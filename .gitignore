@@ -1,0 +1,31 @@
+# build
+build/
+bin/
+*.o
+*.dSYM/
+
+# private deploy / server scripts (local only)
+scripts/deploy.env
+scripts/deploy.env.example
+scripts/upload_to_server.sh
+scripts/download_from_server.sh
+scripts/run_benchmark_full_card_enc.sh
+
+# generated / local benchmark artifacts
+data/s1/
+data/s2/
+data/stim/
+data/benchmark_*
+data/0523/
+data/codetables/
+data/~$*
+data/optimization_log.md
+
+# solver build artifacts
+src/solver/glucose
+src/solver/glucose_*
+
+# python / OS
+__pycache__/
+*.pyc
+.DS_Store

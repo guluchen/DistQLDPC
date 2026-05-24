@@ -1,0 +1,88 @@
+DistQLDPC — Third-Party and Modification Notices
+================================================
+
+This file supplements the root LICENSE (GPL-3.0-or-later). It documents
+third-party components bundled in this repository and modifications made
+to upstream code.
+
+
+1. DistQLDPC application (GPL)
+------------------------------
+
+Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
+
+Includes, without limitation:
+
+  src/core/distqldpc.cc
+  scripts/*.py
+  README.md and project documentation authored for DistQLDPC
+
+Licensed under GNU General Public License v3.0 or later. See LICENSE.
+
+
+2. MaxCDCL / MaxSAT engine (MIT, with DistQLDPC modifications)
+--------------------------------------------------------------
+
+Location: src/solver/
+
+Upstream: MaxCDCL — a MaxSAT solver combining clause learning and
+branch-and-bound (Chu-Min Li et al., CP 2021).
+
+  Copyright (c) 2021, Chu-Min Li (chu-min.li@u-picardie.fr)
+  Based on Maple_CM / Maple_LCM / MiniSat lineage.
+
+Full MIT license text: src/solver/LICENSE
+Copyright headers in individual source files list earlier authors
+(MiniSat, Maple_CM, etc.).
+
+Reference:
+  Chu-Min Li, Zhenxing Xu, Jordi Coll, Felip Manyà, Djamal Habet, Kun He,
+  Combining Clause Learning and Branch and Bound for MaxSAT, CP 2021.
+
+
+3. Modifications to src/solver/ (DistQLDPC patches)
+-----------------------------------------------------
+
+Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
+Part of DistQLDPC (GPL-3.0-or-later when distributed as this project).
+
+These changes are documented in detail in MODIFICATIONS.md. Summary:
+
+  - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
+  - Best-solution tracking and printing on timeout / interrupt
+  - Configurable cardinality encoding modes (Sinz / MTO / off)
+
+Modified files (partial list): Solver.h, Solver.cc
+
+The original MaxCDCL engine remains under MIT. All upstream copyright
+and permission notices in src/solver/ must be preserved in copies and
+substantial portions, per the MIT license.
+
+
+4. MiniSat / Maple_CM / related utilities (MIT)
+-----------------------------------------------
+
+Location: src/solver/mtl/, src/solver/utils/, and headers in src/solver/
+
+  MiniSat — Copyright (c) Niklas Een, Niklas Sorensson
+  Chanseok Oh's MiniSat Patch Series — Copyright (c) Chanseok Oh
+  Maple_LCM / Maple_CM — Copyright (c) Mao Luo, Chu-Min Li, Fan Xiao
+
+See file headers in src/solver/ for exact attribution per file.
+
+
+5. Combined distribution
+--------------------------
+
+When you receive DistQLDPC as a whole (source or binary):
+
+  - The combined work is licensed under GPL-3.0-or-later (see LICENSE).
+  - Third-party MIT components remain available under their original
+    MIT terms; this NOTICE and src/solver/LICENSE satisfy the MIT
+    attribution requirement.
+  - If you extract src/solver/ alone from upstream MaxCDCL sources
+    (without DistQLDPC patches), those files are governed by MIT as
+    stated in src/solver/LICENSE.
+
+For questions about upstream MaxCDCL, contact the original authors
+(see src/solver/ file headers).
