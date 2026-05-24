@@ -91,6 +91,14 @@ python3 scripts/preprocess_matrices.py --src data/matrices --root data
 # writes data/s1/ and data/s2/ variants; re-run compute_logicals on those if needed
 ```
 
+### Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/compute_logicals.py` | Build `Gx` / `Gz` from `Hx` / `Hz` |
+| `scripts/preprocess_matrices.py` | Optional Hx/Hz preprocessing (`data/s1`, `data/s2`) |
+| `scripts/benchmark_matrices.py` | Batch distance runs → CSV (see Advanced) |
+
 ---
 
 ## Usage
