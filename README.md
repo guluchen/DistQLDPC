@@ -1,6 +1,6 @@
 # DistQLDPC
 
-Compute the **minimum distance** `d` of a **CSS / QLDPC** stabilizer code from parity-check matrices, using a MaxSAT solver (MaxCDCL).
+Compute the **minimum distance** `d` of a **CSS / QLDPC** code from parity-check matrices `Hx`, `Hz`, and logical bases `Gx`, `Gz`.
 
 **Repository:** https://github.com/guluchen/DistQLDPC
 
@@ -178,7 +178,9 @@ DistQLDPC is licensed under **GPL-3.0-or-later** — see [LICENSE](LICENSE).
 The MaxSAT engine in `src/solver/` is derived from **MaxCDCL** (MIT).
 Upstream copyright and license: [src/solver/LICENSE](src/solver/LICENSE).
 
-Third-party attribution and DistQLDPC-specific solver patches:
+Third-party attribution (MaxCDCL engine, benchmark matrices from
+[codeDistancePYPI](https://github.com/m-webster/codeDistancePYPI)) and
+DistQLDPC-specific solver patches:
 
 - [NOTICE](NOTICE)
 - [MODIFICATIONS.md](MODIFICATIONS.md)

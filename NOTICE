@@ -71,15 +71,58 @@ Location: src/solver/mtl/, src/solver/utils/, and headers in src/solver/
 See file headers in src/solver/ for exact attribution per file.
 
 
-5. Combined distribution
+5. Benchmark matrices from codeDistancePYPI (MIT)
+-------------------------------------------------
+
+Location: data/matrices/
+
+Some example parity-check and logical-operator data in this repository
+were derived from the codeDistancePYPI project:
+
+  Repository: https://github.com/m-webster/codeDistancePYPI
+  Source tree: https://github.com/m-webster/codeDistancePYPI/tree/main/examples
+  Upstream license: MIT (Copyright (c) 2026 Mark Alan Webster, Abraham Jacob,
+  Oscar Higgott). Full text:
+  https://github.com/m-webster/codeDistancePYPI/blob/main/LICENSE
+
+DistQLDPC changes applied to upstream data:
+
+  - Converted to text matrices: {code}_Hx.txt, {code}_Hz.txt,
+    {code}_Gx.txt, {code}_Gz.txt (GF(2), space-separated 0/1 rows).
+  - File headers and naming follow the DistQLDPC layout described in
+    README.md.
+
+Codes in data/matrices/ with names taken from codeDistancePYPI examples
+(after format conversion):
+
+  AJ_*   — AJ_01, AJ_04, AJ_07, AJ_10, AJ_13, AJ_52
+  PK_*   — PK_31
+  TN_*   — TN_36_8_4, TN_72_8_8, TN_108_2_12, TN_144_2_13, TN_180_2_17,
+           TN_216_4_18, TN_252_2_21, TN_288_2_24, TN_324_4_25, TN_360_4_24,
+           TN_396_4_26, TN_432_8_33, TN_468_4_31, TN_496_2_32, TN_504_2_45,
+           TN_540_4_40, TN_576_2_57, TN_576_2_59, TN_612_2_52, TN_648_10_71,
+           TN_648_14_50, TN_684_2_29
+  xu_*   — xu_16, xu_21, xu_30, xu_42
+
+Other files under data/matrices/ (e.g. BB_*, QT_*, GB_*) are not listed
+here and are provided under the DistQLDPC repository license unless
+otherwise noted.
+
+Redistribution of the MIT-derived matrix files must retain the upstream
+copyright and permission notice above (or the full MIT license text from
+the codeDistancePYPI repository).
+
+
+6. Combined distribution
 --------------------------
 
 When you receive DistQLDPC as a whole (source or binary):
 
   - The combined work is licensed under GPL-3.0-or-later (see LICENSE).
   - Third-party MIT components remain available under their original
-    MIT terms; this NOTICE and src/solver/LICENSE satisfy the MIT
-    attribution requirement.
+    MIT terms; this NOTICE, src/solver/LICENSE, and section 5 above
+    satisfy the MIT attribution requirement for bundled MIT code and
+    MIT-derived benchmark data.
   - If you extract src/solver/ alone from upstream MaxCDCL sources
     (without DistQLDPC patches), those files are governed by MIT as
     stated in src/solver/LICENSE.
