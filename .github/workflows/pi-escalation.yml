@@ -1,0 +1,35 @@
+name: PI Escalation
+
+on:
+  repository_dispatch:
+    types: [pi-escalation]
+
+permissions:
+  contents: read
+
+jobs:
+  surface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Write escalation summary
+        shell: bash
+        env:
+          KIND: ${{ github.event.client_payload.kind }}
+          SOURCE_WORKFLOW: ${{ github.event.client_payload.source_workflow }}
+          RUN_URL: ${{ github.event.client_payload.run_url }}
+          SOURCE_SHA: ${{ github.event.client_payload.sha }}
+        run: |
+          {
+            echo "# Decision needed"
+            echo
+            echo "Kind: **$KIND**"
+            echo
+            echo "Source workflow: **$SOURCE_WORKFLOW**"
+            echo
+            echo "Source SHA: `$SOURCE_SHA`"
+            echo
+            echo "Source run: $RUN_URL"
+            echo
+            echo "This workflow is intentionally created only for events that require PI attention."
+          } >> "$GITHUB_STEP_SUMMARY"
