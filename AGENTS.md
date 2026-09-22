@@ -27,6 +27,15 @@ For changes that can affect solver behavior or performance, require the `QDistSA
 
 When modifying the embedded MaxCDCL engine under `src/solver/`, preserve upstream notices and update `MODIFICATIONS.md` and `NOTICE` when attribution or the documented patch set changes.
 
+## Compute and cost policy
+
+- Codex Cloud may run code inspection, compilation, unit tests, smoke tests, and short representative validation benchmarks.
+- GitHub Actions may run ordinary CI and the selected short QDistSAT cross-repo benchmark. Keep shared-runner timing informational.
+- Do not run the full 18/22-instance benchmark suite, broad parameter sweeps, long solver experiments, or other compute-heavy scientific workloads in Codex Cloud or routine GitHub Actions.
+- Run large scientific experiments on the PI's dedicated compute server.
+- When a large experiment is required, prepare a reproducible server-side run package: exact commands/scripts, configuration, inputs, output locations, and expected resource/runtime notes.
+- If the dedicated server is not available through the current automation path, do not substitute a paid cloud execution environment without explicit PI approval; report the concrete access requirement instead.
+
 ## Scientific boundaries
 
 Do not silently change:
