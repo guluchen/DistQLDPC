@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential zlib1g-dev
+
+      - name: Build DistQLDPC
+        run: make --jobs="$(nproc)"
+
+      - name: Run smoke validation
+        run: bash scripts/smoke_test.sh
