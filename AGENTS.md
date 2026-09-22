@@ -23,6 +23,8 @@ Agents should independently handle routine engineering work, including:
 
 Every substantive change must include validation appropriate to its risk. Prefer fast, deterministic checks for pull requests; do not run the full 18/22-instance benchmark suite as normal CI.
 
+For changes that can affect solver behavior or performance, require the `QDistSAT cross-repo benchmark` PR check. Treat semantic-result mismatches as scientific escalations; treat timing changes on shared CI as diagnostic signals only unless reproduced in a controlled benchmark environment.
+
 When modifying the embedded MaxCDCL engine under `src/solver/`, preserve upstream notices and update `MODIFICATIONS.md` and `NOTICE` when attribution or the documented patch set changes.
 
 ## Scientific boundaries
