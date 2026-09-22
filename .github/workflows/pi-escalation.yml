@@ -3,9 +3,6 @@ name: PI Escalation
 on:
   repository_dispatch:
     types: [pi-escalation]
-  push:
-    paths:
-      - ".github/pi-escalation-test-trigger"
 
 permissions:
   contents: read
@@ -18,10 +15,10 @@ jobs:
       - name: Write escalation summary
         shell: bash
         env:
-          KIND: ${{ github.event.client_payload.kind || 'integration-test' }}
-          SOURCE_WORKFLOW: ${{ github.event.client_payload.source_workflow || 'PI Escalation integration test' }}
-          RUN_URL: ${{ github.event.client_payload.run_url || format('https://github.com/{0}/actions/runs/{1}', github.repository, github.run_id) }}
-          SOURCE_SHA: ${{ github.event.client_payload.sha || github.sha }}
+          KIND: ${{ github.event.client_payload.kind }}
+          SOURCE_WORKFLOW: ${{ github.event.client_payload.source_workflow }}
+          RUN_URL: ${{ github.event.client_payload.run_url }}
+          SOURCE_SHA: ${{ github.event.client_payload.sha }}
         run: |
           {
             echo "# Decision needed"
