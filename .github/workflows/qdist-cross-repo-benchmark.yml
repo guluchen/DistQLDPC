@@ -8,7 +8,7 @@ on:
       - ".github/workflows/qdist-cross-repo-benchmark.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   compare:
@@ -82,6 +82,28 @@ jobs:
           name: qdistsat-cross-repo-benchmark
           path: benchmark-results/
           retention-days: 14
+
+      - name: Escalate scientific mismatch
+        if: steps.bench.outputs.exit_code != '0'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          payload=$(python3 - <<'PY'
+          import json, os
+          print(json.dumps({
+              "event_type": "pi-escalation",
+              "client_payload": {
+                  "kind": "scientific-result-mismatch",
+                  "source_workflow": "QDistSAT cross-repo benchmark",
+                  "run_url": f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+                  "sha": os.environ["GITHUB_SHA"],
+              },
+          }))
+          PY
+          )
+          curl --fail-with-body -sS -X POST             -H "Accept: application/vnd.github+json"             -H "Authorization: Bearer $GH_TOKEN"             -H "X-GitHub-Api-Version: 2022-11-28"             "https://api.github.com/repos/$GITHUB_REPOSITORY/dispatches"             -d "$payload"
 
       - name: Enforce scientific-result consistency
         shell: bash
