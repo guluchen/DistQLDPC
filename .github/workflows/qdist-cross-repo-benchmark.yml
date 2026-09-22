@@ -1,0 +1,92 @@
+name: QDistSAT cross-repo benchmark
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/qdist-cross-repo-benchmark.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Check out candidate DistQLDPC
+        uses: actions/checkout@v7
+        with:
+          path: candidate
+          fetch-depth: 0
+
+      - name: Resolve baseline commit
+        id: refs
+        shell: bash
+        working-directory: candidate
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            base="${{ github.event.before }}"
+          else
+            base="$(git rev-parse HEAD^)"
+          fi
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "candidate=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Check out baseline DistQLDPC
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.refs.outputs.base }}
+          path: baseline
+          fetch-depth: 1
+
+      - name: Check out QDistSAT benchmark platform
+        uses: actions/checkout@v7
+        with:
+          repository: guluchen/QDistSAT
+          ref: main
+          path: qdistsat
+          fetch-depth: 1
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential zlib1g-dev
+
+      - name: Build baseline and candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C baseline --jobs="$(nproc)"
+          make -C candidate --jobs="$(nproc)"
+
+      - name: Compare on selected QDistSAT instances
+        id: bench
+        shell: bash
+        run: |
+          set +e
+          python3 qdistsat/benchmarks/compare_distqldpc_binaries.py             --baseline-bin "$GITHUB_WORKSPACE/baseline/bin/distqldpc"             --candidate-bin "$GITHUB_WORKSPACE/candidate/bin/distqldpc"             --data-root "$GITHUB_WORKSPACE/qdistsat/data"             --stems LP_136_32_4 BB_108_8_10             --timeout 45             --json-out "$GITHUB_WORKSPACE/benchmark-results/result.json"             --markdown-out "$GITHUB_WORKSPACE/benchmark-results/summary.md"
+          code=$?
+          cat "$GITHUB_WORKSPACE/benchmark-results/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload benchmark report
+        uses: actions/upload-artifact@v4
+        with:
+          name: qdistsat-cross-repo-benchmark
+          path: benchmark-results/
+          retention-days: 14
+
+      - name: Enforce scientific-result consistency
+        shell: bash
+        run: |
+          if [ "${{ steps.bench.outputs.exit_code }}" != "0" ]; then
+            echo "QDistSAT detected a scientific-result mismatch between baseline and candidate DistQLDPC."
+            exit 1
+          fi
