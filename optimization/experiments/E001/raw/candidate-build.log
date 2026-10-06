@@ -1,0 +1,1 @@
+clang++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -o bin/distqldpc src/core/distqldpc.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz
