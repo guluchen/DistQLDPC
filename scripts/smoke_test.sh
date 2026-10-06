@@ -18,7 +18,7 @@ grep -Fq "Options: -cpu-lim=N" <<<"$help_output"
 # Exercise the documented small artifact with a strict wall limit. The smoke
 # test checks only integration and output structure, never a distance value.
 set +e
-run_output="$($binary -v -cpu-lim=1 AJ_01 2>&1)"
+run_output="$($binary -v -cpu-lim=1 LP_34_20_2 2>&1)"
 run_status=$?
 set -e
 
@@ -28,7 +28,7 @@ if [[ $run_status -ne 0 && $run_status -ne 1 ]]; then
     exit 1
 fi
 
-grep -Fq "c Hx: data/matrices/AJ_01_Hx.txt" <<<"$run_output"
+grep -Fq "c Hx: data/matrices/LP_34_20_2_Hx.txt" <<<"$run_output"
 grep -Eq '^c Hx: [0-9]+ x [0-9]+, Hz: [0-9]+ x [0-9]+, Gx: [0-9]+ x [0-9]+, Gz: [0-9]+ x [0-9]+, logicals: [0-9]+$' <<<"$run_output"
 grep -Eq '^(o [0-9]+|s UNKNOWN)$' <<<"$run_output"
 
