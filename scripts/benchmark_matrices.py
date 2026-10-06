@@ -9,7 +9,7 @@ Use --all to run every code with complete Hx/Hz/Gx/Gz files.
 Use --compare-card to benchmark both vs off.
 Use --compare-card-enc to benchmark both, sinz, mto, both_force, off (five passes).
 Use --compare-card-enc --flat -j 110 to run all code×mode tasks in one pool (e.g. 22×5).
-Use --compare-card-sm3 to benchmark sinz vs mto vs both_force (three passes).
+Use --compare-roundingsat to benchmark MaxCDCL vs RoundingSat on the same codes.
 """
 
 from __future__ import annotations
@@ -31,15 +31,15 @@ SUFFIXES = ("Hx", "Hz", "Gx", "Gz")
 
 # Default benchmark instances (see README).
 DEFAULT_BENCHMARK_CODES: tuple[str, ...] = (
-    "AJ_01",
-    "AJ_04",
-    "AJ_07",
-    "AJ_10",
-    "AJ_13",
-    "QT_200_10_10",
-    "QT_36_8_3",
-    "QT_54_11_4",
-    "QT_72_14_4",
+    "LP_34_20_2",
+    "LP_136_32_4",
+    "LP_238_44_6",
+    "LP_340_56_8",
+    "LP_442_68_10",
+    "TN_200_10_10",
+    "TN_36_8_3",
+    "TN_54_11_4",
+    "TN_72_14_4",
     "TN_108_2_12",
     "TN_36_8_4",
     "TN_72_8_8",
@@ -47,23 +47,23 @@ DEFAULT_BENCHMARK_CODES: tuple[str, ...] = (
     "BB_144_12_12",
     "BB_72_12_6",
     "BB_90_8_10",
-    "GB_144_12_24",
-    "GB_144_12_37",
+    "GB_144_12_8",
+    "GB_144_12_12",
 )
 
 # Long-run tier (~8h budget); reference wall times on a prior machine (seconds).
 ADVANCED_BENCHMARK_CODES: tuple[str, ...] = (
     "TN_144_2_13",
-    "BB_144_14_0",
-    "xu_16",
-    "QT_250_10_15",
+    "BB_144_14_14",
+    "LP_544_80_12",
+    "TN_250_10_15",
 )
 
 ADVANCED_REFERENCE_SEC: dict[str, int] = {
     "TN_144_2_13": 1115,
-    "BB_144_14_0": 2869,
-    "xu_16": 1628,
-    "QT_250_10_15": 4430,
+    "BB_144_14_14": 2869,
+    "LP_544_80_12": 1628,
+    "TN_250_10_15": 4430,
 }
 
 
@@ -149,6 +149,9 @@ CARD_FLAG = {
     "off": "-no-card",
 }
 
+SOLVER_MAXCDCL = "maxcdcl"
+SOLVER_ROUNDINGSAT = "roundingsat"
+
 
 def run_one(
     binary: Path,
@@ -158,13 +161,21 @@ def run_one(
     matrices_dir: Path,
     quiet: bool,
     card_mode: str = "both",
+    solver: str = SOLVER_MAXCDCL,
+    roundingsat_binary: Optional[Path] = None,
 ) -> RunResult:
     cmd = [str(binary)]
     if quiet:
         cmd.append("-q")
-    flag = CARD_FLAG.get(card_mode)
-    if flag:
-        cmd.append(flag)
+    if solver == SOLVER_ROUNDINGSAT:
+        if roundingsat_binary is not None:
+            cmd.append(f"-roundingsat={roundingsat_binary}")
+        else:
+            cmd.append("-roundingsat")
+    else:
+        flag = CARD_FLAG.get(card_mode)
+        if flag:
+            cmd.append(flag)
     root = repo_root()
     try:
         mat_arg = str(matrices_dir.relative_to(root) / code)
@@ -266,6 +277,8 @@ def run_benchmark_pass(
     card_mode: str,
     jobs: int,
     label: str,
+    solver: str = SOLVER_MAXCDCL,
+    roundingsat_binary: Optional[Path] = None,
 ) -> List[RunResult]:
     results: List[RunResult] = []
     done = 0
@@ -296,6 +309,8 @@ def run_benchmark_pass(
                 matrices_dir=matrices_dir,
                 quiet=quiet,
                 card_mode=card_mode,
+                solver=solver,
+                roundingsat_binary=roundingsat_binary,
             ): code
             for code in codes
         }
@@ -372,6 +387,87 @@ def summarize_pass(rows: List[RunResult]) -> dict[str, float | int]:
         "ok_time": sum(r.elapsed_sec for r in rows if r.status == "ok"),
         "wall_time": sum(r.elapsed_sec for r in rows),
     }
+
+
+def write_solver_compare_csv(
+    path: Path,
+    maxcdcl: List[RunResult],
+    roundingsat: List[RunResult],
+) -> None:
+    by_max = {r.code: r for r in maxcdcl}
+    by_rs = {r.code: r for r in roundingsat}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(
+            [
+                "code",
+                "status_maxcdcl",
+                "distance_maxcdcl",
+                "elapsed_maxcdcl",
+                "status_roundingsat",
+                "distance_roundingsat",
+                "elapsed_roundingsat",
+                "distance_match",
+                "elapsed_ratio_rs_over_maxcdcl",
+            ]
+        )
+        for code in sorted(by_max):
+            a, b = by_max[code], by_rs[code]
+            match = a.distance == b.distance and a.status == b.status
+            ratio = ""
+            if a.elapsed_sec > 0:
+                ratio = f"{b.elapsed_sec / a.elapsed_sec:.3f}"
+            w.writerow(
+                [
+                    code,
+                    a.status,
+                    a.distance if a.distance is not None else "",
+                    f"{a.elapsed_sec:.2f}",
+                    b.status,
+                    b.distance if b.distance is not None else "",
+                    f"{b.elapsed_sec:.2f}",
+                    "yes" if match else "no",
+                    ratio,
+                ]
+            )
+
+
+def print_solver_compare_summary(maxcdcl: List[RunResult], roundingsat: List[RunResult]) -> None:
+    sm = summarize_pass(maxcdcl)
+    sr = summarize_pass(roundingsat)
+    mismatches = []
+    for a, b in zip(maxcdcl, roundingsat):
+        if a.code != b.code:
+            continue
+        if a.status != b.status or a.distance != b.distance:
+            mismatches.append(
+                f"{a.code}: maxcdcl={a.status}/d={a.distance} vs "
+                f"roundingsat={b.status}/d={b.distance}"
+            )
+
+    print("c --- compare: MaxCDCL vs RoundingSat ---", flush=True)
+    print(
+        f"c maxcdcl:     ok={sm['ok']} unknown={sm['unknown']} timeout={sm['timeout']} "
+        f"error={sm['error']} ok_time={sm['ok_time']:.1f}s sum_elapsed={sm['wall_time']:.1f}s",
+        flush=True,
+    )
+    print(
+        f"c roundingsat: ok={sr['ok']} unknown={sr['unknown']} timeout={sr['timeout']} "
+        f"error={sr['error']} ok_time={sr['ok_time']:.1f}s sum_elapsed={sr['wall_time']:.1f}s",
+        flush=True,
+    )
+    if sm["ok_time"] > 0:
+        delta = (sr["ok_time"] - sm["ok_time"]) / sm["ok_time"] * 100.0
+        faster = "roundingsat" if sr["ok_time"] < sm["ok_time"] else "maxcdcl"
+        print(
+            f"c ok-case time: maxcdcl {sm['ok_time']:.1f}s vs roundingsat {sr['ok_time']:.1f}s "
+            f"({delta:+.1f}% roundingsat vs maxcdcl; {faster} faster on ok cases)",
+            flush=True,
+        )
+    print(f"c distance/status mismatches: {len(mismatches)}", flush=True)
+    for m in mismatches:
+        print(f"c   MISMATCH {m}", flush=True)
 
 
 def write_compare_csv(
@@ -548,7 +644,7 @@ def main() -> int:
     ap.add_argument(
         "--advanced",
         action="store_true",
-        help="advanced tier: TN_144_2_13, BB_144_14_0, xu_16, QT_250_10_15 (8h timeout, -j 1)",
+        help="advanced tier: TN_144_2_13, BB_144_14_14, LP_544_80_12, TN_250_10_15 (8h timeout, -j 1)",
     )
     ap.add_argument(
         "--full",
@@ -598,19 +694,42 @@ def main() -> int:
         help="run sinz vs mto vs both_force (forced Sinz+MTO) per code",
     )
     ap.add_argument(
+        "--solver",
+        choices=(SOLVER_MAXCDCL, SOLVER_ROUNDINGSAT),
+        default=SOLVER_MAXCDCL,
+        help="backend: maxcdcl (default) or roundingsat",
+    )
+    ap.add_argument(
+        "--roundingsat-binary",
+        type=Path,
+        default=None,
+        help="path to roundingsat binary (default: roundingsat on PATH)",
+    )
+    ap.add_argument(
+        "--compare-roundingsat",
+        action="store_true",
+        help="run each code with MaxCDCL and RoundingSat, write comparison CSV",
+    )
+    ap.add_argument(
         "--compare-output",
         type=Path,
-        default=root / "data" / "benchmark_compare_card.csv",
-        help="comparison CSV path",
+        default=None,
+        help="comparison CSV path (default depends on compare mode)",
     )
     args = ap.parse_args()
 
     if args.no_card:
         args.card_mode = "off"
-    compare_flags = [args.compare_card, args.compare_card_enc, args.compare_card_sm3]
+    compare_flags = [
+        args.compare_card,
+        args.compare_card_enc,
+        args.compare_card_sm3,
+        args.compare_roundingsat,
+    ]
     if sum(compare_flags) > 1:
         print(
-            "error: use only one of --compare-card, --compare-card-enc, --compare-card-sm3",
+            "error: use only one compare mode "
+            "(--compare-card, --compare-card-enc, --compare-card-sm3, --compare-roundingsat)",
             file=sys.stderr,
         )
         return 1
@@ -620,6 +739,14 @@ def main() -> int:
     if args.flat and not (args.compare_card_enc or args.compare_card_sm3):
         print("error: --flat requires --compare-card-enc or --compare-card-sm3", file=sys.stderr)
         return 1
+    if args.compare_roundingsat and args.solver != SOLVER_MAXCDCL:
+        print("error: --compare-roundingsat sets solvers internally; do not set --solver", file=sys.stderr)
+        return 1
+    if args.solver == SOLVER_ROUNDINGSAT and args.roundingsat_binary is not None:
+        rs_bin = args.roundingsat_binary
+        if not rs_bin.is_file():
+            print(f"error: roundingsat binary not found: {rs_bin}", file=sys.stderr)
+            return 1
 
     if not args.binary.is_file():
         print(f"error: binary not found: {args.binary}", file=sys.stderr)
@@ -675,6 +802,13 @@ def main() -> int:
     else:
         output_path = root / "data" / "benchmark_results.csv"
 
+    if args.compare_output is not None:
+        compare_output_path = args.compare_output
+    elif args.compare_roundingsat:
+        compare_output_path = root / "data" / "benchmark_compare_roundingsat.csv"
+    else:
+        compare_output_path = root / "data" / "benchmark_compare_card.csv"
+
     if tier == "advanced":
         print("c advanced tier (reference solve times on prior runs):", flush=True)
         for code in codes:
@@ -717,11 +851,11 @@ def main() -> int:
                 passes[mode] = rows
         for mode, rows in passes.items():
             write_csv(root / "data" / f"benchmark_results_card_{mode}.csv", rows)
-        write_compare_multi_csv(args.compare_output, passes)
+        write_compare_multi_csv(compare_output_path, passes)
         print_compare_multi_summary(passes)
         wall = time.monotonic() - t0
         print(f"c compare wall={wall:.1f}s", flush=True)
-        print(f"c wrote {args.compare_output}", flush=True)
+        print(f"c wrote {compare_output_path}", flush=True)
         err = sum(1 for rows in passes.values() for r in rows if r.status == "error")
         return 0 if err == 0 else 2
 
@@ -760,12 +894,61 @@ def main() -> int:
                 passes[mode] = rows
         for mode, rows in passes.items():
             write_csv(root / "data" / f"benchmark_results_card_{mode}.csv", rows)
-        write_compare_multi_csv(args.compare_output, passes)
+        write_compare_multi_csv(compare_output_path, passes)
         print_compare_multi_summary(passes)
         wall = time.monotonic() - t0
         print(f"c compare wall={wall:.1f}s", flush=True)
-        print(f"c wrote {args.compare_output}", flush=True)
+        print(f"c wrote {compare_output_path}", flush=True)
         err = sum(1 for rows in passes.values() for r in rows if r.status == "error")
+        return 0 if err == 0 else 2
+
+    if args.compare_roundingsat:
+        print(
+            f"c compare-roundingsat: {len(codes)} codes, timeout={timeout}s, jobs={jobs}, "
+            f"binary={args.binary}",
+            flush=True,
+        )
+        t0 = time.monotonic()
+        maxcdcl_path = root / "data" / "benchmark_results_maxcdcl.csv"
+        rs_path = root / "data" / "benchmark_results_roundingsat.csv"
+
+        print("c pass 1/2: MaxCDCL (default cardinality)", flush=True)
+        maxcdcl = run_benchmark_pass(
+            binary=args.binary,
+            codes=codes,
+            timeout_sec=timeout,
+            matrices_dir=args.matrices_dir,
+            quiet=not args.v,
+            card_mode="both",
+            jobs=jobs,
+            label="maxcdcl",
+            solver=SOLVER_MAXCDCL,
+        )
+        write_csv(maxcdcl_path, maxcdcl)
+
+        print("c pass 2/2: RoundingSat", flush=True)
+        roundingsat = run_benchmark_pass(
+            binary=args.binary,
+            codes=codes,
+            timeout_sec=timeout,
+            matrices_dir=args.matrices_dir,
+            quiet=not args.v,
+            card_mode="both",
+            jobs=jobs,
+            label="roundingsat",
+            solver=SOLVER_ROUNDINGSAT,
+            roundingsat_binary=args.roundingsat_binary,
+        )
+        write_csv(rs_path, roundingsat)
+        write_solver_compare_csv(compare_output_path, maxcdcl, roundingsat)
+        print_solver_compare_summary(maxcdcl, roundingsat)
+
+        wall = time.monotonic() - t0
+        print(f"c compare wall={wall:.1f}s", flush=True)
+        print(f"c wrote {maxcdcl_path}", flush=True)
+        print(f"c wrote {rs_path}", flush=True)
+        print(f"c wrote {compare_output_path}", flush=True)
+        err = sum(1 for r in maxcdcl + roundingsat if r.status == "error")
         return 0 if err == 0 else 2
 
     if args.compare_card:
@@ -803,20 +986,20 @@ def main() -> int:
             label="off",
         )
         write_csv(nocard_path, nocard)
-        write_compare_csv(args.compare_output, card, nocard)
+        write_compare_csv(compare_output_path, card, nocard)
         print_compare_summary(card, nocard)
 
         wall = time.monotonic() - t0
         print(f"c compare wall={wall:.1f}s", flush=True)
         print(f"c wrote {card_path}", flush=True)
         print(f"c wrote {nocard_path}", flush=True)
-        print(f"c wrote {args.compare_output}", flush=True)
+        print(f"c wrote {compare_output_path}", flush=True)
         err = sum(1 for r in card + nocard if r.status == "error")
         return 0 if err == 0 else 2
 
     print(
         f"c benchmark ({tier}): {len(codes)} codes, timeout={timeout}s, jobs={jobs}, "
-        f"binary={args.binary}, card-mode={args.card_mode}",
+        f"binary={args.binary}, solver={args.solver}, card-mode={args.card_mode}",
         flush=True,
     )
 
@@ -829,7 +1012,9 @@ def main() -> int:
         quiet=not args.v,
         card_mode=args.card_mode,
         jobs=jobs,
-        label=args.card_mode,
+        label=args.solver,
+        solver=args.solver,
+        roundingsat_binary=args.roundingsat_binary,
     )
     write_csv(output_path, results, include_ref=(tier == "advanced"))
 

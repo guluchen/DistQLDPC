@@ -10,7 +10,7 @@ Compute the **minimum distance** `d` of a **CSS / QLDPC** code from parity-check
 
 ```bash
 make
-./bin/distqldpc AJ_01
+./bin/distqldpc LP_34_20_2
 ```
 
 Example output while searching:
@@ -39,6 +39,8 @@ For a code named `<code>`, put four text files in one directory (default: `data/
 | `<code>_Gz.txt` | **X-type logicals** — basis of `ker(Hz) / row(Hx)` |
 
 **File format:** each line is one binary row; entries are `0` or `1` separated by spaces. Lines starting with `#` are comments. All four matrices must have the same number of columns `n` (qubits).
+
+**Stem names** use `{family}_{n}_{k}_{d}` (e.g. `BB_72_12_6`, `LP_34_20_2`). Use `unknown` when minimum distance is not certified. Upstream `AJ_*` / `xu_*` ids are recorded in [NOTICE](NOTICE).
 
 Example layout:
 
@@ -159,6 +161,16 @@ Most QLDPC users can ignore these flags.
 ```bash
 python3 scripts/benchmark_matrices.py
 python3 scripts/benchmark_matrices.py --all --timeout 180
+python3 scripts/benchmark_matrices.py --compare-roundingsat
+```
+
+Compare MaxCDCL (embedded) vs [RoundingSat](https://gitlab.com/MIAOresearch/software/roundingsat) on the same WCNF encoding:
+
+```bash
+./bin/distqldpc LP_34_20_2                      # MaxCDCL (default)
+./bin/distqldpc -roundingsat LP_34_20_2       # external RoundingSat binary on PATH
+./bin/distqldpc -roundingsat=/path/to/roundingsat LP_34_20_2
+./bin/distqldpc -dump-wcnf=/tmp/LP_34_20_2.wcnf LP_34_20_2
 ```
 
 ---

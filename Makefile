@@ -5,6 +5,7 @@ CORE    = $(SRC)/core
 SOLVER  = $(SRC)/solver
 BUILD   = build
 BIN     = bin/distqldpc
+MAXCDCL = bin/maxcdcl
 
 CXX     ?= g++
 CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O3 -g \
@@ -19,7 +20,10 @@ ENGINE_OBJS = \
 
 .PHONY: all clean
 
-all: $(BIN)
+all: $(BIN) $(MAXCDCL)
+
+$(MAXCDCL): $(SOLVER)/Main.cc $(ENGINE_OBJS) | dirs
+	$(CXX) $(CXXFLAGS) -o $@ $(SOLVER)/Main.cc $(ENGINE_OBJS) $(LDFLAGS)
 
 $(BIN): $(CORE)/distqldpc.cc $(ENGINE_OBJS) | dirs
 	$(CXX) $(CXXFLAGS) -o $@ $(CORE)/distqldpc.cc $(ENGINE_OBJS) $(LDFLAGS)
@@ -40,4 +44,4 @@ $(BUILD)/System.o: $(SOLVER)/utils/System.cc | dirs
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf build $(BIN)
+	rm -rf build $(BIN) $(MAXCDCL)

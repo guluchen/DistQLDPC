@@ -41,6 +41,13 @@
 
 using namespace Minisat;
 
+enum SolverBackend {
+    SOLVER_MAXCDCL = 0,
+    SOLVER_ROUNDINGSAT = 1,
+};
+
+static const char* DEFAULT_ROUNDINGSAT_BIN = "roundingsat";
+
 struct Matrix {
     int rows;
     int cols;
@@ -166,66 +173,277 @@ static const char* cardinality_mode_label(int mode) {
     }
 }
 
-static int min_distance_stabilizer_maxsat(
-    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int cpu_lim, int verb, int bounds_pipe_w, int card_mode)
+struct StabilizerInstance {
+    int n;
+    int base_vars;
+};
+
+/* Aux bits for sum(x_i) = b + 2*a0 + 4*a1 + ... with Boolean a_j. */
+static int parity_aux_count(int n, bool xor_one)
+{
+    if (n <= 1)
+        return 0;
+    int max_sum = xor_one ? n : (n - (n & 1));
+    if (max_sum <= 0)
+        return 0;
+    for (int k = 1;; k++) {
+        int rhs_max = (xor_one ? 1 : 0) + 2 * ((1 << k) - 1);
+        if (rhs_max >= max_sum)
+            return k;
+    }
+}
+
+/*
+ * Native GF(2) parity in OPB: x1+...+xn = b + 2*a0 + 4*a1 + ...
+ * Returns new parity-aux 1-based var indices via out_aux (appended).
+ */
+static void write_parity_eq(
+    FILE* f, const std::vector<int>& vars, bool xor_one, int& next_var,
+    std::vector<int>& out_aux, int& ncons)
+{
+    const int n = (int)vars.size();
+    if (n == 0)
+        return;
+    if (n == 1) {
+        if (xor_one)
+            fprintf(f, "+1 x%d >= 1;\n", vars[0]);
+        else
+            fprintf(f, "+1 ~x%d >= 1;\n", vars[0]);
+        ncons++;
+        return;
+    }
+    const int k = parity_aux_count(n, xor_one);
+    std::vector<int> aux;
+    for (int i = 0; i < k; i++)
+        aux.push_back(next_var++);
+    out_aux.insert(out_aux.end(), aux.begin(), aux.end());
+
+    bool first = true;
+    for (size_t vi = 0; vi < vars.size(); vi++) {
+        int v = vars[vi];
+        if (first) {
+            fprintf(f, "+1 x%d", v);
+            first = false;
+        } else {
+            fprintf(f, " +1 x%d", v);
+        }
+    }
+    int coef = 2;
+    for (int i = 0; i < k; i++) {
+        fprintf(f, " -%d x%d", coef, aux[i]);
+        coef *= 2;
+    }
+    fprintf(f, " = %d;\n", xor_one ? 1 : 0);
+    ncons++;
+}
+
+static int z_var_idx(int n, int i) { return n + 1 + i; }
+static int x_var_idx(int i) { return 1 + i; }
+static int w_var_idx(int n, int i) { return 2 * n + 1 + i; }
+static int a_var_idx(int n, int j) { return 3 * n + 1 + j; }
+
+static void count_parity_row(int lit_count, int& ncons, int& parity_aux_total)
+{
+    ncons++;
+    if (lit_count > 1)
+        parity_aux_total += parity_aux_count(lit_count, false);
+}
+
+static void write_opb_native_parity(
+    FILE* f,
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz)
 {
     const int n = Hx.cols;
-    if (Hz.cols != n || Gx.cols != n || Gz.cols != n) die("matrix column mismatch");
     const int k_log = Gx.rows + Gz.rows;
-    if (k_log == 0) return INT_MAX;
+    const int base = 3 * n + k_log;
 
-    SimpSolver S;
+    int ncons = 0;
+    int parity_aux_total = 0;
+
+    for (int r = 0; r < Hx.rows; r++) {
+        int cnt = 0;
+        for (int i = 0; i < n; i++)
+            if (getm(Hx, r, i))
+                cnt++;
+        count_parity_row(cnt, ncons, parity_aux_total);
+    }
+    for (int r = 0; r < Hz.rows; r++) {
+        int cnt = 0;
+        for (int i = 0; i < n; i++)
+            if (getm(Hz, r, i))
+                cnt++;
+        count_parity_row(cnt, ncons, parity_aux_total);
+    }
+    ncons++; /* P != 0 */
+    for (int j = 0; j < Gx.rows; j++) {
+        int cnt = 0;
+        for (int i = 0; i < n; i++)
+            if (getm(Gx, j, i))
+                cnt++;
+        if (cnt == 0)
+            ncons++;
+        else
+            count_parity_row(cnt + 1, ncons, parity_aux_total);
+    }
+    for (int j = 0; j < Gz.rows; j++) {
+        int cnt = 0;
+        for (int i = 0; i < n; i++)
+            if (getm(Gz, j, i))
+                cnt++;
+        if (cnt == 0)
+            ncons++;
+        else
+            count_parity_row(cnt + 1, ncons, parity_aux_total);
+    }
+    ncons++; /* OR of logical indicators */
+    ncons += 3 * n; /* w <-> x v z */
+
+    const int nvars = base + parity_aux_total;
+    int next_var = base + 1;
+    std::vector<int> parity_aux;
+    int written = 0;
+
+    fprintf(f, "* #variable= %d #constraint= %d\n", nvars, ncons);
+    fprintf(f, "* DistQLDPC symplectic MaxSAT (native GF(2) parity, min Pauli weight)\n");
+
+    fprintf(f, "min:");
+    for (int i = 0; i < n; i++)
+        fprintf(f, " +1 x%d", w_var_idx(n, i));
+    fprintf(f, " ;\n");
+
+    for (int r = 0; r < Hx.rows; r++) {
+        std::vector<int> vars;
+        for (int i = 0; i < n; i++)
+            if (getm(Hx, r, i))
+                vars.push_back(z_var_idx(n, i));
+        write_parity_eq(f, vars, false, next_var, parity_aux, written);
+    }
+    for (int r = 0; r < Hz.rows; r++) {
+        std::vector<int> vars;
+        for (int i = 0; i < n; i++)
+            if (getm(Hz, r, i))
+                vars.push_back(x_var_idx(i));
+        write_parity_eq(f, vars, false, next_var, parity_aux, written);
+    }
+    {
+        bool first = true;
+        for (int i = 0; i < n; i++) {
+            if (first) {
+                fprintf(f, "+1 x%d", w_var_idx(n, i));
+                first = false;
+            } else {
+                fprintf(f, " +1 x%d", w_var_idx(n, i));
+            }
+        }
+        fprintf(f, " >= 1;\n");
+        written++;
+    }
+    for (int j = 0; j < Gx.rows; j++) {
+        std::vector<int> vars;
+        for (int i = 0; i < n; i++)
+            if (getm(Gx, j, i))
+                vars.push_back(x_var_idx(i));
+        if (vars.empty()) {
+            fprintf(f, "+1 ~x%d >= 1;\n", a_var_idx(n, j));
+            written++;
+        } else {
+            vars.push_back(a_var_idx(n, j));
+            write_parity_eq(f, vars, false, next_var, parity_aux, written);
+        }
+    }
+    for (int j = 0; j < Gz.rows; j++) {
+        std::vector<int> vars;
+        for (int i = 0; i < n; i++)
+            if (getm(Gz, j, i))
+                vars.push_back(z_var_idx(n, i));
+        if (vars.empty()) {
+            fprintf(f, "+1 ~x%d >= 1;\n", a_var_idx(n, Gx.rows + j));
+            written++;
+        } else {
+            vars.push_back(a_var_idx(n, Gx.rows + j));
+            write_parity_eq(f, vars, false, next_var, parity_aux, written);
+        }
+    }
+    {
+        bool first = true;
+        for (int j = 0; j < k_log; j++) {
+            if (first) {
+                fprintf(f, "+1 x%d", a_var_idx(n, j));
+                first = false;
+            } else {
+                fprintf(f, " +1 x%d", a_var_idx(n, j));
+            }
+        }
+        fprintf(f, " >= 1;\n");
+        written++;
+    }
+    for (int i = 0; i < n; i++) {
+        const int w = w_var_idx(n, i);
+        const int x = x_var_idx(i);
+        const int z = z_var_idx(n, i);
+        fprintf(f, "+1 ~x%d +1 x%d +1 x%d >= 1;\n", w, x, z);
+        fprintf(f, "+1 ~x%d +1 x%d >= 1;\n", x, w);
+        fprintf(f, "+1 ~x%d +1 x%d >= 1;\n", z, w);
+        written += 3;
+    }
+    (void)written;
+}
+
+static bool build_stabilizer_instance(
+    SimpSolver& S,
+    std::vector<Var>& aux,
+    StabilizerInstance& meta,
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+    int verb, int card_mode, int bounds_pipe_w)
+{
+    meta.n = Hx.cols;
+    if (Hz.cols != meta.n || Gx.cols != meta.n || Gz.cols != meta.n) die("matrix column mismatch");
+    const int k_log = Gx.rows + Gz.rows;
+    if (k_log == 0)
+        return false;
+
+    aux.clear();
     S.setBoundsPipe(bounds_pipe_w);
     S.cardinalityEncMode = card_mode;
     S.parsing = true;
     S.verbosity = verb;
     S.instanceType = 1;
-    S.hardWeight = (unsigned)(2 * n + k_log + 64);
+    S.hardWeight = (unsigned)(2 * meta.n + k_log + 64);
     S.UB = S.hardWeight;
     S.initUB = INT32_MAX;
-    S.nbOriVars = 2 * n;
+    S.nbOriVars = 2 * meta.n;
 
     const Var off_x = 0;
-    const Var off_z = n;
-    const Var off_w = 2 * n;
-    const Var off_a = 3 * n;
-    const int base_vars = 3 * n + k_log;
-    while (S.nVars() < base_vars) S.newVar();
+    const Var off_z = meta.n;
+    const Var off_w = 2 * meta.n;
+    const Var off_a = 3 * meta.n;
+    meta.base_vars = 3 * meta.n + k_log;
+    while (S.nVars() < meta.base_vars) S.newVar();
 
-    std::vector<Var> aux;
-
-    /* Commutation: X stabilizer rows of Hx -> z-variables; Z stabilizer rows of Hz -> x-variables. */
     for (int r = 0; r < Hx.rows; r++) {
         std::vector<Lit> lits;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < meta.n; i++)
             if (getm(Hx, r, i)) lits.push_back(mkLit(off_z + i));
         add_xor_equals(S, lits, false, aux);
     }
     for (int r = 0; r < Hz.rows; r++) {
         std::vector<Lit> lits;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < meta.n; i++)
             if (getm(Hz, r, i)) lits.push_back(mkLit(off_x + i));
         add_xor_equals(S, lits, false, aux);
     }
-
-    /* P != 0: at least one Pauli component is set. */
     {
         std::vector<Lit> nz;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < meta.n; i++) {
             nz.push_back(mkLit(off_x + i));
             nz.push_back(mkLit(off_z + i));
         }
         add_hard_clause(S, nz);
     }
-
-    /* Logical anticommutation (lit layout on symplectic row [x_L|z_L]):
-     *   L[n+i] -> x_i,  L[i] -> z_i  (ω(P,L) = x_P·z_L + z_P·x_L). */
     int aj = 0;
     for (int j = 0; j < Gx.rows; j++, aj++) {
-        /* Gx rows are Z-type logicals [0|z]; only z_L support -> x_i vars. */
         std::vector<Lit> lits;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < meta.n; i++)
             if (getm(Gx, j, i)) lits.push_back(mkLit(off_x + i));
         Lit a_lit = mkLit(off_a + aj);
         if (lits.empty()) {
@@ -238,9 +456,8 @@ static int min_distance_stabilizer_maxsat(
         }
     }
     for (int j = 0; j < Gz.rows; j++, aj++) {
-        /* Gz rows are X-type logicals [x|0]; only x_L support -> z_i vars. */
         std::vector<Lit> lits;
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < meta.n; i++)
             if (getm(Gz, j, i)) lits.push_back(mkLit(off_z + i));
         Lit a_lit = mkLit(off_a + aj);
         if (lits.empty()) {
@@ -257,9 +474,7 @@ static int min_distance_stabilizer_maxsat(
         for (int j = 0; j < k_log; j++) ors.push_back(mkLit(off_a + j));
         add_hard_clause(S, ors);
     }
-
-    /* Pauli weight w_i <-> x_i v z_i; minimize sum w_i. */
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < meta.n; i++) {
         Lit xi = mkLit(off_x + i);
         Lit zi = mkLit(off_z + i);
         Lit wi = mkLit(off_w + i);
@@ -275,8 +490,24 @@ static int min_distance_stabilizer_maxsat(
     S.parsing = false;
     S.setFrozenVars();
     S.eliminate(true);
-
     if (!S.okay()) die("hard constraints UNSAT");
+    return true;
+}
+
+static int min_distance_stabilizer_maxsat(
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+    int cpu_lim, int verb, int bounds_pipe_w, int card_mode,
+    const char* dump_wcnf_path)
+{
+    (void)cpu_lim;
+    SimpSolver S;
+    std::vector<Var> aux;
+    StabilizerInstance meta;
+    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
+        return INT_MAX;
+
+    if (dump_wcnf_path && dump_wcnf_path[0])
+        S.toWcnf(dump_wcnf_path);
 
     /* Wall-clock timeout is enforced by the parent (fork + SIGKILL).
      * Do not set RLIMIT_CPU here: SIGXCPU can stop the child early and
@@ -287,11 +518,14 @@ static int min_distance_stabilizer_maxsat(
 
     int weight = -1;
     uint64_t opt = S.getLastOptimalCost();
-    if (opt != UINT64_MAX && opt <= (uint64_t)n)
+    if (opt != UINT64_MAX && opt <= (uint64_t)meta.n)
         weight = (int)opt;
     if (weight < 0 && (ret == l_False || ret == l_True)) {
         weight = 0;
-        for (int i = 0; i < n; i++) {
+        const Var off_x = 0;
+        const Var off_z = meta.n;
+        const Var off_w = 2 * meta.n;
+        for (int i = 0; i < meta.n; i++) {
             if (S.value(off_w + i) == l_True)
                 weight++;
             else if (S.value(off_x + i) == l_True || S.value(off_z + i) == l_True)
@@ -303,10 +537,84 @@ static int min_distance_stabilizer_maxsat(
     if (verb > 0)
         printf("c MaxSAT: %s, Pauli weight %d (reported cost %llu), vars %d (base %d + aux %zu)\n",
                ret == l_True ? "SAT" : ret == l_False ? "OPTIMAL" : "UNKNOWN",
-               weight, (unsigned long long)opt, S.nVars(), base_vars, aux.size());
+               weight, (unsigned long long)opt, S.nVars(), meta.base_vars, aux.size());
 
     bool optimal = (ret == l_False) || (weight >= 0 && opt != UINT64_MAX);
     pipe_write_result(bounds_pipe_w, weight, optimal && weight >= 0);
+    return weight;
+}
+
+static int parse_roundingsat_cost(const std::string& out)
+{
+    bool optimum = false;
+    int cost = -1;
+    for (size_t i = 0; i < out.size();) {
+        size_t eol = out.find('\n', i);
+        if (eol == std::string::npos)
+            eol = out.size();
+        std::string line = out.substr(i, eol - i);
+        i = eol + 1;
+        if (line.find("OPTIMUM FOUND") != std::string::npos)
+            optimum = true;
+        if (line.size() >= 2 && line[0] == 'o' && line[1] == ' ') {
+            char* end = NULL;
+            long v = strtol(line.c_str() + 2, &end, 10);
+            if (end != line.c_str() + 2)
+                cost = (int)v;
+        }
+    }
+    return optimum ? cost : -1;
+}
+
+static int min_distance_stabilizer_roundingsat(
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+    int verb, int bounds_pipe_w, const char* roundingsat_bin, const char* dump_wcnf_path)
+{
+    StabilizerInstance meta;
+    SimpSolver S;
+    std::vector<Var> aux;
+    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, 0, 0, bounds_pipe_w))
+        return INT_MAX;
+
+    char tmpl[] = "/tmp/distqldpc_XXXXXX.wcnf";
+    bool tmp_wcnf = !(dump_wcnf_path && dump_wcnf_path[0]);
+    const char* wcnf_path = dump_wcnf_path;
+    if (tmp_wcnf) {
+        int fd = mkstemp(tmpl);
+        if (fd < 0) die("mkstemp() failed");
+        close(fd);
+        wcnf_path = tmpl;
+    }
+    S.toWcnf(wcnf_path);
+
+    std::string cmd = std::string(roundingsat_bin) + " " + wcnf_path + " 2>&1";
+    FILE* fp = popen(cmd.c_str(), "r");
+    if (!fp) {
+        if (tmp_wcnf)
+            unlink(tmpl);
+        die("failed to run RoundingSat");
+    }
+    std::string out;
+    char buf[4096];
+    while (fgets(buf, sizeof(buf), fp) != NULL)
+        out += buf;
+    int pclose_rc = pclose(fp);
+    if (tmp_wcnf)
+        unlink(tmpl);
+
+    int weight = parse_roundingsat_cost(out);
+    if (verb > 0) {
+        printf("c RoundingSat: exit=%d, Pauli weight %d, vars %d (base %d + aux %zu)\n",
+               pclose_rc, weight, S.nVars(), meta.base_vars, aux.size());
+        if (weight < 0) {
+            printf("c RoundingSat output tail:\n");
+            size_t start = out.size() > 1200 ? out.size() - 1200 : 0;
+            fputs(out.c_str() + start, stdout);
+        }
+    }
+
+    bool optimal = weight >= 0;
+    pipe_write_result(bounds_pipe_w, weight, optimal);
     return weight;
 }
 
@@ -424,8 +732,9 @@ static void print_bounds(const BoundsBook& b) {
 
 static int solve_in_child_fork(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int cpu_lim, int verb, int card_mode, BoundsBook& out, bool& timed_out,
-    ProgressState& prog)
+    int cpu_lim, int verb, int card_mode, SolverBackend backend,
+    const char* roundingsat_bin, const char* dump_wcnf_path,
+    BoundsBook& out, bool& timed_out, ProgressState& prog)
 {
     int pipefd[2];
     if (pipe(pipefd) != 0)
@@ -437,15 +746,21 @@ static int solve_in_child_fork(
 
     if (pid == 0) {
         close(pipefd[0]);
-        if (verb == 0) {
+        if (verb == 0 && backend == SOLVER_MAXCDCL) {
             int devnull = open("/dev/null", O_WRONLY);
             if (devnull >= 0) {
                 dup2(devnull, STDOUT_FILENO);
                 close(devnull);
             }
         }
-        int d = min_distance_stabilizer_maxsat(
-            Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode);
+        int d;
+        if (backend == SOLVER_ROUNDINGSAT) {
+            d = min_distance_stabilizer_roundingsat(
+                Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
+        } else {
+            d = min_distance_stabilizer_maxsat(
+                Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
+        }
         if (d < 0)
             pipe_write_result(pipefd[1], -1, false);
         close(pipefd[1]);
@@ -496,6 +811,43 @@ static int solve_in_child_fork(
     return out.distance;
 }
 
+static bool dump_stabilizer_instance(
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+    const char* dump_wcnf_path, const char* dump_opb_path, bool native_parity_opb)
+{
+    if ((!dump_wcnf_path || !dump_wcnf_path[0]) && (!dump_opb_path || !dump_opb_path[0]))
+        die("dump requires -dump-wcnf=PATH and/or -dump-opb=PATH");
+
+    if (dump_wcnf_path && dump_wcnf_path[0]) {
+        SimpSolver S;
+        std::vector<Var> aux;
+        StabilizerInstance meta;
+        if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, 0, 0, -1))
+            return false;
+        S.toWcnf(dump_wcnf_path);
+    }
+
+    if (dump_opb_path && dump_opb_path[0]) {
+        if (native_parity_opb) {
+            FILE* f = fopen(dump_opb_path, "w");
+            if (!f) {
+                fprintf(stderr, "error: cannot open %s\n", dump_opb_path);
+                return false;
+            }
+            write_opb_native_parity(f, Hx, Hz, Gx, Gz);
+            fclose(f);
+        } else {
+            SimpSolver S;
+            std::vector<Var> aux;
+            StabilizerInstance meta;
+            if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, 0, 0, -1))
+                return false;
+            S.toOpb(dump_opb_path);
+        }
+    }
+    return true;
+}
+
 static std::string resolve_prefix(const char* prefix) {
     std::string p(prefix);
     if (p.find('/') == std::string::npos)
@@ -508,10 +860,29 @@ int main(int argc, char** argv) {
     int cpu_lim = INT32_MAX;
     int verb = 0;
     int card_mode = 1;  /* CARD_ENC_BOTH */
+    SolverBackend backend = SOLVER_MAXCDCL;
+    const char* roundingsat_bin = DEFAULT_ROUNDINGSAT_BIN;
+    const char* dump_wcnf_path = NULL;
+    const char* dump_opb_path = NULL;
+    bool dump_only = false;
+    bool native_parity_opb = false;
 
     for (int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "-cpu-lim=", 9))
             cpu_lim = atoi(argv[i] + 9);
+        else if (!strncmp(argv[i], "-dump-wcnf=", 11))
+            dump_wcnf_path = argv[i] + 11;
+        else if (!strncmp(argv[i], "-dump-opb=", 10))
+            dump_opb_path = argv[i] + 10;
+        else if (!strcmp(argv[i], "-dump-only"))
+            dump_only = true;
+        else if (!strcmp(argv[i], "-native-parity-opb"))
+            native_parity_opb = true;
+        else if (!strncmp(argv[i], "-roundingsat=", 13)) {
+            backend = SOLVER_ROUNDINGSAT;
+            roundingsat_bin = argv[i] + 13;
+        } else if (!strcmp(argv[i], "-roundingsat"))
+            backend = SOLVER_ROUNDINGSAT;
         else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "-debug"))
             verb = 1;
         else if (!strcmp(argv[i], "-q"))
@@ -528,9 +899,11 @@ int main(int argc, char** argv) {
             card_mode = 4;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
-            printf("  <code>  e.g. AJ_01  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
+            printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
             printf("  Distance: min Pauli weight in S^perp \\\\ S (symplectic MaxSAT).\n");
-            printf("  Options: -cpu-lim=N  -v|-debug  -q\n");
+            printf("  Options: -cpu-lim=N  -v|-debug  -q  -dump-wcnf=PATH  -dump-opb=PATH  -dump-only\n");
+            printf("           -native-parity-opb  GF(2) parity as PB equalities (OPB dump only)\n");
+            printf("  Solver: default MaxCDCL; -roundingsat[=BIN] uses external RoundingSat on WCNF\n");
             printf("  Cardinality: default Sinz+MTO (Sinz if n<=100); -no-card | -card-sinz | -card-mto\n");
             printf("               -card-both-force  always Sinz+MTO regardless of n\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
@@ -542,7 +915,7 @@ int main(int argc, char** argv) {
         else
             die("unexpected argument");
     }
-    if (!prefix) die("need code name (e.g. AJ_01)");
+    if (!prefix) die("need code name (e.g. LP_34_20_2)");
     if (card_mode != 0 && card_mode != 1 && card_mode != 2 && card_mode != 3 && card_mode != 4)
         die("invalid cardinality mode");
 
@@ -557,9 +930,28 @@ int main(int argc, char** argv) {
     Matrix Gx = load_matrix(gx_path.c_str());
     Matrix Gz = load_matrix(gz_path.c_str());
 
+    if (dump_only) {
+        if (!dump_stabilizer_instance(
+                Hx, Hz, Gx, Gz, dump_wcnf_path, dump_opb_path, native_parity_opb))
+            die("dump failed");
+        if (verb > 0) {
+            if (dump_opb_path)
+                printf("c wrote OPB %s%s\n", dump_opb_path,
+                       native_parity_opb ? " (native parity)" : "");
+            if (dump_wcnf_path)
+                printf("c wrote WCNF %s\n", dump_wcnf_path);
+        }
+        return 0;
+    }
+
     if (verb > 0) {
-        printf("c DistQLDPC — QLDPC/CSS minimum distance (MaxCDCL MaxSAT, symplectic)\n");
-        printf("c cardinality encoding: %s\n", cardinality_mode_label(card_mode));
+        printf("c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)\n");
+        if (backend == SOLVER_ROUNDINGSAT)
+            printf("c solver: RoundingSat (%s)\n", roundingsat_bin);
+        else
+            printf("c solver: MaxCDCL, cardinality encoding: %s\n", cardinality_mode_label(card_mode));
+        if (dump_wcnf_path)
+            printf("c dump WCNF: %s\n", dump_wcnf_path);
         printf("c Hx: %s\n", hx_path.c_str());
         printf("c Hz: %s\n", hz_path.c_str());
         printf("c Gx: %s\n", gx_path.c_str());
@@ -572,7 +964,9 @@ int main(int argc, char** argv) {
     BoundsBook book;
     bool timed_out = false;
     ProgressState prog(false);
-    int d = solve_in_child_fork(Hx, Hz, Gx, Gz, cpu_lim, verb, card_mode, book, timed_out, prog);
+    int d = solve_in_child_fork(
+        Hx, Hz, Gx, Gz, cpu_lim, verb, card_mode, backend,
+        roundingsat_bin, dump_wcnf_path, book, timed_out, prog);
 
     if (verb > 0 || !prog.bounds_printed || timed_out || !book.optimal)
         print_bounds(book);

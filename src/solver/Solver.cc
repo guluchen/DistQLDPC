@@ -6888,6 +6888,129 @@ void Solver::toDimacs(const char *file, const vec<Lit>& assumps)
 }
 
 
+void Solver::toWcnf(const char* file)
+{
+    FILE* f = fopen(file, "w");
+    if (f == NULL)
+        fprintf(stderr, "could not open file %s\n", file), exit(1);
+    toWcnf(f);
+    fclose(f);
+}
+
+void Solver::toWcnf(FILE* f)
+{
+    if (!ok) {
+        fprintf(f, "p wcnf 1 2 %u\n", hardWeight > 0 ? (unsigned)hardWeight : 1u);
+        fprintf(f, "%u 1 0\n", hardWeight > 0 ? (unsigned)hardWeight : 1u);
+        fprintf(f, "%u -1 0\n", hardWeight > 0 ? (unsigned)hardWeight : 1u);
+        return;
+    }
+
+    int cnt = 0;
+    for (int i = 0; i < softClauses.size(); i++)
+        if (!satisfied(ca[softClauses[i]]))
+            cnt++;
+    for (int i = 0; i < clauses.size(); i++)
+        if (!satisfied(ca[clauses[i]]))
+            cnt++;
+
+    unsigned top = hardWeight > 0 ? (unsigned)hardWeight : 1u;
+    fprintf(f, "p wcnf %d %d %u\n", nVars(), cnt, top);
+
+    for (int i = 0; i < softClauses.size(); i++) {
+        Clause& c = ca[softClauses[i]];
+        if (satisfied(c))
+            continue;
+        fprintf(f, "1");
+        for (int j = 0; j < c.size(); j++)
+            if (value(c[j]) != l_False)
+                fprintf(f, " %d", (var(c[j]) + 1) * (sign(c[j]) ? -1 : 1));
+        fprintf(f, " 0\n");
+    }
+    for (int i = 0; i < clauses.size(); i++) {
+        Clause& c = ca[clauses[i]];
+        if (satisfied(c))
+            continue;
+        fprintf(f, "%u", top);
+        for (int j = 0; j < c.size(); j++)
+            if (value(c[j]) != l_False)
+                fprintf(f, " %d", (var(c[j]) + 1) * (sign(c[j]) ? -1 : 1));
+        fprintf(f, " 0\n");
+    }
+}
+
+void Solver::toOpb(const char* file)
+{
+    FILE* f = fopen(file, "w");
+    if (f == NULL)
+        fprintf(stderr, "could not open file %s\n", file), exit(1);
+    toOpb(f);
+    fclose(f);
+}
+
+void Solver::toOpb(FILE* f)
+{
+    if (!ok) {
+        fprintf(f, "* #variable= 1 #constraint= 2\n");
+        fprintf(f, "min: 1 x1 ;\n");
+        fprintf(f, "+1 x1 >= 1;\n");
+        fprintf(f, "+1 ~x1 >= 1;\n");
+        return;
+    }
+
+    int ncons = 0;
+    for (int i = 0; i < clauses.size(); i++)
+        if (!satisfied(ca[clauses[i]]))
+            ncons++;
+
+    fprintf(f, "* #variable= %d #constraint= %d\n", nVars(), ncons);
+    fprintf(f, "* DistQLDPC symplectic MaxSAT (minimize Pauli weight)\n");
+
+    fprintf(f, "min:");
+    bool obj = false;
+    for (int i = 0; i < softClauses.size(); i++) {
+        Clause& c = ca[softClauses[i]];
+        if (satisfied(c))
+            continue;
+        for (int j = 0; j < c.size(); j++) {
+            if (value(c[j]) == l_False)
+                continue;
+            int v = var(c[j]) + 1;
+            if (sign(c[j])) {
+                fprintf(f, " +1 x%d", v);
+                obj = true;
+            } else {
+                fprintf(f, " +1 ~x%d", v);
+                obj = true;
+            }
+        }
+    }
+    if (!obj)
+        fprintf(f, " 0 x1");
+    fprintf(f, " ;\n");
+
+    for (int i = 0; i < clauses.size(); i++) {
+        Clause& c = ca[clauses[i]];
+        if (satisfied(c))
+            continue;
+        bool first = true;
+        for (int j = 0; j < c.size(); j++) {
+            if (value(c[j]) == l_False)
+                continue;
+            int v = var(c[j]) + 1;
+            if (first) {
+                if (sign(c[j])) fprintf(f, "+1 ~x%d", v);
+                else fprintf(f, "+1 x%d", v);
+                first = false;
+            } else {
+                if (sign(c[j])) fprintf(f, " +1 ~x%d", v);
+                else fprintf(f, " +1 x%d", v);
+            }
+        }
+        fprintf(f, " >= 1;\n");
+    }
+}
+
 void Solver::toDimacs(FILE* f, const vec<Lit>& assumps)
 {
     // Handle case when solver is in contradictory state:

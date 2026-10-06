@@ -215,7 +215,7 @@ def main() -> int:
     ap.add_argument(
         "stem",
         nargs="?",
-        help="code name (e.g. AJ_01); omit with --all",
+        help="code name (e.g. LP_34_20_2); omit with --all",
     )
     ap.add_argument(
         "--dir",

@@ -141,6 +141,10 @@ public:
     void    toDimacs     (FILE* f, const vec<Lit>& assumps);            // Write CNF to file in DIMACS-format.
     void    toDimacs     (const char *file, const vec<Lit>& assumps);
     void    toDimacs     (FILE* f, Clause& c, vec<Var>& map, Var& max);
+    void    toWcnf       (FILE* f);                                     // Write MaxSAT instance in WCNF format.
+    void    toWcnf       (const char* file);
+    void    toOpb        (FILE* f);                                     // Write MaxSAT instance in OPB format.
+    void    toOpb        (const char* file);
 
     // Convenience versions of 'toDimacs()':
     void    toDimacs     (const char* file);
