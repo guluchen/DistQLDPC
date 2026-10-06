@@ -2,6 +2,12 @@
 
 **Decision: INCONCLUSIVE — pending controlled run.**
 
+2026-10-07 continuation: the preserved implementation passed supplemental MSYS
+Tier 0 checks; a verified offline archive and reproducible exporter are now
+retained in the repo. Controlled samples remain zero. See the
+[continuation record](CONTINUATION-2026-10-07.md) for raw evidence, the local
+build limitation, package checksum and exact server commands.
+
 Baseline: `24572d6d09cce9a4a5faa58300a89e0feba9da6a`.
 Candidate implementation: `50623f9` (full identity in result.json).
 QDistSAT: `7c4774fffc49856f48a22ae5f9063d00b2661aaa`.

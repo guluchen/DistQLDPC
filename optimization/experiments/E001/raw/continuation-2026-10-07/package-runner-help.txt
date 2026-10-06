@@ -1,0 +1,14 @@
+usage: run.py [-h] --package PACKAGE --output OUTPUT --cpu CPU
+              [--exclusive-host] --reservation-note RESERVATION_NOTE
+
+Offline E001 package runner. Linux dedicated host; no Tier 3 implementation.
+
+options:
+  -h, --help            show this help message and exit
+  --package PACKAGE
+  --output OUTPUT       New empty results directory
+  --cpu CPU
+  --exclusive-host      Operator attests exclusive reservation and stable host
+                        configuration
+  --reservation-note RESERVATION_NOTE
+                        Scheduler reservation or exclusive-host evidence

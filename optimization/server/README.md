@@ -1,5 +1,23 @@
 # E001 dedicated-server package
 
+The [2026-10-07 continuation](../experiments/E001/CONTINUATION-2026-10-07.md)
+retains an actual archive, checksum, validation receipt and exact run commands.
+To recreate the pinned source/input package from a DistQLDPC clone:
+
+```sh
+git clone --bare --filter=blob:none https://github.com/guluchen/QDistSAT.git QDistSAT.git
+python3 optimization/server/make_package.py \
+  --qdistsat-repo QDistSAT.git --output E001-server-package
+```
+
+The output directory must be new. The exporter uses the original E001 baseline,
+candidate and QDistSAT revisions, ignores working-tree edits, preserves committed
+LF bytes even on Windows, and verifies the original input identities. Transfer
+`E001-server-package/E001-run-package.tar.gz` and `SHA256SUMS` together; verify
+with `sha256sum -c SHA256SUMS` before extracting. The archive checksum identifies
+that export (archive timestamps may differ on another export); the manifest
+identifies every immutable source/input file.
+
 The delivered tar.gz is self-contained: exact baseline/candidate source snapshots,
 original matrices and pinned QDistSAT correctness harness/data, notices/licenses,
 and a SHA-256 manifest. No network access, paid cloud or full suite is required.

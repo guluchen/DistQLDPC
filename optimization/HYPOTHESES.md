@@ -15,6 +15,10 @@ Each row in original order chooses its current best strictly reducing partner,
 ties by smallest index; apply immediately, one pass only. Rows are not reordered.
 Local correctness passed; controlled performance remains unknown.
 
+2026-10-07: same implementation revalidated on MSYS; the original proposal and
+selection are unchanged. [Continuation evidence and server package](experiments/E001/CONTINUATION-2026-10-07.md)
+are retained. Zero controlled Tier 1 samples; no new hypothesis is selected.
+
 ## Other original Brain candidates — unselected
 
 H-002: exact XOR-prefix sharing. H-003: verified witness through existing initUB.
