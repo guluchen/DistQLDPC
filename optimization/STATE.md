@@ -5,7 +5,7 @@ Policy: ../docs/OPTIMIZATION_LOOP_POLICY.md.
 
 Current experiment: [E001](experiments/E001/README.md), approved Brain Round 1 H-001.
 Decision: **INCONCLUSIVE — pending controlled run**.
-Local Tier 0 correctness: PASS. Hosted QDistSAT PR check: pending.
+Local Tier 0 correctness: PASS. Hosted QDistSAT PR check: PASS on 18f1603 (same implementation; evidence-only follow-up).
 Tier 1: not run; medians unavailable. Tier 2 blocked. Tier 3 not run.
 
 Latest supported model: sequential row XOR reduces logical chain construction on

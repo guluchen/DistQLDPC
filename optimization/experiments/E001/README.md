@@ -35,8 +35,11 @@ Final local Tier 0: PASS (`raw/tier0/summary.json`).
   no false exact result, bounds contain certified d=10.
 - Six runner gate/parser tests pass (`raw/server-tests.log`).
 
-Hosted QDistSAT PR check remains pending; required before merge. Local pilot
-execution is not a claim that the hosted check already ran.
+Hosted QDistSAT PR check: PASS on `18f1603`, run 37490553731. General CI also
+passed. The downloaded report ZIP (SHA-256 verified), extracted report and
+complete job log are retained under raw/hosted-cross-repo*. Follow-up changes
+only retain this evidence; implementation remains commit 50623f9. Shared GitHub
+timing is diagnostic only, not a Tier 1 pass. Draft PR: https://github.com/guluchen/DistQLDPC/pull/11.
 
 Local build uses Apple Clang with `-Wno-reserved-user-defined-literal` on BOTH
 versions, because unmodified upstream headers fail default Clang compilation.
