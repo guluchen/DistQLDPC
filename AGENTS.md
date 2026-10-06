@@ -9,6 +9,7 @@ Minimize PI attention while preserving the scientific correctness of DistQLDPC's
 - Repository code, build files, and validation scripts.
 - `README.md` for supported inputs, outputs, and user-facing behavior.
 - `MODIFICATIONS.md` and `NOTICE` for the boundary between DistQLDPC code and the embedded MaxCDCL engine.
+- [Optimization loop policy](docs/OPTIMIZATION_LOOP_POLICY.md) for experiment scope, progressive filtering, evidence retention, and performance claims.
 - GitHub issues and pull requests for task-specific requirements.
 
 ## Autonomous work
@@ -26,6 +27,12 @@ Every substantive change must include validation appropriate to its risk. Prefer
 For changes that can affect solver behavior or performance, require the `QDistSAT cross-repo benchmark` PR check. Treat semantic-result mismatches as scientific escalations; treat timing changes on shared CI as diagnostic signals only unless reproduced in a controlled benchmark environment.
 
 When modifying the embedded MaxCDCL engine under `src/solver/`, preserve upstream notices and update `MODIFICATIONS.md` and `NOTICE` when attribution or the documented patch set changes.
+
+## Optimization loop
+
+Follow the [optimization loop policy](docs/OPTIMIZATION_LOOP_POLICY.md): **search space unrestricted, but experiment scope restricted**. Read prior experiment records before proposing one main hypothesis per round. Require Tier 0 correctness/smoke → Tier 1 lightweight performance filter → Tier 2 medium filter → Tier 3 decisive dedicated-server runs, with no skipped gates. Immediately reject and escalate semantic mismatches; automatically reject confirmed performance regressions without routine PI intervention. Retain evidence and reasons for every experiment, including failures. Never trade benchmark ground truth, timeout semantics, logging/result semantics, or scientific semantics for performance.
+
+Passing a filter does not authorize immediate merge: verify semantic preservation and supporting evidence first. Research-grade performance claims require controlled dedicated-server runs.
 
 ## Compute and cost policy
 

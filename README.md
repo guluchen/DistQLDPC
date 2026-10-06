@@ -158,6 +158,8 @@ Most QLDPC users can ignore these flags.
 
 ### Batch benchmarks
 
+Optimization experiments must follow the [optimization loop policy](docs/OPTIMIZATION_LOOP_POLICY.md): progressive Tier 0–3 filtering, one main hypothesis per round, and retained evidence for accepted and rejected experiments. Research-grade performance claims require controlled dedicated-server runs; [QDistSAT cross-repo CI](docs/QDISTSAT_CROSS_REPO_CI.md) timing is diagnostic only. The batch script's default/advanced/full groups are not the policy's filtering tiers; select the tier's cases explicitly. Full suites and other heavy runs belong on the dedicated server.
+
 ```bash
 python3 scripts/benchmark_matrices.py
 python3 scripts/benchmark_matrices.py --all --timeout 180
