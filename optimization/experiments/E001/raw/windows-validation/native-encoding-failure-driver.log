@@ -1,0 +1,17 @@
+[{"algebra_instances": 676, "status": "PASS"}, {"fixture": "css4", "oracle_distance": 2, "status": "PASS"}, {"fixture": "css5", "oracle_distance": 1, "status": "PASS"}, {"smoke_cross_repo_timeouts": "PASS"}]
+Traceback (most recent call last):
+  File "C:\Users\User\Documents\Codex\2026-10-07\you-are-the-execution-agent-for\windows-validation\run-native-checks.py", line 49, in <module>
+    runpy.run_path(sys.argv[0], run_name='__main__')
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\User\Documents\Codex\2026-10-07\you-are-the-execution-agent-for\DistQLDPC\optimization\server\windows_diagnostic.py", line 102, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\User\Documents\Codex\2026-10-07\you-are-the-execution-agent-for\DistQLDPC\optimization\server\windows_diagnostic.py", line 71, in main
+    semantic = gates.parse((out / (label + '.stdout')).read_text())
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1028, in read_text
+    return f.read()
+           ^^^^^^^^
+UnicodeDecodeError: 'cp950' codec can't decode byte 0xe2 in position 12: illegal multibyte sequence

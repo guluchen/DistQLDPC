@@ -4,6 +4,22 @@ This policy governs optimization experiments on DistQLDPC. QDistSAT supplies the
 
 ## Scope and semantic invariants
 
+The research lifecycle is **BRAIN -> EXECUTE -> EVALUATE -> LEARN -> BRAIN AGAIN**.
+HYPOTHESES.md is a registry, not a FIFO queue. After resolving an experiment,
+record its mechanism, prediction, actual outcome, help/hurt cases, likely
+explanation and confidence, and implications for the working performance model.
+Then perform a fresh Brain round using all retained evidence: rank up to three
+serious candidates by expected impact, success probability and information gain
+relative to implementation/semantic risk and experiment cost; select one and
+record the reasoning before implementation. Old unselected alternatives compete
+equally with newly generated candidates. Preserve negative results.
+
+For the current restart, E001 is the active experiment. Do not start another
+optimization while E001 lacks the required controlled evidence. If dedicated
+execution/access is unavailable, verify the reproducible package and stop at
+that external dependency. An INCONCLUSIVE result does not authorize advancing
+gates or automatically executing another old Brain candidate.
+
 **Search space unrestricted, but experiment scope restricted.** Heuristics, branching, restarts, clause management, bound strategy, cardinality encoding, preprocessing, matrix representation, constraint generation, incremental solving, data structures, solver internals, and higher-level formulations are all eligible, provided they preserve scientific semantics.
 
 Each round tests one main hypothesis. Before implementation, read prior accepted and failed experiment records, then write a short proposal: hypothesis, intended change, expected effect, and correctness risk. Supporting changes must serve that hypothesis; do not bundle unrelated optimizations. Revisit a failed idea only with new evidence or a documented change in assumptions.

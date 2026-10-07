@@ -1,41 +1,72 @@
-# Hypotheses
+# Hypothesis registry (not an execution queue)
 
-## H-001: shorten logical bases using one sequential row-XOR pass
+Recorded decision: [fresh Brain deferred; no next selection](brain/2026-10-07-e001-resume-decision.md).
 
-Status: selected and explicitly approved in Brain Round 1; implemented as E001;
-**INCONCLUSIVE pending controlled run**, not accepted as a performance optimization.
+Lifecycle: BRAIN -> EXECUTE -> EVALUATE -> LEARN -> BRAIN AGAIN.
+After resolving the active experiment and recording explicit learning, a fresh
+Brain round generates/ranks up to three serious candidates and selects one.
+Old unselected candidates have no priority; IDs do not specify execution order.
+No fresh Brain while E001 awaits required controlled evidence.
 
-Source: Brain chat 01a111cd-9e52-7112-ad06-4a4b4a078c0c, final answer.
-Approval/restart: ChatGPT 6ac503bf-5384-83ee-8551-c06d26ceb216 and current task.
-Full hypothesis, mechanism, scope, risks, costs and prior-attempt relation:
-[preregistered proposal](experiments/E001/PROPOSAL.md).
+## Active hypothesis
 
-Only MaxCDCL's application entry point receives shortened memory copies of Gx/Gz.
-Each row in original order chooses its current best strictly reducing partner,
-ties by smallest index; apply immediately, one pass only. Rows are not reordered.
-Local correctness passed; controlled performance remains unknown.
+**H-001 — shorten logical bases with one sequential row-XOR pass (E001).**
+Selected as #1 by original Brain Round 1; source chat
+01a111cd-9e52-7112-ad06-4a4b4a078c0c, approval/restart referenced in the
+[original proposal](experiments/E001/PROPOSAL.md). Independently shorten Gx/Gz
+copies, original row order, greatest strict reduction, smallest-index tie,
+immediate updates, one pass. MaxCDCL application entry only; no engine change.
+Status **INCONCLUSIVE**, controlled Tier 1 absent; correctness PASS; three Windows
+numeric filters REJECT. Preserve exact implementation and evaluation rules.
+[Resolution status / external action](experiments/E001/RESOLUTION_STATUS.md).
 
-2026-10-07: same implementation revalidated on MSYS; the original proposal and
-selection are unchanged. [Continuation evidence and server package](experiments/E001/CONTINUATION-2026-10-07.md)
-are retained. Zero controlled Tier 1 samples; no new hypothesis is selected.
+## Previously tested, unpromoted hypotheses
 
-Later [yfclab2 diagnostics](experiments/E001/SERVER-2026-10-07.md) completed
-server Tier 0 and 48 Tier 1 samples on one CPU within the user's idle capacity
-limit. Results match; GB regresses in both modes while the other three cases
-improve. The diagnostic numerical gate rejects, but occupied-host timings do
-not resolve the controlled decision. H-001 remains INCONCLUSIVE; no promotion
-or replacement hypothesis is selected.
+**H-002 — exact XOR-prefix sharing (E002).** Originally an unselected alternative
+from the same old Brain as H-001, not the next queued task. Later executed as an
+independent experiment before E001's controlled resolution; this chronology is
+preserved, not treated as the required fresh Brain process. Only the candidate
+name was recovered; detailed old Brain prose unavailable. Per-build ordered,
+signed XOR cache. Correctness PASS; local numeric REJECT, controlled INCONCLUSIVE.
+[Evidence](experiments/E002/README.md). Further execution suspended while E001
+is active; any future revisit must compete in a fresh Brain with new evidence.
 
-Attempt 5 independently repeats Tier 0 PASS and 48 matching diagnostic solves
-on a different CPU pair. GB is again slower (+45.5% OFF, +45.3% MTO), with
-identical increased phase-specific search counters. All 96 completed diagnostic
-samples are retained as separate rounds. Seven contention checks in attempt 5
-leave controlled performance unresolved; no specialization or replacement is
-selected from these data.
+**H-004 — reduce temporary XOR clause allocations (E003).** Newly proposed
+general engineering mechanism, not an old Brain candidate. Independent baseline,
+one local clause buffer, identical CNF; correctness PASS, local/controlled
+INCONCLUSIVE. [Evidence](experiments/E003/README.md). Preserved historical result,
+not active and not an automatically selected follow-up.
 
-## Other original Brain candidates — unselected
+## Untested candidate hypotheses
 
-H-002: exact XOR-prefix sharing. H-003: verified witness through existing initUB.
-Neither implemented or newly brainstormed here. Do not combine with E001.
+**H-003 — verified witness through existing initUB.** Unselected alternative
+from the original Brain Round 1. Unimplemented/untested. Needs witness validation
+and bound/timeout semantics review. No priority over newly generated ideas.
 
-No earlier versioned experiment history existed; private prior attempts unknown.
+## Rejected hypotheses
+
+No controlled scientific rejection established. H-001 and H-002 have rejected
+local numerical filters, as recorded above; do not relabel those measurements
+as dedicated-server evidence. All negative data remain preserved.
+
+## Accepted hypotheses
+
+None. No candidate promoted or merged on these measurements.
+
+## Superseded assumptions
+
+The interpretation of H-001/H-002/H-003 as a FIFO queue is explicitly superseded
+by the user's 2026-10-07 correction. Earlier immediate-state text prioritizing
+E003 or another optimization before E001 resolution is superseded. This changes
+research scheduling/memory, not experimental methodology or scientific semantics.
+No hypothesis is declared scientifically obsolete without evidence.
+
+Latest user-requested Windows E001 repeat 03: 48 new correct solves, 144 total;
+local numeric REJECT again, GB regression OFF/MTO. Windows provenance explicitly
+recorded; controlled status not relabeled. No fresh Brain/next selection.
+
+Remote yfclab2 evidence reconciled from 7f22d18: 96 additional correct diagnostic
+solves across two server CPU pairs; GB regression repeats in both modes with
+increased phase-specific search counters. Occupied/core-contention timings do not
+resolve the controlled gate. Server/Windows rounds retained separately; H-001
+active, no new selection. See E001/SERVER-2026-10-07.md.

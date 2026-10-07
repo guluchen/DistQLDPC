@@ -2,17 +2,21 @@
 
 **Decision: INCONCLUSIVE — pending controlled run.**
 
-2026-10-07 continuation: the preserved implementation passed supplemental MSYS
-Tier 0 checks; a verified offline archive and reproducible exporter are now
-retained in the repo. Controlled samples remain zero. See the
-[continuation record](CONTINUATION-2026-10-07.md) for raw evidence, the local
-build limitation, package checksum and exact server commands.
+Current priority after the user's lifecycle correction: finish E001 before
+another optimization. Fresh package audit PASS; no controlled data available.
+See [resolution status](RESOLUTION_STATUS.md) for the exact external action and
+audit. HYPOTHESES is a registry, not a queue; E002/E003 records remain preserved.
 
-Later [yfclab2 server continuation](SERVER-2026-10-07.md): server Tier 0 PASS;
-48 diagnostic Tier 1 samples completed with identical scientific results.
-GB medians regress in both modes while the other three cases improve. Occupied
-host timings do not pass the controlled gate. Medians, raw runs, capacity checks,
-the interrupted initial attempt and learning are retained.
+2026-10-07 continuation recovered this existing experiment and retained its exact
+implementation. Evidence was audited and an offline Linux package materialized;
+no new solver run or controlled timing on the Windows host. See
+[execution review](EXECUTION_REVIEW.md) for verified identities and exact commands.
+
+Subsequent user-authorized [Windows continuation](WINDOWS_RESULT.md): fresh Tier 0
+PASS; 48 complete diagnostic timing runs. GB regresses in both modes, so the
+local numerical Tier 1 filter rejects. Controlled-host performance still pending;
+no Tier 2/3 and no acceptance. Historical zero-sample statements below apply to
+the earlier controlled-run status. New raw samples are under raw/windows-validation/.
 
 Baseline: `24572d6d09cce9a4a5faa58300a89e0feba9da6a`.
 Candidate implementation: `50623f9` (full identity in result.json).
@@ -67,12 +71,11 @@ eligible for further tests.
 
 ## Performance / medians / decision
 
-Controlled Tier 1 sample count remains **0**. The initial macOS execution had
-no dedicated-server access. Later, 48 diagnostic samples were collected on
-yfclab2 under the user's CPU capacity rule; medians are in SERVER-2026-10-07.md.
-They show mixed behavior and a substantial GB regression, but the occupied host
-was not reserved. Shared/noisy timings are not used to accept or reject H-001.
-Tier 2 remains blocked; Tier 3 was not run.
+Tier 1 not run. All four cases in both modes: baseline and candidate medians **N/A**,
+raw controlled sample count **0**. This interactive macOS ARM laptop has no
+exclusive reservation; no dedicated server was available through this task.
+No shared/noisy measurement was used to accept or reject the optimization.
+Tier 2 blocked by Tier 1; Tier 3 not run and omitted from the server runner.
 
 Preregistered per-mode medians, conservative variability envelope, case regression
 rule, limits, repetitions and aggregation are in PROPOSAL.md. Run package instructions
@@ -90,12 +93,25 @@ wall time in the server runner includes it. Missing counters remain unknown.
 
 Next: exclusive dedicated-server run of the supplied package, then import raw
 runs/medians/decision into this experiment and reconcile STATE/HYPOTHESES.
-Scientific semantics changed: no. SSH access is configured; a controlled
-reservation is required to resolve the GB warning and overall performance.
+Scientific semantics changed: no. No PI scientific decision required now;
+dedicated-host access/reservation is required to resolve performance.
 
-Attempt 5 adds another Tier 0 PASS and 48 matching diagnostic runs on a different
-CPU pair: GB medians +45.5% OFF/+45.3% MTO, other cases faster. Total diagnostic
-sample count is now 96; controlled sample count remains 0. Full raw runs,
-independent verification and interrupted strict attempts are in the server
-record. The repeated warning does not authorize Tier 2, merging, or changing
-the selected hypothesis; resource permission and timing validity are separate.
+## Latest Windows measurement requested by PI
+
+[Windows repeat 03](WINDOWS_REPEAT_03_RESULT.md): fresh Tier 0 PASS, all 48
+new solves correct, same source/binaries. Windows numerical Tier 1 **REJECT**:
+GB OFF 1.46995 / MTO 1.45277, disjoint sample ranges. Three Windows rounds,
+144 correct solves. Explicit OS/CPU/power provenance, raw timings, medians,
+commands and search counters preserved under raw/windows-repeat-03/. No Tier 2/3
+or new hypothesis. Original controlled Linux status remains INCONCLUSIVE.
+
+## Preserved remote server continuation
+
+The [remote continuation](CONTINUATION-2026-10-07.md) and
+[yfclab2 evidence](SERVER-2026-10-07.md), imported from 7f22d18, remain intact.
+Two server rounds contribute 96 correct diagnostic samples and reproduce the
+GB regression on different CPU pairs. Strict interrupted attempts, package,
+input verification and contention telemetry are preserved. They are separate
+from the 144 Windows samples; no pooling or controlled promotion. SSH access
+is reported configured; reservation/isolation remains unresolved. Server tools,
+including restricted lease helpers, are preserved without being installed here.

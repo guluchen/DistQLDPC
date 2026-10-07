@@ -1,61 +1,125 @@
 # Optimization state
 
-Objective: improve DistQLDPC exact CSS distance runtime without changing semantics.
-Policy: ../docs/OPTIMIZATION_LOOP_POLICY.md.
+Brain lifecycle decision: [resume E001; fresh round deferred](brain/2026-10-07-e001-resume-decision.md).
 
-Current experiment: [E001](experiments/E001/README.md), approved Brain Round 1 H-001.
-Decision: **INCONCLUSIVE — pending controlled run**.
-Tier 0 correctness: PASS (macOS, supplemental MSYS, and yfclab2 server runs).
-Hosted QDistSAT PR check: PASS on 9d68f45 (same implementation; retained evidence).
-Tier 1 controlled gate: not passed. 48 server diagnostic samples are complete;
-all scientific results match. Diagnostic numerical gate rejects on GB; controlled
-confirmation is pending. Tier 2 blocked. Tier 3 not run.
+## Immediate state
 
-Latest continuation: [2026-10-07](experiments/E001/CONTINUATION-2026-10-07.md).
-The exact H-001 implementation was recovered and reused, not replaced. The
-offline archive, checksums and exporter are available; all 56 input identities
-were verified. SSH key access to yfclab2 is configured. User authorizes at most
-half idle capacity when more than 50% is free. One pinned CPU was used; occupied
-host/core conditions prevent controlled promotion. Local standalone maxcdcl has a pre-existing
-MSYS link limitation; both distqldpc builds and correctness checks pass.
+Active experiment: [E001 / H-001](experiments/E001/RESOLUTION_STATUS.md).
+Decision: **INCONCLUSIVE pending controlled Tier 1**. No controlled samples
+available in the inspected workspace. Tier 2/3 blocked; no fresh Brain round
+or next hypothesis selected. Required external dependency: valid controlled Linux reservation/isolation.
+Remote branch reports yfclab2 SSH access configured; this Windows publication
+task did not independently test that access. Exact package/commands in E001.
 
-Latest supported model: sequential row XOR reduces logical chain construction on
-all six inspected pilot/Tier 1/Tier 2 cases. LP_238 logical weights/gates decrease
-1160 -> 936; LP_340 2220 -> 1688 before simplification. This does not establish
-runtime gain. Search behavior can worsen despite fewer clauses.
+The user corrected the lifecycle on 2026-10-07: BRAIN -> EXECUTE -> EVALUATE ->
+LEARN -> BRAIN AGAIN. Hypotheses are not a queue. Do not start another optimization
+while E001 is unresolved. H-002/H-003 were alternatives from the old Brain,
+not successors. Earlier wording prioritizing E003/profiling or treating a new
+round request as permission to bypass E001 resolution is superseded by this
+explicit instruction. E002/E003 remain preserved historical experiments.
 
-Latest evidence: [yfclab2 run](experiments/E001/SERVER-2026-10-07.md). Diagnostic
-medians improve on BB_90, BB_108 and LP_238 in both modes, but GB_144_12_8 is
-50.3% slower OFF and 42.5% slower MTO. Repeated GB phase counters show more
-conflicts/starts/UP, consistent with increased search work. This is a warning to
-confirm under controlled conditions, not an accepted performance conclusion.
-The interrupted first attempt and all later raw outputs are retained.
+Worktree branch research/e001-resolution-audit restores the exact E001 application
+source from 50623f9; no new optimization or change to E001's preregistered gates.
+Original baseline 24572d6, candidate code 50623f9, package snapshot 9d68f45,
+QDistSAT harness 7c4774f. Embedded MaxCDCL unchanged; DistQLDPC is downstream,
+not identical to upstream MaxCDCL. No scientific semantics changed.
 
-Next action: run the E001 offline package on an exclusively reserved dedicated
-Linux server, resolving the GB warning and preserving compiler, inputs and limits. Follow
-its Tier 0 -> Tier 1 -> conditional Tier 2 gates. Import full controlled result
-directory into experiment history and update this state plus HYPOTHESES.
-Do not brainstorm a replacement or promote while this result is inconclusive.
-No scientific semantics changed. No performance claim or merge authorization.
+## Evidence and working performance model
 
-Reservation follow-up: no scheduler or delegated CPU isolation was found for
-the yfclab2 account; the read-only audit is retained in the server experiment
-record. No additional benchmarks were run. Operator-provided exclusivity or a
-different dedicated host is the remaining requirement for controlled timing.
+These are provisional observations, not the post-resolution LEARN step.
 
-User renewed authorization to use yfclab2 whenever spare capacity exceeds 50%,
-within half spare capacity. Strict attempt 3 used one CPU at 80.29% initial idle
-capacity, passed both builds, then stopped on SMT sibling contention before
-Tier 0/performance. All evidence is retained; zero new timing samples. Resource
-use is authorized without further confirmation; timing validity is a separate
-requirement. E001 remains INCONCLUSIVE and lower-tier gates remain unchanged.
+- E001 mechanism/prediction: invertible sequential row-XOR shortens separate
+  Gx/Gz copies, reducing logical chains; expected encoding savings, especially LP.
+- Observed logical weights/raw logical XOR gates: LP_136 560->428, BB_90 204->190,
+  GB_144_12_8 491->434, BB_108 250->222, LP_238 1160->936, LP_340 2220->1688.
+  These are before simplification; do not equate them with final clause counts.
+- E001 correctness: retained macOS and hosted Linux Tier 0 PASS; three Windows
+  rounds pass Tier 0 and 144 complete timing solves have certified correct results.
+  Hosted report independently reverified; shared CI timing excluded.
+- Windows direction: BB_90, BB_108 and LP_238 faster in both modes in both rounds;
+  GB slower: OFF ratios 1.4929 / 1.4756 / 1.4700, MTO 1.4138 / 1.4128 / 1.4528. GB sample ranges
+  disjoint in each round/mode. Local numeric filter REJECT three times; controlled
+  decision remains INCONCLUSIVE. Raw data and medians retained under E001.
+- Supported inference: fewer generated gates alone cannot predict whole-solve
+  runtime on these local measurements. Family-dependent behavior is observed;
+  a structural correlation or portable causal explanation has not been established.
+- Likely explanation to investigate: changed CNF structure can change propagation
+  and search. Confidence low: stage timing/search-counter causal analysis has not
+  isolated it. End-to-end measurements cannot separate encoding/preprocessing
+  savings from search effects; absent counters are unknown, not zero.
+- Implication after resolution: examine construction, simplification and search
+  evidence separately; protect certified bound progress on difficult cases.
+  This is guidance for a future Brain, not selection of another hypothesis.
 
-Latest continuation: strict attempt 4 stopped on contention despite six idle
-preflight windows; diagnostic attempt 5 completed Tier 0 PASS and all 48 Tier 1
-samples with matching ground truth. Global idle 67.45–80.38%, one CPU used.
-GB slowdown recurred: +45.5% OFF, +45.3% MTO; other cases improved. Now 96
-diagnostic samples across two CPU pairs, kept as separate rounds. Seven
-attempt-5 contention checks prevent a controlled conclusion; no Tier 2/3.
-Evidence and independent verification are in the server experiment record.
-Further identical shared-host repeats are unlikely to resolve the controlled
-gate; retain H-001 isolated pending controlled confirmation of the GB warning.
+Fresh package audit PASS: all 914 payload hashes, 28 input identities, exact
+E001 patch/source and unchanged engine/notices; six gate/parser tests PASS.
+No fresh solver run or controlled timing in this audit. See
+experiments/E001/raw/resolution-audit-20261007.json.
+
+## Preserved history
+
+- E001: active, correctness PASS, Windows numeric REJECT three times, controlled
+  INCONCLUSIVE. See EXECUTION_REVIEW.md and WINDOWS_RESULT/REPEAT_02_RESULT.md.
+- E002 / H-002 exact XOR-prefix sharing: independent baseline, correctness PASS,
+  48 local solves correct; numeric REJECT with GB both modes and BB_108 OFF
+  regressions. Controlled INCONCLUSIVE; unpromoted. No formal fresh Brain round
+  after resolving E001 occurred. Full record/branch preserved.
+- E003 / H-004 local clause-buffer reuse: independent baseline, correctness PASS,
+  six byte-identical WCNFs; 48 local solves correct, numeric INCONCLUSIVE
+  (OFF median-ratio geomean 1.00346, MTO 0.99283). Controlled INCONCLUSIVE,
+  unpromoted; no evidence allocation dominates. Full record/branch preserved.
+- H-003 verified witness/initUB: untested old alternative, no priority.
+
+## Resume protocol
+
+Run the unchanged E001 package on the exclusive server; return the entire output
+including reservation/environment, compiler/build logs, Tier 0, raw samples,
+medians and decision. Check environment validity before adopting numeric results.
+Tier 1 failure/inconclusive stops; Tier 1 PASS alone permits LP_340 Tier 2.
+No Tier 3 in this runner; do not spend expensive compute on an earlier failure.
+A correctness anomaly stops and requires PI judgment.
+
+After sufficient evidence resolves E001, explicitly record LEARN: mechanism,
+prediction, actual outcome, help/hurt cases, likely explanation and confidence,
+future implications. Then a fresh Brain may rank up to three candidates using
+all evidence and select exactly one before implementation. Old candidates
+compete equally with new ones. Preserve incremental certification and all failed
+records. No accepted optimization or research-grade performance claim exists.
+
+## Latest explicitly requested Windows execution
+
+User requested measurement on this Windows machine with provenance labeled.
+E001 Windows repeat 03 complete: fresh Tier 0 PASS; 48 scientifically correct
+solves, same verified source/binaries, all 914 package payloads matched.
+Windows numerical decision REJECT; GB OFF ratio 1.46995, MTO 1.45277, disjoint
+ranges. Three rounds / 144 correct local solves total. No Tier 2/3 or new Brain.
+Original controlled Linux status stays separate and INCONCLUSIVE; Windows results
+are genuine local evidence, not mislabeled Linux measurements.
+
+New existing-log observation: GB OFF repeat 1 last failed-UB cnfls 11976->18882,
+final hardConflicts 594->615, nbLK 14347->23628, nbLKup 11604748->18263005.
+Search work differs despite fewer raw gates; this supports investigating search
+behavior but does not identify causal mechanism or construction-stage timing.
+All 48 extracted counters and original logs preserved. See
+experiments/E001/WINDOWS_REPEAT_03_RESULT.md; recorded OS/CPU/power/process
+inventory in raw/windows-repeat-03/windows-host.json. Host interactive/unpinned.
+
+## Reconciled remote yfclab2 evidence (origin 7f22d18)
+
+Preserved remote continuation/server records and all raw files without overwriting
+Windows records. E001 server Tier 0 PASS; attempts 2 and 5 each completed 48
+correct diagnostic Tier 1 solves (96 total), using different CPU pairs. GB is
+slower in both modes: attempt 2 +50.3% OFF/+42.5% MTO, attempt 5 +45.5% OFF/
++45.3% MTO; BB/LP improve. Samples remain separate by host and round, not pooled.
+Capacity-guarded execution respected the remote user's idle allowance, but core/
+sibling contention prevents controlled promotion. Strict attempts interrupted
+before scientific/timing samples are retained, not counted as completed runs.
+
+Remote GB OFF final LRB phase-1 counters 3055->5813 conflicts, 15->31 starts,
+127023->234913 UP reproduce across two server rounds. These are phase-specific,
+not total-search counts, and strengthen the search-work observation without
+identifying a causal explanation. SERVER-2026-10-07.md documents uncertainty.
+Remote fixed-core lease/isolation helpers and server package exporter are retained;
+none installed/executed by this Windows publication task. SSH access is reported
+configured remotely; exclusive reservation/isolation remains unresolved.
+Original controlled E001 decision stays INCONCLUSIVE. No new Brain/selection.

@@ -1,0 +1,28 @@
+diff --git a/src/core/distqldpc.cc b/src/core/distqldpc.cc
+index c7e7942..bbe912f 100644
+--- a/src/core/distqldpc.cc
++++ b/src/core/distqldpc.cc
+@@ -116,11 +116,18 @@ static Lit xor2(SimpSolver& S, Lit a, Lit b, std::vector<Var>& aux) {
+     Var t = ensure_var(S, S.nVars());
+     aux.push_back(t);
+     Lit tl = mkLit(t);
+-    std::vector<Lit> c1, c2, c3, c4;
+-    c1.push_back(~a); c1.push_back(~b); c1.push_back(~tl); add_hard_clause(S, c1);
+-    c2.push_back(a);  c2.push_back(b);  c2.push_back(~tl); add_hard_clause(S, c2);
+-    c3.push_back(a);  c3.push_back(~b); c3.push_back(tl);  add_hard_clause(S, c3);
+-    c4.push_back(~a); c4.push_back(b);  c4.push_back(tl);  add_hard_clause(S, c4);
++    const Lit clauses[4][3] = {
++        {~a, ~b, ~tl}, {a, b, ~tl}, {a, ~b, tl}, {~a, b, tl}
++    };
++    vec<Lit> ps;
++    ps.capacity(3);
++    for (int i = 0; i < 4; ++i) {
++        // addClause_ may sort/shrink ps; refill while retaining its capacity.
++        ps.clear();
++        for (int j = 0; j < 3; ++j) ps.push(clauses[i][j]);
++        if (!S.addClause_(ps, S.hardWeight))
++            die("hard constraints UNSAT during encoding");
++    }
+     return tl;
+ }
+ 

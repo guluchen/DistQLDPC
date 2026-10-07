@@ -37,5 +37,39 @@
     "processor": "arm"
   },
   "build": "make -j2 CXX=clang++\\ -Wno-reserved-user-defined-literal",
-  "performance_environment": "interactive macOS arm64 laptop; no dedicated-host reservation/access supplied; unsuitable for controlled timing"
+  "performance_environment": "interactive macOS arm64 laptop; no dedicated-host reservation/access supplied; unsuitable for controlled timing",
+  "execution_continuation": "raw/execution-review.json",
+  "windows_continuation": {
+    "tier0": "PASS",
+    "diagnostic_samples": 48,
+    "numeric_tier1_filter": "REJECT: GB_144_12_8 regression in both modes",
+    "medians": "raw/windows-validation/all-medians.json",
+    "raw_samples": "raw/windows-validation/samples.json",
+    "report": "WINDOWS_RESULT.md",
+    "tier2": "not reached",
+    "tier3": "not run",
+    "scientific_semantics_match": true,
+    "controlled_environment": false
+  },
+  "windows_repeat_02": {
+    "tier0": "PASS",
+    "raw_samples": 48,
+    "combined_local_samples": 96,
+    "same_binaries": true,
+    "numeric_filter": "REJECT: GB regression reproduced",
+    "report": "WINDOWS_REPEAT_02_RESULT.md",
+    "controlled_environment": false
+  },
+  "resolution_audit": "raw/resolution-audit-20261007.json",
+  "active_program_status": "E001 active; external controlled execution required; no fresh Brain or next hypothesis",
+  "windows_repeat_03": {
+    "platform": "Windows/Cygwin",
+    "tier0": "PASS",
+    "raw_samples": 48,
+    "combined_local_samples": 144,
+    "same_binaries": true,
+    "numeric_filter": "REJECT",
+    "report": "WINDOWS_REPEAT_03_RESULT.md",
+    "controlled_environment": false
+  }
 }

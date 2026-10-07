@@ -1,0 +1,71 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Hx.txt
+c Hz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Hz.txt
+c Gx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Gx.txt
+c Gz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Gz.txt
+c Hx: 105 x 238, Hz: 105 x 238, Gx: 44 x 238, Gz: 44 x 238, logicals: 88
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.07 Mb                                      |
+c Reduced to 1953 vars, 9732 cls (c/v ratio==5.0, grow=0)
+c No iterative elimination performed. (vars=1953, c/v ratio=5.0)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 238, of which 238 unit, 0 nonUnit and 0 empty
+c total nb of literals: 35718
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 298
+c 1 conflict sets found with length 156
+c fixedCost 0, nbSatLits 0, totalFixedVars 298, objForSearch: 238
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 238), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 334 conflicts with init 9666
+
+c UB=2 fails, cnfls=334, hcnfls=233, core 104, tier2 6, local 178, quasiC: 2 (fixed: 122)
+c prunedLB 2.00, dev 0.00, succRate 0.80, nbSucc 8, nbHardens 121 (fixed 14419), lk: 10, shorten: 0, pureSo 93, nbFlyRd 6, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 4
+c nbFailedLits 0, nbI 1, fixedVarsByFL 1, totalFixedVars 300, nbTested: 1256, counter 31218
+c ends of initiationization by VSIDS at 3577 conflicts with init 6757
+
+c UB=4 fails, cnfls=3577, hcnfls=588, core 4188, tier2 323, local 2429, quasiC: 231 (fixed: 14360)
+c prunedLB 2.72, dev 0.67, succRate 0.82, nbSucc 2675, nbHardens 320 (fixed 59462), lk: 3253, shorten: 0, pureSo 307, nbFlyRd 37, nbFixedLH 40
+
+c Cardinality: off (soft-conflict only), UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 298, nbTested: 1001, counter 117396
+c UB=8 succs, confls=5483, hconfls=639, core 700, tier2 415, local 1497,  6 soft cls unsat (0 at L0), 298 fixed vars at L0, softCnfl 325, nbFlyRd 54, nbFixedLH 60
+c nbHardens 335 (fixed 76868), shorten: 0, prunedLB 4.65, dev 0.96, succRate 0.83, nbSucc 1837, lk: 2222, shorten: 0, quasiC: 396 (fixed: 29886)
+
+c ends of initiationization by VSIDS at 5483 conflicts with init 8094
+
+
+c Cardinality: off (soft-conflict only), UB 6
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 307, nbTested: 1001, counter 225104
+c ***** top quasi confl at level 0*****
+c LRB phase 1: conflicts 6886, phase 20000000, starts 31, UP 600777
+c UB=6 fails, cnfls=12369, hcnfls=1070, core 1641, tier2 322, local 6411, quasiC: 1296 (fixed: 87931)
+c prunedLB 3.82, dev 0.77, succRate 0.75, nbSucc 6224, nbHardens 516 (fixed 156061), lk: 8323, shorten: 0, pureSo 557, nbFlyRd 120, nbFixedLH 175
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 6, maxsat: 232, hardConflicts: 1070
+c nbLK: 13809, nbSuccLK: 10744(77.80%), nbLKup: 19452815(1795.12%), hardens 516 (fixed 156061), dynVars 0, shorten: 0
+c MaxSAT: OPTIMAL, Pauli weight 6 (reported cost 6), vars 3354 (base 802 + aux 2552)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Hx.txt
+c Hz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Hz.txt
+c Gx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Gx.txt
+c Gz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/LP_238_44_6_Gz.txt
+c Hx: 105 x 238, Hz: 105 x 238, Gx: 44 x 238, Gz: 44 x 238, logicals: 88
+c d_lb: 6
+c d_ub: 6
+c d  : 6
+o 6

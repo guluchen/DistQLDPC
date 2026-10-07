@@ -1,0 +1,90 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Hx.txt
+c Hz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Hz.txt
+c Gx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Gx.txt
+c Gz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Gz.txt
+c Hx: 45 x 90, Hz: 45 x 90, Gx: 8 x 90, Gz: 8 x 90, logicals: 16
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 551 vars, 2368 cls (c/v ratio==4.3, grow=0)
+c No iterative elimination performed. (vars=551, c/v ratio=4.3)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 90, of which 90 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8338
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 106
+c 1 conflict sets found with length 52
+c fixedCost 0, nbSatLits 0, totalFixedVars 106, objForSearch: 90
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 90), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 267 (MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 7 conflicts with init 9993
+
+c UB=2 fails, cnfls=7, hcnfls=7, core 5, tier2 0, local 0, quasiC: 1 (fixed: 25)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 115), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 563 (MTO) for UB 4
+c ends of initiationization by VSIDS at 1083 conflicts with init 8924
+
+c UB=4 fails, cnfls=1083, hcnfls=721, core 475, tier2 130, local 605, quasiC: 52 (fixed: 662)
+c prunedLB 3.16, dev 0.67, succRate 0.63, nbSucc 319, nbHardens 87 (fixed 5407), lk: 506, shorten: 0, pureSo 44, nbFlyRd 19, nbFixedLH 40
+
+c Cardinality: 788 (MTO) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 106, nbTested: 932, counter 77609
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 109, nbTested: 929, counter 140498
+c ends of initiationization by VSIDS at 6708 conflicts with init 4375
+
+c UB=8 fails, cnfls=6708, hcnfls=896, core 3710, tier2 862, local 3000, quasiC: 979 (fixed: 23975)
+c prunedLB 4.90, dev 0.96, succRate 0.73, nbSucc 5357, nbHardens 144 (fixed 31070), lk: 7306, shorten: 0, pureSo 138, nbFlyRd 44, nbFixedLH 119
+
+c Cardinality: 919 (MTO) for UB 16
+c UB=16 succs, confls=7198, hconfls=915, core 11, tier2 4, local 477,  14 soft cls unsat (0 at L0), 106 fixed vars at L0, softCnfl 140, nbFlyRd 45, nbFixedLH 121
+c nbHardens 145 (fixed 32769), shorten: 0, prunedLB 8.30, dev 1.44, succRate 0.81, nbSucc 469, lk: 578, shorten: 0, quasiC: 1043 (fixed: 25601)
+
+c ends of initiationization by VSIDS at 7198 conflicts with init 9510
+
+
+c Cardinality: 920 (MTO) for UB 14
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 106, nbTested: 1001, counter 196371
+c UB=14 succs, confls=7957, hconfls=1149, core 141, tier2 9, local 1147,  12 soft cls unsat (0 at L0), 106 fixed vars at L0, softCnfl 154, nbFlyRd 66, nbFixedLH 153
+c nbHardens 151 (fixed 36078), shorten: 0, prunedLB 7.53, dev 1.87, succRate 0.59, nbSucc 511, lk: 871, shorten: 0, quasiC: 1182 (fixed: 28727)
+
+
+c Cardinality: 920 (MTO) for UB 12
+c UB=12 succs, confls=8349, hconfls=1187, core 175, tier2 134, local 1494,  10 soft cls unsat (0 at L0), 106 fixed vars at L0, softCnfl 156, nbFlyRd 67, nbFixedLH 157
+c nbHardens 159 (fixed 37702), shorten: 0, prunedLB 6.24, dev 1.25, succRate 0.75, nbSucc 352, lk: 468, shorten: 0, quasiC: 1221 (fixed: 29916)
+
+
+c Cardinality: 921 (MTO) for UB 10
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 106, nbTested: 1001, counter 257591
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 108, nbTested: 1001, counter 367961
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 113, nbTested: 1001, counter 531557
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 116, nbTested: 1001, counter 721582
+c ***** top quasi confl at level 0*****
+c LRB phase 1: conflicts 35384, phase 20000000, starts 125, UP 1448388
+c UB=10 fails, cnfls=42582, hcnfls=2594, core 1506, tier2 341, local 1901, quasiC: 8197 (fixed: 200201)
+c prunedLB 5.65, dev 1.31, succRate 0.67, nbSucc 32193, nbHardens 507 (fixed 221319), lk: 48076, shorten: 0, pureSo 790, nbFlyRd 225, nbFixedLH 659
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 10, maxsat: 80, hardConflicts: 2594
+c nbLK: 57807, nbSuccLK: 39201(67.81%), nbLKup: 27384969(1518.49%), hardens 507 (fixed 221319), dynVars 1772, shorten: 0
+c MaxSAT: OPTIMAL, Pauli weight 10 (reported cost 10), vars 2688 (base 286 + aux 630)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Hx.txt
+c Hz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Hz.txt
+c Gx: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Gx.txt
+c Gz: C:/Users/User/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E002-windows-package/baseline/data/matrices/BB_90_8_10_Gz.txt
+c Hx: 45 x 90, Hz: 45 x 90, Gx: 8 x 90, Gz: 8 x 90, logicals: 16
+c d_lb: 10
+c d_ub: 10
+c d  : 10
+o 10

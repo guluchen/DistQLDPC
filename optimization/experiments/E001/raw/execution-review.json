@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-07",
+  "decision": "INCONCLUSIVE",
+  "reason": "No dedicated Linux server connection/reservation supplied; no controlled timings collected.",
+  "candidate_unchanged_from_tested_implementation": true,
+  "source_diff_matches_retained_patch": true,
+  "solver_notices_and_patch_set_unchanged": true,
+  "retained_tier0_summary": "PASS",
+  "retained_hosted_correctness_report": "PASS: all four case/mode pairs, certified distances and bounds match",
+  "fresh_solver_build_or_runs": "not performed: Windows host lacks Linux toolchain/WSL",
+  "fresh_runner_gate_tests": "PASS: 6 tests",
+  "package": {
+    "archive": "E001-linux-package.tar.gz",
+    "sha256": "3df26a2e60dd23216c37c3cd2f3dfe07b5173059a383c9ba565e28078973b84e",
+    "files_verified": 914,
+    "all_archive_payloads_verified": true,
+    "revisions": {
+      "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+      "candidate": "9d68f459019e9c5a20c5c513cf89aaf4a2cd2854",
+      "qdistsat": "7c4774fffc49856f48a22ae5f9063d00b2661aaa"
+    }
+  },
+  "retained_hosted_artifact_sha256": "3f15057e113be03cebf5b967719d23c388adad4722128662615de37447a131cb",
+  "input_identities_verified": 28,
+  "environment": {
+    "system": "Windows",
+    "release": "11",
+    "machine": "AMD64",
+    "toolchain": {
+      "g++": null,
+      "make": null,
+      "clang++": null,
+      "wsl": "C:\\WINDOWS\\system32\\wsl.EXE"
+    }
+  },
+  "tier1": {
+    "status": "not run",
+    "raw_samples": [],
+    "medians": null
+  },
+  "tier2": "not reached",
+  "tier3": "not run",
+  "scientific_semantics_changed": false
+}
