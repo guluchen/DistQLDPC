@@ -1,5 +1,10 @@
 # Brain Round 2 revision: recent literature and program optimization
 
+> Subsequent execution: user accepted H-007; [E004](../experiments/E004/README.md)
+> reached INCONCLUSIVE after Tier 0 PASS and 48 correct diagnostic Tier 1 solves.
+> No Tier 2/3 or promotion. Text below is the original pre-execution proposal;
+> H-008/H-009 remain unimplemented alternatives, not a queue.
+
 Research date: 2026-10-07. User requests two complementary strategies: recent
 MaxSAT papers and ordinary program optimization. This supersedes the recommendation
 in [the first Round 2 proposal](2026-10-07-round2.md), preserving that document and

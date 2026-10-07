@@ -1,6 +1,7 @@
 # Hypothesis registry (not an execution queue)
 
-Latest decision: [E001 provisionally shelved / LEARN](experiments/E001/DISPOSITION-2026-10-07.md),
+Latest experiment: [E004 / H-007 INCONCLUSIVE](experiments/E004/README.md).
+Earlier decision: [E001 provisionally shelved / LEARN](experiments/E001/DISPOSITION-2026-10-07.md),
 then [literature/program-optimization revision](brain/2026-10-07-round2-research-revision.md). Initial Round 2 priority is superseded.
 
 Lifecycle: BRAIN -> EXECUTE -> EVALUATE -> LEARN -> BRAIN AGAIN.
@@ -25,6 +26,11 @@ numeric filters REJECT. Preserve exact implementation and evaluation rules.
 
 ## Previously tested, unpromoted hypotheses
 
+**H-007 — LTO only (E004).** Revised Brain recommendation accepted by user;
+independent baseline, one build concept. Tier 0 PASS, 48 diagnostic solves correct.
+Small favorable medians but MTO noise envelope fails; occupied host also prevents
+promotion. INCONCLUSIVE, no Tier 2/3 or merge. [Learning/evidence](experiments/E004/README.md).
+
 **H-002 — exact XOR-prefix sharing (E002).** Originally an unselected alternative
 from the same old Brain as H-001, not the next queued task. Later executed as an
 independent experiment before E001's controlled resolution; this chronology is
@@ -40,20 +46,20 @@ one local clause buffer, identical CNF; correctness PASS, local/controlled
 INCONCLUSIVE. [Evidence](experiments/E003/README.md). Preserved historical result,
 not active and not an automatically selected follow-up.
 
-## Revised research proposals (unimplemented, not selected)
+## Revised research proposals (current status; not a queue)
 
 The latest user request emphasizes recent MaxSAT papers and ordinary program
 optimization. [Research revision](brain/2026-10-07-round2-research-revision.md)
 supersedes H-003/H-005/H-006 ranking, without declaring them ineffective.
 
-- **H-007: LTO only.** #1 low-cost engineering recommendation; one build setting,
-  no PGO or source refactoring. No measured benefit or established bottleneck.
+- **H-007: LTO only.** Selected and tested as E004; INCONCLUSIVE, unpromoted.
+  One build setting, no PGO/refactoring; no established controlled speedup.
 - **H-008: one bounded SLS warm start.** #2; CP 2025-inspired feasible cap only,
   original-instance verification and exact BnB retained. Not bundled with H-003.
 - **H-009: singleton BDD objective-bound encoding.** #3; paper-informed alternative
   to MTO, same cardinality meaning/lifecycle, no AMO assumption or tree reuse.
 
-All three are proposals, not an execution queue. No experiment ID allocated;
+H-007 has E004 evidence; H-008/H-009 remain proposals, not an execution queue;
 Tier 0/1/2 gates unchanged and no Tier 3 authorized by this revision.
 
 ## Historical untested candidate hypotheses

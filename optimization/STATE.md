@@ -14,14 +14,19 @@ Correctness PASS, no Tier 2/3 or merge; all five complete diagnostic rounds
 CPU-isolation installation was deferred and is not installed; ordinary spare
 capacity use remains authorized within the user's limits.
 
-Current activity: revised Brain Round 2 screens recent MaxSAT literature and
-ordinary program optimization. Ranked proposals: H-007 LTO only (recommended
-next low-cost trial), H-008 one bounded SLS warm start (leading literature
-adaptation), H-009 singleton BDD bound encoding. No implementation, experiment
-selection or performance run occurred. H-003's earlier priority is withdrawn;
-H-003/H-005/H-006 and the read-only witness receipt remain historical candidates.
-Any trial starts independently from 24572d6; never stack historical patches.
-No bottleneck profile or speedup is claimed by this research revision.
+Current experiment: [E004 / H-007 LTO](experiments/E004/README.md), authorized
+by acceptance of the revised recommendation. Independent baseline 24572d6;
+tested candidate 5b13a2c, final PR 2efbdc1 (only CI serialization differs).
+Server and final required hosted PR Tier 0 PASS. All 48 Tier 1 diagnostic solves
+are correct; OFF/MTO median geomeans 0.979514/0.981341, but MTO range envelope
+1.006753 fails the beyond-noise gate. Occupied host with 29 contention checks.
+Decision INCONCLUSIVE, no Tier 2/3, adoption or merge. Candidate isolated in
+experiment/h007-lto, draft PR 12; current history branch still preserves E001.
+
+H-008 SLS/H-009 BDD remain unimplemented alternatives, not an execution queue.
+Next: controlled E004 Tier 1 if worth resolving; otherwise explicit shelving
+and a fresh Brain before choosing another idea. Do not promote small noisy gains.
+H-003/H-005/H-006 and original witness screen remain historical candidates.
 
 ## Historical state before the latest shelving instruction
 

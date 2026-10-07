@@ -1,10 +1,15 @@
 # Experiment history
 
-Latest: E001 is provisionally shelved / not adopted by explicit user decision;
+Latest completed experiment: [E004 / H-007 LTO](E004/README.md), INCONCLUSIVE.
+Tier 0 PASS, 48 correct diagnostic Tier 1 solves; small favorable medians but
+MTO does not pass the noise-envelope gate, and the server is occupied. No
+Tier 2/3 or adoption/merge. Candidate source isolated in draft PR 12.
+
+Earlier: E001 is provisionally shelved / not adopted by explicit user decision;
 controlled performance remains INCONCLUSIVE. Its [LEARN record](E001/DISPOSITION-2026-10-07.md)
 feeds the [revised research Brain](../brain/2026-10-07-round2-research-revision.md).
-H-007 LTO is recommended; H-008 SLS and H-009 BDD are alternatives. The original
-Round 2 H-003 priority is superseded. No implementation/timing trial is started.
+H-007 was subsequently tested as E004; H-008 SLS and H-009 BDD remain alternatives.
+The original Round 2 H-003 priority is superseded. No automatic next trial.
 Hypotheses are not a queue; only one may be tested per experiment.
 
 - [E001 / H-001](E001/README.md): approved logical row XOR; correctness PASS,

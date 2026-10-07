@@ -1,0 +1,30 @@
+diff --git a/.github/workflows/qdist-cross-repo-benchmark.yml b/.github/workflows/qdist-cross-repo-benchmark.yml
+index e0cd95e..a0371a0 100644
+--- a/.github/workflows/qdist-cross-repo-benchmark.yml
++++ b/.github/workflows/qdist-cross-repo-benchmark.yml
+@@ -63,7 +63,7 @@ jobs:
+         run: |
+           set -euo pipefail
+           make -C baseline --jobs="$(nproc)"
+-          make -C candidate --jobs="$(nproc)"
++          make -C candidate --jobs=1 LTO=1
+ 
+       - name: Compare on selected QDistSAT instances
+         id: bench
+diff --git a/Makefile b/Makefile
+index 3884e0f..1254d82 100644
+--- a/Makefile
++++ b/Makefile
+@@ -12,6 +12,12 @@ CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O3 -g \
+            -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG
+ LDFLAGS  = -lz
+ 
++# Experimental opt-in; use a clean build when changing this setting.
++LTO ?= 0
++ifeq ($(LTO),1)
++CXXFLAGS += -flto=1
++endif
++
+ ENGINE_OBJS = \
+ 	$(BUILD)/SimpSolver.o \
+ 	$(BUILD)/Solver.o \

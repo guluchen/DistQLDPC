@@ -1,0 +1,162 @@
+{
+  "decision": "inconclusive",
+  "reason": "Tier 1 diagnostic samples complete; occupied host has no exclusive reservation. No promotion or Tier 2.",
+  "tiers": {
+    "0": "PASS",
+    "1": {
+      "numerical_diagnostic": "inconclusive",
+      "reason": {
+        "no-card": {
+          "median_geomean": 0.9795140472638302,
+          "range_envelope_geomean": 0.9971997417369209,
+          "no_worse_medians": true
+        },
+        "card-mto": {
+          "median_geomean": 0.9813412022039733,
+          "range_envelope_geomean": 1.0067531780323828,
+          "no_worse_medians": true
+        }
+      },
+      "medians": [
+        {
+          "case": "BB_90_8_10",
+          "mode": "no-card",
+          "baseline_raw": [
+            3.7342978219967335,
+            3.6795269411522895,
+            3.6786509330850095
+          ],
+          "candidate_raw": [
+            3.6808057071175426,
+            3.62785319192335,
+            3.6310891539324075
+          ],
+          "baseline_median": 3.6795269411522895,
+          "candidate_median": 3.6310891539324075,
+          "ratio": 0.9868358655896367
+        },
+        {
+          "case": "BB_90_8_10",
+          "mode": "card-mto",
+          "baseline_raw": [
+            4.576237631030381,
+            4.4785584839992225,
+            4.430358609883115
+          ],
+          "candidate_raw": [
+            4.530603120103478,
+            4.380936610046774,
+            4.379226026125252
+          ],
+          "baseline_median": 4.4785584839992225,
+          "candidate_median": 4.380936610046774,
+          "ratio": 0.978202389384614
+        },
+        {
+          "case": "GB_144_12_8",
+          "mode": "no-card",
+          "baseline_raw": [
+            1.5771897709928453,
+            1.5778911150991917,
+            1.5762126829940826
+          ],
+          "candidate_raw": [
+            1.5273865619674325,
+            1.5259637250564992,
+            1.581738566979766
+          ],
+          "baseline_median": 1.5771897709928453,
+          "candidate_median": 1.5273865619674325,
+          "ratio": 0.9684228176333775
+        },
+        {
+          "case": "GB_144_12_8",
+          "mode": "card-mto",
+          "baseline_raw": [
+            2.010527515085414,
+            2.028979618102312,
+            2.0444684959948063
+          ],
+          "candidate_raw": [
+            1.981693694833666,
+            2.0101601211354136,
+            1.9822230890858918
+          ],
+          "baseline_median": 2.028979618102312,
+          "candidate_median": 1.9822230890858918,
+          "ratio": 0.9769556438126514
+        },
+        {
+          "case": "BB_108_8_10",
+          "mode": "no-card",
+          "baseline_raw": [
+            4.678870540810749,
+            4.63117140205577,
+            4.728545917896554
+          ],
+          "candidate_raw": [
+            4.579717204906046,
+            4.58082911092788,
+            4.63321705092676
+          ],
+          "baseline_median": 4.678870540810749,
+          "candidate_median": 4.58082911092788,
+          "ratio": 0.9790459195167471
+        },
+        {
+          "case": "BB_108_8_10",
+          "mode": "card-mto",
+          "baseline_raw": [
+            6.0795296360738575,
+            5.934891388984397,
+            5.9340447841677815
+          ],
+          "candidate_raw": [
+            5.785529804881662,
+            5.8865971399936825,
+            5.834431789116934
+          ],
+          "baseline_median": 5.934891388984397,
+          "candidate_median": 5.834431789116934,
+          "ratio": 0.9830730516730393
+        },
+        {
+          "case": "LP_238_44_6",
+          "mode": "no-card",
+          "baseline_raw": [
+            3.180590266129002,
+            3.5561431900132447,
+            3.1809407060500234
+          ],
+          "candidate_raw": [
+            3.1295741640497,
+            3.1309084119275212,
+            3.0790902748703957
+          ],
+          "baseline_median": 3.1809407060500234,
+          "candidate_median": 3.1295741640497,
+          "ratio": 0.9838517763306225
+        },
+        {
+          "case": "LP_238_44_6",
+          "mode": "card-mto",
+          "baseline_raw": [
+            3.7309834340121597,
+            3.6839981679804623,
+            3.7331889409106225
+          ],
+          "candidate_raw": [
+            3.6831049770116806,
+            3.6818016059696674,
+            3.731300071114674
+          ],
+          "baseline_median": 3.7309834340121597,
+          "candidate_median": 3.6831049770116806,
+          "ratio": 0.9871673359457959
+        }
+      ]
+    }
+  },
+  "controlled_performance": false,
+  "samples": 48
+}

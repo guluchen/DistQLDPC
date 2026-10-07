@@ -1,0 +1,233 @@
+{
+  "scientific_results": "PASS: all 48 distances/objectives/bounds match",
+  "global_idle_min": 51.710847164319986,
+  "global_idle_max": 73.7545161605312,
+  "half_idle_cpu_min": 66.18988437032958,
+  "resource_checks": 137,
+  "contention_checks": 29,
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        3.7342978219967335,
+        3.6795269411522895,
+        3.6786509330850095
+      ],
+      "candidate_raw": [
+        3.6808057071175426,
+        3.62785319192335,
+        3.6310891539324075
+      ],
+      "baseline_median": 3.6795269411522895,
+      "candidate_median": 3.6310891539324075,
+      "ratio": 0.9868358655896367
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "baseline_raw": [
+        1.5771897709928453,
+        1.5778911150991917,
+        1.5762126829940826
+      ],
+      "candidate_raw": [
+        1.5273865619674325,
+        1.5259637250564992,
+        1.581738566979766
+      ],
+      "baseline_median": 1.5771897709928453,
+      "candidate_median": 1.5273865619674325,
+      "ratio": 0.9684228176333775
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        4.678870540810749,
+        4.63117140205577,
+        4.728545917896554
+      ],
+      "candidate_raw": [
+        4.579717204906046,
+        4.58082911092788,
+        4.63321705092676
+      ],
+      "baseline_median": 4.678870540810749,
+      "candidate_median": 4.58082911092788,
+      "ratio": 0.9790459195167471
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "baseline_raw": [
+        3.180590266129002,
+        3.5561431900132447,
+        3.1809407060500234
+      ],
+      "candidate_raw": [
+        3.1295741640497,
+        3.1309084119275212,
+        3.0790902748703957
+      ],
+      "baseline_median": 3.1809407060500234,
+      "candidate_median": 3.1295741640497,
+      "ratio": 0.9838517763306225
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "baseline_raw": [
+        4.576237631030381,
+        4.4785584839992225,
+        4.430358609883115
+      ],
+      "candidate_raw": [
+        4.530603120103478,
+        4.380936610046774,
+        4.379226026125252
+      ],
+      "baseline_median": 4.4785584839992225,
+      "candidate_median": 4.380936610046774,
+      "ratio": 0.978202389384614
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "baseline_raw": [
+        2.010527515085414,
+        2.028979618102312,
+        2.0444684959948063
+      ],
+      "candidate_raw": [
+        1.981693694833666,
+        2.0101601211354136,
+        1.9822230890858918
+      ],
+      "baseline_median": 2.028979618102312,
+      "candidate_median": 1.9822230890858918,
+      "ratio": 0.9769556438126514
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "baseline_raw": [
+        6.0795296360738575,
+        5.934891388984397,
+        5.9340447841677815
+      ],
+      "candidate_raw": [
+        5.785529804881662,
+        5.8865971399936825,
+        5.834431789116934
+      ],
+      "baseline_median": 5.934891388984397,
+      "candidate_median": 5.834431789116934,
+      "ratio": 0.9830730516730393
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "baseline_raw": [
+        3.7309834340121597,
+        3.6839981679804623,
+        3.7331889409106225
+      ],
+      "candidate_raw": [
+        3.6831049770116806,
+        3.6818016059696674,
+        3.731300071114674
+      ],
+      "baseline_median": 3.7309834340121597,
+      "candidate_median": 3.6831049770116806,
+      "ratio": 0.9871673359457959
+    }
+  ],
+  "modes": {
+    "no-card": {
+      "median_geomean": 0.9795140472638302,
+      "range_envelope_geomean": 0.9971997417369209
+    },
+    "card-mto": {
+      "median_geomean": 0.9813412022039733,
+      "range_envelope_geomean": 1.0067531780323828
+    }
+  },
+  "recorded_search_counters": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 31094, phase 20000000, starts 113, UP 1286102",
+        "c initCost: 0, fixedBySearch: 0, optimal: 10, maxsat: 80, hardConflicts: 1663",
+        "c nbLK: 51547, nbSuccLK: 34990(67.88%), nbLKup: 25033733(1646.15%), hardens 566 (fixed 210167), dynVars 0, shorten: 0"
+      ]
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 3055, phase 20000000, starts 15, UP 127023",
+        "c initCost: 0, fixedBySearch: 0, optimal: 8, maxsat: 136, hardConflicts: 594",
+        "c nbLK: 14347, nbSuccLK: 11018(76.80%), nbLKup: 11604748(2038.15%), hardens 299 (fixed 88020), dynVars 0, shorten: 0"
+      ]
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 33201, phase 20000000, starts 124, UP 1468041",
+        "c initCost: 0, fixedBySearch: 0, optimal: 10, maxsat: 98, hardConflicts: 1672",
+        "c nbLK: 54947, nbSuccLK: 38600(70.25%), nbLKup: 32693187(1852.72%), hardens 607 (fixed 259618), dynVars 0, shorten: 0"
+      ]
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 7216, phase 20000000, starts 31, UP 610223",
+        "c initCost: 0, fixedBySearch: 0, optimal: 6, maxsat: 232, hardConflicts: 940",
+        "c nbLK: 14583, nbSuccLK: 11288(77.41%), nbLKup: 21511590(1901.97%), hardens 452 (fixed 152371), dynVars 0, shorten: 0"
+      ]
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 34889, phase 20000000, starts 125, UP 1496302",
+        "c initCost: 0, fixedBySearch: 0, optimal: 10, maxsat: 80, hardConflicts: 2174",
+        "c nbLK: 56343, nbSuccLK: 38242(67.87%), nbLKup: 27565232(1601.89%), hardens 626 (fixed 244347), dynVars 1772, shorten: 0"
+      ]
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 5101, phase 20000000, starts 28, UP 274447",
+        "c initCost: 0, fixedBySearch: 0, optimal: 8, maxsat: 136, hardConflicts: 1043",
+        "c nbLK: 19447, nbSuccLK: 14409(74.09%), nbLKup: 15726934(1884.11%), hardens 204 (fixed 112053), dynVars 3405, shorten: 0"
+      ]
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 38153, phase 20000000, starts 126, UP 1655382",
+        "c initCost: 0, fixedBySearch: 0, optimal: 10, maxsat: 98, hardConflicts: 2368",
+        "c nbLK: 66957, nbSuccLK: 46325(69.19%), nbLKup: 39359910(1790.99%), hardens 522 (fixed 297895), dynVars 2036, shorten: 0"
+      ]
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "identical_recorded_lines": [
+        "c LRB phase 1: conflicts 9512, phase 20000000, starts 40, UP 776150",
+        "c initCost: 0, fixedBySearch: 0, optimal: 6, maxsat: 232, hardConflicts: 1471",
+        "c nbLK: 16377, nbSuccLK: 12831(78.35%), nbLKup: 23072796(1624.14%), hardens 466 (fixed 163388), dynVars 1930, shorten: 0"
+      ]
+    }
+  ],
+  "search_limitation": "Named phase/final counters only; not proof of identical execution",
+  "decision": "INCONCLUSIVE: occupied host and numerical gate did not pass",
+  "raw_archive_sha256": "a41049170dd2c708e51b3f2aac663cc01e8256a2c6006525b22321fcd60072b0"
+}
