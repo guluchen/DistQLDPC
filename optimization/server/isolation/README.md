@@ -3,6 +3,14 @@
 This is benchmark infrastructure, not an E001 optimization. It changes no
 DistQLDPC/QDistSAT solver, input, timeout/result meaning or scientific semantics.
 
+Setup status (2026-10-07): the user deferred CPU permission/isolation setup.
+The prepared tools remain available, but installation is not complete. Read-only
+verification found no installed helper, sudoers rule, recovery timer or CPU
+partition. Pending installer processes were checked/cancelled. Do not resume
+administrator installation without renewed user instruction. Ordinary authorized
+spare-capacity use remains separate from this deferred setup; E001 remains
+INCONCLUSIVE and no higher-tier gate has passed.
+
 An administrator installs `cpu_run.py` as a root-owned executable and grants
 only its `run ...` and `status` operations to yfc without a password. Arbitrary
 benchmark arguments are executed only after dropping to yfc, setting
