@@ -28,6 +28,12 @@ medians or speedup; Tier 1 remains unchanged. No Tier 3, adoption or merge.
 Candidate isolated in
 experiment/h007-lto, draft PR 12; current history branch still preserves E001.
 
+Later user-requested Windows LP_340 continuation: [environment result](experiments/E004/TIER2-WINDOWS-RESULT.md)
+INCONCLUSIVE. This i9-11900K host lacks a Cygwin compiler; automatic execution
+review blocked installer launch. No local build/Tier 0/timing samples, no Tier 3.
+Verified immutable package and prepared an unexecuted Windows diagnostic driver;
+requires an available toolchain. No performance inference or new hypothesis.
+
 H-008 SLS/H-009 BDD remain unimplemented alternatives, not an execution queue.
 Next: controlled E004 Tier 1 if worth resolving; otherwise explicit shelving
 and a fresh Brain before choosing another idea. Do not promote small noisy gains.

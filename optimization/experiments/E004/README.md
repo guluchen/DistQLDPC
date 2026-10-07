@@ -1,5 +1,9 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Later user-requested [Windows continuation](TIER2-WINDOWS-RESULT.md): installer
+> launch blocked by automatic review and compiler unavailable. No Windows builds
+> or new timings. Reproducible driver prepared; integration remains unexecuted.
+
 > Subsequent user-requested [Tier 2 diagnostic](TIER2-DIAGNOSTIC-RESULT.md): two
 > resource interruptions, one completed OFF baseline d=8, no complete LTO/MTO
 > comparison. Still INCONCLUSIVE; no Tier 3 or adoption. The report below retains

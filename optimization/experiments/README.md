@@ -7,6 +7,9 @@ formal promotion or adoption/merge. The user-requested
 [Tier 2 follow-up](E004/TIER2-DIAGNOSTIC-RESULT.md) was stopped twice on CPU capacity;
 one baseline d=8, no complete candidate/MTO comparison or Tier 3.
 Candidate source isolated in draft PR 12.
+Subsequent [Windows attempt](E004/TIER2-WINDOWS-RESULT.md): toolchain unavailable,
+installer launch rejected by automatic review; no builds or solver samples.
+Same H-007, INCONCLUSIVE; Windows driver prepared but integration unexecuted.
 
 Earlier: E001 is provisionally shelved / not adopted by explicit user decision;
 controlled performance remains INCONCLUSIVE. Its [LEARN record](E001/DISPOSITION-2026-10-07.md)

@@ -32,6 +32,9 @@ Small favorable medians but MTO noise envelope fails; occupied host also prevent
 promotion. INCONCLUSIVE, no merge. A later user-requested diagnostic Tier 2
 stopped twice on CPU capacity; one OFF baseline d=8, no candidate/MTO completion.
 No performance comparison or Tier 3. [Learning/evidence](experiments/E004/README.md).
+The subsequent Windows attempt also remains INCONCLUSIVE: compiler unavailable
+and automatic review rejected installer launch; no new solver samples.
+[Windows preparation/result](experiments/E004/TIER2-WINDOWS-RESULT.md).
 
 **H-002 — exact XOR-prefix sharing (E002).** Originally an unselected alternative
 from the same old Brain as H-001, not the next queued task. Later executed as an
