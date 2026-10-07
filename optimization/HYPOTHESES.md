@@ -1,7 +1,7 @@
 # Hypothesis registry (not an execution queue)
 
 Latest decision: [E001 provisionally shelved / LEARN](experiments/E001/DISPOSITION-2026-10-07.md),
-then [fresh Brain Round 2 proposals](brain/2026-10-07-round2.md).
+then [literature/program-optimization revision](brain/2026-10-07-round2-research-revision.md). Initial Round 2 priority is superseded.
 
 Lifecycle: BRAIN -> EXECUTE -> EVALUATE -> LEARN -> BRAIN AGAIN.
 After resolving the active experiment and recording explicit learning, a fresh
@@ -40,10 +40,26 @@ one local clause buffer, identical CNF; correctness PASS, local/controlled
 INCONCLUSIVE. [Evidence](experiments/E003/README.md). Preserved historical result,
 not active and not an automatically selected follow-up.
 
-## Untested candidate hypotheses
+## Revised research proposals (unimplemented, not selected)
+
+The latest user request emphasizes recent MaxSAT papers and ordinary program
+optimization. [Research revision](brain/2026-10-07-round2-research-revision.md)
+supersedes H-003/H-005/H-006 ranking, without declaring them ineffective.
+
+- **H-007: LTO only.** #1 low-cost engineering recommendation; one build setting,
+  no PGO or source refactoring. No measured benefit or established bottleneck.
+- **H-008: one bounded SLS warm start.** #2; CP 2025-inspired feasible cap only,
+  original-instance verification and exact BnB retained. Not bundled with H-003.
+- **H-009: singleton BDD objective-bound encoding.** #3; paper-informed alternative
+  to MTO, same cardinality meaning/lifecycle, no AMO assumption or tree reuse.
+
+All three are proposals, not an execution queue. No experiment ID allocated;
+Tier 0/1/2 gates unchanged and no Tier 3 authorized by this revision.
+
+## Historical untested candidate hypotheses
 
 **H-003 — verified witness through existing initUB.** Originally unselected,
-now recommended #1 in fresh Brain Round 2 using an independent read-only
+historically ranked #1 in the initial Round 2 using an independent read-only
 committed-input feasibility screen. Not implemented or performance-tested.
 Still requires residual-cost/strict-bound/timeout review before implementation.
 This is a re-ranking using evidence, not promotion from a FIFO queue.

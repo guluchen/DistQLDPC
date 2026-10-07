@@ -1,7 +1,7 @@
 # Optimization state
 
 Latest user decision: [provisionally shelve E001 / LEARN](experiments/E001/DISPOSITION-2026-10-07.md).
-Fresh [Brain Round 2 proposals](brain/2026-10-07-round2.md) supersede the earlier
+Latest [literature/program-optimization revision](brain/2026-10-07-round2-research-revision.md) supersedes the initial Round 2 recommendation and the earlier
 resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
@@ -14,13 +14,14 @@ Correctness PASS, no Tier 2/3 or merge; all five complete diagnostic rounds
 CPU-isolation installation was deferred and is not installed; ordinary spare
 capacity use remains authorized within the user's limits.
 
-Current activity: Brain Round 2 proposes/ranks three independent hypotheses:
-#1 H-003 verified witness/initUB (recommended), #2 H-005 lookahead clause
-prefetch, #3 H-006 compatible MTO tree reuse. No new implementation or
-performance experiment was started. Any selected candidate starts independently
-from 24572d6; never stack E001/E002/E003 or implement three proposals at once.
-The read-only witness screen validates all 320 original rows over six cases;
-feasible upper bounds are recorded, with no optimality or speedup claim.
+Current activity: revised Brain Round 2 screens recent MaxSAT literature and
+ordinary program optimization. Ranked proposals: H-007 LTO only (recommended
+next low-cost trial), H-008 one bounded SLS warm start (leading literature
+adaptation), H-009 singleton BDD bound encoding. No implementation, experiment
+selection or performance run occurred. H-003's earlier priority is withdrawn;
+H-003/H-005/H-006 and the read-only witness receipt remain historical candidates.
+Any trial starts independently from 24572d6; never stack historical patches.
+No bottleneck profile or speedup is claimed by this research revision.
 
 ## Historical state before the latest shelving instruction
 

@@ -2,8 +2,9 @@
 
 Latest: E001 is provisionally shelved / not adopted by explicit user decision;
 controlled performance remains INCONCLUSIVE. Its [LEARN record](E001/DISPOSITION-2026-10-07.md)
-feeds [fresh Brain Round 2](../brain/2026-10-07-round2.md), three proposals with
-H-003 recommended #1. No new implementation/timing experiment is started.
+feeds the [revised research Brain](../brain/2026-10-07-round2-research-revision.md).
+H-007 LTO is recommended; H-008 SLS and H-009 BDD are alternatives. The original
+Round 2 H-003 priority is superseded. No implementation/timing trial is started.
 Hypotheses are not a queue; only one may be tested per experiment.
 
 - [E001 / H-001](E001/README.md): approved logical row XOR; correctness PASS,
