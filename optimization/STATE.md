@@ -37,3 +37,8 @@ its Tier 0 -> Tier 1 -> conditional Tier 2 gates. Import full controlled result
 directory into experiment history and update this state plus HYPOTHESES.
 Do not brainstorm a replacement or promote while this result is inconclusive.
 No scientific semantics changed. No performance claim or merge authorization.
+
+Reservation follow-up: no scheduler or delegated CPU isolation was found for
+the yfclab2 account; the read-only audit is retained in the server experiment
+record. No additional benchmarks were run. Operator-provided exclusivity or a
+different dedicated host is the remaining requirement for controlled timing.
