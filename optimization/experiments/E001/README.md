@@ -2,6 +2,12 @@
 
 **Decision: INCONCLUSIVE — pending controlled run.**
 
+Latest practical disposition: **SHELVED / NOT ADOPTED**, by explicit user
+instruction. See [disposition / LEARN](DISPOSITION-2026-10-07.md) and
+[Brain Round 2](../../brain/2026-10-07-round2.md). The controlled status above
+and all raw records remain unchanged; no Tier 2/3 or merge. Resume-only text
+below is historical and superseded for current research scheduling.
+
 Current priority after the user's lifecycle correction: finish E001 before
 another optimization. Fresh package audit PASS; no controlled data available.
 See [resolution status](RESOLUTION_STATUS.md) for the exact external action and

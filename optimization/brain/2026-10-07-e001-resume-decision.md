@@ -1,5 +1,10 @@
 # Brain lifecycle decision: resume E001; fresh round deferred
 
+Historical decision, superseded for scheduling by the user's subsequent
+[E001 provisional shelving / LEARN](../experiments/E001/DISPOSITION-2026-10-07.md)
+and [fresh Brain Round 2](2026-10-07-round2.md). Scientific/timing evidence labels
+are unchanged; the original instructions below are retained as chronology.
+
 Status: **DEFERRED — no fresh Brain round conducted, no next hypothesis selected.**
 This is a scheduling/decision record, not a fabricated hypothesis ranking.
 

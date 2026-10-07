@@ -1,5 +1,10 @@
 # E001 current resolution status — 2026-10-07
 
+Superseded for immediate scheduling by the user's later
+[provisional shelving / LEARN decision](DISPOSITION-2026-10-07.md).
+Controlled INCONCLUSIVE remains unchanged; this retained audit is historical,
+not a requirement to continue E001 before the now-authorized Brain Round 2.
+
 **Active experiment: H-001. Decision: INCONCLUSIVE pending controlled Tier 1.**
 The user's lifecycle correction restores E001 as the immediate priority. No
 fresh Brain round or next hypothesis selected. E002/E003 history is preserved;

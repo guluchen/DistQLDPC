@@ -1,14 +1,16 @@
 # Hypothesis registry (not an execution queue)
 
-Recorded decision: [fresh Brain deferred; no next selection](brain/2026-10-07-e001-resume-decision.md).
+Latest decision: [E001 provisionally shelved / LEARN](experiments/E001/DISPOSITION-2026-10-07.md),
+then [fresh Brain Round 2 proposals](brain/2026-10-07-round2.md).
 
 Lifecycle: BRAIN -> EXECUTE -> EVALUATE -> LEARN -> BRAIN AGAIN.
 After resolving the active experiment and recording explicit learning, a fresh
 Brain round generates/ranks up to three serious candidates and selects one.
 Old unselected candidates have no priority; IDs do not specify execution order.
-No fresh Brain while E001 awaits required controlled evidence.
+The latest user instruction permits a fresh Brain after provisional shelving;
+it supersedes the earlier resume-only scheduling restriction, not timing gates.
 
-## Active hypothesis
+## Provisionally shelved hypothesis
 
 **H-001 — shorten logical bases with one sequential row-XOR pass (E001).**
 Selected as #1 by original Brain Round 1; source chat
@@ -16,9 +18,10 @@ Selected as #1 by original Brain Round 1; source chat
 [original proposal](experiments/E001/PROPOSAL.md). Independently shorten Gx/Gz
 copies, original row order, greatest strict reduction, smallest-index tie,
 immediate updates, one pass. MaxCDCL application entry only; no engine change.
-Status **INCONCLUSIVE**, controlled Tier 1 absent; correctness PASS; three Windows
+Practical disposition **SHELVED / NOT ADOPTED**. Controlled status **INCONCLUSIVE**,
+Tier 1 controlled evidence absent; correctness PASS; three Windows
 numeric filters REJECT. Preserve exact implementation and evaluation rules.
-[Resolution status / external action](experiments/E001/RESOLUTION_STATUS.md).
+[Disposition / LEARN](experiments/E001/DISPOSITION-2026-10-07.md).
 
 ## Previously tested, unpromoted hypotheses
 
@@ -28,8 +31,8 @@ independent experiment before E001's controlled resolution; this chronology is
 preserved, not treated as the required fresh Brain process. Only the candidate
 name was recovered; detailed old Brain prose unavailable. Per-build ordered,
 signed XOR cache. Correctness PASS; local numeric REJECT, controlled INCONCLUSIVE.
-[Evidence](experiments/E002/README.md). Further execution suspended while E001
-is active; any future revisit must compete in a fresh Brain with new evidence.
+[Evidence](experiments/E002/README.md). Any future revisit must compete in a
+fresh Brain with new evidence; Round 2 does not recommend this failed filter.
 
 **H-004 — reduce temporary XOR clause allocations (E003).** Newly proposed
 general engineering mechanism, not an old Brain candidate. Independent baseline,
@@ -39,9 +42,20 @@ not active and not an automatically selected follow-up.
 
 ## Untested candidate hypotheses
 
-**H-003 — verified witness through existing initUB.** Unselected alternative
-from the original Brain Round 1. Unimplemented/untested. Needs witness validation
-and bound/timeout semantics review. No priority over newly generated ideas.
+**H-003 — verified witness through existing initUB.** Originally unselected,
+now recommended #1 in fresh Brain Round 2 using an independent read-only
+committed-input feasibility screen. Not implemented or performance-tested.
+Still requires residual-cost/strict-bound/timeout review before implementation.
+This is a re-ranking using evidence, not promotion from a FIFO queue.
+
+**H-005 — lookahead long-clause prefetch.** Round 2 #2, unimplemented/untested.
+Preserve propagation/search order; memory bottleneck unverified. Not a binary
+watch or circular-scan proposal, which the existing engine already implements.
+
+**H-006 — compatible MTO tree reuse when tightening k.** Round 2 #3,
+unimplemented/untested; high lifecycle/correctness risk. No bound relaxation or
+literal-set change may retain stale constraints. Detailed scope, cost,
+risks and falsification for all three: [Round 2](brain/2026-10-07-round2.md).
 
 ## Rejected hypotheses
 
@@ -60,6 +74,11 @@ by the user's 2026-10-07 correction. Earlier immediate-state text prioritizing
 E003 or another optimization before E001 resolution is superseded. This changes
 research scheduling/memory, not experimental methodology or scientific semantics.
 No hypothesis is declared scientifically obsolete without evidence.
+
+Latest scheduling override: the user provisionally shelves H-001 and requests
+three fresh proposals. Historical resume-only statements below describe the
+previous state and no longer prohibit this Brain round. No candidate accepted,
+merged or combined; controlled performance uncertainty remains preserved.
 
 Latest user-requested Windows E001 repeat 03: 48 new correct solves, 144 total;
 local numeric REJECT again, GB regression OFF/MTO. Windows provenance explicitly

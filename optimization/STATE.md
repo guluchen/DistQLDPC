@@ -1,15 +1,31 @@
 # Optimization state
 
-Brain lifecycle decision: [resume E001; fresh round deferred](brain/2026-10-07-e001-resume-decision.md).
+Latest user decision: [provisionally shelve E001 / LEARN](experiments/E001/DISPOSITION-2026-10-07.md).
+Fresh [Brain Round 2 proposals](brain/2026-10-07-round2.md) supersede the earlier
+resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
-Active experiment: [E001 / H-001](experiments/E001/RESOLUTION_STATUS.md).
-Decision: **INCONCLUSIVE pending controlled Tier 1**. No controlled samples
-available in the inspected workspace. Tier 2/3 blocked; no fresh Brain round
-or next hypothesis selected. Required external dependency: valid controlled Linux reservation/isolation.
-Remote branch reports yfclab2 SSH access configured; this Windows publication
-task did not independently test that access. Exact package/commands in E001.
+E001 / H-001: **SHELVED / NOT ADOPTED for the current track**, at the user's
+explicit direction after repeated diagnostic GB regressions. Its controlled
+performance decision remains INCONCLUSIVE; no controlled rejection is invented.
+Correctness PASS, no Tier 2/3 or merge; all five complete diagnostic rounds
+(144 Windows + 96 yfclab2 solves) and interrupted attempts remain preserved.
+CPU-isolation installation was deferred and is not installed; ordinary spare
+capacity use remains authorized within the user's limits.
+
+Current activity: Brain Round 2 proposes/ranks three independent hypotheses:
+#1 H-003 verified witness/initUB (recommended), #2 H-005 lookahead clause
+prefetch, #3 H-006 compatible MTO tree reuse. No new implementation or
+performance experiment was started. Any selected candidate starts independently
+from 24572d6; never stack E001/E002/E003 or implement three proposals at once.
+The read-only witness screen validates all 320 original rows over six cases;
+feasible upper bounds are recorded, with no optimality or speedup claim.
+
+## Historical state before the latest shelving instruction
+
+The remaining resume-only descriptions below preserve the earlier chronology;
+they are superseded for current scheduling by the explicit user decision above.
 
 The user corrected the lifecycle on 2026-10-07: BRAIN -> EXECUTE -> EVALUATE ->
 LEARN -> BRAIN AGAIN. Hypotheses are not a queue. Do not start another optimization
