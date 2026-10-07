@@ -42,6 +42,8 @@ def main():
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--cpu', type=int, required=True)
     ap.add_argument('--sibling', type=int, required=True)
+    ap.add_argument('--allow-core-contention', action='store_true',
+                    help='Keep core contention as telemetry only for diagnostics; never promote')
     args = ap.parse_args()
     if platform.system() != 'Linux':
         ap.error('Linux /proc CPU accounting is required')
@@ -71,6 +73,7 @@ def main():
                    'cpu':args.cpu, 'sibling':args.sibling, 'thread_siblings':actual_siblings,
                    'affinity':list(os.sched_getaffinity(0)), 'load_start':os.getloadavg(),
                    'resource_rule':'idle > 50%; allocated CPUs <= half idle capacity',
+                   'allow_core_contention':args.allow_core_contention,
                    'manifest':manifest, 'driver_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     for path in ['/proc/cpuinfo', '/proc/meminfo', f'/sys/devices/system/cpu/cpu{args.cpu}/cpufreq/scaling_governor']:
         try:
@@ -92,9 +95,11 @@ def main():
                'selected_cpu_idle_percent':selected, 'sibling_idle_percent':sibling,
                'half_idle_cpus':cpus * (idle or 0) / 200,
                'load':os.getloadavg()}
+        contention = ((sibling is not None and sibling < 95)
+                      or (phase == 'before' and selected is not None and selected < 95))
+        row['core_contention_detected'] = contention
         telemetry.append(row)
-        if (not capacity_ok(idle, cpus) or (sibling is not None and sibling < 95)
-                or (phase == 'before' and selected is not None and selected < 95)):
+        if not capacity_ok(idle, cpus) or (contention and not args.allow_core_contention):
             raise CapacityLost('Capacity/sibling guard failed: '+json.dumps(row))
 
     def command(cmd, cwd, label, watchdog):
