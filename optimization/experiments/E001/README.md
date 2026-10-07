@@ -92,3 +92,10 @@ Next: exclusive dedicated-server run of the supplied package, then import raw
 runs/medians/decision into this experiment and reconcile STATE/HYPOTHESES.
 Scientific semantics changed: no. SSH access is configured; a controlled
 reservation is required to resolve the GB warning and overall performance.
+
+Attempt 5 adds another Tier 0 PASS and 48 matching diagnostic runs on a different
+CPU pair: GB medians +45.5% OFF/+45.3% MTO, other cases faster. Total diagnostic
+sample count is now 96; controlled sample count remains 0. Full raw runs,
+independent verification and interrupted strict attempts are in the server
+record. The repeated warning does not authorize Tier 2, merging, or changing
+the selected hypothesis; resource permission and timing validity are separate.

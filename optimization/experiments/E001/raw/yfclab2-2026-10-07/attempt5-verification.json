@@ -1,0 +1,210 @@
+{
+  "scientific_results": "PASS",
+  "sample_count": 48,
+  "distances": {
+    "BB_90_8_10": 10,
+    "GB_144_12_8": 8,
+    "BB_108_8_10": 10,
+    "LP_238_44_6": 6
+  },
+  "tier0": "PASS",
+  "tier2": "NOT RUN",
+  "tier3": "NOT RUN",
+  "allocated_cpus": 1,
+  "capacity_checks": 126,
+  "global_idle_min_percent": 67.45090299022995,
+  "global_idle_max_percent": 80.38368272841052,
+  "half_idle_cpu_budget_min": 86.33715582749433,
+  "contention_checks": 7,
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        3.786382327089086,
+        3.788285949965939,
+        3.838480153819546
+      ],
+      "candidate_raw": [
+        3.5384392749983817,
+        3.53634175285697,
+        3.536300713196397
+      ],
+      "baseline_median": 3.788285949965939,
+      "candidate_median": 3.53634175285697,
+      "ratio": 0.9334938807585963
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "baseline_raw": [
+        4.633847414050251,
+        4.633960234001279,
+        4.636288530193269
+      ],
+      "candidate_raw": [
+        3.8403528288472444,
+        3.7874478129670024,
+        3.837790452176705
+      ],
+      "baseline_median": 4.633960234001279,
+      "candidate_median": 3.837790452176705,
+      "ratio": 0.8281880418431847
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "baseline_raw": [
+        1.5823601339943707,
+        1.6368081010878086,
+        1.6368836259935051
+      ],
+      "candidate_raw": [
+        2.3811306259594858,
+        2.382125206058845,
+        2.38133756397292
+      ],
+      "baseline_median": 1.6368081010878086,
+      "candidate_median": 2.38133756397292,
+      "ratio": 1.4548666776455368
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "baseline_raw": [
+        2.0301971540320665,
+        1.9850867560599,
+        1.9832871309481561
+      ],
+      "candidate_raw": [
+        2.935083833988756,
+        2.879002126166597,
+        2.8838117490522563
+      ],
+      "baseline_median": 1.9850867560599,
+      "candidate_median": 2.8838117490522563,
+      "ratio": 1.45273839556322
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        4.584682511165738,
+        4.740092673106119,
+        4.735862165922299
+      ],
+      "candidate_raw": [
+        3.9327382741030306,
+        4.084362721070647,
+        4.084489219123498
+      ],
+      "baseline_median": 4.735862165922299,
+      "candidate_median": 4.084362721070647,
+      "ratio": 0.8624327689391751
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "baseline_raw": [
+        5.939427727134898,
+        5.7885538309346884,
+        5.684224060038105
+      ],
+      "candidate_raw": [
+        4.632097496883944,
+        4.633061974076554,
+        4.633266977034509
+      ],
+      "baseline_median": 5.7885538309346884,
+      "candidate_median": 4.633061974076554,
+      "ratio": 0.8003833270612334
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "baseline_raw": [
+        3.0856550098396838,
+        3.086528418119997,
+        3.030841628089547
+      ],
+      "candidate_raw": [
+        2.8803709940984845,
+        2.9331105779856443,
+        2.8286791099235415
+      ],
+      "baseline_median": 3.0856550098396838,
+      "candidate_median": 2.8803709940984845,
+      "ratio": 0.9334714946788997
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "baseline_raw": [
+        3.531772281974554,
+        3.533317614113912,
+        3.5838741241022944
+      ],
+      "candidate_raw": [
+        2.7297873701900244,
+        2.7799288257956505,
+        2.727884233230725
+      ],
+      "baseline_median": 3.533317614113912,
+      "candidate_median": 2.7297873701900244,
+      "ratio": 0.7725847682885431
+    }
+  ],
+  "GB_no_card_final_LRB_phase1_counters": {
+    "baseline": [
+      {
+        "conflicts": 3055,
+        "phase": 20000000,
+        "starts": 15,
+        "UP": 127023
+      },
+      {
+        "conflicts": 3055,
+        "phase": 20000000,
+        "starts": 15,
+        "UP": 127023
+      },
+      {
+        "conflicts": 3055,
+        "phase": 20000000,
+        "starts": 15,
+        "UP": 127023
+      }
+    ],
+    "candidate": [
+      {
+        "conflicts": 5813,
+        "phase": 20000000,
+        "starts": 31,
+        "UP": 234913
+      },
+      {
+        "conflicts": 5813,
+        "phase": 20000000,
+        "starts": 31,
+        "UP": 234913
+      },
+      {
+        "conflicts": 5813,
+        "phase": 20000000,
+        "starts": 31,
+        "UP": 234913
+      }
+    ]
+  },
+  "median_geomean_diagnostic": {
+    "no-card": 1.0225634032081072,
+    "card-mto": 0.9287314154480392
+  },
+  "numerical_diagnostic": "reject",
+  "decision": "INCONCLUSIVE",
+  "reason": "Occupied-host timings; no controlled promotion",
+  "archive_sha256": {
+    "results-attempt4.tar.gz": "0ee9c9873640938747699e7d00e662e9e726fc27d6620eb4667e72dca79db26e",
+    "results-attempt5.tar.gz": "fb5c9dc8d9ca758876a9d34249e98436fb5c685de30687c0bd1ebf1e47afef1d"
+  }
+}

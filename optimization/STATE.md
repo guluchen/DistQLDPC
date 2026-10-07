@@ -49,3 +49,13 @@ capacity, passed both builds, then stopped on SMT sibling contention before
 Tier 0/performance. All evidence is retained; zero new timing samples. Resource
 use is authorized without further confirmation; timing validity is a separate
 requirement. E001 remains INCONCLUSIVE and lower-tier gates remain unchanged.
+
+Latest continuation: strict attempt 4 stopped on contention despite six idle
+preflight windows; diagnostic attempt 5 completed Tier 0 PASS and all 48 Tier 1
+samples with matching ground truth. Global idle 67.45–80.38%, one CPU used.
+GB slowdown recurred: +45.5% OFF, +45.3% MTO; other cases improved. Now 96
+diagnostic samples across two CPU pairs, kept as separate rounds. Seven
+attempt-5 contention checks prevent a controlled conclusion; no Tier 2/3.
+Evidence and independent verification are in the server experiment record.
+Further identical shared-host repeats are unlikely to resolve the controlled
+gate; retain H-001 isolated pending controlled confirmation of the GB warning.

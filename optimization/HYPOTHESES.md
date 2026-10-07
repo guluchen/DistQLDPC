@@ -26,6 +26,13 @@ improve. The diagnostic numerical gate rejects, but occupied-host timings do
 not resolve the controlled decision. H-001 remains INCONCLUSIVE; no promotion
 or replacement hypothesis is selected.
 
+Attempt 5 independently repeats Tier 0 PASS and 48 matching diagnostic solves
+on a different CPU pair. GB is again slower (+45.5% OFF, +45.3% MTO), with
+identical increased phase-specific search counters. All 96 completed diagnostic
+samples are retained as separate rounds. Seven contention checks in attempt 5
+leave controlled performance unresolved; no specialization or replacement is
+selected from these data.
+
 ## Other original Brain candidates — unselected
 
 H-002: exact XOR-prefix sharing. H-003: verified witness through existing initUB.
