@@ -1,0 +1,145 @@
+{
+  "scientific_results": "PASS",
+  "sample_count": 48,
+  "distance_ground_truth_checked": {
+    "BB_90_8_10": 10,
+    "GB_144_12_8": 8,
+    "BB_108_8_10": 10,
+    "LP_238_44_6": 6
+  },
+  "raw_outputs_preserved": true,
+  "archive_and_driver_sha256": "PASS",
+  "global_idle_min_percent": 77.82732541007759,
+  "global_idle_max_percent": 89.80860589235792,
+  "half_idle_cpu_budget_min": 99.61897652489932,
+  "allocated_cpus": 1,
+  "capacity_checks": 121,
+  "detected_contention_checks": 5,
+  "contention_events": [
+    {
+      "label": "tier1-BB_90_8_10-no-card-1-baseline",
+      "phase": "before",
+      "time": 1791331840.0498545,
+      "idle_percent": 77.82732541007759,
+      "selected_cpu_idle_percent": 84.84848484848484,
+      "sibling_idle_percent": 87.81725888324873,
+      "half_idle_cpus": 99.61897652489932,
+      "load": [
+        28.45703125,
+        28.92041015625,
+        30.08984375
+      ],
+      "core_contention_detected": true
+    },
+    {
+      "label": "tier1-BB_90_8_10-card-mto-2-candidate",
+      "phase": "before",
+      "time": 1791331884.891959,
+      "idle_percent": 78.13957148759518,
+      "selected_cpu_idle_percent": 87.0,
+      "sibling_idle_percent": 85.35353535353535,
+      "half_idle_cpus": 100.01865150412182,
+      "load": [
+        31.6787109375,
+        29.845703125,
+        30.35400390625
+      ],
+      "core_contention_detected": true
+    },
+    {
+      "label": "tier1-BB_108_8_10-card-mto-1-baseline",
+      "phase": "before",
+      "time": 1791331994.6414046,
+      "idle_percent": 78.60071004060177,
+      "selected_cpu_idle_percent": 86.4321608040201,
+      "sibling_idle_percent": 86.4321608040201,
+      "half_idle_cpus": 100.60890885197027,
+      "load": [
+        40.20751953125,
+        31.62451171875,
+        30.8427734375
+      ],
+      "core_contention_detected": true
+    },
+    {
+      "label": "tier1-BB_108_8_10-card-mto-3-baseline",
+      "phase": "before",
+      "time": 1791332022.901779,
+      "idle_percent": 89.5194883930143,
+      "selected_cpu_idle_percent": 79.39698492462311,
+      "sibling_idle_percent": 99.50248756218906,
+      "half_idle_cpus": 114.5849451430583,
+      "load": [
+        35.6943359375,
+        31.25146484375,
+        30.7392578125
+      ],
+      "core_contention_detected": true
+    },
+    {
+      "label": "tier1-LP_238_44_6-no-card-1-candidate",
+      "phase": "before",
+      "time": 1791332041.9641893,
+      "idle_percent": 78.53452509576663,
+      "selected_cpu_idle_percent": 85.07462686567165,
+      "sibling_idle_percent": 85.42713567839196,
+      "half_idle_cpus": 100.52419212258128,
+      "load": [
+        33.22021484375,
+        30.97509765625,
+        30.65869140625
+      ],
+      "core_contention_detected": true
+    }
+  ],
+  "GB_no_card_final_LRB_phase1_counters": {
+    "baseline": [
+      {
+        "conflicts": 3055,
+        "phase": 20000000,
+        "starts": 15,
+        "UP": 127023
+      },
+      {
+        "conflicts": 3055,
+        "phase": 20000000,
+        "starts": 15,
+        "UP": 127023
+      },
+      {
+        "conflicts": 3055,
+        "phase": 20000000,
+        "starts": 15,
+        "UP": 127023
+      }
+    ],
+    "candidate": [
+      {
+        "conflicts": 5813,
+        "phase": 20000000,
+        "starts": 31,
+        "UP": 234913
+      },
+      {
+        "conflicts": 5813,
+        "phase": 20000000,
+        "starts": 31,
+        "UP": 234913
+      },
+      {
+        "conflicts": 5813,
+        "phase": 20000000,
+        "starts": 31,
+        "UP": 234913
+      }
+    ]
+  },
+  "median_geomean_diagnostic": {
+    "no-card": 1.037672589128168,
+    "card-mto": 0.9264996247874109
+  },
+  "decision": "INCONCLUSIVE",
+  "reason": "Occupied host; diagnostic numerical rejection does not establish controlled performance regression",
+  "tier2": "NOT RUN",
+  "tier3": "NOT RUN"
+}

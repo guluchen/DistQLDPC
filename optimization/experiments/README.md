@@ -4,6 +4,8 @@
   local correctness PASS; INCONCLUSIVE pending controlled run.
   [2026-10-07 continuation](E001/CONTINUATION-2026-10-07.md) revalidates the
   existing implementation and retains a verified offline server archive.
+  [yfclab2 continuation](E001/SERVER-2026-10-07.md): server correctness PASS,
+  48 diagnostic samples with a GB regression warning; INCONCLUSIVE, no Tier 2.
 
 Retain failed and inconclusive records, raw outputs and exact reproduction data.
 The repository optimization policy is authoritative. A missing median is not zero.

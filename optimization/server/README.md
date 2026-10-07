@@ -1,5 +1,13 @@
 # E001 dedicated-server package
 
+For a user-authorized occupied host, `idle_tier1.py` separately enforces
+"more than 50% idle; use at most half idle capacity" and pins the entire job to
+one CPU. It reruns Tier 0 and collects Tier 1 diagnostics, never promoting to
+Tier 2. By default it stops on core/sibling contention; `--allow-core-contention`
+retains that activity as telemetry for explicit diagnostics only. It does not
+attest an exclusive reservation or relax controlled promotion criteria. See
+the [yfclab2 run/results](../experiments/E001/SERVER-2026-10-07.md).
+
 The [2026-10-07 continuation](../experiments/E001/CONTINUATION-2026-10-07.md)
 retains an actual archive, checksum, validation receipt and exact run commands.
 To recreate the pinned source/input package from a DistQLDPC clone:

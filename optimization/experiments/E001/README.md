@@ -8,6 +8,12 @@ retained in the repo. Controlled samples remain zero. See the
 [continuation record](CONTINUATION-2026-10-07.md) for raw evidence, the local
 build limitation, package checksum and exact server commands.
 
+Later [yfclab2 server continuation](SERVER-2026-10-07.md): server Tier 0 PASS;
+48 diagnostic Tier 1 samples completed with identical scientific results.
+GB medians regress in both modes while the other three cases improve. Occupied
+host timings do not pass the controlled gate. Medians, raw runs, capacity checks,
+the interrupted initial attempt and learning are retained.
+
 Baseline: `24572d6d09cce9a4a5faa58300a89e0feba9da6a`.
 Candidate implementation: `50623f9` (full identity in result.json).
 QDistSAT: `7c4774fffc49856f48a22ae5f9063d00b2661aaa`.
@@ -61,11 +67,12 @@ eligible for further tests.
 
 ## Performance / medians / decision
 
-Tier 1 not run. All four cases in both modes: baseline and candidate medians **N/A**,
-raw controlled sample count **0**. This interactive macOS ARM laptop has no
-exclusive reservation; no dedicated server was available through this task.
-No shared/noisy measurement was used to accept or reject the optimization.
-Tier 2 blocked by Tier 1; Tier 3 not run and omitted from the server runner.
+Controlled Tier 1 sample count remains **0**. The initial macOS execution had
+no dedicated-server access. Later, 48 diagnostic samples were collected on
+yfclab2 under the user's CPU capacity rule; medians are in SERVER-2026-10-07.md.
+They show mixed behavior and a substantial GB regression, but the occupied host
+was not reserved. Shared/noisy timings are not used to accept or reject H-001.
+Tier 2 remains blocked; Tier 3 was not run.
 
 Preregistered per-mode medians, conservative variability envelope, case regression
 rule, limits, repetitions and aggregation are in PROPOSAL.md. Run package instructions
@@ -83,5 +90,5 @@ wall time in the server runner includes it. Missing counters remain unknown.
 
 Next: exclusive dedicated-server run of the supplied package, then import raw
 runs/medians/decision into this experiment and reconcile STATE/HYPOTHESES.
-Scientific semantics changed: no. No PI scientific decision required now;
-dedicated-host access/reservation is required to resolve performance.
+Scientific semantics changed: no. SSH access is configured; a controlled
+reservation is required to resolve the GB warning and overall performance.

@@ -19,6 +19,13 @@ Local correctness passed; controlled performance remains unknown.
 selection are unchanged. [Continuation evidence and server package](experiments/E001/CONTINUATION-2026-10-07.md)
 are retained. Zero controlled Tier 1 samples; no new hypothesis is selected.
 
+Later [yfclab2 diagnostics](experiments/E001/SERVER-2026-10-07.md) completed
+server Tier 0 and 48 Tier 1 samples on one CPU within the user's idle capacity
+limit. Results match; GB regresses in both modes while the other three cases
+improve. The diagnostic numerical gate rejects, but occupied-host timings do
+not resolve the controlled decision. H-001 remains INCONCLUSIVE; no promotion
+or replacement hypothesis is selected.
+
 ## Other original Brain candidates — unselected
 
 H-002: exact XOR-prefix sharing. H-003: verified witness through existing initUB.
