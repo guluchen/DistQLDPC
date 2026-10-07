@@ -63,7 +63,7 @@ jobs:
         run: |
           set -euo pipefail
           make -C baseline --jobs="$(nproc)"
-          make -C candidate --jobs="$(nproc)"
+          make -C candidate --jobs="$(nproc)" LTO=1
 
       - name: Compare on selected QDistSAT instances
         id: bench
