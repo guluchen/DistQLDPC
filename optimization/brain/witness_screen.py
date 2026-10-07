@@ -42,7 +42,7 @@ def main():
         performance_test=False,optimality_claim=False,source='committed original matrices only',cases=results)
     output=ROOT/'optimization/brain/raw/round2-witness-screen.json'
     output.parent.mkdir(exist_ok=True)
-    output.write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8')
+    output.write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps([dict(case=r['case'],valid=r['validated_rows'],best_weight=r['best']['weight']) for r in results]))
 
 
