@@ -29,7 +29,9 @@ numeric filters REJECT. Preserve exact implementation and evaluation rules.
 **H-007 — LTO only (E004).** Revised Brain recommendation accepted by user;
 independent baseline, one build concept. Tier 0 PASS, 48 diagnostic solves correct.
 Small favorable medians but MTO noise envelope fails; occupied host also prevents
-promotion. INCONCLUSIVE, no Tier 2/3 or merge. [Learning/evidence](experiments/E004/README.md).
+promotion. INCONCLUSIVE, no merge. A later user-requested diagnostic Tier 2
+stopped twice on CPU capacity; one OFF baseline d=8, no candidate/MTO completion.
+No performance comparison or Tier 3. [Learning/evidence](experiments/E004/README.md).
 
 **H-002 — exact XOR-prefix sharing (E002).** Originally an unselected alternative
 from the same old Brain as H-001, not the next queued task. Later executed as an

@@ -1,0 +1,66 @@
+{
+  "decision": "INCONCLUSIVE",
+  "comparison_available": false,
+  "medians": null,
+  "speedup": null,
+  "attempts": [
+    {
+      "attempt": 1,
+      "archive_sha256": "487bfd7ff7049feb4a731ca351ede652866278edcb20736ae7ef421bb0734ffc",
+      "completed_samples": 0,
+      "samples": [],
+      "abort_label": "tier2-LP_340_56_8-no-card-1-baseline.command.json",
+      "abort_elapsed_sec": 6.025704968953505,
+      "idle_min": 47.605800532701984,
+      "resource_checks": 4,
+      "half_idle_cpu_min": 60.93542468185854,
+      "intentional_resource_kill": true,
+      "external_timeout": false
+    },
+    {
+      "attempt": 2,
+      "archive_sha256": "4047422290bac9be4e3823028c12213804954ed68e6eeb21cba1b97cfb03f113",
+      "completed_samples": 1,
+      "samples": [
+        {
+          "tier": 2,
+          "case": "LP_340_56_8",
+          "mode": "no-card",
+          "repeat": 1,
+          "version": "baseline",
+          "command": [
+            "/home/yfc/codex-e004-lto-20261007/E004-server-package/baseline/bin/distqldpc",
+            "-v",
+            "-cpu-lim=600",
+            "-no-card",
+            "/home/yfc/codex-e004-lto-20261007/E004-server-package/baseline/data/matrices/LP_340_56_8"
+          ],
+          "elapsed_sec": 97.58661736990325,
+          "returncode": 0,
+          "watchdog": false,
+          "semantic": {
+            "d": 8,
+            "objective": 8,
+            "lb": 8,
+            "ub": 8,
+            "timeout": false,
+            "unknown": false
+          },
+          "load_after": [
+            68.5966796875,
+            68.66943359375,
+            69.52587890625
+          ]
+        }
+      ],
+      "abort_label": "tier2-LP_340_56_8-no-card-1-candidate.command.json",
+      "abort_elapsed_sec": 6.014477967051789,
+      "idle_min": 40.33393483908069,
+      "resource_checks": 53,
+      "half_idle_cpu_min": 51.62743659402329,
+      "intentional_resource_kill": true,
+      "external_timeout": false
+    }
+  ],
+  "reason": "Both attempts stopped under the CPU capacity rule; no complete candidate or MTO run"
+}

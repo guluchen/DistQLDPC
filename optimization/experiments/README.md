@@ -3,7 +3,10 @@
 Latest completed experiment: [E004 / H-007 LTO](E004/README.md), INCONCLUSIVE.
 Tier 0 PASS, 48 correct diagnostic Tier 1 solves; small favorable medians but
 MTO does not pass the noise-envelope gate, and the server is occupied. No
-Tier 2/3 or adoption/merge. Candidate source isolated in draft PR 12.
+formal promotion or adoption/merge. The user-requested
+[Tier 2 follow-up](E004/TIER2-DIAGNOSTIC-RESULT.md) was stopped twice on CPU capacity;
+one baseline d=8, no complete candidate/MTO comparison or Tier 3.
+Candidate source isolated in draft PR 12.
 
 Earlier: E001 is provisionally shelved / not adopted by explicit user decision;
 controlled performance remains INCONCLUSIVE. Its [LEARN record](E001/DISPOSITION-2026-10-07.md)

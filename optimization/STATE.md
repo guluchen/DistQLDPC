@@ -20,7 +20,12 @@ tested candidate 5b13a2c, final PR 2efbdc1 (only CI serialization differs).
 Server and final required hosted PR Tier 0 PASS. All 48 Tier 1 diagnostic solves
 are correct; OFF/MTO median geomeans 0.979514/0.981341, but MTO range envelope
 1.006753 fails the beyond-noise gate. Occupied host with 29 contention checks.
-Decision INCONCLUSIVE, no Tier 2/3, adoption or merge. Candidate isolated in
+Decision INCONCLUSIVE. The user subsequently requested diagnostic Tier 2
+LP_340_56_8 despite this gate. Two attempts stopped at global idle 47.61%/40.33%;
+only one OFF baseline completed (97.587s, d=8), no candidate/MTO completion.
+[Tier 2 follow-up](experiments/E004/TIER2-DIAGNOSTIC-RESULT.md): no comparison,
+medians or speedup; Tier 1 remains unchanged. No Tier 3, adoption or merge.
+Candidate isolated in
 experiment/h007-lto, draft PR 12; current history branch still preserves E001.
 
 H-008 SLS/H-009 BDD remain unimplemented alternatives, not an execution queue.

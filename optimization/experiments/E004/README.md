@@ -1,5 +1,10 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Subsequent user-requested [Tier 2 diagnostic](TIER2-DIAGNOSTIC-RESULT.md): two
+> resource interruptions, one completed OFF baseline d=8, no complete LTO/MTO
+> comparison. Still INCONCLUSIVE; no Tier 3 or adoption. The report below retains
+> the original completed Tier 0/1 round and its original scope.
+
 One concept tested: opt-in GCC LTO (`-flto=1` at compile and link time).
 Scientific correctness PASS; diagnostic Tier 1 INCONCLUSIVE. No Tier 2/3,
 acceptance, adoption or merge. Candidate is isolated in
