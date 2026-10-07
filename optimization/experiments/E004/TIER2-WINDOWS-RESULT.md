@@ -75,3 +75,14 @@ Next action: make the task-local Cygwin toolchain available through an allowed
 installation path, then execute the command above. Windows desktop measurements
 remain separate diagnostic evidence; resolving formal gates still requires a
 controlled comparison. No new research or next optimization is selected here.
+
+## Explicit installation authorization follow-up
+
+The user then explicitly authorized installation ("可安裝"). A new attempt to
+launch the same verified per-user installer was again rejected by automatic
+execution review with `blocked by policy`, without a reason. Authorization did
+not change that execution restriction. No installer or solver was executed.
+A task-root `install-e004-cygwin.ps1` helper was prepared for manual execution
+by the user outside agent execution; its PowerShell syntax was checked without
+running it. No security setting or execution policy is changed by that script.
+Experiment state remains INCONCLUSIVE pending an available toolchain.
