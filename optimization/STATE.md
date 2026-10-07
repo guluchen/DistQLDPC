@@ -42,3 +42,10 @@ Reservation follow-up: no scheduler or delegated CPU isolation was found for
 the yfclab2 account; the read-only audit is retained in the server experiment
 record. No additional benchmarks were run. Operator-provided exclusivity or a
 different dedicated host is the remaining requirement for controlled timing.
+
+User renewed authorization to use yfclab2 whenever spare capacity exceeds 50%,
+within half spare capacity. Strict attempt 3 used one CPU at 80.29% initial idle
+capacity, passed both builds, then stopped on SMT sibling contention before
+Tier 0/performance. All evidence is retained; zero new timing samples. Resource
+use is authorized without further confirmation; timing validity is a separate
+requirement. E001 remains INCONCLUSIVE and lower-tier gates remain unchanged.
