@@ -18,13 +18,13 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 TREE = HERE.parents[2]
 ASSIGNED_URL = 'HOST_SLOT_NOT_ASSIGNED'
-MODEL_COMMIT = '3fcfba75de194c02c5196973f14c46b7c36ed642'
+MODEL_COMMIT = '8438131b07901a9182e3212aed18b027b1773650'
 BASE = '24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 HELPER_SHA = 'ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2'
 SOURCE = {
     'snapshot_fla.h': '3d8ae9138586c3ae6a25ece1fc9ed9db8e2a89444bd0d62420ee8c5354ab81bc',
     'driver.cc': 'd40233f15151bff8395510730a29f8b4105019e5afbc07a9c84865541d777cf8',
-    'oracle.py': 'c4fefae50b772c15ba8e2f3251f7b67b4a1150bfc9868370e3a1d4273f4b4b6c',
+    'oracle.py': 'dab67bbeda3cd867279f9be0e0831c28784a4f6ffc48ab5245bc8a4f3c511141',
 }
 RUNTIME = {
     'bin/g++.exe': '86bec0e6bef5057ab9065082633d430db5bc443a74489452798818cb0e0c0bd3',

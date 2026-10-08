@@ -1,8 +1,8 @@
 # Test-only model execution prerecord
 
-No production engine adapter exists. This run is neither production Tier0 nor a performance filter. Model source commit is `3fcfba75de194c02c5196973f14c46b7c36ed642`; baseline production `src` and `Makefile` are unchanged. Oracle raw-retention support fix stores stdin and child stdout/stderr as exact bytes; parsing decodes separately. Fixed parameters and the 534 vectors are unchanged.
+No production engine adapter exists. This run is neither production Tier0 nor a performance filter. Model source commit is `8438131b07901a9182e3212aed18b027b1773650`; baseline production `src` and `Makefile` are unchanged. Oracle raw-retention support fixes store stdin and child stdout/stderr as exact bytes in files opened before launch; partial child streams survive outer timeout/Job cleanup. Parsing decodes separately. Fixed parameters and the 534 vectors are unchanged.
 
-Prepared runner `windows_model.py` SHA256 `421e120ca70ec7e202b1fa86e1e6c17a130714cf524f57db1337115fb4f2db0b` is disabled with `HOST_SLOT_NOT_ASSIGNED`. Assignment stamping changes this hash and requires a new recorded execution hash. Launch only when root scheduler assigns Windows through hub issue15; never during GH30 or another owner's slot.
+Prepared runner `windows_model.py` SHA256 `4c04aa8bdbb1a35828222be443267632d28af25acda229984aca3f3a926cfce2` is disabled with `HOST_SLOT_NOT_ASSIGNED`. Assignment stamping changes this hash and requires a new recorded execution hash. Launch only when root scheduler assigns Windows through hub issue15; never during GH30 or another owner's slot.
 
 Expected assigned command: pinned Python313 executable, runner path, `--out` a fresh direct workspace child, and `--run-assignment` the exact assigned hub comment URL. Runner hard-pins model checkout source bytes, frozen model Git blobs (records LF blob versus checkout separately), reviewed CPUWindow helper, Python executable/DLL, Cygwin compiler components and dependency DLLs. Executed source copies and support scripts are retained and rechecked after the run.
 
