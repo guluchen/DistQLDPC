@@ -29,3 +29,7 @@ This record precedes their support implementation; no GH46 build/solver has run.
 
 Actual GCC/C++ execution, coverage, scientific results and allocation opportunity
 remain UNTESTED. Independent review and a named host slot are still required.
+
+### Additional review: lawful short-case deadlines
+
+Before execution, authenticate every bound/status and absence of completed distance/objective for an actual rc1 UNKNOWN/TIMEOUT in tiny CSS, LP34 smoke, and observer CSS. Such lawful incompletion is CoverageGap INCONCLUSIVE, not a scientific rejection. Wrong fields, wrong completed optimum, or crash remain REJECT. This changes support classification only; no deadline or production change.
