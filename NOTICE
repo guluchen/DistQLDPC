@@ -53,6 +53,8 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
   - Best-solution tracking and printing on timeout / interrupt
   - Configurable cardinality encoding modes (Sinz / MTO / off)
+  - GH-27 isolated, unadopted experiment: inline the unchanged lookahead enqueue
+    prefix, retaining original soft-violation handling in an ordinary helper
 
 Modified files (partial list): Solver.h, Solver.cc
 

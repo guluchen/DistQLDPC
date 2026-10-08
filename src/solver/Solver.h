@@ -536,7 +536,11 @@ public:
     bool lookahead();
     void lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>& out_learnt, bool last=false);
     CRef propagateForLK();
-    bool uncheckedEnqueueForLK(Lit p, CRef from=CRef_Undef);
+#if defined(__GNUC__)
+    __attribute__((always_inline))
+#endif
+    inline bool uncheckedEnqueueForLK(Lit p, CRef from=CRef_Undef);
+    bool handleSoftViolationForLK(Var v);
     //   vec<uint64_t> lookaheadCNT;
     vec<Lit> imply;
     bool redundantLit(Lit p);
@@ -788,6 +792,21 @@ inline bool     Solver::locked          (const Clause& c) const {
     int i = c.size() != 2 ? 0 : (value(c[0]) == l_True ? 0 : 1);
     return value(c[i]) == l_True && reason(var(c[i])) != CRef_Undef && ca.lea(reason(var(c[i]))) == &c;
 }
+inline bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
+    assert(value(p) == l_Undef);
+    Var v = var(p);
+    assigns[v] = lbool(!sign(p)); // this makes a lbool object whose value is sign(p)
+    // vardata[x] = mkVarData(from, decisionLevel());
+    vardata[v].reason = from;
+    vardata[v].level = decisionLevel() + 1;
+    trail.push_(p);
+
+    if (auxiVar(v) && value(softLits[v]) == l_False) {// a soft clause is falsified
+      return handleSoftViolationForLK(v);
+    }
+    return true;
+}
+
 inline void     Solver::newDecisionLevel()                      { trail_lim.push(trail.size()); }
 
 inline int      Solver::decisionLevel ()      const   { return trail_lim.size(); }
