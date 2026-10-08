@@ -1,0 +1,585 @@
+{
+  "audit": "PASS",
+  "decision": "INCONCLUSIVE",
+  "correct_solves": 48,
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.727104599995073,
+          2.7338832000095863,
+          2.73228980001295
+        ],
+        "candidate": [
+          2.719486899994081,
+          2.697885800007498,
+          2.7542493999935687
+        ]
+      },
+      "baseline_median": 2.73228980001295,
+      "candidate_median": 2.719486899994081,
+      "median_ratio": 0.9953142232501075,
+      "range_envelope": 1.009953706945654,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.160638100001961,
+          1.1442485000006855,
+          1.1441313000104856
+        ],
+        "candidate": [
+          1.1532979999901727,
+          1.1533669999917038,
+          1.1451647000212688
+        ]
+      },
+      "baseline_median": 1.1442485000006855,
+      "candidate_median": 1.1532979999901727,
+      "median_ratio": 1.0079086841621219,
+      "range_envelope": 1.00807223784642,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.3366925999871455,
+          3.3398634999757633,
+          3.3879931999836117
+        ],
+        "candidate": [
+          3.3665073000011034,
+          3.3304069000005256,
+          3.3912282999954186
+        ]
+      },
+      "baseline_median": 3.3398634999757633,
+      "candidate_median": 3.3665073000011034,
+      "median_ratio": 1.0079775116634357,
+      "range_envelope": 1.0163442386057628,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.2946412000164855,
+          2.321441899985075,
+          2.292339899984654
+        ],
+        "candidate": [
+          2.291261900012614,
+          2.2771093000192195,
+          2.262090200005332
+        ]
+      },
+      "baseline_median": 2.2946412000164855,
+      "candidate_median": 2.2771093000192195,
+      "median_ratio": 0.99235963339404,
+      "range_envelope": 0.999529738163155,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.2920022000034805,
+          3.301564599998528,
+          3.2896950999856927
+        ],
+        "candidate": [
+          3.150368700007675,
+          3.1407647999876644,
+          3.130353100015782
+        ]
+      },
+      "baseline_median": 3.2920022000034805,
+      "candidate_median": 3.1407647999876644,
+      "median_ratio": 0.9540591436981251,
+      "range_envelope": 0.9576476251617898,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.4471011999994516,
+          1.445308299997123,
+          1.445805700001074
+        ],
+        "candidate": [
+          0.8780218999891076,
+          0.8687963999982458,
+          0.8755061999836471
+        ]
+      },
+      "baseline_median": 1.445805700001074,
+      "candidate_median": 0.8755061999836471,
+      "median_ratio": 0.6055490028729287,
+      "range_envelope": 0.6074979988635334,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          4.256847399985418,
+          4.273466300015571,
+          4.252836900006514
+        ],
+        "candidate": [
+          4.540050600015093,
+          4.495668999996269,
+          4.492289299989352
+        ]
+      },
+      "baseline_median": 4.256847399985418,
+      "candidate_median": 4.495668999996269,
+      "median_ratio": 1.0561029272535514,
+      "range_envelope": 1.0675346143672095,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.6969122999871615,
+          2.7029827999940608,
+          2.711880700022448
+        ],
+        "candidate": [
+          3.328125,
+          3.3332855999760795,
+          3.349767300009262
+        ]
+      },
+      "baseline_median": 2.7029827999940608,
+      "candidate_median": 3.3332855999760795,
+      "median_ratio": 1.233187869335833,
+      "range_envelope": 1.2420749833152558,
+      "nonoverlapping_regression": true
+    }
+  ],
+  "aggregates": {
+    "no-card": {
+      "median_geomean": 1.0008646087660078,
+      "range_envelope_geomean": 1.0084570766094891,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 0.9313545068491985,
+      "range_envelope_geomean": 0.9371736991239407,
+      "no_worse_medians": false
+    }
+  },
+  "numeric_filter": "reject",
+  "per_run_resources": [
+    {
+      "label": "BB_90_8_10-no-card-1-baseline",
+      "elapsed_sec": 2.727104599995073,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-no-card-1-candidate",
+      "elapsed_sec": 2.719486899994081,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-no-card-2-candidate",
+      "elapsed_sec": 2.697885800007498,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-no-card-2-baseline",
+      "elapsed_sec": 2.7338832000095863,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-no-card-3-baseline",
+      "elapsed_sec": 2.73228980001295,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.29078014184397,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-no-card-3-candidate",
+      "elapsed_sec": 2.7542493999935687,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 97.84172661870504,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-card-mto-1-baseline",
+      "elapsed_sec": 3.2920022000034805,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-card-mto-1-candidate",
+      "elapsed_sec": 3.150368700007675,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.31506849315069,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-card-mto-2-candidate",
+      "elapsed_sec": 3.1407647999876644,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-card-mto-2-baseline",
+      "elapsed_sec": 3.301564599998528,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 98.55072463768116,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-card-mto-3-baseline",
+      "elapsed_sec": 3.2896950999856927,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_90_8_10-card-mto-3-candidate",
+      "elapsed_sec": 3.130353100015782,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "GB_144_12_8-no-card-1-baseline",
+      "elapsed_sec": 1.160638100001961,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-no-card-1-candidate",
+      "elapsed_sec": 1.1532979999901727,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-no-card-2-candidate",
+      "elapsed_sec": 1.1533669999917038,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-no-card-2-baseline",
+      "elapsed_sec": 1.1442485000006855,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-no-card-3-baseline",
+      "elapsed_sec": 1.1441313000104856,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-no-card-3-candidate",
+      "elapsed_sec": 1.1451647000212688,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-card-mto-1-baseline",
+      "elapsed_sec": 1.4471011999994516,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-card-mto-1-candidate",
+      "elapsed_sec": 0.8780218999891076,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-card-mto-2-candidate",
+      "elapsed_sec": 0.8687963999982458,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-card-mto-2-baseline",
+      "elapsed_sec": 1.445308299997123,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-card-mto-3-baseline",
+      "elapsed_sec": 1.445805700001074,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "GB_144_12_8-card-mto-3-candidate",
+      "elapsed_sec": 0.8755061999836471,
+      "active_checks": 0,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": null,
+      "note": "No active telemetry sample for solves shorter than the2s cadence"
+    },
+    {
+      "label": "BB_108_8_10-no-card-1-baseline",
+      "elapsed_sec": 3.3366925999871455,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-no-card-1-candidate",
+      "elapsed_sec": 3.3665073000011034,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-no-card-2-candidate",
+      "elapsed_sec": 3.3304069000005256,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 98.59154929577464,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-no-card-2-baseline",
+      "elapsed_sec": 3.3398634999757633,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-no-card-3-baseline",
+      "elapsed_sec": 3.3879931999836117,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 97.2027972027972,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-no-card-3-candidate",
+      "elapsed_sec": 3.3912282999954186,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 98.57142857142857,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-card-mto-1-baseline",
+      "elapsed_sec": 4.256847399985418,
+      "active_checks": 2,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.24812030075188,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-card-mto-1-candidate",
+      "elapsed_sec": 4.540050600015093,
+      "active_checks": 2,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-card-mto-2-candidate",
+      "elapsed_sec": 4.495668999996269,
+      "active_checks": 2,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.27536231884058,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-card-mto-2-baseline",
+      "elapsed_sec": 4.273466300015571,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 98.63945578231292,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-card-mto-3-baseline",
+      "elapsed_sec": 4.252836900006514,
+      "active_checks": 2,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.25925925925925,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "BB_108_8_10-card-mto-3-candidate",
+      "elapsed_sec": 4.492289299989352,
+      "active_checks": 2,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.27536231884058,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-no-card-1-baseline",
+      "elapsed_sec": 2.2946412000164855,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.3006993006993,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-no-card-1-candidate",
+      "elapsed_sec": 2.291261900012614,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 97.85714285714286,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-no-card-2-candidate",
+      "elapsed_sec": 2.2771093000192195,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-no-card-2-baseline",
+      "elapsed_sec": 2.321441899985075,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 96.45390070921985,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-no-card-3-baseline",
+      "elapsed_sec": 2.292339899984654,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-no-card-3-candidate",
+      "elapsed_sec": 2.262090200005332,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-card-mto-1-baseline",
+      "elapsed_sec": 2.6969122999871615,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-card-mto-1-candidate",
+      "elapsed_sec": 3.328125,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 99.28057553956835,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-card-mto-2-candidate",
+      "elapsed_sec": 3.3332855999760795,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-card-mto-2-baseline",
+      "elapsed_sec": 2.7029827999940608,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-card-mto-3-baseline",
+      "elapsed_sec": 2.711880700022448,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    },
+    {
+      "label": "LP_238_44_6-card-mto-3-candidate",
+      "elapsed_sec": 3.349767300009262,
+      "active_checks": 1,
+      "active_interference_checks": 0,
+      "min_active_sibling_idle": 100.0,
+      "note": "Observed at2s cadence; not continuous exclusivity evidence"
+    }
+  ],
+  "min_observed_global_idle": 74.47199265381083,
+  "resource_checks": 89,
+  "active_checks": 41,
+  "active_interference_checks": 0,
+  "preflight_interference_checks": 4,
+  "min_active_sibling_idle": 96.45390070921985,
+  "identities": "PASS",
+  "scientific_results": "PASS",
+  "affinity_priority": "PASS",
+  "cleanup": "PASS",
+  "reason": "Complete diagnostic screen; characterize timing robustness and server repetition before formal promotion; no zero-interference veto"
+}

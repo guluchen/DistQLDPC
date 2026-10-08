@@ -1,4 +1,12 @@
-# E006 / H-009: singleton BDD bound encoding — INCONCLUSIVE
+# E006 / H-009: BDD local filter REJECT; server corroboration pending
+
+Latest execution: [diagnostic round02](DIAGNOSTIC-02-RESULT.md),48 correct solves,
+independent audit PASS. BB90/GB144 affected-mode gains4.59%/39.45%; BB108/LP238
+regress5.61%/23.32% with disjoint three-run ranges. Local general-purpose screen
+**REJECT / NOT ADOPTED**, no Tier2/3. Dedicated-server performance remains
+INCONCLUSIVE/unmeasured; repeat on server when eligible to corroborate. Candidate
+unchanged/isolated/unmerged. The earlier strict partial INCONCLUSIVE record below
+is historical and preserved, not the latest local-screen disposition.
 
 Latest user decision: [record diagnostic screening and later controlled server
 repetition](FOLLOWUP-2026-10-08.md). This does not alter the existing result,

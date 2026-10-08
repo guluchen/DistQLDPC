@@ -9,6 +9,17 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest execution: [E006 diagnostic round02](experiments/E006/DIAGNOSTIC-02-RESULT.md),
+48 correct solves/independent audit PASS. Local general-purpose filter REJECT:
+BB108/LP238 affected-mode regress5.61%/23.32%, disjoint repeated ranges; BB90/
+GB144 gains4.59%/39.45% do not hide these failures. Zero active interference
+alerts/41 checks; four preflight alerts recorded without abort. Global spare
+min74.47%, cleanup PASS. Candidatec91b19b isolated/unmerged; no Tier2/3.
+Dedicated-server timing remains INCONCLUSIVE/unmeasured: current sample global
+idle48.72%, CPU102 fully busy, so no server solve started. User-authorized full
+server Tier1 corroboration remains pending eligibility/lease validation; no
+background monitoring. Earlier partial-state entries below are chronological.
+
 Pending user-authorized E006 follow-up: separate complete controlled server
 Tier1 repetition when a validated resource window is available. Two-stage
 policy permits explicitly labeled diagnostics to retain sibling interference

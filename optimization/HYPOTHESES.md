@@ -1,5 +1,13 @@
 # Hypothesis registry (not an execution queue)
 
+Latest H009 evidence: [E006 complete diagnostic round02](experiments/E006/DIAGNOSTIC-02-RESULT.md).
+Local general-purpose screen REJECT / NOT ADOPTED: BB108+5.61% and LP238+23.32%
+repeat with disjoint ranges despite BB90/GB144 gains; all48 science checks and
+independent audit PASS. No active interference alerts at2s cadence, no Tier2/3.
+Dedicated-server corroboration remains pending, formal dedicated timing
+INCONCLUSIVE/unmeasured. Do not reject all BDD methods or silently specialize;
+any future propagation-cost/specialization hypothesis needs a fresh Brain.
+
 Latest user instruction: [record two-stage screening and repeat E006 on the
 server when available](experiments/E006/FOLLOWUP-2026-10-08.md). Formal H009
 status remains INCONCLUSIVE; no fresh hypothesis, execution or gate promotion.
