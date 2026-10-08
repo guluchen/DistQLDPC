@@ -1,6 +1,10 @@
 # Hypothesis registry (not an execution queue)
 
 Latest experiment: [E004 / H-007 INCONCLUSIVE](experiments/E004/README.md).
+Latest [priority configuration/LP340 retry](experiments/E004/WINDOWS-PRIORITY-RESULT-2026-10-08.md):
+AboveNormal job-wide probes PASS for both versions, unchanged LTO-only candidate.
+First strict baseline intentionally killed29.097s on sibling-window loss;
+no complete comparison/median, INCONCLUSIVE. Settings restored, no Tier3/adoption.
 Latest authorized [strict LP340 follow-up](experiments/E004/WINDOWS-STRICT-TIER2-RESULT-2026-10-08.md)
 refused initial core eligibility; zero solver/timing samples. Emulator instances
 observed again, strict authorization retained pending user's environment/mode

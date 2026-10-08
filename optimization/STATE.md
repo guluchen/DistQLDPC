@@ -6,6 +6,15 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest user-requested [AboveNormal priority setup](experiments/E004/WINDOWS-PRIORITY-RESULT-2026-10-08.md):
+shared owned-job priority/parent+fork-child probes verified, timeout/cleanup PASS.
+Same priority for both baseline/LTO, optional CLI flag, no solver optimization
+change. Strict LP340 attempt02 qualifiedCPU14/15, but first baseline was stopped
+at29.097s when sibling idle90.071% (global68.286%). Owned-tree termination and
+priority/affinity/sleep restoration PASS; no completed solve/pair/median.
+INCONCLUSIVE resource-window loss, not scientific rejection; no automatic retry
+or Tier3. Emulator affinity restriction persists; other priorities unchanged.
+
 User-authorized [emulator affinity partition applied](experiments/E004/WINDOWS-EMULATOR-AFFINITY-2026-10-08.md):
 four current dnplayer/Ld9BoxHeadless instances mask65535->16383 (CPU0--13),
 backup/verification PASS, restore helper prepared; no programs closed. Pair14/15

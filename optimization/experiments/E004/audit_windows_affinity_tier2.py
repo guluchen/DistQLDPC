@@ -32,8 +32,11 @@ def main():
     assert [setup['selected_cpu'], setup['sibling']] in setup['topology']
     assert not setup['exclusive_reservation'] and not setup['power_policy_changed']
     cleanup = read(e/'cleanup.json')
-    assert cleanup == dict(job_limit_released=True, affinity_restored=True,
-                           sleep_requirement_restored=True, final_mask=setup['original_affinity'])
+    expected_cleanup = dict(job_limit_released=True, affinity_restored=True,
+                            sleep_requirement_restored=True, final_mask=setup['original_affinity'])
+    if 'priority_class' in setup:
+        expected_cleanup.update(priority_restored=True, final_priority_class=setup['original_priority_class'])
+    assert cleanup == expected_cleanup
     samples = read(e/'samples.json')
     assert len(samples) == 12, 'Incomplete round: no median or performance decision'
     resources = read(e/'resources.json')
@@ -56,6 +59,8 @@ def main():
             assert 's UNKNOWN' not in text and 'c status: TIMEOUT' not in text
             masks = read(e/(label+'.affinity.json'))
             assert masks and all(r['mask'] == setup['mask'] for r in masks)
+            if 'priority_class' in setup:
+                assert all(r['priority_class'] == setup['priority_class'] for r in masks)
             assert len({r['pid'] for r in masks}) >= 2
             preflight = [r for r in resources if r['label'] == label+'-preflight']
             assert preflight and preflight[-1]['eligible']

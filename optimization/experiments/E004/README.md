@@ -1,5 +1,10 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest [user-requested AboveNormal setup and LP340 attempt](WINDOWS-PRIORITY-RESULT-2026-10-08.md):
+> real parent/fork-child probes/timeout/cleanup PASS, both versions share priority.
+> Strict first baseline resource-aborted29.097s at sibling idle90.071%; no completed
+> comparison/median, INCONCLUSIVE. No scientific rejection, adoption or Tier3.
+
 > Latest [user-authorized emulator affinity](WINDOWS-EMULATOR-AFFINITY-2026-10-08.md)
 > applied/verified on four instances, CPU0--13; original settings backed up and
 > restore helper ready. Pair14/15 still below strict eligibility in samples;
