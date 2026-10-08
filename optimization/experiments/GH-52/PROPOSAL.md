@@ -1,0 +1,11 @@
+# GH52 source-only prerecord
+
+Exactly three ranked methods and selected A are preregistered in https://github.com/guluchen/DistQLDPC/issues/52 before any production edit. This fresh worktree starts from immutable24572d6d09cce9a4a5faa58300a89e0feba9da6a; no previous optimization is stacked.
+
+A SELECTED: defer unlocked-soft-conflict stopping only in propagateForLK, retaining the first original unlocked falsity as fallback and prioritizing an actual hard conflict after continuing the original UP queue. Restricted research adaptation from IJCAI2026 Weight-Aware Branch-and-Bound §3.3 Algorithm3; excludes WA-Select, weighted ordering, stratified hardening, FLA and new bound/core formula. B remaining-weight-first active assumption ordering and C prior-unselected demand dirty-watch cleanup are UNSELECTED. Full exact scope, risks, cost, original gates and bibliographic metadata remain in the immutable initial issue body; references.bib retains the primary paper.
+
+Paper: https://www.ijcai.org/proceedings/2026/270 and official PDF https://www.ijcai.org/proceedings/2026/0270.pdf. No paper code copied or upstream code imported. DistQLDPC downstream MaxCDCL-derived engine/QDistSAT benchmark/upstream MaxCDCL remain distinct.
+
+Proof first: genuine multiple-unlocked-falsity reason graph and hard-versus-soft conflict validity, locked-core unlock state, analyzer flags/returns, actual qhead/trail and heap/scratch cleanup, current root offset/UB/hardening lifecycle must be proved against actual baseline callers. No production change until that source gate is complete; withdraw if broader learner/rollback/core work is needed. The existing GH46 baseline anomaly is retained and blocks silent full correctness certification.
+
+Host slot NONE. No compiler/build/model/solver/diagnostic/performance/upload authorized. Source-only preparation; no global STATE/HYPOTHESES or sibling edits. Kernel or source-call counts do not establish pruning opportunity or speed. Original scientific semantics/results/bounds/timeout preserved; true scientific anomaly STOP/REJECT, engineering gap retained INCON. Required genuine Tier0/hosted actual-source proof precedes any original fixed48 Tier1; no automatic exploratory Tier2 or Tier3/adoption.
