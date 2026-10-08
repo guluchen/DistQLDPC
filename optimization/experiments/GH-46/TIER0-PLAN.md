@@ -17,7 +17,8 @@ fix is permitted.
 Generate small unit-weight WCNF instances with exhaustive assignment oracles,
 including disjoint conflicting soft pairs, implication chains, larger hard clauses,
 and varying optimum/upper-bound transitions. Run the original Main in fresh
-processes for each case and each supported cardinality mode. Compare complete
+processes for each case, retaining its actual default BOTH mode (it has no mode
+CLI). Test the five modes through the actual application CSS CLI instead. Compare relevant
 observer output between the two builds. Each emitted optimum must equal the oracle;
 original Main may return 10/SAT or 20/UNSAT according to its final failed-bound
 proof. Validate the actual return/status relationship, not a fabricated SAT-only
@@ -56,9 +57,16 @@ substantive calls, populated calls, baseline reallocations, predicted reallocati
 peak logical size/capacity, and peak retained bytes. Compare predicted versus actual
 candidate growth on the bounded correctness fixtures. Emit counters separately
 from scientific output and never link this support into production/timed binaries.
+To avoid flooding traces, report only the first and every 512th cumulative call as
+`complete:false`, and one final `complete:true` record while the Solver is live.
+The application already destroys its local Solver before `_exit`; original
+NDEBUG standalone Main uses `exit` without destruction, so its **test snapshot only**
+adds an explicit report immediately before that unchanged exit/status expression.
+A killed diagnostic's prefix is incomplete and cannot support a complete-count
+conclusion. Consumers take the last record per Solver, never sum cumulative rows.
 
 After Tier 0 passes, perform four baseline-only diagnostics: LP_34_20_2 and
-LP_136_32_4, each OFF/MTO, with internal 120-second and external bounded watchdogs.
+LP_136_32_4, each OFF/MTO, with internal 110-second and external 120-second watchdogs.
 Validate every scientific result/bound against ground truth. Instrumented wall time
 is not performance evidence; allocation counts are not a time-share estimate.
 If opportunity is negligible, preserve measured counts and shelve without claiming
@@ -81,3 +89,22 @@ all four restoration booleans and independently confirmed process absence are
 required. Run only after a fresh named assignment. Retain all raw streams and exact
 hashes. Hosted CI/cross-repository source/artifact checks are correctness evidence
 only. No Tier 1 is authorized by this source-only plan.
+
+Implementation of support adds no production flag or source concept. Fixed
+GCC14's original GNU++17 default is used by the C++17 inline observer globals;
+there is no language-mode override in production or test builds. A separate
+4097-sequence test compares the capacity prediction against actual original Vec
+push/clear behavior, including the 5->7 inter-growth boundary. This validates the
+diagnostic math, not Solver correctness. `populated_calls` in the raw counters
+means a call with a nonempty logical vector (including its reserved slot); actual
+meaningful explanation coverage is checked independently from populated reset
+slots, across at least two distinct calls on the same Solver and a UB transition.
+
+The driver is disabled until its assignment placeholder is replaced and committed.
+It retains source preparation failures, has a 3600-second aggregate limit and a
+64-MiB per-stream stop without trimming raw bytes. Original-runtime inventory
+9cc9c3db6dc0d72dbd90597058e165ee933affa6c9288a5abf7d804faed33db4
+is retained unmodified from GH38's published original-runtime snapshot; all 10,216
+original files are checked before and after through the assigned Job, including
+compiler internals, GNU headers, libraries and DLLs. This experiment uses the
+original E004 runtime directly, with no Clang overlay or package installation.
