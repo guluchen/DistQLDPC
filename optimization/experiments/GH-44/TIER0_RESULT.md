@@ -1,7 +1,8 @@
 # GH44 Tier0: local and hosted correctness PASS; performance untested
 
-Decision: INCONCLUSIVE pending a preregistered lightweight performance filter.
-No performance adoption, Tier1, Tier2 or Tier3 was executed by this assignment.
+Tier0 decision: PASS. This assignment executed no performance work. The later
+preregistered Tier1 is recorded in TIER1_RESULT.md: local REJECT / NOT ADOPTED,
+formal controlled performance INCONCLUSIVE; no Tier2/3.
 
 The sole conceptual change is GCC `-march=x86-64-v3`, with original generic
 tuning, optimization/FP policy, linking/runtime and every solver source byte
@@ -66,6 +67,6 @@ identity. No failed local attempt occurred.
 
 Learning: fixed v3 is compatible and scientifically consistent on these two
 validated hosts. This proves neither material vectorization nor performance
-benefit. Next action: preregister the standard four-case/two-mode/48-solve
-AB/BA/AB Tier1 with these immutable production binaries and fresh serial host
-assignment. Unsupported CPUs must remain gated; do not deploy this ISA globally.
+benefit. The subsequently executed standard48 filter found serious regressions,
+as recorded separately. Unsupported CPUs must remain gated; do not deploy this
+ISA globally.

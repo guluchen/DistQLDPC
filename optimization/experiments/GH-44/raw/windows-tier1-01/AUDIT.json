@@ -1,0 +1,238 @@
+{
+  "status": "48_SCIENCE_AND_MEDIAN_AUDIT_PASS",
+  "formal_decision": "INCONCLUSIVE",
+  "local_numeric_filter": "reject",
+  "local_numeric_reason": "confirmed per-case regression",
+  "support": "fcc6bba217ef312f5b2c507e11b34f3266410dcf",
+  "candidate": "4a820ac5c1910d64930ed26a719af2f046a6a693",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "binary_hashes": {
+    "baseline": "5d21d6c0c8daf117470e0dd353086f5a27bf5751f2a8ddb35136f2ac779325a8",
+    "candidate": "42ebb16923087a68472cb5b821f470fd5f08be565033a82acf2d67765b78168e"
+  },
+  "driver_sha256": "a68ebbd4e1f47b9de0d9bbcb58130162cb117972493fdc0eab397e37ceb51154",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068824846",
+  "cleanup_all_true": true,
+  "only_runner_before_release": 18132,
+  "all_raw_manifest_files_verified": 159,
+  "raw_science_checks": 48,
+  "median_geomeans": {
+    "no-card": 1.0607621665465403,
+    "card-mto": 0.9322323542196294
+  },
+  "groups": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.478827100014314,
+          2.5060738000029232,
+          2.468424499995308
+        ],
+        "candidate": [
+          2.8265323000086937,
+          2.829409600002691,
+          2.8060985000047367
+        ]
+      },
+      "baseline_median": 2.478827100014314,
+      "candidate_median": 2.8265323000086937,
+      "ratio": 1.1402700494892815,
+      "percent_change": 14.027004948928145,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.9782034999807365,
+          3.0319615000043996,
+          2.96813339999062
+        ],
+        "candidate": [
+          2.5167839999776334,
+          2.5188529000151902,
+          2.5182509000005666
+        ]
+      },
+      "baseline_median": 2.9782034999807365,
+      "candidate_median": 2.5182509000005666,
+      "ratio": 0.8455603856542561,
+      "percent_change": -15.443961434574394,
+      "nonoverlapping_regression": false,
+      "overlap": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.0390706000034697,
+          1.0354968999745324,
+          1.0851134000113234
+        ],
+        "candidate": [
+          1.037406200019177,
+          1.0852629999862984,
+          1.087933900009375
+        ]
+      },
+      "baseline_median": 1.0390706000034697,
+      "candidate_median": 1.0852629999862984,
+      "ratio": 1.0444554970400224,
+      "percent_change": 4.4455497040022385,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.3379100000020117,
+          1.342413199978182,
+          1.3579811999807134
+        ],
+        "candidate": [
+          1.746294399985345,
+          1.7418149999866728,
+          1.7930303000030108
+        ]
+      },
+      "baseline_median": 1.342413199978182,
+      "candidate_median": 1.746294399985345,
+      "ratio": 1.3008620594715004,
+      "percent_change": 30.086205947150034,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.0517977999988943,
+          3.0225047999992967,
+          3.0263906000182033
+        ],
+        "candidate": [
+          3.485769499995513,
+          3.502338399994187,
+          3.4843627999944147
+        ]
+      },
+      "baseline_median": 3.0263906000182033,
+      "candidate_median": 3.485769499995513,
+      "ratio": 1.1517910146742283,
+      "percent_change": 15.179101467422829,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.8700065000157338,
+          3.856793099985225,
+          3.8596294000162743
+        ],
+        "candidate": [
+          3.5495038999943063,
+          3.5348204000038095,
+          3.5502000999986194
+        ]
+      },
+      "baseline_median": 3.8596294000162743,
+      "candidate_median": 3.5495038999943063,
+      "ratio": 0.9196488916732108,
+      "percent_change": -8.035110832678916,
+      "nonoverlapping_regression": false,
+      "overlap": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.1010041999979876,
+          2.072287299990421,
+          2.119109399995068
+        ],
+        "candidate": [
+          1.9878119999775663,
+          1.9387747999862768,
+          1.9392225999908987
+        ]
+      },
+      "baseline_median": 2.1010041999979876,
+      "candidate_median": 1.9392225999908987,
+      "ratio": 0.9229979644937198,
+      "percent_change": -7.700203550628015,
+      "nonoverlapping_regression": false,
+      "overlap": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.5062700000125915,
+          2.474177800002508,
+          2.5107313999906182
+        ],
+        "candidate": [
+          1.8712276000005659,
+          1.870175099989865,
+          1.9153303000202868
+        ]
+      },
+      "baseline_median": 2.5062700000125915,
+      "candidate_median": 1.8712276000005659,
+      "ratio": 0.7466185207464339,
+      "percent_change": -25.338147925356612,
+      "nonoverlapping_regression": false,
+      "overlap": false
+    }
+  ],
+  "resource_samples": 80,
+  "capacity_all_eligible": true,
+  "contention_flags": 1,
+  "minimum_global_idle": 88.26335877862596,
+  "minimum_sibling_idle": 95.5223880597015,
+  "flags": [
+    {
+      "label": "LP_238_44_6-no-card-3-candidate-preflight",
+      "time": 1791492976.8396313,
+      "idle_percent": 88.48484848484848,
+      "half_spare_logical_cpus": 7.078787878787879,
+      "selected_cpu_idle": 92.5925925925926,
+      "sibling_idle": 95.5223880597015,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        93.28358208955224,
+        97.01492537313433,
+        80.74074074074075,
+        94.02985074626865,
+        87.31343283582089,
+        89.55223880597015,
+        90.29850746268657,
+        97.01492537313433,
+        81.34328358208955,
+        70.8955223880597,
+        67.91044776119404,
+        89.47368421052632,
+        92.53731343283582,
+        96.26865671641791,
+        92.5925925925926,
+        95.5223880597015
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    }
+  ],
+  "performance_limit": "Nonexclusive Windows diagnostic; group medians and ranges retained without posthoc selection. No automatic higher tier or controlled acceptance."
+}
