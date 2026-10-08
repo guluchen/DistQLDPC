@@ -53,8 +53,11 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
   - Best-solution tracking and printing on timeout / interrupt
   - Configurable cardinality encoding modes (Sinz / MTO / off)
+  - Experimental H-009 fixed-order singleton BDD replacement at the MTO bound
+    construction call site; original semantics/guards/dynamic lifecycle retained
 
 Modified files (partial list): Solver.h, Solver.cc
+New experimental helper: UnitBoundBDD.h (newly authored, MIT terms).
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and

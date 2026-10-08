@@ -165,10 +165,10 @@ static void pipe_write_result(int pipe_w, int distance, bool optimal) {
 static const char* cardinality_mode_label(int mode) {
     switch (mode) {
         case 0: return "off (soft-conflict only)";
-        case 1: return "Sinz+MTO (default, Sinz if n<=100)";
+        case 1: return "Sinz+BDD (experimental default, Sinz if n<=100)";
         case 2: return "Sinz only";
-        case 3: return "MTO only";
-        case 4: return "Sinz+MTO forced";
+        case 3: return "BDD only (experimental MTO replacement)";
+        case 4: return "Sinz+BDD forced";
         default: return "unknown";
     }
 }

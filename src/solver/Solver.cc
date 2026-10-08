@@ -106,6 +106,7 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #include "mtl/Sort.h"
 #include "Solver.h"
 #include "utils/System.h"
+#include "UnitBoundBDD.h"
 
 using namespace Minisat;
 
@@ -6244,12 +6245,12 @@ void Solver::addCardinalityConstraints() {
   if (useSinz)
     addCardinalityConstraints(activeSoftLits, k);
   if (useMto)
-    addCardinalityConstraintsMTO(activeSoftLits, k);
+    addCardinalityConstraintsBDD(activeSoftLits, k);
   const char* enc = "unknown";
-  if (cardinalityEncMode == CARD_ENC_BOTH) enc = "Sinz+MTO";
-  else if (cardinalityEncMode == CARD_ENC_BOTH_FORCE) enc = "Sinz+MTO forced";
+  if (cardinalityEncMode == CARD_ENC_BOTH) enc = "Sinz+BDD";
+  else if (cardinalityEncMode == CARD_ENC_BOTH_FORCE) enc = "Sinz+BDD forced";
   else if (cardinalityEncMode == CARD_ENC_SINZ) enc = "Sinz";
-  else if (cardinalityEncMode == CARD_ENC_MTO) enc = "MTO";
+  else if (cardinalityEncMode == CARD_ENC_MTO) enc = "BDD (experimental MTO replacement)";
   printf("\nc Cardinality: %d (%s) for UB %llu\n", cardinalityC.size(), enc, UB);
 
   rebuildOrderHeap();
@@ -6270,6 +6271,42 @@ void Solver::addCardinalityConstraints() {
   //   }
   //   printf("0\n");
   // }
+}
+
+// Experimental replacement only; original literal order, k, guards and lifecycle.
+void Solver::addCardinalityConstraintsBDD(vec<Lit>& activeSoftLits, int k) {
+    assert(decisionLevel()==0 && activeSoftLits.size()>k && k>=0);
+    double start=cpuTime();
+    DistQLDPCBDD::Graph graph(activeSoftLits.size(), k);
+    assert(graph.root>=2);
+    vec<Lit> nodeLits;
+    nodeLits.growTo(graph.nodes.size(),lit_Undef);
+    for (size_t i=2; i<graph.nodes.size(); ++i)
+        nodeLits[i]=mkLit(newAuxiVarForCardinality());
+    int before=cardinalityC.size();
+    for (size_t i=2; i<graph.nodes.size(); ++i) {
+        const DistQLDPCBDD::Node& node=graph.nodes[i];
+        assert(node.low!=0); // nonnegative remaining budget always has a feasible low edge
+        vec<Lit> ps;
+        if (node.low!=1) {
+            ps.push(~nodeLits[i]); ps.push(nodeLits[node.low]);
+            CRef cr=ca.alloc(ps,true); cardinalityC.push(cr);
+            attachClause(cr); ca[cr].mark(CORE);
+        }
+        if (node.high!=1) {
+            ps.clear(); ps.push(~nodeLits[i]); ps.push(~activeSoftLits[node.input]);
+            if (node.high!=0) ps.push(nodeLits[node.high]);
+            CRef cr=ca.alloc(ps,true); cardinalityC.push(cr);
+            attachClause(cr); ca[cr].mark(CORE);
+        }
+    }
+    // As for existing MTO root units, relaxation uses cancelUntilBeginning
+    // before cardinality clause removal/dynamic-variable recycling.
+    uncheckedEnqueue(nodeLits[graph.root]);
+    if (verbosity>=1)
+        printf("c BDD: inputs %d k %d nodes %zu auxiliaries %zu clauses %d cpu-seconds %.6f\n",
+               activeSoftLits.size(),k,graph.nodes.size()-2,graph.nodes.size()-2,
+               cardinalityC.size()-before,cpuTime()-start);
 }
 
 void Solver::addCardinalityConstraintsMTO(vec<Lit>& activeSoftLits, int k) {

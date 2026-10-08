@@ -25,3 +25,10 @@ jobs:
 
       - name: Run smoke validation
         run: bash scripts/smoke_test.sh
+
+      - name: Verify BDD projection and dynamic lifetime
+        run: |
+          g++ -Isrc/solver -O2 -std=gnu++11 tests/bdd_bound_probe.cc \
+            build/SimpSolver.o build/Solver.o build/Options.o build/System.o \
+            -lz -o build/bdd_bound_probe
+          ./build/bdd_bound_probe

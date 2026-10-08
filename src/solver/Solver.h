@@ -686,6 +686,7 @@ public:
     int nbFlyReduced;
 
     void addCardinalityConstraintsMTO(vec<Lit>& activeSoftLits, int k);
+    void addCardinalityConstraintsBDD(vec<Lit>& activeSoftLits, int k);
     void nLevelsMTO(vec<Lit> & x, int lIndex, int m, vec<Lit> & result);
 
     inline bool bitIsSet(int x, int pos){

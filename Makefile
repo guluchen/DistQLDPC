@@ -34,7 +34,7 @@ dirs:
 $(BUILD)/SimpSolver.o: $(SOLVER)/SimpSolver.cc | dirs
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(BUILD)/Solver.o: $(SOLVER)/Solver.cc | dirs
+$(BUILD)/Solver.o: $(SOLVER)/Solver.cc $(SOLVER)/Solver.h $(SOLVER)/UnitBoundBDD.h | dirs
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(BUILD)/Options.o: $(SOLVER)/utils/Options.cc | dirs

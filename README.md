@@ -4,6 +4,14 @@ Compute the **minimum distance** `d` of a **CSS / QLDPC** code from parity-check
 
 **Repository:** https://github.com/guluchen/DistQLDPC
 
+Experimental H-009 branch: the existing MTO construction call site now builds
+a fixed-order singleton BDD for the same active sum<=k. Thus `-card-mto` selects
+BDD on this branch; existing default/BOTH combinations retain their Sinz part
+and replace their MTO part. OFF/Sinz-only unchanged. Diagnostics identify the
+actual encoding. This is an unaccepted representation experiment in downstream
+MaxCDCL code; distance, Pauli weight, bounds and parent wall-timeout semantics
+are retained. No LTO, SLS, AMO grouping, variable reordering or tree reuse.
+
 ---
 
 ## Quick start

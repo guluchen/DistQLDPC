@@ -59,7 +59,20 @@ in each file are unchanged.
   - `BOTH` — Sinz if active soft lits ≤ 100, always MTO
   - `BOTH_FORCE` — Sinz + MTO regardless of problem size
 
-#### Solve loop hooks
+#### Experimental H-009 singleton BDD bound replacement
+
+- On this experiment branch, the existing MTO call site builds a fixed-order,
+  unit-coefficient reduced BDD for the same active sum<=k.
+- `UnitBoundBDD.h` is newly authored under MIT terms; no upstream replacement,
+  AMO grouping, tree reuse, literal reordering or proof logging.
+- `addCardinalityConstraintsBDD` uses existing dynamic auxiliary allocation,
+  cardinalityC/CORE clauses, watchers and root-unit/reset/removal lifecycle.
+- Mode numbers/CLI selectors, size/invocation guards, k and scientific semantics
+  remain; candidate diagnostics label MTO replacement as BDD accurately.
+- OFF and Sinz-only paths are unchanged. This unaccepted experiment changes
+  downstream solver code, not quantum distance/weight/logical definitions.
+
+#### Solve loop hooks (unchanged)
 
 - Call `emitTryUpdate(UB)` when testing a new upper-bound candidate
 - Call `emitBoundsUpdate()` after LB/UB updates
