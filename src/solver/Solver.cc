@@ -3983,6 +3983,22 @@ CRef Solver::propagateForLK() {
 	assert(c.lastPoint() >=2);
 	if (c.lastPoint() > c.size())
 	  c.setLastPoint(2);
+	if (c.size() == 3) {
+	  // A ternary clause has exactly one candidate after the watched pair.
+	  lbool tail = value(c[2]);
+	  if (tail == l_Undef) {
+	    c[1] = c[2]; c[2] = false_lit;
+	    watches[~c[1]].push(*i++);
+	    c.setLastPoint(3);
+	    goto NextClause;
+	  }
+	  else if (tail == l_True) {
+	    i->blocker = c[2]; *j++ = *i++;
+	    c.setLastPoint(2);
+	    goto NextClause;
+	  }
+	}
+	else {
 	for (int k = c.lastPoint(); k < c.size(); k++) {
 	  if (value(c[k]) == l_Undef) {
 	    // watcher i is abandonned using i++, because cr watches now ~c[k] instead of p
@@ -4016,6 +4032,7 @@ CRef Solver::propagateForLK() {
 	    c.setLastPoint(k);
 	    goto NextClause;
 	  }
+	}
 	}
 	// Did not find watch -- clause is unit under assignment:
 	//	i->blocker = first;

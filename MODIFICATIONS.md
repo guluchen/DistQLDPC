@@ -33,6 +33,16 @@ in each file are unchanged.
 
 ### `Solver.h` / `Solver.cc`
 
+#### GH-40 isolated direct ternary lookahead tail experiment
+
+- Unadopted candidate in `Solver.cc::propagateForLK`: after the unchanged
+  blocker/first-literal guards and `lastPoint` normalization, a size-3 clause
+  evaluates its sole remaining literal directly. Watch moves, blocker updates,
+  circular-scan cursor and common unit/conflict handling retain original behavior.
+- Other clause sizes retain the original two circular scans. No assignment,
+  encoding, search-order, bounds, timeout or compiler-policy change is combined.
+- Baseline 24572d6; separate GH-40 record. Validation/performance pending.
+
 #### Bounds pipe (search progress → parent process)
 
 - `setBoundsPipe(int write_fd)` — attach write end of pipe
