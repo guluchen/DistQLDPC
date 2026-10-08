@@ -144,6 +144,9 @@ def main():
         assert not any(os.environ.get(v) for v in ['CXX','CXXFLAGS','LDFLAGS','MAKEFLAGS','CPATH','CPLUS_INCLUDE_PATH','LIBRARY_PATH','GCC_EXEC_PREFIX'])
         window=m.Window(True,0x8000);save(out/'window.json',window.selection)
         task('overlay-reuse-before','verify-closure',['--overlay',overlay,'--manifest',manifest,'--closure',HERE/'PACKAGE-CLOSURE.json','--cache',previous/'archives']);snapshotted=True
+        for logical,relative in [('/usr/lib/gcc/x86_64-pc-cygwin/14','lib/gcc/x86_64-pc-cygwin/14'),('/usr/include','usr/include')]:
+            result=run('mount-'+relative.replace('/','-'),[overlay/'bin/cygpath.exe','-w',logical])
+            assert Path(result[0].strip()).resolve()==(overlay/relative).resolve(),'Logical Cygwin mount does not resolve into verified overlay'
         empty=out/'empty.cc';empty.write_text('\n',encoding='ascii')
         probe=out/'linkage.cc';probe.write_text('#include <cstdio>\n#include <vector>\n#include <string>\n#include <zlib.h>\n#include <unistd.h>\nint main(int argc,char**){std::vector<int> v(argc+4,argc+7);std::string s(v.size(),char(v[1]));printf("%ld %zu %zu %zu %zu %zu %d %d %s\\n",(long)__cplusplus,sizeof(void*),sizeof(int),sizeof(bool),sizeof(v),sizeof(s),_GLIBCXX_USE_CXX11_ABI,(int)s[1],zlibVersion());fflush(stdout);sleep(5);return 0;}\n',encoding='ascii')
         results={};flags=['-Wall','-Wno-parentheses','-O3','-g','-D__STDC_LIMIT_MACROS','-D__STDC_FORMAT_MACROS','-DNDEBUG']

@@ -39,5 +39,12 @@ binary hashes checked after all tests; cleanup failures cannot overwrite an
 already established scientific REJECT. Hosted actual correction source ordinary
 CI/cross-repo separately required; shared CI timing never performance evidence.
 
-Source modules prepared only; disabled scientific wrapper implementation will
-follow actual compatibility gate. No automatic Tier1/2/3 permission.
+windows_tier0.py now contains the full meaningful guarded build/test implementation
+but is disabled by both HOST_SLOT_NOT_ASSIGNED and PROBE02_NOT_AUDITED. Exact
+independent corrected-probe audit hash+COMPATIBILITY_PASS and new Tier0 assignment
+must be committed before execution. Full overlay reuse verification runs inside
+the Job before/after tests, with all imported support/raw original-runtime
+manifest pinned to assigned Git bytes before imports. Main/engine/app object
+hashes, raw build commands, all scientific fields and final identities retained.
+Actual scientific REJECT remains preserved if later cleanup fails. Only AST
+parsing performed; no automatic Tier1/2/3 permission.
