@@ -10,12 +10,17 @@
 
 using namespace Minisat;
 
+class FixtureSolver : public Solver {
+public:
+    const vec<char>& seenFlags() const { return seen; }
+};
+
 static void require(bool condition, const char* message) {
     if (!condition) { std::fprintf(stderr, "FAIL: %s\n", message); std::exit(2); }
 }
 
 struct Fixture {
-    Solver solver;
+    FixtureSolver solver;
     int count;
     vec<int> scratch;
     Fixture() : count(0) {
@@ -37,7 +42,11 @@ struct Fixture {
     }
     void emit(unsigned fixture, unsigned step) const {
         std::printf("%u:%u n=%d owners=", fixture, step, count);
-        for (int v=0; v<8; ++v) std::printf("%d,", solver.inConflicts[v]);
+        for (int v=0; v<solver.inConflicts.size(); ++v) std::printf("%d,", solver.inConflicts[v]);
+        std::printf(" seen=");
+        for (int v=0;v<solver.seenFlags().size();++v) std::printf("%d,",int(solver.seenFlags()[v]));
+        std::printf(" unlocked=");
+        for (int v=0;v<solver.unLockedVars.size();++v) std::printf("%d,",solver.unLockedVars[v]);
         for (int k=0; k<count; ++k) {
             std::printf(" core%d rep%d lock%d ids=",k,solver.finalIset[k],solver.isetLock[k]);
             // vec2 has no const operator[]; only inspect this test fixture here.

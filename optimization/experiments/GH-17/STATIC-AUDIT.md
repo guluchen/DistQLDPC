@@ -71,7 +71,8 @@ allocation frequency with whole-solve dominance. No diagnostic run yet.
 
 - Compare original fresh-vector and caller-reused production setConflict paths
   on nonempty overlap, disjoint/empty, repeated merges with varying cardinality,
-  reset nbIsets to0 and repeated caller lifetimes; compare all touched core state.
+  reset nbIsets to0 and repeated caller lifetimes; compare active core ownership,
+  membership, representative/weight fields, seen flags and unlocked-variable list.
 - Validate early return/exception destruction and separate Solver instances;
   ensure stale entries are cleared before each merge.
 - Existing brute-force MaxSAT/CSS fixtures, smoke OFF/MTO, exact initial WCNF,

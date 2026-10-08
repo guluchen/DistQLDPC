@@ -16,10 +16,12 @@ MaxCDCL attribution; MODIFICATIONS/NOTICE describe this isolated patch.
 ## Prepared checks, not executed
 
 - test_core_scratch.cc invokes the original/candidate PRODUCTION method on
- 4096 length-three core sequences, emits complete state traces for bytewise
+ 4096 length-three core sequences, emits active core ownership/membership,
+ representatives, weights, seen flags and unlocked-variable snapshots for bytewise
  comparison, and separately asserts overlapping-component weight, deduplication,
  empty/disjoint calls, unlock increment and restart reset invariants.
- It uses existing downstream public methods/fields without production test hooks.
+ It uses existing downstream public methods/fields and a test-only subclass
+ accessor for protected seen flags, without production test hooks.
 - run_tier0.py compares those traces, independently enumerates Pauli-distance
  oracles on three tiny CSS fixtures, checks exact exported initial CNF, both
  modes smoke/known bounds, help and forced wall-timeout behavior. Raw stdout,

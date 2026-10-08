@@ -60,7 +60,7 @@ def main():
                     result=execute([binary,"-v","-cpu-lim=5","-"+mode,out/stem],label,binary.parent.parent)
                     assert result[0]==0 and semantic(result[1])==(exact,exact,exact,exact),result
                     wcnf=out/(label+".wcnf")
-                    result=execute([binary,"-dump-only","-dump-wcnf="+str(wcnf),out/stem],label+"-dump",binary.parent.parent)
+                    result=execute([binary,"-"+mode,"-dump-only","-dump-wcnf="+str(wcnf),out/stem],label+"-dump",binary.parent.parent)
                     assert result[0]==0,result
                     dumps.append(wcnf.read_bytes())
                 assert dumps[0]==dumps[1],"Initial CNF changed"
