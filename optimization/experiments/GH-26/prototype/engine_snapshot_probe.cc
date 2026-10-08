@@ -87,7 +87,7 @@ public:
             }
         }
         for (int i=0;i<clauses.size();++i) {
-            const Clause& c=ca[clauses[i]];
+            Clause& c=ca[clauses[i]]; // lastPoint() getter lacks const in baseline; read only
             s<<" C"<<clauses[i]<<','<<c.mark()<<','<<c.lastPoint();
             for (int j=0;j<c.size();++j) s<<','<<toInt(c[j]);
         }
