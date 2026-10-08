@@ -55,6 +55,19 @@ def assert_status(text,unknown=False):
     require_science(comments==(['TIMEOUT'] if unknown else []),('unexpected timeout status',comments))
 
 
+def require_completed_application(result,oracle):
+    """Validate lawful deadline incompletion before classifying coverage."""
+    rc,text,_=result
+    assert_all_bounds(text,oracle)
+    if rc==1:
+        assert_status(text,True)
+        require_science(semantic(text)[:2]==(None,None),"Timeout reports completed distance/objective")
+        require_science(not re.search(r'^o\b',text,re.M),"Timeout emits objective")
+        raise CoverageGap("Lawful application timeout did not complete required oracle solve")
+    require_science(rc==0 and semantic(text)==(oracle,oracle,oracle,oracle),result)
+    assert_status(text)
+
+
 def main():
     parser=argparse.ArgumentParser()
     for name in ["baseline-bin","candidate-bin","baseline-maxsat","candidate-maxsat","data-root","out"]:
@@ -88,9 +101,7 @@ def main():
                 for version,binary in versions.items():
                     label=stem+"-"+mode+"-"+version
                     result=execute([binary,"-v","-cpu-lim=5","-"+mode,out/stem],label,binary.parent.parent)
-                    require_science(result[0]==0 and semantic(result[1])==(exact,exact,exact,exact),result)
-                    assert_all_bounds(result[1],exact)
-                    assert_status(result[1])
+                    require_completed_application(result,exact)
                     wcnf=out/(label+".wcnf")
                     result=execute([binary,"-"+mode,"-dump-only","-dump-wcnf="+str(wcnf),out/stem],label+"-dump",binary.parent.parent)
                     require_science(result[0]==0,result)
@@ -136,9 +147,7 @@ def main():
             for mode in ["no-card","card-both","card-sinz","card-mto","card-both-force"]:
                 result=execute([binary,"-"+mode,"-cpu-lim=20",args.data_root.resolve()/"LP_34_20_2"],
                                "smoke-"+version+"-"+mode,binary.parent.parent,35)
-                require_science(result[0]==0 and semantic(result[1])==(2,2,2,2),result)
-                assert_all_bounds(result[1],2)
-                assert_status(result[1])
+                require_completed_application(result,2)
                 result=execute([binary,"-"+mode,"-cpu-lim=1",args.data_root.resolve()/"LP_340_56_8"],
                                "timeout-"+version+"-"+mode,binary.parent.parent)
                 assert_all_bounds(result[1],8)

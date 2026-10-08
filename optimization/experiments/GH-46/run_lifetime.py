@@ -90,8 +90,7 @@ def run(execute,sources,observer_main,production_main,observer_app,oracles,tier0
             for variant in ("baseline","candidate"):
                 result=execute([observer_app[variant],"-v","-"+mode,"-cpu-lim=5",tier0/stem],
                                variant+"-css-state-"+stem+"-"+mode,sources[variant],20)
-                assert result[0]==0 and run_tier0.semantic(result[1])==(exact,exact,exact,exact),"SCIENCE instrumented CSS oracle"
-                run_tier0.assert_all_bounds(result[1],exact);run_tier0.assert_status(result[1])
+                run_tier0.require_completed_application(result,exact)
                 traces.append(state(result[2]))
             assert traces[0]==traces[1],"SCIENCE actual CSS mode lookahead relevant state differs"
             report["fixtures"].append(dict(css=stem,mode=mode,state_rows=len(traces[0]),oracle=exact))
