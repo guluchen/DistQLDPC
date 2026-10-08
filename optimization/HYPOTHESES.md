@@ -1,5 +1,14 @@
 # Hypothesis registry (not an execution queue)
 
+Latest: [E006 / H-009 BDD bound INCONCLUSIVE](experiments/E006/README.md).
+One existing MTO constructor replacement, candidatec91b19b/draftPR14 unmerged;
+local and hosted Tier0 PASS. Strict partial Tier1:31 correct/32 attempts,
+BB90/GB144 affected-mode repeated medians4.88%/39.37% lower, OFF controls overlap.
+BB108 candidate intentionally stopped on sibling-window loss, LP238 unstarted.
+Independent partial audit/cleanup PASS; no full filter or Tier2/3/acceptance.
+Prioritize a complete unchanged-H009 Tier1 measurement before new tuning;
+older latest-state statements are historical, not a queue.
+
 Latest: [E005 / H-008 fixed SLS configuration REJECTED](experiments/E005/README.md).
 One original-CNF call, seed1/10000 flips; local/hosted Tier0 and independent audit
 PASS. Eight Tier1-case/mode calls yielded zero verified caps; mechanism rejected
@@ -119,7 +128,8 @@ supersedes H-003/H-005/H-006 ranking, without declaring them ineffective.
 - **H-009: singleton BDD objective-bound encoding.** #3; paper-informed alternative
   to MTO, same cardinality meaning/lifecycle, no AMO assumption or tree reuse.
 
-H-007/E004 and H-008/E005 have evidence; H-009 remains a proposal, not a queue;
+H-007/E004, H-008/E005 and H-009/E006 now have evidence; H-009's earlier
+proposal-only status is superseded by the partial INCONCLUSIVE experiment above;
 Tier 0/1/2 gates unchanged and no Tier 3 authorized by this revision.
 
 ## Historical untested candidate hypotheses

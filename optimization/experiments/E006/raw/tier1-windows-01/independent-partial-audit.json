@@ -1,0 +1,151 @@
+{
+  "audit": "PASS",
+  "decision": "INCONCLUSIVE",
+  "completed_correct": 31,
+  "attempted": 32,
+  "tier1_complete": false,
+  "partial_medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.725709599995753,
+          2.737963799998397,
+          2.7158364999922924
+        ],
+        "candidate": [
+          2.7310103999916464,
+          2.7045193999947514,
+          2.7126543000049423
+        ]
+      },
+      "baseline_median": 2.725709599995753,
+      "candidate_median": 2.7126543000049423,
+      "ratio": 0.9952103114760168,
+      "improvement_percent": 0.47896885239832043,
+      "range_envelope": 1.0055871920122574
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.27376959999674,
+          3.278678000002401,
+          3.2793392000021413
+        ],
+        "candidate": [
+          3.131261500006076,
+          3.117793800018262,
+          3.118633400008548
+        ]
+      },
+      "baseline_median": 3.278678000002401,
+      "candidate_median": 3.118633400008548,
+      "ratio": 0.951186240309742,
+      "improvement_percent": 4.881375969025803,
+      "range_envelope": 0.9564697222459375
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.1491808000137098,
+          1.142315699980827,
+          1.1329246000095736
+        ],
+        "candidate": [
+          1.136924899998121,
+          1.1431253000046127,
+          1.144245300005423
+        ]
+      },
+      "baseline_median": 1.142315699980827,
+      "candidate_median": 1.1431253000046127,
+      "ratio": 1.0007087357932656,
+      "improvement_percent": -0.07087357932655802,
+      "range_envelope": 1.0099924566875444
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.4355258000141475,
+          1.4442984000197612,
+          1.444687300012447
+        ],
+        "candidate": [
+          0.8721247999928892,
+          0.8756151999987196,
+          0.8803581999964081
+        ]
+      },
+      "baseline_median": 1.4442984000197612,
+      "candidate_median": 0.8756151999987196,
+      "ratio": 0.6062564356415123,
+      "improvement_percent": 39.37435643584877,
+      "range_envelope": 0.6132653275808292
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.3450395000108983,
+          3.338393400015775,
+          3.3456505999783985
+        ],
+        "candidate": [
+          3.3358872999961022,
+          3.33867990001454,
+          3.342221500002779
+        ]
+      },
+      "baseline_median": 3.3450395000108983,
+      "candidate_median": 3.33867990001454,
+      "ratio": 0.9980987967417612,
+      "improvement_percent": 0.19012032582388372,
+      "range_envelope": 1.0011466892988063
+    }
+  ],
+  "active_window_loss": [
+    {
+      "label": "BB_108_8_10-card-mto-1-candidate",
+      "time": 1791459354.9202766,
+      "idle_percent": 69.45205479452055,
+      "half_spare_logical_cpus": 5.556164383561644,
+      "selected_cpu_idle": 0.0,
+      "sibling_idle": 88.40579710144928,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        72.38805970149254,
+        81.48148148148148,
+        67.15328467153284,
+        78.10218978102189,
+        75.18248175182482,
+        77.37226277372262,
+        76.64233576642336,
+        79.41176470588235,
+        83.08823529411765,
+        78.67647058823529,
+        85.29411764705883,
+        16.78832116788321,
+        80.57553956834532,
+        71.94244604316546,
+        0.0,
+        88.40579710144928
+      ],
+      "core_contention_detected": true,
+      "eligible": false
+    }
+  ],
+  "min_observed_global_idle": 69.45205479452055,
+  "active_checks": 21,
+  "cleanup": "PASS",
+  "identities": "PASS",
+  "affinity_priority": "PASS",
+  "reason": "One candidate deliberately stopped on sibling idle below95%; incomplete four-case filter; no aggregate or promotion"
+}

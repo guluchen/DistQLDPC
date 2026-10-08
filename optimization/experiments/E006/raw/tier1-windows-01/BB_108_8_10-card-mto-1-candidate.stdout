@@ -1,0 +1,60 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: BDD only (experimental MTO replacement)
+c Hx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_108_8_10_Hx.txt
+c Hz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_108_8_10_Hz.txt
+c Gx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_108_8_10_Gx.txt
+c Gz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_108_8_10_Gz.txt
+c Hx: 54 x 108, Hz: 54 x 108, Gx: 8 x 108, Gz: 8 x 108, logicals: 16
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 685 vars, 2990 cls (c/v ratio==4.4, grow=0)
+c No iterative elimination performed. (vars=685, c/v ratio=4.4)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 108, of which 108 unit, 0 nonUnit and 0 empty
+c total nb of literals: 10556
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 124
+c 1 conflict sets found with length 60
+c fixedCost 0, nbSatLits 0, totalFixedVars 124, objForSearch: 108
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 108), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+c BDD: inputs 108 k 1 nodes 214 auxiliaries 214 clauses 426 cpu-seconds 0.000000
+
+c Cardinality: 426 (BDD (experimental MTO replacement)) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 22 conflicts with init 9978
+
+c UB=2 fails, cnfls=22, hcnfls=22, core 6, tier2 3, local 10, quasiC: 1 (fixed: 37)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 145), lk: 1, shorten: 0, pureSo 0, nbFlyRd 6, nbFixedLH 0
+c BDD: inputs 108 k 3 nodes 420 auxiliaries 420 clauses 836 cpu-seconds 0.000000
+
+c Cardinality: 836 (BDD (experimental MTO replacement)) for UB 4
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 541 conflicts with init 9481
+
+c UB=4 fails, cnfls=541, hcnfls=441, core 275, tier2 133, local 235, quasiC: 28 (fixed: 576)
+c prunedLB 3.14, dev 0.63, succRate 0.55, nbSucc 101, nbHardens 1 (fixed 684), lk: 182, shorten: 0, pureSo 0, nbFlyRd 11, nbFixedLH 7
+c BDD: inputs 108 k 7 nodes 808 auxiliaries 808 clauses 1608 cpu-seconds 0.000000
+
+c Cardinality: 1608 (BDD (experimental MTO replacement)) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 232, nbTested: 1001, counter 58166
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 237, nbTested: 1001, counter 131111
+c ends of initiationization by VSIDS at 5344 conflicts with init 5197
+
+c UB=8 fails, cnfls=5344, hcnfls=695, core 1295, tier2 159, local 1805, quasiC: 790 (fixed: 23181)
+c prunedLB 5.02, dev 1.03, succRate 0.72, nbSucc 4550, nbHardens 1 (fixed 23289), lk: 6349, shorten: 0, pureSo 0, nbFlyRd 35, nbFixedLH 73
+c BDD: inputs 108 k 15 nodes 1488 auxiliaries 1488 clauses 2960 cpu-seconds 0.000000
+
+c Cardinality: 2960 (BDD (experimental MTO replacement)) for UB 16
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 217, nbTested: 1001, counter 166525
+c UB=16 succs, confls=7008, hconfls=719, core 20, tier2 91, local 1653,  14 soft cls unsat (0 at L0), 217 fixed vars at L0, softCnfl 0, nbFlyRd 40, nbFixedLH 89
+c nbHardens 1 (fixed 31990), shorten: 0, prunedLB 8.47, dev 1.31, succRate 0.75, nbSucc 1640, lk: 2179, shorten: 0, quasiC: 1072 (fixed: 31882)
+
+c ends of initiationization by VSIDS at 7008 conflicts with init 8336
+

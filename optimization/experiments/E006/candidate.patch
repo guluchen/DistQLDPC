@@ -1,0 +1,387 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index cd09faf..e7b4470 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -25,3 +25,10 @@ jobs:
+ 
+       - name: Run smoke validation
+         run: bash scripts/smoke_test.sh
++
++      - name: Verify BDD projection and dynamic lifetime
++        run: |
++          g++ -Isrc/solver -O2 -std=gnu++11 tests/bdd_bound_probe.cc \
++            build/SimpSolver.o build/Solver.o build/Options.o build/System.o \
++            -lz -o build/bdd_bound_probe
++          ./build/bdd_bound_probe
+diff --git a/MODIFICATIONS.md b/MODIFICATIONS.md
+index d50e434..45180ef 100644
+--- a/MODIFICATIONS.md
++++ b/MODIFICATIONS.md
+@@ -59,7 +59,20 @@ in each file are unchanged.
+   - `BOTH` — Sinz if active soft lits ≤ 100, always MTO
+   - `BOTH_FORCE` — Sinz + MTO regardless of problem size
+ 
+-#### Solve loop hooks
++#### Experimental H-009 singleton BDD bound replacement
++
++- On this experiment branch, the existing MTO call site builds a fixed-order,
++  unit-coefficient reduced BDD for the same active sum<=k.
++- `UnitBoundBDD.h` is newly authored under MIT terms; no upstream replacement,
++  AMO grouping, tree reuse, literal reordering or proof logging.
++- `addCardinalityConstraintsBDD` uses existing dynamic auxiliary allocation,
++  cardinalityC/CORE clauses, watchers and root-unit/reset/removal lifecycle.
++- Mode numbers/CLI selectors, size/invocation guards, k and scientific semantics
++  remain; candidate diagnostics label MTO replacement as BDD accurately.
++- OFF and Sinz-only paths are unchanged. This unaccepted experiment changes
++  downstream solver code, not quantum distance/weight/logical definitions.
++
++#### Solve loop hooks (unchanged)
+ 
+ - Call `emitTryUpdate(UB)` when testing a new upper-bound candidate
+ - Call `emitBoundsUpdate()` after LB/UB updates
+diff --git a/Makefile b/Makefile
+index 3884e0f..f7d4f61 100644
+--- a/Makefile
++++ b/Makefile
+@@ -34,7 +34,7 @@ dirs:
+ $(BUILD)/SimpSolver.o: $(SOLVER)/SimpSolver.cc | dirs
+ 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+ 
+-$(BUILD)/Solver.o: $(SOLVER)/Solver.cc | dirs
++$(BUILD)/Solver.o: $(SOLVER)/Solver.cc $(SOLVER)/Solver.h $(SOLVER)/UnitBoundBDD.h | dirs
+ 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+ 
+ $(BUILD)/Options.o: $(SOLVER)/utils/Options.cc | dirs
+diff --git a/NOTICE b/NOTICE
+index d2d9fde..0e81ae1 100644
+--- a/NOTICE
++++ b/NOTICE
+@@ -53,8 +53,11 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
+   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
+   - Best-solution tracking and printing on timeout / interrupt
+   - Configurable cardinality encoding modes (Sinz / MTO / off)
++  - Experimental H-009 fixed-order singleton BDD replacement at the MTO bound
++    construction call site; original semantics/guards/dynamic lifecycle retained
+ 
+ Modified files (partial list): Solver.h, Solver.cc
++New experimental helper: UnitBoundBDD.h (newly authored, MIT terms).
+ 
+ The original MaxCDCL engine remains under MIT. All upstream copyright
+ and permission notices in src/solver/ must be preserved in copies and
+diff --git a/README.md b/README.md
+index 7894c4e..04fbb12 100644
+--- a/README.md
++++ b/README.md
+@@ -4,6 +4,14 @@ Compute the **minimum distance** `d` of a **CSS / QLDPC** code from parity-check
+ 
+ **Repository:** https://github.com/guluchen/DistQLDPC
+ 
++Experimental H-009 branch: the existing MTO construction call site now builds
++a fixed-order singleton BDD for the same active sum<=k. Thus `-card-mto` selects
++BDD on this branch; existing default/BOTH combinations retain their Sinz part
++and replace their MTO part. OFF/Sinz-only unchanged. Diagnostics identify the
++actual encoding. This is an unaccepted representation experiment in downstream
++MaxCDCL code; distance, Pauli weight, bounds and parent wall-timeout semantics
++are retained. No LTO, SLS, AMO grouping, variable reordering or tree reuse.
++
+ ---
+ 
+ ## Quick start
+diff --git a/src/core/distqldpc.cc b/src/core/distqldpc.cc
+index c7e7942..f33bac3 100644
+--- a/src/core/distqldpc.cc
++++ b/src/core/distqldpc.cc
+@@ -165,10 +165,10 @@ static void pipe_write_result(int pipe_w, int distance, bool optimal) {
+ static const char* cardinality_mode_label(int mode) {
+     switch (mode) {
+         case 0: return "off (soft-conflict only)";
+-        case 1: return "Sinz+MTO (default, Sinz if n<=100)";
++        case 1: return "Sinz+BDD (experimental default, Sinz if n<=100)";
+         case 2: return "Sinz only";
+-        case 3: return "MTO only";
+-        case 4: return "Sinz+MTO forced";
++        case 3: return "BDD only (experimental MTO replacement)";
++        case 4: return "Sinz+BDD forced";
+         default: return "unknown";
+     }
+ }
+diff --git a/src/solver/Solver.cc b/src/solver/Solver.cc
+index 30508f1..97bff34 100644
+--- a/src/solver/Solver.cc
++++ b/src/solver/Solver.cc
+@@ -105,7 +105,8 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
+ 
+ #include "mtl/Sort.h"
+ #include "Solver.h"
+-#include "utils/System.h"
++#include "utils/System.h"
++#include "UnitBoundBDD.h"
+ 
+ using namespace Minisat;
+ 
+@@ -6243,13 +6244,13 @@ void Solver::addCardinalityConstraints() {
+       || (cardinalityEncMode == CARD_ENC_BOTH_FORCE);
+   if (useSinz)
+     addCardinalityConstraints(activeSoftLits, k);
+-  if (useMto)
+-    addCardinalityConstraintsMTO(activeSoftLits, k);
++  if (useMto)
++    addCardinalityConstraintsBDD(activeSoftLits, k);
+   const char* enc = "unknown";
+-  if (cardinalityEncMode == CARD_ENC_BOTH) enc = "Sinz+MTO";
+-  else if (cardinalityEncMode == CARD_ENC_BOTH_FORCE) enc = "Sinz+MTO forced";
++  if (cardinalityEncMode == CARD_ENC_BOTH) enc = "Sinz+BDD";
++  else if (cardinalityEncMode == CARD_ENC_BOTH_FORCE) enc = "Sinz+BDD forced";
+   else if (cardinalityEncMode == CARD_ENC_SINZ) enc = "Sinz";
+-  else if (cardinalityEncMode == CARD_ENC_MTO) enc = "MTO";
++  else if (cardinalityEncMode == CARD_ENC_MTO) enc = "BDD (experimental MTO replacement)";
+   printf("\nc Cardinality: %d (%s) for UB %llu\n", cardinalityC.size(), enc, UB);
+ 
+   rebuildOrderHeap();
+@@ -6272,7 +6273,43 @@ void Solver::addCardinalityConstraints() {
+   // }
+ }
+ 
+-void Solver::addCardinalityConstraintsMTO(vec<Lit>& activeSoftLits, int k) {
++// Experimental replacement only; original literal order, k, guards and lifecycle.
++void Solver::addCardinalityConstraintsBDD(vec<Lit>& activeSoftLits, int k) {
++    assert(decisionLevel()==0 && activeSoftLits.size()>k && k>=0);
++    double start=cpuTime();
++    DistQLDPCBDD::Graph graph(activeSoftLits.size(), k);
++    assert(graph.root>=2);
++    vec<Lit> nodeLits;
++    nodeLits.growTo(graph.nodes.size(),lit_Undef);
++    for (size_t i=2; i<graph.nodes.size(); ++i)
++        nodeLits[i]=mkLit(newAuxiVarForCardinality());
++    int before=cardinalityC.size();
++    for (size_t i=2; i<graph.nodes.size(); ++i) {
++        const DistQLDPCBDD::Node& node=graph.nodes[i];
++        assert(node.low!=0); // nonnegative remaining budget always has a feasible low edge
++        vec<Lit> ps;
++        if (node.low!=1) {
++            ps.push(~nodeLits[i]); ps.push(nodeLits[node.low]);
++            CRef cr=ca.alloc(ps,true); cardinalityC.push(cr);
++            attachClause(cr); ca[cr].mark(CORE);
++        }
++        if (node.high!=1) {
++            ps.clear(); ps.push(~nodeLits[i]); ps.push(~activeSoftLits[node.input]);
++            if (node.high!=0) ps.push(nodeLits[node.high]);
++            CRef cr=ca.alloc(ps,true); cardinalityC.push(cr);
++            attachClause(cr); ca[cr].mark(CORE);
++        }
++    }
++    // As for existing MTO root units, relaxation uses cancelUntilBeginning
++    // before cardinality clause removal/dynamic-variable recycling.
++    uncheckedEnqueue(nodeLits[graph.root]);
++    if (verbosity>=1)
++        printf("c BDD: inputs %d k %d nodes %zu auxiliaries %zu clauses %d cpu-seconds %.6f\n",
++               activeSoftLits.size(),k,graph.nodes.size()-2,graph.nodes.size()-2,
++               cardinalityC.size()-before,cpuTime()-start);
++}
++
++void Solver::addCardinalityConstraintsMTO(vec<Lit>& activeSoftLits, int k) {
+ 
+     int k2 = k;
+     int m = activeSoftLits.size(); //Number of variables
+diff --git a/src/solver/Solver.h b/src/solver/Solver.h
+index c588192..aa551dc 100644
+--- a/src/solver/Solver.h
++++ b/src/solver/Solver.h
+@@ -686,6 +686,7 @@ public:
+     int nbFlyReduced;
+ 
+     void addCardinalityConstraintsMTO(vec<Lit>& activeSoftLits, int k);
++    void addCardinalityConstraintsBDD(vec<Lit>& activeSoftLits, int k);
+     void nLevelsMTO(vec<Lit> & x, int lIndex, int m, vec<Lit> & result);
+ 
+     inline bool bitIsSet(int x, int pos){
+diff --git a/src/solver/UnitBoundBDD.h b/src/solver/UnitBoundBDD.h
+new file mode 100644
+index 0000000..e5e4cba
+--- /dev/null
++++ b/src/solver/UnitBoundBDD.h
+@@ -0,0 +1,40 @@
++/* DistQLDPC experimental singleton unit-coefficient bound BDD.
++ * Copyright (c) 2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
++ * SPDX-License-Identifier: MIT
++ * Newly authored; existing engine attribution and MIT notices remain intact.
++ */
++#ifndef DISTQLDPC_UNIT_BOUND_BDD_H
++#define DISTQLDPC_UNIT_BOUND_BDD_H
++#include <algorithm>
++#include <vector>
++namespace DistQLDPCBDD {
++struct Node { int input, low, high; };
++struct Graph {
++    std::vector<Node> nodes;
++    int root;
++    Graph(int n, int k) : root(0) {
++        nodes.push_back(Node{-1,0,0}); // false terminal
++        nodes.push_back(Node{-1,1,1}); // true terminal
++        if (k < 0) return;
++        if (k >= n) { root = 1; return; }
++        std::vector<int> suffix(k+1,1), current(k+1,1);
++        for (int i=n-1; i>=0; --i) {
++            // Only budgets reachable after i prefix decisions are constructed.
++            for (int r=std::max(0,k-i); r<=k; ++r) {
++                if (r>=n-i) { current[r]=1; continue; }
++                int low=suffix[r], high=r ? suffix[r-1] : 0;
++                if (low==high) current[r]=low;
++                else {
++                    current[r]=int(nodes.size());
++                    nodes.push_back(Node{i,low,high});
++                }
++            }
++            current.swap(suffix);
++        }
++        root=suffix[k];
++        // At a fixed input, distinct nonterminal unit budgets represent distinct
++        // thresholds, so state memoization also makes the graph reduced/unique.
++    }
++};
++}
++#endif
+diff --git a/tests/bdd_bound_probe.cc b/tests/bdd_bound_probe.cc
+new file mode 100644
+index 0000000..a71f9fe
+--- /dev/null
++++ b/tests/bdd_bound_probe.cc
+@@ -0,0 +1,138 @@
++// DistQLDPC independent projection/lifetime checks for the actual BDD encoder.
++// SPDX-License-Identifier: GPL-3.0-or-later
++#include "Solver.h"
++#include "UnitBoundBDD.h"
++#include <assert.h>
++#include <cmath>
++#include <algorithm>
++#include <set>
++#include <tuple>
++#include <vector>
++using namespace Minisat;
++using CNF=std::vector<std::vector<int> >;
++class Probe : public Solver {
++public:
++    Probe(int n) {
++        hardWeight=1000;UB=1000;instanceType=1;phase_saving=0;
++        for(int i=0;i<n;++i) newVar();
++        staticNbVars=n;
++    }
++    CNF snapshot() const {
++        CNF clauses;
++        for(int i=0;i<cardinalityC.size();++i) {
++            const Clause& c=ca[cardinalityC[i]];
++            std::vector<int> row;
++            for(int j=0;j<c.size();++j) row.push_back((sign(c[j])?-1:1)*(var(c[j])+1));
++            clauses.push_back(row);
++        }
++        for(int i=0;i<trail.size();++i)
++            clauses.push_back({(sign(trail[i])?-1:1)*(var(trail[i])+1)});
++        return clauses;
++    }
++    void relax_and_remove() {
++        cancelUntilBeginning(0);
++        for(int i=0;i<cardinalityC.size();++i) removeClause(cardinalityC[i]);
++        cardinalityC.clear();collectDynVars();
++        watches.cleanAll();watches_bin.cleanAll();checkGarbage();
++    }
++    void tighten_remove() {
++        for(int i=0;i<cardinalityC.size();++i) removeClause(cardinalityC[i]);
++        cardinalityC.clear();collectDynVars();
++        watches.cleanAll();watches_bin.cleanAll();checkGarbage();
++    }
++    bool unit_propagate() {return propagate()==CRef_Undef;}
++};
++// Independent SAT extension checker: original/auxiliary variables are ordinary
++// Boolean variables; no use of the tested graph to evaluate CNF satisfaction.
++static bool sat(const CNF& cnf,std::vector<int> a) {
++    bool changed=true;
++    while(changed) {
++        changed=false;
++        for(const auto& c:cnf) {
++            bool satisfied=false;int unknown=0,last=0;
++            for(int lit:c) {
++                int v=abs(lit);
++                if(a[v]<0) {++unknown;last=lit;}
++                else satisfied|=a[v]==(lit>0);
++            }
++            if(satisfied)continue;
++            if(!unknown)return false;
++            if(unknown==1) {a[abs(last)]=last>0;changed=true;}
++        }
++    }
++    int variable=0;
++    for(const auto& c:cnf) {
++        bool satisfied=false;
++        for(int lit:c) if(a[abs(lit)]>=0 && a[abs(lit)]==(lit>0))satisfied=true;
++        if(!satisfied)for(int lit:c) if(a[abs(lit)]<0) {variable=abs(lit);break;}
++        if(variable)break;
++    }
++    if(!variable)return true;
++    a[variable]=0;if(sat(cnf,a))return true;
++    a[variable]=1;return sat(cnf,a);
++}
++static int count(int assignment,int n,int pattern) {
++    int total=0;
++    for(int i=0;i<n;++i)total+=bool(assignment&(1<<i)) != (pattern==2 || (pattern==1 && i%2));
++    return total;
++}
++static void project(Probe& s,int n,int k,int pattern) {
++    CNF cnf=s.snapshot();
++    for(int x=0;x<(1<<n);++x) {
++        std::vector<int> a(s.nVars()+1,-1);
++        for(int i=0;i<n;++i)a[i+1]=(x>>i)&1;
++        assert(sat(cnf,a)==(count(x,n,pattern)<=k));
++    }
++}
++static vec<Lit>* literals(int n,int pattern) {
++    vec<Lit>* xs=new vec<Lit>();
++    for(int i=0;i<n;++i)xs->push(mkLit(i,pattern==2 || (pattern==1 && i%2)));
++    return xs;
++}
++int main() {
++    unsigned checks=0;
++    for(int n=0;n<=8;++n)for(int k=-1;k<=n+1;++k) {
++        DistQLDPCBDD::Graph g(n,k);
++        std::set<std::tuple<int,int,int> > unique;
++        for(size_t i=2;i<g.nodes.size();++i) {
++            const auto& node=g.nodes[i];
++            assert(node.low!=node.high && node.low<int(i) && node.high<int(i));
++            assert(unique.insert(std::make_tuple(node.input,node.low,node.high)).second);
++        }
++        for(int x=0;x<(1<<n);++x) {
++            int id=g.root;
++            while(id>=2) {const auto& node=g.nodes[id];id=(x&(1<<node.input))?node.high:node.low;}
++            assert(bool(id)==(__builtin_popcount(unsigned(x))<=k));++checks;
++        }
++        if(k>=0 && k<n)for(int pattern=0;pattern<3;++pattern) {
++            Probe s(n);auto xs=literals(n,pattern);s.addCardinalityConstraintsBDD(*xs,k);
++            project(s,n,k,pattern);
++            if(n<=5)for(int partial=0;partial<int(pow(3,n));++partial) {
++                int code=partial;std::vector<int> a(s.nVars()+1,-1);
++                for(int i=0;i<n;++i){int b=code%3;code/=3;a[i+1]=b==2?-1:b;}
++                bool possible=false;
++                for(int x=0;x<(1<<n);++x) {
++                    bool agrees=true;for(int i=0;i<n;++i)agrees &= a[i+1]<0 || a[i+1]==((x>>i)&1);
++                    possible |= agrees && count(x,n,pattern)<=k;
++                }
++                assert(sat(s.snapshot(),a)==possible);++checks;
++            }
++            delete xs;
++        }
++    }
++    // Actual root propagation, relaxation/reset/removal, recycling and relocation.
++    for(int pattern=0;pattern<3;++pattern) {
++        Probe s(6);auto xs=literals(6,pattern);
++        for(int k : {0,4,1,5,2,0,3}) {
++            s.addCardinalityConstraintsBDD(*xs,k);assert(s.unit_propagate());
++            s.garbageCollect();project(s,6,k,pattern);
++            s.relax_and_remove();assert(s.snapshot().empty());
++            for(int v=0;v<s.nVars();++v)assert(s.value(v)==l_Undef);
++        }
++        s.addCardinalityConstraintsBDD(*xs,4);assert(s.unit_propagate());
++        s.tighten_remove();s.addCardinalityConstraintsBDD(*xs,1);
++        assert(s.unit_propagate());s.garbageCollect();project(s,6,1,pattern);
++        s.relax_and_remove();delete xs;
++    }
++    printf("BDD_PROBE_PASS: %u graph/partial checks, production full signed CNF projections, root reset/tighten/relax/recycle/garbage\n",checks);
++}

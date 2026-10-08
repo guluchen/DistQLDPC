@@ -7,6 +7,19 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest experiment: [E006 / H-009 singleton BDD bound](experiments/E006/README.md),
+selected from existing H009 after fresh Round4. **INCONCLUSIVE / NOT ADOPTED**.
+Local+required hosted Tier0 PASS; candidatec91b19b isolated in draftPR14 unmerged.
+Strict Windows Tier1 completed31 correct solves,32 attempts/48 intended;
+BB90/GB144 MTO-to-BDD three-repeat medians favor candidate4.88%/39.37%,
+OFF controls overlap. BB108 first candidate MTO resource-aborted when sibling
+idle88.405797%<95%; global69.452055% remained eligible. Independent partial
+identity/science/affinity/priority/resource/cleanup audit PASS. No complete
+four-case aggregate, promotion, Tier2/3 or automatic retry. Preserve this
+positive partial evidence without acceptance or rejection; next measurement
+should complete unchanged H009 Tier1 under a validated resource window.
+Older immediate-state entries below are chronological, not active queue items.
+
 Latest experiment: [E005 / H-008 one bounded SLS warm start](experiments/E005/README.md),
 selected from the existing revision after fresh Round3. **REJECTED configuration /
 NOT ADOPTED**: seed1/10000-flip backend provided zero verified caps in8 complete
