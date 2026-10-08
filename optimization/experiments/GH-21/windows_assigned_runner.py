@@ -88,7 +88,13 @@ def managed_run(argv,cwd,target,label,timeout,cygwin=False):
     reason=None;start=time.monotonic();last=start;sampled=False
     with (target/(label+".stdout")).open("wb") as stdout,(target/(label+".stderr")).open("wb") as stderr:
         try:
-            current=subprocess.Popen(argv,cwd=cwd,stdout=stdout,stderr=stderr)
+            # Only make's shell children get POSIX PATH. Direct native launch
+            # keeps the Windows runtime DLL lookup PATH, including Cygwin/bin.
+            child_env=dict(os.environ)
+            if cygwin and Path(argv[0]).name.lower()=="make.exe":
+                child_env["PATH"]=runner_common.cygpath(runtime/"bin")+":/usr/bin:/bin"
+            command["path_kind"]="posix-make" if Path(argv[0]).name.lower()=="make.exe" else "native-DLL"
+            current=subprocess.Popen(argv,cwd=cwd,stdout=stdout,stderr=stderr,env=child_env)
             # Verify actual owned descendants when present; Job limits also
             # enforce children too short-lived to capture in a sample.
             while current.poll() is None:
@@ -143,18 +149,26 @@ try:
     assert "CXXFLAGS" not in os.environ and "LDFLAGS" not in os.environ, "Unexpected external build override"
     window=module.Window(True,0x8000)
     window.previous=module.ticks();time.sleep(2.1);observe("assignment-preflight")
-    # Preserve immutable package. Copy for standalone Main linking, retaining
-    # verified original O3 engine objects. Never compile in original package.
+    # Preserve immutable package. Copy for standalone TEST Main linking,
+    # retaining verified O3 engine objects. Never compile in original package.
     base=out/"baseline-link-snapshot";shutil.copytree(immutable_base,base)
     for source in [base,candidate]:
         for rel in ["Makefile","scripts/smoke_test.sh"]:
             p=source/rel;p.write_bytes(p.read_bytes().replace(b"\r\n",b"\n"))
+        # The original smoke script resolves LP34 relative to its own tree.
+        destination=source/"data/matrices";destination.mkdir(parents=True,exist_ok=True)
+        for suffix in ["Hx","Hz","Gx","Gz"]:
+            reference=immutable_base/"data/matrices"/("LP_34_20_2_"+suffix+".txt")
+            target=destination/reference.name
+            if source==candidate and target.exists():assert sha(target)==sha(reference)
+            if not target.exists():shutil.copy2(reference,target)
+            assert sha(target)==sha(reference)
     assert not (candidate/"build").exists() and not (candidate/"bin/distqldpc.exe").exists(), "Candidate must be clean"
     save(out/"identity.json",dict(candidate=head,baseline=baseline_sha,assignment=args.run_assignment,
          baseline_manifest_sha256=sha(package/"manifest.json"),baseline_binary_sha256=sha(immutable_base/"bin/distqldpc.exe"),
          runner_sha256=sha(__file__),helper_sha256=sha(helper),runtime_manifest_sha256=sha(runtime/"etc/setup/installed.db"),
          selection=window.selection,source_hashes={p:sha(candidate/p) for p in paths+["Makefile"]},
-         support_hashes={p.name:sha(p) for p in HERE.glob("*.py")},
+         support_hashes={p.name:sha(p) for p in list(HERE.glob("*.py"))+list(HERE.glob("*.cc"))},
          object_hashes={str(p.relative_to(immutable_base)):sha(p) for p in (immutable_base/"build").glob("*.o")},
          input_hashes={p.name:sha(p) for stem in ["LP_34_20_2","LP_340_56_8"] for p in (immutable_base/"data/matrices").glob(stem+"_*.txt")}))
     runner_common.run=managed_run;run_tier0.run=managed_run
@@ -164,16 +178,31 @@ try:
     for level in ["O3","O2"]:
         result=managed_run([runtime/"bin/g++.exe","-Q","-"+level,"--help=optimizers"],candidate,buildlogs,level+"-optimizers",20)
         assert result[0]==0
-    result=managed_run([runtime/"bin/make.exe","-j1"],candidate,buildlogs,"candidate-default-build",300,True)
+    # Original make-all Main.cc cannot link on this Cygwin runtime: its
+    # memUsedPeak declaration lacks an unsupported-platform definition.
+    # The production target/default flags require no change or test shim.
+    result=managed_run([runtime/"bin/make.exe","-j1","bin/distqldpc"],candidate,buildlogs,"candidate-default-build",300,True)
     if result[0]:raise RuntimeError("Candidate build failed: "+result[2][-3000:])
-    result=managed_run([runtime/"bin/make.exe","-j1","bin/maxcdcl"],base,buildlogs,"baseline-main-default-link",120,True)
-    if result[0]:raise RuntimeError("Baseline standalone link failed: "+result[2][-3000:])
+    test_main={}
+    for source,label,level in [(base,"baseline","-O3"),(candidate,"candidate","-O2")]:
+        binary=out/(label+"-test-only-main.exe");test_main[label]=binary
+        # Exactly original default flags for Main/engine, except the selected
+        # optimization level. Same non-production statistic shim both versions.
+        flags=["-Isrc/solver","-Wall","-Wno-parentheses",level,"-g",
+               "-D","__STDC_LIMIT_MACROS","-D","__STDC_FORMAT_MACROS","-DNDEBUG"]
+        objects=[source/"build"/(name+".o") for name in ["SimpSolver","Solver","Options","System"]]
+        result=managed_run([runtime/"bin/g++.exe"]+flags+[source/"src/solver/Main.cc",HERE/"cygwin_test_stats_shim.cc"]+
+                          objects+["-lz","-o",binary],source,buildlogs,label+"-test-main-link",120,True)
+        if result[0]:raise RuntimeError("Standalone TEST Main link failed: "+result[2][-3000:])
     for source,label in [(base,"baseline"),(candidate,"candidate")]:
-        result=managed_run([runtime/"bin/size.exe",source/"bin/distqldpc.exe",source/"bin/maxcdcl.exe"],source,buildlogs,label+"-sections",20,True)
+        result=managed_run([runtime/"bin/size.exe",source/"bin/distqldpc.exe",test_main[label]],source,buildlogs,label+"-sections",20,True)
         assert result[0]==0
+        result=managed_run([runtime/"bin/bash.exe",source/"scripts/smoke_test.sh",source/"bin/distqldpc.exe"],
+                          source,buildlogs,label+"-original-smoke-script",35,True)
+        if result[0]:raise RuntimeError("Original smoke script failed: "+result[2][-3000:])
     sys.argv=["run_tier0.py","--baseline-bin",str(immutable_base/"bin/distqldpc.exe"),
-              "--candidate-bin",str(candidate/"bin/distqldpc.exe"),"--baseline-maxsat",str(base/"bin/maxcdcl.exe"),
-              "--candidate-maxsat",str(candidate/"bin/maxcdcl.exe"),"--data-root",str(immutable_base/"data/matrices"),
+              "--candidate-bin",str(candidate/"bin/distqldpc.exe"),"--baseline-maxsat",str(test_main["baseline"]),
+              "--candidate-maxsat",str(test_main["candidate"]),"--data-root",str(immutable_base/"data/matrices"),
               "--out",str(out/"tier0"),"--run-assignment",args.run_assignment,"--cygwin"]
     run_tier0.main();summary.update(Tier0="LOCAL_PASS",status="PREPARATORY_COMPLETE")
 except BaseException as error:
