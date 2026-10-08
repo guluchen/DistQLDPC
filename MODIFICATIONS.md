@@ -33,6 +33,14 @@ in each file are unchanged.
 
 ### `Solver.h` / `Solver.cc`
 
+#### GH-27 isolated lookahead enqueue prefix experiment
+
+- Unadopted candidate: inline the unchanged assignment/trail prefix and soft-false guard
+  of `uncheckedEnqueueForLK`; GNU-compatible compilers use `always_inline`.
+- The original soft-violation locking/core/heap body remains in an ordinary helper.
+  Preserve statement order, reasons, levels, returns, caller sites and solver semantics.
+- Separate baseline experiment GH-27; no PGO, compiler flag or heuristic bundle.
+
 #### Bounds pipe (search progress → parent process)
 
 - `setBoundsPipe(int write_fd)` — attach write end of pipe

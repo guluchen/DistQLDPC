@@ -1,0 +1,67 @@
+{
+  "status": "LOCAL_TIER0_PASS_BASELINE_DIAGNOSTIC_PASS",
+  "frozen_support": "dc86b2926f57b9e09682770f93472944d6969804",
+  "production_candidate": "58fbae546e74c158c21070cd10106e94d6bd2b98",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6065614772",
+  "driver_sha256": "7e7a32ab3a1e894f2bac61c73c77981dc7987d1fb872920a4980e9fcb4df9c79",
+  "fixture_sha256": "e720e19c0e7712e9a10d21124f0408a7e8d6e4592215dd6a98a3f9048246676c",
+  "archive_sha256": "e58ddf58c2e81dbb0883e8bae1f0ff87470702489a66f0f76c33e38d7c652a35",
+  "archive_members": 635,
+  "only_runner_before_release": 15724,
+  "cleanup_all_true": true,
+  "selected_cpu": 14,
+  "mask": 16384,
+  "priority_class": 32768,
+  "science_records": 20,
+  "pms_oracle_cases": 36,
+  "opportunity": [
+    {
+      "stem": "LP_34_20_2",
+      "mode": "no-card",
+      "counts": {
+        "entries": 230,
+        "soft_false": 1,
+        "unlocked_false": 1,
+        "locked_false": 0
+      },
+      "scientific_expected": 2
+    },
+    {
+      "stem": "LP_34_20_2",
+      "mode": "card-mto",
+      "counts": {
+        "entries": 230,
+        "soft_false": 1,
+        "unlocked_false": 1,
+        "locked_false": 0
+      },
+      "scientific_expected": 2
+    },
+    {
+      "stem": "LP_136_32_4",
+      "mode": "no-card",
+      "counts": {
+        "entries": 1324453,
+        "soft_false": 7857,
+        "unlocked_false": 5970,
+        "locked_false": 1887
+      },
+      "scientific_expected": 4
+    },
+    {
+      "stem": "LP_136_32_4",
+      "mode": "card-mto",
+      "counts": {
+        "entries": 1672392,
+        "soft_false": 8847,
+        "unlocked_false": 6580,
+        "locked_false": 2267
+      },
+      "scientific_expected": 4
+    }
+  ],
+  "performance": "NOT_MEASURED",
+  "hosted_evidence": "raw/hosted-7a25708 (production-source identity verified separately)",
+  "limitations": "Windows capacity guarded but not exclusive; counts are baseline-only opportunity, not performance benefit; no comparative tier authorized"
+}

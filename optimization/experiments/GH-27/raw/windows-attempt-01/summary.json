@@ -1,0 +1,18 @@
+{
+  "status": "INCONCLUSIVE",
+  "Tier0": "NOT_RUN",
+  "diagnostic": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "candidate": "58fbae546e74c158c21070cd10106e94d6bd2b98",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6065364988",
+  "reason": "RuntimeError('BUILD/TEST command failed baseline-release-test_enqueue_prefix.cc-build: In file included from src/solver/Solver.h:53,\\n                 from /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH27-ENQUEUE/optimization/experiments/GH-27/test_enqueue_prefix.cc:5:\\nsrc/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]\\n  285 |             fprintf(stderr, \"%4\"PRIi64, range.begin);\\n      |                             ^\\nsrc/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]\\n  291 |             fprintf(stderr, \"%4\"PRIi64, range.end);\\n      |                             ^\\nsrc/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]\\n  293 |         fprintf(stderr, \"] (default: %\"PRIi64\")\\\\n\", value);\\n      |                         ^\\n/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH27-ENQUEUE/optimization/experiments/GH-27/test_enqueue_prefix.cc: In member function \\'void Fixture::run(unsigned int, int, bool, int, bool, bool, bool, bool)\\':\\n/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH27-ENQUEUE/optimization/experiments/GH-27/test_enqueue_prefix.cc:35:15: error: \\'class Minisat::vec2<int, Minisat::vec<int> >\\' has no member named \\'growTo\\'\\n   35 |         isets.growTo(2); isetsLits.growTo(2);\\n      |               ^~~~~~\\n/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH27-ENQUEUE/optimization/experiments/GH-27/test_enqueue_prefix.cc:35:36: error: \\'class Minisat::vec2<int, Minisat::vec<Minisat::Lit> >\\' has no member named \\'growTo\\'\\n   35 |         isets.growTo(2); isetsLits.growTo(2);\\n      |                                    ^~~~~~\\n')",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "valid_run": false
+}

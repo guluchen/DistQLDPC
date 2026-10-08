@@ -3896,16 +3896,7 @@ static double luby(double y, int x){
     return pow(y, seq);
 }
 
-bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
-    assert(value(p) == l_Undef);
-    Var v = var(p);
-    assigns[v] = lbool(!sign(p)); // this makes a lbool object whose value is sign(p)
-    // vardata[x] = mkVarData(from, decisionLevel());
-    vardata[v].reason = from;
-    vardata[v].level = decisionLevel() + 1;
-    trail.push_(p);
-
-    if (auxiVar(v) && value(softLits[v]) == l_False) {// a soft clause is falsified
+bool Solver::handleSoftViolationForLK(Var v){
       if (unLockedSoftVarForLK(v))
 	return false;
       else {
@@ -3925,7 +3916,6 @@ bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
 	  }
 	}
       }
-    }
     return true;
 }
 

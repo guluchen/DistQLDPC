@@ -1,0 +1,167 @@
+START LP_340_56_8-no-card-1-baseline
+LP_340_56_8-no-card-1-baseline: rc=0
+START LP_340_56_8-no-card-1-candidate
+LP_340_56_8-no-card-1-candidate: rc=0
+START LP_340_56_8-no-card-2-candidate
+LP_340_56_8-no-card-2-candidate: rc=0
+START LP_340_56_8-no-card-2-baseline
+LP_340_56_8-no-card-2-baseline: rc=0
+START LP_340_56_8-no-card-3-baseline
+LP_340_56_8-no-card-3-baseline: rc=0
+START LP_340_56_8-no-card-3-candidate
+LP_340_56_8-no-card-3-candidate: rc=0
+START LP_340_56_8-card-mto-1-baseline
+LP_340_56_8-card-mto-1-baseline: rc=0
+START LP_340_56_8-card-mto-1-candidate
+LP_340_56_8-card-mto-1-candidate: rc=0
+START LP_340_56_8-card-mto-2-candidate
+LP_340_56_8-card-mto-2-candidate: rc=0
+START LP_340_56_8-card-mto-2-baseline
+LP_340_56_8-card-mto-2-baseline: rc=0
+START LP_340_56_8-card-mto-3-baseline
+LP_340_56_8-card-mto-3-baseline: rc=0
+START LP_340_56_8-card-mto-3-candidate
+LP_340_56_8-card-mto-3-candidate: rc=0
+{
+  "status": "FILTER_COMPLETE",
+  "Tier0": "PASS",
+  "diagnostic": "NOT_RUN",
+  "performance": "WINDOWS_EXPLORATORY_USER_EXCEPTION",
+  "candidate": "58fbae546e74c158c21070cd10106e94d6bd2b98",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6066419326",
+  "decision": "INCONCLUSIVE",
+  "Tier1": "NOT_PROMOTED_INCONCLUSIVE",
+  "Tier2": "12 scientifically correct exploratory solves",
+  "Tier3": "NOT_AUTHORIZED",
+  "normal_promotion": false,
+  "reason": "Exploratory direction/variability only; Tier1 not promoted; controlled confirmation pending; no Tier3",
+  "exception_review": {
+    "user_one_tier_exception": true,
+    "normal_tier1_promotion": false,
+    "no_material_regression_reviewed": true,
+    "why_not_directly_denied": "OFF GM -0.394%, MTO +0.610%; mixed near-zero, six ranges overlap; two disjoint slowdowns only +0.371%/+0.411%; largest median slowdown +1.922% overlaps; no scientific mismatch. Larger-case inline hot path not decisively falsified.",
+    "scope": "Exactly one exploratory LP340 tier, both modes, 12 solves; no automatic Tier3 or adoption",
+    "prior_evidence_commit": "671aa25761ad76cbf35ad157d546d0b41ce17b8d",
+    "prior_sha256": {
+      "result.json": "4f806043435c2f53b58baeab20e387f43e3d3977d78e786119a44641bb6ac949",
+      "samples.json": "1b3bd749a21435ed5d0a8a67705563825c37ee4b222f866ecb620ef111021c79",
+      "AUDIT.json": "0b69c1092b15b2fd5b1d242dd83ca61eca210276ea4d65a6904a8bb6af875f16",
+      "SHA256.json": "20eb4e59bd047b71bceb92d749f1ed0707275b1e8649180675765cec33350210",
+      "preexecution.json": "2552fc9a1388fc30326e467a11cff42a6cd448c8cc90a29f6c29163216b47a78"
+    },
+    "observation_limits": "Not an assertion that noise caused differences or that method helps; unchanged reject filter retained"
+  },
+  "numeric_filter": "inconclusive",
+  "numeric_reason": {
+    "no-card": {
+      "median_geomean": 0.9977559250627868,
+      "range_envelope_geomean": 1.006272187146763,
+      "no_worse_medians": true
+    },
+    "card-mto": {
+      "median_geomean": 0.9985373648938277,
+      "range_envelope_geomean": 1.0022134961628872,
+      "no_worse_medians": true
+    }
+  },
+  "medians": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          59.7455706000037,
+          60.639112699980615,
+          60.08556029997999
+        ],
+        "candidate": [
+          59.95072380002239,
+          60.12030599999707,
+          59.84356300000218
+        ]
+      },
+      "baseline_median": 60.08556029997999,
+      "candidate_median": 59.95072380002239,
+      "ratio": 0.9977559250627868,
+      "range_envelope": 1.006272187146763,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          66.66977899998892,
+          66.7889753000054,
+          67.1380674999964
+        ],
+        "candidate": [
+          66.69128740002634,
+          66.60649139998714,
+          66.81735229998594
+        ]
+      },
+      "baseline_median": 66.7889753000054,
+      "candidate_median": 66.69128740002634,
+      "ratio": 0.9985373648938277,
+      "range_envelope": 1.0022134961628872,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "legacy_filter_details": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "baseline_raw": [
+        59.7455706000037,
+        60.639112699980615,
+        60.08556029997999
+      ],
+      "candidate_raw": [
+        59.95072380002239,
+        60.12030599999707,
+        59.84356300000218
+      ],
+      "baseline_median": 60.08556029997999,
+      "candidate_median": 59.95072380002239,
+      "median_ratio": 0.9977559250627868,
+      "baseline_range_over_median": 0.014871161981611907,
+      "baseline_min": 59.7455706000037,
+      "baseline_max": 60.639112699980615,
+      "candidate_min": 59.84356300000218,
+      "candidate_max": 60.12030599999707
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "baseline_raw": [
+        66.66977899998892,
+        66.7889753000054,
+        67.1380674999964
+      ],
+      "candidate_raw": [
+        66.69128740002634,
+        66.60649139998714,
+        66.81735229998594
+      ],
+      "baseline_median": 66.7889753000054,
+      "candidate_median": 66.69128740002634,
+      "median_ratio": 0.9985373648938277,
+      "baseline_range_over_median": 0.0070114640613064905,
+      "baseline_min": 66.66977899998892,
+      "baseline_max": 67.1380674999964,
+      "candidate_min": 66.60649139998714,
+      "candidate_max": 66.81735229998594
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "valid_run": true
+}
