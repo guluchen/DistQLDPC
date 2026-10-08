@@ -32,7 +32,7 @@ struct Fixture : Solver {
         vardata[3]=mkVarData(CRef_Undef,decisionLevel());
         finalIset.push(0); finalIset.push(0);
         isetLock.push(kind==4 ? 1 : kind==5 ? 2 : 0); isetLock.push(0);
-        isets.init(1); isetsLits.init(1);
+        isets.growTo(2); isetsLits.growTo(2);
         if (!emptyCore) {
             isets[0].push(0); isets[0].push(1);
             isetsLits[0].push(mkLit(1)); isetsLits[0].push(mkLit(2));
