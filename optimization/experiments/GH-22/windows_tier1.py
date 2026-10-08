@@ -170,7 +170,7 @@ HASHES={'baseline': 'bbcebda2ee69a34f0bce2bc3bd3add05fa7bf8f892de534f1958531322b
 CASES=['BB_90_8_10','GB_144_12_8','BB_108_8_10','LP_238_44_6']
 MODES=['no-card','card-mto']
 prep=ROOT/'GH22-windows-tier0-01'
-record=candidate/'optimization/experiments/GH-20'
+record=candidate/'optimization/experiments/GH-22'
 binaries={v:prep/(v+'-source')/'bin/distqldpc.exe' for v in HASHES}
 samples=[];inputs={}
 summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',Tier0='PASS',Tier1='NOT_RUN',Tier2='NOT_RUN',Tier3='NOT_RUN',performance='PENDING_ASSIGNED_DIAGNOSTIC',reason='No exclusive OS reservation; report numeric filter separately')
