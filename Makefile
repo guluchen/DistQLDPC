@@ -8,7 +8,7 @@ BIN     = bin/distqldpc
 MAXCDCL = bin/maxcdcl
 
 CXX     ?= g++
-CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O3 -g \
+CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O2 -g \
            -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG
 LDFLAGS  = -lz
 
