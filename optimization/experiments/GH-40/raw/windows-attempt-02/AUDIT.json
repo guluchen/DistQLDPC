@@ -1,0 +1,106 @@
+{
+  "status": "LOCAL_TIER0_PASS_DIAGNOSTIC_PASS",
+  "performance": "NOT_MEASURED",
+  "frozen_support": "94f906a4f61315afee2a90268f9e5b5e51cb4d9e",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067315838",
+  "production": "2a7332fbe8958e9ff694d5ab62e50fe79185583c",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "driver_sha256": "1afd9ece1b9356ca0494f51902390215559a305b1590547c58a9521322cf520a",
+  "binary_hashes": {
+    "baseline": "a88464461b69d3eb3f3b1bbb3e4221b322c191656952df43b5ebde023f5a11af",
+    "candidate": "c6005150bd5378d3477a4aae0796a2756958b49d04e7ee6e590aeb301ad4187c"
+  },
+  "original_manifest_verified": 828,
+  "archive_members": 829,
+  "archive_parts": {
+    "attempt-part-01.zip": "aaaf0ba28cea01bd8dac47153624afc700649a49e70498a18960c742db3a420a",
+    "attempt-part-02.zip": "57ccfa3eef6f4d41e116bcd32cf37e12a7f5e40f03444226b7838f092dee21cd",
+    "attempt-part-03.zip": "9495bbcbfc949ab6cc0c5188a6ff9593b6ca93a819e230395fb91801f1b89937",
+    "attempt-part-04.zip": "af776e4b54433814e8c85b55f6950ba3354f7404f0c14faf8c4fb91b76ab0011"
+  },
+  "fixture_instances": 25560,
+  "science_records": 36,
+  "genuine_timeouts": 12,
+  "PMS_oracles": 36,
+  "PMS_solves": 72,
+  "selected_cpu": 8,
+  "sibling": 9,
+  "mask": 256,
+  "priority_class": 32768,
+  "resource_samples": 267,
+  "all_capacity_eligible": true,
+  "contention_flags": 76,
+  "only_runner_before_release": 18080,
+  "all4restoration": true,
+  "opportunity": [
+    {
+      "stem": "LP_34_20_2",
+      "mode": "no-card",
+      "counts": {
+        "visits": 963,
+        "blocker_hits": 406,
+        "loads": 557,
+        "first_hits": 0,
+        "ternary_tail": 190,
+        "other_tail": 367,
+        "scans": 671,
+        "ternary_undef": 110,
+        "ternary_true": 0,
+        "ternary_false": 80
+      },
+      "scientific_expected": 2
+    },
+    {
+      "stem": "LP_34_20_2",
+      "mode": "card-mto",
+      "counts": {
+        "visits": 963,
+        "blocker_hits": 406,
+        "loads": 557,
+        "first_hits": 0,
+        "ternary_tail": 190,
+        "other_tail": 367,
+        "scans": 671,
+        "ternary_undef": 110,
+        "ternary_true": 0,
+        "ternary_false": 80
+      },
+      "scientific_expected": 2
+    },
+    {
+      "stem": "LP_136_32_4",
+      "mode": "no-card",
+      "counts": {
+        "visits": 5277299,
+        "blocker_hits": 3014886,
+        "loads": 2262413,
+        "first_hits": 18580,
+        "ternary_tail": 686201,
+        "other_tail": 1557632,
+        "scans": 4975916,
+        "ternary_undef": 253226,
+        "ternary_true": 8117,
+        "ternary_false": 424858
+      },
+      "scientific_expected": 4
+    },
+    {
+      "stem": "LP_136_32_4",
+      "mode": "card-mto",
+      "counts": {
+        "visits": 7746063,
+        "blocker_hits": 4224920,
+        "loads": 3521143,
+        "first_hits": 23807,
+        "ternary_tail": 884205,
+        "other_tail": 2613131,
+        "scans": 10022482,
+        "ternary_undef": 314823,
+        "ternary_true": 10724,
+        "ternary_false": 558658
+      },
+      "scientific_expected": 4
+    }
+  ],
+  "limitations": "Counting-only BASE observations are not runtime proportions or speed benefits; capacity-guarded Windows is not exclusively reserved; hosted evidence retained separately."
+}

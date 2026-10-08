@@ -1,0 +1,130 @@
+
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/baseline-source/bin/distqldpc.exe:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000100417720 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)>:
+   100417720:	41 54                	push   %r12
+   100417722:	55                   	push   %rbp
+   100417723:	57                   	push   %rdi
+   100417724:	56                   	push   %rsi
+   100417725:	53                   	push   %rbx
+   100417726:	48 83 ec 20          	sub    $0x20,%rsp
+   10041772a:	4c 8b 89 58 02 00 00 	mov    0x258(%rcx),%r9
+   100417731:	89 d6                	mov    %edx,%esi
+   100417733:	48 89 cb             	mov    %rcx,%rbx
+   100417736:	d1 fe                	sar    $1,%esi
+   100417738:	48 63 c6             	movslq %esi,%rax
+   10041773b:	41 88 14 01          	mov    %dl,(%r9,%rax,1)
+   10041773f:	41 80 24 01 01       	andb   $0x1,(%r9,%rax,1)
+   100417744:	48 8b 89 a8 02 00 00 	mov    0x2a8(%rcx),%rcx
+   10041774b:	8b bb a0 02 00 00    	mov    0x2a0(%rbx),%edi
+   100417751:	4c 8d 14 c1          	lea    (%rcx,%rax,8),%r10
+   100417755:	8d 4f 01             	lea    0x1(%rdi),%ecx
+   100417758:	45 89 02             	mov    %r8d,(%r10)
+   10041775b:	4c 8b 83 88 02 00 00 	mov    0x288(%rbx),%r8
+   100417762:	41 89 4a 04          	mov    %ecx,0x4(%r10)
+   100417766:	48 63 8b 90 02 00 00 	movslq 0x290(%rbx),%rcx
+   10041776d:	44 8d 51 01          	lea    0x1(%rcx),%r10d
+   100417771:	44 89 93 90 02 00 00 	mov    %r10d,0x290(%rbx)
+   100417778:	41 89 14 88          	mov    %edx,(%r8,%rcx,4)
+   10041777c:	48 8b 93 88 06 00 00 	mov    0x688(%rbx),%rdx
+   100417783:	8b 14 82             	mov    (%rdx,%rax,4),%edx
+   100417786:	83 fa fe             	cmp    $0xfffffffe,%edx
+   100417789:	74 13                	je     10041779e <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x7e>
+   10041778b:	89 d1                	mov    %edx,%ecx
+   10041778d:	83 e2 01             	and    $0x1,%edx
+   100417790:	d1 f9                	sar    $1,%ecx
+   100417792:	48 63 c9             	movslq %ecx,%rcx
+   100417795:	41 32 14 09          	xor    (%r9,%rcx,1),%dl
+   100417799:	80 fa 01             	cmp    $0x1,%dl
+   10041779c:	74 12                	je     1004177b0 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x90>
+   10041779e:	b8 01 00 00 00       	mov    $0x1,%eax
+   1004177a3:	48 83 c4 20          	add    $0x20,%rsp
+   1004177a7:	5b                   	pop    %rbx
+   1004177a8:	5e                   	pop    %rsi
+   1004177a9:	5f                   	pop    %rdi
+   1004177aa:	5d                   	pop    %rbp
+   1004177ab:	41 5c                	pop    %r12
+   1004177ad:	c3                   	ret
+   1004177ae:	66 90                	xchg   %ax,%ax
+   1004177b0:	48 8b 93 f8 07 00 00 	mov    0x7f8(%rbx),%rdx
+   1004177b7:	48 63 14 82          	movslq (%rdx,%rax,4),%rdx
+   1004177bb:	31 c0                	xor    %eax,%eax
+   1004177bd:	83 fa f9             	cmp    $0xfffffff9,%edx
+   1004177c0:	74 e1                	je     1004177a3 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x83>
+   1004177c2:	48 8b 8b 40 08 00 00 	mov    0x840(%rbx),%rcx
+   1004177c9:	4c 8b 83 50 08 00 00 	mov    0x850(%rbx),%r8
+   1004177d0:	4c 63 24 91          	movslq (%rcx,%rdx,4),%r12
+   1004177d4:	43 8b 14 a0          	mov    (%r8,%r12,4),%edx
+   1004177d8:	4a 8d 3c a5 00 00 00 	lea    0x0(,%r12,4),%rdi
+   1004177df:	00 
+   1004177e0:	85 d2                	test   %edx,%edx
+   1004177e2:	74 bf                	je     1004177a3 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x83>
+   1004177e4:	48 01 f9             	add    %rdi,%rcx
+   1004177e7:	48 63 01             	movslq (%rcx),%rax
+   1004177ea:	41 83 2c 80 01       	subl   $0x1,(%r8,%rax,4)
+   1004177ef:	48 63 83 40 07 00 00 	movslq 0x740(%rbx),%rax
+   1004177f6:	3b 83 44 07 00 00    	cmp    0x744(%rbx),%eax
+   1004177fc:	0f 84 ca 00 00 00    	je     1004178cc <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x1ac>
+   100417802:	48 8b 93 38 07 00 00 	mov    0x738(%rbx),%rdx
+   100417809:	44 8d 48 01          	lea    0x1(%rax),%r9d
+   10041780d:	44 89 8b 40 07 00 00 	mov    %r9d,0x740(%rbx)
+   100417814:	89 34 82             	mov    %esi,(%rdx,%rax,4)
+   100417817:	48 63 01             	movslq (%rcx),%rax
+   10041781a:	41 8b 04 80          	mov    (%r8,%rax,4),%eax
+   10041781e:	85 c0                	test   %eax,%eax
+   100417820:	0f 85 78 ff ff ff    	jne    10041779e <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x7e>
+   100417826:	49 c1 e4 04          	shl    $0x4,%r12
+   10041782a:	4c 03 a3 08 08 00 00 	add    0x808(%rbx),%r12
+   100417831:	41 8b 44 24 08       	mov    0x8(%r12),%eax
+   100417836:	85 c0                	test   %eax,%eax
+   100417838:	0f 8e 60 ff ff ff    	jle    10041779e <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x7e>
+   10041783e:	31 ed                	xor    %ebp,%ebp
+   100417840:	49 8b 14 24          	mov    (%r12),%rdx
+   100417844:	48 63 3c aa          	movslq (%rdx,%rbp,4),%rdi
+   100417848:	48 c1 e7 04          	shl    $0x4,%rdi
+   10041784c:	48 03 bb 18 08 00 00 	add    0x818(%rbx),%rdi
+   100417853:	44 8b 47 08          	mov    0x8(%rdi),%r8d
+   100417857:	45 85 c0             	test   %r8d,%r8d
+   10041785a:	7e 5f                	jle    1004178bb <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x19b>
+   10041785c:	31 f6                	xor    %esi,%esi
+   10041785e:	eb 29                	jmp    100417889 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x169>
+   100417860:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+   100417867:	00 00 00 
+   10041786a:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+   100417871:	00 00 00 00 
+   100417875:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+   10041787c:	00 00 00 00 
+   100417880:	48 83 c6 01          	add    $0x1,%rsi
+   100417884:	41 39 f0             	cmp    %esi,%r8d
+   100417887:	7e 2d                	jle    1004178b6 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x196>
+   100417889:	48 8b 07             	mov    (%rdi),%rax
+   10041788c:	48 8b 8b 58 02 00 00 	mov    0x258(%rbx),%rcx
+   100417893:	8b 14 b0             	mov    (%rax,%rsi,4),%edx
+   100417896:	d1 fa                	sar    $1,%edx
+   100417898:	48 63 c2             	movslq %edx,%rax
+   10041789b:	f6 04 01 02          	testb  $0x2,(%rcx,%rax,1)
+   10041789f:	74 df                	je     100417880 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x160>
+   1004178a1:	48 89 d9             	mov    %rbx,%rcx
+   1004178a4:	48 83 c6 01          	add    $0x1,%rsi
+   1004178a8:	e8 03 f1 ff ff       	call   1004169b0 <Minisat::Solver::insertAuxiVarOrder(int)>
+   1004178ad:	44 8b 47 08          	mov    0x8(%rdi),%r8d
+   1004178b1:	41 39 f0             	cmp    %esi,%r8d
+   1004178b4:	7f d3                	jg     100417889 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x169>
+   1004178b6:	41 8b 44 24 08       	mov    0x8(%r12),%eax
+   1004178bb:	48 83 c5 01          	add    $0x1,%rbp
+   1004178bf:	39 e8                	cmp    %ebp,%eax
+   1004178c1:	0f 8f 79 ff ff ff    	jg     100417840 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x120>
+   1004178c7:	e9 d2 fe ff ff       	jmp    10041779e <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0x7e>
+   1004178cc:	8d 50 01             	lea    0x1(%rax),%edx
+   1004178cf:	48 8d 8b 38 07 00 00 	lea    0x738(%rbx),%rcx
+   1004178d6:	e8 85 ad 01 00       	call   100432660 <Minisat::vec<int>::capacity(int)>
+   1004178db:	48 03 bb 40 08 00 00 	add    0x840(%rbx),%rdi
+   1004178e2:	4c 8b 83 50 08 00 00 	mov    0x850(%rbx),%r8
+   1004178e9:	48 63 83 40 07 00 00 	movslq 0x740(%rbx),%rax
+   1004178f0:	48 89 f9             	mov    %rdi,%rcx
+   1004178f3:	e9 0a ff ff ff       	jmp    100417802 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)+0xe2>
+   1004178f8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+   1004178ff:	00 

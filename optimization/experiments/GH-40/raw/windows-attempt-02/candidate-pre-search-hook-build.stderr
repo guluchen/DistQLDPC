@@ -1,0 +1,894 @@
+In file included from src/solver/Solver.h:53,
+                 from /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:108:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+src/solver/Solver.h: In constructor 'Minisat::Solver::Solver()':
+src/solver/Solver.h:480:15: warning: 'Minisat::Solver::my_var_decay' will be initialized after [-Wreorder]
+  480 |     double    my_var_decay;
+      |               ^~~~~~~~~~~~
+src/solver/Solver.h:293:42: warning:   'Minisat::Heap<Minisat::Solver::VarOrderLt> Minisat::Solver::order_heap_distance' [-Wreorder]
+  293 |                         order_heap_VSIDS,order_heap_distance;
+      |                                          ^~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:144:1: warning:   when initialized here [-Wreorder]
+  144 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:514:14: warning: 'Minisat::Solver::lastOptimalCost' will be initialized after [-Wreorder]
+  514 |     uint64_t lastOptimalCost;
+      |              ^~~~~~~~~~~~~~~
+src/solver/Solver.h:513:40: warning:   'uint64_t Minisat::Solver::totalWeight' [-Wreorder]
+  513 |     uint64_t hardWeight, solutionCost, totalWeight, UB;
+      |                                        ^~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:144:1: warning:   when initialized here [-Wreorder]
+  144 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:707:25: warning: 'Minisat::Solver::orderHeapAuxi' will be initialized after [-Wreorder]
+  707 |     Heap<VarOrderGt>    orderHeapAuxi;
+      |                         ^~~~~~~~~~~~~
+src/solver/Solver.h:619:25: warning:   'int Minisat::Solver::tier2_lbd_cut' [-Wreorder]
+  619 |     int                 tier2_lbd_cut;
+      |                         ^~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:144:1: warning:   when initialized here [-Wreorder]
+  144 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:663:9: warning: 'Minisat::Solver::cardinalityEncMode' will be initialized after [-Wreorder]
+  663 |     int cardinalityEncMode;
+      |         ^~~~~~~~~~~~~~~~~~
+src/solver/Solver.h:644:14: warning:   'uint64_t Minisat::Solver::quasiSoftConflicts' [-Wreorder]
+  644 |     uint64_t quasiSoftConflicts;
+      |              ^~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:144:1: warning:   when initialized here [-Wreorder]
+  144 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:696:14: warning: 'Minisat::Solver::nbFixedByLH' will be initialized after [-Wreorder]
+  696 |     uint64_t nbFixedByLH;
+      |              ^~~~~~~~~~~
+src/solver/Solver.h:562:10: warning:   'bool Minisat::Solver::bestSolutionFound' [-Wreorder]
+  562 |     bool bestSolutionFound;
+      |          ^~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:144:1: warning:   when initialized here [-Wreorder]
+  144 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:564:9: warning: 'Minisat::Solver::nbSatLitsAtStart' will be initialized after [-Wreorder]
+  564 |     int nbSatLitsAtStart;
+      |         ^~~~~~~~~~~~~~~~
+src/solver/Solver.h:560:9: warning:   'int Minisat::Solver::bounds_pipe_w' [-Wreorder]
+  560 |     int bounds_pipe_w;
+      |         ^~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:144:1: warning:   when initialized here [-Wreorder]
+  144 | Solver::Solver() :
+      | ^~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'Minisat::CRef Minisat::Solver::simplePropagate()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:317:27: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+  317 |         if (c.lastPoint() > c.size())
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:336:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+  336 |         for (int k = 2; k < c.lastPoint(); k++) {
+      |                         ~~^~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:382:63: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+  382 |     if (confl == CRef_Undef && falseLits.size() + rootNbIsets >= UB)
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'bool Minisat::Solver::simplifyLearnt_core()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:788:34: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+  788 |                     if (nblevels < c.lbd()){
+      |                         ~~~~~~~~~^~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:722:9: warning: unused variable 'learnts_core_size_before' [-Wunused-variable]
+  722 |     int learnts_core_size_before = learnts_core.size();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'bool Minisat::Solver::simplifyLearnt_tier2()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:896:34: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+  896 |                     if (nblevels < c.lbd()){
+      |                         ~~~~~~~~~^~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:824:9: warning: unused variable 'learnts_tier2_size_before' [-Wunused-variable]
+  824 |     int learnts_tier2_size_before = learnts_tier2.size();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:829:9: warning: variable 'limit' set but not used [-Wunused-but-set-variable]
+  829 |     int limit;
+      |         ^~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'bool Minisat::Solver::failedLiteralDetection()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1039:100: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 7 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 1039 |   printf("c nbFailedLits %d, nbI %d, fixedVarsByFL %d, totalFixedVars %d, nbTested: %d, counter %llu\n",
+      |                                                                                                 ~~~^
+      |                                                                                                    |
+      |                                                                                                    long long unsigned int
+      |                                                                                                 %lu
+ 1040 |          nbFailedLits, nbI, trail.size()-initTrail, trail.size(), nbTested, counter);
+      |                                                                             ~~~~~~~                 
+      |                                                                             |
+      |                                                                             uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'bool Minisat::Solver::simplifyOriginalClauses()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1180:40: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 1180 |     printf("c total nb of literals: %llu\n", clauses_literals);
+      |                                     ~~~^     ~~~~~~~~~~~~~~~~
+      |                                        |     |
+      |                                        |     uint64_t {aka long unsigned int}
+      |                                        long long unsigned int
+      |                                     %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1174:25: warning: unused variable 'nbOriginalClauses_before' [-Wunused-variable]
+ 1174 |     int last_shorten=0, nbOriginalClauses_before = clauses.size();
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1186:17: warning: unused variable 'begin_simp_time' [-Wunused-variable]
+ 1186 |     double      begin_simp_time = cpuTime();
+      |                 ^~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1251:12: warning: variable 'avg' set but not used [-Wunused-but-set-variable]
+ 1251 |     double avg;
+      |            ^~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'Minisat::CRef Minisat::Solver::propagate()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2006:31: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 2006 |             if (c.lastPoint() > c.size())
+      |                 ~~~~~~~~~~~~~~^~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2025:31: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 2025 |             for (int k = 2; k < c.lastPoint(); k++) {
+      |                             ~~^~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2077:49: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 2077 |     if (confl == CRef_Undef && falseLits.size() >= UB)
+      |                                ~~~~~~~~~~~~~~~~~^~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2073:1: warning: label 'ExitProp' defined but not used [-Wunused-label]
+ 2073 | ExitProp:;
+      | ^~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2178:9: warning: variable 'myLevel' set but not used [-Wunused-but-set-variable]
+ 2178 |     int myLevel = decisionLevel() +1;
+      |         ^~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2197:26: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 2197 |     if (falseLits.size() >= UB)
+      |         ~~~~~~~~~~~~~~~~~^~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2207:26: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 2207 |     if (falseLits.size() > UB) {
+      |         ~~~~~~~~~~~~~~~~~^~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'bool Minisat::Solver::simplifyLearnt_local()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2632:34: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 2632 |                     if (nblevels < c.lbd()){
+      |                         ~~~~~~~~~^~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2560:7: warning: unused variable 'learnts_local_size_before' [-Wunused-variable]
+ 2560 |   int learnts_local_size_before = learnts_local.size();
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2561:7: warning: unused variable 'savedTrail' [-Wunused-variable]
+ 2561 |   int savedTrail = trail.size();
+      |       ^~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::reduceDB_core()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2773:9: warning: unused variable 'totalLocalSize' [-Wunused-variable]
+ 2773 |     int totalLocalSize=0, removedSize=0;
+      |         ^~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2773:27: warning: unused variable 'removedSize' [-Wunused-variable]
+ 2773 |     int totalLocalSize=0, removedSize=0;
+      |                           ^~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'Minisat::CRef Minisat::Solver::lPropagate()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3023:20: warning: comparison of integer expressions of different signedness: 'uint64_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+ 3023 |   if (UB > 1 && UB == falseLits.size() + 1 && decisionLevel() < hardenLevel) {
+      |                 ~~~^~~~~~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::identifyClausesToSplit(Minisat::vec<unsigned int>&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3171:46: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 3171 |     for(j=i+1; j<cs.size() && 2*nbCommunLits >= UB; j++) {
+      |                               ~~~~~~~~~~~~~~~^~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'Minisat::lbool Minisat::Solver::search(int&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3822:31: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3822 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                            ~~~^
+      |                               |
+      |                               long long unsigned int
+      |                            %lu
+ 3823 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+      |                      ~~        
+      |                      |
+      |                      uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3822:50: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3822 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                               ~~~^
+      |                                                  |
+      |                                                  long long unsigned int
+      |                                               %lu
+ 3823 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+      |                          ~~~~~~~~~                
+      |                          |
+      |                          uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3822:64: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3822 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                             ~~~^
+      |                                                                |
+      |                                                                long long unsigned int
+      |                                                             %lu
+ 3823 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~     
+      |                                              |
+      |                                              uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3822:186: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 13 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3822 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                                                                                                       ~~~^
+      |                                                                                                                                                                                          |
+      |                                                                                                                                                                                          long long unsigned int
+      |                                                                                                                                                                                       %lu
+ 3823 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+ 3824 |                      falseLits.size(), nbFalses, nbFixeds, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                                         ~~~~~~~~~~~                                                                                       
+      |                                                                                         |
+      |                                                                                         uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3826:48: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3826 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                             ~~~^
+      |                                                |
+      |                                                long long unsigned int
+      |                                             %lu
+ 3827 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                 ~~~~~~~~~~~~~~  
+      |                                 |
+      |                                 uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3826:64: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3826 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                             ~~~^
+      |                                                                |
+      |                                                                long long unsigned int
+      |                                                             %lu
+ 3827 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                 ~~~~~~~~~~~     
+      |                                                 |
+      |                                                 uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3826:120: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3826 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                     ~~~^
+      |                                                                                                                        |
+      |                                                                                                                        long long unsigned int
+      |                                                                                                                     %lu
+ 3827 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~        
+      |                                                                                                |
+      |                                                                                                uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3826:130: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 9 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3826 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                               ~~~^
+      |                                                                                                                                  |
+      |                                                                                                                                  long long unsigned int
+      |                                                                                                                               %lu
+ 3827 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                            |
+      |                                                                                                                            uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3826:145: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 10 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3826 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                                              ~~~^
+      |                                                                                                                                                 |
+      |                                                                                                                                                 long long unsigned int
+      |                                                                                                                                              %lu
+ 3827 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                             ~~~~~~~~~~~
+      |                                                                                                                                             |
+      |                                                                                                                                             uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3826:159: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 11 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3826 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                                                            ~~~^
+      |                                                                                                                                                               |
+      |                                                                                                                                                               long long unsigned int
+      |                                                                                                                                                            %lu
+ 3827 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                                          ~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                          |
+      |                                                                                                                                                          uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3826:172: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 12 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3826 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                                                                         ~~~^
+      |                                                                                                                                                                            |
+      |                                                                                                                                                                            long long unsigned int
+      |                                                                                                                                                                         %lu
+ 3827 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                                                              ~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                                              |
+      |                                                                                                                                                                              uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'Minisat::CRef Minisat::Solver::propagateForLK()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:3985:27: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 3985 |         if (c.lastPoint() > c.size())
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:4020:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 4020 |         for (int k = 2; k < c.lastPoint(); k++) {
+      |                         ~~^~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:4520:26: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 4520 |     if (falseLits.size() > UB) {
+      |         ~~~~~~~~~~~~~~~~~^~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'bool Minisat::Solver::lookahead()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:4861:17: warning: comparison of integer expressions of different signedness: 'uint64_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+ 4861 |   if (conflicts > prevConflicts) {
+      |       ~~~~~~~~~~^~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::addHardClausesForSoftClauses()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5106:70: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5106 |   printf("c nb soft clauses: %d, of which %d unit, %d nonUnit and %llu empty\n",
+      |                                                                   ~~~^
+      |                                                                      |
+      |                                                                      long long unsigned int
+      |                                                                   %lu
+ 5107 |          softClauses.size(), nbUnitSoft, nbNonUnitSoft, solutionCost);
+      |                                                         ~~~~~~~~~~~~  
+      |                                                         |
+      |                                                         uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::printBestSolution() const':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5257:49: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'long unsigned int' [-Wformat=]
+ 5257 |     printf("c   unsat soft clauses (search): %llu\n", bestSup);
+      |                                              ~~~^     ~~~~~~~
+      |                                                 |     |
+      |                                                 |     long unsigned int
+      |                                                 long long unsigned int
+      |                                              %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5258:53: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5258 |     printf("c   satisfied soft clauses (maxsat): %llu\n", maxsat);
+      |                                                  ~~~^     ~~~~~~
+      |                                                     |     |
+      |                                                     |     uint64_t {aka long unsigned int}
+      |                                                     long long unsigned int
+      |                                                  %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5259:39: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5259 |     printf("c   total weight cost: %llu\n", optimal);
+      |                                    ~~~^     ~~~~~~~
+      |                                       |     |
+      |                                       |     uint64_t {aka long unsigned int}
+      |                                       long long unsigned int
+      |                                    %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::checkSolution()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5275:15: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 5275 |   if (nbFalse != falseLits.size()+fixedCostBySearch + relaxedCost)
+      |       ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5276:92: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5276 |     printf("c **** error nb of false soft clauses real nbfalse: %d, recorded falseLits: %llu****\n",
+      |                                                                                         ~~~^
+      |                                                                                            |
+      |                                                                                            long long unsigned int
+      |                                                                                         %lu
+ 5277 |            nbFalse, falseLits.size()+fixedCostBySearch+relaxedCost);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                          
+      |                                                       |
+      |                                                       uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::partition()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5397:31: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5397 |         if (conflicted[var(q)]==iset.size()) {
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5407:32: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5407 |         if (conflicted[var(q)] < iset.size())
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5466:50: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5466 |         if (q != lit_Undef && conflicted[var(q)] == iset.size()) {
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5531:38: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5531 |   printf("c isets %d, derivedCost %llu\n", nbIsets, derivedCost);
+      |                                   ~~~^              ~~~~~~~~~~~
+      |                                      |              |
+      |                                      |              uint64_t {aka long unsigned int}
+      |                                      long long unsigned int
+      |                                   %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'Minisat::CRef Minisat::Solver::simplepropagateForLK()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5678:27: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5678 |         if (c.lastPoint() > c.size())
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:5692:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 5692 |         for (int k = 2; k < c.lastPoint(); k++) {
+      |                         ~~^~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::addCardinalityConstraints()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6222:64: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6222 |       printf("\nc Cardinality: off (soft-conflict only), UB %llu\n", UB);
+      |                                                             ~~~^     ~~
+      |                                                                |     |
+      |                                                                |     uint64_t {aka long unsigned int}
+      |                                                                long long unsigned int
+      |                                                             %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6252:82: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 6252 |   if (activeSoftLits.size() < 2 || UB - 1 - nbFalse < 1 || activeSoftLits.size() <= UB - 1 - nbFalse
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6271:46: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6271 |   printf("\nc Cardinality: %d (%s) for UB %llu\n", cardinalityC.size(), enc, UB);
+      |                                           ~~~^                               ~~
+      |                                              |                               |
+      |                                              long long unsigned int          uint64_t {aka long unsigned int}
+      |                                           %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'Minisat::lbool Minisat::Solver::solve_()':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6620:79: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6620 |     printf("c fixedCost %d, nbSatLits %d, totalFixedVars %d, objForSearch: %llu\n\n",
+      |                                                                            ~~~^
+      |                                                                               |
+      |                                                                               long long unsigned int
+      |                                                                            %lu
+ 6621 |                 fixedCost, nbSatLits, trail.size(), objForSearch);
+      |                                                     ~~~~~~~~~~~~               
+      |                                                     |
+      |                                                     uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6649:35: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6649 |         printf("c provided UB: %llu\n", providedUB);
+      |                                ~~~^     ~~~~~~~~~~
+      |                                   |     |
+      |                                   |     uint64_t {aka long unsigned int}
+      |                                   long long unsigned int
+      |                                %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6652:54: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6652 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                   ~~~^                                                                           ~~~~~~
+      |                                                      |                                                                           |
+      |                                                      long long unsigned int                                                      uint64_t {aka long unsigned int}
+      |                                                   %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6652:68: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6652 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                 ~~~^                                                                     ~~~~~~~~~~~~
+      |                                                                    |                                                                     |
+      |                                                                    long long unsigned int                                                uint64_t {aka long unsigned int}
+      |                                                                 %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6652:87: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6652 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                                    ~~~^                                                                ~~~~~~~~~~~~~~~~~
+      |                                                                                       |                                                                |
+      |                                                                                       long long unsigned int                                           uint64_t {aka long unsigned int}
+      |                                                                                    %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6652:105: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6652 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                                                      ~~~^                                                                 ~~~~~~~~~~~
+      |                                                                                                         |                                                                 |
+      |                                                                                                         long long unsigned int                                            uint64_t {aka long unsigned int}
+      |                                                                                                      %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6652:124: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6652 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                                                                         ~~~^                                                           ~~~~~~~~~~~
+      |                                                                                                                            |                                                           |
+      |                                                                                                                            long long unsigned int                                      uint64_t {aka long unsigned int}
+      |                                                                                                                         %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6674:58: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6674 |       printf("c ends of initiationization by VSIDS at %llu conflicts with init %d\n\n",
+      |                                                       ~~~^
+      |                                                          |
+      |                                                          long long unsigned int
+      |                                                       %lu
+ 6675 |              conflicts, init);
+      |              ~~~~~~~~~                                    
+      |              |
+      |              uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6704:50: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6704 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                               ~~~^
+      |                                                  |
+      |                                                  long long unsigned int
+      |                                               %lu
+ 6705 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+      |                                ~~~~~~~~~~~~~~~~~~~~
+      |                                         |
+      |                                         uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6704:62: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6704 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                           ~~~^
+      |                                                              |
+      |                                                              long long unsigned int
+      |                                                           %lu
+ 6705 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+      |                                                      ~~~~~~~~~~~~~~~
+      |                                                      |
+      |                                                      uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6704:75: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6704 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                        ~~~^
+      |                                                                           |
+      |                                                                           long long unsigned int
+      |                                                                        %lu
+ 6705 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+ 6706 |                  starts-savedRestarts, propagations-savedUP);
+      |                  ~~~~~~~~~~~~~~~~~~~~                                      
+      |                        |
+      |                        uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6704:84: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6704 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                                 ~~~^
+      |                                                                                    |
+      |                                                                                    long long unsigned int
+      |                                                                                 %lu
+ 6705 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+ 6706 |                  starts-savedRestarts, propagations-savedUP);
+      |                                        ~~~~~~~~~~~~~~~~~~~~                         
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6710:48: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6710 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                             ~~~^
+      |                                                |
+      |                                                long long unsigned int
+      |                                             %lu
+ 6711 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+      |                              ~~~~~~~~~~~~~~~~~~~~
+      |                                       |
+      |                                       uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6710:60: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6710 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                         ~~~^
+      |                                                            |
+      |                                                            long long unsigned int
+      |                                                         %lu
+ 6711 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+      |                                                    ~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6710:73: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6710 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                      ~~~^
+      |                                                                         |
+      |                                                                         long long unsigned int
+      |                                                                      %lu
+ 6711 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+ 6712 |                  starts-savedRestarts, propagations-savedUP);
+      |                  ~~~~~~~~~~~~~~~~~~~~                                    
+      |                        |
+      |                        uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6710:82: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6710 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                               ~~~^
+      |                                                                                  |
+      |                                                                                  long long unsigned int
+      |                                                                               %lu
+ 6711 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+ 6712 |                  starts-savedRestarts, propagations-savedUP);
+      |                                        ~~~~~~~~~~~~~~~~~~~~                       
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6757:25: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6757 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                      ~~~^
+      |                         |
+      |                         long long unsigned int
+      |                      %lu
+ 6758 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                ~~        
+      |                |
+      |                uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6757:43: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6757 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                        ~~~^
+      |                                           |
+      |                                           long long unsigned int
+      |                                        %lu
+ 6758 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                    ~~~~~~~~~               
+      |                    |
+      |                    uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6757:56: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6757 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                                     ~~~^
+      |                                                        |
+      |                                                        long long unsigned int
+      |                                                     %lu
+ 6758 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~   
+      |                                        |
+      |                                        uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6757:99: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6757 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                                                                                ~~~^
+      |                                                                                                   |
+      |                                                                                                   long long unsigned int
+      |                                                                                                %lu
+ 6758 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                         ~~~~~~~~~~~~~~~~~~
+      |                                                                                                                         |
+      |                                                                                                                         uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6757:112: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 9 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6757 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                                                                                             ~~~^
+      |                                                                                                                |
+      |                                                                                                                long long unsigned int
+      |                                                                                                             %lu
+ 6758 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                             ~~~~~~~~~~~~~~~~~
+      |                                                                                                                                             |
+      |                                                                                                                                             uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6759:72: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6759 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                     ~~~^
+      |                                                                        |
+      |                                                                        long long unsigned int
+      |                                                                     %lu
+ 6760 |                meanLB, dev, succRate,
+ 6761 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                             
+      |                           |
+      |                           uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6759:98: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 7 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6759 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                               ~~~^
+      |                                                                                                  |
+      |                                                                                                  long long unsigned int
+      |                                                                                               %lu
+ 6760 |                meanLB, dev, succRate,
+ 6761 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                         ~~~~~~~~~~~~~~                            
+      |                                                         |
+      |                                                         uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6759:109: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6759 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                          ~~~^
+      |                                                                                                             |
+      |                                                                                                             long long unsigned int
+      |                                                                                                          %lu
+ 6760 |                meanLB, dev, succRate,
+ 6761 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~             
+      |                                                                                  |
+      |                                                                                  uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6759:124: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 9 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6759 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                                         ~~~^
+      |                                                                                                                            |
+      |                                                                                                                            long long unsigned int
+      |                                                                                                                         %lu
+ 6760 |                meanLB, dev, succRate,
+ 6761 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                                                   ~~~~~~~~~~~               
+      |                                                                                                   |
+      |                                                                                                   uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6759:163: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 12 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6759 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                                                                                ~~~^
+      |                                                                                                                                                                   |
+      |                                                                                                                                                                   long long unsigned int
+      |                                                                                                                                                                %lu
+ 6760 |                meanLB, dev, succRate,
+ 6761 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                                                                                             ~~~~~~~~~~~            
+      |                                                                                                                                             |
+      |                                                                                                                                             uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6787:25: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6787 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                      ~~~^
+      |                         |
+      |                         long long unsigned int
+      |                      %lu
+ 6788 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+      |                ~~        
+      |                |
+      |                uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6787:43: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6787 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                        ~~~^
+      |                                           |
+      |                                           long long unsigned int
+      |                                        %lu
+ 6788 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+      |                    ~~~~~~~~~               
+      |                    |
+      |                    uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6787:60: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6787 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                                         ~~~^
+      |                                                            |
+      |                                                            long long unsigned int
+      |                                                         %lu
+ 6788 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~       
+      |                                        |
+      |                                        uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6787:189: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 11 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6787 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                                                                                                                                                                          ~~~^
+      |                                                                                                                                                                                             |
+      |                                                                                                                                                                                             long long unsigned int
+      |                                                                                                                                                                                          %lu
+ 6788 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+ 6789 |                meanLB, dev, succRate, nbLKsuccess, nbSavedLits);
+      |                                       ~~~~~~~~~~~                                                                                                                                            
+      |                                       |
+      |                                       uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6787:207: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 12 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6787 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                                                                                                                                                                                            ~~~^
+      |                                                                                                                                                                                                               |
+      |                                                                                                                                                                                                               long long unsigned int
+      |                                                                                                                                                                                                            %lu
+ 6788 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+ 6789 |                meanLB, dev, succRate, nbLKsuccess, nbSavedLits);
+      |                                                    ~~~~~~~~~~~                                                                                                                                                 
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6816:17: warning: comparison of integer expressions of different signedness: 'uint64_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+ 6816 |         if (inf > falseLits.size())
+      |             ~~~~^~~~~~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6824:34: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6824 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+      |                               ~~~^                         ~~
+      |                                  |                         |
+      |                                  long long unsigned int    uint64_t {aka long unsigned int}
+      |                               %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6824:44: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6824 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+      |                                         ~~~^                   ~~~
+      |                                            |                   |
+      |                                            |                   uint64_t {aka long unsigned int}
+      |                                            long long unsigned int
+      |                                         %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6824:54: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6824 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+      |                                                   ~~~^              ~~~
+      |                                                      |              |
+      |                                                      |              uint64_t {aka long unsigned int}
+      |                                                      long long unsigned int
+      |                                                   %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6846:57: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6846 |       printf("c no feasible solution, hardConflicts: %llu\n", conflicts - softConflicts);
+      |                                                      ~~~^     ~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                         |               |
+      |                                                         |               uint64_t {aka long unsigned int}
+      |                                                         long long unsigned int
+      |                                                      %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6849:30: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6849 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                           ~~~^
+      |                              |
+      |                              long long unsigned int
+      |                           %lu
+ 6850 |              solutionCost, fixedCostBySearch,
+      |              ~~~~~~~~~~~~     
+      |              |
+      |              uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6849:51: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6849 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                ~~~^
+      |                                                   |
+      |                                                   long long unsigned int
+      |                                                %lu
+ 6850 |              solutionCost, fixedCostBySearch,
+      |                            ~~~~~~~~~~~~~~~~~       
+      |                            |
+      |                            uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6849:66: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6849 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                               ~~~^
+      |                                                                  |
+      |                                                                  long long unsigned int
+      |                                                               %lu
+ 6850 |              solutionCost, fixedCostBySearch,
+ 6851 |              lastOptimalCost,
+      |              ~~~~~~~~~~~~~~~                                      
+      |              |
+      |              uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6849:80: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6849 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                                             ~~~^
+      |                                                                                |
+      |                                                                                long long unsigned int
+      |                                                                             %lu
+......
+ 6852 |              objForSearch-sup + nbSatLits, conflicts - softConflicts);
+      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                       
+      |                               |
+      |                               uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6849:101: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6849 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                                                                  ~~~^
+      |                                                                                                     |
+      |                                                                                                     long long unsigned int
+      |                                                                                                  %lu
+......
+ 6852 |              objForSearch-sup + nbSatLits, conflicts - softConflicts);
+      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~                                 
+      |                                                      |
+      |                                                      uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6854:24: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6854 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                     ~~~^
+      |                        |
+      |                        long long unsigned int
+      |                     %lu
+ 6855 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+      |            ~~~~~~~~~    
+      |            |
+      |            uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6854:40: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6854 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                     ~~~^
+      |                                        |
+      |                                        long long unsigned int
+      |                                     %lu
+ 6855 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+      |                       ~~~~~~~~~~~       
+      |                       |
+      |                       uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6854:63: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6854 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                                            ~~~^
+      |                                                               |
+      |                                                               long long unsigned int
+      |                                                            %lu
+ 6855 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+      |                                                                 ~~~~~~~~~~~~~~~
+      |                                                                 |
+      |                                                                 uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6854:96: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6854 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                                                                             ~~~^
+      |                                                                                                |
+      |                                                                                                long long unsigned int
+      |                                                                                             %lu
+ 6855 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+ 6856 |            100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
+      |                                                           ~~~~~~~~~~~~~~                        
+      |                                                           |
+      |                                                           uint64_t {aka long unsigned int}
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:6854:124: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 10 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6854 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                                                                                                         ~~~^
+      |                                                                                                                            |
+      |                                                                                                                            long long unsigned int
+      |                                                                                                                         %lu
+ 6855 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+ 6856 |            100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
+      |                                                                                                 ~~~~~~~~~~~                 
+      |                                                                                                 |
+      |                                                                                                 uint64_t {aka long unsigned int}
+In file included from src/solver/mtl/Sort.h:24,
+                 from /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:107:
+src/solver/mtl/Vec.h: In instantiation of 'void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<Minisat::Solver::Watcher>]':
+src/solver/mtl/Vec.h:115:13:   required from 'void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<Minisat::Solver::Watcher>]'
+  115 |     capacity(size);
+      |     ~~~~~~~~^~~~~~
+src/solver/SolverTypes.h:339:50:   required from 'void Minisat::OccLists<Idx, Vec, Deleted>::init(const Idx&) [with Idx = Minisat::Lit; Vec = Minisat::vec<Minisat::Solver::Watcher>; Deleted = Minisat::Solver::WatcherDeleted]'
+  339 |     void  init      (const Idx& idx){ occs.growTo(toInt(idx)+1); dirty.growTo(toInt(idx)+1, 0); }
+      |                                       ~~~~~~~~~~~^~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1273:21:   required from here
+ 1273 |     watches_bin.init(mkLit(v, false));
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:99:54: warning: 'void* realloc(void*, size_t)' moving an object of non-trivially copyable type 'class Minisat::vec<Minisat::Solver::Watcher>'; use 'new' and 'delete' instead [-Wclass-memaccess]
+   99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+      |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:38:7: note: 'class Minisat::vec<Minisat::Solver::Watcher>' declared here
+   38 | class vec {
+      |       ^~~
+src/solver/mtl/Vec.h: In instantiation of 'void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<Minisat::Lit>]':
+src/solver/mtl/Vec.h:115:13:   required from 'void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<Minisat::Lit>]'
+  115 |     capacity(size);
+      |     ~~~~~~~~^~~~~~
+src/solver/Solver.h:72:50:   required from 'void Minisat::vec2<Idx, Vec>::init(const Idx&) [with Idx = Minisat::Lit; Vec = Minisat::vec<Minisat::Lit>]'
+   72 |     void  init      (const Idx& idx){ occs.growTo(toInt(idx)+1);}
+      |                                       ~~~~~~~~~~~^~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1313:22:   required from here
+ 1313 |     conflictLits.init(mkLit(v, false));
+      |     ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:99:54: warning: 'void* realloc(void*, size_t)' moving an object of non-trivially copyable type 'class Minisat::vec<Minisat::Lit>'; use 'new' and 'delete' instead [-Wclass-memaccess]
+   99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+      |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:38:7: note: 'class Minisat::vec<Minisat::Lit>' declared here
+   38 | class vec {
+      |       ^~~
+src/solver/mtl/Vec.h: In instantiation of 'void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<int>]':
+src/solver/mtl/Vec.h:115:13:   required from 'void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<int>]'
+  115 |     capacity(size);
+      |     ~~~~~~~~^~~~~~
+src/solver/Solver.h:72:50:   required from 'void Minisat::vec2<Idx, Vec>::init(const Idx&) [with Idx = int; Vec = Minisat::vec<int>]'
+   72 |     void  init      (const Idx& idx){ occs.growTo(toInt(idx)+1);}
+      |                                       ~~~~~~~~~~~^~~~~~~~~~~~~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:4268:13:   required from here
+ 4268 |   isets.init(nbIsets); isets[nbIsets].clear(); isets[nbIsets].push(nbIsets);
+      |   ~~~~~~~~~~^~~~~~~~~
+src/solver/mtl/Vec.h:99:54: warning: 'void* realloc(void*, size_t)' moving an object of non-trivially copyable type 'class Minisat::vec<int>'; use 'new' and 'delete' instead [-Wclass-memaccess]
+   99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+      |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:38:7: note: 'class Minisat::vec<int>' declared here
+   38 | class vec {
+      |       ^~~
+In file included from src/solver/Solver.h:54:
+In function 'Minisat::Lit Minisat::operator~(Lit)',
+    inlined from 'void Minisat::Solver::analyze(Minisat::CRef, Minisat::vec<Minisat::Lit>&, int&, int&)' at /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1758:22:
+src/solver/SolverTypes.h:73:64: warning: 'p.Minisat::Lit::x' may be used uninitialized [-Wmaybe-uninitialized]
+   73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+      |                                                            ~~~~^~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::analyze(Minisat::CRef, Minisat::vec<Minisat::Lit>&, int&, int&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:1672:9: note: 'p.Minisat::Lit::x' was declared here
+ 1672 |     Lit p; //     = lit_Undef;
+      |         ^
+In function 'Minisat::Lit Minisat::operator~(Lit)',
+    inlined from 'void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)' at /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:4682:22:
+src/solver/SolverTypes.h:73:64: warning: 'p.Minisat::Lit::x' may be used uninitialized [-Wmaybe-uninitialized]
+   73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+      |                                                            ~~~~^~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:4510:9: note: 'p.Minisat::Lit::x' was declared here
+ 4510 |     Lit p;
+      |         ^
+In function 'Minisat::Lit Minisat::operator~(Lit)',
+    inlined from 'void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)' at /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2397:22:
+src/solver/SolverTypes.h:73:64: warning: 'p.Minisat::Lit::x' may be used uninitialized [-Wmaybe-uninitialized]
+   73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+      |                                                            ~~~~^~~
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc: In member function 'void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/candidate-pre-search-test-only-Solver.cc:2194:9: note: 'p.Minisat::Lit::x' was declared here
+ 2194 |     Lit p;
+      |         ^

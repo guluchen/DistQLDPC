@@ -1,0 +1,315 @@
+
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH40-windows-tier0-02/baseline-source/bin/distqldpc.exe:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000100419060 <Minisat::Solver::propagateForLK()>:
+   100419060:	41 57                	push   %r15
+   100419062:	41 56                	push   %r14
+   100419064:	41 55                	push   %r13
+   100419066:	41 54                	push   %r12
+   100419068:	55                   	push   %rbp
+   100419069:	57                   	push   %rdi
+   10041906a:	56                   	push   %rsi
+   10041906b:	53                   	push   %rbx
+   10041906c:	48 83 ec 48          	sub    $0x48,%rsp
+   100419070:	c7 81 18 06 00 00 ff 	movl   $0xffffffff,0x618(%rcx)
+   100419077:	ff ff ff 
+   10041907a:	49 89 ce             	mov    %rcx,%r14
+   10041907d:	48 8d 89 20 02 00 00 	lea    0x220(%rcx),%rcx
+   100419084:	e8 b7 b3 01 00       	call   100434440 <Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()>
+   100419089:	49 8d 8e e8 01 00 00 	lea    0x1e8(%r14),%rcx
+   100419090:	e8 ab b3 01 00       	call   100434440 <Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()>
+   100419095:	49 63 86 b8 02 00 00 	movslq 0x2b8(%r14),%rax
+   10041909c:	41 39 86 90 02 00 00 	cmp    %eax,0x290(%r14)
+   1004190a3:	0f 8e 1d 04 00 00    	jle    1004194c6 <Minisat::Solver::propagateForLK()+0x466>
+   1004190a9:	b9 ff ff ff ff       	mov    $0xffffffff,%ecx
+   1004190ae:	c7 44 24 2c 00 00 00 	movl   $0x0,0x2c(%rsp)
+   1004190b5:	00 
+   1004190b6:	89 4c 24 38          	mov    %ecx,0x38(%rsp)
+   1004190ba:	8d 50 01             	lea    0x1(%rax),%edx
+   1004190bd:	49 8b b6 e8 01 00 00 	mov    0x1e8(%r14),%rsi
+   1004190c4:	4d 8b ae 20 02 00 00 	mov    0x220(%r14),%r13
+   1004190cb:	41 89 96 b8 02 00 00 	mov    %edx,0x2b8(%r14)
+   1004190d2:	49 8b 96 88 02 00 00 	mov    0x288(%r14),%rdx
+   1004190d9:	48 63 2c 82          	movslq (%rdx,%rax,4),%rbp
+   1004190dd:	49 89 ec             	mov    %rbp,%r12
+   1004190e0:	48 c1 e5 04          	shl    $0x4,%rbp
+   1004190e4:	48 01 ee             	add    %rbp,%rsi
+   1004190e7:	8b 46 08             	mov    0x8(%rsi),%eax
+   1004190ea:	85 c0                	test   %eax,%eax
+   1004190ec:	7e 62                	jle    100419150 <Minisat::Solver::propagateForLK()+0xf0>
+   1004190ee:	31 db                	xor    %ebx,%ebx
+   1004190f0:	eb 0f                	jmp    100419101 <Minisat::Solver::propagateForLK()+0xa1>
+   1004190f2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   1004190f8:	48 83 c3 01          	add    $0x1,%rbx
+   1004190fc:	39 5e 08             	cmp    %ebx,0x8(%rsi)
+   1004190ff:	7e 4f                	jle    100419150 <Minisat::Solver::propagateForLK()+0xf0>
+   100419101:	48 8b 06             	mov    (%rsi),%rax
+   100419104:	4d 8b 8e 58 02 00 00 	mov    0x258(%r14),%r9
+   10041910b:	48 8d 0c d8          	lea    (%rax,%rbx,8),%rcx
+   10041910f:	8b 51 04             	mov    0x4(%rcx),%edx
+   100419112:	89 d7                	mov    %edx,%edi
+   100419114:	89 d0                	mov    %edx,%eax
+   100419116:	d1 ff                	sar    $1,%edi
+   100419118:	83 e0 01             	and    $0x1,%eax
+   10041911b:	4c 63 c7             	movslq %edi,%r8
+   10041911e:	43 32 04 01          	xor    (%r9,%r8,1),%al
+   100419122:	3c 01                	cmp    $0x1,%al
+   100419124:	0f 84 76 02 00 00    	je     1004193a0 <Minisat::Solver::propagateForLK()+0x340>
+   10041912a:	a8 02                	test   $0x2,%al
+   10041912c:	74 ca                	je     1004190f8 <Minisat::Solver::propagateForLK()+0x98>
+   10041912e:	44 8b 01             	mov    (%rcx),%r8d
+   100419131:	4c 89 f1             	mov    %r14,%rcx
+   100419134:	e8 e7 e5 ff ff       	call   100417720 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)>
+   100419139:	84 c0                	test   %al,%al
+   10041913b:	75 bb                	jne    1004190f8 <Minisat::Solver::propagateForLK()+0x98>
+   10041913d:	41 89 be 18 06 00 00 	mov    %edi,0x618(%r14)
+   100419144:	b9 ff ff ff ff       	mov    $0xffffffff,%ecx
+   100419149:	e9 69 02 00 00       	jmp    1004193b7 <Minisat::Solver::propagateForLK()+0x357>
+   10041914e:	66 90                	xchg   %ax,%ax
+   100419150:	49 8d 5c 2d 00       	lea    0x0(%r13,%rbp,1),%rbx
+   100419155:	4c 8b 3b             	mov    (%rbx),%r15
+   100419158:	48 63 43 08          	movslq 0x8(%rbx),%rax
+   10041915c:	4d 8d 2c c7          	lea    (%r15,%rax,8),%r13
+   100419160:	4d 39 fd             	cmp    %r15,%r13
+   100419163:	0f 84 50 01 00 00    	je     1004192b9 <Minisat::Solver::propagateForLK()+0x259>
+   100419169:	41 83 f4 01          	xor    $0x1,%r12d
+   10041916d:	48 89 5c 24 30       	mov    %rbx,0x30(%rsp)
+   100419172:	4c 89 fd             	mov    %r15,%rbp
+   100419175:	44 89 64 24 28       	mov    %r12d,0x28(%rsp)
+   10041917a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   100419180:	8b 55 04             	mov    0x4(%rbp),%edx
+   100419183:	4d 8b 8e 58 02 00 00 	mov    0x258(%r14),%r9
+   10041918a:	4c 8d 65 08          	lea    0x8(%rbp),%r12
+   10041918e:	89 d0                	mov    %edx,%eax
+   100419190:	89 d1                	mov    %edx,%ecx
+   100419192:	d1 f8                	sar    $1,%eax
+   100419194:	83 e1 01             	and    $0x1,%ecx
+   100419197:	48 98                	cltq
+   100419199:	41 38 0c 01          	cmp    %cl,(%r9,%rax,1)
+   10041919d:	0f 84 4d 01 00 00    	je     1004192f0 <Minisat::Solver::propagateForLK()+0x290>
+   1004191a3:	8b 4d 00             	mov    0x0(%rbp),%ecx
+   1004191a6:	49 8b 86 a0 03 00 00 	mov    0x3a0(%r14),%rax
+   1004191ad:	48 8d 1c 88          	lea    (%rax,%rcx,4),%rbx
+   1004191b1:	8b 44 24 28          	mov    0x28(%rsp),%eax
+   1004191b5:	49 89 c8             	mov    %rcx,%r8
+   1004191b8:	44 8b 5b 0c          	mov    0xc(%rbx),%r11d
+   1004191bc:	41 39 c3             	cmp    %eax,%r11d
+   1004191bf:	75 0b                	jne    1004191cc <Minisat::Solver::propagateForLK()+0x16c>
+   1004191c1:	44 8b 5b 10          	mov    0x10(%rbx),%r11d
+   1004191c5:	89 43 10             	mov    %eax,0x10(%rbx)
+   1004191c8:	44 89 5b 0c          	mov    %r11d,0xc(%rbx)
+   1004191cc:	44 39 da             	cmp    %r11d,%edx
+   1004191cf:	74 1b                	je     1004191ec <Minisat::Solver::propagateForLK()+0x18c>
+   1004191d1:	44 89 d8             	mov    %r11d,%eax
+   1004191d4:	44 89 da             	mov    %r11d,%edx
+   1004191d7:	44 89 5d 04          	mov    %r11d,0x4(%rbp)
+   1004191db:	d1 f8                	sar    $1,%eax
+   1004191dd:	83 e2 01             	and    $0x1,%edx
+   1004191e0:	48 98                	cltq
+   1004191e2:	41 38 14 01          	cmp    %dl,(%r9,%rax,1)
+   1004191e6:	0f 84 04 01 00 00    	je     1004192f0 <Minisat::Solver::propagateForLK()+0x290>
+   1004191ec:	8b 7b 04             	mov    0x4(%rbx),%edi
+   1004191ef:	44 8b 13             	mov    (%rbx),%r10d
+   1004191f2:	41 39 fa             	cmp    %edi,%r10d
+   1004191f5:	0f 83 0d 01 00 00    	jae    100419308 <Minisat::Solver::propagateForLK()+0x2a8>
+   1004191fb:	c7 43 04 02 00 00 00 	movl   $0x2,0x4(%rbx)
+   100419202:	bf 02 00 00 00       	mov    $0x2,%edi
+   100419207:	b8 02 00 00 00       	mov    $0x2,%eax
+   10041920c:	41 83 fa 02          	cmp    $0x2,%r10d
+   100419210:	7f 23                	jg     100419235 <Minisat::Solver::propagateForLK()+0x1d5>
+   100419212:	e9 b9 01 00 00       	jmp    1004193d0 <Minisat::Solver::propagateForLK()+0x370>
+   100419217:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   10041921e:	00 00 
+   100419220:	38 d1                	cmp    %dl,%cl
+   100419222:	0f 84 58 01 00 00    	je     100419380 <Minisat::Solver::propagateForLK()+0x320>
+   100419228:	48 83 c0 01          	add    $0x1,%rax
+   10041922c:	41 39 c2             	cmp    %eax,%r10d
+   10041922f:	0f 8e eb 00 00 00    	jle    100419320 <Minisat::Solver::propagateForLK()+0x2c0>
+   100419235:	8b 54 83 0c          	mov    0xc(%rbx,%rax,4),%edx
+   100419239:	48 63 f0             	movslq %eax,%rsi
+   10041923c:	89 d1                	mov    %edx,%ecx
+   10041923e:	83 e2 01             	and    $0x1,%edx
+   100419241:	d1 f9                	sar    $1,%ecx
+   100419243:	48 63 c9             	movslq %ecx,%rcx
+   100419246:	41 0f b6 0c 09       	movzbl (%r9,%rcx,1),%ecx
+   10041924b:	f6 c1 02             	test   $0x2,%cl
+   10041924e:	74 d0                	je     100419220 <Minisat::Solver::propagateForLK()+0x1c0>
+   100419250:	48 98                	cltq
+   100419252:	8b 7c 24 28          	mov    0x28(%rsp),%edi
+   100419256:	8b 54 83 0c          	mov    0xc(%rbx,%rax,4),%edx
+   10041925a:	89 53 10             	mov    %edx,0x10(%rbx)
+   10041925d:	89 7c 83 0c          	mov    %edi,0xc(%rbx,%rax,4)
+   100419261:	48 63 7b 10          	movslq 0x10(%rbx),%rdi
+   100419265:	48 83 f7 01          	xor    $0x1,%rdi
+   100419269:	48 c1 e7 04          	shl    $0x4,%rdi
+   10041926d:	49 03 be 20 02 00 00 	add    0x220(%r14),%rdi
+   100419274:	48 63 47 08          	movslq 0x8(%rdi),%rax
+   100419278:	3b 47 0c             	cmp    0xc(%rdi),%eax
+   10041927b:	0f 84 99 01 00 00    	je     10041941a <Minisat::Solver::propagateForLK()+0x3ba>
+   100419281:	8d 48 01             	lea    0x1(%rax),%ecx
+   100419284:	48 8b 17             	mov    (%rdi),%rdx
+   100419287:	83 c6 01             	add    $0x1,%esi
+   10041928a:	89 4f 08             	mov    %ecx,0x8(%rdi)
+   10041928d:	48 8b 4d 00          	mov    0x0(%rbp),%rcx
+   100419291:	4c 89 e5             	mov    %r12,%rbp
+   100419294:	48 89 0c c2          	mov    %rcx,(%rdx,%rax,8)
+   100419298:	89 73 04             	mov    %esi,0x4(%rbx)
+   10041929b:	49 39 ed             	cmp    %rbp,%r13
+   10041929e:	0f 85 dc fe ff ff    	jne    100419180 <Minisat::Solver::propagateForLK()+0x120>
+   1004192a4:	4d 29 fd             	sub    %r15,%r13
+   1004192a7:	48 8b 5c 24 30       	mov    0x30(%rsp),%rbx
+   1004192ac:	49 c1 fd 03          	sar    $0x3,%r13
+   1004192b0:	45 85 ed             	test   %r13d,%r13d
+   1004192b3:	7e 04                	jle    1004192b9 <Minisat::Solver::propagateForLK()+0x259>
+   1004192b5:	44 29 6b 08          	sub    %r13d,0x8(%rbx)
+   1004192b9:	83 44 24 2c 01       	addl   $0x1,0x2c(%rsp)
+   1004192be:	49 63 86 b8 02 00 00 	movslq 0x2b8(%r14),%rax
+   1004192c5:	41 3b 86 90 02 00 00 	cmp    0x290(%r14),%eax
+   1004192cc:	0f 8c e8 fd ff ff    	jl     1004190ba <Minisat::Solver::propagateForLK()+0x5a>
+   1004192d2:	8b 4c 24 38          	mov    0x38(%rsp),%ecx
+   1004192d6:	48 63 44 24 2c       	movslq 0x2c(%rsp),%rax
+   1004192db:	49 01 86 f8 05 00 00 	add    %rax,0x5f8(%r14)
+   1004192e2:	e9 d0 00 00 00       	jmp    1004193b7 <Minisat::Solver::propagateForLK()+0x357>
+   1004192e7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   1004192ee:	00 00 
+   1004192f0:	48 8b 45 00          	mov    0x0(%rbp),%rax
+   1004192f4:	49 83 c7 08          	add    $0x8,%r15
+   1004192f8:	4c 89 e5             	mov    %r12,%rbp
+   1004192fb:	49 89 47 f8          	mov    %rax,-0x8(%r15)
+   1004192ff:	eb 9a                	jmp    10041929b <Minisat::Solver::propagateForLK()+0x23b>
+   100419301:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   100419308:	48 63 c7             	movslq %edi,%rax
+   10041930b:	44 39 d7             	cmp    %r10d,%edi
+   10041930e:	0f 8c 21 ff ff ff    	jl     100419235 <Minisat::Solver::propagateForLK()+0x1d5>
+   100419314:	90                   	nop
+   100419315:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+   10041931c:	00 00 00 00 
+   100419320:	83 ff 02             	cmp    $0x2,%edi
+   100419323:	0f 86 a7 00 00 00    	jbe    1004193d0 <Minisat::Solver::propagateForLK()+0x370>
+   100419329:	b8 02 00 00 00       	mov    $0x2,%eax
+   10041932e:	eb 12                	jmp    100419342 <Minisat::Solver::propagateForLK()+0x2e2>
+   100419330:	44 38 d1             	cmp    %r10b,%cl
+   100419333:	74 4b                	je     100419380 <Minisat::Solver::propagateForLK()+0x320>
+   100419335:	48 83 c0 01          	add    $0x1,%rax
+   100419339:	48 39 f8             	cmp    %rdi,%rax
+   10041933c:	0f 84 8e 00 00 00    	je     1004193d0 <Minisat::Solver::propagateForLK()+0x370>
+   100419342:	8b 54 83 0c          	mov    0xc(%rbx,%rax,4),%edx
+   100419346:	48 63 f0             	movslq %eax,%rsi
+   100419349:	89 d1                	mov    %edx,%ecx
+   10041934b:	41 89 d2             	mov    %edx,%r10d
+   10041934e:	d1 f9                	sar    $1,%ecx
+   100419350:	41 83 e2 01          	and    $0x1,%r10d
+   100419354:	48 63 c9             	movslq %ecx,%rcx
+   100419357:	41 0f b6 0c 09       	movzbl (%r9,%rcx,1),%ecx
+   10041935c:	f6 c1 02             	test   $0x2,%cl
+   10041935f:	74 cf                	je     100419330 <Minisat::Solver::propagateForLK()+0x2d0>
+   100419361:	48 98                	cltq
+   100419363:	8b 7c 24 28          	mov    0x28(%rsp),%edi
+   100419367:	83 f2 01             	xor    $0x1,%edx
+   10041936a:	8b 4c 83 0c          	mov    0xc(%rbx,%rax,4),%ecx
+   10041936e:	89 4b 10             	mov    %ecx,0x10(%rbx)
+   100419371:	89 7c 83 0c          	mov    %edi,0xc(%rbx,%rax,4)
+   100419375:	48 63 fa             	movslq %edx,%rdi
+   100419378:	e9 ec fe ff ff       	jmp    100419269 <Minisat::Solver::propagateForLK()+0x209>
+   10041937d:	0f 1f 00             	nopl   (%rax)
+   100419380:	8b 54 b3 0c          	mov    0xc(%rbx,%rsi,4),%edx
+   100419384:	49 83 c7 08          	add    $0x8,%r15
+   100419388:	89 55 04             	mov    %edx,0x4(%rbp)
+   10041938b:	48 8b 55 00          	mov    0x0(%rbp),%rdx
+   10041938f:	4c 89 e5             	mov    %r12,%rbp
+   100419392:	49 89 57 f8          	mov    %rdx,-0x8(%r15)
+   100419396:	89 43 04             	mov    %eax,0x4(%rbx)
+   100419399:	e9 fd fe ff ff       	jmp    10041929b <Minisat::Solver::propagateForLK()+0x23b>
+   10041939e:	66 90                	xchg   %ax,%ax
+   1004193a0:	41 83 f4 01          	xor    $0x1,%r12d
+   1004193a4:	41 89 96 14 09 00 00 	mov    %edx,0x914(%r14)
+   1004193ab:	b9 fe ff ff ff       	mov    $0xfffffffe,%ecx
+   1004193b0:	45 89 a6 10 09 00 00 	mov    %r12d,0x910(%r14)
+   1004193b7:	89 c8                	mov    %ecx,%eax
+   1004193b9:	48 83 c4 48          	add    $0x48,%rsp
+   1004193bd:	5b                   	pop    %rbx
+   1004193be:	5e                   	pop    %rsi
+   1004193bf:	5f                   	pop    %rdi
+   1004193c0:	5d                   	pop    %rbp
+   1004193c1:	41 5c                	pop    %r12
+   1004193c3:	41 5d                	pop    %r13
+   1004193c5:	41 5e                	pop    %r14
+   1004193c7:	41 5f                	pop    %r15
+   1004193c9:	c3                   	ret
+   1004193ca:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   1004193d0:	48 8b 45 00          	mov    0x0(%rbp),%rax
+   1004193d4:	45 89 da             	mov    %r11d,%r10d
+   1004193d7:	49 8d 5f 08          	lea    0x8(%r15),%rbx
+   1004193db:	41 d1 fa             	sar    $1,%r10d
+   1004193de:	49 89 07             	mov    %rax,(%r15)
+   1004193e1:	49 63 d2             	movslq %r10d,%rdx
+   1004193e4:	44 89 d8             	mov    %r11d,%eax
+   1004193e7:	83 e0 01             	and    $0x1,%eax
+   1004193ea:	41 32 04 11          	xor    (%r9,%rdx,1),%al
+   1004193ee:	3c 01                	cmp    $0x1,%al
+   1004193f0:	0f 84 82 00 00 00    	je     100419478 <Minisat::Solver::propagateForLK()+0x418>
+   1004193f6:	44 89 da             	mov    %r11d,%edx
+   1004193f9:	4c 89 f1             	mov    %r14,%rcx
+   1004193fc:	44 89 54 24 3c       	mov    %r10d,0x3c(%rsp)
+   100419401:	e8 1a e3 ff ff       	call   100417720 <Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)>
+   100419406:	44 8b 54 24 3c       	mov    0x3c(%rsp),%r10d
+   10041940b:	84 c0                	test   %al,%al
+   10041940d:	74 1f                	je     10041942e <Minisat::Solver::propagateForLK()+0x3ce>
+   10041940f:	49 89 df             	mov    %rbx,%r15
+   100419412:	4c 89 e5             	mov    %r12,%rbp
+   100419415:	e9 81 fe ff ff       	jmp    10041929b <Minisat::Solver::propagateForLK()+0x23b>
+   10041941a:	8d 50 01             	lea    0x1(%rax),%edx
+   10041941d:	48 89 f9             	mov    %rdi,%rcx
+   100419420:	e8 2b 8f 01 00       	call   100432350 <Minisat::vec<Minisat::Solver::Watcher>::capacity(int)>
+   100419425:	48 63 47 08          	movslq 0x8(%rdi),%rax
+   100419429:	e9 53 fe ff ff       	jmp    100419281 <Minisat::Solver::propagateForLK()+0x221>
+   10041942e:	41 8b 86 90 02 00 00 	mov    0x290(%r14),%eax
+   100419435:	41 89 86 b8 02 00 00 	mov    %eax,0x2b8(%r14)
+   10041943c:	4d 39 ec             	cmp    %r13,%r12
+   10041943f:	0f 83 9d 00 00 00    	jae    1004194e2 <Minisat::Solver::propagateForLK()+0x482>
+   100419445:	48 89 df             	mov    %rbx,%rdi
+   100419448:	4c 89 e6             	mov    %r12,%rsi
+   10041944b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+   100419450:	48 a5                	movsq  (%rsi),(%rdi)
+   100419452:	4c 39 ee             	cmp    %r13,%rsi
+   100419455:	72 f9                	jb     100419450 <Minisat::Solver::propagateForLK()+0x3f0>
+   100419457:	49 8d 45 f7          	lea    -0x9(%r13),%rax
+   10041945b:	48 29 e8             	sub    %rbp,%rax
+   10041945e:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+   100419462:	4c 8d 7c 03 08       	lea    0x8(%rbx,%rax,1),%r15
+   100419467:	49 8d 6c 04 08       	lea    0x8(%r12,%rax,1),%rbp
+   10041946c:	45 89 96 18 06 00 00 	mov    %r10d,0x618(%r14)
+   100419473:	e9 23 fe ff ff       	jmp    10041929b <Minisat::Solver::propagateForLK()+0x23b>
+   100419478:	41 8b 86 90 02 00 00 	mov    0x290(%r14),%eax
+   10041947f:	41 89 86 b8 02 00 00 	mov    %eax,0x2b8(%r14)
+   100419486:	4d 39 ec             	cmp    %r13,%r12
+   100419489:	73 47                	jae    1004194d2 <Minisat::Solver::propagateForLK()+0x472>
+   10041948b:	48 89 df             	mov    %rbx,%rdi
+   10041948e:	4c 89 e6             	mov    %r12,%rsi
+   100419491:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   100419498:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+   10041949f:	00 
+   1004194a0:	48 a5                	movsq  (%rsi),(%rdi)
+   1004194a2:	4c 39 ee             	cmp    %r13,%rsi
+   1004194a5:	72 f9                	jb     1004194a0 <Minisat::Solver::propagateForLK()+0x440>
+   1004194a7:	49 8d 45 f7          	lea    -0x9(%r13),%rax
+   1004194ab:	44 89 44 24 38       	mov    %r8d,0x38(%rsp)
+   1004194b0:	48 29 e8             	sub    %rbp,%rax
+   1004194b3:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+   1004194b7:	4c 8d 7c 03 08       	lea    0x8(%rbx,%rax,1),%r15
+   1004194bc:	49 8d 6c 04 08       	lea    0x8(%r12,%rax,1),%rbp
+   1004194c1:	e9 d5 fd ff ff       	jmp    10041929b <Minisat::Solver::propagateForLK()+0x23b>
+   1004194c6:	31 c0                	xor    %eax,%eax
+   1004194c8:	b9 ff ff ff ff       	mov    $0xffffffff,%ecx
+   1004194cd:	e9 09 fe ff ff       	jmp    1004192db <Minisat::Solver::propagateForLK()+0x27b>
+   1004194d2:	44 89 44 24 38       	mov    %r8d,0x38(%rsp)
+   1004194d7:	49 89 df             	mov    %rbx,%r15
+   1004194da:	4c 89 e5             	mov    %r12,%rbp
+   1004194dd:	e9 b9 fd ff ff       	jmp    10041929b <Minisat::Solver::propagateForLK()+0x23b>
+   1004194e2:	49 89 df             	mov    %rbx,%r15
+   1004194e5:	4c 89 e5             	mov    %r12,%rbp
+   1004194e8:	eb 82                	jmp    10041946c <Minisat::Solver::propagateForLK()+0x40c>
+   1004194ea:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)

@@ -1,0 +1,946 @@
+In file included from src/solver/Solver.h:53,
+                 from src/solver/SimpSolver.h:37,
+                 from src/solver/SimpSolver.cc:34:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+In file included from src/solver/mtl/Sort.h:24,
+                 from src/solver/SimpSolver.cc:33:
+src/solver/mtl/Vec.h: In instantiation of 'void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<unsigned int>]':
+src/solver/mtl/Vec.h:115:13:   required from 'void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<unsigned int>]'
+  115 |     capacity(size);
+      |     ~~~~~~~~^~~~~~
+src/solver/SolverTypes.h:339:50:   required from 'void Minisat::OccLists<Idx, Vec, Deleted>::init(const Idx&) [with Idx = int; Vec = Minisat::vec<unsigned int>; Deleted = Minisat::SimpSolver::ClauseDeleted]'
+  339 |     void  init      (const Idx& idx){ occs.growTo(toInt(idx)+1); dirty.growTo(toInt(idx)+1, 0); }
+      |                                       ~~~~~~~~~~~^~~~~~~~~~~~~~
+src/solver/SimpSolver.cc:98:24:   required from here
+   98 |         occurs    .init(v);
+      |         ~~~~~~~~~~~~~~~^~~
+src/solver/mtl/Vec.h:99:54: warning: 'void* realloc(void*, size_t)' moving an object of non-trivially copyable type 'class Minisat::vec<unsigned int>'; use 'new' and 'delete' instead [-Wclass-memaccess]
+   99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+      |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:38:7: note: 'class Minisat::vec<unsigned int>' declared here
+   38 | class vec {
+      |       ^~~
+In file included from src/solver/Solver.h:53,
+                 from src/solver/Solver.cc:107:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+src/solver/Solver.h: In constructor 'Minisat::Solver::Solver()':
+src/solver/Solver.h:480:15: warning: 'Minisat::Solver::my_var_decay' will be initialized after [-Wreorder]
+  480 |     double    my_var_decay;
+      |               ^~~~~~~~~~~~
+src/solver/Solver.h:293:42: warning:   'Minisat::Heap<Minisat::Solver::VarOrderLt> Minisat::Solver::order_heap_distance' [-Wreorder]
+  293 |                         order_heap_VSIDS,order_heap_distance;
+      |                                          ^~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+  143 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:514:14: warning: 'Minisat::Solver::lastOptimalCost' will be initialized after [-Wreorder]
+  514 |     uint64_t lastOptimalCost;
+      |              ^~~~~~~~~~~~~~~
+src/solver/Solver.h:513:40: warning:   'uint64_t Minisat::Solver::totalWeight' [-Wreorder]
+  513 |     uint64_t hardWeight, solutionCost, totalWeight, UB;
+      |                                        ^~~~~~~~~~~
+src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+  143 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:707:25: warning: 'Minisat::Solver::orderHeapAuxi' will be initialized after [-Wreorder]
+  707 |     Heap<VarOrderGt>    orderHeapAuxi;
+      |                         ^~~~~~~~~~~~~
+src/solver/Solver.h:619:25: warning:   'int Minisat::Solver::tier2_lbd_cut' [-Wreorder]
+  619 |     int                 tier2_lbd_cut;
+      |                         ^~~~~~~~~~~~~
+src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+  143 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:663:9: warning: 'Minisat::Solver::cardinalityEncMode' will be initialized after [-Wreorder]
+  663 |     int cardinalityEncMode;
+      |         ^~~~~~~~~~~~~~~~~~
+src/solver/Solver.h:644:14: warning:   'uint64_t Minisat::Solver::quasiSoftConflicts' [-Wreorder]
+  644 |     uint64_t quasiSoftConflicts;
+      |              ^~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+  143 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:696:14: warning: 'Minisat::Solver::nbFixedByLH' will be initialized after [-Wreorder]
+  696 |     uint64_t nbFixedByLH;
+      |              ^~~~~~~~~~~
+src/solver/Solver.h:562:10: warning:   'bool Minisat::Solver::bestSolutionFound' [-Wreorder]
+  562 |     bool bestSolutionFound;
+      |          ^~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+  143 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.h:564:9: warning: 'Minisat::Solver::nbSatLitsAtStart' will be initialized after [-Wreorder]
+  564 |     int nbSatLitsAtStart;
+      |         ^~~~~~~~~~~~~~~~
+src/solver/Solver.h:560:9: warning:   'int Minisat::Solver::bounds_pipe_w' [-Wreorder]
+  560 |     int bounds_pipe_w;
+      |         ^~~~~~~~~~~~~
+src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+  143 | Solver::Solver() :
+      | ^~~~~~
+src/solver/Solver.cc: In member function 'Minisat::CRef Minisat::Solver::simplePropagate()':
+src/solver/Solver.cc:316:27: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+  316 |         if (c.lastPoint() > c.size())
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~
+src/solver/Solver.cc:335:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+  335 |         for (int k = 2; k < c.lastPoint(); k++) {
+      |                         ~~^~~~~~~~~~~~~~~
+src/solver/Solver.cc:381:63: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+  381 |     if (confl == CRef_Undef && falseLits.size() + rootNbIsets >= UB)
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+src/solver/Solver.cc: In member function 'bool Minisat::Solver::simplifyLearnt_core()':
+src/solver/Solver.cc:787:34: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+  787 |                     if (nblevels < c.lbd()){
+      |                         ~~~~~~~~~^~~~~~~~~
+src/solver/Solver.cc:721:9: warning: unused variable 'learnts_core_size_before' [-Wunused-variable]
+  721 |     int learnts_core_size_before = learnts_core.size();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc: In member function 'bool Minisat::Solver::simplifyLearnt_tier2()':
+src/solver/Solver.cc:895:34: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+  895 |                     if (nblevels < c.lbd()){
+      |                         ~~~~~~~~~^~~~~~~~~
+src/solver/Solver.cc:823:9: warning: unused variable 'learnts_tier2_size_before' [-Wunused-variable]
+  823 |     int learnts_tier2_size_before = learnts_tier2.size();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:828:9: warning: variable 'limit' set but not used [-Wunused-but-set-variable]
+  828 |     int limit;
+      |         ^~~~~
+src/solver/Solver.cc: In member function 'bool Minisat::Solver::failedLiteralDetection()':
+src/solver/Solver.cc:1038:100: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 7 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 1038 |   printf("c nbFailedLits %d, nbI %d, fixedVarsByFL %d, totalFixedVars %d, nbTested: %d, counter %llu\n",
+      |                                                                                                 ~~~^
+      |                                                                                                    |
+      |                                                                                                    long long unsigned int
+      |                                                                                                 %lu
+ 1039 |          nbFailedLits, nbI, trail.size()-initTrail, trail.size(), nbTested, counter);
+      |                                                                             ~~~~~~~                 
+      |                                                                             |
+      |                                                                             uint64_t {aka long unsigned int}
+src/solver/Solver.cc: In member function 'bool Minisat::Solver::simplifyOriginalClauses()':
+src/solver/Solver.cc:1179:40: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 1179 |     printf("c total nb of literals: %llu\n", clauses_literals);
+      |                                     ~~~^     ~~~~~~~~~~~~~~~~
+      |                                        |     |
+      |                                        |     uint64_t {aka long unsigned int}
+      |                                        long long unsigned int
+      |                                     %lu
+src/solver/Solver.cc:1173:25: warning: unused variable 'nbOriginalClauses_before' [-Wunused-variable]
+ 1173 |     int last_shorten=0, nbOriginalClauses_before = clauses.size();
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:1185:17: warning: unused variable 'begin_simp_time' [-Wunused-variable]
+ 1185 |     double      begin_simp_time = cpuTime();
+      |                 ^~~~~~~~~~~~~~~
+src/solver/Solver.cc:1250:12: warning: variable 'avg' set but not used [-Wunused-but-set-variable]
+ 1250 |     double avg;
+      |            ^~~
+src/solver/Solver.cc: In member function 'Minisat::CRef Minisat::Solver::propagate()':
+src/solver/Solver.cc:2005:31: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 2005 |             if (c.lastPoint() > c.size())
+      |                 ~~~~~~~~~~~~~~^~~~~~~~~~
+src/solver/Solver.cc:2024:31: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 2024 |             for (int k = 2; k < c.lastPoint(); k++) {
+      |                             ~~^~~~~~~~~~~~~~~
+src/solver/Solver.cc:2076:49: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 2076 |     if (confl == CRef_Undef && falseLits.size() >= UB)
+      |                                ~~~~~~~~~~~~~~~~~^~~~~
+src/solver/Solver.cc:2072:1: warning: label 'ExitProp' defined but not used [-Wunused-label]
+ 2072 | ExitProp:;
+      | ^~~~~~~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)':
+src/solver/Solver.cc:2177:9: warning: variable 'myLevel' set but not used [-Wunused-but-set-variable]
+ 2177 |     int myLevel = decisionLevel() +1;
+      |         ^~~~~~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+src/solver/Solver.cc:2196:26: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 2196 |     if (falseLits.size() >= UB)
+      |         ~~~~~~~~~~~~~~~~~^~~~~
+src/solver/Solver.cc:2206:26: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 2206 |     if (falseLits.size() > UB) {
+      |         ~~~~~~~~~~~~~~~~~^~~~
+src/solver/Solver.cc: In member function 'bool Minisat::Solver::simplifyLearnt_local()':
+src/solver/Solver.cc:2631:34: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 2631 |                     if (nblevels < c.lbd()){
+      |                         ~~~~~~~~~^~~~~~~~~
+src/solver/Solver.cc:2559:7: warning: unused variable 'learnts_local_size_before' [-Wunused-variable]
+ 2559 |   int learnts_local_size_before = learnts_local.size();
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:2560:7: warning: unused variable 'savedTrail' [-Wunused-variable]
+ 2560 |   int savedTrail = trail.size();
+      |       ^~~~~~~~~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::reduceDB_core()':
+src/solver/Solver.cc:2772:9: warning: unused variable 'totalLocalSize' [-Wunused-variable]
+ 2772 |     int totalLocalSize=0, removedSize=0;
+      |         ^~~~~~~~~~~~~~
+src/solver/Solver.cc:2772:27: warning: unused variable 'removedSize' [-Wunused-variable]
+ 2772 |     int totalLocalSize=0, removedSize=0;
+      |                           ^~~~~~~~~~~
+src/solver/Solver.cc: In member function 'Minisat::CRef Minisat::Solver::lPropagate()':
+src/solver/Solver.cc:3022:20: warning: comparison of integer expressions of different signedness: 'uint64_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+ 3022 |   if (UB > 1 && UB == falseLits.size() + 1 && decisionLevel() < hardenLevel) {
+      |                 ~~~^~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::identifyClausesToSplit(Minisat::vec<unsigned int>&)':
+src/solver/Solver.cc:3170:46: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 3170 |     for(j=i+1; j<cs.size() && 2*nbCommunLits >= UB; j++) {
+      |                               ~~~~~~~~~~~~~~~^~~~~
+src/solver/Solver.cc: In member function 'Minisat::lbool Minisat::Solver::search(int&)':
+src/solver/Solver.cc:3821:31: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3821 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                            ~~~^
+      |                               |
+      |                               long long unsigned int
+      |                            %lu
+ 3822 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+      |                      ~~        
+      |                      |
+      |                      uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3821:50: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3821 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                               ~~~^
+      |                                                  |
+      |                                                  long long unsigned int
+      |                                               %lu
+ 3822 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+      |                          ~~~~~~~~~                
+      |                          |
+      |                          uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3821:64: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3821 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                             ~~~^
+      |                                                                |
+      |                                                                long long unsigned int
+      |                                                             %lu
+ 3822 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~     
+      |                                              |
+      |                                              uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3821:186: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 13 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3821 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                                                                                                       ~~~^
+      |                                                                                                                                                                                          |
+      |                                                                                                                                                                                          long long unsigned int
+      |                                                                                                                                                                                       %lu
+ 3822 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+ 3823 |                      falseLits.size(), nbFalses, nbFixeds, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                                         ~~~~~~~~~~~                                                                                       
+      |                                                                                         |
+      |                                                                                         uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3825:48: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3825 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                             ~~~^
+      |                                                |
+      |                                                long long unsigned int
+      |                                             %lu
+ 3826 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                 ~~~~~~~~~~~~~~  
+      |                                 |
+      |                                 uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3825:64: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3825 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                             ~~~^
+      |                                                                |
+      |                                                                long long unsigned int
+      |                                                             %lu
+ 3826 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                 ~~~~~~~~~~~     
+      |                                                 |
+      |                                                 uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3825:120: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3825 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                     ~~~^
+      |                                                                                                                        |
+      |                                                                                                                        long long unsigned int
+      |                                                                                                                     %lu
+ 3826 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~        
+      |                                                                                                |
+      |                                                                                                uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3825:130: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 9 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3825 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                               ~~~^
+      |                                                                                                                                  |
+      |                                                                                                                                  long long unsigned int
+      |                                                                                                                               %lu
+ 3826 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                                                                                            |
+      |                                                                                                                            uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3825:145: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 10 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3825 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                                              ~~~^
+      |                                                                                                                                                 |
+      |                                                                                                                                                 long long unsigned int
+      |                                                                                                                                              %lu
+ 3826 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                             ~~~~~~~~~~~
+      |                                                                                                                                             |
+      |                                                                                                                                             uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3825:159: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 11 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3825 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                                                            ~~~^
+      |                                                                                                                                                               |
+      |                                                                                                                                                               long long unsigned int
+      |                                                                                                                                                            %lu
+ 3826 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                                          ~~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                          |
+      |                                                                                                                                                          uint64_t {aka long unsigned int}
+src/solver/Solver.cc:3825:172: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 12 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 3825 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+      |                                                                                                                                                                         ~~~^
+      |                                                                                                                                                                            |
+      |                                                                                                                                                                            long long unsigned int
+      |                                                                                                                                                                         %lu
+ 3826 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                                                              ~~~~~~~~~~~~~~~~~
+      |                                                                                                                                                                              |
+      |                                                                                                                                                                              uint64_t {aka long unsigned int}
+src/solver/Solver.cc: In member function 'Minisat::CRef Minisat::Solver::propagateForLK()':
+src/solver/Solver.cc:3984:27: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 3984 |         if (c.lastPoint() > c.size())
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~
+src/solver/Solver.cc:4019:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 4019 |         for (int k = 2; k < c.lastPoint(); k++) {
+      |                         ~~^~~~~~~~~~~~~~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+src/solver/Solver.cc:4519:26: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 4519 |     if (falseLits.size() > UB) {
+      |         ~~~~~~~~~~~~~~~~~^~~~
+src/solver/Solver.cc: In member function 'bool Minisat::Solver::lookahead()':
+src/solver/Solver.cc:4860:17: warning: comparison of integer expressions of different signedness: 'uint64_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+ 4860 |   if (conflicts > prevConflicts) {
+      |       ~~~~~~~~~~^~~~~~~~~~~~~~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::addHardClausesForSoftClauses()':
+src/solver/Solver.cc:5105:70: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5105 |   printf("c nb soft clauses: %d, of which %d unit, %d nonUnit and %llu empty\n",
+      |                                                                   ~~~^
+      |                                                                      |
+      |                                                                      long long unsigned int
+      |                                                                   %lu
+ 5106 |          softClauses.size(), nbUnitSoft, nbNonUnitSoft, solutionCost);
+      |                                                         ~~~~~~~~~~~~  
+      |                                                         |
+      |                                                         uint64_t {aka long unsigned int}
+src/solver/Solver.cc: In member function 'void Minisat::Solver::printBestSolution() const':
+src/solver/Solver.cc:5256:49: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'long unsigned int' [-Wformat=]
+ 5256 |     printf("c   unsat soft clauses (search): %llu\n", bestSup);
+      |                                              ~~~^     ~~~~~~~
+      |                                                 |     |
+      |                                                 |     long unsigned int
+      |                                                 long long unsigned int
+      |                                              %lu
+src/solver/Solver.cc:5257:53: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5257 |     printf("c   satisfied soft clauses (maxsat): %llu\n", maxsat);
+      |                                                  ~~~^     ~~~~~~
+      |                                                     |     |
+      |                                                     |     uint64_t {aka long unsigned int}
+      |                                                     long long unsigned int
+      |                                                  %lu
+src/solver/Solver.cc:5258:39: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5258 |     printf("c   total weight cost: %llu\n", optimal);
+      |                                    ~~~^     ~~~~~~~
+      |                                       |     |
+      |                                       |     uint64_t {aka long unsigned int}
+      |                                       long long unsigned int
+      |                                    %lu
+src/solver/Solver.cc: In member function 'void Minisat::Solver::checkSolution()':
+src/solver/Solver.cc:5274:15: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 5274 |   if (nbFalse != falseLits.size()+fixedCostBySearch + relaxedCost)
+      |       ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:5275:92: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5275 |     printf("c **** error nb of false soft clauses real nbfalse: %d, recorded falseLits: %llu****\n",
+      |                                                                                         ~~~^
+      |                                                                                            |
+      |                                                                                            long long unsigned int
+      |                                                                                         %lu
+ 5276 |            nbFalse, falseLits.size()+fixedCostBySearch+relaxedCost);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                          
+      |                                                       |
+      |                                                       uint64_t {aka long unsigned int}
+src/solver/Solver.cc: In member function 'void Minisat::Solver::partition()':
+src/solver/Solver.cc:5396:31: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5396 |         if (conflicted[var(q)]==iset.size()) {
+src/solver/Solver.cc:5406:32: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5406 |         if (conflicted[var(q)] < iset.size())
+src/solver/Solver.cc:5465:50: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5465 |         if (q != lit_Undef && conflicted[var(q)] == iset.size()) {
+src/solver/Solver.cc:5530:38: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 5530 |   printf("c isets %d, derivedCost %llu\n", nbIsets, derivedCost);
+      |                                   ~~~^              ~~~~~~~~~~~
+      |                                      |              |
+      |                                      |              uint64_t {aka long unsigned int}
+      |                                      long long unsigned int
+      |                                   %lu
+src/solver/Solver.cc: In member function 'Minisat::CRef Minisat::Solver::simplepropagateForLK()':
+src/solver/Solver.cc:5677:27: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+ 5677 |         if (c.lastPoint() > c.size())
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~
+src/solver/Solver.cc:5691:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 5691 |         for (int k = 2; k < c.lastPoint(); k++) {
+      |                         ~~^~~~~~~~~~~~~~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::addCardinalityConstraints()':
+src/solver/Solver.cc:6221:64: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6221 |       printf("\nc Cardinality: off (soft-conflict only), UB %llu\n", UB);
+      |                                                             ~~~^     ~~
+      |                                                                |     |
+      |                                                                |     uint64_t {aka long unsigned int}
+      |                                                                long long unsigned int
+      |                                                             %lu
+src/solver/Solver.cc:6251:82: warning: comparison of integer expressions of different signedness: 'int' and 'uint64_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 6251 |   if (activeSoftLits.size() < 2 || UB - 1 - nbFalse < 1 || activeSoftLits.size() <= UB - 1 - nbFalse
+      |                                                            ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:6270:46: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6270 |   printf("\nc Cardinality: %d (%s) for UB %llu\n", cardinalityC.size(), enc, UB);
+      |                                           ~~~^                               ~~
+      |                                              |                               |
+      |                                              long long unsigned int          uint64_t {aka long unsigned int}
+      |                                           %lu
+src/solver/Solver.cc: In member function 'Minisat::lbool Minisat::Solver::solve_()':
+src/solver/Solver.cc:6619:79: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6619 |     printf("c fixedCost %d, nbSatLits %d, totalFixedVars %d, objForSearch: %llu\n\n",
+      |                                                                            ~~~^
+      |                                                                               |
+      |                                                                               long long unsigned int
+      |                                                                            %lu
+ 6620 |                 fixedCost, nbSatLits, trail.size(), objForSearch);
+      |                                                     ~~~~~~~~~~~~               
+      |                                                     |
+      |                                                     uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6648:35: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6648 |         printf("c provided UB: %llu\n", providedUB);
+      |                                ~~~^     ~~~~~~~~~~
+      |                                   |     |
+      |                                   |     uint64_t {aka long unsigned int}
+      |                                   long long unsigned int
+      |                                %lu
+src/solver/Solver.cc:6651:54: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6651 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                   ~~~^                                                                           ~~~~~~
+      |                                                      |                                                                           |
+      |                                                      long long unsigned int                                                      uint64_t {aka long unsigned int}
+      |                                                   %lu
+src/solver/Solver.cc:6651:68: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6651 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                 ~~~^                                                                     ~~~~~~~~~~~~
+      |                                                                    |                                                                     |
+      |                                                                    long long unsigned int                                                uint64_t {aka long unsigned int}
+      |                                                                 %lu
+src/solver/Solver.cc:6651:87: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6651 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                                    ~~~^                                                                ~~~~~~~~~~~~~~~~~
+      |                                                                                       |                                                                |
+      |                                                                                       long long unsigned int                                           uint64_t {aka long unsigned int}
+      |                                                                                    %lu
+src/solver/Solver.cc:6651:105: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6651 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                                                      ~~~^                                                                 ~~~~~~~~~~~
+      |                                                                                                         |                                                                 |
+      |                                                                                                         long long unsigned int                                            uint64_t {aka long unsigned int}
+      |                                                                                                      %lu
+src/solver/Solver.cc:6651:124: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6651 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+      |                                                                                                                         ~~~^                                                           ~~~~~~~~~~~
+      |                                                                                                                            |                                                           |
+      |                                                                                                                            long long unsigned int                                      uint64_t {aka long unsigned int}
+      |                                                                                                                         %lu
+src/solver/Solver.cc:6673:58: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6673 |       printf("c ends of initiationization by VSIDS at %llu conflicts with init %d\n\n",
+      |                                                       ~~~^
+      |                                                          |
+      |                                                          long long unsigned int
+      |                                                       %lu
+ 6674 |              conflicts, init);
+      |              ~~~~~~~~~                                    
+      |              |
+      |              uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6703:50: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6703 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                               ~~~^
+      |                                                  |
+      |                                                  long long unsigned int
+      |                                               %lu
+ 6704 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+      |                                ~~~~~~~~~~~~~~~~~~~~
+      |                                         |
+      |                                         uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6703:62: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6703 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                           ~~~^
+      |                                                              |
+      |                                                              long long unsigned int
+      |                                                           %lu
+ 6704 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+      |                                                      ~~~~~~~~~~~~~~~
+      |                                                      |
+      |                                                      uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6703:75: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6703 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                        ~~~^
+      |                                                                           |
+      |                                                                           long long unsigned int
+      |                                                                        %lu
+ 6704 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+ 6705 |                  starts-savedRestarts, propagations-savedUP);
+      |                  ~~~~~~~~~~~~~~~~~~~~                                      
+      |                        |
+      |                        uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6703:84: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6703 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                                 ~~~^
+      |                                                                                    |
+      |                                                                                    long long unsigned int
+      |                                                                                 %lu
+ 6704 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+ 6705 |                  starts-savedRestarts, propagations-savedUP);
+      |                                        ~~~~~~~~~~~~~~~~~~~~                         
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6709:48: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6709 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                             ~~~^
+      |                                                |
+      |                                                long long unsigned int
+      |                                             %lu
+ 6710 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+      |                              ~~~~~~~~~~~~~~~~~~~~
+      |                                       |
+      |                                       uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6709:60: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6709 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                         ~~~^
+      |                                                            |
+      |                                                            long long unsigned int
+      |                                                         %lu
+ 6710 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+      |                                                    ~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6709:73: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6709 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                      ~~~^
+      |                                                                         |
+      |                                                                         long long unsigned int
+      |                                                                      %lu
+ 6710 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+ 6711 |                  starts-savedRestarts, propagations-savedUP);
+      |                  ~~~~~~~~~~~~~~~~~~~~                                    
+      |                        |
+      |                        uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6709:82: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6709 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+      |                                                                               ~~~^
+      |                                                                                  |
+      |                                                                                  long long unsigned int
+      |                                                                               %lu
+ 6710 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+ 6711 |                  starts-savedRestarts, propagations-savedUP);
+      |                                        ~~~~~~~~~~~~~~~~~~~~                       
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6756:25: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6756 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                      ~~~^
+      |                         |
+      |                         long long unsigned int
+      |                      %lu
+ 6757 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                ~~        
+      |                |
+      |                uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6756:43: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6756 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                        ~~~^
+      |                                           |
+      |                                           long long unsigned int
+      |                                        %lu
+ 6757 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                    ~~~~~~~~~               
+      |                    |
+      |                    uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6756:56: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6756 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                                     ~~~^
+      |                                                        |
+      |                                                        long long unsigned int
+      |                                                     %lu
+ 6757 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~   
+      |                                        |
+      |                                        uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6756:99: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6756 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                                                                                ~~~^
+      |                                                                                                   |
+      |                                                                                                   long long unsigned int
+      |                                                                                                %lu
+ 6757 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                         ~~~~~~~~~~~~~~~~~~
+      |                                                                                                                         |
+      |                                                                                                                         uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6756:112: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 9 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6756 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+      |                                                                                                             ~~~^
+      |                                                                                                                |
+      |                                                                                                                long long unsigned int
+      |                                                                                                             %lu
+ 6757 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+      |                                                                                                                                             ~~~~~~~~~~~~~~~~~
+      |                                                                                                                                             |
+      |                                                                                                                                             uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6758:72: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6758 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                     ~~~^
+      |                                                                        |
+      |                                                                        long long unsigned int
+      |                                                                     %lu
+ 6759 |                meanLB, dev, succRate,
+ 6760 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                             
+      |                           |
+      |                           uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6758:98: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 7 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6758 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                               ~~~^
+      |                                                                                                  |
+      |                                                                                                  long long unsigned int
+      |                                                                                               %lu
+ 6759 |                meanLB, dev, succRate,
+ 6760 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                         ~~~~~~~~~~~~~~                            
+      |                                                         |
+      |                                                         uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6758:109: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6758 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                          ~~~^
+      |                                                                                                             |
+      |                                                                                                             long long unsigned int
+      |                                                                                                          %lu
+ 6759 |                meanLB, dev, succRate,
+ 6760 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~             
+      |                                                                                  |
+      |                                                                                  uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6758:124: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 9 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6758 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                                         ~~~^
+      |                                                                                                                            |
+      |                                                                                                                            long long unsigned int
+      |                                                                                                                         %lu
+ 6759 |                meanLB, dev, succRate,
+ 6760 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                                                   ~~~~~~~~~~~               
+      |                                                                                                   |
+      |                                                                                                   uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6758:163: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 12 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6758 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+      |                                                                                                                                                                ~~~^
+      |                                                                                                                                                                   |
+      |                                                                                                                                                                   long long unsigned int
+      |                                                                                                                                                                %lu
+ 6759 |                meanLB, dev, succRate,
+ 6760 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+      |                                                                                                                                             ~~~~~~~~~~~            
+      |                                                                                                                                             |
+      |                                                                                                                                             uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6786:25: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6786 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                      ~~~^
+      |                         |
+      |                         long long unsigned int
+      |                      %lu
+ 6787 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+      |                ~~        
+      |                |
+      |                uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6786:43: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6786 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                        ~~~^
+      |                                           |
+      |                                           long long unsigned int
+      |                                        %lu
+ 6787 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+      |                    ~~~~~~~~~               
+      |                    |
+      |                    uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6786:60: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6786 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                                         ~~~^
+      |                                                            |
+      |                                                            long long unsigned int
+      |                                                         %lu
+ 6787 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~       
+      |                                        |
+      |                                        uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6786:189: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 11 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6786 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                                                                                                                                                                          ~~~^
+      |                                                                                                                                                                                             |
+      |                                                                                                                                                                                             long long unsigned int
+      |                                                                                                                                                                                          %lu
+ 6787 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+ 6788 |                meanLB, dev, succRate, nbLKsuccess, nbSavedLits);
+      |                                       ~~~~~~~~~~~                                                                                                                                            
+      |                                       |
+      |                                       uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6786:207: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 12 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6786 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+      |                                                                                                                                                                                                            ~~~^
+      |                                                                                                                                                                                                               |
+      |                                                                                                                                                                                                               long long unsigned int
+      |                                                                                                                                                                                                            %lu
+ 6787 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+ 6788 |                meanLB, dev, succRate, nbLKsuccess, nbSavedLits);
+      |                                                    ~~~~~~~~~~~                                                                                                                                                 
+      |                                                    |
+      |                                                    uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6815:17: warning: comparison of integer expressions of different signedness: 'uint64_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+ 6815 |         if (inf > falseLits.size())
+      |             ~~~~^~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:6823:34: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6823 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+      |                               ~~~^                         ~~
+      |                                  |                         |
+      |                                  long long unsigned int    uint64_t {aka long unsigned int}
+      |                               %lu
+src/solver/Solver.cc:6823:44: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6823 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+      |                                         ~~~^                   ~~~
+      |                                            |                   |
+      |                                            |                   uint64_t {aka long unsigned int}
+      |                                            long long unsigned int
+      |                                         %lu
+src/solver/Solver.cc:6823:54: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6823 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+      |                                                   ~~~^              ~~~
+      |                                                      |              |
+      |                                                      |              uint64_t {aka long unsigned int}
+      |                                                      long long unsigned int
+      |                                                   %lu
+src/solver/Solver.cc:6845:57: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6845 |       printf("c no feasible solution, hardConflicts: %llu\n", conflicts - softConflicts);
+      |                                                      ~~~^     ~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                                         |               |
+      |                                                         |               uint64_t {aka long unsigned int}
+      |                                                         long long unsigned int
+      |                                                      %lu
+src/solver/Solver.cc:6848:30: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6848 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                           ~~~^
+      |                              |
+      |                              long long unsigned int
+      |                           %lu
+ 6849 |              solutionCost, fixedCostBySearch,
+      |              ~~~~~~~~~~~~     
+      |              |
+      |              uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6848:51: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6848 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                ~~~^
+      |                                                   |
+      |                                                   long long unsigned int
+      |                                                %lu
+ 6849 |              solutionCost, fixedCostBySearch,
+      |                            ~~~~~~~~~~~~~~~~~       
+      |                            |
+      |                            uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6848:66: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6848 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                               ~~~^
+      |                                                                  |
+      |                                                                  long long unsigned int
+      |                                                               %lu
+ 6849 |              solutionCost, fixedCostBySearch,
+ 6850 |              lastOptimalCost,
+      |              ~~~~~~~~~~~~~~~                                      
+      |              |
+      |              uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6848:80: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6848 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                                             ~~~^
+      |                                                                                |
+      |                                                                                long long unsigned int
+      |                                                                             %lu
+......
+ 6851 |              objForSearch-sup + nbSatLits, conflicts - softConflicts);
+      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                       
+      |                               |
+      |                               uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6848:101: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 6 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6848 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+      |                                                                                                  ~~~^
+      |                                                                                                     |
+      |                                                                                                     long long unsigned int
+      |                                                                                                  %lu
+......
+ 6851 |              objForSearch-sup + nbSatLits, conflicts - softConflicts);
+      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~                                 
+      |                                                      |
+      |                                                      uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6853:24: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6853 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                     ~~~^
+      |                        |
+      |                        long long unsigned int
+      |                     %lu
+ 6854 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+      |            ~~~~~~~~~    
+      |            |
+      |            uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6853:40: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 3 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6853 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                     ~~~^
+      |                                        |
+      |                                        long long unsigned int
+      |                                     %lu
+ 6854 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+      |                       ~~~~~~~~~~~       
+      |                       |
+      |                       uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6853:63: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6853 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                                            ~~~^
+      |                                                               |
+      |                                                               long long unsigned int
+      |                                                            %lu
+ 6854 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+      |                                                                 ~~~~~~~~~~~~~~~
+      |                                                                 |
+      |                                                                 uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6853:96: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 8 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6853 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                                                                             ~~~^
+      |                                                                                                |
+      |                                                                                                long long unsigned int
+      |                                                                                             %lu
+ 6854 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+ 6855 |            100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
+      |                                                           ~~~~~~~~~~~~~~                        
+      |                                                           |
+      |                                                           uint64_t {aka long unsigned int}
+src/solver/Solver.cc:6853:124: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 10 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+ 6853 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+      |                                                                                                                         ~~~^
+      |                                                                                                                            |
+      |                                                                                                                            long long unsigned int
+      |                                                                                                                         %lu
+ 6854 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+ 6855 |            100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
+      |                                                                                                 ~~~~~~~~~~~                 
+      |                                                                                                 |
+      |                                                                                                 uint64_t {aka long unsigned int}
+In file included from src/solver/mtl/Sort.h:24,
+                 from src/solver/Solver.cc:106:
+src/solver/mtl/Vec.h: In instantiation of 'void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<Minisat::Solver::Watcher>]':
+src/solver/mtl/Vec.h:115:13:   required from 'void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<Minisat::Solver::Watcher>]'
+  115 |     capacity(size);
+      |     ~~~~~~~~^~~~~~
+src/solver/SolverTypes.h:339:50:   required from 'void Minisat::OccLists<Idx, Vec, Deleted>::init(const Idx&) [with Idx = Minisat::Lit; Vec = Minisat::vec<Minisat::Solver::Watcher>; Deleted = Minisat::Solver::WatcherDeleted]'
+  339 |     void  init      (const Idx& idx){ occs.growTo(toInt(idx)+1); dirty.growTo(toInt(idx)+1, 0); }
+      |                                       ~~~~~~~~~~~^~~~~~~~~~~~~~
+src/solver/Solver.cc:1272:21:   required from here
+ 1272 |     watches_bin.init(mkLit(v, false));
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:99:54: warning: 'void* realloc(void*, size_t)' moving an object of non-trivially copyable type 'class Minisat::vec<Minisat::Solver::Watcher>'; use 'new' and 'delete' instead [-Wclass-memaccess]
+   99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+      |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:38:7: note: 'class Minisat::vec<Minisat::Solver::Watcher>' declared here
+   38 | class vec {
+      |       ^~~
+src/solver/mtl/Vec.h: In instantiation of 'void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<Minisat::Lit>]':
+src/solver/mtl/Vec.h:115:13:   required from 'void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<Minisat::Lit>]'
+  115 |     capacity(size);
+      |     ~~~~~~~~^~~~~~
+src/solver/Solver.h:72:50:   required from 'void Minisat::vec2<Idx, Vec>::init(const Idx&) [with Idx = Minisat::Lit; Vec = Minisat::vec<Minisat::Lit>]'
+   72 |     void  init      (const Idx& idx){ occs.growTo(toInt(idx)+1);}
+      |                                       ~~~~~~~~~~~^~~~~~~~~~~~~~
+src/solver/Solver.cc:1312:22:   required from here
+ 1312 |     conflictLits.init(mkLit(v, false));
+      |     ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:99:54: warning: 'void* realloc(void*, size_t)' moving an object of non-trivially copyable type 'class Minisat::vec<Minisat::Lit>'; use 'new' and 'delete' instead [-Wclass-memaccess]
+   99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+      |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:38:7: note: 'class Minisat::vec<Minisat::Lit>' declared here
+   38 | class vec {
+      |       ^~~
+src/solver/mtl/Vec.h: In instantiation of 'void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<int>]':
+src/solver/mtl/Vec.h:115:13:   required from 'void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<int>]'
+  115 |     capacity(size);
+      |     ~~~~~~~~^~~~~~
+src/solver/Solver.h:72:50:   required from 'void Minisat::vec2<Idx, Vec>::init(const Idx&) [with Idx = int; Vec = Minisat::vec<int>]'
+   72 |     void  init      (const Idx& idx){ occs.growTo(toInt(idx)+1);}
+      |                                       ~~~~~~~~~~~^~~~~~~~~~~~~~
+src/solver/Solver.cc:4267:13:   required from here
+ 4267 |   isets.init(nbIsets); isets[nbIsets].clear(); isets[nbIsets].push(nbIsets);
+      |   ~~~~~~~~~~^~~~~~~~~
+src/solver/mtl/Vec.h:99:54: warning: 'void* realloc(void*, size_t)' moving an object of non-trivially copyable type 'class Minisat::vec<int>'; use 'new' and 'delete' instead [-Wclass-memaccess]
+   99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+      |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/mtl/Vec.h:38:7: note: 'class Minisat::vec<int>' declared here
+   38 | class vec {
+      |       ^~~
+In file included from src/solver/Solver.h:54:
+In function 'Minisat::Lit Minisat::operator~(Lit)',
+    inlined from 'void Minisat::Solver::analyze(Minisat::CRef, Minisat::vec<Minisat::Lit>&, int&, int&)' at src/solver/Solver.cc:1757:22:
+src/solver/SolverTypes.h:73:64: warning: 'p.Minisat::Lit::x' may be used uninitialized [-Wmaybe-uninitialized]
+   73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+      |                                                            ~~~~^~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::analyze(Minisat::CRef, Minisat::vec<Minisat::Lit>&, int&, int&)':
+src/solver/Solver.cc:1671:9: note: 'p.Minisat::Lit::x' was declared here
+ 1671 |     Lit p; //     = lit_Undef;
+      |         ^
+In function 'Minisat::Lit Minisat::operator~(Lit)',
+    inlined from 'void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)' at src/solver/Solver.cc:4681:22:
+src/solver/SolverTypes.h:73:64: warning: 'p.Minisat::Lit::x' may be used uninitialized [-Wmaybe-uninitialized]
+   73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+      |                                                            ~~~~^~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+src/solver/Solver.cc:4509:9: note: 'p.Minisat::Lit::x' was declared here
+ 4509 |     Lit p;
+      |         ^
+In function 'Minisat::Lit Minisat::operator~(Lit)',
+    inlined from 'void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)' at src/solver/Solver.cc:2396:22:
+src/solver/SolverTypes.h:73:64: warning: 'p.Minisat::Lit::x' may be used uninitialized [-Wmaybe-uninitialized]
+   73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+      |                                                            ~~~~^~~
+src/solver/Solver.cc: In member function 'void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)':
+src/solver/Solver.cc:2193:9: note: 'p.Minisat::Lit::x' was declared here
+ 2193 |     Lit p;
+      |         ^
+In file included from src/solver/utils/Options.cc:21:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+In file included from src/solver/Solver.h:53,
+                 from src/solver/SimpSolver.h:37,
+                 from src/core/distqldpc.cc:40:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
