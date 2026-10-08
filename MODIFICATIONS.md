@@ -65,6 +65,28 @@ in each file are unchanged.
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
 
+#### Ternary-clause inline watchers ("tri-watch", experiment GH-fable-triwatch)
+
+Performance experiment on the engine's watched-literal scheme; no change to
+heuristics, encodings, bounds, timeouts or output semantics.
+
+- `Solver.h`: `Watcher3` (`CRef` + the clause's other two literals),
+  `Watcher3Deleted`, member `watches_tri`
+- `Solver.cc`: `attachClause()`/`detachClause()` route size-3 clauses to
+  `watches_tri` (one watcher per literal, watches never move);
+  `propagate()`, `propagateForLK()`, `simplePropagate()` and
+  `simplepropagateForLK()` process `watches_tri[p]` after binary watches and
+  before long watches without touching clause memory unless the clause is
+  unit or conflicting (`triPutFirst()` then puts the implied literal at `c[0]`);
+  `relocAll()`, `newVar()`, `newAuxiVar()` and every `cleanAll()` site cover
+  the new lists; `simplifyLearnt()` detaches a clause that is or becomes
+  size 2/3 before rewriting it in place; `splitClauses()` detaches before any
+  in-place rewrite
+- `SimpSolver.cc`: `eliminateVar()` frees the `watches_tri` lists of an
+  eliminated variable
+
+Record, preregistration and raw evidence: `optimization/experiments/GH-fable-triwatch/`.
+
 ---
 
 ## Files not modified for DistQLDPC integration
@@ -72,7 +94,7 @@ in each file are unchanged.
 The following are included from upstream with headers intact but without
 DistQLDPC-specific functional changes (as of this document):
 
-- `SimpSolver.h`, `SimpSolver.cc`
+- `SimpSolver.h` (`SimpSolver.cc`: only the two-line `watches_tri` cleanup noted above)
 - `SolverTypes.h`, `Dimacs.h`
 - `mtl/*`, `utils/*`
 - Legacy entry points: `Main.cc`, `glucose_Main.cc` (not built by root Makefile)

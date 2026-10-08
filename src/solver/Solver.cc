@@ -182,6 +182,7 @@ Solver::Solver() :
   , var_inc            (1)
   , watches_bin        (WatcherDeleted(ca))
   , watches            (WatcherDeleted(ca))
+  , watches_tri        (Watcher3Deleted(ca))
   , qhead              (0)
   , simpDB_assigns     (-1)
   , simpDB_props       (0)
@@ -256,6 +257,16 @@ Solver::~Solver()
 
 // simplify All
 //
+// DistQLDPC tri-watch: make 'u' the first literal of the size-3 clause 'c', so that code
+// consuming reason clauses finds the implied literal at c[0]. The other two literals keep
+// their relative order. Watchers of size-3 clauses do not depend on literal positions.
+static inline void triPutFirst(Clause& c, Lit u) {
+    if (c[0] != u) {
+        if (c[1] == u) c[1] = c[0]; else c[2] = c[0];
+        c[0] = u;
+    }
+}
+
 CRef Solver::simplePropagate() {
   // if (falseLits.size() + rootNbIsets >= UB) { // no need to propagate if a soft conflict occurs
   //   softConflictFlag=true;
@@ -266,6 +277,7 @@ CRef Solver::simplePropagate() {
     softConflictFlag = false;
     watches.cleanAll();
     watches_bin.cleanAll();
+    watches_tri.cleanAll();
     while (qhead < trail.size()) {
       Lit            p = trail[qhead++];     // 'p' is enqueued fact to propagate.
       vec<Watcher>&  ws = watches[p];
@@ -287,6 +299,19 @@ CRef Solver::simplePropagate() {
 	  //   return confl;
 	  // }
 	}
+      }
+      // DistQLDPC tri-watch: size-3 clauses, no clause access unless unit or conflicting.
+      vec<Watcher3>& wtri = watches_tri[p];
+      for (int k = 0; k < wtri.size(); k++) {
+	Lit a = wtri[k].l1, b = wtri[k].l2;
+	lbool va = value(a), vb = value(b);
+	if (va == l_True || vb == l_True || (va == l_Undef && vb == l_Undef)) continue;
+	CRef cr = wtri[k].cref;
+	if (va == l_False && vb == l_False)
+	  return cr;
+	Lit u = (va == l_Undef) ? a : b;
+	triPutFirst(ca[cr], u);
+	simpleUncheckEnqueue(u, cr);
       }
       for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {
 	// Try to avoid inspecting the clause:
@@ -636,22 +661,26 @@ bool Solver::simplifyLearnt(Clause& c, CRef cr, vec<Lit>& lits) {
         
         if (false_lit){
             int li, lj;
+            // DistQLDPC tri-watch: a clause that is, or becomes, size 2 or 3 lives in a
+            // dedicated watch list whose entries carry literal values; detach it before
+            // any in-place rewrite and re-attach after the shrink. Longer clauses keep
+            // c[0]/c[1] untouched (false literals sit at positions >= 2) and stay attached.
+            int nbNonFalse = 0;
+            for (li = 0; li < c.size(); li++)
+                if (value(c[li]) != l_False) nbNonFalse++;
+            bool reattach = (c.size() == 3 || nbNonFalse <= 3);
+            if (reattach)
+                detachClause(cr, true);
             for (li = lj = 0; li < c.size(); li++){
                 if (value(c[li]) != l_False){
                     c[lj++] = c[li];
                 }
-                else assert(li>1);
+                else assert(li>1 || reattach);
             }
-            if (lj==2) {
-                assert(li>2);
-                detachClause(cr, true);
-                c.shrink(li - lj);
+            assert(lj == nbNonFalse && lj >= 2 && li > lj);
+            c.shrink(li - lj);
+            if (reattach)
                 attachClause(cr);
-            }
-            else {
-                assert(lj>2);
-                c.shrink(li - lj);
-            }
         }
         original_length_record += c.size();
         
@@ -1273,6 +1302,8 @@ Var Solver::newVar(bool sign, bool dvar)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
+    watches_tri.init(mkLit(v, false));
+    watches_tri.init(mkLit(v, true ));
     assigns  .push(l_Undef);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);
@@ -1432,9 +1463,16 @@ bool Solver::addClause_(vec<Lit>& ps, unsigned weight) {
 void Solver::attachClause(CRef cr) {
     const Clause& c = ca[cr];
     assert(c.size() > 1);
-    OccLists<Lit, vec<Watcher>, WatcherDeleted>& ws = c.size() == 2 ? watches_bin : watches;
-    ws[~c[0]].push(Watcher(cr, c[1]));
-    ws[~c[1]].push(Watcher(cr, c[0]));
+    if (c.size() == 3) {
+        // DistQLDPC tri-watch: watch all three literals; each watcher carries the other two.
+        watches_tri[~c[0]].push(Watcher3(cr, c[1], c[2]));
+        watches_tri[~c[1]].push(Watcher3(cr, c[0], c[2]));
+        watches_tri[~c[2]].push(Watcher3(cr, c[0], c[1]));
+    } else {
+        OccLists<Lit, vec<Watcher>, WatcherDeleted>& ws = c.size() == 2 ? watches_bin : watches;
+        ws[~c[0]].push(Watcher(cr, c[1]));
+        ws[~c[1]].push(Watcher(cr, c[0]));
+    }
     if (c.learnt()) learnts_literals += c.size();
     else            clauses_literals += c.size(); }
 
@@ -1442,8 +1480,20 @@ void Solver::attachClause(CRef cr) {
 void Solver::detachClause(CRef cr, bool strict) {
     const Clause& c = ca[cr];
     assert(c.size() > 1);
+    if (c.size() == 3) {
+        // DistQLDPC tri-watch: three watchers, identified by clause reference only.
+        if (strict){
+            remove(watches_tri[~c[0]], Watcher3(cr, c[1], c[2]));
+            remove(watches_tri[~c[1]], Watcher3(cr, c[0], c[2]));
+            remove(watches_tri[~c[2]], Watcher3(cr, c[0], c[1]));
+        }else{
+            watches_tri.smudge(~c[0]);
+            watches_tri.smudge(~c[1]);
+            watches_tri.smudge(~c[2]);
+        }
+    } else {
     OccLists<Lit, vec<Watcher>, WatcherDeleted>& ws = c.size() == 2 ? watches_bin : watches;
-    
+
     if (strict){
         remove(ws[~c[0]], Watcher(cr, c[1]));
         remove(ws[~c[1]], Watcher(cr, c[0]));
@@ -1452,7 +1502,8 @@ void Solver::detachClause(CRef cr, bool strict) {
         ws.smudge(~c[0]);
         ws.smudge(~c[1]);
     }
-    
+    }
+
     if (c.learnt()) learnts_literals -= c.size();
     else            clauses_literals -= c.size(); }
 
@@ -1940,6 +1991,7 @@ CRef Solver::propagate()
     //   Lit conflLit = lit_Undef;
     watches.cleanAll();
     watches_bin.cleanAll();
+    watches_tri.cleanAll();
     
     while (qhead < trail.size()){
         Lit            p   = trail[qhead++];     // 'p' is enqueued fact to propagate.
@@ -1976,6 +2028,25 @@ CRef Solver::propagate()
 		//	}
 	    }
 	}
+        // DistQLDPC tri-watch: size-3 clauses, no clause access unless unit or conflicting.
+        vec<Watcher3>& ws_tri = watches_tri[p];
+        for (int k = 0; k < ws_tri.size(); k++){
+            Lit a = ws_tri[k].l1, b = ws_tri[k].l2;
+            lbool va = value(a), vb = value(b);
+            if (va == l_True || vb == l_True || (va == l_Undef && vb == l_Undef)) continue;
+            CRef cr = ws_tri[k].cref;
+            if (va == l_False && vb == l_False){
+                confl = cr;
+#ifdef LOOSE_PROP_STAT
+                return confl;
+#else
+                goto ExitProp;
+#endif
+            }
+            Lit u = (va == l_Undef) ? a : b;
+            triPutFirst(ca[cr], u);
+            uncheckedEnqueue(u, cr);
+        }
         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
             // Try to avoid inspecting the clause:
             Lit blocker = i->blocker;
@@ -3090,10 +3161,9 @@ void Solver::splitClauses(vec<CRef>& cs) {
     else if (c1.mark() == TIER2 && clauseType == LOCAL)
       clauseType = TIER2;
     
-    if (seen2[toInt(c1[0])] == counter || seen2[toInt(c1[1])] == counter) {
-      detachClause(cr1, true); toAttache=true;
-    }
-    else toAttache=false;
+    // DistQLDPC tri-watch: watchers of size-3 clauses carry literal values, so any
+    // in-place rewrite must be bracketed by detach/attach.
+    detachClause(cr1, true); toAttache=true;
     
     //   detachClause(cr1, true);
     // int k=0;
@@ -3144,6 +3214,7 @@ void Solver::splitClauses(vec<CRef>& cs) {
   }
   watches.cleanAll();
   watches_bin.cleanAll();
+  watches_tri.cleanAll();
 
   nbSavedLits += cs.size() * (communLits.size() - 1) - (communLits.size() + 1);
   // printf("communLits: %d, nbCls: %d\n", communLits.size()-1, cs.size());
@@ -3551,6 +3622,7 @@ lbool Solver::search(int& nof_conflicts)
       		  
       watches.cleanAll();
       watches_bin.cleanAll();
+      watches_tri.cleanAll();
       checkGarbage();
     }
     // else if (prevUB < UB) {
@@ -3935,6 +4007,7 @@ CRef Solver::propagateForLK() {
   int     num_props = 0;
   watches.cleanAll();
   watches_bin.cleanAll();
+  watches_tri.cleanAll();
   while (qhead < trail.size()) {
     Lit            p = trail[qhead++];     // 'p' is enqueued fact to propagate.
     vec<Watcher>&  ws = watches[p];
@@ -3954,6 +4027,22 @@ CRef Solver::propagateForLK() {
 	  falseVar = var(imp);
 	  return CRef_Undef;
 	}
+      }
+    }
+    // DistQLDPC tri-watch: size-3 clauses, no clause access unless unit or conflicting.
+    vec<Watcher3>& wtri = watches_tri[p];
+    for (int k = 0; k < wtri.size(); k++) {
+      Lit a = wtri[k].l1, b = wtri[k].l2;
+      lbool va = value(a), vb = value(b);
+      if (va == l_True || vb == l_True || (va == l_Undef && vb == l_Undef)) continue;
+      CRef cr = wtri[k].cref;
+      if (va == l_False && vb == l_False)
+	return cr;
+      Lit u = (va == l_Undef) ? a : b;
+      triPutFirst(ca[cr], u);
+      if (!uncheckedEnqueueForLK(u, cr)) {
+	falseVar = var(u);
+	return CRef_Undef;
       }
     }
     for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {
@@ -5133,6 +5222,7 @@ void Solver::removeLearntClauses() {
   learnts_core.clear();
   watches.cleanAll();
   watches_bin.cleanAll();
+  watches_tri.cleanAll();
   checkGarbage();
 
   dynVars.clear();
@@ -5611,6 +5701,7 @@ CRef Solver::simplepropagateForLK() {
   int     num_props = 0;
   watches.cleanAll();
   watches_bin.cleanAll();
+  watches_tri.cleanAll();
   while (qhead < trail.size()) {
     Lit            p = trail[qhead++];     // 'p' is enqueued fact to propagate.
     vec<Watcher>&  ws = watches[p];
@@ -5632,6 +5723,23 @@ CRef Solver::simplepropagateForLK() {
 	  falseVar = var(imp);
 	  return CRef_Undef;
 	}
+      }
+    }
+    // DistQLDPC tri-watch: size-3 clauses, no clause access unless unit or conflicting.
+    vec<Watcher3>& wtri = watches_tri[p];
+    for (int k = 0; k < wtri.size(); k++) {
+      Lit a = wtri[k].l1, b = wtri[k].l2;
+      lbool va = value(a), vb = value(b);
+      if (va == l_True || vb == l_True || (va == l_Undef && vb == l_Undef)) continue;
+      CRef cr = wtri[k].cref;
+      if (va == l_False && vb == l_False)
+	return cr;
+      Lit u = (va == l_Undef) ? a : b;
+      triPutFirst(ca[cr], u);
+      simpleuncheckedEnqueueForLK(u, cr);
+      if (auxiVar(var(u)) && value(softLits[var(u)]) == l_False && !softVarLocked[var(u)]) {
+	falseVar = var(u);
+	return CRef_Undef;
       }
     }
     for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {
@@ -6054,6 +6162,8 @@ Var Solver::newAuxiVar(bool sign)
     watches_bin[~p].clear();
     watches[p].clear();
     watches[~p].clear();
+    watches_tri[p].clear();
+    watches_tri[~p].clear();
     imply[toInt(p)] = lit_Undef;
     imply[toInt(~p)] = lit_Undef;
     decision[v] = false;
@@ -6065,6 +6175,8 @@ Var Solver::newAuxiVar(bool sign)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
+    watches_tri.init(mkLit(v, false));
+    watches_tri.init(mkLit(v, true ));
     assigns  .push(l_Undef);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);
@@ -6214,6 +6326,7 @@ void Solver::addCardinalityConstraints() {
     
     watches.cleanAll();
     watches_bin.cleanAll();
+    watches_tri.cleanAll();
     checkGarbage();
   }
   
@@ -6792,6 +6905,7 @@ lbool Solver::solve_()
 	learnts_tier2.clear();
 	watches.cleanAll();
 	watches_bin.cleanAll();
+	watches_tri.cleanAll();
 	checkGarbage();
 
 	sup -= falseLits.size(); //reduce the number of false lits at level 0
@@ -7063,6 +7177,7 @@ void Solver::relocAll(ClauseAllocator& to)
     // for (int i = 0; i < watches.size(); i++)
     watches.cleanAll();
     watches_bin.cleanAll();
+    watches_tri.cleanAll();
     for (int v = 0; v < nVars(); v++)
         for (int s = 0; s < 2; s++){
             Lit p = mkLit(v, s);
@@ -7073,6 +7188,9 @@ void Solver::relocAll(ClauseAllocator& to)
             vec<Watcher>& ws_bin = watches_bin[p];
             for (int j = 0; j < ws_bin.size(); j++)
                 ca.reloc(ws_bin[j].cref, to);
+            vec<Watcher3>& ws_tri = watches_tri[p];
+            for (int j = 0; j < ws_tri.size(); j++)
+                ca.reloc(ws_tri[j].cref, to);
         }
     
     // All reasons:

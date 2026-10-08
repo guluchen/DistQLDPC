@@ -53,8 +53,11 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
   - Best-solution tracking and printing on timeout / interrupt
   - Configurable cardinality encoding modes (Sinz / MTO / off)
+  - Ternary-clause inline watchers ("tri-watch", performance experiment
+    GH-fable-triwatch): size-3 clauses watched on all three literals with
+    the other two literals stored in the watcher
 
-Modified files (partial list): Solver.h, Solver.cc
+Modified files (partial list): Solver.h, Solver.cc, SimpSolver.cc
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and

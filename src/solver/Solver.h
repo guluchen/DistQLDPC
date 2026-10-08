@@ -259,6 +259,26 @@ protected:
         bool operator()(const Watcher& w) const { return ca[w.cref].mark() == 1; }
     };
 
+    // DistQLDPC tri-watch (experiment GH-fable-triwatch): a clause of exactly three
+    // literals is watched on all three literals; each watcher carries the other two
+    // literals so propagation never touches clause memory unless the clause becomes
+    // unit or conflicting. Watches of such clauses never move.
+    struct Watcher3 {
+        CRef cref;
+        Lit  l1;
+        Lit  l2;
+        Watcher3(CRef cr, Lit a, Lit b) : cref(cr), l1(a), l2(b) {}
+        bool operator==(const Watcher3& w) const { return cref == w.cref; }
+        bool operator!=(const Watcher3& w) const { return cref != w.cref; }
+    };
+
+    struct Watcher3Deleted
+    {
+        const ClauseAllocator& ca;
+        Watcher3Deleted(const ClauseAllocator& _ca) : ca(_ca) {}
+        bool operator()(const Watcher3& w) const { return ca[w.cref].mark() == 1; }
+    };
+
     struct VarOrderLt {
         const vec<double>&  activity;
         bool operator () (Var x, Var y) const { return activity[x] > activity[y]; }
@@ -279,6 +299,8 @@ protected:
     OccLists<Lit, vec<Watcher>, WatcherDeleted>
                         watches_bin,      // Watches for binary clauses only.
                         watches;          // 'watches[lit]' is a list of constraints watching 'lit' (will go there if literal becomes true).
+    OccLists<Lit, vec<Watcher3>, Watcher3Deleted>
+                        watches_tri;      // DistQLDPC tri-watch: size-3 clauses, watched on all three literals.
     vec<lbool>          assigns;          // The current assignments.
     vec<char>           polarity;         // The preferred polarity of each variable.
     vec<char>           decision;         // Declares if a variable is eligible for selection in the decision heuristic.

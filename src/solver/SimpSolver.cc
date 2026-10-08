@@ -616,6 +616,8 @@ bool SimpSolver::eliminateVar(Var v)
     watches_bin[~mkLit(v)].clear(true);
     watches[ mkLit(v)].clear(true);
     watches[~mkLit(v)].clear(true);
+    watches_tri[ mkLit(v)].clear(true);
+    watches_tri[~mkLit(v)].clear(true);
 
     return backwardSubsumptionCheck();
 }
