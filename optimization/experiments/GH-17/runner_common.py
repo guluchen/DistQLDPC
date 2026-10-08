@@ -43,8 +43,18 @@ def run(argv, cwd, out, label, timeout, cygwin=False):
             except ProcessLookupError: pass
         else:
             subprocess.run(["taskkill","/PID",str(process.pid),"/T","/F"],check=False,
-                           stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-        stdout,stderr=process.communicate()
+                           stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=10)
+        try:
+            stdout,stderr=process.communicate(timeout=10)
+        except subprocess.TimeoutExpired as cleanup_error:
+            stdout=cleanup_error.output or b"";stderr=cleanup_error.stderr or b""
+            if process.stdout is not None:process.stdout.close()
+            if process.stderr is not None:process.stderr.close()
+            (out/(label+".stdout")).write_bytes(stdout)
+            (out/(label+".stderr")).write_bytes(stderr)
+            save(out/(label+".command.json"),dict(argv=argv,cwd=str(cwd),returncode=process.poll(),
+                 watchdog_or_interruption=True,pipe_drain_confirmed=False,cleanup_confirmed=False))
+            raise RuntimeError("Owned process/pipe cleanup unconfirmed after bounded wait") from cleanup_error
         (out/(label+".stdout")).write_bytes(stdout)
         (out/(label+".stderr")).write_bytes(stderr)
         save(out/(label+".command.json"),dict(argv=argv,cwd=str(cwd),returncode=process.returncode,

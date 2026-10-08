@@ -40,7 +40,7 @@ struct Fixture {
         solver.setConflict(count, scratch);
 #endif
     }
-    void emit(unsigned fixture, unsigned step) const {
+    void emit(unsigned fixture, unsigned step) {
         std::printf("%u:%u n=%d owners=", fixture, step, count);
         for (int v=0; v<solver.inConflicts.size(); ++v) std::printf("%d,", solver.inConflicts[v]);
         std::printf(" seen=");
@@ -50,7 +50,7 @@ struct Fixture {
         for (int k=0; k<count; ++k) {
             std::printf(" core%d rep%d lock%d ids=",k,solver.finalIset[k],solver.isetLock[k]);
             // vec2 has no const operator[]; only inspect this test fixture here.
-            Solver& s=const_cast<Solver&>(solver);
+            Solver& s=solver;
             for (int j=0; j<s.isets[k].size(); ++j) std::printf("%d,",s.isets[k][j]);
             std::printf(" lits=");
             for (int j=0; j<s.isetsLits[k].size(); ++j) std::printf("%d,",toInt(s.isetsLits[k][j]));

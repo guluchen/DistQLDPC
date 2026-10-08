@@ -1,0 +1,17 @@
+{
+  "status": "INCONCLUSIVE",
+  "Tier0": "NOT_RUN",
+  "diagnostic": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "candidate": "191de6849357574c830e14992a7afe9615dad320",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6062543626",
+  "reason": "RuntimeError('Probe build failed: In file included from /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH17-SCRATCH/optimization/experiments/GH-17/test_core_scratch.cc:7:\\nsrc/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]\\n  285 |             fprintf(stderr, \"%4\"PRIi64, range.begin);\\n      |                             ^\\nsrc/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]\\n  291 |             fprintf(stderr, \"%4\"PRIi64, range.end);\\n      |                             ^\\nsrc/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]\\n  293 |         fprintf(stderr, \"] (default: %\"PRIi64\")\\\\n\", value);\\n      |                         ^\\n/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH17-SCRATCH/optimization/experiments/GH-17/test_core_scratch.cc: In member function \\'void Fixture::emit(unsigned int, unsigned int) const\\':\\n/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH17-SCRATCH/optimization/experiments/GH-17/test_core_scratch.cc:53:23: error: invalid \\'const_cast\\' from type \\'const FixtureSolver*\\' to type \\'Minisat::Solver*\\'\\n   53 |             Solver& s=const_cast<Solver&>(solver);\\n      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~\\n')",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "candidate": "191de6849357574c830e14992a7afe9615dad320",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6062543626",
+  "baseline_manifest_sha256": "3518b99159a0baff318b5d6dd100145a8a73aada6e443b46d4e04e3cc0442315",
+  "baseline_binary_sha256": "22e398cc7558c2a04d5f24bd6db3030ce552c752622027fc2657eff7c1bd1815",
+  "runner_sha256": "bd5e681caa70cd7979703f2de8287af537d4676249faf26f8ea212d82b8ac340",
+  "helper_sha256": "ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2",
+  "test_source_sha256": "4310702ed999779fcfe6db552987082434ebf95400f723de68561ad1dab084eb",
+  "runtime_manifest_sha256": "e1448a286c12ba0508090ce35d416422b04390f1e79d2c73e12e2ecd5ac5b3e7",
+  "selection": {
+    "topology": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ]
+    ],
+    "selected_cpu": 14,
+    "sibling": 15,
+    "original_affinity": 65535,
+    "mask": 16384,
+    "idle_by_cpu": [
+      65.0,
+      80.9375,
+      81.875,
+      78.125,
+      87.1875,
+      71.5625,
+      86.5625,
+      74.6875,
+      75.0,
+      53.4375,
+      76.25,
+      59.6875,
+      86.875,
+      75.9375,
+      89.0625,
+      93.125
+    ],
+    "sampling_sec": 5,
+    "exclusive_reservation": false,
+    "power_policy_changed": false,
+    "sleep_inhibition": "temporary system requirement",
+    "allow_contention": true,
+    "affinity_enforcement": "Unnamed Windows Job Object JOB_OBJECT_LIMIT_AFFINITY; no breakaway flags",
+    "priority_class": 32768,
+    "original_priority_class": 32,
+    "priority_enforcement": "JOB_OBJECT_LIMIT_PRIORITY_CLASS on owned process tree"
+  },
+  "source_hashes": {
+    "src/solver/Solver.cc": "6dcad29a6053530c4b4eebb68acacd2e9342e5f9957926b06d3093994a27bfaf",
+    "src/solver/Solver.h": "e518dc22e8f8b868fbbbb4a5adb93503ffcca3c94a2b8bb6467664a5dfe08a06",
+    "src/core/distqldpc.cc": "a2844f379d5efba4567c8502278da37f81510d00907be0e6f1fba4c2b6d950e4",
+    "Makefile": "a237812982eeb6c58776bc8c8bf910228da2c7da6e6f8feb56a56682aecfb94e"
+  },
+  "support_hashes": {
+    "prepare_diagnostic.py": "36a2502434e9c9f49671ff694009add41cd2ebf9d95a4c39bba71667de55db31",
+    "runner_common.py": "ea6b3897c6e42c3e1b4c0de4b11dd03b0b20491678b31cbf019e1f2344388f3a",
+    "run_allocation_diagnostic.py": "cd5851b5620a5975bc02c1706f81137534a0382c8f7e7aa01a777416dfb676da",
+    "run_tier0.py": "bb74db45b66a72da3431f66f7f6a1aa674144f884d5b0987aa3f8a317357f7f4",
+    "windows_assigned_runner.py": "bd5e681caa70cd7979703f2de8287af537d4676249faf26f8ea212d82b8ac340"
+  },
+  "object_hashes": {
+    "build\\Options.o": "fa71a49b6ccb000e09b021d5a8e6cbde60b12d77aa23db017f6947cebca90639",
+    "build\\SimpSolver.o": "a35b0859dfca602f523e34ce7d671c4ec503e550a5f1e26ff360f1b1a9f07968",
+    "build\\Solver.o": "789faba83f9684745e888becfb4739eb33003e52beb4a85430e11c480b31c557",
+    "build\\System.o": "e995b98a7aea6f206f0f1c4cdd008bfb2797d2aebe99ce319721e0d63d92f5fa"
+  },
+  "input_hashes": {
+    "LP_34_20_2_Gx.txt": "bf09826369fac1adb4ba1820be97972e38bc8c708c631a9a2d38978dd5376de5",
+    "LP_34_20_2_Gz.txt": "84382e94ea4806f2b17f51e7e8563d0cb068a9b45f3d087f19cc60980c4e1811",
+    "LP_34_20_2_Hx.txt": "e671159c88d55b1610481e0629f915e99f18da3284bdab5a0034894edeb86525",
+    "LP_34_20_2_Hz.txt": "d2d10fe7712a4776fde77a1364a60c4e3a49a0c26486062405b167cacde835d0",
+    "LP_136_32_4_Gx.txt": "8e975369a2601dd6b7236a3c6fcfce32a022d79c9e8fac6d35cd812b2632e945",
+    "LP_136_32_4_Gz.txt": "e699e67cfd04baa4e820fb66af1744376d123a301108ef1be64632dc3dae09ef",
+    "LP_136_32_4_Hx.txt": "eae70b8b9d763bb1112bd2219ec5b9db894ebc8c0318f2a9433239e6d91cb2ab",
+    "LP_136_32_4_Hz.txt": "feef75c05abf642cb39cc07bd699126cb3e776f639278cad70a2935c4c1ed403",
+    "LP_340_56_8_Gx.txt": "e05585ec252b84fc94a0de7f9f95732c8c6e4bf11b3a295bbd2fa0277f44589b",
+    "LP_340_56_8_Gz.txt": "383b79ac33a8b2e2842fe2908763ec1e8e82de5a30c8cea52a19d40ee21d5c66",
+    "LP_340_56_8_Hx.txt": "097a76f0030e82b3077259ffda5c74e5009b42efba58a7dabad252c13b348d8a",
+    "LP_340_56_8_Hz.txt": "d5fd553dfa914dad412abf357ed42b0ff79c35b1ee3bad4ef5c83d7b8f33e9e6"
+  }
+}

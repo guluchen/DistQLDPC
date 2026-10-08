@@ -2,9 +2,11 @@
 
 Owner: independent-brain-20261008. [Issue17](https://github.com/guluchen/DistQLDPC/issues/17).
 Baseline24572d6d09cce9a4a5faa58300a89e0feba9da6a.
-Disposition: UNTESTED / NOT ADOPTED. Tier0/1/2 NOT RUN. No performance claim.
-Host slot NONE; primary currently owns Windows host preparation. Nothing in
-this record starts a workload or grants a resource lease.
+Disposition: SHELVED / LOW PRIORITY / NOT ADOPTED; performance INCONCLUSIVE.
+Local+hosted Tier0 PASS; diagnostic328 observed allocations vs319 predicted
+reused allocations,9 saved counts, no timing conclusion. Tier1/2/3 NOT RUN.
+[Result and learning](RESULT.md). Windows assigned slot released after cleanup;
+nothing in this record grants a new resource lease.
 
 Selected GH-17-A from the three proposals recorded in PROPOSAL.md. Exactly one
 production concept: caller-local oldset capacity reuse across cores in each
@@ -13,7 +15,7 @@ compiler flags, bound/output/timeout interpretation or scientific semantics
 intended. Correctness still requires the tests below. Preserve downstream
 MaxCDCL attribution; MODIFICATIONS/NOTICE describe this isolated patch.
 
-## Prepared checks, not executed
+## Validation and diagnostics
 
 - test_core_scratch.cc invokes the original/candidate PRODUCTION method on
  4096 length-three core sequences, emits active core ownership/membership,
@@ -35,7 +37,11 @@ MaxCDCL attribution; MODIFICATIONS/NOTICE describe this isolated patch.
  OFF/MTO,120s parent/135s watchdog. Checks exact expected results, retains all
  aggregates and outputs; never computes a performance ratio.
 
-Helper source and scripts are prepared but UNVALIDATED by compilation/execution.
+Windows actual execution uses the separately hashed assigned runner and reviewed
+Job helper, with file-backed bounded supervision; see RESULT.md and raw evidence.
+Original attempt01's test-only compile failure and subsequent corrected attempt02
+are both retained. General POSIX helper cleanup is now bounded; that follow-up
+was not the supervisor used for this Windows execution.
 Windows host use must remain serially scheduled; resource/affinity/job guards
 come from the assigned runner, not runner_common.py or --run-assignment text.
 The common helper terminates only its owned process tree on watchdog/interruption.
