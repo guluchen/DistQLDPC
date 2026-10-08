@@ -24,7 +24,7 @@ ap.add_argument("--run-assignment",required=True)
 ap.add_argument("--candidate-sha",required=True)
 args=ap.parse_args()
 ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
-PROBE02_AUDIT_SHA256="PROBE02_NOT_AUDITED"
+PROBE02_AUDIT_SHA256="e78abbc71f26d3ed1fa973b0cbfce9cf908352745be125e6a442dc0bd5d9daaf"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "No RUN_ASSIGNMENT: preparation only"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();assert out.parent==ROOT and out.name=="GH38-windows-tier0-01";out.mkdir(parents=True,exist_ok=False)
@@ -33,7 +33,7 @@ def save(path,value):Path(path).write_text(json.dumps(value,indent=2),encoding="
 original_runtime=ROOT/"E004-windows-runtime/cygwin"
 runtime=ROOT/"GH38-setup-probe-01/overlay"
 prior02=ROOT/"GH38-setup-probe-02"
-assert PROBE02_AUDIT_SHA256!="PROBE02_NOT_AUDITED", "Corrected compatibility audit not frozen"
+assert PROBE02_AUDIT_SHA256!="e78abbc71f26d3ed1fa973b0cbfce9cf908352745be125e6a442dc0bd5d9daaf", "Corrected compatibility audit not frozen"
 assert sha(prior02/"INDEPENDENT-COMPATIBILITY-AUDIT.json")==PROBE02_AUDIT_SHA256
 assert json.loads((prior02/"INDEPENDENT-COMPATIBILITY-AUDIT.json").read_text())["decision"]=="COMPATIBILITY_PASS"
 package=ROOT/"E004-windows-tier2-02/E004-server-package"
