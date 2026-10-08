@@ -147,3 +147,8 @@ When you receive DistQLDPC as a whole (source or binary):
 
 For questions about upstream MaxCDCL, contact the original authors
 (see src/solver/ file headers).
+
+Experimental GH53 branch (not adopted): Solver.cc changes only the existing
+conflict minimization default from deep(2) to basic(1). Original helper code
+and upstream copyright/license headers remain unchanged. See MODIFICATIONS.md
+and optimization/experiments/GH-53/PRERECORD.md for validation limits.

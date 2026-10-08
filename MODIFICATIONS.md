@@ -88,3 +88,16 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+## Isolated GH53 experiment: existing basic conflict minimization default
+
+Experimental branch only, not adopted. `Solver.cc` changes only the existing
+`ccmin-mode` default from 2 (deep) to 1 (basic). Both existing downstream
+conflict and quasi-conflict minimization paths use the selected mode; their
+implementations, clause learning, bounds and encodings are unchanged. Search
+and learned clause lengths may differ. The original standalone Main supports
+its existing explicit option override; the DistQLDPC application does not
+parse this option. Correctness and performance are untested for this candidate.
+See `optimization/experiments/GH-53/PRERECORD.md`; the unresolved valid GH46
+baseline anomaly remains a correctness gate. Original upstream notices remain
+intact. This is a downstream DistQLDPC experiment, not an upstream MaxCDCL result.
