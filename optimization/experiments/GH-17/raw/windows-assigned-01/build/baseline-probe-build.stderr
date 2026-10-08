@@ -1,0 +1,14 @@
+In file included from /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH17-SCRATCH/optimization/experiments/GH-17/test_core_scratch.cc:7:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH17-SCRATCH/optimization/experiments/GH-17/test_core_scratch.cc: In member function 'void Fixture::emit(unsigned int, unsigned int) const':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH17-SCRATCH/optimization/experiments/GH-17/test_core_scratch.cc:53:23: error: invalid 'const_cast' from type 'const FixtureSolver*' to type 'Minisat::Solver*'
+   53 |             Solver& s=const_cast<Solver&>(solver);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
