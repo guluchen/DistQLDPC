@@ -28,7 +28,7 @@ ROOT=HERE.parents[3]
 ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 args=ap.parse_args()
-ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6065364988"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6065614772"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "Preparation only: no host slot"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
