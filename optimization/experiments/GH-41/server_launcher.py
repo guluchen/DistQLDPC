@@ -3,7 +3,7 @@ Only that authenticated session is eligible for TERM/KILL cleanup.
 """
 import argparse,hashlib,json,os,signal,subprocess,sys,time
 from pathlib import Path
-ASSIGNED_URL='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067673124'
 def proc(pid):
     try:
         raw=Path('/proc',str(pid),'stat').read_text();f=raw[raw.rfind(')')+2:].split()

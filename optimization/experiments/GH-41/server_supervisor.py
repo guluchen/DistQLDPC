@@ -3,7 +3,7 @@ No CLI, build/science orchestration, or claim of a reserved/exclusive host.
 """
 import json,os,signal,subprocess,time
 from pathlib import Path
-RUN_ASSIGNMENT='HOST_SLOT_NOT_ASSIGNED'
+RUN_ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067673124'
 def save(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n',encoding='utf8')
 def cpus(text):
     out=set()

@@ -1,5 +1,5 @@
 """Metadata-only GH41 Linux bundle builder. No compiler/solver/server access."""
-import argparse,hashlib,io,json,subprocess,tarfile
+import argparse,ast,hashlib,io,json,subprocess,tarfile
 from pathlib import Path
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 CAND='66cf8be5a4881643f2063471325e33cecaa0caf1'
@@ -60,10 +60,15 @@ def main():
         blob=subprocess.check_output(['git','-C',str(TREE),'show',support_head+':optimization/experiments/GH-41/'+name],timeout=10)
         assert blob.replace(b'\r\n',b'\n')==(HERE/name).read_bytes().replace(b'\r\n',b'\n'),'Uncommitted package support '+name
         files['support/'+name]=(HERE/name).read_bytes()
+    assignments={}
+    for name,var in [('server_launcher.py','ASSIGNED_URL'),('server_tier0.py','ASSIGNED_URL'),('server_supervisor.py','RUN_ASSIGNMENT')]:
+        values=[ast.literal_eval(node.value) for node in ast.parse(files['support/'+name]).body if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id==var for t in node.targets)]
+        assert len(values)==1;assignments[name]=values[0]
+    assert len(set(assignments.values()))==1,'Assignment constants disagree'
     info=dict(baseline=BASE,candidate=CAND,archives=archives,windows_raw_manifest_sha256=sha((prep/'SHA256.json').read_bytes()),
         fixture_origin='GH36-windows-tier0-01; rejected optimization; fixtures only, no reused science verdict or binary',
         original_fixture_support='247bc11d4191e36466f2203f0236da102d27ff0d',hypothesis='GH41 explicit-MTO verified original logical-row scalar cap',
-        support_head=support_head,files={name:sha(data) for name,data in files.items()},Tier0='NOT_RUN',Tier1='NOT_RUN',server_assignment='NOT_ASSIGNED')
+        support_head=support_head,files={name:sha(data) for name,data in files.items()},Tier0='NOT_RUN',Tier1='NOT_RUN',server_assignment=assignments['server_tier0.py'])
     files['manifest.json']=(json.dumps(info,indent=2)+'\n').encode()
     out.mkdir()
     for name,data in files.items():p=out/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
