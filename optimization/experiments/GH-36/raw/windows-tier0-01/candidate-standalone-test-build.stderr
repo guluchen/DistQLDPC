@@ -1,0 +1,48 @@
+In file included from /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:51:
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:84:16: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   84 |         printf("c restarts              : %"PRIu64"\n", solver.starts);
+      |                ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:85:16: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   85 |         printf("c conflicts             : %-12"PRIu64"   (%.0f /sec)\n", solver.conflicts, solver.conflicts / cpu_time);
+      |                ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:86:16: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   86 |         printf("c decisions             : %-12"PRIu64"   (%4.2f %% random) (%.0f /sec)\n", solver.decisions, (float)solver.rnd_decisions * 100 / (float)solver.decisions, solver.decisions / cpu_time);
+      |                ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:87:16: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   87 |         printf("c propagations          : %-12"PRIu64"   (%.0f /sec)\n", solver.propagations, solver.propagations / cpu_time);
+      |                ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:88:16: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   88 |         printf("c conflict literals     : %-12"PRIu64"   (%4.2f %% deleted)\n", solver.tot_literals, (solver.max_literals - solver.tot_literals) * 100 / (double)solver.max_literals);
+      |                ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:93:16: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+   93 |         printf("c s_propagations        : %-12"PRIu64"\n", solver.s_propagations);
+      |                ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc: In function 'void printStats(Minisat::Solver&)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:92:46: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+   92 |         printf("c nbSimplifyAll         : %llu\n", solver.nbSimplifyAll);
+      |                                           ~~~^     ~~~~~~~~~~~~~~~~~~~~
+      |                                              |            |
+      |                                              |            uint64_t {aka long unsigned int}
+      |                                              long long unsigned int
+      |                                           %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc: In function 'int main(int, char**)':
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:187:34: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 2 has type 'uint64_t' {aka 'long unsigned int'} [-Wformat=]
+  187 |         printf("c initial UB: %llu\n", S.initUB);
+      |                               ~~~^     ~~~~~~~~
+      |                                  |       |
+      |                                  |       uint64_t {aka long unsigned int}
+      |                                  long long unsigned int
+      |                               %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc: At global scope:
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH36-windows-tier0-01/candidate-source/src/solver/Main.cc:108:13: warning: 'void SIGINT_exit(int)' defined but not used [-Wunused-function]
+  108 | static void SIGINT_exit(int signum) {
+      |             ^~~~~~~~~~~

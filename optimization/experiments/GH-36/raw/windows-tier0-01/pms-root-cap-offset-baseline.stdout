@@ -1,0 +1,39 @@
+c This is COMiniSatPS.
+c ============================[ Problem Statistics ]=============================
+c |                                                                             |
+c initial UB: 2147483647
+c |  Number of variables:             2                                         |
+c |  Number of clauses:               0                                         |
+c |  Parse time:                   0.00 s                                       |
+c |                                                                             |
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 1, of which 1 unit, 0 nonUnit and 1 empty
+c total nb of literals: 0
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 1
+c 0 conflict sets found with length 0
+c fixedCost 0, nbSatLits 0, totalFixedVars 1, objForSearch: 1
+
+c no UB provided, search from scratch...
+c UB=1 succs, confls=0, hconfls=0, core 0, tier2 0, local 0,  0 soft cls unsat (0 at L0), 0 fixed vars at L0, softCnfl 0, nbFlyRd 0, nbFixedLH 0
+c nbHardens 2 (fixed 1), shorten: 0, prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, lk: 1, shorten: 0, quasiC: 0 (fixed: 0)
+
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=0 succ, confls=0 and hconfls=0 with 0 soft clauses unsat (0 at level 0) and 0 fixed vars at level 0,  prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, shortened : 0
+c ===============================================================================
+c initCost: 1, fixedBySearch: 0, optimal: 1, maxsat: 1, hardConflicts: 0
+c nbLK: 1, nbSuccLK: 0(0.00%), nbLKup: 1(50.00%), hardens 2 (fixed 1), dynVars 0, shorten: 0
+c restarts              : 1
+c conflicts             : 0              (0 /sec)
+c decisions             : 1              (0.00 % random) (67 /sec)
+c propagations          : 2              (133 /sec)
+c conflict literals     : 0              (-nan % deleted)
+c CPU time              : 0.015 s
+c nbSimplifyAll         : 0
+c s_propagations        : 1           
+c s_cost_ratio          : 50.00%
+
+s SATISFIABLE
