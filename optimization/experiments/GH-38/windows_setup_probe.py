@@ -2,7 +2,7 @@
 import argparse,ctypes as C,hashlib,importlib.util,json,os,re,struct,subprocess,sys,time,traceback
 from pathlib import Path
 HERE=Path(__file__).resolve().parent;REPO=HERE.parents[2];ROOT=HERE.parents[3]
-ASSIGNMENT='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6066796343'
 HELPER_SHA='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2'
 SUPPORT=['windows_setup_probe.py','setup_worker.py','resolve_packages.py','windows_cpu_window.py','PACKAGE-CLOSURE.json','PACKAGE-METADATA.json']
 def sha(p):
