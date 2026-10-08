@@ -59,7 +59,12 @@ k.QueryInformationJobObject.restype=C.c_int
 window=None;current=None;resources=[];descendants=[];command_index=0
 RUN_START=time.monotonic()
 RUN_LIMIT=2700 # 45-minute aggregate watchdog; no autonomous retries.
-identities={}; binaries={}
+identities={}; binaries={};artifact_pins={}
+def pin_created(path):
+    path=str(path);digest=sha(path)
+    assert path not in identities or identities[path]==digest,'Produced artifact changed before repin: '+path
+    identities[path]=digest;artifact_pins[path]=digest
+    save(out/'artifact-pins.json',artifact_pins)
 summary=dict(status="INCONCLUSIVE",Tier0="NOT_RUN",diagnostic="NOT_RUN",performance="NOT_MEASURED",
              candidate="4a820ac5c1910d64930ed26a719af2f046a6a693",assignment=args.run_assignment)
 
@@ -286,7 +291,8 @@ try:
     for v,source in sources.items():
         for rel,digest in source_hashes[v].items():identities[str(source/rel)]=digest
         p=source/'data/matrices';p.mkdir(parents=True)
-        for suffix in ['Hx','Hz','Gx','Gz']:shutil.copy2(data_root/('LP_34_20_2_'+suffix+'.txt'),p)
+        for suffix in ['Hx','Hz','Gx','Gz']:
+            target=p/('LP_34_20_2_'+suffix+'.txt');shutil.copy2(data_root/target.name,target);pin_created(target)
     runtime_manifest=json.loads((HERE/'runtime-original.json').read_text(encoding='utf8'))
     assert len(runtime_manifest)==10216,'Original runtime manifest scope'
     runtime_identity_paths={str(runtime/rel) for rel in runtime_manifest}
@@ -317,13 +323,13 @@ try:
     result=check_run([compiler,'--version'],'compiler-version',candidate);assert '14.4.0' in result[1],'Compiler version drift'
     gate=out/'portable-isa-gate.exe'
     check_run([compiler,*original_flags,HERE/'cpu_isa_gate.cc','-o',gate],'portable-isa-gate-build',sources['baseline'],60)
-    identities[str(gate)]=sha(gate)
+    pin_created(gate)
     rc,text,err=check_run([gate],'portable-isa-gate-run',sources['baseline'],10,allow_rc=True)
     if rc!=0:raise RuntimeError('ISA compatibility not established: '+text+err)
     gate_result=json.loads(text);assert gate_result['compatible'] is True,'ISA compatibility not established'
     save(out/'isa-gate.json',dict(cpu=window.selection['selected_cpu'],mask=window.mask,cpuid=gate_result))
     empty=out/'empty-target.cc';empty.write_text('int provenance_marker;\n',encoding='utf8')
-    identities[str(empty)]=sha(empty)
+    pin_created(empty)
     options={};optimizers={};macros={};abi={}
     for version,flags in version_flags.items():
         rc,options[version],err=check_run([compiler,*flags,'-Q','--help=target','-c',empty,'-o',out/(version+'-target.o')],version+'-target',sources[version],30)
@@ -335,7 +341,7 @@ try:
         assert '#define __cplusplus 201703L' in macros[version],'Language default drift'
         probe=out/(version+'-abi-probe.exe')
         check_run([compiler,*flags,HERE/'abi_probe.cc','-lz','-o',probe],'abi-build-'+version,sources[version],60)
-        identities[str(probe)]=sha(probe)
+        pin_created(probe)
         rc,abi[version],err=check_run([probe],'abi-run-'+version,sources[version],10)
         live=json.loads((out/('abi-run-'+version+'.command.json')).read_text(encoding='utf8')).get('loaded_modules',[])
         assert {'cygwin1.dll','cygstdc++-6.dll','cygz.dll'}.issubset({Path(row['path']).name.lower() for row in live}),'Missing actual scientific linkage proof'
@@ -346,8 +352,8 @@ try:
     save(out/'target-provenance.json',dict(abi=abi,FPpolicy=fp(optimizers['baseline']),cpu=gate_result,original_generic_tuning=True,one_isa_change=True))
     for version,source in sources.items():
         check_run([runtime/'bin/make.exe','-j1','bin/distqldpc'],'build-'+version,source,300)
-        binaries[version]=source/'bin/distqldpc.exe';identities[str(binaries[version])]=sha(binaries[version])
-        for obj in (source/'build').glob('*.o'):identities[str(obj)]=sha(obj)
+        binaries[version]=source/'bin/distqldpc.exe';pin_created(binaries[version])
+        for obj in (source/'build').glob('*.o'):pin_created(obj)
     save(out/'binary-hashes.json',{v:sha(p) for v,p in binaries.items()})
     props={v:pe_properties(p) for v,p in binaries.items()};assert props['baseline']==props['candidate'],'GNU PE security/default manifest changed'
     save(out/'production-pe.json',props)
@@ -363,6 +369,7 @@ try:
         exact=min((x|z).bit_count() for x,z in itertools.product(range(1<<n),repeat=2) if all((h&z).bit_count()%2==0 for h in hx) and all((h&x).bit_count()%2==0 for h in hz) and (x not in span(hx) or z not in span(hz)))
         for suffix,rows in zip(['Hx','Hz','Gx','Gz'],[hx,hz,gx,gz]):
             (out/(stem+'_'+suffix+'.txt')).write_text(''.join(' '.join(str((r>>i)&1) for i in range(n))+'\n' for r in rows),encoding='utf8')
+            pin_created(out/(stem+'_'+suffix+'.txt'))
         for mode in ['no-card','card-sinz','card-mto','card-both-force',None]:
             dumps=[]
             for version,binary in binaries.items():
@@ -394,7 +401,7 @@ try:
         objects=[source/'build'/(n+'.o') for n in ['SimpSolver','Solver','Options','System']]
         check_run([runtime/'bin/g++.exe',*version_flags[version],source/'src/solver/Main.cc',
             HERE/'cygwin_test_stats_shim.cc',*objects,'-lz','-o',binary],version+'-standalone-test-build',source,120)
-        identities[str(binary)]=sha(binary)
+        pin_created(binary)
     def satisfies(clause,assignment):
         return any(bool(assignment&(1<<(abs(lit)-1)))==(lit>0) for lit in clause)
     cases=[('pms-zero',2,[[-1,2]],[[1],[2]]),
@@ -419,6 +426,7 @@ try:
         wcnf.write_text('p wcnf %d %d %d\n'%(n,len(hard)+len(soft),top)+
             ''.join(str(weight)+' '+' '.join(map(str,c))+' 0\n'
                     for weight,clauses in [(top,hard),(1,soft)] for c in clauses),encoding='utf8')
+        pin_created(wcnf)
         checked=[]
         for version,binary in standalone.items():
             rc,text,error=check_run([binary,'-verb=1',wcnf],stem+'-'+version,sources[version],20,allow_rc=True)
@@ -430,7 +438,7 @@ try:
         assert checked[0]==checked[1],'SCIENCE standalone result/exit semantics mismatch '+stem
         oracle.append(dict(stem=stem,variables=n,oracle=exact,scientific_results=checked,input_sha256=sha(wcnf)))
         save(out/'pms-oracle.json',oracle)
-    for binary in standalone.values():identities[str(binary)]=sha(binary)
+    for binary in standalone.values():pin_created(binary)
     save(out/'standalone-test-hashes.json',{v:sha(p) for v,p in standalone.items()})
     for version,source in sources.items():
         original=(source/'src/solver/Solver.cc').read_bytes()
@@ -448,15 +456,15 @@ try:
             tag=version+'-'+phase
             hooked=out/(tag+'-test-only-Solver.cc')
             hooked.write_bytes(b'#include <unistd.h>\n'+body)
-            identities[str(hooked)]=sha(hooked)
+            pin_created(hooked)
             obj=out/(tag+'-test-only-Solver.o')
             flags=version_flags[version]
             check_run([runtime/'bin/g++.exe',*flags,'-c',hooked,'-o',obj],tag+'-hook-build',source,120)
-            identities[str(obj)]=sha(obj)
+            pin_created(obj)
             binary=out/(tag+'-test-only.exe')
             other=[source/'build'/(name+'.o') for name in ['SimpSolver','Options','System']]
             check_run([runtime/'bin/g++.exe',*flags,source/'src/core/distqldpc.cc',obj,*other,'-lz','-o',binary],tag+'-app-build',source,120)
-            identities[str(binary)]=sha(binary)
+            pin_created(binary)
             for mode in ['no-card','card-mto']:
                 label=tag+'-timeout-'+mode
                 rc,text,error=check_run([binary,'-v','-'+mode,'-cpu-lim=1',out/'css4'],label,source,20,exact=2,timeout=True)
@@ -466,7 +474,7 @@ try:
                 if phase=='pre-search':assert not found,'SCIENCE pre-search hook unexpectedly emitted model UB'
                 assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
             save(out/(tag+'-hook-hashes.json'),dict(source=sha(hooked),object=sha(obj),binary=sha(binary),production_engine_untouched=True))
-            for retained in [hooked,obj,binary]:identities[str(retained)]=sha(retained)
+            for retained in [hooked,obj,binary]:pin_created(retained)
     summary.update(Tier0='LOCAL_PASS',hosted='REQUIRED_SEPARATELY',Tier0_complete=False);save(out/'summary.json',summary)
     assert len(science)==50,'Test coverage incomplete'
     summary.update(status='PREPARATORY_COMPLETE',Tier0='LOCAL_PASS',diagnostic='NOT_RUN',performance='NOT_MEASURED')
