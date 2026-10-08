@@ -7,7 +7,10 @@ BUILD   = build
 BIN     = bin/distqldpc
 MAXCDCL = bin/maxcdcl
 
-CXX     ?= g++
+ifeq ($(origin CXX), default)
+CXX      = clang++ -Wno-reserved-user-defined-literal
+endif
+CXX     ?= clang++ -Wno-reserved-user-defined-literal
 CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O3 -g \
            -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG
 LDFLAGS  = -lz
