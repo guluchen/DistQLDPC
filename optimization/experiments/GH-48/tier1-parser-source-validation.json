@@ -1,6 +1,6 @@
 {
   "status": "PURE_SCIENCE_AST_VALIDATION_PASS",
-  "driver_sha256": "e3916630edbdbad70cda5b9c46d90a4ccd6f54731f4c0addd72d7b133ed34364",
+  "driver_sha256": "f380e948cc34fa9c4b0d90de2efc360e943d976abaa6bf919f7c257ed49d12ad",
   "checks": [
     {
       "case": "lawful_unknown",
@@ -8,6 +8,10 @@
     },
     {
       "case": "lawful_timeout",
+      "result": "PASS"
+    },
+    {
+      "case": "lawful_dash_bounds",
       "result": "PASS"
     },
     {
@@ -40,6 +44,14 @@
     },
     {
       "case": "objective",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "missing_lb",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "missing_ub",
       "result": "REJECT_EXPECTED"
     },
     {

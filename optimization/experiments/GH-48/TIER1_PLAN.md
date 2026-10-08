@@ -23,7 +23,7 @@ ownership recheck before cleanup, and mandatory exact incomplete distance/status
 trailers. Original numeric judge source/AST/thresholds remain unchanged. No claimed
 bit-identical Linux/Windows compilation. Driver is blocked by
 HOST_SLOT_NOT_ASSIGNED before helper execution; only source/AST preparation and
-11 pure parser-function validation cases have run, no actual benchmark.
+14 pure parser-function validation cases have run, no actual benchmark.
 
 Exactly BB_90_8_10, GB_144_12_8, BB_108_8_10, LP_238_44_6; no-card and card-mto
 separately. Baseline3/candidate3 in serial AB/BA/AB order on the same selected CPU:

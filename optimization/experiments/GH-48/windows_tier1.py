@@ -180,6 +180,7 @@ def scientific(rc,text,exact,timeout=False,incomplete=False):
         assert statuses==['UNKNOWN'] and len(comments)==1,'SCIENCE changed incomplete output semantics'
         assert comments[0] in ['UNKNOWN','TIMEOUT (child killed after -cpu-lim)'],'SCIENCE malformed incomplete status'
         assert re.findall(specs['d'][0],text,re.M)==['UNKNOWN'],'SCIENCE incomplete distance trailer missing or malformed'
+        for key in ['lb','ub']:assert re.findall(specs[key][0],text,re.M),'SCIENCE missing incomplete '+key
         if timeout:assert timed,'SCIENCE requested timeout status missing'
         assert values['d'] is None and values['objective'] is None,'SCIENCE incomplete solve reported optimum'
         assert not re.search(r'^o\b',text,re.M),'SCIENCE incomplete objective'
