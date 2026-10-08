@@ -1,0 +1,329 @@
+{
+  "status": "FILTER_COMPLETE",
+  "Tier2": "12_SCIENCE_PASS",
+  "decision": "SPECIALIZED_DIAGNOSTIC",
+  "performance": "OBSERVED_QUIET_DIAGNOSTIC",
+  "exclusive": false,
+  "interpretation": "PAIR_ISOLATION_DIAGNOSTIC_FORMAL_INCONCLUSIVE",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069823418",
+  "robustness_prerecord_commit": "ab61a882cea88fdc689b1eaaa591e624b9eb3701",
+  "robustness_prerecord_sha": "e5a81bcdaf65af5b2da91a5e89c59016780a93d04b5c8d14b8fba1cd56519ff0",
+  "numeric_filter": "inconclusive",
+  "numeric_reason": {
+    "no-card": {
+      "median_geomean": 0.9991400186763807,
+      "range_envelope_geomean": 1.0042163316299921,
+      "no_worse_medians": true
+    },
+    "card-mto": {
+      "median_geomean": 0.7418412724661902,
+      "range_envelope_geomean": 0.7480329311068936,
+      "no_worse_medians": true
+    }
+  },
+  "legacy_filter_details": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "baseline_raw": [
+        98.23730467702262,
+        99.12295900005847,
+        98.71893580909818
+      ],
+      "candidate_raw": [
+        97.78225781605579,
+        98.63403936801478,
+        98.65150573197752
+      ],
+      "baseline_median": 98.71893580909818,
+      "candidate_median": 98.63403936801478,
+      "median_ratio": 0.9991400186763807,
+      "baseline_range_over_median": 0.008971473565603683,
+      "baseline_min": 98.23730467702262,
+      "baseline_max": 99.12295900005847,
+      "candidate_min": 97.78225781605579,
+      "candidate_max": 98.65150573197752
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "baseline_raw": [
+        109.75839377217926,
+        110.03510840889066,
+        110.04392549418844
+      ],
+      "candidate_raw": [
+        81.51541750784963,
+        81.62858483800665,
+        82.10289300698787
+      ],
+      "baseline_median": 110.03510840889066,
+      "candidate_median": 81.62858483800665,
+      "median_ratio": 0.7418412724661902,
+      "baseline_range_over_median": 0.0025949147152938275,
+      "baseline_min": 109.75839377217926,
+      "baseline_max": 110.04392549418844,
+      "candidate_min": 81.51541750784963,
+      "candidate_max": 82.10289300698787
+    }
+  ],
+  "medians": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          98.23730467702262,
+          99.12295900005847,
+          98.71893580909818
+        ],
+        "candidate": [
+          97.78225781605579,
+          98.63403936801478,
+          98.65150573197752
+        ]
+      },
+      "baseline_median": 98.71893580909818,
+      "candidate_median": 98.63403936801478,
+      "ratio": 0.9991400186763807,
+      "range_envelope": 1.0042163316299921,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          109.75839377217926,
+          110.03510840889066,
+          110.04392549418844
+        ],
+        "candidate": [
+          81.51541750784963,
+          81.62858483800665,
+          82.10289300698787
+        ]
+      },
+      "baseline_median": 110.03510840889066,
+      "candidate_median": 81.62858483800665,
+      "ratio": 0.7418412724661902,
+      "range_envelope": 0.7480329311068936,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "robustness_details": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "exit_intervals": {
+        "baseline": [
+          [
+            98.18717494700104,
+            98.23730206605978
+          ],
+          [
+            99.07285092910752,
+            99.12295829015784
+          ],
+          [
+            98.66873528016731,
+            98.718934209086
+          ]
+        ],
+        "candidate": [
+          [
+            97.2829268919304,
+            97.78225654596463
+          ],
+          [
+            98.5838928220328,
+            98.634038628079
+          ],
+          [
+            98.60137283685617,
+            98.65150511194952
+          ]
+        ]
+      },
+      "cpu_raw": {
+        "baseline": [
+          86.474698,
+          87.192289,
+          86.75150299999997
+        ],
+        "candidate": [
+          85.917048,
+          86.71853200000004,
+          86.64267000000001
+        ]
+      },
+      "median_exit_intervals": {
+        "baseline": [
+          98.66873528016731,
+          98.718934209086
+        ],
+        "candidate": [
+          98.5838928220328,
+          98.634038628079
+        ]
+      },
+      "candidate_max_exit_upper": 98.65150511194952,
+      "baseline_min_exit_lower": 98.18717494700104,
+      "candidate_max_cpu": 86.71853200000004,
+      "baseline_min_cpu": 86.474698,
+      "pairs": [
+        {
+          "repeat": 1,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "exit_interval_win": true,
+          "cpu_win": true,
+          "conservative_exit_difference_sec": -0.4049184010364115,
+          "cpu_difference_sec": -0.5576500000000095
+        },
+        {
+          "repeat": 2,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "exit_interval_win": true,
+          "cpu_win": true,
+          "conservative_exit_difference_sec": -0.43881230102851987,
+          "cpu_difference_sec": -0.47375699999996357
+        },
+        {
+          "repeat": 3,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "exit_interval_win": true,
+          "cpu_win": true,
+          "conservative_exit_difference_sec": -0.017230168217793107,
+          "cpu_difference_sec": -0.10883299999996154
+        }
+      ],
+      "exit_ranges_disjoint_positive": false,
+      "cpu_ranges_disjoint_positive": false,
+      "corroborated": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "exit_intervals": {
+        "baseline": [
+          [
+            109.70824210811406,
+            109.75839299196377
+          ],
+          [
+            109.98497133981436,
+            110.03510751901194
+          ],
+          [
+            109.99377449601889,
+            110.04392478405498
+          ]
+        ],
+        "candidate": [
+          [
+            81.46526365703903,
+            81.51541682798415
+          ],
+          [
+            81.5784290379379,
+            81.6285841180943
+          ],
+          [
+            82.05271066003479,
+            82.10289187706076
+          ]
+        ]
+      },
+      "cpu_raw": {
+        "baseline": [
+          96.06968199999994,
+          96.07418100000002,
+          96.06385800000002
+        ],
+        "candidate": [
+          71.29931200000004,
+          71.37159399999997,
+          71.52429499999998
+        ]
+      },
+      "median_exit_intervals": {
+        "baseline": [
+          109.98497133981436,
+          110.03510751901194
+        ],
+        "candidate": [
+          81.5784290379379,
+          81.6285841180943
+        ]
+      },
+      "candidate_max_exit_upper": 82.10289187706076,
+      "baseline_min_exit_lower": 109.70824210811406,
+      "candidate_max_cpu": 71.52429499999998,
+      "baseline_min_cpu": 96.06385800000002,
+      "pairs": [
+        {
+          "repeat": 1,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "exit_interval_win": true,
+          "cpu_win": true,
+          "conservative_exit_difference_sec": -28.19282528012991,
+          "cpu_difference_sec": -24.7703699999999
+        },
+        {
+          "repeat": 2,
+          "order": [
+            "candidate",
+            "baseline"
+          ],
+          "exit_interval_win": true,
+          "cpu_win": true,
+          "conservative_exit_difference_sec": -28.35638722172007,
+          "cpu_difference_sec": -24.70258700000005
+        },
+        {
+          "repeat": 3,
+          "order": [
+            "baseline",
+            "candidate"
+          ],
+          "exit_interval_win": true,
+          "cpu_win": true,
+          "conservative_exit_difference_sec": -27.89088261895813,
+          "cpu_difference_sec": -24.539563000000044
+        }
+      ],
+      "exit_ranges_disjoint_positive": true,
+      "cpu_ranges_disjoint_positive": true,
+      "corroborated": true
+    }
+  ],
+  "preliminary_corroboration": false,
+  "reason": "Exploratory medium-case result; prior Tier1 INCONCLUSIVE retained, no adoption or Tier3 authorized",
+  "prior_tier1_numeric_filter": "inconclusive",
+  "exploratory": true,
+  "adoption": "NOT_AUTHORIZED",
+  "available_configuration_unchanged": true,
+  "unavailable_configuration_fields": [
+    "/sys/devices/system/cpu/intel_pstate/no_turbo"
+  ],
+  "cleanup_restoration_confirmed": true,
+  "full_identity_confirmed": true,
+  "valid_run": true,
+  "engineering_corroboration_valid": false,
+  "pair_reserved": true,
+  "host_exclusive": false,
+  "forced_supervisor_death_recovery_tested": false,
+  "engineering_status": "inconclusive"
+}
