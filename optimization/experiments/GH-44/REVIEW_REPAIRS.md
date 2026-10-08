@@ -22,3 +22,11 @@ no added/removed files accepted. Posthash/child cleanup/actual4restore remain.
 All50 application streams/15WCNF pairs/72PMS/2originalsmokes and12genuine timeout
 coverage stay mandatory. No compiled PASS claimed. Hosted compatibility guard
 separately preregistered; earlier ungated hosted runs remain excluded.
+
+Integrator clarification before execution: full10,216-file runtime hashes and
+exact file sets remain mandatory pre/post; per-command checks authenticate every
+existing source/input/support/produced-object/binary plus critical runtime tools,
+shared DLLs/import libraries and startup objects, rather than repeatedly hashing
+inactive runtime documentation. Actual critical list/count retained in
+preexecution.json; all original full identities still checked at finalization.
+This preserves the45-minute budget without a new performance or scientific claim.

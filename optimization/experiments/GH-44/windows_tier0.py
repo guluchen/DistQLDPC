@@ -109,6 +109,7 @@ def managed_run(argv,cwd,target,label,timeout,cygwin=False):
     window.previous=module.ticks();time.sleep(2.1);observe(label+"-preflight")
     identity_guard=time.monotonic()
     for path,digest in identities.items():
+        if path in runtime_identity_paths and path not in critical_runtime_paths:continue
         assert time.monotonic()-RUN_START<RUN_LIMIT,'Aggregate watchdog expired during identity check'
         assert sha(path)==digest,'Pre-command identity changed: '+path
         if time.monotonic()-identity_guard>=2:
@@ -288,6 +289,11 @@ try:
         for suffix in ['Hx','Hz','Gx','Gz']:shutil.copy2(data_root/('LP_34_20_2_'+suffix+'.txt'),p)
     runtime_manifest=json.loads((HERE/'runtime-original.json').read_text(encoding='utf8'))
     assert len(runtime_manifest)==10216,'Original runtime manifest scope'
+    runtime_identity_paths={str(runtime/rel) for rel in runtime_manifest}
+    critical_tool_names={'g++.exe','gcc.exe','make.exe','bash.exe','sh.exe','mkdir.exe','cc1plus.exe','collect2.exe','as.exe','ld.exe','nm.exe','objdump.exe','size.exe'}
+    critical_runtime_paths={str(runtime/rel) for rel in runtime_manifest
+        if Path(rel).name in critical_tool_names or rel.lower().endswith(('.dll','.dll.a'))
+        or Path(rel).name in {'libgcc.a','libgcc_eh.a','crt0.o','crt1.o','crtbegin.o','crtend.o'}}
     frozen_runtime_file_set={p.relative_to(runtime).as_posix() for p in runtime.rglob('*') if p.is_file()}
     assert frozen_runtime_file_set==set(runtime_manifest),'Original runtime file set changed'
     identity_guard=time.monotonic()
@@ -299,7 +305,7 @@ try:
     for p in support:identities[str(p)]=sha(p)
     save(out/'preexecution.json',dict(assignment=args.run_assignment,baseline=BASE,production_candidate=CAND,record_head=head,
         driver_sha256=sha(__file__),helper_sha256=sha(helper),support={p.name:sha(p) for p in support},source_hashes=source_hashes,
-        input_hashes=inputs,identities=identities,aggregate_watchdog=RUN_LIMIT,exclusive_reservation=False,
+        input_hashes=inputs,identities=identities,critical_runtime_paths=sorted(critical_runtime_paths),full_runtime_prepost_count=len(runtime_manifest),aggregate_watchdog=RUN_LIMIT,exclusive_reservation=False,
         semantics='Only Make/smoke CRLF normalized symmetrically; original Git source bytes; no bit-identical rebuild claim'))
     shutil.copy2(Path(__file__),out/'executed-driver.py')
     os.environ['PATH']=str(runtime/'bin')+os.pathsep+os.environ['PATH']
@@ -317,6 +323,7 @@ try:
     gate_result=json.loads(text);assert gate_result['compatible'] is True,'ISA compatibility not established'
     save(out/'isa-gate.json',dict(cpu=window.selection['selected_cpu'],mask=window.mask,cpuid=gate_result))
     empty=out/'empty-target.cc';empty.write_text('int provenance_marker;\n',encoding='utf8')
+    identities[str(empty)]=sha(empty)
     options={};optimizers={};macros={};abi={}
     for version,flags in version_flags.items():
         rc,options[version],err=check_run([compiler,*flags,'-Q','--help=target','-c',empty,'-o',out/(version+'-target.o')],version+'-target',sources[version],30)
