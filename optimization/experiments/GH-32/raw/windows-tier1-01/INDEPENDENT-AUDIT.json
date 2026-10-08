@@ -1,0 +1,102 @@
+{
+  "audit": "PASS",
+  "solves": 48,
+  "emitted_bounds": 96,
+  "raw_manifest_files": 199,
+  "modes": {
+    "no-card": {
+      "median_geomean": 1.0080860705802983,
+      "range_envelope_geomean": 1.0191875923552207,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 1.0090776370218555,
+      "range_envelope_geomean": 1.0243591129557355,
+      "no_worse_medians": false
+    }
+  },
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "baseline_median": 2.490815900004236,
+      "candidate_median": 2.5100388000137173,
+      "ratio": 1.00771751136222,
+      "envelope": 1.0223374390671538,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "baseline_median": 2.988642600015737,
+      "candidate_median": 3.0316655000206083,
+      "ratio": 1.0143954650196865,
+      "envelope": 1.0168699495321183,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "baseline_median": 1.0670767000119668,
+      "candidate_median": 1.0579282999970019,
+      "ratio": 0.9914266706274607,
+      "envelope": 1.003789493140785,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "baseline_median": 1.3187429999816231,
+      "candidate_median": 1.3380379999871366,
+      "ratio": 1.0146313572893144,
+      "envelope": 1.0494047503261246,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "baseline_median": 3.032672499975888,
+      "candidate_median": 3.1031053999904543,
+      "ratio": 1.0232246970337635,
+      "envelope": 1.0353912980549647,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "baseline_median": 3.9086417000216898,
+      "candidate_median": 3.935732600017218,
+      "ratio": 1.006931026703056,
+      "envelope": 1.020474232782351,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "baseline_median": 2.088072699989425,
+      "candidate_median": 2.1094326000020374,
+      "ratio": 1.0102294810006953,
+      "envelope": 1.0154886881702025,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "baseline_median": 2.498118899995461,
+      "candidate_median": 2.4991719000099692,
+      "ratio": 1.000421517172185,
+      "envelope": 1.0111101249843761,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "resource_checks": 82,
+  "contention_alerts": 3,
+  "active_contention_alerts": 0,
+  "min_global_idle": 86.85185185185185,
+  "min_sibling_idle": 96.875,
+  "identity": "PASS original files checked",
+  "cleanup": "PASS",
+  "decision": "REJECT",
+  "tier2": "NOT_RUN",
+  "tier3": "NOT_RUN"
+}

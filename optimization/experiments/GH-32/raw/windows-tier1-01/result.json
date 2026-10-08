@@ -1,0 +1,182 @@
+{
+  "decision": "REJECT",
+  "tier0": "PASS",
+  "tier1": "48 scientifically correct solves",
+  "tier2": "NOT_RUN",
+  "tier3": "NOT_RUN",
+  "reason": "Repeated nonoverlapping per-case diagnostic regression",
+  "numeric_filter": "reject",
+  "numeric_reason": "confirmed per-case regression",
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.490815900004236,
+          2.481909399997676,
+          2.5011383999953978
+        ],
+        "candidate": [
+          2.5100388000137173,
+          2.5054357000044547,
+          2.53734889999032
+        ]
+      },
+      "baseline_median": 2.490815900004236,
+      "candidate_median": 2.5100388000137173,
+      "ratio": 1.00771751136222,
+      "range_envelope": 1.0223374390671538,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.010911199991824,
+          2.988642600015737,
+          2.987110299989581
+        ],
+        "candidate": [
+          3.037502699997276,
+          3.0205452000082005,
+          3.0316655000206083
+        ]
+      },
+      "baseline_median": 2.988642600015737,
+      "candidate_median": 3.0316655000206083,
+      "ratio": 1.0143954650196865,
+      "range_envelope": 1.0168699495321183,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.0542306999850553,
+          1.1007667000230867,
+          1.0670767000119668
+        ],
+        "candidate": [
+          1.0579282999970019,
+          1.0568838999897707,
+          1.0582256999914534
+        ]
+      },
+      "baseline_median": 1.0670767000119668,
+      "candidate_median": 1.0579282999970019,
+      "ratio": 0.9914266706274607,
+      "range_envelope": 1.003789493140785,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.3187429999816231,
+          1.3148432000016328,
+          1.3258917999919504
+        ],
+        "candidate": [
+          1.336936900013825,
+          1.3798027000157163,
+          1.3380379999871366
+        ]
+      },
+      "baseline_median": 1.3187429999816231,
+      "candidate_median": 1.3380379999871366,
+      "ratio": 1.0146313572893144,
+      "range_envelope": 1.0494047503261246,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.032672499975888,
+          3.0290299000043888,
+          3.0959987999813166
+        ],
+        "candidate": [
+          3.076683099992806,
+          3.1031053999904543,
+          3.136231200012844
+        ]
+      },
+      "baseline_median": 3.032672499975888,
+      "candidate_median": 3.1031053999904543,
+      "ratio": 1.0232246970337635,
+      "range_envelope": 1.0353912980549647,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.9228717999940272,
+          3.8669532000203617,
+          3.9086417000216898
+        ],
+        "candidate": [
+          3.946126099996036,
+          3.922720400005346,
+          3.935732600017218
+        ]
+      },
+      "baseline_median": 3.9086417000216898,
+      "candidate_median": 3.935732600017218,
+      "ratio": 1.006931026703056,
+      "range_envelope": 1.020474232782351,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.088072699989425,
+          2.087252299999818,
+          2.1519744000106584
+        ],
+        "candidate": [
+          2.1094326000020374,
+          2.1093019999971148,
+          2.1195811000070535
+        ]
+      },
+      "baseline_median": 2.088072699989425,
+      "candidate_median": 2.1094326000020374,
+      "ratio": 1.0102294810006953,
+      "range_envelope": 1.0154886881702025,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.498118899995461,
+          2.5050797000003513,
+          2.477676899987273
+        ],
+        "candidate": [
+          2.4963657000043895,
+          2.4991719000099692,
+          2.505204200017033
+        ]
+      },
+      "baseline_median": 2.498118899995461,
+      "candidate_median": 2.4991719000099692,
+      "ratio": 1.000421517172185,
+      "range_envelope": 1.0111101249843761,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "valid_run": true
+}
