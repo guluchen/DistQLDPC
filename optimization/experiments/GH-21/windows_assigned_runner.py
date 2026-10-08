@@ -14,6 +14,7 @@ import struct
 import subprocess
 import sys
 import time
+import traceback
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[3]
@@ -160,15 +161,19 @@ try:
         for suffix in ["Hx","Hz","Gx","Gz"]:
             reference=immutable_base/"data/matrices"/("LP_34_20_2_"+suffix+".txt")
             target=destination/reference.name
-            if source==candidate and target.exists():assert sha(target)==sha(reference)
+            if source==candidate and target.exists():
+                raw=target.read_bytes();canonical=git_data(head,"data/matrices/"+reference.name)
+                assert raw.replace(b"\r\n",b"\n")==canonical.replace(b"\r\n",b"\n"),reference.name
             if not target.exists():shutil.copy2(reference,target)
-            assert sha(target)==sha(reference)
+            assert target.read_bytes().replace(b"\r\n",b"\n")==reference.read_bytes().replace(b"\r\n",b"\n"),reference.name
     assert not (candidate/"build").exists() and not (candidate/"bin/distqldpc.exe").exists(), "Candidate must be clean"
     save(out/"identity.json",dict(candidate=head,baseline=baseline_sha,assignment=args.run_assignment,
          baseline_manifest_sha256=sha(package/"manifest.json"),baseline_binary_sha256=sha(immutable_base/"bin/distqldpc.exe"),
          runner_sha256=sha(__file__),helper_sha256=sha(helper),runtime_manifest_sha256=sha(runtime/"etc/setup/installed.db"),
          selection=window.selection,source_hashes={p:sha(candidate/p) for p in paths+["Makefile"]},
          support_hashes={p.name:sha(p) for p in list(HERE.glob("*.py"))+list(HERE.glob("*.cc"))},
+         smoke_input_hashes={label:{p.name:sha(p) for p in (source/"data/matrices").glob("LP_34_20_2_*.txt")}
+                             for label,source in [("baseline-copy",base),("candidate-checkout",candidate)]},
          object_hashes={str(p.relative_to(immutable_base)):sha(p) for p in (immutable_base/"build").glob("*.o")},
          input_hashes={p.name:sha(p) for stem in ["LP_34_20_2","LP_340_56_8"] for p in (immutable_base/"data/matrices").glob(stem+"_*.txt")}))
     runner_common.run=managed_run;run_tier0.run=managed_run
@@ -207,6 +212,7 @@ try:
     run_tier0.main();summary.update(Tier0="LOCAL_PASS",status="PREPARATORY_COMPLETE")
 except BaseException as error:
     summary["reason"]=repr(error)
+    summary["traceback"]=traceback.format_exc()
     # Assertions before scientific execution are provenance/harness failures,
     # not fabricated scientific disagreements.
     if (out/"tier0/summary.json").exists():
