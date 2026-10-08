@@ -1,11 +1,25 @@
 # Optimization state
 
-Latest user decision: [shelve LTO / E004](experiments/E004/DISPOSITION-2026-10-08.md)
-and try the next proposal. E001's earlier shelving remains preserved below.
+Latest user decision: [record diagnostic screening and repeat BDD verification
+when server resources are available](experiments/E006/FOLLOWUP-2026-10-08.md).
+The earlier [LTO / E004 shelving](experiments/E004/DISPOSITION-2026-10-08.md)
+and E001's earlier shelving remain preserved below.
 Latest [literature/program-optimization revision](brain/2026-10-07-round2-research-revision.md) supersedes the initial Round 2 recommendation and the earlier
 resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
+
+Pending user-authorized E006 follow-up: separate complete controlled server
+Tier1 repetition when a validated resource window is available. Two-stage
+policy permits explicitly labeled diagnostics to retain sibling interference
+instead of aborting; global>50%/<=half spare and scientific guards remain.
+This update records the plan only; no new run, polling or scheduled monitor.
+Existing strict executable defaults and historical INCONCLUSIVE result unchanged.
+User also permits acceptance despite minor interference once repeated evidence
+shows the performance decision is robust to it; zero interference is not an
+absolute veto. Scientific equality alone is insufficient. Retain all timings/
+telemetry and require reproducible gains/no material regression; uncertain
+interference effects remain INCONCLUSIVE, spare-capacity guards unchanged.
 
 Latest experiment: [E006 / H-009 singleton BDD bound](experiments/E006/README.md),
 selected from existing H009 after fresh Round4. **INCONCLUSIVE / NOT ADOPTED**.

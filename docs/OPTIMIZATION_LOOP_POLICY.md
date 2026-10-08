@@ -28,6 +28,30 @@ Never obtain a performance improvement by changing benchmark ground truth, timeo
 
 ## Progressive filtering
 
+### User-directed diagnostic screening and server verification (2026-10-08)
+
+The user accepts a two-stage approach to avoid repeatedly aborting inexpensive
+screens on brief sibling-core activity. In a preregistered diagnostic screen,
+interleave serial baseline/candidate runs on the same CPU and retain interference
+telemetry; sibling idle below95% is recorded instead of ending the screen.
+Global spare>50%, allocation<=half spare, correctness and timeout guards still
+apply. Diagnostic timings do not establish controlled PASS, acceptance, merge
+or research-grade speedups. Promising candidates receive a separate complete
+controlled repetition on the dedicated server when resources and validated
+isolation are available. Do not pool different protocols or retrospectively
+relabel earlier aborted runs. Strict isolation/helper guards remain unchanged.
+Additional user instruction permits acceptance with minor interference if
+repeated evidence establishes that it does not change the performance decision.
+Zero interference is not an absolute requirement. Preregister the assessment,
+retain all samples and telemetry, verify reproducible gains beyond variability
+and no material per-case regression. Equal scientific answers alone do not
+establish timing robustness. If interference can change the decision, remain
+INCONCLUSIVE; capacity, correctness and tier guards remain mandatory.
+The [E006 follow-up record](../optimization/experiments/E006/FOLLOWUP-2026-10-08.md)
+records the authorized pending BDD verification and acceptance conditions;
+no background monitor is implied. Existing strict executables remain unchanged
+until a separately preregistered measurement protocol is implemented.
+
 ### User-directed exploratory continuation (2026-10-08)
 
 The user's latest instruction is: if the evidence does not clearly justify

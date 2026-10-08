@@ -1,5 +1,9 @@
 # E006 / H-009: singleton BDD bound encoding — INCONCLUSIVE
 
+Latest user decision: [record diagnostic screening and later controlled server
+repetition](FOLLOWUP-2026-10-08.md). This does not alter the existing result,
+candidate or strict runner defaults; no new benchmark started in that update.
+
 2026-10-08. User asks for the next method after E005. Fresh
 [Brain Round4](../../brain/2026-10-08-round4.md) selects existing H-009;
 [proposal recorded before implementation](PROPOSAL.md). Test exactly one change:

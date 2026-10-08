@@ -1,5 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
+Latest user instruction: [record two-stage screening and repeat E006 on the
+server when available](experiments/E006/FOLLOWUP-2026-10-08.md). Formal H009
+status remains INCONCLUSIVE; no fresh hypothesis, execution or gate promotion.
+Minor interference need not prevent future acceptance if repeated retained
+evidence establishes a robust performance decision and scientific correctness.
+
 Latest: [E006 / H-009 BDD bound INCONCLUSIVE](experiments/E006/README.md).
 One existing MTO constructor replacement, candidatec91b19b/draftPR14 unmerged;
 local and hosted Tier0 PASS. Strict partial Tier1:31 correct/32 attempts,
