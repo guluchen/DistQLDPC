@@ -33,22 +33,22 @@ def save(path,value):Path(path).write_text(json.dumps(value,indent=2),encoding="
 original_runtime=ROOT/"E004-windows-runtime/cygwin"
 runtime=ROOT/"GH38-setup-probe-01/overlay"
 prior02=ROOT/"GH38-setup-probe-02"
-assert PROBE02_AUDIT_SHA256!="e78abbc71f26d3ed1fa973b0cbfce9cf908352745be125e6a442dc0bd5d9daaf", "Corrected compatibility audit not frozen"
+assert PROBE02_AUDIT_SHA256!="PROBE02_NOT_AUDITED", "Corrected compatibility audit not frozen"
 assert sha(prior02/"INDEPENDENT-COMPATIBILITY-AUDIT.json")==PROBE02_AUDIT_SHA256
 assert json.loads((prior02/"INDEPENDENT-COMPATIBILITY-AUDIT.json").read_text())["decision"]=="COMPATIBILITY_PASS"
 package=ROOT/"E004-windows-tier2-02/E004-server-package"
 immutable_base=package/"baseline"
-candidate=ROOT/"GH38-MTUNE"
+candidate=ROOT/"GH38-CLANG"
 helper=HERE/"windows_cpu_window.py"
 # Pin every imported local support file to the named committed revision BEFORE
 # executing it. CRLF checkout normalization is permitted; no content edits are.
 head=subprocess.check_output(["git","-C",str(candidate),"rev-parse","HEAD"],text=True,timeout=20).strip()
 assert head==args.candidate_sha, "Support HEAD differs from assignment"
-assert HERE==candidate/"optimization/experiments/GH-32", "Unexpected support directory"
+assert HERE==candidate/"optimization/experiments/GH-38", "Unexpected support directory"
 preimport_hashes={}
 for name in ["windows_tier0.py","windows_cpu_window.py","runner_common.py","run_tier0.py","cygwin_test_stats_shim.cc","setup_worker.py","windows_codegen_probe.py","PACKAGE-CLOSURE.json","raw/setup-probe-01/runtime-before.json"]:
     path=HERE/name
-    committed=subprocess.check_output(["git","-C",str(candidate),"show",head+":optimization/experiments/GH-32/"+name],timeout=20)
+    committed=subprocess.check_output(["git","-C",str(candidate),"show",head+":optimization/experiments/GH-38/"+name],timeout=20)
     actual=path.read_bytes()
     assert actual.replace(b"\r\n",b"\n")==committed.replace(b"\r\n",b"\n"), "Uncommitted support: "+name
     preimport_hashes[name]=sha(path)
@@ -206,11 +206,13 @@ try:
     runner_common.run=managed_run;run_tier0.run=managed_run
     buildlogs=out/"build-logs";buildlogs.mkdir()
     def verify_overlay(label):
-        return managed_run([sys.executable,HERE/"setup_worker.py","verify-closure",
+        result=managed_run([sys.executable,HERE/"setup_worker.py","verify-closure",
             "--runtime",original_runtime,"--overlay",runtime,
             "--manifest",HERE/"raw/setup-probe-01/runtime-before.json",
             "--closure",HERE/"PACKAGE-CLOSURE.json","--cache",ROOT/"GH38-setup-probe-01/archives",
             "--result",out/(label+".json")],candidate,buildlogs,label,300)
+        assert result[0]==0,"Overlay verification worker failed: "+label
+        return result
     verify_overlay("overlay-before")
     for label,compiler,version in [("original-GNU",runtime/"bin/g++.exe","14.4.0"),
                                    ("candidate-Clang",runtime/"bin/clang++.exe","22.1.8")]:
