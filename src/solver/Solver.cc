@@ -3357,6 +3357,7 @@ int Solver::lookaheadForRestart() {
   }
   int nbIsets=0;
   vec<Lit> out_learnt, ps;
+  vec<int> oldset;
 #ifdef printTestedVar
   printf("\n\nc **********lookahead: %llu, lb: %d, NbFalseLits: %d, thres: %d, UB: %llu\n", LOOKAHEAD, lb, falseLits.size(), thres, UB);
 #endif
@@ -3436,7 +3437,7 @@ int Solver::lookaheadForRestart() {
       //	  else printf("q\n");
       //	else printf("nnn old %d new %d\n", saved, lits.size());
       lookbackResetTrail(confl, falseVar, nbIsets, out_learnt); nbConfl++;
-      setConflict(nbIsets);
+      setConflict(nbIsets, oldset);
       falseVar = var_Undef;
       if (lb==nbConfl) {
 	printf("c softConfl at top...\n");
@@ -4237,14 +4238,13 @@ Var Solver::pickAuxiVar() {
   return v;
 }
 
-void Solver::setConflict(int& nbIsets) {
+void Solver::setConflict(int& nbIsets, vec<int>& oldset) {
  for(int c = unLockedVars.size()-1; c >= 0; c--) {
     Var x = unLockedVars[c];
     incrementIsetLock(inConflicts[x]);
  }
  unLockedVars.shrink(unLockedVars.size());
   
-  vec<int> oldset;
   int i, j, newlock = 1;
   oldset.clear();
   isets.init(nbIsets); isets[nbIsets].clear(); isets[nbIsets].push(nbIsets);
@@ -4876,6 +4876,7 @@ bool Solver::lookahead() {
   }
   int nbIsets=0;
   vec<Lit> out_learnt;
+  vec<int> oldset;
 #ifdef printTestedVar
   printf("\n\nc **********lookahead: %llu, lb: %d, NbFalseLits: %d, thres: %d, UB: %llu\n", LOOKAHEAD, lb, falseLits.size(), thres, UB);
 #endif
@@ -4928,7 +4929,7 @@ bool Solver::lookahead() {
 	  }
 	  continue;
 	}
-	setConflict(nbIsets);
+	setConflict(nbIsets, oldset);
       }
 #ifdef printTestedVar
       printf("£ %d\n", nbConfl);
@@ -4946,7 +4947,7 @@ bool Solver::lookahead() {
       // testedVars.push(falseVar);
       if (lb > nbConfl) {
 	isetsLits[nbIsets].push(softLits[falseVar]);
-	setConflict(nbIsets);
+	setConflict(nbIsets, oldset);
       }
       falseVar = var_Undef;
     }

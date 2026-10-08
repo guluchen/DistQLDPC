@@ -26,9 +26,9 @@ inside setConflict. Solver.h625--635 lock/getLockedVar helpers are inline
 index accesses/updates, with no recursive callbacks. Remaining container calls
 are ordinary vector init/grow/push/clear/shrink, not solver-control calls.
 
-lookahead has several early returns before declaring out_learnt4868 and before
+lookahead has several early returns before declaring out_learnt4878 and before
 the core loop. Put caller-local vec<int> oldset alongside out_learnt after
-these fast returns. lookaheadForRestart out_learnt/ps declaration3365 is before
+these fast returns. lookaheadForRestart out_learnt/ps declaration3359 is before
 its core loop. Reset paths return or continue with nbIsets=0; scratch must clear
 on every setConflict call, independent of nbIsets/reset paths.
 Stack ownership naturally releases capacity on normal/early caller returns and
