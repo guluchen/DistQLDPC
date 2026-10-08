@@ -1,5 +1,10 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest [user-authorized emulator affinity](WINDOWS-EMULATOR-AFFINITY-2026-10-08.md)
+> applied/verified on four instances, CPU0--13; original settings backed up and
+> restore helper ready. Pair14/15 still below strict eligibility in samples;
+> no LP340 timing samples or scientific decision from this setup change.
+
 > Latest authorized [strict LP340 Tier2 attempt](WINDOWS-STRICT-TIER2-RESULT-2026-10-08.md):
 > initial95%-idle pair unavailable, emulator instances observed again; zero solver
 > samples, environment INCONCLUSIVE. Driver/audit ready, strict mode retained

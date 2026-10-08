@@ -6,6 +6,13 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+User-authorized [emulator affinity partition applied](experiments/E004/WINDOWS-EMULATOR-AFFINITY-2026-10-08.md):
+four current dnplayer/Ld9BoxHeadless instances mask65535->16383 (CPU0--13),
+backup/verification PASS, restore helper prepared; no programs closed. Pair14/15
+still not jointly>=95% in three5s samples, no LP340 solver started. Strict Tier2
+continues pending an eligible window; no inference of exclusive Windows resource
+ownership or a diagnostic-mode switch. Candidate source/semantics unchanged.
+
 Latest authorized LP340 Tier2 strict attempt: [initial window refused](experiments/E004/WINDOWS-STRICT-TIER2-RESULT-2026-10-08.md).
 No95%-idle physical-core/SMT pair; zero solver/timing samples, INCONCLUSIVE.
 Emulator instances again observed with different PIDs; later per-core idle
