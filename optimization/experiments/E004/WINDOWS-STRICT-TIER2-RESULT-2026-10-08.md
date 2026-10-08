@@ -37,6 +37,16 @@ configuration. Retain after-emulator-core-reduction.json separately from the
 initial refusal and earlier supplemental observations. No explicit switch to
 diagnostic mode received, so no solver started and strict authorization remains.
 
+User subsequently reports another virtual-core reduction. Two more five-second
+samples found global idle86.66797/90.31439%, still no95%-idle pair in either
+sample. Best second-sample pair12/13 was95.625/93.125%; CPU10/11 was99.375/47.5%.
+Store after-second-emulator-core-reduction.json; no claim about actual emulator
+virtual CPU count or causal effect, since only user-reported configuration and
+observed host accounting are available. No further solver launch or weakened
+threshold. A prospective practical alternative is confining emulator processes
+to other physical cores to leave14/15 for the owned benchmark; not performed
+in this scope, and would not exclude Windows/cache/power interference.
+
 Prepared `run_windows_affinity_tier2.py` derives from the verified strict Tier1
 driver with only case/count/time-budget selection changed: LP340,12 solves,
 600s internal/615s external. Same source/package/runtime/binary checks, Job

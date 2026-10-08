@@ -17,6 +17,10 @@ After user halved emulator virtual CPU count, two5s samples show global idle
 89.141/88.281% but no95%-idle SMT pair; CPU8 idle98--99%, sibling9 idle81--85%.
 No solver started or explicit diagnostic-mode switch; strict continuation pending
 eligible environment. Abundant spare capacity is distinct from per-core quietness.
+Second user-reported virtual-core reduction: global idle86.668/90.314%, no
+eligible pair; best second-sample12/13 idle95.625/93.125%. Retained separately,
+no solver or affinity change. Emulator affinity partition is a prospective
+alternative, not applied or claimed as Windows exclusivity.
 
 Latest retry after user closed emulators: [strict Windows window/result](experiments/E004/WINDOWS-STRICT-RESULT-2026-10-08.md).
 Complete48 exact solves, independent scientific/affinity/strict-window/cleanup
