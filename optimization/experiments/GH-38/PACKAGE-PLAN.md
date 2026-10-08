@@ -1,5 +1,11 @@
 # Cached package metadata and disabled setup template
 
+Historical planner record below is superseded by PACKAGE-CLOSURE.json and
+SETUP-SUPERVISOR.md: dependency closure is now resolved and an actual guarded
+overlay supervisor is prepared. It remains unexecuted and its named-slot gate
+is closed. prepare_setup_probe.py is retained only as the disabled earlier
+planner; windows_setup_probe.py is the actual reviewed execution entry point.
+
 Read-only extraction from the previously retained official-mirror setup.ini in E004's2026-10-08 cache; no new package download, installation, compiler probe or workload. PACKAGE-METADATA.json records exact indexSHA512 and factual version/archive/path/size/SHA512/dependency fields for Clang/LLVM and original runtime/compiler packages. Index provenance is cached metadata, not independent proof of a freshly signed current index or installed toolchain compatibility.
 
 Pinned candidate metadata clang22.1.8-3 and libclang22.1 version22.1.8-3; libllvm22.1 version22.1.8-2. These three compressed archives total66,287,868bytes (~63.2MiB); dependency closure still unresolved, including libxml2/libedit0/python3. Original metadata GCC14.4.0-1, Cygwin3.6.11-1, libstdc++6/libgcc1 version14.4.0-1, zlib0 version1.3.2-1. Installed.db confirms original GNU runtime packages, but matching metadata names/versions does not establish byte/ABI/header/library equivalence. Any future mirror archive must match its pinned expected hash/size; validate signed package index with standard installer signature checks, never --no-verify.
