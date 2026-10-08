@@ -284,15 +284,20 @@ try:
         oracle.append(dict(stem=stem,variables=n,oracle=exact,scientific_results=checked,input_sha256=sha(wcnf)))
         save(out/'pms-oracle.json',oracle)
     save(out/'standalone-test-hashes.json',{v:sha(p) for v,p in standalone.items()})
-    summary['Tier0']='PASS';save(out/'summary.json',summary)
     for p in [Path(__file__),HERE/'test_binary_activity.cc',HERE/'cygwin_test_stats_shim.cc',helper]:
         assert sha(p)==frozen[p.name], 'Support identity changed '+p.name
     for name,digest in runtime_pins.items():
         assert sha(runtime/'bin'/name)==digest, 'Runtime identity changed '+name
     for rel,digest in inputs.items():
         assert sha(package/rel)==digest, 'Input identity changed '+rel
+    for version,hashes in source_hashes.items():
+        for rel,digest in hashes.items():
+            assert sha(sources[version]/rel)==digest, 'Exported source identity changed '+version+' '+rel
+    frozen_binaries=json.loads((out/'binary-hashes.json').read_text())
+    for version,binary in binaries.items():
+        assert sha(binary)==frozen_binaries[version], 'Binary identity changed '+version
     save(out/'postexecution-identities.json',dict(support=True,runtime=True,inputs=True))
-    summary.update(status='PREPARATORY_COMPLETE',diagnostic='NOT_REQUESTED',performance='NOT_MEASURED')
+    summary.update(status='PREPARATORY_COMPLETE',Tier0='PASS',diagnostic='NOT_REQUESTED',performance='NOT_MEASURED')
 except BaseException as error:
     summary['reason']=repr(error)
     if isinstance(error,AssertionError) and ('SCIENCE' in str(error) or 'TEST' in str(error)):
@@ -300,6 +305,23 @@ except BaseException as error:
     print('STOP: '+repr(error),flush=True)
 finally:
     if window is not None:
+        try:
+            for p in [Path(__file__),HERE/'test_binary_activity.cc',HERE/'cygwin_test_stats_shim.cc',helper]:
+                assert sha(p)==frozen[p.name], 'Support identity changed '+p.name
+            for name,digest in runtime_pins.items():
+                assert sha(runtime/'bin'/name)==digest, 'Runtime identity changed '+name
+            for rel,digest in inputs.items():
+                assert sha(package/rel)==digest, 'Input identity changed '+rel
+            for version,hashes in source_hashes.items():
+                for rel,digest in hashes.items():
+                    assert sha(sources[version]/rel)==digest, 'Exported source identity changed '+version+' '+rel
+            if (out/'binary-hashes.json').exists():
+                frozen_binaries=json.loads((out/'binary-hashes.json').read_text())
+                for version,binary in binaries.items():
+                    assert sha(binary)==frozen_binaries[version], 'Binary identity changed '+version
+        except Exception as error:
+            summary.update(status='REJECTED' if summary.get('scientific_rejected') else 'INCONCLUSIVE',
+                           Tier0='REJECTED' if summary.get('scientific_rejected') else 'INCONCLUSIVE',identity_failure=repr(error))
         try:
             clean_owned('final-cleanup');save(out/'job-pids-before-release.json',job_pids())
         except Exception as error:summary.update(status='REJECTED' if summary.get('scientific_rejected') else 'INCONCLUSIVE',cleanup_failure=repr(error))
