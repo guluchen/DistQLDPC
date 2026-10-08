@@ -58,6 +58,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes build-essential zlib1g-dev
 
+      - name: Verify required ISA and OS state before production build
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -O2 -march=x86-64 -mtune=generic candidate/optimization/experiments/GH-44/cpu_isa_gate.cc -o "$RUNNER_TEMP/gh44-portable-isa-gate"
+          "$RUNNER_TEMP/gh44-portable-isa-gate" > "$RUNNER_TEMP/gh44-isa-gate.json"
+          cat "$RUNNER_TEMP/gh44-isa-gate.json"
+          mkdir -p benchmark-results
+          cp "$RUNNER_TEMP/gh44-isa-gate.json" benchmark-results/isa-gate.json
+
       - name: Build baseline and candidate
         shell: bash
         run: |
