@@ -256,8 +256,7 @@ try:
         check_run([runtime/'bin/bash.exe',sources[version]/'scripts/smoke_test.sh',binary],'smoke-'+version,sources[version],20)
         for mode in ['no-card','card-mto']:
             rc,text,error=check_run([binary,'-'+mode,'-cpu-lim=1',data_root/'LP_340_56_8'],'timeout-'+version+'-'+mode,sources[version],20,exact=8,timeout=True)
-            assert not re.findall(r'^c\s+d_ub:\s*\d+\s*$',text,re.M),'SCIENCE pre-model timeout unexpectedly found model'
-            assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE input cap fabricated timeout objective'
+            assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
     # Test-only standalone Main link. No shim in production DistQLDPC.
     standalone={}
     for version,source in sources.items():
@@ -319,27 +318,49 @@ try:
             provided_results.append((rc,statuses,int(optimal[-1])))
             save(out/(stem+'-witness.json'),dict(assignment=witness,verified_weight=cap,oracle=exact,original_Main_accepted_initUB=accepted))
         assert provided_results[0]==provided_results[1],'SCIENCE provided-bound engine result mismatch'
+        if stem=='pms-root-cap-offset':
+            loose_witness=max(feasible_assignments,key=lambda a:sum(not satisfies(c,a) for c in soft))
+            loose_cap=sum(not satisfies(c,loose_witness) for c in soft)
+            assert loose_cap==2 and cap==1,'Fixed offset witness fixture changed'
+            for version,binary in standalone.items():
+                rc,text,error=check_run([binary,'-verb=1',wcnf,str(loose_cap)],stem+'-'+version+'-loose',sources[version],20,allow_rc=True)
+                optimal=re.findall(r'optimal:\s*(\d+)',text)
+                assert rc in (10,20) and optimal and all(int(v)==exact for v in optimal),'SCIENCE offset+1 exact PMS mismatch'
+                p=re.findall(r'^c provided UB:\s*(\d+)\s*$',text,re.M)
+                if p!=['2']:raise RuntimeError('TEST_COVERAGE: fixed offset+1 normalization not reached as expected')
+                first=(out/(stem+'-'+version+'-provided.stdout')).read_text()
+                if re.findall(r'^c provided UB:\s*(\d+)\s*$',first,re.M)!=['1']:
+                    raise RuntimeError('TEST_COVERAGE: fixed offset normalization not reached as expected')
+                save(out/(stem+'-'+version+'-offset-coverage.json'),dict(offset=1,strict_P=[1,2],verified_assignments=[witness,loose_witness],costs=[cap,loose_cap],oracle=exact))
     for version,source in sources.items():
-        body=(source/'src/solver/Solver.cc').read_bytes()
-        begin=body.index(b'void Solver::noteBestSolution(')
-        end=body.index(b'void Solver::printBestSolution()',begin)
-        section=body[begin:end]
-        assert section.count(b'emitBoundsUpdate();')==1
-        section=section.replace(b'emitBoundsUpdate();',b'emitBoundsUpdate(); ::sleep(3);')
-        hooked=out/(version+'-test-only-post-model-Solver.cc')
-        hooked.write_bytes(b'#include <unistd.h>\n'+body[:begin]+section+body[end:])
-        obj=out/(version+'-test-only-post-model-Solver.o')
-        flags=['-Isrc/solver','-Wall','-Wno-parentheses','-O3','-g','-D__STDC_LIMIT_MACROS','-D__STDC_FORMAT_MACROS','-DNDEBUG']
-        check_run([runtime/'bin/g++.exe',*flags,'-c',hooked,'-o',obj],version+'-post-model-hook-build',source,120)
-        binary=out/(version+'-test-only-post-model.exe')
-        other=[source/'build'/(name+'.o') for name in ['SimpSolver','Options','System']]
-        check_run([runtime/'bin/g++.exe',*flags,source/'src/core/distqldpc.cc',obj,*other,'-lz','-o',binary],version+'-post-model-app-build',source,120)
-        for mode in ['no-card','card-mto']:
-            label=version+'-post-model-timeout-'+mode
-            rc,text,error=check_run([binary,'-v','-'+mode,'-cpu-lim=1',out/'css4'],label,source,20,exact=2,timeout=True)
-            assert re.findall(r'^c\s+d_ub:\s*(\d+)\s*$',text,re.M),'SCIENCE post-model interruption had no actual model UB'
-            assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
-        save(out/(version+'-post-model-hook-hashes.json'),dict(source=sha(hooked),object=sha(obj),binary=sha(binary),production_engine_untouched=True))
+        original=(source/'src/solver/Solver.cc').read_bytes()
+        for phase in ['pre-search','post-model']:
+            if phase=='pre-search':
+                assert original.count(b'emitTryUpdate(UB);')==1
+                body=original.replace(b'emitTryUpdate(UB);',b'emitTryUpdate(UB); ::sleep(3);')
+            else:
+                begin=original.index(b'void Solver::noteBestSolution(')
+                end=original.index(b'void Solver::printBestSolution()',begin)
+                section=original[begin:end]
+                assert section.count(b'emitBoundsUpdate();')==1
+                section=section.replace(b'emitBoundsUpdate();',b'emitBoundsUpdate(); ::sleep(3);')
+                body=original[:begin]+section+original[end:]
+            tag=version+'-'+phase
+            hooked=out/(tag+'-test-only-Solver.cc')
+            hooked.write_bytes(b'#include <unistd.h>\n'+body)
+            obj=out/(tag+'-test-only-Solver.o')
+            flags=['-Isrc/solver','-Wall','-Wno-parentheses','-O3','-g','-D__STDC_LIMIT_MACROS','-D__STDC_FORMAT_MACROS','-DNDEBUG']
+            check_run([runtime/'bin/g++.exe',*flags,'-c',hooked,'-o',obj],tag+'-hook-build',source,120)
+            binary=out/(tag+'-test-only.exe')
+            other=[source/'build'/(name+'.o') for name in ['SimpSolver','Options','System']]
+            check_run([runtime/'bin/g++.exe',*flags,source/'src/core/distqldpc.cc',obj,*other,'-lz','-o',binary],tag+'-app-build',source,120)
+            for mode in ['no-card','card-mto']:
+                label=tag+'-timeout-'+mode
+                rc,text,error=check_run([binary,'-v','-'+mode,'-cpu-lim=1',out/'css4'],label,source,20,exact=2,timeout=True)
+                found=re.findall(r'^c\s+d_ub:\s*(\d+)\s*$',text,re.M)
+                assert bool(found)==(phase=='post-model'),'SCIENCE forced model-tracking phase mismatch'
+                assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
+            save(out/(tag+'-hook-hashes.json'),dict(source=sha(hooked),object=sha(obj),binary=sha(binary),production_engine_untouched=True))
     save(out/'standalone-test-hashes.json',{v:sha(p) for v,p in standalone.items()})
     for p in [Path(__file__),HERE/'test_witness.cc',HERE/'cygwin_test_stats_shim.cc',helper]:
         assert sha(p)==frozen[p.name], 'Support identity changed '+p.name
