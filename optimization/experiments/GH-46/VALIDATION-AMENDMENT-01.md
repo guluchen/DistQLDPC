@@ -33,3 +33,7 @@ remain UNTESTED. Independent review and a named host slot are still required.
 ### Additional review: lawful short-case deadlines
 
 Before execution, authenticate every bound/status and absence of completed distance/objective for an actual rc1 UNKNOWN/TIMEOUT in tiny CSS, LP34 smoke, and observer CSS. Such lawful incompletion is CoverageGap INCONCLUSIVE, not a scientific rejection. Wrong fields, wrong completed optimum, or crash remain REJECT. This changes support classification only; no deadline or production change.
+
+### Exact incomplete-output trailer review
+
+Before execution, require precisely one distance trailer with UNKNOWN for an incomplete application. Accept only original exact c status values UNKNOWN or TIMEOUT (child killed after -cpu-lim), paired with s UNKNOWN. Missing distance/status or arbitrary TIMEOUT prefixes are scientific output regressions, never lawful coverage gaps. Source-only AST-extracted parser cases will check this support repair.
