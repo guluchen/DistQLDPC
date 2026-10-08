@@ -59,8 +59,6 @@ in each file are unchanged.
   - `BOTH` — Sinz if active soft lits ≤ 100, always MTO
   - `BOTH_FORCE` — Sinz + MTO regardless of problem size
 
-#### Solve loop hooks
-
 #### GH-22 experimental symmetric lookahead activity
 
 - In `lookbackResetTrail`'s VSIDS binary-conflict path, bump the second
