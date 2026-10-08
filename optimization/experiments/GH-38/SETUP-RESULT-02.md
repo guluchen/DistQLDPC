@@ -1,0 +1,13 @@
+# Corrected minimal probe02 engineering result
+
+COMPATIBILITY_PASS after independent local metadata audit and separate reviewer examination. Scientific Tier0 NOT RUN; performance NOT MEASURED; NOT ADOPTED. This is the same fixed Clang O3 codegen experiment with original GNU linking, production79db804cf3d1fab8271a680ddb46a2b546808629. Attempt01 remains engineering INCONCLUSIVE and immutable.
+
+Assignment https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067533076 ; support3982a7fd73857811d22505874b21e91c2f0b37c6 ; driver SHA25671e8ad13ca1d3d35df1c77e8007a31c8666cef66bf8035e75212f2847f51f769 ; session99426 exited0. Actual runner absence independently queried successfully; Job owned PIDs empty and all four restoration booleans true. Release https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067599417 .
+
+22 bounded commands returned0. Both minimal binaries print `201703 8 4 1 24 8 0 8 1.3.2`. Original GNU14.4 driver links both GCC14.4/Clang22.1.8 objects:17 ordered original static-link inputs identical, effective PE machine/subsystem/security properties equal including DLLCharacteristics0x8000, original manifest SHA256eba2c9713517c971783fd9ea9282ff53e0e1a13d9ae462bc0b00106049765344 identical. Six actual Cygwin DLL module paths/hashes equal and all original-runtime bytes. Default C++17/basic ABI/exception/RTTI/ISA macros checked. Header traces contain148 GCC/162 Clang paths:143 common GNU headers identical;5 GCC builtin versus19 Clang resource headers reflect compiler frontend and do not establish full header-set equality.
+
+All10,216 original runtime files unchanged; full13,084-file overlay catalog before/after identical. Nine prior archives revalidated size/SHA512; no redownload, clone, global install or postinstall.80 resource samples all eligible (minimum76.07421875% global idle; half spare6.0859375 CPUs),5 contention alerts; selectedCPU14/sibling15/single Job affinity. Engineering timing provides no scientific speed conclusion.
+
+Exact streams, metadata, actual executed support and header attribution: raw/setup-probe-02/PUBLIC-SHA256.json (69 public files including catalog). Probe object/executable bytes retained locally and published hashes in LOCAL-BINARIES.json; overlay/archives remain local with complete validated catalogs. No raw stream rewritten. Independent compatibility audit SHA256e78abbc71f26d3ed1fa973b0cbfce9cf908352745be125e6a442dc0bd5d9daaf.
+
+Next: full meaningful solver Tier0 only after separate root review and fresh named CPU assignment. Disabled full runner already source-reviewed; no Tier1 authorization. Minimal ABI compatibility cannot substitute for scientific correctness.

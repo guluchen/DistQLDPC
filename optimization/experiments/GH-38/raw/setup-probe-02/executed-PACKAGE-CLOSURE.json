@@ -1,0 +1,712 @@
+{
+  "index_sha512": "2c0fef81cfb68db9133d1f2e2687b3e05f0356abacf04c1292db910c7cf438d13b4701b1deef3e9fc16dbe3d69a4fa8b70d39eb12ec09cc5a20583f5018d837a",
+  "installed_db_sha256": "e1448a286c12ba0508090ce35d416422b04390f1e79d2c73e12e2ecd5ac5b3e7",
+  "packages": {
+    "clang": {
+      "version": "22.1.8-3",
+      "archive": "x86_64/release/clang/clang-22.1.8-3-x86_64.tar.xz",
+      "bytes": 9333588,
+      "sha512": "67b679af0b2c3c3b64cb19b7ae1c66de22a6938d569c83af634bd4e671bd8945c94d5720f25d6845f32bbcee4b988982043600e5c4ac00b7caa642aa77d8674f",
+      "dependencies": [
+        "binutils",
+        "cygwin",
+        "cygwin-devel",
+        "gcc-core",
+        "gcc-g++",
+        "libclang22.1",
+        "libgcc1",
+        "libllvm22.1",
+        "libstdc++6",
+        "libxml2",
+        "python3",
+        "windows-default-manifest"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "binutils": {
+      "version": "2.47-1",
+      "archive": "x86_64/release/binutils/binutils-2.47-1-x86_64.tar.zst",
+      "bytes": 9267975,
+      "sha512": "25cf6a54f9a085e62d8cd0d37afa0d7b5e913e502d8d14c8bbe1cfffd2451dba5adee65602d57f158f03312bfcc3871fc40307e8096270acc888848f29738121",
+      "dependencies": [
+        "cygwin",
+        "libgcc1",
+        "libintl8",
+        "libzstd1",
+        "zlib0"
+      ],
+      "installed_version": "2.47-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "cygwin": {
+      "version": "3.6.11-1",
+      "archive": "x86_64/release/cygwin/cygwin-3.6.11-1-x86_64.tar.xz",
+      "bytes": 1621088,
+      "sha512": "1c33f8396d78eca035106325c5b90ff1165a6b78839f16190ec00f025067306522a23a5ec1b99557974e471649104cd31dad68685d2a544c31fb4494297a744a",
+      "dependencies": [
+        "bash",
+        "libgcc1",
+        "libintl8",
+        "libzstd1",
+        "zlib0"
+      ],
+      "installed_version": "3.6.11-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "cygwin-devel": {
+      "version": "3.6.11-1",
+      "archive": "x86_64/release/cygwin/cygwin-devel/cygwin-devel-3.6.11-1-x86_64.tar.xz",
+      "bytes": 321428,
+      "sha512": "5772f9dbc93cb40ed831348db672026b48ae91e22c3431e6ece6a627cd0c7d742a0e8c24ba6b95f853f8c652f9ce7999267e39e294fb18bf821da9e7295f0876",
+      "dependencies": [],
+      "installed_version": "3.6.11-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "gcc-core": {
+      "version": "14.4.0-1",
+      "archive": "x86_64/release/gcc/gcc-core/gcc-core-14.4.0-1-x86_64.tar.zst",
+      "bytes": 39606756,
+      "sha512": "c463f27075353dbbbb05878a3695c2651a81da0032f75b71f121dece745aa3d646b7f03180618844aa5372be358d5dc2e0efc0fffde80f9216eae3ef5b3d963e",
+      "dependencies": [
+        "bash",
+        "binutils",
+        "cygwin",
+        "cygwin-devel",
+        "libatomic1",
+        "libgcc1",
+        "libgmp10",
+        "libgomp1",
+        "libiconv-devel",
+        "libiconv2",
+        "libintl-devel",
+        "libintl8",
+        "libisl23",
+        "libmpc3",
+        "libmpfr6",
+        "libquadmath0",
+        "libzstd1",
+        "w32api-headers",
+        "w32api-runtime",
+        "windows-default-manifest",
+        "zlib0"
+      ],
+      "installed_version": "14.4.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "gcc-g++": {
+      "version": "14.4.0-1",
+      "archive": "x86_64/release/gcc/gcc-g++/gcc-g++-14.4.0-1-x86_64.tar.zst",
+      "bytes": 23324952,
+      "sha512": "1d316bbe5dab14ee65366e2e3381e3863dd3e48bf6a9deae2ca4acd6628360377c4099071b7195ef25aa44e63b8b383a1d424d36835c6eef6954148949addd50",
+      "dependencies": [
+        "cygwin",
+        "gcc14",
+        "libgmp10",
+        "libiconv2",
+        "libintl8",
+        "libisl23",
+        "libmpc3",
+        "libmpfr6",
+        "libstdc++6",
+        "libzstd1",
+        "zlib0"
+      ],
+      "installed_version": "14.4.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libclang22.1": {
+      "version": "22.1.8-3",
+      "archive": "x86_64/release/clang/libclang22.1/libclang22.1-22.1.8-3-x86_64.tar.xz",
+      "bytes": 24745156,
+      "sha512": "24de90735e2b9a4e5491101abbda596cb8f12e4bbf9562e4d25299d60b992a6650c8ad95bca435ea3743e9fa83c7a0a086becb4952e834e289d89544120ae875",
+      "dependencies": [
+        "cygwin",
+        "libgcc1",
+        "libllvm22.1",
+        "libstdc++6"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "libgcc1": {
+      "version": "14.4.0-1",
+      "archive": "x86_64/release/gcc/libgcc1/libgcc1-14.4.0-1-x86_64.tar.zst",
+      "bytes": 59166,
+      "sha512": "5ac8a56e5eee285efcd6dbd05a473e795e181021d7194b8a98dfe2fa201a71f0abe2908e0b4c81490eb5ef472efaeac8e56a61a5f289eee4ad6e90e52a844ff8",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "14.4.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libllvm22.1": {
+      "version": "22.1.8-2",
+      "archive": "x86_64/release/llvm/libllvm22.1/libllvm22.1-22.1.8-2-x86_64.tar.xz",
+      "bytes": 32209124,
+      "sha512": "95991da0a0947f1bfcd90ebbf498f389784f4099599c6bc5c6d635678f1c8f2d1c85af535bb3e94c7470b97cfbb868c2a150954610cb6ee11e8df34517bd60b5",
+      "dependencies": [
+        "cygwin",
+        "libedit0",
+        "libgcc1",
+        "libstdc++6",
+        "libxml2",
+        "libzstd1",
+        "zlib0"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "libstdc++6": {
+      "version": "14.4.0-1",
+      "archive": "x86_64/release/gcc/libstdc++6/libstdc++6-14.4.0-1-x86_64.tar.zst",
+      "bytes": 651767,
+      "sha512": "3d86409193c952618eee7e2dea32bdeb97f22ee800e13cc46f98b5095d4d0b1b31ac4336dc5819abb2d553ad1c2151619e9f6f337dfe921ba80fda1323f6f4e3",
+      "dependencies": [
+        "cygwin",
+        "libgcc1",
+        "libiconv2",
+        "libintl8"
+      ],
+      "installed_version": "14.4.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libxml2": {
+      "version": "2.13.9-2",
+      "archive": "x86_64/release/libxml2/libxml2-2.13.9-2-x86_64.tar.xz",
+      "bytes": 489820,
+      "sha512": "dbea2e2facd79238c8232f44f556db27ceaf87e53150167e9e28029ef81dca45a37dd3fd98dd810b90e82926ea95204c09fb7e16907cfc3ee93cae4298dd3758",
+      "dependencies": [
+        "cygwin",
+        "libiconv2",
+        "liblzma5",
+        "libreadline8",
+        "zlib0"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "python3": {
+      "version": "3.12.12-1",
+      "archive": "x86_64/release/python3/python3-3.12.12-1-x86_64.tar.xz",
+      "bytes": 248,
+      "sha512": "94792a46fa9c6c4cca2dc90e2439bc3f9f03cea8b1a6a78e0811313289664fa3c8568bfc60b2c549cfea5b0a92b1bd9881b34cc2b43d746c9630b76434b59092",
+      "dependencies": [
+        "python312"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "windows-default-manifest": {
+      "version": "6.5-1",
+      "archive": "x86_64/release/windows-default-manifest/windows-default-manifest-6.5-1-x86_64.tar.xz",
+      "bytes": 1244,
+      "sha512": "ab99a93fb744c7be84fbd3d0f81cb4429b5e784655e4b8e02f436c36378dbd7688f8ea74ac646354c1f7ba9dc6cdeba05d109b76cd455c1a75791a93e1b9e08d",
+      "dependencies": [],
+      "installed_version": "6.5-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libintl8": {
+      "version": "0.22.5-1",
+      "archive": "x86_64/release/gettext/libintl8/libintl8-0.22.5-1.tar.xz",
+      "bytes": 43256,
+      "sha512": "370a19af888bc7c9ed95cf8ade0d36d5e7cdb634abdebcba260cad61fa9a4cc05b5e748e315c9709f66861e8756b227d6757d529846591189e19ee2b2d00002d",
+      "dependencies": [
+        "cygwin",
+        "libiconv2"
+      ],
+      "installed_version": "0.22.5-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libzstd1": {
+      "version": "1.5.7-1",
+      "archive": "x86_64/release/zstd/libzstd1/libzstd1-1.5.7-1.tar.zst",
+      "bytes": 253786,
+      "sha512": "f89cdaa004487ec8c4796b8f56887c81f6f497873c1495b9cb585ffe6c8d6e6b8ad4b52617d5238075f965f1fe001da287d9a00d121590274b2d87672b415a0f",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "1.5.7-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "zlib0": {
+      "version": "1.3.2-1",
+      "archive": "x86_64/release/zlib/zlib0/zlib0-1.3.2-1-x86_64.tar.zst",
+      "bytes": 46254,
+      "sha512": "d79ba6098cadf6bf2f32f35d9cd54729293c64b3c9daabb9d080f52861a19db71544d5710fdbd61ff45e7c2ae4eecb3f2e3b8a1e3bc05695b8cfe01c7639c53a",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "1.3.2-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "bash": {
+      "version": "5.2.21-1",
+      "archive": "x86_64/release/bash/bash-5.2.21-1.tar.xz",
+      "bytes": 1650932,
+      "sha512": "c3a5594f1c248dd27a3b5aa10c31fb1651072eae878479d3d8cab09c28354ce4509a2fe230f176ad200a6484a561bc10c2dc9c74c4e9f03164190dac2e683d65",
+      "dependencies": [
+        "cygwin",
+        "libiconv2",
+        "libintl8",
+        "libreadline7"
+      ],
+      "installed_version": "5.2.21-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libatomic1": {
+      "version": "14.4.0-1",
+      "archive": "x86_64/release/gcc/libatomic1/libatomic1-14.4.0-1-x86_64.tar.zst",
+      "bytes": 6589,
+      "sha512": "c8a034dd05167576a80cf006c84e41e1f34f735dea32923a4241a62288a13312afc659a4bbb8ca7a8fda9a2df535834acf98a6442f4aa65464a06fa64fbb638a",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "14.4.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libgmp10": {
+      "version": "6.3.0-1",
+      "archive": "x86_64/release/gmp/libgmp10/libgmp10-6.3.0-1.tar.zst",
+      "bytes": 254680,
+      "sha512": "947cd56e1945ddf180622b453f17e6655b4ee3e79fcc91238370a8826b88cd07c31d939f1ed7b87d91344d46fee90af2560105267a9207dcca800cba72459191",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "6.3.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libgomp1": {
+      "version": "14.4.0-1",
+      "archive": "x86_64/release/gcc/libgomp1/libgomp1-14.4.0-1-x86_64.tar.zst",
+      "bytes": 112610,
+      "sha512": "dbc36b7182d25ca655f23105997a5d1f0d3e1a9e82dbf38928750dff00e1af411af1c9c6f2020d828dbb676e984a17444c8ff5cddfd0769f96ea6a85100ddb8d",
+      "dependencies": [
+        "cygwin",
+        "libgcc1"
+      ],
+      "installed_version": "14.4.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libiconv-devel": {
+      "version": "1.19-2",
+      "archive": "x86_64/release/libiconv/libiconv-devel/libiconv-devel-1.19-2-x86_64.tar.xz",
+      "bytes": 751764,
+      "sha512": "c9e68c5b333a23ad5c81922ccd189ff02658f185ea9aa68e78495b1d07ca5f80524c1bc1ff2035f13c7ea7b593d42ad9c54c66526aacdab5ce1d824828146440",
+      "dependencies": [
+        "libcharset1",
+        "libiconv2"
+      ],
+      "installed_version": "1.19-2",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libiconv2": {
+      "version": "1.19-2",
+      "archive": "x86_64/release/libiconv/libiconv2/libiconv2-1.19-2-x86_64.tar.xz",
+      "bytes": 555664,
+      "sha512": "a1b23e24e0a495e7163923bcf40a4b933403e0826cfc0d9bde785bc92c909b8c4fb94b1e6b2c0242f4328a723855e72ff3baab9f557ef855b7fe7a7d901b0943",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "1.19-2",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libintl-devel": {
+      "version": "0.22.5-1",
+      "archive": "x86_64/release/gettext/libintl-devel/libintl-devel-0.22.5-1.tar.xz",
+      "bytes": 221432,
+      "sha512": "610161b0cd5cef34ef36554b4d6a658c069a01f0f45770514aa1a520681d4db24a7fc629f033a634a1ed36bd727b3c44152d03133c177f15db46803eb1120ce6",
+      "dependencies": [
+        "libintl8"
+      ],
+      "installed_version": "0.22.5-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libisl23": {
+      "version": "0.28-1",
+      "archive": "x86_64/release/isl/libisl23/libisl23-0.28-1-x86_64.tar.zst",
+      "bytes": 628562,
+      "sha512": "d96e2b9b20dbc7b110bb9457c2156849fad6f415077142bdcca61a326ecfad1c6ca3e1801a909e92928f62be69127b526120897158904986780898cab3266ddb",
+      "dependencies": [
+        "cygwin",
+        "libgmp10"
+      ],
+      "installed_version": "0.28-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libmpc3": {
+      "version": "1.4.1-1",
+      "archive": "x86_64/release/mpclib/libmpc3/libmpc3-1.4.1-1-x86_64.tar.zst",
+      "bytes": 51914,
+      "sha512": "f99f877aed04b5c732805dc154505dc9530c77010f88e25e249c953f9eec0b7d8c03d26f2d5ec3b3a7a169978484017ba59ab88d9866564e935127cd6348b843",
+      "dependencies": [
+        "cygwin",
+        "libgmp10",
+        "libmpfr6"
+      ],
+      "installed_version": "1.4.1-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libmpfr6": {
+      "version": "4.2.2-1",
+      "archive": "x86_64/release/mpfr/libmpfr6/libmpfr6-4.2.2-1.tar.zst",
+      "bytes": 284416,
+      "sha512": "8203dc61bf646041c71f7fece9fe59422ded96ac28dd24826ffb00a9607f274f3226673f9bee441f32b424a7e26c2f178281bd7836db26b0253d37da208d06a8",
+      "dependencies": [
+        "cygwin",
+        "libgcc1",
+        "libgmp10"
+      ],
+      "installed_version": "4.2.2-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libquadmath0": {
+      "version": "14.4.0-1",
+      "archive": "x86_64/release/gcc/libquadmath0/libquadmath0-14.4.0-1-x86_64.tar.zst",
+      "bytes": 159401,
+      "sha512": "ec6dcea72ccd9cbb5a5c7572d98d624e6564199929b019bb19ca06c2394ad606efa0a620a7da21ccc3290c99a5d5a7959a4d6e00306c22675fa1eefee0835e44",
+      "dependencies": [
+        "cygwin",
+        "libgcc1"
+      ],
+      "installed_version": "14.4.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "w32api-headers": {
+      "version": "14.0.0-1",
+      "archive": "x86_64/release/w32api-headers/w32api-headers-14.0.0-1-x86_64.tar.xz",
+      "bytes": 6178248,
+      "sha512": "b2b6ecd2a17cbfe42593d92eb067bff56a0870d7c601ec7b0aeb9511b91e0557f07a939e57b337f0ab1da5fdf97980e705ba8ba0520994362060bd2a89925edf",
+      "dependencies": [],
+      "installed_version": "14.0.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "w32api-runtime": {
+      "version": "14.0.0-1",
+      "archive": "x86_64/release/w32api-runtime/w32api-runtime-14.0.0-1-x86_64.tar.xz",
+      "bytes": 3484152,
+      "sha512": "d06e35dfeb4cf86faf59bd512d192870f8711ee581bae127beecd8be82800dca84c0f69e27921317ea6db217864dd942bd777d72efd43a47720f0e507c7cb253",
+      "dependencies": [
+        "w32api-headers"
+      ],
+      "installed_version": "14.0.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libedit0": {
+      "version": "20251016-1",
+      "archive": "x86_64/release/libedit/libedit0/libedit0-20251016-1-x86_64.tar.xz",
+      "bytes": 77960,
+      "sha512": "4c5afd4f494da552e3073dd9cd0a25b95d29065fb9b68ad3dfc2e2546a40e9f038821dd15bbece3f1d026276df798afc3a90dd09c1c9265df6fb262055781170",
+      "dependencies": [
+        "cygwin",
+        "libncursesw10"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "liblzma5": {
+      "version": "5.8.4-1",
+      "archive": "x86_64/release/xz/liblzma5/liblzma5-5.8.4-1-x86_64.tar.zst",
+      "bytes": 88387,
+      "sha512": "3fa68c933b64215fe70be45c026d046fd330a28467a589329ffe1a571b7434246063c866369314015d9966767476f315c91097c9bb1d25a71e4ce36c0ef98a9d",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "5.8.4-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libreadline8": {
+      "version": "8.3-1",
+      "archive": "x86_64/release/readline/libreadline8/libreadline8-8.3-1-x86_64.tar.xz",
+      "bytes": 120084,
+      "sha512": "64142c5f305b9836c5be9a4271e4163d8b3e739a0451c0d152373eeb3338342f7cf5691e4437b8e6d0a8404c30ea7a21832e342e7a1ca3b5f3e8e3403051b96e",
+      "dependencies": [
+        "cygwin",
+        "libncursesw10"
+      ],
+      "installed_version": "8.3-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "python312": {
+      "version": "3.12.12-1",
+      "archive": "x86_64/release/python312/python312-3.12.12-1-x86_64.tar.xz",
+      "bytes": 7361988,
+      "sha512": "408dadd10018872eaf6f4c83dc7d81ed252bf49d2b7f3879b768283d011e03ce495e840f9421dd04cfa94f78256f0a9dd8352ca3766f3fc2efee35d2ab77dd8a",
+      "dependencies": [
+        "alternatives",
+        "binutils",
+        "cygwin",
+        "libbz2_1",
+        "libcrypt2",
+        "libexpat1",
+        "libffi8",
+        "libgcc1",
+        "libgdbm6",
+        "libgdbm_compat4",
+        "libintl8",
+        "liblzma5",
+        "libncursesw10",
+        "libreadline8",
+        "libsqlite3_0",
+        "libssl3",
+        "libuuid1",
+        "zlib0"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "libreadline7": {
+      "version": "8.2-2",
+      "archive": "x86_64/release/readline/libreadline7/libreadline7-8.2-2.tar.xz",
+      "bytes": 113340,
+      "sha512": "1d27576cf49b056f35f90ad933e39c5d946bc271ddcd109daa98f95b97123b428256827889ff45ca8a76409cdb1afd0146e99c9b70150b302538356512acfe38",
+      "dependencies": [
+        "cygwin",
+        "libncursesw10"
+      ],
+      "installed_version": "8.2-2",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libcharset1": {
+      "version": "1.19-2",
+      "archive": "x86_64/release/libiconv/libcharset1/libcharset1-1.19-2-x86_64.tar.xz",
+      "bytes": 2100,
+      "sha512": "a3271ab0eb182ad37e53c39964194f0af37a449fd445ac8aea36c2f5ede2a1701dc9572e567f63686973824c0d271f47ca3e6e948ae1f8f6fe996cde2c206c24",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "1.19-2",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libncursesw10": {
+      "version": "6.5+20240427-1",
+      "archive": "x86_64/release/ncurses/libncursesw10/libncursesw10-6.5+20240427-1.tar.xz",
+      "bytes": 393928,
+      "sha512": "08102f7a7083cb5663fecc46d819f2ece4123444a8f94c42300f03f7eebd40395f556c44b22ab58bf57321b44d9b8fb8b19358e535c7500d36e52d48b05dcca8",
+      "dependencies": [
+        "cygwin",
+        "terminfo"
+      ],
+      "installed_version": "6.5+20240427-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "alternatives": {
+      "version": "1.31-1",
+      "archive": "x86_64/release/alternatives/alternatives-1.31-1.tar.xz",
+      "bytes": 123748,
+      "sha512": "94adf3376e7fcaf937594be718f54a99f2a2b66367eb2bb294b6fd4a933a9515954a9e9f309ed74cc62fbb353adb053d8500bbaf42994e4355f7180664afa62c",
+      "dependencies": [
+        "cygwin",
+        "libintl8"
+      ],
+      "installed_version": "1.31-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libbz2_1": {
+      "version": "1.0.8-2",
+      "archive": "x86_64/release/bzip2/libbz2_1/libbz2_1-1.0.8-2-x86_64.tar.xz",
+      "bytes": 26884,
+      "sha512": "d15d88e8e0fae69f7c4c3025515e748c273d758a0f470312162cec46c4cf0d340d2ef036e3a4f4d03b5edf4508b4927834ffa0f9aa45585a5f3bc3b3163ff675",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "1.0.8-2",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libcrypt2": {
+      "version": "4.5.2-1",
+      "archive": "x86_64/release/libxcrypt/libcrypt2/libcrypt2-4.5.2-1-x86_64.tar.xz",
+      "bytes": 106104,
+      "sha512": "7668d29aaebba8ca94e48e810d92108db72b067b2786cea8dcf4a049c29f20f0aeb8653a6e9524869c69e0b1df9d4d0ac499a052a86f0d44178e8a8167002c97",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "4.5.2-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libexpat1": {
+      "version": "2.9.0-1",
+      "archive": "x86_64/release/expat/libexpat1/libexpat1-2.9.0-1-x86_64.tar.xz",
+      "bytes": 58184,
+      "sha512": "7b097b2469270bade93b9790d9b98e54af886ce852b6108d1f2f54c12859e15706fc5fb8587038d68be36c4a20616c4a27c8a08bb14ee3cba9b7d4de5ca6767e",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "libffi8": {
+      "version": "3.8.0-1",
+      "archive": "x86_64/release/libffi/libffi8/libffi8-3.8.0-1-x86_64.tar.xz",
+      "bytes": 196924,
+      "sha512": "935a0567f740a314d70ecd4adc8c4cf5ad37c6fb43f2d26dee882d4fda71f08efb2646bee10cee6e2000f52e25cce87fa29ce07665ba6d22532e0daa76bc887c",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "3.8.0-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libgdbm6": {
+      "version": "1.26-1",
+      "archive": "x86_64/release/gdbm/libgdbm6/libgdbm6-1.26-1-x86_64.tar.xz",
+      "bytes": 25436,
+      "sha512": "8ed666a5b978b40f8cfc69d270d47cd674a31eb41bac499f783137eedfde6aa02ba4346de3d5dc3184d9af10ec80f57730c7517a88732616f4c6e0ef637d4bce",
+      "dependencies": [
+        "cygwin",
+        "libgcc1",
+        "libintl8"
+      ],
+      "installed_version": "1.26-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libgdbm_compat4": {
+      "version": "1.26-1",
+      "archive": "x86_64/release/gdbm/libgdbm_compat4/libgdbm_compat4-1.26-1-x86_64.tar.xz",
+      "bytes": 3892,
+      "sha512": "fd026dd74c495c1ee67b790269e77e8525ad78d52d4895923443feab55f7bb32dc07b115d490143c7e0277167d9cdbef5dad4707ecc7ca6df13a9f1a5184f8ca",
+      "dependencies": [
+        "cygwin",
+        "libgdbm6"
+      ],
+      "installed_version": null,
+      "action": "OVERLAY_ONLY"
+    },
+    "libsqlite3_0": {
+      "version": "3.49.1-1",
+      "archive": "x86_64/release/sqlite3/libsqlite3_0/libsqlite3_0-3.49.1-1.tar.xz",
+      "bytes": 686212,
+      "sha512": "cd81686fe5778a94ab91e4aebdd2a229cb963318ce7b393e0a0299e29ed7648c24135733c1978cbebbb926813d7f994b9e38318ede12c72fe79ad404dbfdeaf2",
+      "dependencies": [],
+      "installed_version": "3.49.1-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libssl3": {
+      "version": "3.5.9-1",
+      "archive": "x86_64/release/openssl/libssl3/libssl3-3.5.9-1-x86_64.tar.zst",
+      "bytes": 2101048,
+      "sha512": "cc3836812d1133caaab81c17e79efffb47aa5172dce3d4644682ed73a2df2b0754d2e1e8df879479d0be148d4a329b4cd76e15dfaff6e7874fa8aabe298a8288",
+      "dependencies": [
+        "ca-certificates",
+        "crypto-policies",
+        "cygwin",
+        "zlib0"
+      ],
+      "installed_version": "3.5.9-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libuuid1": {
+      "version": "2.40.2-2",
+      "archive": "x86_64/release/util-linux/libuuid1/libuuid1-2.40.2-2.tar.xz",
+      "bytes": 12532,
+      "sha512": "3ba0c5d5a401c88796077e9f45164532408882f2f5d9f0ab99b2fdf6eb915917250124cde3653a7c53b648866e091aa3baf3304d0b243337f0d4e254a7631f55",
+      "dependencies": [
+        "cygwin",
+        "libgcc1",
+        "libintl8"
+      ],
+      "installed_version": "2.40.2-2",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "terminfo": {
+      "version": "6.5+20240427-1",
+      "archive": "x86_64/release/ncurses/terminfo/terminfo-6.5+20240427-1.tar.xz",
+      "bytes": 94760,
+      "sha512": "128fb04f188bbf2af3060416193c9879a9cbbf7e5486febf851f35c3d9d00b9d61a0e2bf4be575d2308fd665a224ce5674485dcfd071125c3a8d199a4b88a042",
+      "dependencies": [],
+      "installed_version": "6.5+20240427-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "ca-certificates": {
+      "version": "2026.2.90_v9.0.317-1",
+      "archive": "noarch/release/ca-certificates/ca-certificates-2026.2.90_v9.0.317-1-noarch.tar.zst",
+      "bytes": 915867,
+      "sha512": "d3a34f94f0b394df540c730e232836551cf9cb1793f35fa4de6d615a5373dd3d8e584feab3a32f1ca72b996d552a68333211588132a86cccaabe2f87091df17b",
+      "dependencies": [
+        "bash",
+        "p11-kit",
+        "p11-kit-trust"
+      ],
+      "installed_version": "2026.2.90_v9.0.317-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "crypto-policies": {
+      "version": "20190218-1",
+      "archive": "noarch/release/crypto-policies/crypto-policies-20190218-1.tar.xz",
+      "bytes": 14032,
+      "sha512": "44d50ff08528df786eeb26ec1d312445ec92d77ecc9f448a3b741f7647e187f11eabdc0b38f8ab8de803e21d2e610f67eb44de7554f3fa83f6e8172e609b0054",
+      "dependencies": [
+        "bash"
+      ],
+      "installed_version": "20190218-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "p11-kit": {
+      "version": "0.26.5-1",
+      "archive": "x86_64/release/p11-kit/p11-kit-0.26.5-1-x86_64.tar.xz",
+      "bytes": 332724,
+      "sha512": "1f057de789a5553f04649c80e6f78385135b57de7ba078e9dd51f2db60afee37717bb6de9dcf0a330cf72fce1359e08c0186988632b5f858992ebf95739bb840",
+      "dependencies": [
+        "cygwin",
+        "libintl8",
+        "libp11-kit0",
+        "libtasn1_6"
+      ],
+      "installed_version": "0.26.5-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "p11-kit-trust": {
+      "version": "0.26.5-1",
+      "archive": "x86_64/release/p11-kit/p11-kit-trust/p11-kit-trust-0.26.5-1-x86_64.tar.xz",
+      "bytes": 110096,
+      "sha512": "2f98ae11e42f69fa4626638f7cefe2ba2fed808ae618093c1e6c568f8a8be79e6690b40e39e20df02a8d363c371cca8b8320fea7b288e8561cd299f15cc5b796",
+      "dependencies": [
+        "cygwin",
+        "libgcc1",
+        "libintl8",
+        "libp11-kit0",
+        "libtasn1_6"
+      ],
+      "installed_version": "0.26.5-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libp11-kit0": {
+      "version": "0.26.5-1",
+      "archive": "x86_64/release/p11-kit/libp11-kit0/libp11-kit0-0.26.5-1-x86_64.tar.xz",
+      "bytes": 212700,
+      "sha512": "dd64f129fe71233e26e0845b6711db5cf2eb2e6d2d050f07b6aec0d9dd54d980e87390614744fbf022cf57aa2b3f7edbdc30c548c2f9d480188c22bcde0c2eba",
+      "dependencies": [
+        "cygwin",
+        "libffi8",
+        "libgcc1",
+        "libintl8"
+      ],
+      "installed_version": "0.26.5-1",
+      "action": "REUSE_IMMUTABLE"
+    },
+    "libtasn1_6": {
+      "version": "4.21.0-1",
+      "archive": "x86_64/release/libtasn1/libtasn1_6/libtasn1_6-4.21.0-1-x86_64.tar.xz",
+      "bytes": 32072,
+      "sha512": "d28713b27d5d41408b29caed785e29380da4d8b4ccdc1c479ae13906e6765bedc6d6b9e6c1c22fd2111d678fcf1663187d3de27d7ad2e104cd48c38086189e36",
+      "dependencies": [
+        "cygwin"
+      ],
+      "installed_version": "4.21.0-1",
+      "action": "REUSE_IMMUTABLE"
+    }
+  },
+  "virtual_dependencies": [
+    {
+      "parent": "cygwin",
+      "predicate": "_windows ( >= 6.3 )",
+      "proof": "Supervisor requires native Windows >=6.3"
+    },
+    {
+      "predicate": "gcc14",
+      "provider": "gcc-core",
+      "proof": "Exact installed provider version verified recursively"
+    }
+  ],
+  "overlay_archives_bytes": 74279960,
+  "provenance": "Cached retained official-mirror index; archive hashes are pins, not fresh signature verification"
+}
