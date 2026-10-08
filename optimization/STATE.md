@@ -1,5 +1,11 @@
 # Optimization state
 
+Latest explicit user instruction: continuously repeat three-proposal Brain,
+select one, analyze/execute and preserve learning until a feasible optimization
+is supported. A rejected round returns to fresh Brain; scientific and resource
+gates remain. H010 preparation now active; independent research agent also
+authorized to register its own three/selection, without concurrent benchmarks.
+
 Latest user request: [Brain Round5](brain/2026-10-08-round5.md) proposes three
 independent approaches: H010 PGO, H011 one core-processing scratch buffer,
 H012 bounded further lookahead from CP2026. H010 recommended for the next

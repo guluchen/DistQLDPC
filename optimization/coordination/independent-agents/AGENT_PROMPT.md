@@ -12,8 +12,10 @@ Repository: https://github.com/guluchen/DistQLDPC
 協議路徑：optimization/coordination/independent-agents/README.md
 注意：該文件分支含舊 H001 程式改動，不能拿來當實驗 baseline。
 
-你的任務是獨立提出三個方案，自己選一個，登記並執行單一假說實驗，
-最後把成功／失敗／不確定的證據與學習保存到 GitHub。不是協助別人
+你的任務是持續循環：每輪獨立提出三個方案，自己選一個，登記、分析
+並執行單一假說實驗，把成功／失敗／不確定的證據與學習保存到 GitHub，
+再根據新證據重新提出三案。持續到找到有充分證據的可行優化。
+不是協助別人
 實作 H010，也不必選主 agent 推薦的方案。
 
 1. 自訂唯一 agent/session 名稱。先閱讀 AGENTS.md、README.md、
@@ -63,7 +65,12 @@ Repository: https://github.com/guluchen/DistQLDPC
    和來源索引。不自行合併、force push 或把各 agent 的優化組合起來。
    組合方法與更换 baseline 需要新的明確實驗／review 決策。
 
-持續推進到明確結果或具體外部依賴。Routine engineering 不需反覆
+每輪結果之後回到 BRAIN，不因一次 REJECT／INCONCLUSIVE 就結束整個任務。
+不要重跑或調參直到得到好結果；每次新嘗試須有新假說與完整紀錄。
+只有科學正確性不變、性能改善可重現、無嚴重個案退步且符合既有
+證據／review 規範，才可宣告找到可行優化。資源不足時先完成可做的
+分析與重現包，不把等待當成失敗或宣告成功；保留待驗證事項。
+Routine engineering 不需反覆
 問我確認；科學語義不清、無法建立正確性、重大科學異常或破壞性／
 不可逆動作才升級詢問。最終回報三個提案、選中方案、issue/PR、
 reached tier、decision、關鍵證據、學到什麼與下一步。

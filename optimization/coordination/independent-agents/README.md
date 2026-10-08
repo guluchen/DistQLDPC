@@ -3,6 +3,10 @@
 User clarification2026-10-08: each agent independently proposes three methods,
 selects one, and shares experiments/learning through GitHub. Agents cooperate
 through accumulated evidence, not by splitting H010 implementation into roles.
+Subsequent user instruction: repeat BRAIN(three) -> SELECT(one) -> ANALYZE/EXECUTE
+-> EVALUATE/LEARN -> BRAIN until a feasible optimization has reproducible,
+scientifically correct supporting evidence. A rejected round does not end the
+overall task; each new attempt needs fresh rationale, not outcome-seeking retries.
 
 Coordination hub: [GitHub issue15](https://github.com/guluchen/DistQLDPC/issues/15).
 Reusable instruction: [AGENT_PROMPT.md](AGENT_PROMPT.md).
