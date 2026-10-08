@@ -1,0 +1,71 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/LP_238_44_6_Hx.txt
+c Hz: data/matrices/LP_238_44_6_Hz.txt
+c Gx: data/matrices/LP_238_44_6_Gx.txt
+c Gz: data/matrices/LP_238_44_6_Gz.txt
+c Hx: 105 x 238, Hz: 105 x 238, Gx: 44 x 238, Gz: 44 x 238, logicals: 88
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.07 Mb                                      |
+c Reduced to 1990 vars, 10044 cls (c/v ratio==5.0, grow=0)
+c No iterative elimination performed. (vars=1990, c/v ratio=5.0)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 238, of which 238 unit, 0 nonUnit and 0 empty
+c total nb of literals: 36982
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 298
+c 1 conflict sets found with length 156
+c fixedCost 0, nbSatLits 0, totalFixedVars 298, objForSearch: 238
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 238), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 253 conflicts with init 9747
+
+c UB=2 fails, cnfls=253, hcnfls=176, core 472, tier2 6, local 121, quasiC: 3 (fixed: 205)
+c prunedLB 2.00, dev 0.00, succRate 0.40, nbSucc 2, nbHardens 86 (fixed 7937), lk: 5, shorten: 0, pureSo 75, nbFlyRd 6, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 4
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 306, nbTested: 1001, counter 27183
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 2347 conflicts with init 7906
+
+c UB=4 fails, cnfls=2347, hcnfls=447, core 2133, tier2 254, local 1444, quasiC: 133 (fixed: 8810)
+c prunedLB 2.86, dev 0.61, succRate 0.83, nbSucc 1663, nbHardens 220 (fixed 34735), lk: 2005, shorten: 0, pureSo 236, nbFlyRd 41, nbFixedLH 31
+
+c Cardinality: off (soft-conflict only), UB 8
+c UB=8 succs, confls=3210, hconfls=467, core 50, tier2 281, local 760,  6 soft cls unsat (0 at L0), 298 fixed vars at L0, softCnfl 245, nbFlyRd 47, nbFixedLH 37
+c nbHardens 225 (fixed 40501), shorten: 0, prunedLB 4.85, dev 0.77, succRate 0.88, nbSucc 834, lk: 943, shorten: 0, quasiC: 188 (fixed: 13786)
+
+c ends of initiationization by VSIDS at 3210 conflicts with init 9137
+
+
+c Cardinality: off (soft-conflict only), UB 6
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 298, nbTested: 1001, counter 76187
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 320, nbTested: 1001, counter 183801
+c LRB phase 1: conflicts 6959, phase 20000000, starts 31, UP 592263
+c UB=6 fails, cnfls=10169, hcnfls=780, core 1095, tier2 313, local 3696, quasiC: 1105 (fixed: 78077)
+c prunedLB 3.73, dev 0.77, succRate 0.76, nbSucc 6397, nbHardens 379 (fixed 122954), lk: 8462, shorten: 0, pureSo 495, nbFlyRd 111, nbFixedLH 146
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 6, maxsat: 232, hardConflicts: 780
+c nbLK: 11416, nbSuccLK: 8896(77.93%), nbLKup: 16010572(1867.21%), hardens 379 (fixed 122954), dynVars 0, shorten: 0
+c MaxSAT: OPTIMAL, Pauli weight 6 (reported cost 6), vars 3432 (base 802 + aux 2630)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/LP_238_44_6_Hx.txt
+c Hz: data/matrices/LP_238_44_6_Hz.txt
+c Gx: data/matrices/LP_238_44_6_Gx.txt
+c Gz: data/matrices/LP_238_44_6_Gz.txt
+c Hx: 105 x 238, Hz: 105 x 238, Gx: 44 x 238, Gz: 44 x 238, logicals: 88
+c d_lb: 6
+c d_ub: 6
+c d  : 6
+o 6

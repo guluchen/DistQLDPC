@@ -1,0 +1,235 @@
+{
+ "manifest": {
+  "host": "yufangchendeMacBook-Pro.local",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "cpu": "Apple M3 Max",
+  "ncpu": 14,
+  "start": "2026-10-09T00:03:52+0800",
+  "baseline": {
+   "path": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-7c2edd/wt-triwatch/../DistQLDPC/bin/distqldpc",
+   "sha256": "6abb7938abc3075839e4080ba8d42b376800ae57bdfaf8630fea93479acff2e7"
+  },
+  "candidate": {
+   "path": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-7c2edd/wt-triwatch/bin/distqldpc",
+   "sha256": "8640e725489a93337f7d75bf3d091a3a428c624ee1d7907943a117c0af759a78"
+  },
+  "limit_s": 30,
+  "watchdog_s": 40,
+  "repeats": 1,
+  "cases": [
+   "LP_34_20_2"
+  ],
+  "modes": [
+   "-no-card",
+   "-card-mto"
+  ],
+  "inputs": {
+   "LP_34_20_2_Hx.txt": "e671159c88d55b1610481e0629f915e99f18da3284bdab5a0034894edeb86525",
+   "LP_34_20_2_Hz.txt": "d2d10fe7712a4776fde77a1364a60c4e3a49a0c26486062405b167cacde835d0",
+   "LP_34_20_2_Gx.txt": "bf09826369fac1adb4ba1820be97972e38bc8c708c631a9a2d38978dd5376de5",
+   "LP_34_20_2_Gz.txt": "84382e94ea4806f2b17f51e7e8563d0cb068a9b45f3d087f19cc60980c4e1811"
+  },
+  "end": "2026-10-09T00:03:53+0800"
+ },
+ "runs": [
+  {
+   "cmd": [
+    "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-7c2edd/wt-triwatch/../DistQLDPC/bin/distqldpc",
+    "-cpu-lim=30",
+    "-no-card",
+    "LP_34_20_2"
+   ],
+   "wall_s": 0.03777262501535006,
+   "rc": 0,
+   "watchdog_killed": false,
+   "cpu_user_s": 0.007118999999999999,
+   "cpu_sys_s": 0.0047870000000000005,
+   "loadavg_before": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "loadavg_after": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "o": 2,
+   "d_lb": 2,
+   "d_ub": 2,
+   "status": null,
+   "log": "LP_34_20_2_no-card_B_rep1.log",
+   "case": "LP_34_20_2",
+   "mode": "-no-card",
+   "version": "baseline",
+   "rep": 1
+  },
+  {
+   "cmd": [
+    "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-7c2edd/wt-triwatch/bin/distqldpc",
+    "-cpu-lim=30",
+    "-no-card",
+    "LP_34_20_2"
+   ],
+   "wall_s": 0.04055583299486898,
+   "rc": 0,
+   "watchdog_killed": false,
+   "cpu_user_s": 0.0072780000000000015,
+   "cpu_sys_s": 0.004739,
+   "loadavg_before": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "loadavg_after": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "o": 2,
+   "d_lb": 2,
+   "d_ub": 2,
+   "status": null,
+   "log": "LP_34_20_2_no-card_C_rep1.log",
+   "case": "LP_34_20_2",
+   "mode": "-no-card",
+   "version": "candidate",
+   "rep": 1
+  },
+  {
+   "cmd": [
+    "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-7c2edd/wt-triwatch/../DistQLDPC/bin/distqldpc",
+    "-cpu-lim=30",
+    "-card-mto",
+    "LP_34_20_2"
+   ],
+   "wall_s": 0.038493833009852096,
+   "rc": 0,
+   "watchdog_killed": false,
+   "cpu_user_s": 0.006848,
+   "cpu_sys_s": 0.005016,
+   "loadavg_before": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "loadavg_after": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "o": 2,
+   "d_lb": 2,
+   "d_ub": 2,
+   "status": null,
+   "log": "LP_34_20_2_card-mto_B_rep1.log",
+   "case": "LP_34_20_2",
+   "mode": "-card-mto",
+   "version": "baseline",
+   "rep": 1
+  },
+  {
+   "cmd": [
+    "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-7c2edd/wt-triwatch/bin/distqldpc",
+    "-cpu-lim=30",
+    "-card-mto",
+    "LP_34_20_2"
+   ],
+   "wall_s": 0.038304207992041484,
+   "rc": 0,
+   "watchdog_killed": false,
+   "cpu_user_s": 0.006789,
+   "cpu_sys_s": 0.004397999999999999,
+   "loadavg_before": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "loadavg_after": [
+    3.72314453125,
+    3.49169921875,
+    3.9541015625
+   ],
+   "o": 2,
+   "d_lb": 2,
+   "d_ub": 2,
+   "status": null,
+   "log": "LP_34_20_2_card-mto_C_rep1.log",
+   "case": "LP_34_20_2",
+   "mode": "-card-mto",
+   "version": "candidate",
+   "rep": 1
+  }
+ ],
+ "summary": {
+  "per_case": {
+   "LP_34_20_2 -no-card": {
+    "baseline_raw": [
+     0.03777262501535006
+    ],
+    "candidate_raw": [
+     0.04055583299486898
+    ],
+    "baseline_median": 0.03777262501535006,
+    "candidate_median": 0.04055583299486898,
+    "ratio": 1.0736832025412022,
+    "baseline_spread": 1.0,
+    "candidate_spread": 1.0,
+    "disjoint_regression": true,
+    "disjoint_improvement": false,
+    "results": [
+     [
+      2,
+      2,
+      2
+     ]
+    ],
+    "science_ok": true
+   },
+   "LP_34_20_2 -card-mto": {
+    "baseline_raw": [
+     0.038493833009852096
+    ],
+    "candidate_raw": [
+     0.038304207992041484
+    ],
+    "baseline_median": 0.038493833009852096,
+    "candidate_median": 0.038304207992041484,
+    "ratio": 0.9950738857893917,
+    "baseline_spread": 1.0,
+    "candidate_spread": 1.0,
+    "disjoint_regression": false,
+    "disjoint_improvement": true,
+    "results": [
+     [
+      2,
+      2,
+      2
+     ]
+    ],
+    "science_ok": true
+   }
+  },
+  "per_mode": {
+   "-no-card": {
+    "G_geomean_ratio": 1.0736832025412022,
+    "V_geomean_baseline_spread": 1.0,
+    "G_times_V": 1.0736832025412022,
+    "any_disjoint_regression": true,
+    "gate": "REJECT"
+   },
+   "-card-mto": {
+    "G_geomean_ratio": 0.9950738857893917,
+    "V_geomean_baseline_spread": 1.0,
+    "G_times_V": 0.9950738857893917,
+    "any_disjoint_regression": false,
+    "gate": "PASS"
+   }
+  },
+  "science": {
+   "all_results_identical_and_expected": true
+  },
+  "decision_rule": "per mode: PASS iff G<1, G*V<1 and no disjoint per-case regression; REJECT if a disjoint regression >2% with G>=1; else INCONCLUSIVE (PROPOSAL.md section 4)"
+ }
+}
