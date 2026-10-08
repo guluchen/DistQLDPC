@@ -25,7 +25,7 @@ all: $(BIN) $(MAXCDCL)
 $(MAXCDCL): $(SOLVER)/Main.cc $(ENGINE_OBJS) | dirs
 	$(CXX) $(CXXFLAGS) -o $@ $(SOLVER)/Main.cc $(ENGINE_OBJS) $(LDFLAGS)
 
-$(BIN): $(CORE)/distqldpc.cc $(ENGINE_OBJS) | dirs
+$(BIN): $(CORE)/distqldpc.cc $(CORE)/SlsWarmStart.h $(ENGINE_OBJS) | dirs
 	$(CXX) $(CXXFLAGS) -o $@ $(CORE)/distqldpc.cc $(ENGINE_OBJS) $(LDFLAGS)
 
 dirs:

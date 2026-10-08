@@ -38,6 +38,7 @@
 
 #include "utils/System.h"
 #include "SimpSolver.h"
+#include "SlsWarmStart.h"
 
 using namespace Minisat;
 
@@ -93,7 +94,18 @@ static uint8_t getm(const Matrix& m, int r, int c) {
     return m.data[(size_t)r * m.cols + c];
 }
 
+// Capture before addClause_ can simplify/reorder; dumps keep the original path.
+static DistWarm::Formula* warm_capture = NULL;
+static void capture_clause(const std::vector<Lit>& lits, bool hard) {
+    if (!warm_capture) return;
+    DistWarm::Clause c; c.hard = hard;
+    for (size_t i = 0; i < lits.size(); ++i)
+        c.lits.push_back((sign(lits[i]) ? -1 : 1) * (var(lits[i]) + 1));
+    warm_capture->clauses.push_back(c);
+}
+
 static void add_hard_clause(SimpSolver& S, const std::vector<Lit>& lits) {
+    capture_clause(lits, true);
     vec<Lit> ps;
     for (size_t i = 0; i < lits.size(); i++) ps.push(lits[i]);
     if (!S.addClause_(ps, S.hardWeight))
@@ -101,6 +113,7 @@ static void add_hard_clause(SimpSolver& S, const std::vector<Lit>& lits) {
 }
 
 static void add_soft_clause(SimpSolver& S, const std::vector<Lit>& lits, unsigned w) {
+    capture_clause(lits, false);
     vec<Lit> ps;
     for (size_t i = 0; i < lits.size(); i++) ps.push(lits[i]);
     if (!S.addClause_(ps, w))
@@ -494,6 +507,41 @@ static bool build_stabilizer_instance(
     return true;
 }
 
+// Independently verify original CSS predicates and union Pauli weight.
+static int verified_pauli_weight(const Matrix& Hx, const Matrix& Hz,
+    const Matrix& Gx, const Matrix& Gz, const std::vector<uint8_t>& a)
+{
+    const int n = Hx.cols;
+    if (a.size() < size_t(3*n)) return -1;
+    int weight = 0;
+    for (int i = 0; i < n; ++i) {
+        if (a[i] > 1 || a[n+i] > 1 || a[2*n+i] != (a[i] | a[n+i])) return -1;
+        weight += a[i] | a[n+i];
+    }
+    for (int r = 0; r < Hx.rows; ++r) {
+        int parity = 0;
+        for (int i = 0; i < n; ++i) parity ^= getm(Hx,r,i) & a[n+i];
+        if (parity) return -1;
+    }
+    for (int r = 0; r < Hz.rows; ++r) {
+        int parity = 0;
+        for (int i = 0; i < n; ++i) parity ^= getm(Hz,r,i) & a[i];
+        if (parity) return -1;
+    }
+    bool logical = false;
+    for (int r = 0; r < Gx.rows; ++r) {
+        int parity = 0;
+        for (int i = 0; i < n; ++i) parity ^= getm(Gx,r,i) & a[i];
+        logical |= bool(parity);
+    }
+    for (int r = 0; r < Gz.rows; ++r) {
+        int parity = 0;
+        for (int i = 0; i < n; ++i) parity ^= getm(Gz,r,i) & a[n+i];
+        logical |= bool(parity);
+    }
+    return weight > 0 && logical ? weight : -1;
+}
+
 static int min_distance_stabilizer_maxsat(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int cpu_lim, int verb, int bounds_pipe_w, int card_mode,
@@ -503,8 +551,33 @@ static int min_distance_stabilizer_maxsat(
     SimpSolver S;
     std::vector<Var> aux;
     StabilizerInstance meta;
-    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
+    DistWarm::Formula original;
+    warm_capture = &original;
+    bool built = build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w);
+    warm_capture = NULL;
+    if (!built)
         return INT_MAX;
+
+    original.vars = S.nVars(); original.hard_score = meta.n + 1;
+    timeval start, end; gettimeofday(&start, NULL);
+    DistWarm::Result warm = DistWarm::run(original);
+    const int checked_cost = DistWarm::verified_cost(original, warm.assignment);
+    const int checked_weight = verified_pauli_weight(Hx, Hz, Gx, Gz, warm.assignment);
+    const bool verified = warm.cost >= 0 && checked_cost == warm.cost && checked_weight == warm.cost;
+    if (verified) S.initUB = warm.cost; // original cost; engine handles offsets and inclusive +1
+    gettimeofday(&end, NULL);
+    if (verb > 0) {
+        double seconds = double(end.tv_sec-start.tv_sec) + (end.tv_usec-start.tv_usec)/1000000.0;
+        printf("c sls: seed 1 budget 10000 flips %d final-hard-unsat %d verified-cap %d seconds %.6f\n",
+               warm.flips, warm.final_hard_unsat, verified ? warm.cost : -1, seconds);
+        if (verified) {
+            printf("c sls witness: ");
+            for (int i = 0; i < meta.n; ++i) printf("%d", warm.assignment[i]);
+            printf(" ");
+            for (int i = 0; i < meta.n; ++i) printf("%d", warm.assignment[meta.n+i]);
+            printf("\n");
+        }
+    }
 
     if (dump_wcnf_path && dump_wcnf_path[0])
         S.toWcnf(dump_wcnf_path);

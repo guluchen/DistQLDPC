@@ -4,6 +4,14 @@ Compute the **minimum distance** `d` of a **CSS / QLDPC** code from parity-check
 
 **Repository:** https://github.com/guluchen/DistQLDPC
 
+This experimental H-008 branch adds one original-CNF local-search warm start
+(seed1,10000 flips) before exact MaxSAT search. Only a fully verified feasible
+original objective is passed through the existing inclusive `initUB` path.
+No feasible witness means ordinary exact search. This is an unaccepted research
+candidate, not a new distance algorithm or an upstream MaxCDCL replacement.
+Warm-start work counts inside the existing parent wall timeout. Verbose `c sls`
+diagnostics describe acquisition only; the original exact solver certifies results.
+
 ---
 
 ## Quick start
