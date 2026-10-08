@@ -42,7 +42,7 @@ base=package/"baseline"
 candidate=ROOT/"GH40-TERNARY"
 support_head=subprocess.check_output(['git','-C',str(candidate),'rev-parse','HEAD'],text=True,timeout=10).strip()
 assert support_head==args.support_sha,'Assigned support commit mismatch'
-support_blob=subprocess.check_output(['git','-C',str(candidate),'show',support_head+':optimization/experiments/GH-27/windows_tier1.py'],timeout=10)
+support_blob=subprocess.check_output(['git','-C',str(candidate),'show',support_head+':optimization/experiments/GH-40/windows_tier1.py'],timeout=10)
 assert Path(__file__).read_bytes()==support_blob,'Uncommitted Tier1 driver'
 helper=ROOT/"DistQLDPC/optimization/experiments/E004/windows_cpu_window.py"
 assert sha(helper)=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2','Reviewed helper changed'
@@ -186,7 +186,7 @@ HASHES={'baseline':'a88464461b69d3eb3f3b1bbb3e4221b322c191656952df43b5ebde023f5a
 CASES=['BB_90_8_10','GB_144_12_8','BB_108_8_10','LP_238_44_6']
 MODES=['no-card','card-mto']
 prep=ROOT/'GH40-windows-tier0-02'
-record=candidate/'optimization/experiments/GH-27'
+record=candidate/'optimization/experiments/GH-40'
 binaries={v:prep/(v+'-source')/'bin/distqldpc.exe' for v in HASHES}
 samples=[];inputs={}
 summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',Tier0='PASS',Tier1='NOT_RUN',Tier2='NOT_RUN',Tier3='NOT_RUN',performance='PENDING_ASSIGNED_DIAGNOSTIC',reason='No exclusive OS reservation; report numeric filter separately')
