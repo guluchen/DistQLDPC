@@ -37,7 +37,7 @@ def main(raw):
         s, m = r['stem'], r['mode']
         b = (raw / 'logs' / f'{s}.{m}.base.out').read_bytes()
         c = (raw / 'logs' / f'{s}.{m}.cand.out').read_bytes()
-        d = s.split('_')[-1]; exp = int(d) if d.isdigit() else None
+        d = s.split('_')[-1]; exp = int(d) if d.isdigit() and not s.startswith(('xu_', 'PK_')) else None  # xu_/PK_ names carry no distance
         if r['kind'] == 'identical':
             ok, kind, info = b == c, 'identical' if b == c else 'MISMATCH', None
         else:
