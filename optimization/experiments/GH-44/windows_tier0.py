@@ -312,8 +312,9 @@ try:
         assert {'cygwin1.dll','cygstdc++-6.dll','cygz.dll'}.issubset({Path(row['path']).name.lower() for row in live}),'Missing actual scientific linkage proof'
         identities[str(probe)]=sha(probe)
     assert abi['baseline']==abi['candidate'],'ABI/library probe mismatch'
-    fp=lambda text:re.findall(r'^\s*(-ffp-contract=|-[^ ]*(?:fast-math|finite-math-only|unsafe-math-optimizations|rounding-math|signed-zeros))\s+(.*?)\s*$',text,re.M)
-    assert fp(optimizers['baseline']) and fp(optimizers['baseline'])==fp(optimizers['candidate']),'FP policy differs'
+    fp=lambda text:re.findall(r'^\s*(-ffp-contract=\S*|-f(?:fast-math|finite-math-only|unsafe-math-optimizations|rounding-math|signed-zeros|associative-math|reciprocal-math|excess-precision=\S*))\s+(.*?)\s*$',text,re.M)
+    assert any(key.startswith('-ffp-contract=') for key,value in fp(optimizers['baseline'])),'FP contraction policy missing'
+    assert fp(optimizers['baseline'])==fp(optimizers['candidate']),'FP policy differs'
     save(out/'target-provenance.json',dict(abi=abi,FPpolicy=fp(optimizers['baseline']),cpu=gate_result,original_generic_tuning=True,one_isa_change=True))
     for version,source in sources.items():
         check_run([runtime/'bin/make.exe','-j1','bin/distqldpc'],'build-'+version,source,300)
