@@ -45,15 +45,19 @@ All 8 replication medians favour the candidate; 5 of 8 cells are non-overlapping
 improvements; none overlaps in the regressive direction.
 
 ## Decision
-Formal Tier1 gate: **INCONCLUSIVE** (the fixed rule's all-medians-non-worse condition
-fails by +0.05%/+0.06% in one case per mode, within overlapping ranges). Not REJECT:
-no regression flag, scientific results identical, and 18 sample sets show a
-consistent ~1% favourable direction. Not PASS. Under the recorded standing user
-instruction (docs/OPTIMIZATION_LOOP_POLICY.md, "User-directed exploratory
-continuation": if evidence does not clearly justify rejection, advance one tier),
+Formal Tier1 gate: **INCONCLUSIVE**. In no-card both conditions fail: GB144's median
+is +0.05% and the envelope geomean is 1.0058 (>= 1). In card-mto the envelope passes
+(0.9944) but LP238's median is +0.06%. Both worse medians lie within overlapping
+ranges. Not REJECT: no regression flag, scientific results identical, and 14 of the
+16 case/mode medians (8 gate + 8 replication) favour the candidate, by about 1%. Not PASS. Under the recorded standing user
+instruction (docs/OPTIMIZATION_LOOP_POLICY.md on branch experiment/h001-logical-row-xor,
+"User-directed exploratory continuation": if evidence does not clearly justify rejection, advance one tier),
 one bounded exploratory LP_340 Tier2 is preregistered in TIER2_EXPLORATORY.md.
 It cannot turn this gate into PASS and authorises no Tier3/merge.
 
-Mechanism note: the effect size (~1%) is consistent with removing two dependent
-ALU operations from each `value(Lit)` check on a path where ~70% of time is
-lookahead propagation; branch mispredictions and loads still dominate.
+Mechanism note (hypothesis, not established): the ~1% could come from removing two
+dependent ALU operations from each `value(Lit)` check on a path where ~70% of time is
+lookahead propagation. It is not isolated from code-layout/alignment effects (binary
+sizes differ, 327656 vs 327304 bytes) and no performance-counter evidence exists; on
+an unpinned desktop with 0.67-2.3 s solves that include fork and parsing, ~1% is
+within what layout alone can produce.

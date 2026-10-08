@@ -72,7 +72,8 @@ in each file are unchanged.
   updates both literal slots; variable creation pushes both literal slots
 - `value(Lit)` reads `litvals[toInt(p)]`; `value(Var)` and all other `assigns` readers unchanged
 - Optional test-only `-DLITVALS_CHECK` aborts if the mirror ever differs from `assigns ^ sign`
-- Search behaviour is unchanged by construction (verified by byte-identical verbose traces)
+- Search behaviour is intended to be unchanged by construction; verbose traces were byte-identical
+  for all completed Tier0 runs and prefix-consistent for timed-out runs (see optimization/experiments/GH-34)
 
 ---
 

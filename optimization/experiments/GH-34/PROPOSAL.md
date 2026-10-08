@@ -162,3 +162,7 @@ This preregistration was committed as `GH-PENDING` before the issue existed. Git
 issue https://github.com/guluchen/DistQLDPC/issues/34 was then created, so
 GH-<issue> = GH-34 and the hypotheses are GH-34-A (selected), GH-34-B, GH-34-C.
 The text above is otherwise unchanged from commit b51fab3.
+
+Erratum (independent review): the baseline has 21 `assigns[x] = ...` write sites plus
+2 `assigns.push` sites (23 sites in total), not "23 write sites". The implementation
+covers all of them.
