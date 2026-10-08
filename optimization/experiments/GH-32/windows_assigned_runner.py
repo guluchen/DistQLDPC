@@ -185,7 +185,7 @@ try:
     result=managed_run([runtime/"bin/g++.exe","-dumpmachine"],candidate,buildlogs,"compiler-target-triple",20)
     assert result[0]==0 and result[1].strip()=="x86_64-pc-cygwin", "Unexpected compiler ABI/target"
     empty=out/"empty-target.cc";empty.write_bytes(b"")
-    targets={};isa={}
+    targets={};isa={};non_tuning_macros={}
     prefixes=("__SSE","__SSSE","__AVX","__FMA","__MMX","__AES","__PCLMUL","__POPCNT","__BMI","__LZCNT","__RDRND","__RDSEED","__SHA","__GFNI","__VAES","__VPCLMUL","__F16C","__x86_64","__i386")
     for label,extra in [("original",[]),("native",["-mtune=native"])]:
         result=managed_run([runtime/"bin/g++.exe","-Q","-O3"]+extra+["--help=target"],candidate,buildlogs,label+"-target",20)
@@ -194,11 +194,21 @@ try:
         result=managed_run([runtime/"bin/g++.exe","-O3"]+extra+["-dM","-E","-x","c++",empty],candidate,buildlogs,label+"-isa-macros",20,True)
         assert result[0]==0
         isa[label]=sorted(line for line in result[1].splitlines() if line.startswith("#define ") and line.split()[1].startswith(prefixes))
+        # Compare all other predefined macros too, covering newer ISA families
+        # outside the named subset. Native CPU/cache tuning macros are retained
+        # in raw logs but are not instruction-set enablement.
+        non_tuning_macros[label]=sorted(line for line in result[1].splitlines() if line.startswith("#define ")
+            and not line.split()[1].startswith("__tune_")
+            and line.split()[1] not in ["__GCC_DESTRUCTIVE_SIZE","__GCC_CONSTRUCTIVE_SIZE"])
     import re
     march={label:re.search(r"^\s*-march=\s+(\S+)",text,re.M).group(1) for label,text in targets.items()}
     assert march["original"]==march["native"] and isa["original"]==isa["native"], "Compiler target/ISA enablement changed"
+    assert non_tuning_macros["original"]==non_tuning_macros["native"], "Unexpected non-tuning predefined macro change"
     assert any("__x86_64__" in line for line in isa["original"]), "Empty/incorrect ISA macro evidence"
-    save(out/"target-provenance.json",dict(march=march,isa_macros=isa,host_specific_tuning=True,source_only_concept="mtune native",performance="NOT_MEASURED"))
+    mtune={label:re.search(r"^\s*-mtune=\s+(\S+)",text,re.M).group(1) for label,text in targets.items()}
+    save(out/"target-provenance.json",dict(march=march,mtune=mtune,isa_macros=isa,
+        all_non_tuning_macros_identical=True,excluded_tuning_macros="__tune_* and __GCC_{DESTRUCTIVE,CONSTRUCTIVE}_SIZE; full outputs retained",
+        host_specific_tuning=True,source_only_concept="mtune native",performance="NOT_MEASURED"))
     # Original make-all Main.cc cannot link on this Cygwin runtime: its
     # memUsedPeak declaration lacks an unsupported-platform definition.
     # The production target/default flags require no change or test shim.

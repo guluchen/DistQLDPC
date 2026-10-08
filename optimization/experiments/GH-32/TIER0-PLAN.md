@@ -17,3 +17,5 @@ python GH32-MTUNE\optimization\experiments\GH-32\windows_assigned_runner.py --ca
 ```
 
 No Tier1 command authorized by this preparation. Subsequent separately preregistered fixed48 standard Tier1 must use newly verified native-tuned candidate and original baseline hashes, never GH21O2 binary. No Tier2/3 automatic progression or performance adoption.
+
+Pre-execution own source review: named ISA-macro subset alone is not exhaustive. Runner additionally requires every non-tuning predefined macro identical (only __tune_* and documented CPU interference-size macros excluded and retained in full raw logs), equal march, and records effective original/native mtune. Unexpected other macro changes stop configuration INCONCLUSIVE before candidate tests, without adding corrective flags. This is compiler/provenance evidence, not an exhaustive disassembly proof. Original Main defaults BOTH, so PMS checks validate that supported default configuration; explicit OFF/MTO CSS/WCNF/timeout checks cover those application modes. The compiler flag applies globally, unlike GH30's MTO-only heuristic.
