@@ -1,0 +1,17 @@
+{
+  "status": "INCONCLUSIVE",
+  "Tier0": "NOT_RUN",
+  "diagnostic": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "candidate": "3fe5afead91cf0527cd39529a6d48b4e19e12041",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6063328992",
+  "reason": "RuntimeError('BUILD/TEST command failed build-baseline: ver/Main.cc: In function \\'void printStats(Minisat::Solver&)\\':\\nsrc/solver/Main.cc:92:46: warning: format \\'%llu\\' expects argument of type \\'long long unsigned int\\', but argument 2 has type \\'uint64_t\\' {aka \\'long unsigned int\\'} [-Wformat=]\\n   92 |         printf(\"c nbSimplifyAll         : %llu\\\\n\", solver.nbSimplifyAll);\\n      |                                           ~~~^     ~~~~~~~~~~~~~~~~~~~~\\n      |                                              |            |\\n      |                                              |            uint64_t {aka long unsigned int}\\n      |                                              long long unsigned int\\n      |                                           %lu\\nsrc/solver/Main.cc: In function \\'int main(int, char**)\\':\\nsrc/solver/Main.cc:187:34: warning: format \\'%llu\\' expects argument of type \\'long long unsigned int\\', but argument 2 has type \\'uint64_t\\' {aka \\'long unsigned int\\'} [-Wformat=]\\n  187 |         printf(\"c initial UB: %llu\\\\n\", S.initUB);\\n      |                               ~~~^     ~~~~~~~~\\n      |                                  |       |\\n      |                                  |       uint64_t {aka long unsigned int}\\n      |                                  long long unsigned int\\n      |                               %lu\\nsrc/solver/Main.cc: At global scope:\\nsrc/solver/Main.cc:108:13: warning: \\'void SIGINT_exit(int)\\' defined but not used [-Wunused-function]\\n  108 | static void SIGINT_exit(int signum) {\\n      |             ^~~~~~~~~~~\\n/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-runtime/cygwin/bin/ld: /cygdrive/c/Users/yfc/AppData/Local/Temp/ccUrAb5j.o: in function `printStats(Minisat::Solver&)\\':\\n/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH20-windows-tier0-02/baseline-source/src/solver/Main.cc:83:(.text+0x24a): undefined reference to `Minisat::memUsedPeak()\\'\\ncollect2: error: ld returned 1 exit status\\nmake: *** [Makefile:26: bin/maxcdcl] Error 1\\n')",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  }
+}

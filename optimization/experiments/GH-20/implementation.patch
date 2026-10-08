@@ -1,0 +1,91 @@
+diff --git a/.github/workflows/qdist-cross-repo-benchmark.yml b/.github/workflows/qdist-cross-repo-benchmark.yml
+index e0cd95e..3f0af87 100644
+--- a/.github/workflows/qdist-cross-repo-benchmark.yml
++++ b/.github/workflows/qdist-cross-repo-benchmark.yml
+@@ -65,6 +65,23 @@ jobs:
+           make -C baseline --jobs="$(nproc)"
+           make -C candidate --jobs="$(nproc)"
+ 
++      - name: Compare production lookahead watch state (GH-20)
++        shell: bash
++        run: |
++          set -euo pipefail
++          mkdir -p benchmark-results/watch-tail
++          for version in baseline candidate; do
++            g++ -I"$version/src/solver" -O2 -std=gnu++11 \
++              candidate/optimization/experiments/GH-20/test_watch_tail.cc \
++              "$version/build/SimpSolver.o" "$version/build/Solver.o" \
++              "$version/build/Options.o" "$version/build/System.o" \
++              -lz -o "benchmark-results/watch-tail/$version-probe"
++            "benchmark-results/watch-tail/$version-probe" \
++              > "benchmark-results/watch-tail/$version.stdout" \
++              2> "benchmark-results/watch-tail/$version.stderr"
++          done
++          cmp benchmark-results/watch-tail/baseline.stdout benchmark-results/watch-tail/candidate.stdout
++
+       - name: Compare on selected QDistSAT instances
+         id: bench
+         shell: bash
+diff --git a/MODIFICATIONS.md b/MODIFICATIONS.md
+index d50e434..013af7c 100644
+--- a/MODIFICATIONS.md
++++ b/MODIFICATIONS.md
+@@ -65,6 +65,15 @@ in each file are unchanged.
+ - Call `emitBoundsUpdate()` after LB/UB updates
+ - Call `noteBestSolution()` when a better incumbent is found
+ 
++#### GH-20 isolated experiment: lookahead watch-tail self copies
++
++- In the two conflict-tail paths of `propagateForLK`, skip suffix copies only
++  when source and destination pointers are identical. Preserve original copying
++  for compacted lists, all watch order, pointer results and conflict behavior.
++- This one performance concept is untested/unadopted; no solver heuristic,
++  encoding, bound, timeout or scientific-semantic change is intended.
++  Prerecord: `optimization/experiments/GH-20/PROPOSAL.md`.
++
+ ---
+ 
+ ## Files not modified for DistQLDPC integration
+diff --git a/NOTICE b/NOTICE
+index d2d9fde..7400131 100644
+--- a/NOTICE
++++ b/NOTICE
+@@ -53,6 +53,8 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
+   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
+   - Best-solution tracking and printing on timeout / interrupt
+   - Configurable cardinality encoding modes (Sinz / MTO / off)
++  - GH-20 isolated, unadopted experiment: skip identical watch-tail self copies
++    in lookahead propagation; retain original nonidentity compaction
+ 
+ Modified files (partial list): Solver.h, Solver.cc
+ 
+diff --git a/src/solver/Solver.cc b/src/solver/Solver.cc
+index 30508f1..ae1ebcd 100644
+--- a/src/solver/Solver.cc
++++ b/src/solver/Solver.cc
+@@ -4024,15 +4024,21 @@ CRef Solver::propagateForLK() {
+ 	  confl = cr;
+ 	  qhead = trail.size();
+ 	  // Copy the remaining watches:
+-	  while (i < end)
+-	    *j++ = *i++;
++	  if (i == j)
++	    i = j = end;
++	  else
++	    while (i < end)
++	      *j++ = *i++;
+ 	}
+ 	else {
+ 	  if (!uncheckedEnqueueForLK(first, cr)) {
+ 	    qhead = trail.size();
+ 	    // Copy the remaining watches:
+-	    while (i < end)
+-	      *j++ = *i++;
++	    if (i == j)
++	      i = j = end;
++	    else
++	      while (i < end)
++	        *j++ = *i++;
+ 	    falseVar = var(first);
+ 	  }
+ 	}
