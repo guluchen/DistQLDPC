@@ -88,3 +88,13 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+
+Experimental GH-30 downstream patch (isolated, not adopted)
+---------------------------------------------------------
+Solver::lookbackResetTrail selects the second binary-conflict VSIDS .1
+bump endpoint by the existing cardinalityEncMode: endpoint1 only for
+explicit CARD_ENC_MTO, original endpoint0 for all other modes. Both
+weights and all encoding/objective/bound/timeout behavior are unchanged.
+This is a DistQLDPC experimental modification to embedded MIT MaxCDCL;
+upstream copyright headers remain intact. See optimization/experiments/GH-30.
