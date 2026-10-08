@@ -235,14 +235,32 @@ except BaseException as error:
     print('STOP: '+repr(error),flush=True)
 finally:
     if window is not None:
-        try:clean_owned('final-cleanup');save(out/'job-pids-before-release.json',job_pids())
-        except Exception as error:summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',cleanup_failure=repr(error))
-        cleanup=window.close();save(out/'cleanup.json',cleanup);summary['cleanup']=cleanup
-        if not all(cleanup.get(k) is True for k in ['job_limit_released','affinity_restored','sleep_requirement_restored','priority_restored']):summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',cleanup_invalid=True)
+        try:
+            clean_owned('final-cleanup');save(out/'job-pids-before-release.json',job_pids())
+        except Exception as error:summary.update(cleanup_failure=repr(error),cleanup_invalid=True)
+        finally:
+            # Restoration is attempted independently of child-cleanup success.
+            # Preserve any scientific rejection as a separate, durable finding.
+            try:
+                cleanup=window.close();save(out/'cleanup.json',cleanup);summary['cleanup']=cleanup
+                if not all(cleanup.get(k) is True for k in ['job_limit_released','affinity_restored','sleep_requirement_restored','priority_restored']):summary['cleanup_invalid']=True
+            except Exception as error:summary.update(restoration_failure=repr(error),cleanup_invalid=True)
+    identity_errors=[]
     for version,binary in binaries.items():
-        if sha(binary)!=HASHES[version]:summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',identity_invalid=version)
+        try:
+            if sha(binary)!=HASHES[version]:identity_errors.append(version+' binary changed')
+        except Exception as error:identity_errors.append(version+': '+repr(error))
     for p,digest in inputs.items():
-        if sha(Path(p))!=digest:summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',identity_invalid=p)
+        try:
+            if sha(Path(p))!=digest:identity_errors.append(p+' input changed')
+        except Exception as error:identity_errors.append(p+': '+repr(error))
+    if identity_errors:summary['identity_invalid']=identity_errors
+    summary['valid_run']=bool(summary.get('status')=='FILTER_COMPLETE' and len(samples)==48 and not summary.get('cleanup_invalid') and not summary.get('identity_invalid'))
+    if not summary['valid_run'] and summary.get('decision')!='REJECTED':summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE')
     save(out/'result.json',summary)
-    save(out/'SHA256.json',{str(p.relative_to(out)):sha(p) for p in sorted(out.rglob('*')) if p.is_file() and p.name!='SHA256.json'})
+    try:save(out/'SHA256.json',{str(p.relative_to(out)):sha(p) for p in sorted(out.rglob('*')) if p.is_file() and p.name!='SHA256.json'})
+    except Exception as error:
+        summary.update(manifest_failure=repr(error),valid_run=False)
+        save(out/'result.json',summary)
     print(json.dumps(summary,indent=2),flush=True)
+sys.exit(0 if summary['valid_run'] else 1)
