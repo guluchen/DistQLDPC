@@ -1,0 +1,54 @@
+{
+  "source": "cached official mirrored setup.ini from preserved2026-10-08 E004 installation, not fresh download",
+  "setup_ini_sha512": "2c0fef81cfb68db9133d1f2e2687b3e05f0356abacf04c1292db910c7cf438d13b4701b1deef3e9fc16dbe3d69a4fa8b70d39eb12ec09cc5a20583f5018d837a",
+  "packages": {
+    "clang": {
+      "version": "22.1.8-3",
+      "install": "x86_64/release/clang/clang-22.1.8-3-x86_64.tar.xz 9333588 67b679af0b2c3c3b64cb19b7ae1c66de22a6938d569c83af634bd4e671bd8945c94d5720f25d6845f32bbcee4b988982043600e5c4ac00b7caa642aa77d8674f",
+      "source": "x86_64/release/clang/clang-22.1.8-3-src.tar.xz 110789084 a659a0eb7386c04841ae3951f35045fce736c81c1e584a691b23b5fcd2fa72309e4442e42f3354fe2a06c147fe8da70f80e8db9c3f93fd532fe87960fb3ea85f",
+      "depends2": "binutils, cygwin, cygwin-devel, gcc-core, gcc-g++, libclang22.1, libgcc1, libllvm22.1, libstdc++6, libxml2, python3, windows-default-manifest"
+    },
+    "libclang22.1": {
+      "version": "22.1.8-3",
+      "install": "x86_64/release/clang/libclang22.1/libclang22.1-22.1.8-3-x86_64.tar.xz 24745156 24de90735e2b9a4e5491101abbda596cb8f12e4bbf9562e4d25299d60b992a6650c8ad95bca435ea3743e9fa83c7a0a086becb4952e834e289d89544120ae875",
+      "source": "x86_64/release/clang/clang-22.1.8-3-src.tar.xz 110789084 a659a0eb7386c04841ae3951f35045fce736c81c1e584a691b23b5fcd2fa72309e4442e42f3354fe2a06c147fe8da70f80e8db9c3f93fd532fe87960fb3ea85f",
+      "depends2": "cygwin, libgcc1, libllvm22.1, libstdc++6"
+    },
+    "libllvm22.1": {
+      "version": "22.1.8-2",
+      "install": "x86_64/release/llvm/libllvm22.1/libllvm22.1-22.1.8-2-x86_64.tar.xz 32209124 95991da0a0947f1bfcd90ebbf498f389784f4099599c6bc5c6d635678f1c8f2d1c85af535bb3e94c7470b97cfbb868c2a150954610cb6ee11e8df34517bd60b5",
+      "source": "x86_64/release/llvm/llvm-22.1.8-2-src.tar.xz 94033440 972b3285f94f295f09f277869a7febf7d62f932fc4599f3bdc900f18d88beafab950065aa83d47da97ee0a2832ab5035f14fb6f0b45300f68408e68ae78bb849",
+      "depends2": "cygwin, libedit0, libgcc1, libstdc++6, libxml2, libzstd1, zlib0"
+    },
+    "gcc-g++": {
+      "version": "14.4.0-1",
+      "install": "x86_64/release/gcc/gcc-g++/gcc-g++-14.4.0-1-x86_64.tar.zst 23324952 1d316bbe5dab14ee65366e2e3381e3863dd3e48bf6a9deae2ca4acd6628360377c4099071b7195ef25aa44e63b8b383a1d424d36835c6eef6954148949addd50",
+      "source": "x86_64/release/gcc/gcc-14.4.0-1-src.tar.zst 91626118 a4fa4be6b610a7d868271027c17c46c5f64e1b125e0bec1d51d34cc47f53a670c95841ad4fdcb5aa236244e8b09e5dc194c64e788fc5011459ba2eb29a815299",
+      "depends2": "cygwin, gcc14, libgmp10, libiconv2, libintl8, libisl23, libmpc3, libmpfr6, libstdc++6, libzstd1, zlib0"
+    },
+    "cygwin": {
+      "version": "3.6.11-1",
+      "install": "x86_64/release/cygwin/cygwin-3.6.11-1-x86_64.tar.xz 1621088 1c33f8396d78eca035106325c5b90ff1165a6b78839f16190ec00f025067306522a23a5ec1b99557974e471649104cd31dad68685d2a544c31fb4494297a744a",
+      "source": "src/release/cygwin/cygwin-3.6.11-1-src.tar.xz 9316544 0c90f92e714d69013cf9281647a75737952f44acca556959645a7a0669606e2c9caa8217abee667c795824ff6fbe711a020b75d8043818c828713570652bec32",
+      "depends2": "_windows ( >= 6.3 ), bash, libgcc1, libintl8, libzstd1, zlib0"
+    },
+    "libstdc++6": {
+      "version": "14.4.0-1",
+      "install": "x86_64/release/gcc/libstdc++6/libstdc++6-14.4.0-1-x86_64.tar.zst 651767 3d86409193c952618eee7e2dea32bdeb97f22ee800e13cc46f98b5095d4d0b1b31ac4336dc5819abb2d553ad1c2151619e9f6f337dfe921ba80fda1323f6f4e3",
+      "source": "x86_64/release/gcc/gcc-14.4.0-1-src.tar.zst 91626118 a4fa4be6b610a7d868271027c17c46c5f64e1b125e0bec1d51d34cc47f53a670c95841ad4fdcb5aa236244e8b09e5dc194c64e788fc5011459ba2eb29a815299",
+      "depends2": "cygwin, libgcc1, libiconv2, libintl8"
+    },
+    "libgcc1": {
+      "version": "14.4.0-1",
+      "install": "x86_64/release/gcc/libgcc1/libgcc1-14.4.0-1-x86_64.tar.zst 59166 5ac8a56e5eee285efcd6dbd05a473e795e181021d7194b8a98dfe2fa201a71f0abe2908e0b4c81490eb5ef472efaeac8e56a61a5f289eee4ad6e90e52a844ff8",
+      "source": "x86_64/release/gcc/gcc-14.4.0-1-src.tar.zst 91626118 a4fa4be6b610a7d868271027c17c46c5f64e1b125e0bec1d51d34cc47f53a670c95841ad4fdcb5aa236244e8b09e5dc194c64e788fc5011459ba2eb29a815299",
+      "depends2": "cygwin"
+    },
+    "zlib0": {
+      "version": "1.3.2-1",
+      "install": "x86_64/release/zlib/zlib0/zlib0-1.3.2-1-x86_64.tar.zst 46254 d79ba6098cadf6bf2f32f35d9cd54729293c64b3c9daabb9d080f52861a19db71544d5710fdbd61ff45e7c2ae4eecb3f2e3b8a1e3bc05695b8cfe01c7639c53a",
+      "source": "x86_64/release/zlib/zlib-1.3.2-1-src.tar.zst 1321796 10aa89718be99490ba9e76c19cf8e7e5cbb2a84c7510ea928c87c60279cb5ef0beb58def1049f427139e2b2024e4434ca32bdfbf7cd9a73ea7672684b2b3bcb9",
+      "depends2": "cygwin"
+    }
+  }
+}
