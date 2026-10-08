@@ -1,0 +1,164 @@
+{
+  "status": "12_SCIENCE_PASS_EXPLORATORY_USER_EXCEPTION",
+  "formal_decision": "INCONCLUSIVE",
+  "local_numeric_filter": "inconclusive",
+  "local_numeric_reason": {
+    "no-card": {
+      "median_geomean": 0.9977559250627868,
+      "range_envelope_geomean": 1.006272187146763,
+      "no_worse_medians": true
+    },
+    "card-mto": {
+      "median_geomean": 0.9985373648938277,
+      "range_envelope_geomean": 1.0022134961628872,
+      "no_worse_medians": true
+    }
+  },
+  "support": "530a1a2a2082f24c4bc4336a0b1a21f1d9ff22db",
+  "candidate": "58fbae546e74c158c21070cd10106e94d6bd2b98",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "binary_hashes": {
+    "baseline": "f2afe14e8f70c776372e0d4a23c21b7418510a6f6fe9b409aefbf0a98f062307",
+    "candidate": "9e920d9513541bdc87f13beebc78f040c5b95d16ffb291803a9c0f3244bde96e"
+  },
+  "driver_sha256": "8d9bd8afa2aa828e5e702e6495f818f80de0ca262077221c44038a783acdc28b",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6066419326",
+  "cleanup_all_true": true,
+  "only_runner_before_release": 23188,
+  "release_comment": 6066680027,
+  "all_raw_manifest_files_verified": 46,
+  "raw_science_checks": 12,
+  "normal_promotion": false,
+  "exception_review": {
+    "user_one_tier_exception": true,
+    "normal_tier1_promotion": false,
+    "no_material_regression_reviewed": true,
+    "why_not_directly_denied": "OFF GM -0.394%, MTO +0.610%; mixed near-zero, six ranges overlap; two disjoint slowdowns only +0.371%/+0.411%; largest median slowdown +1.922% overlaps; no scientific mismatch. Larger-case inline hot path not decisively falsified.",
+    "scope": "Exactly one exploratory LP340 tier, both modes, 12 solves; no automatic Tier3 or adoption",
+    "prior_evidence_commit": "671aa25761ad76cbf35ad157d546d0b41ce17b8d",
+    "prior_sha256": {
+      "result.json": "4f806043435c2f53b58baeab20e387f43e3d3977d78e786119a44641bb6ac949",
+      "samples.json": "1b3bd749a21435ed5d0a8a67705563825c37ee4b222f866ecb620ef111021c79",
+      "AUDIT.json": "0b69c1092b15b2fd5b1d242dd83ca61eca210276ea4d65a6904a8bb6af875f16",
+      "SHA256.json": "20eb4e59bd047b71bceb92d749f1ed0707275b1e8649180675765cec33350210",
+      "preexecution.json": "2552fc9a1388fc30326e467a11cff42a6cd448c8cc90a29f6c29163216b47a78"
+    },
+    "observation_limits": "Not an assertion that noise caused differences or that method helps; unchanged reject filter retained"
+  },
+  "median_geomeans": {
+    "no-card": 0.9977559250627868,
+    "card-mto": 0.9985373648938277
+  },
+  "groups": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          59.7455706000037,
+          60.639112699980615,
+          60.08556029997999
+        ],
+        "candidate": [
+          59.95072380002239,
+          60.12030599999707,
+          59.84356300000218
+        ]
+      },
+      "baseline_median": 60.08556029997999,
+      "candidate_median": 59.95072380002239,
+      "ratio": 0.9977559250627868,
+      "percent_change": -0.22440749372132363,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          66.66977899998892,
+          66.7889753000054,
+          67.1380674999964
+        ],
+        "candidate": [
+          66.69128740002634,
+          66.60649139998714,
+          66.81735229998594
+        ]
+      },
+      "baseline_median": 66.7889753000054,
+      "candidate_median": 66.69128740002634,
+      "ratio": 0.9985373648938277,
+      "percent_change": -0.1462635106172283,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    }
+  ],
+  "resource_samples": 379,
+  "capacity_all_eligible": true,
+  "contention_flags": 2,
+  "minimum_global_idle": 72.69657501205981,
+  "minimum_sibling_idle": 87.6923076923077,
+  "flags": [
+    {
+      "label": "LP_340_56_8-no-card-2-baseline",
+      "time": 1791484287.2345746,
+      "idle_percent": 72.69657501205981,
+      "half_spare_logical_cpus": 5.815726000964784,
+      "selected_cpu_idle": 0.0,
+      "sibling_idle": 87.6923076923077,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        83.59375,
+        82.94573643410853,
+        73.4375,
+        82.17054263565892,
+        77.95275590551181,
+        78.90625,
+        80.0,
+        79.23076923076923,
+        77.09923664122137,
+        62.595419847328245,
+        75.57251908396947,
+        60.30534351145038,
+        83.07692307692308,
+        79.23076923076923,
+        0.0,
+        87.6923076923077
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-card-mto-3-baseline",
+      "time": 1791484769.8209662,
+      "idle_percent": 82.75700934579439,
+      "half_spare_logical_cpus": 6.620560747663551,
+      "selected_cpu_idle": 0.0,
+      "sibling_idle": 94.77611940298507,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        90.9090909090909,
+        93.93939393939394,
+        88.80597014925372,
+        95.5223880597015,
+        88.80597014925372,
+        96.26865671641791,
+        91.7910447761194,
+        95.5223880597015,
+        67.16417910447761,
+        80.59701492537313,
+        73.13432835820896,
+        79.1044776119403,
+        91.7910447761194,
+        96.26865671641791,
+        0.0,
+        94.77611940298507
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    }
+  ],
+  "performance_limit": "Nonexclusive Windows diagnostic; exploratory exception only; prior Tier1 not promoted; no Tier3 or adoption authorized"
+}
