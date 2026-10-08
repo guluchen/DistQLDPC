@@ -67,6 +67,16 @@ in each file are unchanged.
 
 ---
 
+### `mtl/Vec.h` (GH55 experimental capacity policy)
+
+- Common vector geometric growth doubles when the doubled capacity fits signed int.
+- Initial two-slot allocation, even capacities, required-size rounding, overflow guard,
+  high-capacity original growth fallback, realloc/exception handling and element lifetime
+  operations are retained. Logical size/order and solver algorithms are unchanged.
+- This is an isolated, unvalidated performance experiment; no adoption or speed claim.
+
+---
+
 ## Files not modified for DistQLDPC integration
 
 The following are included from upstream with headers intact but without
@@ -74,7 +84,7 @@ DistQLDPC-specific functional changes (as of this document):
 
 - `SimpSolver.h`, `SimpSolver.cc`
 - `SolverTypes.h`, `Dimacs.h`
-- `mtl/*`, `utils/*`
+- `mtl/*` except `mtl/Vec.h`, `utils/*`
 - Legacy entry points: `Main.cc`, `glucose_Main.cc` (not built by root Makefile)
 
 If you add further patches, extend this file and mention them in `NOTICE`.
