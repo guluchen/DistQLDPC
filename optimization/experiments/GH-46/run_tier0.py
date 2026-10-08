@@ -52,7 +52,11 @@ def assert_status(text,unknown=False):
     status=[v.strip() for v in re.findall(r'^s\s+(.*?)\s*$',text,re.M)]
     comments=[v.strip() for v in re.findall(r'^c\s+status:\s*(.*?)\s*$',text,re.M)]
     require_science(status==(['UNKNOWN'] if unknown else []),('unexpected application status',status))
-    require_science(comments==(['TIMEOUT'] if unknown else []),('unexpected timeout status',comments))
+    allowed=[['UNKNOWN'],['TIMEOUT (child killed after -cpu-lim)']] if unknown else [[]]
+    require_science(comments in allowed,('unexpected timeout status',comments))
+    if unknown:
+        distances=re.findall(r'^c\s+d\s*:\s*(.*?)\s*$',text,re.M)
+        require_science(distances==['UNKNOWN'],('missing/invalid incomplete distance trailer',distances))
 
 
 def require_completed_application(result,oracle):
