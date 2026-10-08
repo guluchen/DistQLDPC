@@ -22,3 +22,10 @@ If controlled server resources become eligible, a future separately planned corr
 Next primary round already registers exactlythree methods in GH22 and selects one symmetric binary-conflict VSIDS activity change; GH20/GH21 independently select watch-tail/O2. Independent branches and gates remain.
 
 Raw: raw/windows-tier2-exploratory-01 retains all stdout/stderr/argv/affinity/timing/science/resource/environment/cleanup/executed-driver; raw-sha256.json covers both rounds and failures.
+
+Independent second-agent audit PASS: all60results/all120emittedbounds, runorder,
+limits/medians/envelopes/geomeans/resourcecounts, exactbinary/profile/parser/helper
+hashes, originalpackage and594rawGitblobs at152109a verified. Exact report and
+executed reviewer script retained in raw/independent-audit-152109a; its workspace
+path assumptions describe the historical execution, not a portable standalone
+runner. Manifest now includes those two additional witness payloads596total.
