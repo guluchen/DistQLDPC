@@ -5,7 +5,7 @@ import platform, re, shutil, statistics, subprocess, sys, time
 
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 CAND='79db804cf3d1fab8271a680ddb46a2b546808629'
-ASSIGNED_URL='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068139292'
 QDIST='7c4774fffc49856f48a22ae5f9063d00b2661aaa'
 HASHES={'baseline':'22e398cc7558c2a04d5f24bd6db3030ce552c752622027fc2657eff7c1bd1815',
         'candidate':'62d1ca4e813d34856b64844e08303d3f30a72005cec8c1c68cf436581bca14cc'}
