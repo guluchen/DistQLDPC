@@ -18,6 +18,7 @@ New code, not derived from MaxCDCL.
 | Area | Description |
 |------|-------------|
 | QLDPC encoding | MaxSAT formulation for stabilizer distance (Hx/Hz/Gx/Gz matrices) |
+| Verified input cap | Original pure-X/Gz and pure-Z/Gx rows validated against original stabilizer and logical predicates; smallest feasible Pauli weight passed only through existing initUB, with original fallback and no model/result reporting change |
 | Fork + pipe | Child runs solver; parent enforces wall-clock timeout (`-cpu-lim`) via `SIGKILL` |
 | Bounds sync | Parent reads `TRY` / `LB` / `UB` / `RESULT` lines from pipe |
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
