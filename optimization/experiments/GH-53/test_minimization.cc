@@ -45,7 +45,8 @@ public:
         // Original conflict clause is falsified by this legal implication trail.
         formula.push_back({~u, ~a, ~x});
         vec<Lit> learned; learned.push(~u); learned.push(~a); learned.push(~x);
-        for (int i=0;i<learned.size();++i) seen[var(learned[i])]=1;
+        // Actual UIP analysis/fixByLookahead need not mark the asserting slot.
+        for (int i=1;i<learned.size();++i) seen[var(learned[i])]=1;
         std::vector<int> assignment, levels, reasons, trailBefore;
         for(int v=0;v<nVars();++v) {
             assignment.push_back(toInt(assigns[v]));
