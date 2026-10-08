@@ -1,0 +1,37 @@
+{
+  "march": {
+    "original": "x86-64",
+    "native": "x86-64"
+  },
+  "mtune": {
+    "original": "generic",
+    "native": "rocketlake"
+  },
+  "isa_macros": {
+    "original": [
+      "#define __MMX_WITH_SSE__ 1",
+      "#define __MMX__ 1",
+      "#define __SSE2_MATH__ 1",
+      "#define __SSE2__ 1",
+      "#define __SSE_MATH__ 1",
+      "#define __SSE__ 1",
+      "#define __x86_64 1",
+      "#define __x86_64__ 1"
+    ],
+    "native": [
+      "#define __MMX_WITH_SSE__ 1",
+      "#define __MMX__ 1",
+      "#define __SSE2_MATH__ 1",
+      "#define __SSE2__ 1",
+      "#define __SSE_MATH__ 1",
+      "#define __SSE__ 1",
+      "#define __x86_64 1",
+      "#define __x86_64__ 1"
+    ]
+  },
+  "all_non_tuning_macros_identical": true,
+  "excluded_tuning_macros": "__tune_* and __GCC_{DESTRUCTIVE,CONSTRUCTIVE}_SIZE; full outputs retained",
+  "host_specific_tuning": true,
+  "source_only_concept": "mtune native",
+  "performance": "NOT_MEASURED"
+}
