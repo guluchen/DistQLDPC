@@ -1,0 +1,1603 @@
+{
+  "classification": "GH41_NATIVE_TIER0_INDEPENDENT_AUDIT",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "candidate": "66cf8be5a4881643f2063471325e33cecaa0caf1",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068419272",
+  "support_head": "4174b5936577268ee06ab9ab743af722037ca39c",
+  "raw_manifest_sha": "ecf1f127d1d6f130fa99d954220e10f70a8accec5b6d7d01de2b14ab1118deeb",
+  "archive_sha": "71f7058fbaa7a350835e88faac48cfb2581da10e65c6437008947eca596451d9",
+  "package_sha": "47f46ec547d8c7da29a963e5803a81ee8b91f6159f394f0122d5462582e27b0c",
+  "runtime_sha": "940fce2a7063e8f6c3fce44fe1e013d194712a7ed9b05873dc2a89ad61accd8a",
+  "absence_proof_sha": "5f3a37206d5df326fa00c8ba9748df0f1801cb6ff551be1762e21381e8e84ef2",
+  "counts": {
+    "science": 52,
+    "PMS": 162,
+    "helper": 21840
+  },
+  "science_complete": true,
+  "full_raw_hashes_match": true,
+  "source_archives_match": true,
+  "runtime_input_binary_hashes_match": true,
+  "owned_empty": true,
+  "actual_restore": true,
+  "outer_transport_valid": true,
+  "full_boundary_identities": true,
+  "source_assertion_helper_checked": true,
+  "audited_files": 1535,
+  "raw_manifest_excluded_package_pinned": [
+    "frozen-package/windows-provenance/SHA256.json"
+  ],
+  "app_results": {
+    "css1-no-card-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-no-card-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-sinz-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-sinz-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-mto-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-mto-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-both-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-both-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-both-force-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css1-card-both-force-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-no-card-baseline": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-no-card-candidate": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-sinz-baseline": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-sinz-candidate": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-mto-baseline": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-mto-candidate": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-both-baseline": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-both-candidate": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-both-force-baseline": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css4-card-both-force-candidate": {
+      "lb": 2,
+      "ub": 2,
+      "d": 2,
+      "objective": 2,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-no-card-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-no-card-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-sinz-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-sinz-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-mto-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-mto-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-both-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-both-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-both-force-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css5-card-both-force-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-no-card-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-no-card-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-sinz-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-sinz-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-mto-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-mto-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-both-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-both-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-both-force-baseline": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "css-fallback-card-both-force-candidate": {
+      "lb": 1,
+      "ub": 1,
+      "d": 1,
+      "objective": 1,
+      "returncode": 0,
+      "timeout": false
+    },
+    "production-1s-baseline-no-card": {
+      "lb": 4,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "production-1s-baseline-card-mto": {
+      "lb": 2,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "production-1s-candidate-no-card": {
+      "lb": 4,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "production-1s-candidate-card-mto": {
+      "lb": 2,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "baseline-pre-search-timeout-no-card": {
+      "lb": null,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "baseline-pre-search-timeout-card-mto": {
+      "lb": null,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "baseline-post-model-timeout-no-card": {
+      "lb": 2,
+      "ub": 2,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "baseline-post-model-timeout-card-mto": {
+      "lb": 2,
+      "ub": 2,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "candidate-pre-search-timeout-no-card": {
+      "lb": null,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "candidate-pre-search-timeout-card-mto": {
+      "lb": null,
+      "ub": null,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "candidate-post-model-timeout-no-card": {
+      "lb": 2,
+      "ub": 2,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    },
+    "candidate-post-model-timeout-card-mto": {
+      "lb": 2,
+      "ub": 2,
+      "d": null,
+      "objective": null,
+      "returncode": 1,
+      "timeout": true
+    }
+  },
+  "pms_results": {
+    "pms-zero-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-zero-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-zero-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-zero-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-conflict-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-conflict-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-conflict-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-conflict-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-triangle-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-triangle-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-triangle-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-triangle-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-cycle-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-cycle-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-cycle-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-cycle-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-root-cap-offset-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-root-cap-offset-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-root-cap-offset-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-root-cap-offset-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-root-cap-offset-baseline-loose": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-root-cap-offset-candidate-loose": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-root-cap-offset-plus-one-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-root-cap-offset-plus-one-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-root-cap-offset-plus-one-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-root-cap-offset-plus-one-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-empty-soft-offset-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-empty-soft-offset-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-empty-soft-offset-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-empty-soft-offset-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-tight-positive-residual-baseline-ordinary": {
+      "returncode": 20,
+      "statuses": [
+        "UNSATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-tight-positive-residual-candidate-ordinary": {
+      "returncode": 20,
+      "statuses": [
+        "UNSATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-tight-positive-residual-baseline-provided": {
+      "returncode": 20,
+      "statuses": [
+        "UNSATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-tight-positive-residual-candidate-provided": {
+      "returncode": 20,
+      "statuses": [
+        "UNSATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-00-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-00-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-00-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-00-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-01-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-01-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-01-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-01-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-02-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-02-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-02-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-02-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-03-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-03-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-03-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-03-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-04-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-04-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-04-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-04-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-05-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-05-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-05-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-05-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-06-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-06-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-06-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-06-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-07-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-07-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-07-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-07-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-08-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-08-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-08-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-08-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-09-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-09-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-09-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-09-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-10-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-10-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-10-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-10-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-11-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-11-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-11-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-11-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-12-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-12-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-12-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-12-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-13-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-13-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-13-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-13-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-14-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-14-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-14-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-14-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-15-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-15-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-15-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-15-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-16-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-16-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-16-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-16-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-17-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-17-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-17-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-17-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-18-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-18-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-18-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-18-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-19-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-19-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-19-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-19-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-20-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-20-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-20-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-20-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-21-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-21-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-21-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-21-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-22-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-22-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-22-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-22-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-23-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-23-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-23-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-23-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-24-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-24-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-24-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-24-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 1
+    },
+    "pms-seed-25-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-25-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-25-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-25-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 3
+    },
+    "pms-seed-26-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 5
+    },
+    "pms-seed-26-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 5
+    },
+    "pms-seed-26-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 5
+    },
+    "pms-seed-26-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 5
+    },
+    "pms-seed-27-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-27-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-27-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-27-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-28-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-28-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-28-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-28-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 0
+    },
+    "pms-seed-29-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-29-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-29-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-29-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-30-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-30-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-30-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-30-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-31-baseline-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-31-candidate-ordinary": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-31-baseline-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    },
+    "pms-seed-31-candidate-provided": {
+      "returncode": 10,
+      "statuses": [
+        "SATISFIABLE"
+      ],
+      "optimal": 2
+    }
+  },
+  "css_oracles": {
+    "css1": 1,
+    "css4": 2,
+    "css5": 1,
+    "css-fallback": 1
+  },
+  "tight": [
+    "baseline",
+    "candidate"
+  ],
+  "offset": [
+    "baseline-P1",
+    "baseline-P2",
+    "candidate-P1",
+    "candidate-P2"
+  ],
+  "exclusive": false,
+  "performance": "NOT_MEASURED",
+  "audit_method": "Original bytes + independent original objectives + authenticated committed support loops + independent post-exit process proof"
+}
