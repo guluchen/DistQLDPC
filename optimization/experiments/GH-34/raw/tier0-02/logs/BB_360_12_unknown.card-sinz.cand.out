@@ -1,0 +1,73 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz only
+c Hx: data/matrices/BB_360_12_unknown_Hx.txt
+c Hz: data/matrices/BB_360_12_unknown_Hz.txt
+c Gx: data/matrices/BB_360_12_unknown_Gx.txt
+c Gz: data/matrices/BB_360_12_unknown_Gz.txt
+c Hx: 180 x 360, Hz: 180 x 360, Gx: 12 x 360, Gz: 12 x 360, logicals: 24
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.08 Mb                                      |
+c Reduced to 2505 vars, 11714 cls (c/v ratio==4.7, grow=0)
+c No iterative elimination performed. (vars=2505, c/v ratio=4.7)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 360, of which 360 unit, 0 nonUnit and 0 empty
+c total nb of literals: 42144
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 384
+c 1 conflict sets found with length 190
+c fixedCost 0, nbSatLits 0, totalFixedVars 384, objForSearch: 360
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 360), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 1076 (Sinz) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 12 conflicts with init 9988
+
+c UB=2 fails, cnfls=12, hcnfls=12, core 4, tier2 1, local 5, quasiC: 1 (fixed: 138)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 498), lk: 1, shorten: 0, pureSo 0, nbFlyRd 2, nbFixedLH 0
+
+c Cardinality: 2502 (Sinz) for UB 4
+c nbFailedLits 16, nbI 30, fixedVarsByFL 258, totalFixedVars 646, nbTested: 3346, counter 148690
+c ends of initiationization by VSIDS at 1686 conflicts with init 8326
+
+c UB=4 fails, cnfls=1686, hcnfls=1020, core 487, tier2 68, local 1200, quasiC: 75 (fixed: 4751)
+c prunedLB 3.44, dev 0.59, succRate 0.67, nbSucc 667, nbHardens 1 (fixed 5111), lk: 999, shorten: 0, pureSo 0, nbFlyRd 9, nbFixedLH 31
+
+c Cardinality: 5330 (Sinz) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 384, nbTested: 1001, counter 324924
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 392, nbTested: 1001, counter 507814
+c nbFailedLits 3, nbI 0, fixedVarsByFL 46, totalFixedVars 486, nbTested: 1030, counter 833071
+c ends of initiationization by VSIDS at 11690 conflicts with init -4
+
+c LRB phase 1: conflicts 4644, phase 20000000, starts 24, UP 2649264
+c UB=8 fails, cnfls=16334, hcnfls=2221, core 1916, tier2 314, local 6885, quasiC: 1731 (fixed: 154269)
+c prunedLB 5.38, dev 1.21, succRate 0.75, nbSucc 13448, nbHardens 1 (fixed 154629), lk: 17877, shorten: 0, pureSo 0, nbFlyRd 39, nbFixedLH 274
+
+c Cardinality: 10890 (Sinz) for UB 16
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 384, nbTested: 1001, counter 1285483
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 384, nbTested: 1001, counter 1394437
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 384, nbTested: 1001, counter 1560314
+c ends of initiationization by VSIDS at 26341 conflicts with init -7
+
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 384, nbTested: 1001, counter 1855909
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 384, nbTested: 1001, counter 2334537
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 384, nbTested: 1001, counter 3560391
+c LRB phase 2: conflicts 39189, phase 20000000, starts 126, UP 20805310
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz only
+c Hx: data/matrices/BB_360_12_unknown_Hx.txt
+c Hz: data/matrices/BB_360_12_unknown_Hz.txt
+c Gx: data/matrices/BB_360_12_unknown_Gx.txt
+c Gz: data/matrices/BB_360_12_unknown_Gz.txt
+c Hx: 180 x 360, Hz: 180 x 360, Gx: 12 x 360, Gz: 12 x 360, logicals: 24
+c d_lb: 8
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

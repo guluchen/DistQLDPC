@@ -1,0 +1,59 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/BB_864_4_40_Hx.txt
+c Hz: data/matrices/BB_864_4_40_Hz.txt
+c Gx: data/matrices/BB_864_4_40_Gx.txt
+c Gz: data/matrices/BB_864_4_40_Gz.txt
+c Hx: 432 x 864, Hz: 432 x 864, Gx: 4 x 864, Gz: 4 x 864, logicals: 8
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.14 Mb                                      |
+c Reduced to 5113 vars, 22018 cls (c/v ratio==4.3, grow=0)
+c No iterative elimination performed. (vars=5113, c/v ratio=4.3)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 864, of which 864 unit, 0 nonUnit and 0 empty
+c total nb of literals: 77824
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 872
+c 1 conflict sets found with length 427
+c fixedCost 0, nbSatLits 0, totalFixedVars 872, objForSearch: 864
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 864), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 2589 (Sinz+MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 4 conflicts with init 9996
+
+c UB=2 fails, cnfls=4, hcnfls=4, core 2, tier2 0, local 0, quasiC: 1 (fixed: 359)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 1223), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 5527 (Sinz+MTO) for UB 4
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 878, nbTested: 1001, counter 51900
+c ends of initiationization by VSIDS at 2872 conflicts with init 7132
+
+c UB=4 fails, cnfls=2872, hcnfls=496, core 8389, tier2 102, local 2259, quasiC: 149 (fixed: 35891)
+c prunedLB 3.07, dev 0.60, succRate 0.79, nbSucc 2084, nbHardens 288 (fixed 229427), lk: 2643, shorten: 0, pureSo 293, nbFlyRd 28, nbFixedLH 21
+
+c Cardinality: 7664 (Sinz+MTO) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 872, nbTested: 1001, counter 268241
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 880, nbTested: 1001, counter 626477
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 894, nbTested: 1001, counter 1281305
+c ends of initiationization by VSIDS at 12875 conflicts with init -3
+
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/BB_864_4_40_Hx.txt
+c Hz: data/matrices/BB_864_4_40_Hz.txt
+c Gx: data/matrices/BB_864_4_40_Gx.txt
+c Gz: data/matrices/BB_864_4_40_Gz.txt
+c Hx: 432 x 864, Hz: 432 x 864, Gx: 4 x 864, Gz: 4 x 864, logicals: 8
+c d_lb: 4
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

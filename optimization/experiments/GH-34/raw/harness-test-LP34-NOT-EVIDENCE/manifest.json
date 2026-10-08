@@ -1,0 +1,35 @@
+{
+ "argv": [
+  "optimization/experiments/GH-34/tier1_mac.py",
+  "--base",
+  "../base/bin/distqldpc",
+  "--cand",
+  "bin/distqldpc",
+  "--out",
+  "optimization/experiments/GH-34/raw/harness-test-LP34-NOT-EVIDENCE",
+  "--cases",
+  "LP_34_20_2",
+  "--replicate",
+  "2"
+ ],
+ "binaries": {
+  "baseline": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/base/bin/distqldpc",
+  "candidate": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/cand/bin/distqldpc"
+ },
+ "binary_sha256": {
+  "baseline": "ac43af52144330f72d838667c82851511bc208f1cb35966359126c2d6a69eb26",
+  "candidate": "0549c4ecc9cdf65fa807a1a7556667787bedcebdff674ed2296032168fc61b8b"
+ },
+ "input_sha256": {
+  "data/matrices/LP_34_20_2_Gx.txt": "bf09826369fac1adb4ba1820be97972e38bc8c708c631a9a2d38978dd5376de5",
+  "data/matrices/LP_34_20_2_Gz.txt": "84382e94ea4806f2b17f51e7e8563d0cb068a9b45f3d087f19cc60980c4e1811",
+  "data/matrices/LP_34_20_2_Hx.txt": "e671159c88d55b1610481e0629f915e99f18da3284bdab5a0034894edeb86525",
+  "data/matrices/LP_34_20_2_Hz.txt": "d2d10fe7712a4776fde77a1364a60c4e3a49a0c26486062405b167cacde835d0"
+ },
+ "host": "macOS-27.0.1-arm64-arm-64bit",
+ "machine": "arm64",
+ "cpu": "Apple M6",
+ "ncpu": 12,
+ "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+ "started": "2026-10-09T01:12:03+0800"
+}
