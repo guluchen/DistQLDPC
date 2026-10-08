@@ -3945,11 +3945,12 @@ CRef Solver::propagateForLK() {
     
     for (int k = 0; k<wbin.size(); k++) {
       Lit imp = wbin[k].blocker;
-      if (value(imp) == l_False) {
+      const lbool imp_value = value(imp);
+      if (imp_value == l_False) {
 	binConfl[0] = ~p; binConfl[1]=imp;
 	return CRef_Bin;
       }
-      if (value(imp) == l_Undef) {
+      if (imp_value == l_Undef) {
 	if (!uncheckedEnqueueForLK(imp, wbin[k].cref)) {
 	  falseVar = var(imp);
 	  return CRef_Undef;

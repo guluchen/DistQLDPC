@@ -88,3 +88,11 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+## Experimental GH50 downstream binary lookup reuse
+
+On the isolated experiment/gh50-binary-value branch only, propagateForLK reuses
+one iteration-local literal value for its existing false/undefined comparisons.
+All original enqueue/return/watch ordering and other propagation paths remain
+unchanged. This is a DistQLDPC downstream experimental patch, not upstream
+MaxCDCL behavior. No scientific or performance acceptance is established.
