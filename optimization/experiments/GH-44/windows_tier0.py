@@ -165,11 +165,11 @@ def exported(commit,destination):
         p=destination/rel;p.write_bytes(p.read_bytes().replace(b'\r\n',b'\n'))
     return {str(p.relative_to(destination)):sha(p) for p in destination.rglob('*') if p.is_file()}
 
-def scientific(rc,text,exact,timeout=False):
+def scientific(rc,text,exact,timeout=False,incomplete=False):
     # Reject malformed fields, every interim bound/objective/d, not only final values.
     values={}
     specs={'lb':(r'^c\s+d_lb:\s*(.*?)\s*$',{'-'}),'ub':(r'^c\s+d_ub:\s*(.*?)\s*$',{'-'}),
-           'd':(r'^c\s+d\s*:\s*(.*?)\s*$',{'UNKNOWN'}),'objective':(r'^o\s+(.*?)\s*$',set())}
+           'd':(r'^c\s+d\s*:\s*(.*?)\s*$',{'UNKNOWN'}),'objective':(r'^o(?:\s+(.*?))?\s*$',set())}
     for key,(pattern,sentinels) in specs.items():
         raw=re.findall(pattern,text,re.M);nums=[]
         for item in raw:
@@ -184,9 +184,12 @@ def scientific(rc,text,exact,timeout=False):
     comments=re.findall(r'^c status:\s*(.*?)\s*$',text,re.M)
     unknown=bool(re.search(r'^s UNKNOWN\s*$',text,re.M))
     timed=bool(re.search(r'^c status: TIMEOUT\b',text,re.M))
-    if timeout:
-        assert rc==1 and unknown and timed,'SCIENCE timeout status/return'
-        assert statuses==['UNKNOWN'] and len(comments)==1 and comments[0].startswith('TIMEOUT'),'SCIENCE changed timeout output semantics'
+    if timeout or incomplete:
+        assert rc==1 and unknown,'SCIENCE incomplete status/return'
+        assert statuses==['UNKNOWN'] and len(comments)==1,'SCIENCE changed incomplete output semantics'
+        assert comments[0]=='UNKNOWN' or comments[0].startswith('TIMEOUT'),'SCIENCE malformed incomplete status'
+        if timeout:assert timed,'SCIENCE requested timeout status missing'
+        assert re.findall(r'^c\s+d\s*:\s*(.*?)\s*$',text,re.M)==['UNKNOWN'],'SCIENCE incomplete distance output changed'
         assert values['d'] is None and values['objective'] is None,'SCIENCE timeout reported optimum'
         assert not re.search(r'^o\b',text,re.M),'SCIENCE timeout objective'
     else:
@@ -197,7 +200,11 @@ def scientific(rc,text,exact,timeout=False):
 
 def check_run(argv,label,cwd,limit=20,exact=None,timeout=False,allow_rc=False):
     result=managed_run(argv,cwd,out,label,limit,True)
-    if exact is not None:science.append(dict(label=label,result=scientific(result[0],result[1],exact,timeout)));save(out/'science.json',science)
+    if exact is not None:
+        assert not result[2],'SCIENCE scientific stderr regression '+label
+        incomplete=result[0]==1 and not timeout
+        science.append(dict(label=label,result=scientific(result[0],result[1],exact,timeout,incomplete)));save(out/'science.json',science)
+        if incomplete:raise RuntimeError('Legitimate incomplete solve blocks Tier0 completion: '+label)
     elif not allow_rc:
         if 'trace' in label:
             if result[0]==2 and result[2].startswith('FAIL:'):
