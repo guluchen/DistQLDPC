@@ -81,10 +81,55 @@ def extract(archive,root):
     return dict(members=records,expanded_bytes=total,postinstall_executed=False,
                 alias_policy='Contained regular-file aliases copied byte identically; unresolved/directory aliases stop')
 
+def verify_closure(runtime,overlay,manifest,closure,cache):
+    expected=json.loads(Path(manifest).read_text());original=dict(expected)
+    assert snapshot(runtime)==original,'Original runtime changed'
+    aliases=[];packages=json.loads(Path(closure).read_text(encoding='utf-8-sig'))['packages']
+    for name,row in packages.items():
+        if row['action']!='OVERLAY_ONLY':continue
+        archive=Path(cache)/Path(row['archive']).name
+        assert archive.stat().st_size==row['bytes'] and digest(archive,'sha512')==row['sha512'],name
+        total=0;count=0
+        with tarfile.open(archive,'r:*') as tf:
+            for m in tf:
+                count+=1;assert count<=150000,name
+                rel=destination(Path(overlay).resolve(),m.name).relative_to(Path(overlay).resolve()).as_posix()
+                if m.isdir():continue
+                if m.isfile():
+                    total+=m.size;assert m.size<=256*1024**2 and total<=2*1024**3,name
+                    with tf.extractfile(m) as src:data=src.read(m.size+1)
+                    assert len(data)==m.size,m.name
+                    h=hashlib.sha256(data).hexdigest()
+                    if rel in expected:assert expected[rel]==h,'Package collision '+rel
+                    expected[rel]=h
+                elif m.issym() or m.islnk():aliases.append((m,rel))
+                else:raise AssertionError('Unsupported member '+m.name)
+    while aliases:
+        remaining=[];progress=False
+        for m,rel in aliases:
+            raw=m.linkname;assert '\\' not in raw and ':' not in raw,raw
+            logical=PurePosixPath(raw.lstrip('/')) if raw.startswith('/') or m.islnk() else PurePosixPath(m.name).parent/PurePosixPath(raw)
+            normalized=[]
+            for part in logical.parts:
+                if part=='..':assert normalized,raw;normalized.pop()
+                elif part!='.':normalized.append(part)
+            target=destination(Path(overlay).resolve(),'/'.join(normalized)).relative_to(Path(overlay).resolve()).as_posix()
+            if target not in expected:remaining.append((m,rel));continue
+            if rel in expected:assert expected[rel]==expected[target],rel
+            expected[rel]=expected[target];progress=True
+        assert progress or not remaining,'Unresolved/directory alias'
+        aliases=remaining
+    actual=snapshot(overlay)
+    assert actual==expected,'Overlay missing/modified/unexpected regular files'
+    return dict(original_unchanged=True,original_files=len(original),overlay_files=len(expected),
+                original_subset_identical=True,all_added_files_pinned_to_previous_archives=True,
+                overlay_sha256=expected,downloads=False,reclone=False)
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['snapshot','clone','archive','verify'])
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['snapshot','clone','archive','verify','verify-closure'])
     p.add_argument('--runtime',type=Path);p.add_argument('--overlay',type=Path)
     p.add_argument('--manifest',type=Path);p.add_argument('--package',type=Path);p.add_argument('--cache',type=Path)
+    p.add_argument('--closure',type=Path)
     p.add_argument('--result',type=Path,required=True);a=p.parse_args()
     if a.action=='snapshot':write(a.result,snapshot(a.runtime))
     elif a.action=='clone':
@@ -110,6 +155,7 @@ def main():
         result=extract(archive,a.overlay)
         result.update(package=row,archive_sha512=digest(archive,'sha512'),download_bytes=count)
         write(a.result,result)
+    elif a.action=='verify-closure':write(a.result,verify_closure(a.runtime,a.overlay,a.manifest,a.closure,a.cache))
     elif a.action=='verify':
         expected=json.loads(a.manifest.read_text());actual=snapshot(a.runtime)
         assert actual==expected,'Original runtime changed'
