@@ -32,9 +32,12 @@ Small favorable medians but MTO noise envelope fails; occupied host also prevent
 promotion. INCONCLUSIVE, no merge. A later user-requested diagnostic Tier 2
 stopped twice on CPU capacity; one OFF baseline d=8, no candidate/MTO completion.
 No performance comparison or Tier 3. [Learning/evidence](experiments/E004/README.md).
-The subsequent Windows attempt also remains INCONCLUSIVE: compiler unavailable
+The initial Windows attempt was INCONCLUSIVE: compiler unavailable
 and automatic review rejected installer launch; no new solver samples.
 [Windows preparation/result](experiments/E004/TIER2-WINDOWS-RESULT.md).
+2026-10-08: [Windows setup completed](experiments/E004/TIER2-WINDOWS-COMPLETE-2026-10-08.md),
+Tier 0 PASS, 12 correct LP340 diagnostics; small positive medians but no controlled
+promotion. H-007 remains INCONCLUSIVE; no new hypothesis or Tier 3.
 
 **H-002 — exact XOR-prefix sharing (E002).** Originally an unselected alternative
 from the same old Brain as H-001, not the next queued task. Later executed as an

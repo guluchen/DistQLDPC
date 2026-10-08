@@ -10,6 +10,9 @@ Candidate source isolated in draft PR 12.
 Subsequent [Windows attempt](E004/TIER2-WINDOWS-RESULT.md): toolchain unavailable,
 installer launch rejected by automatic review; no builds or solver samples.
 Same H-007, INCONCLUSIVE; Windows driver prepared but integration unexecuted.
+2026-10-08 [follow-up](E004/TIER2-WINDOWS-COMPLETE-2026-10-08.md) completed setup,
+Tier 0 and 12 correct LP340 diagnostics; Windows fallback now usable. Small
+OFF/MTO median gains do not establish controlled promotion. E004 INCONCLUSIVE.
 
 Earlier: E001 is provisionally shelved / not adopted by explicit user decision;
 controlled performance remains INCONCLUSIVE. Its [LEARN record](E001/DISPOSITION-2026-10-07.md)

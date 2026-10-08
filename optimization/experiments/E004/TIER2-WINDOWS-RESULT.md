@@ -1,5 +1,9 @@
 # Windows continuation: INCONCLUSIVE (toolchain unavailable)
 
+> Historical 2026-10-07 failure. Superseded for environment readiness by the
+> [2026-10-08 successful setup and complete diagnostic](TIER2-WINDOWS-COMPLETE-2026-10-08.md).
+> Original failures retained; performance status remains INCONCLUSIVE.
+
 2026-10-07. User requested running the same LP_340_56_8 comparison on this
 Windows computer. [Preregistration](TIER2-WINDOWS-PROPOSAL.md) was written before
 installation/builds. H-007 remains opt-in GCC LTO only; no new hypothesis or

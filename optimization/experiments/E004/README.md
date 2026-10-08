@@ -1,5 +1,10 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest: [2026-10-08 Windows fallback ready](TIER2-WINDOWS-COMPLETE-2026-10-08.md).
+> Cygwin/GCC installed, Tier 0 PASS, all 12 LP340 diagnostic solves correct.
+> OFF/MTO median ratios 0.987788/0.993750; small gains, desktop/control limitations.
+> Still INCONCLUSIVE, no Tier 3 or merge. Earlier environment failures retained.
+
 > Later user-requested [Windows continuation](TIER2-WINDOWS-RESULT.md): installer
 > launch blocked by automatic review and compiler unavailable. No Windows builds
 > or new timings. Reproducible driver prepared; integration remains unexecuted.

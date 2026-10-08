@@ -30,11 +30,18 @@ medians or speedup; Tier 1 remains unchanged. No Tier 3, adoption or merge.
 Candidate isolated in
 experiment/h007-lto, draft PR 12; current history branch still preserves E001.
 
-Later user-requested Windows LP_340 continuation: [environment result](experiments/E004/TIER2-WINDOWS-RESULT.md)
+Historical 2026-10-07 Windows LP_340 continuation: [environment result](experiments/E004/TIER2-WINDOWS-RESULT.md)
 INCONCLUSIVE. This i9-11900K host lacks a Cygwin compiler; automatic execution
 review blocked installer launch. No local build/Tier 0/timing samples, no Tier 3.
 Verified immutable package and prepared an unexecuted Windows diagnostic driver;
 requires an available toolchain. No performance inference or new hypothesis.
+
+2026-10-08 supersedes that environment blocker: [Windows fallback ready](experiments/E004/TIER2-WINDOWS-COMPLETE-2026-10-08.md).
+Cygwin/GCC 14.4 installed; Windows Tier 0 PASS and 12 LP340 diagnostic solves
+correct, audit PASS. OFF/MTO median ratios 0.987788/0.993750, small desktop gains
+without controlled promotion. E004 still INCONCLUSIVE, no Tier 3/merge. User
+prefers this Windows host as fallback when server resources are unavailable;
+keep environment/results separate and do not treat this as a scheduled monitor.
 
 H-008 SLS/H-009 BDD remain unimplemented alternatives, not an execution queue.
 Next: controlled E004 Tier 1 if worth resolving; otherwise explicit shelving
