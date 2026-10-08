@@ -17,7 +17,7 @@ import time
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 TREE = HERE.parents[2]
-ASSIGNED_URL = 'HOST_SLOT_NOT_ASSIGNED'
+ASSIGNED_URL = 'https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6064900438'
 MODEL_COMMIT = '8438131b07901a9182e3212aed18b027b1773650'
 BASE = '24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 HELPER_SHA = 'ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2'
