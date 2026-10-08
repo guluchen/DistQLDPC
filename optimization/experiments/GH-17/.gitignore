@@ -1,0 +1,7 @@
+# Compiled validation executables are retained locally and identified by hash.
+raw/windows-assigned-*/*-probe.exe
+# Diagnostic snapshots are reconstructible from pinned baseline plus instrumenter.
+raw/windows-assigned-*/diagnostic-baseline/
+# The repository-wide build/ ignore must not discard archived build LOGS.
+!raw/windows-assigned-*/build/
+!raw/windows-assigned-*/build/*

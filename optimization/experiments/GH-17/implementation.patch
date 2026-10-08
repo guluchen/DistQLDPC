@@ -1,0 +1,109 @@
+diff --git a/MODIFICATIONS.md b/MODIFICATIONS.md
+index d50e434..9d16a26 100644
+--- a/MODIFICATIONS.md
++++ b/MODIFICATIONS.md
+@@ -65,6 +65,15 @@ in each file are unchanged.
+ - Call `emitBoundsUpdate()` after LB/UB updates
+ - Call `noteBestSolution()` when a better incumbent is found
+ 
++#### GH-17 experiment: core-merge scratch ownership
++
++- `setConflict` receives a caller-local `vec<int>` from `lookahead` or
++  `lookaheadForRestart`, clears its contents on each call, and retains capacity
++  between cores within that caller invocation.
++- Core merge order, locking, bounds, clause encodings and heuristics are unchanged.
++  This isolated experiment is untested/unadopted pending correctness and performance
++  gates; its record is `optimization/experiments/GH-17/`.
++
+ ---
+ 
+ ## Files not modified for DistQLDPC integration
+diff --git a/NOTICE b/NOTICE
+index d2d9fde..edd4a98 100644
+--- a/NOTICE
++++ b/NOTICE
+@@ -53,6 +53,8 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
+   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
+   - Best-solution tracking and printing on timeout / interrupt
+   - Configurable cardinality encoding modes (Sinz / MTO / off)
++  - GH-17 isolated experiment: caller-local core-merge scratch capacity reuse
++    (unadopted; no intended algorithm or scientific-semantic change)
+ 
+ Modified files (partial list): Solver.h, Solver.cc
+ 
+diff --git a/src/solver/Solver.cc b/src/solver/Solver.cc
+index 30508f1..2d37a18 100644
+--- a/src/solver/Solver.cc
++++ b/src/solver/Solver.cc
+@@ -3357,6 +3357,7 @@ int Solver::lookaheadForRestart() {
+   }
+   int nbIsets=0;
+   vec<Lit> out_learnt, ps;
++  vec<int> oldset;
+ #ifdef printTestedVar
+   printf("\n\nc **********lookahead: %llu, lb: %d, NbFalseLits: %d, thres: %d, UB: %llu\n", LOOKAHEAD, lb, falseLits.size(), thres, UB);
+ #endif
+@@ -3436,7 +3437,7 @@ int Solver::lookaheadForRestart() {
+       //	  else printf("q\n");
+       //	else printf("nnn old %d new %d\n", saved, lits.size());
+       lookbackResetTrail(confl, falseVar, nbIsets, out_learnt); nbConfl++;
+-      setConflict(nbIsets);
++      setConflict(nbIsets, oldset);
+       falseVar = var_Undef;
+       if (lb==nbConfl) {
+ 	printf("c softConfl at top...\n");
+@@ -4237,14 +4238,13 @@ Var Solver::pickAuxiVar() {
+   return v;
+ }
+ 
+-void Solver::setConflict(int& nbIsets) {
++void Solver::setConflict(int& nbIsets, vec<int>& oldset) {
+  for(int c = unLockedVars.size()-1; c >= 0; c--) {
+     Var x = unLockedVars[c];
+     incrementIsetLock(inConflicts[x]);
+  }
+  unLockedVars.shrink(unLockedVars.size());
+   
+-  vec<int> oldset;
+   int i, j, newlock = 1;
+   oldset.clear();
+   isets.init(nbIsets); isets[nbIsets].clear(); isets[nbIsets].push(nbIsets);
+@@ -4876,6 +4876,7 @@ bool Solver::lookahead() {
+   }
+   int nbIsets=0;
+   vec<Lit> out_learnt;
++  vec<int> oldset;
+ #ifdef printTestedVar
+   printf("\n\nc **********lookahead: %llu, lb: %d, NbFalseLits: %d, thres: %d, UB: %llu\n", LOOKAHEAD, lb, falseLits.size(), thres, UB);
+ #endif
+@@ -4928,7 +4929,7 @@ bool Solver::lookahead() {
+ 	  }
+ 	  continue;
+ 	}
+-	setConflict(nbIsets);
++	setConflict(nbIsets, oldset);
+       }
+ #ifdef printTestedVar
+       printf("£ %d\n", nbConfl);
+@@ -4946,7 +4947,7 @@ bool Solver::lookahead() {
+       // testedVars.push(falseVar);
+       if (lb > nbConfl) {
+ 	isetsLits[nbIsets].push(softLits[falseVar]);
+-	setConflict(nbIsets);
++	setConflict(nbIsets, oldset);
+       }
+       falseVar = var_Undef;
+     }
+diff --git a/src/solver/Solver.h b/src/solver/Solver.h
+index c588192..a04287e 100644
+--- a/src/solver/Solver.h
++++ b/src/solver/Solver.h
+@@ -608,7 +608,7 @@ public:
+     vec<int> inConflicts;
+     vec2< Var, vec<int> > isets;
+     vec2< int, vec<Lit> > isetsLits;
+-    void setConflict(int& nbIsets);
++    void setConflict(int& nbIsets, vec<int>& oldset);
+     void resetConflicts(int nbIsets);
+     void copyInitConflicts(int& nbIsets);
+     void simpleuncheckedEnqueueForLK(Lit p, CRef from=CRef_Undef);

@@ -608,7 +608,7 @@ public:
     vec<int> inConflicts;
     vec2< Var, vec<int> > isets;
     vec2< int, vec<Lit> > isetsLits;
-    void setConflict(int& nbIsets);
+    void setConflict(int& nbIsets, vec<int>& oldset);
     void resetConflicts(int nbIsets);
     void copyInitConflicts(int& nbIsets);
     void simpleuncheckedEnqueueForLK(Lit p, CRef from=CRef_Undef);

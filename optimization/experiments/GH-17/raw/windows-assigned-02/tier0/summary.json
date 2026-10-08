@@ -1,0 +1,25 @@
+{
+  "decision": "INCONCLUSIVE",
+  "Tier0": "LOCAL_PASS",
+  "performance": "NOT_MEASURED",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6062543626",
+  "hosted_cross_repo": "REQUIRED_PENDING",
+  "checks": [
+    {
+      "fixture": "css1",
+      "oracle_distance": 1,
+      "initial_CNF_identical": true
+    },
+    {
+      "fixture": "css4",
+      "oracle_distance": 2,
+      "initial_CNF_identical": true
+    },
+    {
+      "fixture": "css5",
+      "oracle_distance": 1,
+      "initial_CNF_identical": true
+    }
+  ],
+  "reason": "Core-state equivalence, CSS oracle, CNF, smoke and timeout checks"
+}

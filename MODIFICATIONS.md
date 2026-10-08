@@ -65,6 +65,15 @@ in each file are unchanged.
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
 
+#### GH-17 experiment: core-merge scratch ownership
+
+- `setConflict` receives a caller-local `vec<int>` from `lookahead` or
+  `lookaheadForRestart`, clears its contents on each call, and retains capacity
+  between cores within that caller invocation.
+- Core merge order, locking, bounds, clause encodings and heuristics are unchanged.
+  This isolated experiment is untested/unadopted pending correctness and performance
+  gates; its record is `optimization/experiments/GH-17/`.
+
 ---
 
 ## Files not modified for DistQLDPC integration

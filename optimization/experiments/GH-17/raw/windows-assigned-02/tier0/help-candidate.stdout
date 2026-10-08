@@ -1,0 +1,11 @@
+Usage: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH17-SCRATCH/bin/distqldpc [options] <code>
+  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)
+  Distance: min Pauli weight in S^perp \\ S (symplectic MaxSAT).
+  Options: -cpu-lim=N  -v|-debug  -q  -dump-wcnf=PATH  -dump-opb=PATH  -dump-only
+           -native-parity-opb  GF(2) parity as PB equalities (OPB dump only)
+  Solver: default MaxCDCL; -roundingsat[=BIN] uses external RoundingSat on WCNF
+  Cardinality: default Sinz+MTO (Sinz if n<=100); -no-card | -card-sinz | -card-mto
+               -card-both-force  always Sinz+MTO regardless of n
+  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d
+  -v / -debug: solver search log and matrix paths
+  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.
