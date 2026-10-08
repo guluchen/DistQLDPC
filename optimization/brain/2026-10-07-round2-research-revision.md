@@ -1,5 +1,11 @@
 # Brain Round 2 revision: recent literature and program optimization
 
+> 2026-10-08: user shelves H-007 and selects H-008 through fresh
+> [Round3](2026-10-08-round3.md). [E005](../experiments/E005/README.md) tests the
+> fixed configuration: Tier0 PASS, no verified caps on8 case/mode calls,
+> mechanism rejected; controlled performance INCONCLUSIVE. Original ranking
+> and pre-execution alternatives below are preserved as chronology, not a queue.
+
 > Subsequent execution: user accepted H-007; [E004](../experiments/E004/README.md)
 > reached INCONCLUSIVE after Tier 0 PASS and 48 correct diagnostic Tier 1 solves.
 > No Tier 2/3 or promotion. Text below is the original pre-execution proposal;

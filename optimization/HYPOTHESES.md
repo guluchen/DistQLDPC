@@ -1,5 +1,13 @@
 # Hypothesis registry (not an execution queue)
 
+Latest: [E005 / H-008 fixed SLS configuration REJECTED](experiments/E005/README.md).
+One original-CNF call, seed1/10000 flips; local/hosted Tier0 and independent audit
+PASS. Eight Tier1-case/mode calls yielded zero verified caps; mechanism rejected
+for this configuration. Strict Tier1 initial window refused, zero timing samples,
+formal performance INCONCLUSIVE. No Tier2/3 or merge; no universal SLS rejection.
+User [shelves H-007 LTO](experiments/E004/DISPOSITION-2026-10-08.md); unadopted,
+formal result still INCONCLUSIVE. Older latest-state entries below are chronology.
+
 H-007 latest [strict LP340 retry03](experiments/E004/WINDOWS-PRIORITY-RETRY-03-2026-10-08.md):
 one correct OFF pair68.305533s/67.624900s, second candidate resource-aborted
 on sibling idle94.405594%<95%. Partial audit/restoration PASS; no repeated
@@ -59,6 +67,13 @@ numeric filters REJECT. Preserve exact implementation and evaluation rules.
 
 ## Previously tested, unpromoted hypotheses
 
+**H-008 — one bounded SLS warm start (E005).** Existing revision #2 selected
+by fresh Brain/user next-proposal request. Seed1/10000-flip fixed backend rejected
+on zero verified-cap acquisition across all Tier1 case/mode calls. Tier0 PASS,
+engine unchanged, exact fallback and timeout/bounds preserved. Controlled timing
+INCONCLUSIVE because strict initial resources refused. DraftPR13 preserves the
+isolated candidate; not an established performance regression or all-SLS finding.
+
 **H-007 — LTO only (E004).** Revised Brain recommendation accepted by user;
 independent baseline, one build concept. Tier 0 PASS, 48 diagnostic solves correct.
 Small favorable medians but MTO noise envelope fails; occupied host also prevents
@@ -96,14 +111,15 @@ The latest user request emphasizes recent MaxSAT papers and ordinary program
 optimization. [Research revision](brain/2026-10-07-round2-research-revision.md)
 supersedes H-003/H-005/H-006 ranking, without declaring them ineffective.
 
-- **H-007: LTO only.** Selected and tested as E004; INCONCLUSIVE, unpromoted.
+- **H-007: LTO only.** Tested as E004; now user-shelved, INCONCLUSIVE, unpromoted.
   One build setting, no PGO/refactoring; no established controlled speedup.
-- **H-008: one bounded SLS warm start.** #2; CP 2025-inspired feasible cap only,
-  original-instance verification and exact BnB retained. Not bundled with H-003.
+- **H-008: one bounded SLS warm start.** #2 now tested independently as E005;
+  fixed configuration mechanism rejected, formal performance INCONCLUSIVE.
+  Original-instance verification and exact BnB retained; not bundled with H-003.
 - **H-009: singleton BDD objective-bound encoding.** #3; paper-informed alternative
   to MTO, same cardinality meaning/lifecycle, no AMO assumption or tree reuse.
 
-H-007 has E004 evidence; H-008/H-009 remain proposals, not an execution queue;
+H-007/E004 and H-008/E005 have evidence; H-009 remains a proposal, not a queue;
 Tier 0/1/2 gates unchanged and no Tier 3 authorized by this revision.
 
 ## Historical untested candidate hypotheses
@@ -124,6 +140,9 @@ literal-set change may retain stale constraints. Detailed scope, cost,
 risks and falsification for all three: [Round 2](brain/2026-10-07-round2.md).
 
 ## Rejected hypotheses
+
+E005's fixed SLS configuration is rejected on absent verified-cap mechanism,
+not a controlled numerical performance rejection. No universal SLS conclusion.
 
 No controlled scientific rejection established. H-001 and H-002 have rejected
 local numerical filters, as recorded above; do not relabel those measurements

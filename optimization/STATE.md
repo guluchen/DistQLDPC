@@ -1,10 +1,26 @@
 # Optimization state
 
-Latest user decision: [provisionally shelve E001 / LEARN](experiments/E001/DISPOSITION-2026-10-07.md).
+Latest user decision: [shelve LTO / E004](experiments/E004/DISPOSITION-2026-10-08.md)
+and try the next proposal. E001's earlier shelving remains preserved below.
 Latest [literature/program-optimization revision](brain/2026-10-07-round2-research-revision.md) supersedes the initial Round 2 recommendation and the earlier
 resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
+
+Latest experiment: [E005 / H-008 one bounded SLS warm start](experiments/E005/README.md),
+selected from the existing revision after fresh Round3. **REJECTED configuration /
+NOT ADOPTED**: seed1/10000-flip backend provided zero verified caps in8 complete
+calls on all Tier1 cases/both modes; original exact no-UB fallback observed.
+Local+required hosted Tier0 PASS, independent witness/cap/timeout/cleanup audit
+PASS. Strict Tier1 initial selector refused resources before workloads (0 timing
+samples); formal controlled performance remains INCONCLUSIVE, not a measured
+regression. No Tier2/3. Candidate749391c isolated in draftPR13 unmerged. No engine
+changes, LTO or combined method. Revisit SLS only as a separately preregistered
+configuration; next Brain may compare existing BDD/profiling directions.
+
+E004 is now SHELVED / NOT ADOPTED at explicit user direction. Its formal LTO
+performance result remains INCONCLUSIVE; older chronological immediate-state
+entries below are retained evidence, not active scheduling instructions.
 
 Latest user-authorized [strict LP340 retry03](experiments/E004/WINDOWS-PRIORITY-RETRY-03-2026-10-08.md):
 one serial OFF pair completed, baseline68.305533s/LTO67.624900s, both exact

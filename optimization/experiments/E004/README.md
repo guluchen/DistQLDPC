@@ -1,5 +1,9 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> [Latest user disposition](DISPOSITION-2026-10-08.md): LTO provisionally shelved /
+> NOT ADOPTED; formal INCONCLUSIVE preserved. Next selected experiment
+> [E005/H-008](../E005/README.md), independent baseline, no combined LTO.
+
 > [User-authorized strict LP340 retry03](WINDOWS-PRIORITY-RETRY-03-2026-10-08.md):
 > two correct OFF solves68.305533s/67.624900s, next candidate resource-aborted
 > at22.363s on sibling idle94.406%<95%. Partial audit and restoration PASS;
