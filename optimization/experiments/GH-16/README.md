@@ -7,11 +7,13 @@ Baseline24572d6d09cce9a4a5faa58300a89e0feba9da6a, isolated branch
 experiment/gh16-pgo. Exactly one performance concept: compiler profile feedback
 for the unchanged embedded downstream MaxCDCL engine.
 
-Current disposition **INCONCLUSIVE / NOT ADOPTED**. Tier0 PASS:
+Current disposition **INCONCLUSIVE / SHELVED / NOT ADOPTED**. Tier0 PASS:
 local and required hosted ordinary/cross-repo checks pass. [Tier1 diagnostic](TIER1_RESULT.md)
 completed48 correct solves; about2% positive median direction but OFF variability
 fails original numeric filter. No formal Tier1 PASS. One user-authorized bounded
-[exploratory Tier2](TIER2_PROPOSAL.md) is next; no Tier3.
+[exploratory Tier2](TIER2_RESULT.md) completed12 correct solves; OFF-0.535%,
+MTO+0.333% medians with overlapping ranges/large MTO variation. No corroborated
+general gain, no Tier3. Both raw rounds/failed preparations retained.
 Continuous user-authorized Brain->select->experiment->learn loop active;
 this round cannot be accepted from correctness or shared CI timing alone.
 
@@ -73,9 +75,11 @@ not performance data and are not used as Tier1 samples.
 ## Next and limitations
 
 Hosted checks and independent artifact/science/identity audit completed;
-see [Tier0 result](TIER0_RESULT.md). Serial Tier1 complete; use only an assigned
-host slot for the separately preregistered exploratory Tier2; no parallel
-agent timings or resource over-allocation. No proven speedup or accepted method.
+see [Tier0 result](TIER0_RESULT.md). Both scoped rounds complete; Windows released
+after verified cleanup to GH20. No parallel agent timings/resource over-allocation.
+No proven speedup or accepted method. [Server reproduction](SERVER_COMMANDS.md)
+pending eligible controlled resources; primary fresh three-proposal GH22 round
+continues independently, no PGO bundle.
 Training is fixed and excludes Tier1/2/3 inputs; LP136 training is also a smoke
 pilot, so its pilot timing is not holdout evidence. Cygwin preparation failures
 do not reject PGO as a method, and ordinary off CI does not certify PGO-use.
