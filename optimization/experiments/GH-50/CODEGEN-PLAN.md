@@ -31,3 +31,9 @@ calling opportunity useful; layoutalone norescue. No speedclaim from build or
 disassembler times. If still plausible, later independently reviewed full Tier0
 package and new namedslot, explicitly dealing with knownbaseline anomaly first.
 No automatic comparativeTier1/2/3.
+
+Source review support repairs before execution: correct all GH50 namespace paths;
+reject presence (including empty values) of compiler/include/make/preload/CYGWIN
+override variable names without logging their values. Copy BOTH actual compiled
+Solver.o files into owned raw, hash/protect them and include objects in the raw
+SHA catalog; do not retain only source or a disassembly excerpt.

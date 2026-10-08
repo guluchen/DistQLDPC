@@ -183,7 +183,12 @@ try:
     assert subprocess.check_output(["git","-C",str(candidate),"show",head+":Makefile"],timeout=20)==subprocess.check_output(["git","-C",str(candidate),"show",BASELINE+":Makefile"],timeout=20)
     for name in preimport_hashes:freeze(HERE/name)
     freeze(sys.executable)
-    assert not any(os.environ.get(key) for key in ["CXXFLAGS","LDFLAGS","CXX","MAKEFLAGS","CPATH","CPLUS_INCLUDE_PATH","LIBRARY_PATH","GCC_EXEC_PREFIX"]),"External build override"
+    blocked=['CC','CXX','CPP','CFLAGS','CXXFLAGS','CPPFLAGS','LDFLAGS','MAKEFLAGS','GNUMAKEFLAGS','MAKEFILES','MFLAGS','MAKEOVERRIDES',
+             'CPATH','C_INCLUDE_PATH','CPLUS_INCLUDE_PATH','OBJC_INCLUDE_PATH',
+             'GCC_EXEC_PREFIX','COMPILER_PATH','LIBRARY_PATH','GCC_COMPARE_DEBUG',
+             'GCC_COMPARE_DEBUG_SECOND','LD_PRELOAD','LD_LIBRARY_PATH','LD_AUDIT','CYGWIN']
+    present=[name for name in blocked if name in os.environ]
+    assert not present, "External build/runtime override names: "+repr(present)
     assert not (candidate/"build").exists(),"Candidate must be clean"
     os.environ["PATH"]=str(runtime/"bin")+os.pathsep+os.environ["PATH"]
     window=module.Window(True,0x8000)
@@ -211,6 +216,8 @@ try:
             freeze(path)
         checked([runtime/"bin/make.exe","-j1","build/Solver.o"],source,logs,label+"-original-O3-Solver-object",300)
         obj=source/"build/Solver.o";freeze(obj);objects[label]=obj
+        retained=out/(label+"-actual-Solver.o");shutil.copyfile(obj,retained)
+        assert sha(retained)==sha(obj),"Retained actual object differs";freeze(retained)
         checked([runtime/"bin/nm.exe","--defined-only",obj],source,logs,label+"-defined-symbols",30)
         result=checked([runtime/"bin/objdump.exe","-dr","--disassemble="+codegen_parser.SYMBOL,obj],source,logs,label+"-actual-ForLK-disassembly",30)
         disassemblies[label]=codegen_parser.parse(result[1])
@@ -246,6 +253,6 @@ finally:
     if not success:summary["status"]="INCONCLUSIVE"
     save(out/"protected-identities.json",protected_files);save(out/"summary.json",summary)
     save(out/"SHA256.json",{str(p.relative_to(out)):sha(p) for p in sorted(out.rglob("*"))
-         if p.is_file() and p.suffix not in [".exe",".o"] and p.name!="SHA256.json"})
+         if p.is_file() and p.suffix!=".exe" and p.name!="SHA256.json"})
     print(json.dumps(summary,indent=2),flush=True)
 if not summary["valid_run"]:sys.exit(1)
