@@ -69,13 +69,16 @@ def clean_owned(reason):
         result=subprocess.run(["taskkill","/PID",str(current.pid),"/T","/F"],
                               capture_output=True,text=True,timeout=10)
         records.append(dict(pid=current.pid,returncode=result.returncode,stdout=result.stdout,stderr=result.stderr))
+        save(out/("cleanup-actions-"+str(command_index)+".json"),records)
         current.wait(timeout=10)
     # This NEW unnamed Job contains only this runner and its children, not other
     # users' jobs. Bounded cleanup handles any already-orphaned owned descendants.
     remaining=[pid for pid in job_pids() if pid!=os.getpid()]
     for pid in remaining:
+        if pid not in job_pids():continue
         result=subprocess.run(["taskkill","/PID",str(pid),"/T","/F"],capture_output=True,text=True,timeout=10)
         records.append(dict(pid=pid,returncode=result.returncode,stdout=result.stdout,stderr=result.stderr))
+        save(out/("cleanup-actions-"+str(command_index)+".json"),records)
     deadline=time.monotonic()+5
     while time.monotonic()<deadline and [pid for pid in job_pids() if pid!=os.getpid()]:time.sleep(.1)
     still=[pid for pid in job_pids() if pid!=os.getpid()]
