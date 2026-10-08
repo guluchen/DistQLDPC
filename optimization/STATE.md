@@ -1,5 +1,27 @@
 # Optimization state
 
+2026-10-08 latest execution update supersedes all running/setup entries below.
+H010/GH16 PGO completed Tier1 and one preregistered user-exploratory Tier2:
+60 scientific results correct. Tier1 medians about2% faster, but its fixed
+filter remained INCONCLUSIVE. LP340 OFF median66.940680s ->66.582461s (-0.535%),
+MTO76.325509s ->76.579457s (+0.333%), overlapping ranges and retained contention.
+Decision INCONCLUSIVE / SHELVED / NOT ADOPTED; no Tier3 or merge. Evidence commit
+[90c35e5](https://github.com/guluchen/DistQLDPC/commit/90c35e5d7281dc8c42c7bc1fa9cb641f86660ead)
+retains596 raw payloads with exact Git-blob SHA256 verification; independent
+audit agrees. No universal PGO rejection or controlled performance claim.
+
+Independent fresh rounds remain on immutable baseline24572d6, separate PRs:
+[GH20 watch-tail](https://github.com/guluchen/DistQLDPC/pull/23) owns the Windows
+slot for guarded Tier0 and baseline-only mechanism diagnostics; production and
+GC-relocation fixtures pass, remaining checks in progress. Engineering failed
+preparations retained separately; no performance conclusion.
+[GH21 O2-only](https://github.com/guluchen/DistQLDPC/pull/24) hosted checks PASS,
+reviewed local Tier0 queued.
+[GH22 symmetric VSIDS](https://github.com/guluchen/DistQLDPC/pull/25) changes one
+activity index byte; hosted checks PASS, local Tier0 preparation queued.
+Shared CPU timing remains serial under hub15 assignments; no accepted optimization.
+Continue independent three proposals -> choose one -> experiment -> shared learning.
+
 2026-10-08 execution update supersedes the Round5 setup-only state below:
 [H010/GH-16 PGO PR19](https://github.com/guluchen/DistQLDPC/pull/19),
 production4674331, local+hosted Tier0 PASS with independent artifact/science/

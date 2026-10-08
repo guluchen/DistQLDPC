@@ -1,5 +1,17 @@
 # Hypothesis registry (not an execution queue)
 
+2026-10-08 latest: H010/GH16 PGO Tier0 PASS, Tier1 filter INCONCLUSIVE,
+user-exploratory LP340 Tier2 fails to corroborate (~-0.535% OFF/+0.333% MTO,
+overlapping ranges). INCONCLUSIVE / SHELVED / NOT ADOPTED, no Tier3 or merge;
+[full record90c35e5](https://github.com/guluchen/DistQLDPC/commit/90c35e5d7281dc8c42c7bc1fa9cb641f86660ead).
+GH17 scratch stays low-priority INCONCLUSIVE with9/328 predicted allocations
+saved, not a timing conclusion. Fresh selected single concepts: GH20-A identity
+watch-tail skip (local Tier0/diagnostic active), GH21-A O2-only (hosted PASS,
+local queued), GH22-A symmetric lookahead binary-conflict VSIDS bumps (one byte,
+hosted PASS, local preparation). GH22 explicitly re-ranks GH20's unselected B;
+no novelty claim. All independent from24572d6, own records/PRs, no bundling.
+Continuous loop ACTIVE until a feasible evidence-backed optimization is found.
+
 2026-10-08 execution update: primary selected H010 is now
 [GH-16/PR19](https://github.com/guluchen/DistQLDPC/pull/19), one PGO concept,
 source4674331; complete Tier0 PASS, Windows Tier1 diagnostic running under
