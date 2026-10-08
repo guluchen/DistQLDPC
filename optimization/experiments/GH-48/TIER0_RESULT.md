@@ -66,3 +66,5 @@ compatibility here establish correctness on these tested hosts; they do not
 prove faster execution, identical search trajectory, or compatibility elsewhere.
 Next: independently review a disabled fixed-binary standard 48-solve Tier 1,
 then acquire a fresh named serial Windows assignment before any timing.
+
+Subsequent finite experiment disposition: ONE separately preregistered exploratory LP340 Tier2 is now complete; all12 science correct, numeric/formal INCONCLUSIVE, practical SHELVE/NOT ADOPTED. See TIER2_RESULT.md and public aa2c21e; no further GH48 workload/Tier3. Historical gates and raw are unchanged.

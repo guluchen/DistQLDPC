@@ -64,3 +64,5 @@ exploratory LP_340 Tier2 could be considered under the user's standing one-tier
 exception: correct science, no material regression seen, and this near-zero small
 case filter does not directly deny larger-case ISA benefit. That would not mean
 Tier1 PASS and requires a fresh named host assignment; no Tier2/3 has run here.
+
+Subsequent finite experiment disposition: ONE separately preregistered exploratory LP340 Tier2 is now complete; all12 science correct, numeric/formal INCONCLUSIVE, practical SHELVE/NOT ADOPTED. See TIER2_RESULT.md and public aa2c21e; no further GH48 workload/Tier3. Historical gates and raw are unchanged.
