@@ -7,8 +7,11 @@ Baseline24572d6d09cce9a4a5faa58300a89e0feba9da6a, isolated branch
 experiment/gh16-pgo. Exactly one performance concept: compiler profile feedback
 for the unchanged embedded downstream MaxCDCL engine.
 
-Current disposition **UNTESTED performance / NOT ADOPTED**. Local Tier0 PASS;
-required hosted ordinary/cross-repo checks pending. No Tier1/2/3 yet.
+Current disposition **INCONCLUSIVE / NOT ADOPTED**. Tier0 PASS:
+local and required hosted ordinary/cross-repo checks pass. [Tier1 diagnostic](TIER1_RESULT.md)
+completed48 correct solves; about2% positive median direction but OFF variability
+fails original numeric filter. No formal Tier1 PASS. One user-authorized bounded
+[exploratory Tier2](TIER2_PROPOSAL.md) is next; no Tier3.
 Continuous user-authorized Brain->select->experiment->learn loop active;
 this round cannot be accepted from correctness or shared CI timing alone.
 
@@ -69,8 +72,9 @@ not performance data and are not used as Tier1 samples.
 
 ## Next and limitations
 
-Required hosted checks and independent artifact/science/identity audit precede
-performance. Request one host slot for the prerecorded48-solve Tier1; no parallel
+Hosted checks and independent artifact/science/identity audit completed;
+see [Tier0 result](TIER0_RESULT.md). Serial Tier1 complete; use only an assigned
+host slot for the separately preregistered exploratory Tier2; no parallel
 agent timings or resource over-allocation. No proven speedup or accepted method.
 Training is fixed and excludes Tier1/2/3 inputs; LP136 training is also a smoke
 pilot, so its pilot timing is not holdout evidence. Cygwin preparation failures

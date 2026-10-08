@@ -1,0 +1,192 @@
+{
+  "decision": "INCONCLUSIVE",
+  "tier0": "PASS",
+  "tier1": "48 scientifically correct solves",
+  "tier2": "NOT_RUN",
+  "tier3": "NOT_RUN",
+  "reason": "Windows diagnostic: no exclusive reservation; never research-grade evidence",
+  "numeric_filter": "inconclusive",
+  "numeric_reason": {
+    "no-card": {
+      "median_geomean": 0.9799386485452973,
+      "range_envelope_geomean": 1.0208159470650273,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 0.979528635185214,
+      "range_envelope_geomean": 0.9986563437927354,
+      "no_worse_medians": true
+    }
+  },
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.766696900012903,
+          3.0534411999979056,
+          2.891961800021818
+        ],
+        "candidate": [
+          2.896147000021301,
+          2.7866651999938767,
+          2.863335100002587
+        ]
+      },
+      "baseline_median": 2.891961800021818,
+      "candidate_median": 2.863335100002587,
+      "ratio": 0.9901012869468002,
+      "range_envelope": 1.0467886814807197,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.444926399999531,
+          3.407071800000267,
+          3.73014709999552
+        ],
+        "candidate": [
+          3.4759729000215884,
+          3.3663482000119984,
+          3.38582550000865
+        ]
+      },
+      "baseline_median": 3.444926399999531,
+      "candidate_median": 3.38582550000865,
+      "ratio": 0.9828440746975352,
+      "range_envelope": 1.0202229668366003,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.2429041999857873,
+          1.1885824000055436,
+          1.287125400005607
+        ],
+        "candidate": [
+          1.1785891000181437,
+          1.1667591999867,
+          1.188992400013376
+        ]
+      },
+      "baseline_median": 1.2429041999857873,
+      "candidate_median": 1.1785891000181437,
+      "ratio": 0.9482541776201423,
+      "range_envelope": 1.000344948745523,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.6178863000241108,
+          1.4770805000152905,
+          1.482880199997453
+        ],
+        "candidate": [
+          1.4471506999980193,
+          1.4667343000182882,
+          1.412237400014419
+        ]
+      },
+      "baseline_median": 1.482880199997453,
+      "candidate_median": 1.4471506999980193,
+      "ratio": 0.9759053361158271,
+      "range_envelope": 0.992995507017461,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.3105612999934237,
+          3.3531659999862313,
+          3.32228490000125
+        ],
+        "candidate": [
+          3.4418066999933217,
+          3.323956099979114,
+          3.2240926999947987
+        ]
+      },
+      "baseline_median": 3.32228490000125,
+      "candidate_median": 3.323956099979114,
+      "ratio": 1.0005030272924105,
+      "range_envelope": 1.0396444554584017,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          4.451057199999923,
+          4.2120448000205215,
+          4.245703699998558
+        ],
+        "candidate": [
+          4.167117300006794,
+          4.158562099997653,
+          4.145664300012868
+        ]
+      },
+      "baseline_median": 4.245703699998558,
+      "candidate_median": 4.158562099997653,
+      "ratio": 0.9794753458652957,
+      "range_envelope": 0.9893335654897334,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.2477022999955807,
+          2.2598216999904253,
+          2.2773730999906547
+        ],
+        "candidate": [
+          2.2184361000254285,
+          2.2152314000122715,
+          2.2419965000008233
+        ]
+      },
+      "baseline_median": 2.2598216999904253,
+      "candidate_median": 2.2184361000254285,
+      "ratio": 0.9816863427919238,
+      "range_envelope": 0.9974614965715127,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.7444827999861445,
+          2.660091099998681,
+          2.688519500021357
+        ],
+        "candidate": [
+          2.634486100025242,
+          2.639828099985607,
+          2.613601400022162
+        ]
+      },
+      "baseline_median": 2.688519500021357,
+      "candidate_median": 2.634486100025242,
+      "ratio": 0.9799021729261456,
+      "range_envelope": 0.9923825917040646,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs"
+}
