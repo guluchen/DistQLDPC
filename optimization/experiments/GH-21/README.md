@@ -1,6 +1,6 @@
 # GH21 O2-only experiment
 
-Current status: **Tier0 PASS; Tier1 INCONCLUSIVE / NOT ADOPTED**, all48 scientific results correct, OFF/MTO median geometric improvements approximately0.788%/0.679% with overlapping ranges. See [Tier1 result](TIER1-RESULT.md) and exact raw/audit evidence. Windows released6064213166; no Tier2/3 executed. A separate preregistered one-tier exploratory followup needs a fresh assignment; this is not a Tier1 promotion.
+Current status: **Tier0 PASS; performance INCONCLUSIVE / NOT ADOPTED**, all48 Tier1+12 exploratory Tier2 scientific results correct. Tier1 OFF/MTO median improvements approximately0.788%/0.679%; LP340 OFF effectively neutral, MTO approximately1.426% faster, both repeated ranges overlap. See [Tier1 result](TIER1-RESULT.md), [exploratory Tier2 result](TIER2-EXPLORATORY-RESULT.md) and exact raw/audit evidence. Windows released6064674507; no Tier3 or further suite execution. Tier1 was not promoted; low-priority controlled followup retained.
 
 Selected proposal and paper-derived unselected alternative: [PROPOSAL](PROPOSAL.md), [BibTeX](references.bib). Issue: https://github.com/guluchen/DistQLDPC/issues/21 . Owner independent-brain-20261008-round2, exclusive branch experiment/gh21-o2; baseline24572d6d09cce9a4a5faa58300a89e0feba9da6a. Preregistration commit5f6358d preceded implementation.
 
@@ -27,7 +27,7 @@ The Windows wrapper intentionally refuses to run until ASSIGNED_URL is replaced 
 python optimization/experiments/GH-21/windows_assigned_runner.py --candidate-sha <actual-HEAD> --run-assignment <frozen-hub-comment-URL> --out optimization/experiments/GH-21/raw/windows-assigned-01
 ```
 
-Hosted ordinary CI/QDistSAT and assigned local Tier0 PASS for unchanged productione1aa917, actual executed supportc64b036. See [HOSTED-RESULT](HOSTED-RESULT.md), [TIER0-RESULT](TIER0-RESULT.md), [preserved attempts](ATTEMPTS.md). All expected CSS/PMS results, WCNFs, smoke, bounds and actual timeout semantics verified; independent raw audit PASS. Tier1 executed supportfa7531a with exact same frozen binaries; see current result above. No Tier2/3 or adoption.
+Hosted ordinary CI/QDistSAT and assigned local Tier0 PASS for unchanged productione1aa917, actual executed supportc64b036. See [HOSTED-RESULT](HOSTED-RESULT.md), [TIER0-RESULT](TIER0-RESULT.md), [preserved attempts](ATTEMPTS.md). All expected CSS/PMS results, WCNFs, smoke, bounds and actual timeout semantics verified; independent raw audit PASS. Tier1 executed supportfa7531a and exploratory Tier2 supportf225760 with exact same frozen binaries; see current results above. No Tier3 or adoption.
 
 Read-only review fixes before any local execution: CSS/smoke/timeout validate EVERY emitted bound/objective/distance against the oracle; external watchdog raises INCONCLUSIVE unless a scientific failure is established. The assigned supervisor marks valid_run=false and exits nonzero on any failure, including unconfirmed owned cleanup or any false Job/affinity/priority/sleep restoration flag. Restoration is attempted even after cleanup fails. Normal completion/restoration and actual solver timeout paths have assigned execution evidence; no claim that every external abort path was exercised.
 

@@ -1,0 +1,49 @@
+{
+  "audit": "PASS",
+  "solves": 12,
+  "emitted_bounds": 24,
+  "raw_manifest_files": 55,
+  "modes": {
+    "no-card": {
+      "median_geomean": 1.0001076249055436,
+      "range_envelope_geomean": 1.009474774787742,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 0.9857402734707671,
+      "range_envelope_geomean": 1.0094354375347152,
+      "no_worse_medians": true
+    }
+  },
+  "medians": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "baseline_median": 59.31712530000368,
+      "candidate_median": 59.32350930001121,
+      "ratio": 1.0001076249055436,
+      "envelope": 1.009474774787742,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "baseline_median": 66.33766769999056,
+      "candidate_median": 65.39171070000157,
+      "ratio": 0.9857402734707671,
+      "envelope": 1.0094354375347152,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "resource_checks": 366,
+  "contention_alerts": 4,
+  "active_contention_alerts": 4,
+  "min_global_idle": 70.0187969924812,
+  "min_sibling_idle": 78.94736842105263,
+  "identity": "PASS",
+  "cleanup": "PASS",
+  "decision": "INCONCLUSIVE",
+  "tier1": "INCONCLUSIVE",
+  "exploratory_exception": true,
+  "tier3": "NOT_RUN"
+}

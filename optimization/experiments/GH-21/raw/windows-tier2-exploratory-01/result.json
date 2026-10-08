@@ -1,0 +1,69 @@
+{
+  "decision": "INCONCLUSIVE",
+  "tier0": "PASS",
+  "tier1": "INCONCLUSIVE",
+  "tier2": "12 scientifically correct solves",
+  "tier3": "NOT_RUN",
+  "exploratory_exception": true,
+  "tier1_promoted": false,
+  "reason": "User-authorized one-tier exploratory exception; Tier1 INCONCLUSIVE, Windows diagnostic only",
+  "numeric_filter": "inconclusive",
+  "numeric_reason": {
+    "no-card": {
+      "median_geomean": 1.0001076249055436,
+      "range_envelope_geomean": 1.009474774787742,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 0.9857402734707671,
+      "range_envelope_geomean": 1.0094354375347152,
+      "no_worse_medians": true
+    }
+  },
+  "medians": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          59.31712530000368,
+          59.10970050000469,
+          59.49916939999093
+        ],
+        "candidate": [
+          59.669751600013115,
+          59.32350930001121,
+          58.647783399996115
+        ]
+      },
+      "baseline_median": 59.31712530000368,
+      "candidate_median": 59.32350930001121,
+      "ratio": 1.0001076249055436,
+      "range_envelope": 1.009474774787742,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          65.67774919999647,
+          66.33766769999056,
+          66.78525720001198
+        ],
+        "candidate": [
+          65.39171070000157,
+          65.2559344000183,
+          66.29744749999372
+        ]
+      },
+      "baseline_median": 66.33766769999056,
+      "candidate_median": 65.39171070000157,
+      "ratio": 0.9857402734707671,
+      "range_envelope": 1.0094354375347152,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "valid_run": true
+}
