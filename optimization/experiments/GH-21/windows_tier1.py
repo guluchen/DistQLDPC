@@ -22,7 +22,8 @@ def owned_pids(window):
     info=JobPids()
     if not k.QueryInformationJobObject(window.job,3,C.byref(info),C.sizeof(info),None):
         raise C.WinError(C.get_last_error())
-    assert info.count<=1024
+    if info.count>1024:
+        raise RuntimeError('Owned-job PID inventory exceeds bounded buffer')
     return [int(p) for p in info.ids[:info.count] if p!=os.getpid()]
 
 def scientific_updates(text,expected):
@@ -114,8 +115,8 @@ def main():
               'platform':platform.uname()._asdict(),'python':sys.version,'invocation':sys.argv,
               'affinity':window.selection,'exclusive_reservation':False,
               'tier':1,'exploratory_exception':False,
-              'compiler':subprocess.check_output([str(runtime/'g++.exe'),'--version'],text=True),
-              'power_scheme':subprocess.check_output(['powercfg','/GETACTIVESCHEME']).decode(errors='replace')})
+              'compiler':subprocess.check_output([str(runtime/'g++.exe'),'--version'],text=True,timeout=10),
+              'power_scheme':subprocess.check_output(['powercfg','/GETACTIVESCHEME'],timeout=10).decode(errors='replace')})
         for case in cases:
             expected=int(case.rsplit('_',1)[1])
             for mode in gates.MODES:
