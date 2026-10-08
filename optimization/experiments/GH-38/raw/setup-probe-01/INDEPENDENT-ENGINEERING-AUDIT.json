@@ -1,0 +1,1790 @@
+{
+  "support": "05bf25500de9a8fcb1dbbb7f63efcdcb0fdbc2bd",
+  "science": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "session": 58495,
+  "original_files": 10216,
+  "commands": 27,
+  "all_commands_rc0": true,
+  "resources": {
+    "checks": 85,
+    "eligible": true,
+    "min_global_idle_percent": 81.20192307692308,
+    "min_half_spare": 6.496153846153846,
+    "contention_alerts": 9
+  },
+  "pe": {
+    "gcc": {
+      "sha256": "862b273a68e16c3ba691ebb3c5c4a2beaee042467fd36b4620736b4a0184810f",
+      "machine": "0x8664",
+      "dll_characteristics": "0x8000",
+      "high_entropy_va": false,
+      "dynamic_base": false,
+      "nx_compat": false,
+      "default_manifest_present": true,
+      "manifest_sha256": "eba2c9713517c971783fd9ea9282ff53e0e1a13d9ae462bc0b00106049765344"
+    },
+    "clang": {
+      "sha256": "9487b81495b273e42a2201b93c5d999b264fbd3e67d106ef71794f74b87ebd69",
+      "machine": "0x8664",
+      "dll_characteristics": "0x8000",
+      "high_entropy_va": false,
+      "dynamic_base": false,
+      "nx_compat": false,
+      "default_manifest_present": false,
+      "manifest_sha256": null
+    }
+  },
+  "traces": {
+    "gcc": [
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/../../../crt0.o",
+        "physical_relative": "lib/crt0.o",
+        "sha256": "256c7dcf8ce2933d0b6b89d5e06211616b966062384001a25541fd60dcd05490"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/crtbegin.o",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/crtbegin.o",
+        "sha256": "310445996ea8498e4b8c4a74444527ac1827de44c4dffaca6327da635c36e386"
+      },
+      {
+        "logical": "/cygdrive/c/Users/yfc/AppData/Local/Temp/ccTs3jvs.o",
+        "compiler_temporary_object": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/../../../libz.dll.a",
+        "physical_relative": "lib/libz.dll.a",
+        "sha256": "a12debd259f9e5a4f86daacd32d282230b591b787d1fd65216d19dd45364843d"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/libstdc++.dll.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libstdc++.dll.a",
+        "sha256": "cc2f903d1af41e434fd6f86819dc90297daefceb73ae20d1cc4efb8528b6a7b2"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "sha256": "52387088633274ee29888091be0839a59868a1ad90a675c5e7b95bfffda10d14"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "sha256": "9e901a923a003e28059482c26d9b38e7d799950abd65c61f12e22bf599ec36b8"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/../../../libintl.dll.a",
+        "physical_relative": "lib/libintl.dll.a",
+        "sha256": "1ebfcfcf69e86a95f60a3328ac8cf1a3fdf26e7a1d0417ab9e41ee07d5cb0ed2"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/../../../libiconv.dll.a",
+        "physical_relative": "lib/libiconv.dll.a",
+        "sha256": "a907bf9049a7b4204404b2a7ef0ce21d59e241901fb94c89550ada8d3926eda5"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/../../../libcygwin.a",
+        "physical_relative": "lib/libcygwin.a",
+        "sha256": "34cd3366ec53a22f4b42159fe7ed6bb44774806065a0aade61a4978c725d025d"
+      },
+      {
+        "logical": "/usr/lib/w32api/libadvapi32.a",
+        "physical_relative": "lib/w32api/libadvapi32.a",
+        "sha256": "e1cb77dda071232ab98c6f2494ededdffe8a656931d2d730224c44eb544ce6fe"
+      },
+      {
+        "logical": "/usr/lib/w32api/libshell32.a",
+        "physical_relative": "lib/w32api/libshell32.a",
+        "sha256": "28155efca6068fb6bcd98c3be4e05343c9f0b6c5b2b1bec87b07332f55ec73ce"
+      },
+      {
+        "logical": "/usr/lib/w32api/libuser32.a",
+        "physical_relative": "lib/w32api/libuser32.a",
+        "sha256": "c82e93b16b72527c484eb56ac3eb6edc95fe3f48c2cf4fdefb75f4680ee60c2d"
+      },
+      {
+        "logical": "/usr/lib/w32api/libkernel32.a",
+        "physical_relative": "lib/w32api/libkernel32.a",
+        "sha256": "6b13a7d24a5d92973bf731dfad1c720333400a27a7b5c7a44eeb80196fb418eb"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "sha256": "52387088633274ee29888091be0839a59868a1ad90a675c5e7b95bfffda10d14"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "sha256": "9e901a923a003e28059482c26d9b38e7d799950abd65c61f12e22bf599ec36b8"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/../../../default-manifest.o",
+        "physical_relative": "lib/default-manifest.o",
+        "sha256": "fceecc40a48e6b7f42a808de131df0dcd27d48ffddc1162393e2c41e0bc914b0"
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/crtend.o",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/crtend.o",
+        "sha256": "432b7121865cdedff7dd0ab5f58b59d3051b9eebf46526c643b83484d37accba"
+      }
+    ],
+    "clang": [
+      {
+        "logical": "/usr/bin/../lib/crt0.o",
+        "physical_relative": "lib/crt0.o",
+        "sha256": "256c7dcf8ce2933d0b6b89d5e06211616b966062384001a25541fd60dcd05490"
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/crtbegin.o",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/crtbegin.o",
+        "sha256": "310445996ea8498e4b8c4a74444527ac1827de44c4dffaca6327da635c36e386"
+      },
+      {
+        "logical": "/cygdrive/c/Users/yfc/AppData/Local/Temp/linkage-8c5da1.o",
+        "compiler_temporary_object": true
+      },
+      {
+        "logical": "/usr/bin/../lib/libz.dll.a",
+        "physical_relative": "lib/libz.dll.a",
+        "sha256": "a12debd259f9e5a4f86daacd32d282230b591b787d1fd65216d19dd45364843d"
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/libstdc++.dll.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libstdc++.dll.a",
+        "sha256": "cc2f903d1af41e434fd6f86819dc90297daefceb73ae20d1cc4efb8528b6a7b2"
+      },
+      {
+        "logical": "/usr/bin/../lib/libm.a",
+        "physical_relative": "lib/libm.a",
+        "sha256": "eb26ad432bb530ee622e8482d10c50da2e538cd5e0376618f045b03fb1a65646"
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "sha256": "52387088633274ee29888091be0839a59868a1ad90a675c5e7b95bfffda10d14"
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "sha256": "9e901a923a003e28059482c26d9b38e7d799950abd65c61f12e22bf599ec36b8"
+      },
+      {
+        "logical": "/usr/bin/../lib/libc.a",
+        "physical_relative": "lib/libc.a",
+        "sha256": "b9dc965c86d951fb5a0510c2818e7412e82131752a8a8ceb9d33e7168cb686ba"
+      },
+      {
+        "logical": "/usr/bin/../lib/libcygwin.a",
+        "physical_relative": "lib/libcygwin.a",
+        "sha256": "34cd3366ec53a22f4b42159fe7ed6bb44774806065a0aade61a4978c725d025d"
+      },
+      {
+        "logical": "/usr/lib/w32api/libadvapi32.a",
+        "physical_relative": "lib/w32api/libadvapi32.a",
+        "sha256": "e1cb77dda071232ab98c6f2494ededdffe8a656931d2d730224c44eb544ce6fe"
+      },
+      {
+        "logical": "/usr/lib/w32api/libshell32.a",
+        "physical_relative": "lib/w32api/libshell32.a",
+        "sha256": "28155efca6068fb6bcd98c3be4e05343c9f0b6c5b2b1bec87b07332f55ec73ce"
+      },
+      {
+        "logical": "/usr/lib/w32api/libuser32.a",
+        "physical_relative": "lib/w32api/libuser32.a",
+        "sha256": "c82e93b16b72527c484eb56ac3eb6edc95fe3f48c2cf4fdefb75f4680ee60c2d"
+      },
+      {
+        "logical": "/usr/lib/w32api/libkernel32.a",
+        "physical_relative": "lib/w32api/libkernel32.a",
+        "sha256": "6b13a7d24a5d92973bf731dfad1c720333400a27a7b5c7a44eeb80196fb418eb"
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc_s.dll.a",
+        "sha256": "52387088633274ee29888091be0839a59868a1ad90a675c5e7b95bfffda10d14"
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/libgcc.a",
+        "sha256": "9e901a923a003e28059482c26d9b38e7d799950abd65c61f12e22bf599ec36b8"
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/crtend.o",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/crtend.o",
+        "sha256": "432b7121865cdedff7dd0ab5f58b59d3051b9eebf46526c643b83484d37accba"
+      }
+    ]
+  },
+  "headers": {
+    "gcc": [
+      {
+        "logical": "/usr/include/_ansi.h",
+        "physical_relative": "usr/include/_ansi.h",
+        "sha256": "5c6403b471ee897c9a6c12e00a58617247804eb3ee72d7baeb7c08616090dd1d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/_newlib_version.h",
+        "physical_relative": "usr/include/_newlib_version.h",
+        "sha256": "f4c14dfb59c9eb36181455ef077c4ec7a0571ed64f79947094ac1cd9a96d3fae",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/bits/byteswap.h",
+        "physical_relative": "usr/include/bits/byteswap.h",
+        "sha256": "bcb119f1bad6ae5b1576026776c9a1a8e4e818b7f2d091d6bc1d66488be65a34",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/bits/endian.h",
+        "physical_relative": "usr/include/bits/endian.h",
+        "sha256": "6e6f985174e4958c5d87168a5047af14167b72f6009dcf5e0aedd4e64097edf5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/bits/wordsize.h",
+        "physical_relative": "usr/include/bits/wordsize.h",
+        "sha256": "b1d49cf7ee000eb35281764d1037e3a253301c0358e8f77e4ff9d02abf3a052a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/cygwin/config.h",
+        "physical_relative": "usr/include/cygwin/config.h",
+        "sha256": "0a664264d08bf08ed787b3065d04b2cec14e1edf98cd6d64ef9b02d4128e69cc",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/cygwin/limits.h",
+        "physical_relative": "usr/include/cygwin/limits.h",
+        "sha256": "30cf75f3d1049f0b67c55f3f0f59b66bb81a15908e6a05ce2899e7a9778c4c06",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/endian.h",
+        "physical_relative": "usr/include/endian.h",
+        "sha256": "a5bc565357320624fe38e0cdf8e9c3d07f78de94e187a058703baa81777928db",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/features.h",
+        "physical_relative": "usr/include/features.h",
+        "sha256": "09dd4b2ba0311f45137d00fae21c8136b2a0b9dea27595b65909185d9b12b90a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/getopt.h",
+        "physical_relative": "usr/include/getopt.h",
+        "sha256": "62587114043beb0b2216930f2388dab65117f713a3704a8a7db7de3fe8a5225f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/limits.h",
+        "physical_relative": "usr/include/limits.h",
+        "sha256": "7a10071746570c5870f6646719f3686cca569b14c3415a5c0ffdad1223663329",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/_default_types.h",
+        "physical_relative": "usr/include/machine/_default_types.h",
+        "sha256": "6b5e1b951468972b88672c1f4366f23e09d5a1deb42d11cdaae312071a098ff7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/_endian.h",
+        "physical_relative": "usr/include/machine/_endian.h",
+        "sha256": "c68baac430a70b1c859d5bd96b145c388d9d0ede6b09a7feb71cb0e2567ac737",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/_types.h",
+        "physical_relative": "usr/include/machine/_types.h",
+        "sha256": "f04d6826bf42d2fd131f3d9c0904e06e687f8b32f9ba943423a41d9ebd927d9e",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/endian.h",
+        "physical_relative": "usr/include/machine/endian.h",
+        "sha256": "c9cb16333e537785dde867ed059915ef2d09661dbab7cc8b4519b646735eace4",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/ieeefp.h",
+        "physical_relative": "usr/include/machine/ieeefp.h",
+        "sha256": "ec1e7f9f068ef40e2ec360681a4bbc7e2f3f1e3bb9e141a254a1f1ccdc4af195",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/types.h",
+        "physical_relative": "usr/include/machine/types.h",
+        "sha256": "0d416fa0a2b86127e8bd9a12e01509fbe120761a2afa7f509e78a652cc6901fa",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/newlib.h",
+        "physical_relative": "usr/include/newlib.h",
+        "sha256": "3e9025642c8b6de704bbf2f16c244281c15df8238a8b41a685cc6b953c612c97",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/stdio.h",
+        "physical_relative": "usr/include/stdio.h",
+        "sha256": "c900e320b44518e1a214792b8caf7cffa683fda7bae2cb70714bdcd8087fe2f8",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_pthreadtypes.h",
+        "physical_relative": "usr/include/sys/_pthreadtypes.h",
+        "sha256": "1818e87b10e319aabbbc7d3bd7fa621908ae6c836270aea909208ca858ebfe49",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_sigset.h",
+        "physical_relative": "usr/include/sys/_sigset.h",
+        "sha256": "16e78626ff97ef85ec70ba9898082fccf70b741b0c6586c57e4421fc60b9a07d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_stdint.h",
+        "physical_relative": "usr/include/sys/_stdint.h",
+        "sha256": "49f8328943afa2a83ed4a35fcb808ed08b8c9fcb55373c786fb1b1d3a21952d7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_timespec.h",
+        "physical_relative": "usr/include/sys/_timespec.h",
+        "sha256": "cea8007561c4c9285063cc2f941a284d008e9f044fdfa346572e8bb39f236391",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_timeval.h",
+        "physical_relative": "usr/include/sys/_timeval.h",
+        "sha256": "976b01c11c44422953444b3f612ca6a7d41d70569e25a4c0674e9f8899101b22",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_types.h",
+        "physical_relative": "usr/include/sys/_types.h",
+        "sha256": "1abe39aca5104bafbde2e0219e7cdc3e96129b22ce1ef5cd58b66d8d147d3fb7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/cdefs.h",
+        "physical_relative": "usr/include/sys/cdefs.h",
+        "sha256": "9dcd9f554b32c40791b8f081f34c83767c61c0bc567b4a486066edda39812f3e",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/config.h",
+        "physical_relative": "usr/include/sys/config.h",
+        "sha256": "583e381e7184a477bcea569149f6154ccf4f0faa0829a9d8363954adb7aecf14",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/cpuset.h",
+        "physical_relative": "usr/include/sys/cpuset.h",
+        "sha256": "dce418c50502a4609907c0fd4c747461677d8c4cfaafd0f662a601ca55aaff04",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/features.h",
+        "physical_relative": "usr/include/sys/features.h",
+        "sha256": "a57eda10906bcf7af112185fd71f9099072ef379cd539168a8adbe6935f8ef83",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/lock.h",
+        "physical_relative": "usr/include/sys/lock.h",
+        "sha256": "72fffd27d1ea5dc91f542a21f89cff19193ae3c2252dd45f5e571441b1c317f1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/reent.h",
+        "physical_relative": "usr/include/sys/reent.h",
+        "sha256": "1631214a7fb5c26f8b6ce1c1d317af9863afd8109a811dc72f9ec1afd2c0789b",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/select.h",
+        "physical_relative": "usr/include/sys/select.h",
+        "sha256": "95b29d3fbd8a106e718038a2fabf6ad64fb9ce1b4a549334d5ee1ca274def4a7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/stdio.h",
+        "physical_relative": "usr/include/sys/stdio.h",
+        "sha256": "29ee2fc39fe3b87ae4976c5090d3ef77642ab030189d525362f497a0ab7357a1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/sysmacros.h",
+        "physical_relative": "usr/include/sys/sysmacros.h",
+        "sha256": "0c3dfd9579e372c6cd1ade88d269ed786c04d6be66513300bb3ef1be1e08116c",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/timespec.h",
+        "physical_relative": "usr/include/sys/timespec.h",
+        "sha256": "c2c2dfdcf9deacccb8919ff633f212afa455e4779a2d12c47b9afa0eff7d73c1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/types.h",
+        "physical_relative": "usr/include/sys/types.h",
+        "sha256": "659abc34a2db9f62109d06135699e72a8759cce553626aac5340bfd84988d8a7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/unistd.h",
+        "physical_relative": "usr/include/sys/unistd.h",
+        "sha256": "03d0d4d822bde32e703fe2b4e73d2d9f11bda097816582d96785426e94cc7e52",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/unistd.h",
+        "physical_relative": "usr/include/unistd.h",
+        "sha256": "19f31553182c4d649dd0d6301ffdbb5b4d7903b28373dd070a553798b41f524f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/zconf.h",
+        "physical_relative": "usr/include/zconf.h",
+        "sha256": "0718a11beb3295b345fb29a63b44b654b282d82c4cd0513f6225587f2b29b8bb",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/zlib.h",
+        "physical_relative": "usr/include/zlib.h",
+        "sha256": "818667d6ab6a37fe7469cb06a7f0cb2c2cb2f2c948a03e5accf1a4a74bf3020a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/backward/binders.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/backward/binders.h",
+        "sha256": "a5577c02530f5881e1331ef1bd73d69c957e2fbb5d72437530eed4ab2f81a2da",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bit",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bit",
+        "sha256": "6cc90e4f1095d4ef8f682c1bf81f55a967373b56c5304db3de10052fe8d080de",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/alloc_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/alloc_traits.h",
+        "sha256": "313d72a5ec0402527b4402ad3b4a8f6c3933319146a80c3e8fe0815a4a55082d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/allocator.h",
+        "sha256": "a7c201885fc96082e7291394ec41a6e838b9b8219dfd034651b1c1459e5d5a97",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/concept_check.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/concept_check.h",
+        "sha256": "1521f15b06dfe8f9644d809e9ae4ac5287bfde853cdb452958d64d97320f746f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/cpp_type_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/cpp_type_traits.h",
+        "sha256": "3affd0d64f9a3a50565f05fc743c8e075e4ea59462c3b3db1c089323452cad06",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/exception.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/exception.h",
+        "sha256": "58815b0f379a37954ea1cb7831c719d25eeb28c3c443746a6d9020c461871728",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/exception_defines.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/exception_defines.h",
+        "sha256": "7b63d08bfbb52ba3bc83d85a5df40f2e4af917e7cf35c8f5fc05865fd310a1f2",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/functexcept.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/functexcept.h",
+        "sha256": "67b574b32ae99b7e4736d976e45fcdc16d7cd1a078afa999a724395dd258f6c5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/functional_hash.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/functional_hash.h",
+        "sha256": "b11e54c10a345f85c7b2b8c3b9c7e45b9e1321cb91c4dae238b327fc70c6a708",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/hash_bytes.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/hash_bytes.h",
+        "sha256": "6a7fde7d1de6b516248501b82bb0187919ec2d52e9c4997e958198ad914ffd3b",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/invoke.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/invoke.h",
+        "sha256": "e3f32bb2dbad76ff71d8f4d3405264e287484b362dc84782154174530f54ce97",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/memory_resource.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/memory_resource.h",
+        "sha256": "47c01bb1d4f151aa832507a76604f8ca9bd25d1d60ce3a35f24235b76521d6fc",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/memoryfwd.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/memoryfwd.h",
+        "sha256": "e9d0651caa4149f1300905d1fd0ca3d9ebc5bbdc8b754780a8ee37ecd38e3c6f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/move.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/move.h",
+        "sha256": "c4da61c8ee45d76b73cc7d778c758086d68d170097d47ea13f468cf8003b2071",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/new_allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/new_allocator.h",
+        "sha256": "5b56b898afc31c9722c77752994576533f1b7149abb689544ab413be2c2f6b94",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/predefined_ops.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/predefined_ops.h",
+        "sha256": "25478342b5d993b09ebfcc1ee1e372e7391ea160e9222e704cd0b1835558d404",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/ptr_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/ptr_traits.h",
+        "sha256": "dee11a657a744b120c7ccbe0889e5caec6d6c1c87f8c419b30d87e371d9ee090",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/range_access.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/range_access.h",
+        "sha256": "fd927e4d7751761d34461b311aa022716a340514d26632f41082620e8f5e3419",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/refwrap.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/refwrap.h",
+        "sha256": "9d141384351b85744fe4a02e8d758a80303d75e1f4c8074827e0233d127690c6",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/requires_hosted.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/requires_hosted.h",
+        "sha256": "e3a41079a079eb22fe7e9b45271ab5e8e2a051b3fff4cd4e971ecdc2ab874fe2",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_algobase.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_algobase.h",
+        "sha256": "0ec2358cc592e8397f13fb77260f208ea922796d7bba7f202400e88ac511b332",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_bvector.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_bvector.h",
+        "sha256": "d17336c83d5b5f17fcfab5712e091446995ccfb65351bd0798baccdd41e00b8d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_construct.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_construct.h",
+        "sha256": "023a1f5eae0fd23509c8c83c4fa5f131d86fad529f9e13f32f757854ca1f549b",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_function.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_function.h",
+        "sha256": "0cb2604ec4eaf200cfaf919411b440413ef4573279743dfca4f67d96e9c477b5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator.h",
+        "sha256": "181110a295141e12e01e325ad77923b0d61b754b7c7dba9e047cb604d5c1874a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_funcs.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_funcs.h",
+        "sha256": "60157d6c530f0021175adeaa0c199716eb3c547f3b5480c325cfb1e5fc727cce",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_types.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_types.h",
+        "sha256": "54297bb3d97c8220ba59c52a7d9355b357cbafb32432bd813c342bcb08f1e0e3",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_pair.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_pair.h",
+        "sha256": "d326b30dc6325a8aa08f0e3b333d6de8ccbd013a339a80b8ae56120a5c721449",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_uninitialized.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_uninitialized.h",
+        "sha256": "2c9d0b5774b047d852631a9941e005f9b62054f7da4e85d1da2081ee41998486",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_vector.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_vector.h",
+        "sha256": "d6c36eac574085d3cba643ac2cd4590ad0345442cb3fc431f4448cea1e0a935e",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator.h",
+        "sha256": "5a12d04cf62dd45d311c9703ca3875b24bf139dff1f1b808f31580d6f0d5aba2",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator_args.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator_args.h",
+        "sha256": "4c6525b6f7ae452d7e8abc50736242fb2219e8d5ecb9e926b385a59de0bf4505",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/utility.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/utility.h",
+        "sha256": "bd9cf887825f7f0d157c2379665e81eaa0c4720c5ac542e89966a70663ddcf23",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/vector.tcc",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/vector.tcc",
+        "sha256": "7c78fdc0a40e2d9f118e07261e83e82e217accd4fc840e90cc4c82c56b50136f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/version.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/version.h",
+        "sha256": "78c5573b7fa0185d0caa8611809be971bf6f1b73ce0f3f92fa0b1c52dded0771",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/concepts",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/concepts",
+        "sha256": "fd0ee5549ff24bab8efb0d99e0d8f8babd9df4fc7da2be760e51b0f3b478d170",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/cstddef",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/cstddef",
+        "sha256": "5bab063802439c257d607c2e427b3740f6cf212c07ca2c257182535d138f01f9",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/cstdio",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/cstdio",
+        "sha256": "112c306d227dd47e4c5a1397c91290e5c7dc8c659d68da210941dc009db12d14",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/debug/assertions.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/debug/assertions.h",
+        "sha256": "97e5c8a9401b6736efe231bd8044fa3e28ecf3f1f735f80728f8dd4ad0ebe22f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/debug/debug.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/debug/debug.h",
+        "sha256": "254137a19dd5794b36fa5f4c28c5f26ed72c455b596c91ef2ebc864f7949e0c1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/alloc_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/alloc_traits.h",
+        "sha256": "5ddb91c43a84c9daf24c9dcacaa9067e316f01ec2cb0dac626bd032cbcc05ba1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/numeric_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/numeric_traits.h",
+        "sha256": "c7f980283e4faca756afa6bfaa9f696b4279e730f49cde0b1880a39ee0d0444a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/type_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/type_traits.h",
+        "sha256": "99ad765980f1d7165b0b49ce8f30e52e4defeb83eb0e9be4601a2e7672bd524c",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/initializer_list",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/initializer_list",
+        "sha256": "e99e57ada509647a0dad224d1406c45c3b1e3335d5fecdc501c356e5cb74b400",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/new",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/new",
+        "sha256": "322cbd903ef1ebe6521d318f450d9e2f302add0f28d4a8484aed616b2f58f985",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/pstl/pstl_config.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/pstl/pstl_config.h",
+        "sha256": "bb345f04a06da82729897739105e8b69a01fcfaf58c608db36f2fd310a36ccd5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/tuple",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/tuple",
+        "sha256": "b548eb4b8632bdfcc8c6201e3972b985363ecbd2769d80cbbff2614947da2ea4",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/type_traits",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/type_traits",
+        "sha256": "07f5248ab2ed56933a72f5f6d4aa3bce2aa28abcf24ec767d4a2650a50a3f5d5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/vector",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/vector",
+        "sha256": "03cf064a98aa54b3da572fbaae2df6c974d0d0eec3aecff08f1c650b3b4d362f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/c++allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/c++allocator.h",
+        "sha256": "61be0086b7d7f76026dc7d951e072cae202a722597f4995d2fa8f111b58dc7ed",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/c++config.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/c++config.h",
+        "sha256": "f7c58fc652bf41fcca1d1e2cc405fe434de70d069a855a57936bfaea41167681",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/cpu_defines.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/cpu_defines.h",
+        "sha256": "048c6257a6d3dbff2470a296b06afbf031e4eb7e3eec47014e011518e4facfd9",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/os_defines.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/os_defines.h",
+        "sha256": "2b82a2e0155400c723e4f16b8bca8c787bacff4f605ed2d62a99fc9574aa9c4f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/limits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/limits.h",
+        "sha256": "10f0973e3bf1586914ede6f74aa2713c3e9aefe73d10b95f469a82293822e578",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/stdarg.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/stdarg.h",
+        "sha256": "7ead4a2428691baf94bec3fd2db8984dbb1c5f597edf0f9bc3068fb43dad22f7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/stddef.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/stddef.h",
+        "sha256": "bac7ab773a3e3d9568d5cbe61632cfb96292ef5039df54a7ffaf15ba54af0ba0",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/gcc/x86_64-pc-cygwin/14/include/syslimits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/syslimits.h",
+        "sha256": "22dd0ab81baadd5a8d455b445855f341d419c7b0267beca235de00b7ec78e529",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      }
+    ],
+    "clang": [
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++//x86_64-pc-cygwin/bits/c++allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/c++allocator.h",
+        "sha256": "61be0086b7d7f76026dc7d951e072cae202a722597f4995d2fa8f111b58dc7ed",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++//x86_64-pc-cygwin/bits/c++config.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/c++config.h",
+        "sha256": "f7c58fc652bf41fcca1d1e2cc405fe434de70d069a855a57936bfaea41167681",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++//x86_64-pc-cygwin/bits/cpu_defines.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/cpu_defines.h",
+        "sha256": "048c6257a6d3dbff2470a296b06afbf031e4eb7e3eec47014e011518e4facfd9",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++//x86_64-pc-cygwin/bits/os_defines.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/x86_64-pc-cygwin/bits/os_defines.h",
+        "sha256": "2b82a2e0155400c723e4f16b8bca8c787bacff4f605ed2d62a99fc9574aa9c4f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/backward/binders.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/backward/binders.h",
+        "sha256": "a5577c02530f5881e1331ef1bd73d69c957e2fbb5d72437530eed4ab2f81a2da",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bit",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bit",
+        "sha256": "6cc90e4f1095d4ef8f682c1bf81f55a967373b56c5304db3de10052fe8d080de",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/alloc_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/alloc_traits.h",
+        "sha256": "313d72a5ec0402527b4402ad3b4a8f6c3933319146a80c3e8fe0815a4a55082d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/allocator.h",
+        "sha256": "a7c201885fc96082e7291394ec41a6e838b9b8219dfd034651b1c1459e5d5a97",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/concept_check.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/concept_check.h",
+        "sha256": "1521f15b06dfe8f9644d809e9ae4ac5287bfde853cdb452958d64d97320f746f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/cpp_type_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/cpp_type_traits.h",
+        "sha256": "3affd0d64f9a3a50565f05fc743c8e075e4ea59462c3b3db1c089323452cad06",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/exception.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/exception.h",
+        "sha256": "58815b0f379a37954ea1cb7831c719d25eeb28c3c443746a6d9020c461871728",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/exception_defines.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/exception_defines.h",
+        "sha256": "7b63d08bfbb52ba3bc83d85a5df40f2e4af917e7cf35c8f5fc05865fd310a1f2",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/functexcept.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/functexcept.h",
+        "sha256": "67b574b32ae99b7e4736d976e45fcdc16d7cd1a078afa999a724395dd258f6c5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/functional_hash.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/functional_hash.h",
+        "sha256": "b11e54c10a345f85c7b2b8c3b9c7e45b9e1321cb91c4dae238b327fc70c6a708",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/hash_bytes.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/hash_bytes.h",
+        "sha256": "6a7fde7d1de6b516248501b82bb0187919ec2d52e9c4997e958198ad914ffd3b",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/invoke.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/invoke.h",
+        "sha256": "e3f32bb2dbad76ff71d8f4d3405264e287484b362dc84782154174530f54ce97",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/memory_resource.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/memory_resource.h",
+        "sha256": "47c01bb1d4f151aa832507a76604f8ca9bd25d1d60ce3a35f24235b76521d6fc",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/memoryfwd.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/memoryfwd.h",
+        "sha256": "e9d0651caa4149f1300905d1fd0ca3d9ebc5bbdc8b754780a8ee37ecd38e3c6f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/move.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/move.h",
+        "sha256": "c4da61c8ee45d76b73cc7d778c758086d68d170097d47ea13f468cf8003b2071",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/new_allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/new_allocator.h",
+        "sha256": "5b56b898afc31c9722c77752994576533f1b7149abb689544ab413be2c2f6b94",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/predefined_ops.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/predefined_ops.h",
+        "sha256": "25478342b5d993b09ebfcc1ee1e372e7391ea160e9222e704cd0b1835558d404",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/ptr_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/ptr_traits.h",
+        "sha256": "dee11a657a744b120c7ccbe0889e5caec6d6c1c87f8c419b30d87e371d9ee090",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/range_access.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/range_access.h",
+        "sha256": "fd927e4d7751761d34461b311aa022716a340514d26632f41082620e8f5e3419",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/refwrap.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/refwrap.h",
+        "sha256": "9d141384351b85744fe4a02e8d758a80303d75e1f4c8074827e0233d127690c6",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/requires_hosted.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/requires_hosted.h",
+        "sha256": "e3a41079a079eb22fe7e9b45271ab5e8e2a051b3fff4cd4e971ecdc2ab874fe2",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_algobase.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_algobase.h",
+        "sha256": "0ec2358cc592e8397f13fb77260f208ea922796d7bba7f202400e88ac511b332",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_bvector.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_bvector.h",
+        "sha256": "d17336c83d5b5f17fcfab5712e091446995ccfb65351bd0798baccdd41e00b8d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_construct.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_construct.h",
+        "sha256": "023a1f5eae0fd23509c8c83c4fa5f131d86fad529f9e13f32f757854ca1f549b",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_function.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_function.h",
+        "sha256": "0cb2604ec4eaf200cfaf919411b440413ef4573279743dfca4f67d96e9c477b5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator.h",
+        "sha256": "181110a295141e12e01e325ad77923b0d61b754b7c7dba9e047cb604d5c1874a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_funcs.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_funcs.h",
+        "sha256": "60157d6c530f0021175adeaa0c199716eb3c547f3b5480c325cfb1e5fc727cce",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_types.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_iterator_base_types.h",
+        "sha256": "54297bb3d97c8220ba59c52a7d9355b357cbafb32432bd813c342bcb08f1e0e3",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_pair.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_pair.h",
+        "sha256": "d326b30dc6325a8aa08f0e3b333d6de8ccbd013a339a80b8ae56120a5c721449",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_uninitialized.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_uninitialized.h",
+        "sha256": "2c9d0b5774b047d852631a9941e005f9b62054f7da4e85d1da2081ee41998486",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_vector.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/stl_vector.h",
+        "sha256": "d6c36eac574085d3cba643ac2cd4590ad0345442cb3fc431f4448cea1e0a935e",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator.h",
+        "sha256": "5a12d04cf62dd45d311c9703ca3875b24bf139dff1f1b808f31580d6f0d5aba2",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator_args.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/uses_allocator_args.h",
+        "sha256": "4c6525b6f7ae452d7e8abc50736242fb2219e8d5ecb9e926b385a59de0bf4505",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/utility.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/utility.h",
+        "sha256": "bd9cf887825f7f0d157c2379665e81eaa0c4720c5ac542e89966a70663ddcf23",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/vector.tcc",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/vector.tcc",
+        "sha256": "7c78fdc0a40e2d9f118e07261e83e82e217accd4fc840e90cc4c82c56b50136f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/bits/version.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/bits/version.h",
+        "sha256": "78c5573b7fa0185d0caa8611809be971bf6f1b73ce0f3f92fa0b1c52dded0771",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/concepts",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/concepts",
+        "sha256": "fd0ee5549ff24bab8efb0d99e0d8f8babd9df4fc7da2be760e51b0f3b478d170",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/cstddef",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/cstddef",
+        "sha256": "5bab063802439c257d607c2e427b3740f6cf212c07ca2c257182535d138f01f9",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/cstdio",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/cstdio",
+        "sha256": "112c306d227dd47e4c5a1397c91290e5c7dc8c659d68da210941dc009db12d14",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/debug/assertions.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/debug/assertions.h",
+        "sha256": "97e5c8a9401b6736efe231bd8044fa3e28ecf3f1f735f80728f8dd4ad0ebe22f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/debug/debug.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/debug/debug.h",
+        "sha256": "254137a19dd5794b36fa5f4c28c5f26ed72c455b596c91ef2ebc864f7949e0c1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/ext/alloc_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/alloc_traits.h",
+        "sha256": "5ddb91c43a84c9daf24c9dcacaa9067e316f01ec2cb0dac626bd032cbcc05ba1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/ext/numeric_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/numeric_traits.h",
+        "sha256": "c7f980283e4faca756afa6bfaa9f696b4279e730f49cde0b1880a39ee0d0444a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/ext/type_traits.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/ext/type_traits.h",
+        "sha256": "99ad765980f1d7165b0b49ce8f30e52e4defeb83eb0e9be4601a2e7672bd524c",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/initializer_list",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/initializer_list",
+        "sha256": "e99e57ada509647a0dad224d1406c45c3b1e3335d5fecdc501c356e5cb74b400",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/new",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/new",
+        "sha256": "322cbd903ef1ebe6521d318f450d9e2f302add0f28d4a8484aed616b2f58f985",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/pstl/pstl_config.h",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/pstl/pstl_config.h",
+        "sha256": "bb345f04a06da82729897739105e8b69a01fcfaf58c608db36f2fd310a36ccd5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/tuple",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/tuple",
+        "sha256": "b548eb4b8632bdfcc8c6201e3972b985363ecbd2769d80cbbff2614947da2ea4",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/type_traits",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/type_traits",
+        "sha256": "07f5248ab2ed56933a72f5f6d4aa3bce2aa28abcf24ec767d4a2650a50a3f5d5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/bin/../lib/gcc/x86_64-pc-cygwin/14/../../../gcc/x86_64-pc-cygwin/14/include/c++/vector",
+        "physical_relative": "lib/gcc/x86_64-pc-cygwin/14/include/c++/vector",
+        "sha256": "03cf064a98aa54b3da572fbaae2df6c974d0d0eec3aecff08f1c650b3b4d362f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/_ansi.h",
+        "physical_relative": "usr/include/_ansi.h",
+        "sha256": "5c6403b471ee897c9a6c12e00a58617247804eb3ee72d7baeb7c08616090dd1d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/_newlib_version.h",
+        "physical_relative": "usr/include/_newlib_version.h",
+        "sha256": "f4c14dfb59c9eb36181455ef077c4ec7a0571ed64f79947094ac1cd9a96d3fae",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/bits/byteswap.h",
+        "physical_relative": "usr/include/bits/byteswap.h",
+        "sha256": "bcb119f1bad6ae5b1576026776c9a1a8e4e818b7f2d091d6bc1d66488be65a34",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/bits/endian.h",
+        "physical_relative": "usr/include/bits/endian.h",
+        "sha256": "6e6f985174e4958c5d87168a5047af14167b72f6009dcf5e0aedd4e64097edf5",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/bits/wordsize.h",
+        "physical_relative": "usr/include/bits/wordsize.h",
+        "sha256": "b1d49cf7ee000eb35281764d1037e3a253301c0358e8f77e4ff9d02abf3a052a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/cygwin/config.h",
+        "physical_relative": "usr/include/cygwin/config.h",
+        "sha256": "0a664264d08bf08ed787b3065d04b2cec14e1edf98cd6d64ef9b02d4128e69cc",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/cygwin/limits.h",
+        "physical_relative": "usr/include/cygwin/limits.h",
+        "sha256": "30cf75f3d1049f0b67c55f3f0f59b66bb81a15908e6a05ce2899e7a9778c4c06",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/endian.h",
+        "physical_relative": "usr/include/endian.h",
+        "sha256": "a5bc565357320624fe38e0cdf8e9c3d07f78de94e187a058703baa81777928db",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/features.h",
+        "physical_relative": "usr/include/features.h",
+        "sha256": "09dd4b2ba0311f45137d00fae21c8136b2a0b9dea27595b65909185d9b12b90a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/getopt.h",
+        "physical_relative": "usr/include/getopt.h",
+        "sha256": "62587114043beb0b2216930f2388dab65117f713a3704a8a7db7de3fe8a5225f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/limits.h",
+        "physical_relative": "usr/include/limits.h",
+        "sha256": "7a10071746570c5870f6646719f3686cca569b14c3415a5c0ffdad1223663329",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/_default_types.h",
+        "physical_relative": "usr/include/machine/_default_types.h",
+        "sha256": "6b5e1b951468972b88672c1f4366f23e09d5a1deb42d11cdaae312071a098ff7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/_endian.h",
+        "physical_relative": "usr/include/machine/_endian.h",
+        "sha256": "c68baac430a70b1c859d5bd96b145c388d9d0ede6b09a7feb71cb0e2567ac737",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/_types.h",
+        "physical_relative": "usr/include/machine/_types.h",
+        "sha256": "f04d6826bf42d2fd131f3d9c0904e06e687f8b32f9ba943423a41d9ebd927d9e",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/endian.h",
+        "physical_relative": "usr/include/machine/endian.h",
+        "sha256": "c9cb16333e537785dde867ed059915ef2d09661dbab7cc8b4519b646735eace4",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/ieeefp.h",
+        "physical_relative": "usr/include/machine/ieeefp.h",
+        "sha256": "ec1e7f9f068ef40e2ec360681a4bbc7e2f3f1e3bb9e141a254a1f1ccdc4af195",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/machine/types.h",
+        "physical_relative": "usr/include/machine/types.h",
+        "sha256": "0d416fa0a2b86127e8bd9a12e01509fbe120761a2afa7f509e78a652cc6901fa",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/newlib.h",
+        "physical_relative": "usr/include/newlib.h",
+        "sha256": "3e9025642c8b6de704bbf2f16c244281c15df8238a8b41a685cc6b953c612c97",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/stdio.h",
+        "physical_relative": "usr/include/stdio.h",
+        "sha256": "c900e320b44518e1a214792b8caf7cffa683fda7bae2cb70714bdcd8087fe2f8",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_pthreadtypes.h",
+        "physical_relative": "usr/include/sys/_pthreadtypes.h",
+        "sha256": "1818e87b10e319aabbbc7d3bd7fa621908ae6c836270aea909208ca858ebfe49",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_sigset.h",
+        "physical_relative": "usr/include/sys/_sigset.h",
+        "sha256": "16e78626ff97ef85ec70ba9898082fccf70b741b0c6586c57e4421fc60b9a07d",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_stdint.h",
+        "physical_relative": "usr/include/sys/_stdint.h",
+        "sha256": "49f8328943afa2a83ed4a35fcb808ed08b8c9fcb55373c786fb1b1d3a21952d7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_timespec.h",
+        "physical_relative": "usr/include/sys/_timespec.h",
+        "sha256": "cea8007561c4c9285063cc2f941a284d008e9f044fdfa346572e8bb39f236391",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_timeval.h",
+        "physical_relative": "usr/include/sys/_timeval.h",
+        "sha256": "976b01c11c44422953444b3f612ca6a7d41d70569e25a4c0674e9f8899101b22",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/_types.h",
+        "physical_relative": "usr/include/sys/_types.h",
+        "sha256": "1abe39aca5104bafbde2e0219e7cdc3e96129b22ce1ef5cd58b66d8d147d3fb7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/cdefs.h",
+        "physical_relative": "usr/include/sys/cdefs.h",
+        "sha256": "9dcd9f554b32c40791b8f081f34c83767c61c0bc567b4a486066edda39812f3e",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/config.h",
+        "physical_relative": "usr/include/sys/config.h",
+        "sha256": "583e381e7184a477bcea569149f6154ccf4f0faa0829a9d8363954adb7aecf14",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/cpuset.h",
+        "physical_relative": "usr/include/sys/cpuset.h",
+        "sha256": "dce418c50502a4609907c0fd4c747461677d8c4cfaafd0f662a601ca55aaff04",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/features.h",
+        "physical_relative": "usr/include/sys/features.h",
+        "sha256": "a57eda10906bcf7af112185fd71f9099072ef379cd539168a8adbe6935f8ef83",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/lock.h",
+        "physical_relative": "usr/include/sys/lock.h",
+        "sha256": "72fffd27d1ea5dc91f542a21f89cff19193ae3c2252dd45f5e571441b1c317f1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/reent.h",
+        "physical_relative": "usr/include/sys/reent.h",
+        "sha256": "1631214a7fb5c26f8b6ce1c1d317af9863afd8109a811dc72f9ec1afd2c0789b",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/select.h",
+        "physical_relative": "usr/include/sys/select.h",
+        "sha256": "95b29d3fbd8a106e718038a2fabf6ad64fb9ce1b4a549334d5ee1ca274def4a7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/stdio.h",
+        "physical_relative": "usr/include/sys/stdio.h",
+        "sha256": "29ee2fc39fe3b87ae4976c5090d3ef77642ab030189d525362f497a0ab7357a1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/sysmacros.h",
+        "physical_relative": "usr/include/sys/sysmacros.h",
+        "sha256": "0c3dfd9579e372c6cd1ade88d269ed786c04d6be66513300bb3ef1be1e08116c",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/timespec.h",
+        "physical_relative": "usr/include/sys/timespec.h",
+        "sha256": "c2c2dfdcf9deacccb8919ff633f212afa455e4779a2d12c47b9afa0eff7d73c1",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/types.h",
+        "physical_relative": "usr/include/sys/types.h",
+        "sha256": "659abc34a2db9f62109d06135699e72a8759cce553626aac5340bfd84988d8a7",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/sys/unistd.h",
+        "physical_relative": "usr/include/sys/unistd.h",
+        "sha256": "03d0d4d822bde32e703fe2b4e73d2d9f11bda097816582d96785426e94cc7e52",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/unistd.h",
+        "physical_relative": "usr/include/unistd.h",
+        "sha256": "19f31553182c4d649dd0d6301ffdbb5b4d7903b28373dd070a553798b41f524f",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/zconf.h",
+        "physical_relative": "usr/include/zconf.h",
+        "sha256": "0718a11beb3295b345fb29a63b44b654b282d82c4cd0513f6225587f2b29b8bb",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/include/zlib.h",
+        "physical_relative": "usr/include/zlib.h",
+        "sha256": "818667d6ab6a37fe7469cb06a7f0cb2c2cb2f2c948a03e5accf1a4a74bf3020a",
+        "compiler_resource_header": false,
+        "original_byte_identical": true
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stdarg___gnuc_va_list.h",
+        "physical_relative": "lib/clang/22/include/__stdarg___gnuc_va_list.h",
+        "sha256": "feca975bfdfb254d17458a8e3d51f8ad6d9bdc9fd6287727f0f8b2fb81fcb0b0",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stdarg___va_copy.h",
+        "physical_relative": "lib/clang/22/include/__stdarg___va_copy.h",
+        "sha256": "f0a8d3c963338173f2d57b2cbc209dde38c90536107b15eb0cf78166d4caee1f",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stdarg_header_macro.h",
+        "physical_relative": "lib/clang/22/include/__stdarg_header_macro.h",
+        "sha256": "7b3fbcc442af2508f36bb2dc98d9ad2b8a1f5c0f5333394fb2159c8bd5ecd5b8",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stdarg_va_arg.h",
+        "physical_relative": "lib/clang/22/include/__stdarg_va_arg.h",
+        "sha256": "274c75a1db86f649439aa3bcc1dead4170725e6f803925c3fc38a2e93307afdc",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stdarg_va_copy.h",
+        "physical_relative": "lib/clang/22/include/__stdarg_va_copy.h",
+        "sha256": "bb195f56cb08d4cee6a60bd9f62f34466e8ac4f89f6fed043b044cb2f7ead010",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stdarg_va_list.h",
+        "physical_relative": "lib/clang/22/include/__stdarg_va_list.h",
+        "sha256": "81c3055f7033e26e7f53705653bc9d69b5202f25c2692e03b3a4f77ff44a7d76",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_header_macro.h",
+        "physical_relative": "lib/clang/22/include/__stddef_header_macro.h",
+        "sha256": "4cf46e8fbb809df048eecbbd63686fa741da27afa8db4245bd1f61c1fb1611dc",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_max_align_t.h",
+        "physical_relative": "lib/clang/22/include/__stddef_max_align_t.h",
+        "sha256": "3c1e4de47f4f06b35e2c5890d670052e84f716760505ff51b022fc8b21a9400f",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_null.h",
+        "physical_relative": "lib/clang/22/include/__stddef_null.h",
+        "sha256": "b1d71b08563ab3d2c22a1e4f8ddf4d9a1111c89e9404b859a45c307e8ebc6c69",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_nullptr_t.h",
+        "physical_relative": "lib/clang/22/include/__stddef_nullptr_t.h",
+        "sha256": "898b4465c5d3040d27e760e82983a751b1b0cae23ba280b18a1b81451841f9eb",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_offsetof.h",
+        "physical_relative": "lib/clang/22/include/__stddef_offsetof.h",
+        "sha256": "e5f0f4ff8ff5fc6a1cc8b535f5065f1728eadd2bf1e1401f021f803ec7b4222f",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_ptrdiff_t.h",
+        "physical_relative": "lib/clang/22/include/__stddef_ptrdiff_t.h",
+        "sha256": "b4178a57f3711b7013cba747a72a2f178c29fa9364e77d75b2159754072ced43",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_size_t.h",
+        "physical_relative": "lib/clang/22/include/__stddef_size_t.h",
+        "sha256": "d86ddc0238da09b385846ebef814ffc50a44e40cf85d4e3793f485952b7e73ad",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_wchar_t.h",
+        "physical_relative": "lib/clang/22/include/__stddef_wchar_t.h",
+        "sha256": "1900d4998aef3698b06399ed686db0c21e26509b08638a25734fb97ae89b1001",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/__stddef_wint_t.h",
+        "physical_relative": "lib/clang/22/include/__stddef_wint_t.h",
+        "sha256": "f2ededa38c5454397242aceaefa65b42b292a1b3cc258e7ca6e216f146e51f0d",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/limits.h",
+        "physical_relative": "lib/clang/22/include/limits.h",
+        "sha256": "6b59cc1b6f86c901bf41ce942b8434530e852eb16e79e6e9287f89441f71efca",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/stdarg.h",
+        "physical_relative": "lib/clang/22/include/stdarg.h",
+        "sha256": "ce6e43d79dc89b50208ecf259b1ffd519f5a78cd3a2c7fcaac6386f376b89fef",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      },
+      {
+        "logical": "/usr/lib/clang/22/include/stddef.h",
+        "physical_relative": "lib/clang/22/include/stddef.h",
+        "sha256": "b3e62a046ddf28d09eedebe6eb9461cb7060e47cad2c69964b222c4eea10347e",
+        "compiler_resource_header": true,
+        "original_byte_identical": false
+      }
+    ]
+  },
+  "live_dlls": {
+    "gcc": [
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cygwin1.dll",
+        "sha256": "959048d1407074097af021708d87bdf5ac1a8f107ff963c8950cd6dc8f21afaf"
+      },
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cygz.dll",
+        "sha256": "b3acfadb0f642c8e94d4b5cb4ee527d068f4b2001508af523444766949d67a80"
+      },
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cyggcc_s-seh-1.dll",
+        "sha256": "af178c2cb5d4756ff5c2523433812c43f1ad91c6eea9c381caa5e8396bfdc134"
+      },
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cygstdc++-6.dll",
+        "sha256": "e8677526b0a6fef2a457d4d0e105571e1e350c7ad66c925bd00120cf91410443"
+      },
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cygiconv-2.dll",
+        "sha256": "ddb34b3a5538495775c4e1333acf0d5f5b1cf228e38f3b4a7e6438cfc5290e9c"
+      },
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cygintl-8.dll",
+        "sha256": "f0f89113cdac2b710cf6ff295120b8718a709b020165235f3554e5ed5c6fc75a"
+      }
+    ],
+    "clang": [
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cygwin1.dll",
+        "sha256": "959048d1407074097af021708d87bdf5ac1a8f107ff963c8950cd6dc8f21afaf"
+      },
+      {
+        "path": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH38-setup-probe-01\\overlay\\bin\\cygz.dll",
+        "sha256": "b3acfadb0f642c8e94d4b5cb4ee527d068f4b2001508af523444766949d67a80"
+      }
+    ]
+  },
+  "archive_pins": {
+    "archive-clang": {
+      "sha512": "67b679af0b2c3c3b64cb19b7ae1c66de22a6938d569c83af634bd4e671bd8945c94d5720f25d6845f32bbcee4b988982043600e5c4ac00b7caa642aa77d8674f",
+      "bytes": 9333588,
+      "expanded_bytes": 38482043,
+      "members": 29
+    },
+    "archive-libclang22.1": {
+      "sha512": "24de90735e2b9a4e5491101abbda596cb8f12e4bbf9562e4d25299d60b992a6650c8ad95bca435ea3743e9fa83c7a0a086becb4952e834e289d89544120ae875",
+      "bytes": 24745156,
+      "expanded_bytes": 116511135,
+      "members": 287
+    },
+    "archive-libedit0": {
+      "sha512": "4c5afd4f494da552e3073dd9cd0a25b95d29065fb9b68ad3dfc2e2546a40e9f038821dd15bbece3f1d026276df798afc3a90dd09c1c9265df6fb262055781170",
+      "bytes": 77960,
+      "expanded_bytes": 193952,
+      "members": 9
+    },
+    "archive-libexpat1": {
+      "sha512": "7b097b2469270bade93b9790d9b98e54af886ce852b6108d1f2f54c12859e15706fc5fb8587038d68be36c4a20616c4a27c8a08bb14ee3cba9b7d4de5ca6767e",
+      "bytes": 58184,
+      "expanded_bytes": 168979,
+      "members": 1
+    },
+    "archive-libgdbm_compat4": {
+      "sha512": "fd026dd74c495c1ee67b790269e77e8525ad78d52d4895923443feab55f7bb32dc07b115d490143c7e0277167d9cdbef5dad4707ecc7ca6df13a9f1a5184f8ca",
+      "bytes": 3892,
+      "expanded_bytes": 13331,
+      "members": 1
+    },
+    "archive-libllvm22.1": {
+      "sha512": "95991da0a0947f1bfcd90ebbf498f389784f4099599c6bc5c6d635678f1c8f2d1c85af535bb3e94c7470b97cfbb868c2a150954610cb6ee11e8df34517bd60b5",
+      "bytes": 32209124,
+      "expanded_bytes": 153760294,
+      "members": 2
+    },
+    "archive-libxml2": {
+      "sha512": "dbea2e2facd79238c8232f44f556db27ceaf87e53150167e9e28029ef81dca45a37dd3fd98dd810b90e82926ea95204c09fb7e16907cfc3ee93cae4298dd3758",
+      "bytes": 489820,
+      "expanded_bytes": 1314266,
+      "members": 10
+    },
+    "archive-python3": {
+      "sha512": "94792a46fa9c6c4cca2dc90e2439bc3f9f03cea8b1a6a78e0811313289664fa3c8568bfc60b2c549cfea5b0a92b1bd9881b34cc2b43d746c9630b76434b59092",
+      "bytes": 248,
+      "expanded_bytes": 47,
+      "members": 1
+    },
+    "archive-python312": {
+      "sha512": "408dadd10018872eaf6f4c83dc7d81ed252bf49d2b7f3879b768283d011e03ce495e840f9421dd04cfa94f78256f0a9dd8352ca3766f3fc2efee35d2ab77dd8a",
+      "bytes": 7361988,
+      "expanded_bytes": 51310898,
+      "members": 2640
+    }
+  },
+  "decision": "INCONCLUSIVE / DEFAULT_GNU_LINK_RECIPE_AND_MANIFEST_NOT_EQUAL",
+  "reason": "Both actual PE DLLCharacteristics are0x8000, so explicit Clang security-disable argv did not change effective bits. GCC embeds original default manifest; Clang has no resource/manifest and uses a different GNU default-library recipe. No scientific solver test performed.",
+  "correction": "AUDIT-DRAFT-INVALID-PE-INFERENCE.json incorrectly inferred actual security-bit difference from driver argv. Its own numeric PE values already show equality. It is INVALID and preserved; this corrected audit supersedes that interpretation without altering raw streams."
+}
