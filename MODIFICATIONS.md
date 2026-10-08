@@ -88,3 +88,7 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+## GH52 isolated experiment
+
+Only propagateForLK defers stopping on an unlocked soft falsity: retain the first soft fallback locally while continuing original hard-clause propagation. Actual hard conflict takes precedence; queue exhaustion publishes the first fallback. No helper/caller/core/bound/encoding/compiler change. Restricted adaptation of Zhang et al., IJCAI2026, DOI10.24963/ijcai.2026/270, Section3.3 Algorithm3; not weighted WA-Select or full-paper reproduction. Source-only/UNTESTED, no scientific/performance certification; known baseline anomaly retained.
