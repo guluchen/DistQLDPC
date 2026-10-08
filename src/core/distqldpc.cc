@@ -389,6 +389,47 @@ static void write_opb_native_parity(
     (void)written;
 }
 
+// A validated original logical row supplies an inclusive feasible cost only.
+// It is not a solver model, an optimality proof or a reported upper bound.
+static int verified_logical_row_bound(
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+    int card_mode)
+{
+    if (card_mode != Solver::CARD_ENC_MTO)
+        return INT32_MAX;
+    int best = INT32_MAX;
+    const Matrix* rows[2] = {&Gz, &Gx};
+    const Matrix* checks[2] = {&Hz, &Hx};
+    const Matrix* logicals[2] = {&Gx, &Gz};
+    for (int kind = 0; kind < 2; kind++) {
+        const Matrix& basis = *rows[kind];
+        for (int r = 0; r < basis.rows; r++) {
+            int weight = 0;
+            for (int i = 0; i < basis.cols; i++) weight += getm(basis, r, i);
+            if (weight == 0 || weight >= best) continue;
+            bool valid = true;
+            const Matrix& stabilizers = *checks[kind];
+            for (int j = 0; j < stabilizers.rows && valid; j++) {
+                int parity = 0;
+                for (int i = 0; i < basis.cols; i++)
+                    parity ^= getm(basis, r, i) & getm(stabilizers, j, i);
+                valid = parity == 0;
+            }
+            if (!valid) continue;
+            bool nontrivial = false;
+            const Matrix& dual = *logicals[kind];
+            for (int j = 0; j < dual.rows && !nontrivial; j++) {
+                int parity = 0;
+                for (int i = 0; i < basis.cols; i++)
+                    parity ^= getm(basis, r, i) & getm(dual, j, i);
+                nontrivial = parity != 0;
+            }
+            if (nontrivial) best = weight;
+        }
+    }
+    return best;
+}
+
 static bool build_stabilizer_instance(
     SimpSolver& S,
     std::vector<Var>& aux,
@@ -512,6 +553,8 @@ static int min_distance_stabilizer_maxsat(
     /* Wall-clock timeout is enforced by the parent (fork + SIGKILL).
      * Do not set RLIMIT_CPU here: SIGXCPU can stop the child early and
      * surface as UNKNOWN instead of a parent TIMEOUT with bounds. */
+
+    S.initUB = verified_logical_row_bound(Hx, Hz, Gx, Gz, card_mode);
 
     vec<Lit> dummy;
     lbool ret = S.solveLimited(dummy);

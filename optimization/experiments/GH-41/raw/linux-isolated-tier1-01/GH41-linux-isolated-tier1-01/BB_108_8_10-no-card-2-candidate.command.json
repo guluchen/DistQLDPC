@@ -1,0 +1,82 @@
+{
+  "argv": [
+    "/home/yfc/GH41-linux-tier0-04/candidate/bin/distqldpc",
+    "-v",
+    "-cpu-lim=180",
+    "-no-card",
+    "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_108_8_10"
+  ],
+  "cwd": "/home/yfc/GH41-linux-tier0-04/candidate",
+  "limit": 195,
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069447421",
+  "state": "RUNNING",
+  "original_start_monotonic": 1352637.684778707,
+  "rusage_children_before": {
+    "ru_utime": 69.802367,
+    "ru_stime": 0.372515,
+    "ru_nvcsw": 8970,
+    "ru_nivcsw": 10612,
+    "ru_minflt": 67952,
+    "ru_majflt": 26,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "popen_begin_monotonic": 1352637.687101625,
+  "popen_return_monotonic": 1352637.690036384,
+  "leader": {
+    "pid": 3455313,
+    "ppid": 3454484,
+    "pgrp": 3455313,
+    "session": 3454484,
+    "start": 135263768
+  },
+  "last_owned_members": [
+    {
+      "pid": 3455313,
+      "ppid": 3454484,
+      "pgrp": 3455313,
+      "session": 3454484,
+      "start": 135263768
+    },
+    {
+      "pid": 3455314,
+      "ppid": 3455313,
+      "pgrp": 3455313,
+      "session": 3454484,
+      "start": 135263769
+    }
+  ],
+  "returncode": 0,
+  "elapsed_sec": 4.83114407886751,
+  "last_alive_lower_monotonic": 1352642.465809324,
+  "exited_upper_monotonic": 1352642.515922296,
+  "exit_interval_sec": [
+    4.781030616955832,
+    4.831143588991836
+  ],
+  "observed_exit_interval_width_sec": 0.050112972036004066,
+  "rusage_children_after": {
+    "ru_utime": 74.073358,
+    "ru_stime": 0.39074,
+    "ru_nvcsw": 9504,
+    "ru_nivcsw": 11331,
+    "ru_minflt": 70377,
+    "ru_majflt": 27,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "rusage_children_delta": {
+    "ru_utime": 4.270990999999995,
+    "ru_stime": 0.01822499999999999,
+    "ru_nvcsw": 534,
+    "ru_nivcsw": 719,
+    "ru_minflt": 2425,
+    "ru_majflt": 1,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "waited_child_cpu_sec": 4.289215999999995,
+  "waited_child_measurement_complete": true,
+  "descriptive_elapsed_minus_cpu_sec": 0.5419280788675147,
+  "descriptive_cpu_over_elapsed": 0.8878261401397595
+}

@@ -18,6 +18,7 @@ New code, not derived from MaxCDCL.
 | Area | Description |
 |------|-------------|
 | QLDPC encoding | MaxSAT formulation for stabilizer distance (Hx/Hz/Gx/Gz matrices) |
+| MTO verified input cap | Only explicit CARD_ENC_MTO: original pure-X/Gz and pure-Z/Gx rows validated against original stabilizer and logical predicates; smallest feasible Pauli weight supplied through existing initUB. Other modes/default retain INT32_MAX without scanning; no model/result/encoding change |
 | Fork + pipe | Child runs solver; parent enforces wall-clock timeout (`-cpu-lim`) via `SIGKILL` |
 | Bounds sync | Parent reads `TRY` / `LB` / `UB` / `RESULT` lines from pipe |
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |

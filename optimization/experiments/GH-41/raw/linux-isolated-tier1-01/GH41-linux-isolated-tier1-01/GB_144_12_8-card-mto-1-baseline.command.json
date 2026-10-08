@@ -1,0 +1,66 @@
+{
+  "argv": [
+    "/home/yfc/GH41-linux-tier0-04/baseline/bin/distqldpc",
+    "-v",
+    "-cpu-lim=180",
+    "-card-mto",
+    "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/GB_144_12_8"
+  ],
+  "cwd": "/home/yfc/GH41-linux-tier0-04/baseline",
+  "limit": 195,
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069447421",
+  "state": "RUNNING",
+  "original_start_monotonic": 1352579.426783072,
+  "rusage_children_before": {
+    "ru_utime": 52.939686,
+    "ru_stime": 0.277707,
+    "ru_nvcsw": 6713,
+    "ru_nivcsw": 8084,
+    "ru_minflt": 50279,
+    "ru_majflt": 18,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "popen_begin_monotonic": 1352579.429368964,
+  "popen_return_monotonic": 1352579.432216401,
+  "leader": {
+    "pid": 3455048,
+    "ppid": 3454484,
+    "pgrp": 3455048,
+    "session": 3454484,
+    "start": 135257942
+  },
+  "returncode": 0,
+  "elapsed_sec": 1.8635646130423993,
+  "last_alive_lower_monotonic": 1352581.240200443,
+  "exited_upper_monotonic": 1352581.290346725,
+  "exit_interval_sec": [
+    1.8134173708967865,
+    1.8635636528488249
+  ],
+  "observed_exit_interval_width_sec": 0.05014628195203841,
+  "rusage_children_after": {
+    "ru_utime": 54.765678,
+    "ru_stime": 0.290549,
+    "ru_nvcsw": 6956,
+    "ru_nivcsw": 8321,
+    "ru_minflt": 53255,
+    "ru_majflt": 19,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "rusage_children_delta": {
+    "ru_utime": 1.8259919999999994,
+    "ru_stime": 0.01284200000000002,
+    "ru_nvcsw": 243,
+    "ru_nivcsw": 237,
+    "ru_minflt": 2976,
+    "ru_majflt": 1,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "waited_child_cpu_sec": 1.8388339999999994,
+  "waited_child_measurement_complete": true,
+  "descriptive_elapsed_minus_cpu_sec": 0.024730613042399874,
+  "descriptive_cpu_over_elapsed": 0.9867294040306843
+}

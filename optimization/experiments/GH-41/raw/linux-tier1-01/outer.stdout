@@ -1,0 +1,32 @@
+START BB_90_8_10-no-card-1-baseline
+START BB_90_8_10-no-card-1-candidate
+START BB_90_8_10-no-card-2-candidate
+START BB_90_8_10-no-card-2-baseline
+START BB_90_8_10-no-card-3-baseline
+START BB_90_8_10-no-card-3-candidate
+START BB_90_8_10-card-mto-1-baseline
+START BB_90_8_10-card-mto-1-candidate
+START BB_90_8_10-card-mto-2-candidate
+START BB_90_8_10-card-mto-2-baseline
+START BB_90_8_10-card-mto-3-baseline
+{
+  "status": "INCONCLUSIVE",
+  "Tier1": "NOT_RUN",
+  "decision": "INCONCLUSIVE",
+  "performance": "NOT_MEASURED",
+  "exclusive": false,
+  "interpretation": "OBSERVED_QUIET_DIAGNOSTIC_FORMAL_INCONCLUSIVE",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069089234",
+  "robustness_prerecord_commit": "ab61a882cea88fdc689b1eaaa591e624b9eb3701",
+  "robustness_prerecord_sha": "e5a81bcdaf65af5b2da91a5e89c59016780a93d04b5c8d14b8fba1cd56519ff0",
+  "reason": "RuntimeError('INCONCLUSIVE observed-quiet capacity guard: BB_90_8_10-card-mto-3-baseline')",
+  "available_configuration_unchanged": true,
+  "unavailable_configuration_fields": [
+    "/sys/devices/system/cpu/intel_pstate/no_turbo"
+  ],
+  "cleanup_restoration_confirmed": true,
+  "full_identity_confirmed": true,
+  "valid_run": false,
+  "engineering_corroboration_valid": false,
+  "engineering_status": "INCONCLUSIVE"
+}

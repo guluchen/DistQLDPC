@@ -1,0 +1,75 @@
+{
+  "argv": [
+    "/home/yfc/GH41-linux-tier0-04/baseline/bin/distqldpc",
+    "-v",
+    "-cpu-lim=180",
+    "-card-mto",
+    "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_108_8_10"
+  ],
+  "cwd": "/home/yfc/GH41-linux-tier0-04/baseline",
+  "limit": 195,
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069447421",
+  "state": "RUNNING",
+  "original_start_monotonic": 1352719.891754392,
+  "rusage_children_before": {
+    "ru_utime": 107.512349,
+    "ru_stime": 0.527305,
+    "ru_nvcsw": 13587,
+    "ru_nivcsw": 16805,
+    "ru_minflt": 90262,
+    "ru_majflt": 34,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "popen_begin_monotonic": 1352719.894176432,
+  "popen_return_monotonic": 1352719.897163931,
+  "leader": {
+    "pid": 3455576,
+    "ppid": 3454484,
+    "pgrp": 3455576,
+    "session": 3454484,
+    "start": 135271989
+  },
+  "last_owned_members": [
+    {
+      "pid": 3455576,
+      "ppid": 3454484,
+      "pgrp": 3455576,
+      "session": 3454484,
+      "start": 135271989
+    }
+  ],
+  "returncode": 0,
+  "elapsed_sec": 6.306671853875741,
+  "last_alive_lower_monotonic": 1352725.90145621,
+  "exited_upper_monotonic": 1352726.198425856,
+  "exit_interval_sec": [
+    6.009701817994937,
+    6.306671463884413
+  ],
+  "observed_exit_interval_width_sec": 0.29696964588947594,
+  "rusage_children_after": {
+    "ru_utime": 112.99991,
+    "ru_stime": 0.548874,
+    "ru_nvcsw": 14241,
+    "ru_nivcsw": 17697,
+    "ru_minflt": 93166,
+    "ru_majflt": 35,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "rusage_children_delta": {
+    "ru_utime": 5.4875609999999995,
+    "ru_stime": 0.02156899999999995,
+    "ru_nvcsw": 654,
+    "ru_nivcsw": 892,
+    "ru_minflt": 2904,
+    "ru_majflt": 1,
+    "ru_inblock": 0,
+    "ru_oublock": 0
+  },
+  "waited_child_cpu_sec": 5.509129999999999,
+  "waited_child_measurement_complete": true,
+  "descriptive_elapsed_minus_cpu_sec": 0.7975418538757424,
+  "descriptive_cpu_over_elapsed": 0.8735399791911457
+}

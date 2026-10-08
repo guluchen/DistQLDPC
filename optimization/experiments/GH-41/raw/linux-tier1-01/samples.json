@@ -1,0 +1,752 @@
+[
+  {
+    "case": "BB_90_8_10",
+    "mode": "no-card",
+    "repeat": 1,
+    "version": "baseline",
+    "elapsed_sec": 3.7791502319741994,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/baseline/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-no-card",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351216.892211911,
+      "popen_begin_monotonic": 1351216.89466714,
+      "popen_return_monotonic": 1351216.898402389,
+      "last_alive_lower_monotonic": 1351220.621204185,
+      "exited_upper_monotonic": 1351220.671359503,
+      "exit_interval_sec": [
+        3.728992274031043,
+        3.779147591907531
+      ],
+      "observed_exit_interval_width_sec": 0.05015531787648797,
+      "rusage_children_before": {
+        "ru_utime": 0.0,
+        "ru_stime": 0.0,
+        "ru_nvcsw": 0,
+        "ru_nivcsw": 0,
+        "ru_minflt": 0,
+        "ru_majflt": 0,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 3.47295,
+        "ru_stime": 0.014806999999999999,
+        "ru_nvcsw": 430,
+        "ru_nivcsw": 528,
+        "ru_minflt": 2207,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.47295,
+        "ru_stime": 0.014806999999999999,
+        "ru_nvcsw": 430,
+        "ru_nivcsw": 528,
+        "ru_minflt": 2207,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.4877569999999998,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.29139323197419964,
+      "descriptive_cpu_over_elapsed": 0.9228945095887394
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      3.728992274031043,
+      3.779147591907531
+    ],
+    "waited_child_cpu_sec": 3.4877569999999998
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "no-card",
+    "repeat": 1,
+    "version": "candidate",
+    "elapsed_sec": 3.812472278950736,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/candidate/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-no-card",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351225.794896908,
+      "popen_begin_monotonic": 1351225.797624091,
+      "popen_return_monotonic": 1351225.801047306,
+      "last_alive_lower_monotonic": 1351229.55724925,
+      "exited_upper_monotonic": 1351229.607367607,
+      "exit_interval_sec": [
+        3.762352341786027,
+        3.812470698961988
+      ],
+      "observed_exit_interval_width_sec": 0.05011835717596114,
+      "rusage_children_before": {
+        "ru_utime": 3.47295,
+        "ru_stime": 0.014806999999999999,
+        "ru_nvcsw": 430,
+        "ru_nivcsw": 528,
+        "ru_minflt": 2207,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 6.951268,
+        "ru_stime": 0.031326,
+        "ru_nvcsw": 862,
+        "ru_nivcsw": 1060,
+        "ru_minflt": 4414,
+        "ru_majflt": 2,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.478318,
+        "ru_stime": 0.016519,
+        "ru_nvcsw": 432,
+        "ru_nivcsw": 532,
+        "ru_minflt": 2207,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.494837,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.31763527895073596,
+      "descriptive_cpu_over_elapsed": 0.9166852226822866
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      3.762352341786027,
+      3.812470698961988
+    ],
+    "waited_child_cpu_sec": 3.494837
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "no-card",
+    "repeat": 2,
+    "version": "candidate",
+    "elapsed_sec": 3.7842129168566316,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/candidate/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-no-card",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351234.78435217,
+      "popen_begin_monotonic": 1351234.787061763,
+      "popen_return_monotonic": 1351234.790867834,
+      "last_alive_lower_monotonic": 1351238.518465799,
+      "exited_upper_monotonic": 1351238.568564637,
+      "exit_interval_sec": [
+        3.734113628976047,
+        3.784212467027828
+      ],
+      "observed_exit_interval_width_sec": 0.05009883805178106,
+      "rusage_children_before": {
+        "ru_utime": 6.951268,
+        "ru_stime": 0.031326,
+        "ru_nvcsw": 862,
+        "ru_nivcsw": 1060,
+        "ru_minflt": 4414,
+        "ru_majflt": 2,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 10.432217,
+        "ru_stime": 0.047127999999999996,
+        "ru_nvcsw": 1293,
+        "ru_nivcsw": 1593,
+        "ru_minflt": 6618,
+        "ru_majflt": 3,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.480949,
+        "ru_stime": 0.015801999999999997,
+        "ru_nvcsw": 431,
+        "ru_nivcsw": 533,
+        "ru_minflt": 2204,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.4967509999999997,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.2874619168566319,
+      "descriptive_cpu_over_elapsed": 0.9240365372740673
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      3.734113628976047,
+      3.784212467027828
+    ],
+    "waited_child_cpu_sec": 3.4967509999999997
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "no-card",
+    "repeat": 2,
+    "version": "baseline",
+    "elapsed_sec": 3.781664083013311,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/baseline/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-no-card",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351243.720545098,
+      "popen_begin_monotonic": 1351243.723588966,
+      "popen_return_monotonic": 1351243.727020721,
+      "last_alive_lower_monotonic": 1351247.452050442,
+      "exited_upper_monotonic": 1351247.50220795,
+      "exit_interval_sec": [
+        3.731505344156176,
+        3.781662852037698
+      ],
+      "observed_exit_interval_width_sec": 0.05015750788152218,
+      "rusage_children_before": {
+        "ru_utime": 10.432217,
+        "ru_stime": 0.047127999999999996,
+        "ru_nvcsw": 1293,
+        "ru_nivcsw": 1593,
+        "ru_minflt": 6618,
+        "ru_majflt": 3,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 13.919362,
+        "ru_stime": 0.061314,
+        "ru_nvcsw": 1725,
+        "ru_nivcsw": 2125,
+        "ru_minflt": 8825,
+        "ru_majflt": 4,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.487145,
+        "ru_stime": 0.014186000000000004,
+        "ru_nvcsw": 432,
+        "ru_nivcsw": 532,
+        "ru_minflt": 2207,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.501331,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.28033308301331106,
+      "descriptive_cpu_over_elapsed": 0.9258704430484647
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      3.731505344156176,
+      3.781662852037698
+    ],
+    "waited_child_cpu_sec": 3.501331
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "no-card",
+    "repeat": 3,
+    "version": "baseline",
+    "elapsed_sec": 3.824065436143428,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/baseline/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-no-card",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351252.617770498,
+      "popen_begin_monotonic": 1351252.620329068,
+      "popen_return_monotonic": 1351252.624136909,
+      "last_alive_lower_monotonic": 1351256.391690995,
+      "exited_upper_monotonic": 1351256.441834914,
+      "exit_interval_sec": [
+        3.7739204971585423,
+        3.8240644161123782
+      ],
+      "observed_exit_interval_width_sec": 0.050143918953835964,
+      "rusage_children_before": {
+        "ru_utime": 13.919362,
+        "ru_stime": 0.061314,
+        "ru_nvcsw": 1725,
+        "ru_nivcsw": 2125,
+        "ru_minflt": 8825,
+        "ru_majflt": 4,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 17.4059,
+        "ru_stime": 0.083489,
+        "ru_nvcsw": 2157,
+        "ru_nivcsw": 2648,
+        "ru_minflt": 11031,
+        "ru_majflt": 5,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.4865379999999995,
+        "ru_stime": 0.022174999999999993,
+        "ru_nvcsw": 432,
+        "ru_nivcsw": 523,
+        "ru_minflt": 2206,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.5087129999999993,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.3153524361434288,
+      "descriptive_cpu_over_elapsed": 0.9175347698910032
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      3.7739204971585423,
+      3.8240644161123782
+    ],
+    "waited_child_cpu_sec": 3.5087129999999993
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "no-card",
+    "repeat": 3,
+    "version": "candidate",
+    "elapsed_sec": 3.8039284490514547,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/candidate/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-no-card",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351261.561596412,
+      "popen_begin_monotonic": 1351261.56402504,
+      "popen_return_monotonic": 1351261.566899597,
+      "last_alive_lower_monotonic": 1351265.315395082,
+      "exited_upper_monotonic": 1351265.365524381,
+      "exit_interval_sec": [
+        3.7537986701354384,
+        3.8039279689546674
+      ],
+      "observed_exit_interval_width_sec": 0.05012929881922901,
+      "rusage_children_before": {
+        "ru_utime": 17.4059,
+        "ru_stime": 0.083489,
+        "ru_nvcsw": 2157,
+        "ru_nivcsw": 2648,
+        "ru_minflt": 11031,
+        "ru_majflt": 5,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 20.8753,
+        "ru_stime": 0.096646,
+        "ru_nvcsw": 2588,
+        "ru_nivcsw": 3176,
+        "ru_minflt": 13238,
+        "ru_majflt": 6,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.4694000000000003,
+        "ru_stime": 0.013157000000000002,
+        "ru_nvcsw": 431,
+        "ru_nivcsw": 528,
+        "ru_minflt": 2207,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.4825570000000003,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.3213714490514543,
+      "descriptive_cpu_over_elapsed": 0.9155159058968128
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      3.7537986701354384,
+      3.8039279689546674
+    ],
+    "waited_child_cpu_sec": 3.4825570000000003
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "card-mto",
+    "repeat": 1,
+    "version": "baseline",
+    "elapsed_sec": 4.797375089023262,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/baseline/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-card-mto",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351270.513091566,
+      "popen_begin_monotonic": 1351270.515510325,
+      "popen_return_monotonic": 1351270.518823637,
+      "last_alive_lower_monotonic": 1351275.260378156,
+      "exited_upper_monotonic": 1351275.310466145,
+      "exit_interval_sec": [
+        4.747286590049043,
+        4.797374578891322
+      ],
+      "observed_exit_interval_width_sec": 0.05008798884227872,
+      "rusage_children_before": {
+        "ru_utime": 20.8753,
+        "ru_stime": 0.096646,
+        "ru_nvcsw": 2588,
+        "ru_nivcsw": 3176,
+        "ru_minflt": 13238,
+        "ru_majflt": 6,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 25.069433,
+        "ru_stime": 0.117242,
+        "ru_nvcsw": 3116,
+        "ru_nivcsw": 3870,
+        "ru_minflt": 16284,
+        "ru_majflt": 7,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 4.194133000000001,
+        "ru_stime": 0.020596000000000003,
+        "ru_nvcsw": 528,
+        "ru_nivcsw": 694,
+        "ru_minflt": 3046,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 4.214729000000001,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.5826460890232612,
+      "descriptive_cpu_over_elapsed": 0.8785489818470944
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      4.747286590049043,
+      4.797374578891322
+    ],
+    "waited_child_cpu_sec": 4.214729000000001
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "card-mto",
+    "repeat": 1,
+    "version": "candidate",
+    "elapsed_sec": 3.9782096119597554,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/candidate/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-card-mto",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351280.437762534,
+      "popen_begin_monotonic": 1351280.440358555,
+      "popen_return_monotonic": 1351280.443632548,
+      "last_alive_lower_monotonic": 1351284.365798786,
+      "exited_upper_monotonic": 1351284.415971177,
+      "exit_interval_sec": [
+        3.9280362520366907,
+        3.9782086429186165
+      ],
+      "observed_exit_interval_width_sec": 0.05017239088192582,
+      "rusage_children_before": {
+        "ru_utime": 25.069433,
+        "ru_stime": 0.117242,
+        "ru_nvcsw": 3116,
+        "ru_nivcsw": 3870,
+        "ru_minflt": 16284,
+        "ru_majflt": 7,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 28.753317,
+        "ru_stime": 0.134274,
+        "ru_nvcsw": 3567,
+        "ru_nivcsw": 4415,
+        "ru_minflt": 18266,
+        "ru_majflt": 8,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.683883999999999,
+        "ru_stime": 0.017032000000000005,
+        "ru_nvcsw": 451,
+        "ru_nivcsw": 545,
+        "ru_minflt": 1982,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.700915999999999,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.27729361195975644,
+      "descriptive_cpu_over_elapsed": 0.9302968825156612
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      3.9280362520366907,
+      3.9782086429186165
+    ],
+    "waited_child_cpu_sec": 3.700915999999999
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "card-mto",
+    "repeat": 2,
+    "version": "candidate",
+    "elapsed_sec": 4.319414153927937,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/candidate/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-card-mto",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351289.553508643,
+      "popen_begin_monotonic": 1351289.555642757,
+      "popen_return_monotonic": 1351289.559138393,
+      "last_alive_lower_monotonic": 1351293.555211086,
+      "exited_upper_monotonic": 1351293.872922377,
+      "exit_interval_sec": [
+        4.0017024429980665,
+        4.319413733901456
+      ],
+      "observed_exit_interval_width_sec": 0.31771129090338945,
+      "rusage_children_before": {
+        "ru_utime": 28.753317,
+        "ru_stime": 0.134274,
+        "ru_nvcsw": 3567,
+        "ru_nivcsw": 4415,
+        "ru_minflt": 18266,
+        "ru_majflt": 8,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 32.469875,
+        "ru_stime": 0.158183,
+        "ru_nvcsw": 4023,
+        "ru_nivcsw": 4978,
+        "ru_minflt": 20254,
+        "ru_majflt": 9,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 3.7165580000000027,
+        "ru_stime": 0.023908999999999986,
+        "ru_nvcsw": 456,
+        "ru_nivcsw": 563,
+        "ru_minflt": 1988,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 3.740467000000003,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.5789471539279343,
+      "descriptive_cpu_over_elapsed": 0.8659662784589761
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      4.0017024429980665,
+      4.319413733901456
+    ],
+    "waited_child_cpu_sec": 3.740467000000003
+  },
+  {
+    "case": "BB_90_8_10",
+    "mode": "card-mto",
+    "repeat": 2,
+    "version": "baseline",
+    "elapsed_sec": 4.812428656965494,
+    "returncode": 0,
+    "command": [
+      "/home/yfc/GH41-linux-tier0-04/baseline/bin/distqldpc",
+      "-v",
+      "-cpu-lim=180",
+      "-card-mto",
+      "/home/yfc/GH41-linux-tier0-04/frozen-package/inputs/BB_90_8_10"
+    ],
+    "science": "PASS",
+    "measurement": {
+      "original_start_monotonic": 1351298.987752415,
+      "popen_begin_monotonic": 1351298.990129363,
+      "popen_return_monotonic": 1351298.993310604,
+      "last_alive_lower_monotonic": 1351303.750075202,
+      "exited_upper_monotonic": 1351303.800180672,
+      "exit_interval_sec": [
+        4.7623227869626135,
+        4.812428256962448
+      ],
+      "observed_exit_interval_width_sec": 0.050105469999834895,
+      "rusage_children_before": {
+        "ru_utime": 32.469875,
+        "ru_stime": 0.158183,
+        "ru_nvcsw": 4023,
+        "ru_nivcsw": 4978,
+        "ru_minflt": 20254,
+        "ru_majflt": 9,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_after": {
+        "ru_utime": 36.701751,
+        "ru_stime": 0.184281,
+        "ru_nvcsw": 4555,
+        "ru_nivcsw": 5672,
+        "ru_minflt": 23303,
+        "ru_majflt": 10,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "rusage_children_delta": {
+        "ru_utime": 4.231876,
+        "ru_stime": 0.02609800000000001,
+        "ru_nvcsw": 532,
+        "ru_nivcsw": 694,
+        "ru_minflt": 3049,
+        "ru_majflt": 1,
+        "ru_inblock": 0,
+        "ru_oublock": 0
+      },
+      "waited_child_cpu_sec": 4.257974,
+      "waited_child_measurement_complete": true,
+      "descriptive_elapsed_minus_cpu_sec": 0.5544546569654942,
+      "descriptive_cpu_over_elapsed": 0.8847869347293121
+    },
+    "semantic": {
+      "lb": 10,
+      "ub": 10,
+      "d": 10,
+      "objective": 10,
+      "returncode": 0,
+      "timeout": false
+    },
+    "exit_interval_sec": [
+      4.7623227869626135,
+      4.812428256962448
+    ],
+    "waited_child_cpu_sec": 4.257974
+  }
+]
