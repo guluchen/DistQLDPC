@@ -22,13 +22,16 @@ def span(rows):
 
 def assert_all_bounds(text,oracle):
     """Validate every emitted scientific update, not only its final value."""
-    lower=list(map(int,re.findall(r"^c\s+d_lb:\s*(\d+)\s*$",text,re.M)))
-    upper=list(map(int,re.findall(r"^c\s+d_ub:\s*(\d+)\s*$",text,re.M)))
-    distance=list(map(int,re.findall(r"^c\s+d\s*:\s*(\d+)\s*$",text,re.M)))
-    objective=list(map(int,re.findall(r"^o\s+(-?\d+)\s*$",text,re.M)))
-    assert all(v<=oracle for v in lower),('unsound lower bound',lower,oracle)
-    assert all(v>=oracle for v in upper+objective),('unsound upper bound',upper,objective,oracle)
-    assert all(v==oracle for v in distance),('wrong certified distance',distance,oracle)
+    specs={'lb':(r'^c\s+d_lb:\s*(.*?)\s*$',{'-'}),
+           'ub':(r'^c\s+d_ub:\s*(.*?)\s*$',{'-'}),
+           'd':(r'^c\s+d\s*:\s*(.*?)\s*$',{'UNKNOWN'}),
+           'objective':(r'^o(?:\s+(.*?))?\s*$',set())}
+    for key,(pattern,sentinels) in specs.items():
+        for item in re.findall(pattern,text,re.M):
+            if item in sentinels:continue
+            assert re.fullmatch(r'\d+',item),('malformed scientific field',key,item)
+            value=int(item)
+            assert (value<=oracle if key=='lb' else value==oracle if key=='d' else value>=oracle),('unsound scientific field',key,value,oracle)
 
 
 def main():
@@ -90,10 +93,18 @@ def main():
             scientific=[]
             for version,binary in maxsat_versions.items():
                 result=execute([binary,"-verb=1",wcnf],stem+"-"+version,binary.parent.parent)
-                values=re.findall(r"optimal:\s*(\d+)",result[1])
-                status=re.findall(r"^s\s+(.+)$",result[1],re.M)
-                assert result[0] in (10,20) and values and int(values[-1])==exact,result
-                scientific.append((result[0],status,int(values[-1])))
+                # Solver.cc emits comma-delimited optimal fields. Inspect every
+                # occurrence, including malformed/negative values, not a numeric subset.
+                raw_values=re.findall(r"optimal:\s*([^,\r\n]*)",result[1])
+                assert raw_values and all(re.fullmatch(r'\d+',v.strip()) for v in raw_values),result
+                values=[int(v.strip()) for v in raw_values]
+                status=[v.strip() for v in re.findall(r"^s\s+(.+)$",result[1],re.M)]
+                expected_status={10:'SATISFIABLE',20:'UNSATISFIABLE'}
+                assert result[0] in expected_status and status==[expected_status[result[0]]],result
+                # Exhaustive finite-cost oracle establishes hard satisfiability
+                # for these fixtures; rc20 is therefore a scientific mismatch.
+                assert result[0]==10 and all(v==exact for v in values),result
+                scientific.append((result[0],status,values))
             assert scientific[0]==scientific[1],"Standalone result/exit semantics differ"
             checks.append(dict(fixture=stem,oracle_cost=exact,standalone_semantics_identical=True))
         # Existing integration help/smoke case plus a stable long-instance timeout.

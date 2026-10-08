@@ -34,6 +34,20 @@ package=ROOT/"E004-windows-tier2-02/E004-server-package"
 immutable_base=package/"baseline"
 candidate=ROOT/"GH32-MTUNE"
 helper=HERE/"windows_cpu_window.py"
+# Pin every imported local support file to the named committed revision BEFORE
+# executing it. CRLF checkout normalization is permitted; no content edits are.
+head=subprocess.check_output(["git","-C",str(candidate),"rev-parse","HEAD"],text=True,timeout=20).strip()
+assert head==args.candidate_sha, "Support HEAD differs from assignment"
+assert HERE==candidate/"optimization/experiments/GH-32", "Unexpected support directory"
+preimport_hashes={}
+for name in ["windows_assigned_runner.py","windows_cpu_window.py","runner_common.py","run_tier0.py","cygwin_test_stats_shim.cc"]:
+    path=HERE/name
+    committed=subprocess.check_output(["git","-C",str(candidate),"show",head+":optimization/experiments/GH-32/"+name],timeout=20)
+    actual=path.read_bytes()
+    assert actual.replace(b"\r\n",b"\n")==committed.replace(b"\r\n",b"\n"), "Uncommitted support: "+name
+    preimport_hashes[name]=sha(path)
+assert sha(helper)=="ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2", "Reviewed helper differs"
+save(out/"preimport-support.json",dict(candidate=head,assignment=args.run_assignment,hashes=preimport_hashes))
 spec=importlib.util.spec_from_file_location("gh32_window",helper)
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 sys.path.insert(0,str(HERE))
@@ -70,6 +84,9 @@ def clean_owned(reason):
     # users' jobs. Bounded cleanup handles any already-orphaned owned descendants.
     remaining=[pid for pid in job_pids() if pid!=os.getpid()]
     for pid in remaining:
+        # A snapshotted PID can exit/recycle before taskkill. Recheck membership
+        # in our unnamed Job immediately before issuing this bounded kill.
+        if pid not in job_pids():continue
         result=subprocess.run(["taskkill","/PID",str(pid),"/T","/F"],capture_output=True,text=True,timeout=10)
         records.append(dict(pid=pid,returncode=result.returncode,stdout=result.stdout,stderr=result.stderr))
     deadline=time.monotonic()+5
@@ -170,6 +187,7 @@ try:
     initial_identity=dict(candidate=head,baseline=baseline_sha,assignment=args.run_assignment,
          baseline_manifest_sha256=sha(package/"manifest.json"),baseline_binary_sha256=sha(immutable_base/"bin/distqldpc.exe"),
          runner_sha256=sha(__file__),helper_sha256=sha(helper),runtime_manifest_sha256=sha(runtime/"etc/setup/installed.db"),
+         preimport_support_hashes=preimport_hashes,
          runtime_file_hashes={name:sha(runtime/"bin"/name) for name in ["g++.exe","make.exe","bash.exe","size.exe","cygwin1.dll","cygstdc++-6.dll"]},
          selection=window.selection,source_hashes={p:sha(candidate/p) for p in paths+["Makefile"]},
          support_hashes={p.name:sha(p) for p in list(HERE.glob("*.py"))+list(HERE.glob("*.cc"))},
@@ -263,6 +281,7 @@ finally:
         except Exception as error:summary["restoration_failure"]=repr(error)
     try:
         if initial_identity is not None:
+            for name,digest in preimport_hashes.items():assert sha(HERE/name)==digest, "Imported support changed "+name
             for rel,digest in initial_identity["source_hashes"].items():assert sha(candidate/rel)==digest, "Source changed "+rel
             for name,digest in initial_identity["support_hashes"].items():assert sha(HERE/name)==digest, "Support changed "+name
             for name,digest in initial_identity["input_hashes"].items():assert sha(immutable_base/"data/matrices"/name)==digest, "Input changed "+name
