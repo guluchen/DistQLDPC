@@ -20,6 +20,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes build-essential zlib1g-dev
 
+      - name: Verify required v2 ISA before production build
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -O2 -march=x86-64 -mtune=generic optimization/experiments/GH-48/cpu_isa_gate.cc -o "$RUNNER_TEMP/gh48-portable-isa-gate"
+          "$RUNNER_TEMP/gh48-portable-isa-gate" > "$RUNNER_TEMP/gh48-isa-gate.json"
+          cat "$RUNNER_TEMP/gh48-isa-gate.json"
+
       - name: Build DistQLDPC
         run: make --jobs="$(nproc)"
 
