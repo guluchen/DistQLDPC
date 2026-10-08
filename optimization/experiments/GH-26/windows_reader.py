@@ -18,14 +18,14 @@ import time
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 TREE = HERE.parents[2]
-ASSIGNED_URL = 'https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6065833380'
-MODEL_COMMIT = '419d9e8b69c7b33eec38572de948958de92a1674'
+ASSIGNED_URL = 'HOST_SLOT_NOT_ASSIGNED'
+MODEL_COMMIT = '0aef426348387f5b535fae8dd66df911805cc93e'
 BASE = '24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 HELPER_SHA = 'ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2'
 SOURCE = {
     'snapshot_fla.h': '3d8ae9138586c3ae6a25ece1fc9ed9db8e2a89444bd0d62420ee8c5354ab81bc',
     'engine_snapshot_fixture.h': 'c2a42ca7db3e91420920940fcab41eba08ce73046c290cd4d04d177cecbd099c',
-    'engine_snapshot_probe.cc': '97004ec9a331fe5d63d0993b508943c5be23af9723d422d592d1a647fd2b86e7',
+    'engine_snapshot_probe.cc': 'e8b1cba055f770c912455b8a05c602a098cfac98ff4de11c5b96c23d14491723',
 }
 RUNTIME = {
     'bin/g++.exe': '86bec0e6bef5057ab9065082633d430db5bc443a74489452798818cb0e0c0bd3',
