@@ -70,3 +70,5 @@ validated hosts. This proves neither material vectorization nor performance
 benefit. The subsequently executed standard48 filter found serious regressions,
 as recorded separately. Unsupported CPUs must remain gated; do not deploy this
 ISA globally.
+
+Additional provenance limitation discovered during GH48 support review (2026-10-09): GH44 checked the helper source SHA but imported that helper through the normal Python source loader. A reusable helper bytecode cache exists in the workspace. Past cache bytes were not retained independently, so the source hash alone does not establish the exact imported helper bytecode for the historical run. Current cache contents cannot prove which bytes were used then. This is a limited historical executable-provenance gap, not evidence of a scientific mismatch; actual outputs, timing, observed affinity/priority, cleanup and public raw bytes remain retained. GH44 stays NOT ADOPTED/local REJECT with formal controlled timing INCONCLUSIVE. GH48 separately executes authenticated source bytes directly and launches Python with -B. No historical raw files or audit assertions are rewritten.
