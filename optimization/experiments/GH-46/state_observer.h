@@ -67,14 +67,16 @@ struct GH46TraceSnapshot {
             (unsigned long long)s.nbFixedByLH);
         std::fputc('\n',stderr);
     }
-    static void reset(Solver& s,const vec<Lit>& out,bool uip,int core) {
+    static void reset(Solver& s,const vec<Lit>& out,bool uip,int core,
+                      CRef original_confl,Var original_false_var,bool last) {
         bool selected=gh46_active_allocation && gh46_active_allocation->target==&out &&
             &gh46_active_allocation->counts==&s.gh46_allocation_counts;
         if(selected) ++s.gh46_allocation_counts.resets;
         if(selected && uip) ++s.gh46_allocation_counts.uip_resets;
         if(!enabled()) return;
-        std::fprintf(stderr,"GH46_RESET call=%llu core=%d selected=%d uip=%d size=%d",
-            (unsigned long long)s.gh46_allocation_counts.entries,core,int(selected),int(uip),out.size());
+        std::fprintf(stderr,"GH46_RESET call=%llu core=%d selected=%d uip=%d size=%d branch=%s binary=%d last=%d",
+            (unsigned long long)s.gh46_allocation_counts.entries,core,int(selected),int(uip),out.size(),
+            original_false_var==var_Undef?"hard":"soft",int(original_confl==CRef_Bin),int(last));
         lits("populated",out,uip?0:1); std::fputc('\n',stderr);
     }
     static void buffer_entry(Solver& s,const vec<Lit>& out) {

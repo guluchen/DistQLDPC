@@ -2,6 +2,9 @@
 Bounded file-backed supervisor reused from GH17, with separate outputs/source hashes.
 Separate targeted allocation diagnostic only after correctness; no performance loop.
 """
+import sys
+sys.dont_write_bytecode=True
+if not __debug__:raise RuntimeError("Python assertions disabled; unsupported supervisor invocation")
 import argparse
 import ctypes as C
 import hashlib
@@ -12,12 +15,14 @@ from pathlib import Path
 import shutil
 import struct
 import subprocess
-import sys
 import time
 import traceback
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[3]
+os.environ["PYTHONDONTWRITEBYTECODE"]="1"
+if (HERE/"__pycache__").exists() or list(HERE.rglob("*.pyc")):
+    raise RuntimeError("Support bytecode cache present before imports; no cached support execution")
 ap=argparse.ArgumentParser()
 ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
@@ -158,8 +163,12 @@ def managed_run(argv,cwd,target,label,timeout,cygwin=False):
 BASELINE="24572d6d09cce9a4a5faa58300a89e0feba9da6a"
 PRODUCTION="51509debe2e09a44bc3accdaf1b1857a6c30e53f"
 protected_files={}
+consumed_links=[]
 def freeze(path):
-    path=Path(path);protected_files[str(path)]=sha(path)
+    path=Path(path);digest=sha(path)
+    if str(path) in protected_files and protected_files[str(path)]!=digest:
+        raise RuntimeError("Frozen file changed before a later consumption: "+str(path))
+    protected_files[str(path)]=digest
 
 def checked(argv,cwd,target,label,timeout=120,cygwin=True):
     result=managed_run(argv,cwd,target,label,timeout,cygwin)
@@ -168,11 +177,34 @@ def checked(argv,cwd,target,label,timeout=120,cygwin=True):
 
 FLAGS=["-Isrc/solver","-Wall","-Wno-parentheses","-O3","-g",
        "-D","__STDC_LIMIT_MACROS","-D","__STDC_FORMAT_MACROS","-DNDEBUG"]
+ENGINE_NAMES=["SimpSolver","Solver","Options","System"]
+def build_app(source,label,logs):
+    objects=[source/"build"/(name+".o") for name in ENGINE_NAMES]
+    checked([runtime/"bin/make.exe","-j1",*["build/"+name+".o" for name in ENGINE_NAMES]],
+            source,logs,label+"-compile-engine-objects",300)
+    for p in objects:freeze(p)
+    before={str(p):sha(p) for p in objects}
+    checked([runtime/"bin/make.exe","-j1","bin/distqldpc"],source,logs,label+"-application-link",300)
+    after={str(p):sha(p) for p in objects}
+    if before!=after:raise RuntimeError("Consumed application objects changed during link "+label)
+    consumed_links.append(dict(label=label,kind="original-Makefile-application-link",before=before,after=after))
+    save(out/"consumed-links.json",consumed_links)
+    binary=source/"bin/distqldpc.exe";freeze(binary)
+    return binary
+
 def build_main(source,label,logs):
     binary=out/(label+"-test-only-main.exe")
-    objects=[source/"build"/(name+".o") for name in ["SimpSolver","Solver","Options","System"]]
+    objects=[source/"build"/(name+".o") for name in ENGINE_NAMES]
+    for p in objects:
+        if str(p) not in protected_files or sha(p)!=protected_files[str(p)]:
+            raise RuntimeError("Unpinned/changed consumed Main object: "+str(p))
+    before={str(p):sha(p) for p in objects}
     checked([runtime/"bin/g++.exe",*FLAGS,source/"src/solver/Main.cc",HERE/"cygwin_test_stats_shim.cc",
              *objects,"-lz","-o",binary],source,logs,label+"-test-main-link")
+    after={str(p):sha(p) for p in objects}
+    if before!=after:raise RuntimeError("Consumed Main objects changed during link "+label)
+    consumed_links.append(dict(label=label,kind="identical-test-only-statistic-shim-Main-link",before=before,after=after))
+    save(out/"consumed-links.json",consumed_links)
     freeze(binary)
     return binary
 
@@ -191,7 +223,7 @@ try:
         assert (candidate/name).read_bytes().replace(b"\r\n",b"\n")==committed.replace(b"\r\n",b"\n"),name
     for name in [*paths,"scripts/smoke_test.sh"]:freeze(candidate/name)
     for name in preimport_hashes:freeze(HERE/name)
-    freeze(helper);freeze(installed)
+    freeze(helper);freeze(installed);freeze(sys.executable)
     for name in ["g++.exe","make.exe","bash.exe","size.exe","nm.exe","cygwin1.dll","cygstdc++-6.dll",
                  "cyggcc_s-seh-1.dll","cygz.dll","cygiconv-2.dll","cygintl-8.dll"]:freeze(runtime/"bin"/name)
     for stem in ["LP_34_20_2","LP_136_32_4","LP_340_56_8"]:
@@ -205,6 +237,7 @@ try:
                           assignment=args.run_assignment,preimport=preimport_hashes,
                           selection=window.selection,protected_files=dict(protected_files),
                           original_package_binary=sha(immutable_base/"bin/distqldpc.exe"),
+                          support_cache_absent=True,python_executable=sys.executable,python_version=sys.version,
                           aggregate_watchdog_seconds=RUN_LIMIT,exclusive_reservation=False)
     save(out/"identity.json",initial_identity);shutil.copyfile(__file__,out/"executed-driver.py")
     # Fresh original source build, preserving the immutable package and its executable.
@@ -214,7 +247,7 @@ try:
     for source in [base,candidate]:
         for name in ["Makefile","scripts/smoke_test.sh"]:
             p=source/name;p.write_bytes(p.read_bytes().replace(b"\r\n",b"\n"))
-            if source==candidate:freeze(p) # canonical LF shell normalization only
+            if source==candidate:protected_files[str(p)]=sha(p) # explicitly allowed canonical LF shell normalization only
         dest=source/"data/matrices";dest.mkdir(exist_ok=True,parents=True)
         for suffix in ["Hx","Hz","Gx","Gz"]:
             reference=immutable_base/"data/matrices"/("LP_34_20_2_"+suffix+".txt")
@@ -224,15 +257,17 @@ try:
             else:shutil.copyfile(reference,target)
             freeze(target)
     assert not (candidate/"build").exists() and not (candidate/"bin/distqldpc.exe").exists(),"Candidate must be clean"
+    for p in (base/"src").rglob("*"):
+        if p.is_file():freeze(p)
+    for name in ["Makefile","scripts/smoke_test.sh"]:freeze(base/name)
     logs=out/"build-logs";logs.mkdir()
-    checked([sys.executable,HERE/"verify_runtime.py","--runtime",runtime,"--manifest",HERE/"RUNTIME-ORIGINAL-SHA256.json",
+    checked([sys.executable,"-B",HERE/"verify_runtime.py","--runtime",runtime,"--manifest",HERE/"RUNTIME-ORIGINAL-SHA256.json",
              "--out",out/"runtime-before.json"],candidate,logs,"original-runtime-before",300,False)
     compiler=checked([runtime/"bin/g++.exe","--version"],candidate,logs,"compiler",20,False)
     assert "14.4" in compiler[1],"Frozen compiler version changed"
     sources={"baseline":base,"candidate":candidate};apps={};mains={}
     for label,source in sources.items():
-        checked([runtime/"bin/make.exe","-j1","bin/distqldpc"],source,logs,label+"-clean-production-build",300)
-        apps[label]=source/"bin/distqldpc.exe";freeze(apps[label])
+        apps[label]=build_app(source,label+"-production",logs)
         for p in (source/"src").rglob("*"):
             if p.is_file():freeze(p)
         mains[label]=build_main(source,label,logs)
@@ -250,19 +285,18 @@ try:
     observed={};observed_mains={};observed_apps={}
     for label,source in sources.items():
         snapshot=out/(label+"-observer-source")
-        checked([sys.executable,HERE/"prepare_observer.py","--source",source,"--out",snapshot,"--variant",label,"--trace"],candidate,logs,label+"-prepare-observer",30,False)
+        checked([sys.executable,"-B",HERE/"prepare_observer.py","--source",source,"--out",snapshot,"--variant",label,"--trace"],candidate,logs,label+"-prepare-observer",30,False)
         observed[label]=snapshot
         for p in snapshot.rglob("*"):
             if p.is_file():freeze(p)
-        checked([runtime/"bin/make.exe","-j1","bin/distqldpc"],snapshot,logs,label+"-observer-build",300)
-        observed_apps[label]=snapshot/"bin/distqldpc.exe";freeze(observed_apps[label])
+        observed_apps[label]=build_app(snapshot,label+"-observer",logs)
         observed_mains[label]=build_main(snapshot,label+"-observer",logs)
     prediction=out/"allocation-prediction.exe"
     checked([runtime/"bin/g++.exe",*FLAGS,HERE/"test_allocation_prediction.cc","-o",prediction],observed["baseline"],logs,"prediction-build",120)
     freeze(prediction)
     checked([prediction],observed["baseline"],logs,"prediction-check",30)
     oracle_dir=out/"oracles"
-    checked([sys.executable,HERE/"generate_oracles.py","--out",oracle_dir],candidate,logs,"generate-oracles",30,False)
+    checked([sys.executable,"-B",HERE/"generate_oracles.py","--out",oracle_dir],candidate,logs,"generate-oracles",30,False)
     for p in oracle_dir.iterdir():freeze(p)
     os.environ.update(GH46_TRACE="1",GH46_REPORT="1")
     def fixture_execute(argv,label,cwd,timeout):
@@ -274,11 +308,10 @@ try:
     summary["Tier0"]="LOCAL_PASS"
     # Only four bounded ORIGINAL-baseline diagnostics, after all correctness checks.
     diag=out/"baseline-diagnostic-source"
-    checked([sys.executable,HERE/"prepare_observer.py","--source",base,"--out",diag,"--variant","baseline"],candidate,logs,"prepare-allocation-diagnostic",30,False)
+    checked([sys.executable,"-B",HERE/"prepare_observer.py","--source",base,"--out",diag,"--variant","baseline"],candidate,logs,"prepare-allocation-diagnostic",30,False)
     for p in diag.rglob("*"):
         if p.is_file():freeze(p)
-    checked([runtime/"bin/make.exe","-j1","bin/distqldpc"],diag,logs,"diagnostic-build",300)
-    diag_bin=diag/"bin/distqldpc.exe";freeze(diag_bin)
+    diag_bin=build_app(diag,"baseline-allocation-diagnostic",logs)
     os.environ["GH46_REPORT"]="1";allocation=[]
     try:
         for stem,exact in [("LP_34_20_2",2),("LP_136_32_4",4)]:
@@ -297,13 +330,13 @@ try:
                                        complete=bool(counts) and all(c["complete"] for c in counts.values())))
                 save(out/"allocation/COUNTERS.json",allocation)
     finally:os.environ.pop("GH46_REPORT",None)
-    checked([sys.executable,HERE/"verify_runtime.py","--runtime",runtime,"--manifest",HERE/"RUNTIME-ORIGINAL-SHA256.json",
+    checked([sys.executable,"-B",HERE/"verify_runtime.py","--runtime",runtime,"--manifest",HERE/"RUNTIME-ORIGINAL-SHA256.json",
              "--out",out/"runtime-after.json"],candidate,logs,"original-runtime-after",300,False)
     summary.update(status="PREPARATORY_COMPLETE",diagnostic="COMPLETE" if all(x["complete"] for x in allocation) else "INCOMPLETE_PREFIX_ONLY",
                    performance="NOT_MEASURED",protected_identity_count=len(protected_files))
 except BaseException as error:
     summary["reason"]=repr(error);summary["traceback"]=traceback.format_exc()
-    if isinstance(error,AssertionError) and "SCIENCE" in str(error):summary.update(status="REJECT",Tier0="REJECT")
+    if isinstance(error,run_tier0.ScienceMismatch) or isinstance(error,AssertionError) and "SCIENCE" in str(error):summary.update(status="REJECT",Tier0="REJECT")
     if (out/"tier0/summary.json").exists():
         summary["production_report"]=json.loads((out/"tier0/summary.json").read_text())
         if summary["production_report"]["Tier0"]=="REJECT":summary.update(status="REJECT",Tier0="REJECT")
@@ -319,6 +352,9 @@ finally:
             if not all(summary["cleanup"].get(k) is True for k in required):summary["restoration_failure"]="Not all restorations succeeded"
         except Exception as error:summary["restoration_failure"]=repr(error)
     try:
+        if (HERE/"__pycache__").exists() or list(HERE.rglob("*.pyc")):
+            raise RuntimeError("Support cache appeared during frozen run")
+        summary["support_cache_absent_after"]=True
         for name,digest in protected_files.items():assert sha(name)==digest,"Frozen identity changed "+name
         if "manifest" in globals():
             for relative,digest in manifest["files"].items():assert sha(package/relative)==digest,"Immutable package changed "+relative

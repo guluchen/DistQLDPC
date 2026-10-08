@@ -50,7 +50,7 @@ def state(error):
 def run(execute,sources,observer_main,production_main,observer_app,oracles,tier0,out):
     rows=json.loads((oracles/"ORACLES.json").read_text())
     report={"status":"INCONCLUSIVE","fixtures":[],"science":"NOT_RUN","lifetime":"NOT_RUN"}
-    sufficient=False
+    sufficient=False;outcomes=set();branches=set()
     for row in rows:
         results={};trace={};count={}
         for variant in ("baseline","candidate"):
@@ -63,6 +63,11 @@ def run(execute,sources,observer_main,production_main,observer_app,oracles,tier0
             trace[variant]=state(result[2]);count[variant]=counters(result[2],False)
         assert results["baseline"]==results["candidate"],"SCIENCE actual source result/status differs"
         assert trace["baseline"]==trace["candidate"],"SCIENCE lookahead relevant state/rollback differs"
+        for line in trace["baseline"]:
+            m=re.match(r'GH46_STATE phase=exit call=\d+ substantive=1 result=([01])\b',line)
+            if m:outcomes.add(int(m[1]))
+            m=re.match(r'GH46_RESET .* selected=1 .* branch=(hard|soft)\b',line)
+            if m:branches.add(m[1])
         assert count["baseline"].keys()==count["candidate"].keys(),"COUNTER solver lifetime differs"
         for sid,b in count["baseline"].items():
             c=count["candidate"][sid]
@@ -90,10 +95,12 @@ def run(execute,sources,observer_main,production_main,observer_app,oracles,tier0
                 traces.append(state(result[2]))
             assert traces[0]==traces[1],"SCIENCE actual CSS mode lookahead relevant state differs"
             report["fixtures"].append(dict(css=stem,mode=mode,state_rows=len(traces[0]),oracle=exact))
-    report.update(science="PASS",coverage_sufficient=sufficient)
-    if not sufficient:
+    coverage=sufficient and outcomes=={0,1} and branches=={"hard","soft"}
+    report.update(science="PASS",coverage_sufficient=coverage,
+                  repeated_UB_lifetime=sufficient,substantive_outcomes=sorted(outcomes),selected_reset_branches=sorted(branches))
+    if not coverage:
         (out/"lifetime-report.json").write_text(json.dumps(report,indent=2)+"\n")
-        raise RuntimeError("COVERAGE_GAP: bounded fixtures did not exercise repeated populated lookahead across UB changes")
+        raise run_tier0.CoverageGap("Bounded fixtures lack repeated populated UB lifetime or successful/failing substantive exits or hard/soft selected resets")
     report.update(status="PASS",lifetime="PASS")
     (out/"lifetime-report.json").write_text(json.dumps(report,indent=2)+"\n")
     return report

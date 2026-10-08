@@ -11,7 +11,7 @@ a named assignment precede replacing that URL and publishing the new support SHA
 
 The prepared scope is clean serial original-GCC builds of baseline/candidate,
 all-five-mode CSS/WCNF/smoke/timeout checks, original standalone Main oracles,
-separate observer snapshots and twelve new exhaustive PMS oracles, relevant
+separate observer snapshots and sixteen new exhaustive PMS oracles, relevant
 lookahead/reset state comparisons, and 4097 actual-Vec prediction checks. Original
 Main stays in its actual BOTH default; mode selection is exercised via the actual
 application CLI. Only after these pass: four baseline-only allocation diagnostics,
@@ -27,10 +27,10 @@ worker `_exit`, so it reports the genuine final counters normally. Periodic rows
 are explicitly incomplete, and only final rows count as complete observations.
 
 Source preparation was actually performed for both variants, without compilation,
-in workspace `independent-brain-records/GH46-static-{baseline,candidate}-observer-03`.
+in workspace `independent-brain-records/GH46-static-{baseline,candidate}-observer-04`.
 The resulting Solver.cc pair differs only in the selected local-versus-reused
 declaration/clear; Solver.h differs only by the selected scratch member. Vec/Main
-and observer helpers are identical. Earlier static snapshots 01/02 predate the final
+and observer helpers are identical. Earlier static snapshots 01/02/03 predate the final
 report/coverage support and are superseded, not runtime evidence.
 
 Eight Python files passed AST parsing. Helper bytes remain exactly reviewed SHA
@@ -50,3 +50,12 @@ Actual process absence still needs an independent successful post-exit check.
 These are source-preparation findings. C++ API validity, fixture coverage, original
 runtime equality now, science, allocation counts and cleanup are UNTESTED until the
 assigned execution; no runtime correctness or optimization benefit is claimed.
+
+Review follow-up is preregistered in VALIDATION-AMENDMENT-01.md / 6ede271. The
+reserved slot is zero-value-initialized, though it is not a populated explanation
+until assigned. Required observed lifecycle includes successful/failing substantive
+returns and actual selected hard/soft resets. Correct early timeout-case completion
+is validated then treated as a coverage gap. Scientific failures are explicitly
+typed; unexpected assertions remain engineering. Bytecode cache absence and
+per-link consumed object hashes are frozen; actual executable/object bytes stay
+local while their protected/public hash records are retained.

@@ -29,8 +29,9 @@ Trace all actual lookahead entries/exits and actual lookback resets. Include
 assignments, reasons/levels, trail and qhead, seen/involved flags, involved literals,
 unlocked variables, conflict ownership/representatives/locks, core contents,
 activities, relevant heaps and flags/counters, and populated explanation literals.
-Reserved UIP slot zero must be compared only when production actually assigns it;
-do not read its uninitialized placeholder. Record branch coverage and require
+Reserved UIP slot zero is value-initialized to zero by original Vec::push's T().
+It is not a populated explanation/UIP until production assigns that role; compare
+that slot only on the populated UIP path. Record branch coverage and require
 multiple substantive calls on the same Solver with populated output and repeated
 upper-bound transitions before claiming this lifetime check passed. If bounded
 cases fail to exercise this mechanism, record an engineering coverage gap and stop
@@ -46,10 +47,13 @@ not an unsupported assertion that every byte of Solver is meaningful/equal.
 Instrument only the selected lookahead vector in a separate original-baseline
 snapshot. A per-Solver counter record and an RAII active-vector pointer restrict
 generic Vec hooks to that exact buffer. Restore the previous pointer at every
-return. Count actual growth reallocations and requested allocation bytes; observe
-every push's logical size, not just baseline growth events. This is necessary:
-reused capacity can lie between two baseline growth steps, so growth-event-only
-simulation could miss a candidate growth inside an existing baseline capacity.
+return. Count actual growth reallocations and requested allocation bytes, and
+observe every push's logical size to measure call populations and peaks directly.
+The selected pinned path grows only through single-element pushes: its capacities
+follow the same prefix 0,2,4,8,14,... in either variant. Thus a previously stated
+inter-growth-step necessity was overly general for this exact path; it is corrected
+here before execution. Every-push observation remains a precise way to verify the
+actual logical sequence and independently test the reuse prediction.
 
 Simulate persistent capacity using the exact original Vec growth rule, resetting
 logical size per call while retaining predicted capacity per Solver. Record
@@ -94,7 +98,7 @@ Implementation of support adds no production flag or source concept. Fixed
 GCC14's original GNU++17 default is used by the C++17 inline observer globals;
 there is no language-mode override in production or test builds. A separate
 4097-sequence test compares the capacity prediction against actual original Vec
-push/clear behavior, including the 5->7 inter-growth boundary. This validates the
+push/clear behavior, including a 5->7 within-capacity transition. This validates the
 diagnostic math, not Solver correctness. `populated_calls` in the raw counters
 means a call with a nonempty logical vector (including its reserved slot); actual
 meaningful explanation coverage is checked independently from populated reset
@@ -108,3 +112,13 @@ is retained unmodified from GH38's published original-runtime snapshot; all 10,2
 original files are checked before and after through the assigned Job, including
 compiler internals, GNU headers, libraries and DLLs. This experiment uses the
 original E004 runtime directly, with no Clang overlay or package installation.
+
+Independent review amendments were preregistered in 6ede271 before implementation.
+Sixteen tiny PMS oracle cases include four explicit non-auxiliary hard/soft/mixed
+structures. Required lifecycle labels are successful/failing substantive exits and
+selected hard/soft resets, in addition to repeated populated calls across a UB
+transition. Correct early optimum 8 in a timeout case is science-valid but leaves
+timeout coverage INCONCLUSIVE; wrong scientific fields/status/crashes reject.
+Unexpected assertions are not blanket scientific rejection. Support caches are
+absent before imports/after execution, bytecode writes disabled in parent/children,
+and all four consumed engine objects are pinned before each link and at finalization.

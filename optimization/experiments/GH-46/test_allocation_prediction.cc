@@ -36,5 +36,5 @@ int main() {
     for(int a=0;a<16;++a) for(int b=0;b<16;++b) for(int c=0;c<16;++c) {
         int sizes[]={a,b,c};check(sizes,3);
     }
-    std::puts("PASS: 4097 exact Vec allocation predictions including inter-growth boundary");
+    std::puts("PASS: 4097 exact Vec allocation predictions including within-capacity transitions");
 }

@@ -27,6 +27,15 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
     args=ap.parse_args();args.out.mkdir(parents=True,exist_ok=False)
     records=[]
+    def emit(name,n,hard,soft):
+        optimum,witness=oracle(n,hard,soft);top=len(soft)+1
+        text=f"p wcnf {n} {len(hard)+len(soft)} {top}\n"
+        text += "".join(f"{top} "+" ".join(map(str,c))+" 0\n" for c in hard)
+        text += "".join("1 "+" ".join(map(str,c))+" 0\n" for c in soft)
+        data=text.encode();(args.out/name).write_bytes(data)
+        records.append({"file":name,"variables":n,"hard":len(hard),"soft":len(soft),
+                        "optimum":optimum,"witness_mask":witness,
+                        "sha256":hashlib.sha256(data).hexdigest()})
     for family,n in enumerate((8,10,12)):
         for variant in range(4):
             rng=random.Random(4600+100*family+variant)
@@ -43,16 +52,20 @@ def main():
             soft=[(v,) for v in range(1,n+1)]
             if variant&1:
                 soft += [(-v,) for v in range(1,n//3+1)]
-            optimum,witness=oracle(n,hard,soft)
-            top=len(soft)+1
-            text=f"p wcnf {n} {len(hard)+len(soft)} {top}\n"
-            text += "".join(f"{top} "+" ".join(map(str,c))+" 0\n" for c in hard)
-            text += "".join("1 "+" ".join(map(str,c))+" 0\n" for c in soft)
-            name=f"family{family}-variant{variant}.wcnf"
-            data=text.encode();(args.out/name).write_bytes(data)
-            records.append({"file":name,"variables":n,"hard":len(hard),"soft":len(soft),
-                            "optimum":optimum,"witness_mask":witness,
-                            "sha256":hashlib.sha256(data).hexdigest()})
+            emit(f"family{family}-variant{variant}.wcnf",n,hard,soft)
+    # Explicit structure targets real production branches, not a forced threshold.
+    # Variables absent from soft clauses remain non-auxiliary propagation vertices.
+    emit("structured-hard-binary.wcnf",10,
+         [(-1,2),(-1,3),(-2,-3),(-4,5),(-4,6),(-5,-6),(-7,8),(-8,-9),(-7,9)],
+         [(1,),(4,),(7,),(10,)])
+    emit("structured-hard-ternary.wcnf",10,
+         [(-1,2),(-1,3),(-1,4),(-2,-3,-4),(-5,6),(-5,7),(-5,8),(-6,-7,-8)],
+         [(1,),(5,),(9,),(10,)])
+    emit("structured-soft-chain.wcnf",8,
+         [(-1,-2),(-4,-5),(-7,3),(-3,-8)],[(1,),(2,),(4,),(5,),(7,),(8,)])
+    emit("structured-mixed.wcnf",12,
+         [(-1,2),(-1,3),(-2,-3),(-4,-5),(-7,8),(-8,9),(-9,-10),(-11,-12)],
+         [(1,),(4,),(5,),(7,),(10,),(11,),(12,)])
     (args.out/"ORACLES.json").write_text(json.dumps(records,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"fixtures":len(records),"solver_executed":False}))
 

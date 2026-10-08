@@ -9,6 +9,12 @@ import re
 import subprocess
 from runner_common import run,save,manifest,sha
 
+class ScienceMismatch(AssertionError):
+    """Established scientific/result/format disagreement, not a harness assertion."""
+class CoverageGap(RuntimeError):
+    """Correct behavior did not exercise a required test path."""
+def require_science(condition,reason):
+    if not condition:raise ScienceMismatch(reason)
 
 def semantic(text):
     patterns=[r"^c\s+d\s*:\s*(\d+)\s*$",r"^o\s+(-?\d+)\s*$",
@@ -32,21 +38,21 @@ def assert_all_bounds(text,oracle):
     for key,(pattern,sentinels) in specs.items():
         for item in re.findall(pattern,text,re.M):
             if item in sentinels:continue
-            assert re.fullmatch(r'\d+',item),('malformed scientific field',key,item)
+            require_science(re.fullmatch(r'\d+',item),('malformed scientific field',key,item))
             value=int(item)
-            assert (value<=oracle if key=='lb' else value==oracle if key=='d' else value>=oracle),('unsound scientific field',key,value,oracle)
+            require_science((value<=oracle if key=='lb' else value==oracle if key=='d' else value>=oracle),('unsound scientific field',key,value,oracle))
     # A malformed scientific prefix must not disappear from the numeric parser.
     for line in text.splitlines():
         if re.match(r'^c\s+(d_lb|d_ub|d)\b',line):
-            assert any(re.fullmatch(p,line) for p,_ in specs.values()),('malformed scientific line',line)
+            require_science(any(re.fullmatch(p,line) for p,_ in specs.values()),('malformed scientific line',line))
         elif re.match(r'^o\b',line):
-            assert re.fullmatch(specs['objective'][0],line),('malformed objective line',line)
+            require_science(re.fullmatch(specs['objective'][0],line),('malformed objective line',line))
 
 def assert_status(text,unknown=False):
     status=[v.strip() for v in re.findall(r'^s\s+(.*?)\s*$',text,re.M)]
     comments=[v.strip() for v in re.findall(r'^c\s+status:\s*(.*?)\s*$',text,re.M)]
-    assert status==(['UNKNOWN'] if unknown else []),('unexpected application status',status)
-    assert comments==(['TIMEOUT'] if unknown else []),('unexpected timeout status',comments)
+    require_science(status==(['UNKNOWN'] if unknown else []),('unexpected application status',status))
+    require_science(comments==(['TIMEOUT'] if unknown else []),('unexpected timeout status',comments))
 
 
 def main():
@@ -82,14 +88,14 @@ def main():
                 for version,binary in versions.items():
                     label=stem+"-"+mode+"-"+version
                     result=execute([binary,"-v","-cpu-lim=5","-"+mode,out/stem],label,binary.parent.parent)
-                    assert result[0]==0 and semantic(result[1])==(exact,exact,exact,exact),result
+                    require_science(result[0]==0 and semantic(result[1])==(exact,exact,exact,exact),result)
                     assert_all_bounds(result[1],exact)
                     assert_status(result[1])
                     wcnf=out/(label+".wcnf")
                     result=execute([binary,"-"+mode,"-dump-only","-dump-wcnf="+str(wcnf),out/stem],label+"-dump",binary.parent.parent)
-                    assert result[0]==0,result
+                    require_science(result[0]==0,result)
                     dumps.append(wcnf.read_bytes())
-                assert dumps[0]==dumps[1],"Initial CNF changed"
+                require_science(dumps[0]==dumps[1],"Initial CNF changed")
             checks.append(dict(fixture=stem,oracle_distance=exact,initial_CNF_identical=True))
         # Independent exhaustive oracle for tiny supported unweighted PMS.
         # Main.cc's standalone result format uses "optimal:", not DistQLDPC's o line.
@@ -112,44 +118,49 @@ def main():
                 # Solver.cc emits comma-delimited optimal fields. Inspect every
                 # occurrence, including malformed/negative values, not a numeric subset.
                 raw_values=re.findall(r"optimal:\s*([^,\r\n]*)",result[1])
-                assert raw_values and all(re.fullmatch(r'\d+',v.strip()) for v in raw_values),result
+                require_science(raw_values and all(re.fullmatch(r'\d+',v.strip()) for v in raw_values),result)
                 values=[int(v.strip()) for v in raw_values]
                 status=[v.strip() for v in re.findall(r"^s\s+(.+)$",result[1],re.M)]
                 expected_status={10:'SATISFIABLE',20:'UNSATISFIABLE'}
-                assert result[0] in expected_status and status==[expected_status[result[0]]],result
+                require_science(result[0] in expected_status and status==[expected_status[result[0]]],result)
                 # Finite optimum alone does not force original Main rc10:
                 # its final failed-bound proof can report rc20/UNSATISFIABLE.
-                assert all(v==exact for v in values),result
+                require_science(all(v==exact for v in values),result)
                 scientific.append((result[0],status,values))
-            assert scientific[0]==scientific[1],"Standalone result/exit semantics differ"
+            require_science(scientific[0]==scientific[1],"Standalone result/exit semantics differ")
             checks.append(dict(fixture=stem,oracle_cost=exact,standalone_semantics_identical=True))
         # Existing integration help/smoke case plus a stable long-instance timeout.
         for version,binary in versions.items():
             result=execute([binary,"--help"],"help-"+version,binary.parent.parent)
-            assert result[0]==0 and "Usage:" in result[1],result
+            require_science(result[0]==0 and "Usage:" in result[1],result)
             for mode in ["no-card","card-both","card-sinz","card-mto","card-both-force"]:
                 result=execute([binary,"-"+mode,"-cpu-lim=20",args.data_root.resolve()/"LP_34_20_2"],
                                "smoke-"+version+"-"+mode,binary.parent.parent,35)
-                assert result[0]==0 and semantic(result[1])==(2,2,2,2),result
+                require_science(result[0]==0 and semantic(result[1])==(2,2,2,2),result)
                 assert_all_bounds(result[1],2)
                 assert_status(result[1])
                 result=execute([binary,"-"+mode,"-cpu-lim=1",args.data_root.resolve()/"LP_340_56_8"],
                                "timeout-"+version+"-"+mode,binary.parent.parent)
-                assert result[0]==1 and "s UNKNOWN" in result[1] and "c status: TIMEOUT" in result[1],result
-                assert semantic(result[1])[:2]==(None,None),result
                 assert_all_bounds(result[1],8)
+                if result[0]==0:
+                    require_science(semantic(result[1])==(8,8,8,8),result)
+                    assert_status(result[1])
+                    raise CoverageGap("LP340 correctly completed optimum 8 before deadline; timeout path not exercised: "+version+" "+mode)
+                require_science(result[0]==1,"Unexpected timeout-case exit/crash: "+repr(result))
+                require_science(semantic(result[1])[:2]==(None,None),result)
                 assert_status(result[1],True)
-                assert all(int(v)<=8 for v in re.findall(r"^c\s+d_lb:\s*(\d+)",result[1],re.M)),result
-                assert all(int(v)>=8 for v in re.findall(r"^c\s+d_ub:\s*(\d+)",result[1],re.M)),result
         summary.update(Tier0="LOCAL_PASS",checks=checks,reason="CSS oracle, CNF, smoke, timeout and standalone MaxSAT oracle checks")
     except subprocess.TimeoutExpired as error:
         summary.update(Tier0="INCONCLUSIVE",reason="External watchdog interruption; no scientific mismatch established: "+str(error))
         raise
-    except AssertionError as error:
+    except ScienceMismatch as error:
         summary.update(decision="REJECT",Tier0="REJECT",reason=str(error))
         raise
+    except CoverageGap as error:
+        summary.update(Tier0="INCONCLUSIVE",coverage_gap=str(error),reason=str(error))
+        raise
     except Exception as error:
-        summary.update(reason=repr(error))
+        summary.update(Tier0="INCONCLUSIVE",reason=repr(error))
         raise
     finally:
         save(out/"summary.json",summary);manifest(out)

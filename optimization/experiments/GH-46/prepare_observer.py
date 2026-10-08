@@ -89,9 +89,9 @@ def main():
         helper_start=cc.index(b"void Solver::lookbackResetTrail(")
         helper_end=cc.index(b"\nvoid Solver::bumpConflVars()",helper_start)
         helper_body=cc[helper_start:helper_end]
-        helper_body=replace_once(helper_body,b"  int pathC=0;",b"  bool gh46_uip=false;\n  int pathC=0;")
+        helper_body=replace_once(helper_body,b"  int pathC=0;",b"  bool gh46_uip=false;\n  CRef gh46_initial_confl=confl;\n  int pathC=0;")
         helper_body=replace_once(helper_body,b"out_learnt[0] = ~p;",b"out_learnt[0] = ~p; gh46_uip=true;")
-        helper_body=replace_once(helper_body,b"      seen[var(out_learnt[i])] = 0;\n}",b"      seen[var(out_learnt[i])] = 0;\n  GH46TraceSnapshot::reset(*this,out_learnt,gh46_uip,nbIsets);\n}")
+        helper_body=replace_once(helper_body,b"      seen[var(out_learnt[i])] = 0;\n}",b"      seen[var(out_learnt[i])] = 0;\n  GH46TraceSnapshot::reset(*this,out_learnt,gh46_uip,nbIsets,gh46_initial_confl,falseVar,last);\n}")
         cc=cc[:helper_start]+helper_body+cc[helper_end:]
     for name,data in zip(FILES,(cc,hh,vv,mm)):
         (out/name).write_bytes(data)
