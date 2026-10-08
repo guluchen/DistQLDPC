@@ -40,7 +40,12 @@ def main():
         assert parsed['ub'] is None or parsed['ub'] >= 10
         assert parsed['objective'] is None or parsed['objective'] >= 10
     observations = load('resources.json')
-    assert all(r['affinity'] == setup['mask'] and r['eligible'] for r in observations)
+    assert all(r['affinity'] == setup['mask'] for r in observations)
+    assert all(r['eligible'] or r['label'].endswith('-preflight') for r in observations)
+    if not setup['allow_contention']:
+        assert all(setup['idle_by_cpu'][i] >= 95 for i in [setup['selected_cpu'], setup['sibling']])
+        assert all(not r['core_contention_detected'] and r['sibling_idle'] >= 95 for r in observations if r['eligible'])
+        assert all(r['selected_cpu_idle'] >= 95 for r in observations if r['eligible'] and r['label'].endswith('-preflight'))
     per_run = []
     for row in load('samples.json'):
         label = f"{row['case']}-{row['mode']}-{row['repeat']}-{row['version']}"
@@ -48,13 +53,21 @@ def main():
         assert masks and all(r['mask'] == setup['mask'] for r in masks)
         assert len({r['pid'] for r in masks}) >= 2, 'Parent and fork child must both be observed'
         checks = [r for r in observations if r['label'] == label or r['label'].startswith(label+'-')]
+        preflight = [r for r in checks if r['label'].endswith('-preflight')]
+        assert preflight and preflight[-1]['eligible'], 'No eligible preflight before this solve'
         per_run.append(dict(label=label, observations=len(checks),
                             contention_observations=sum(r['core_contention_detected'] for r in checks),
                             min_sibling_idle=min(r['sibling_idle'] for r in checks)))
     audited.update(affinity_audit='PASS', selected_cpu=setup['selected_cpu'], sibling=setup['sibling'],
                    contention_observations=sum(r['core_contention_detected'] for r in observations),
+                   preflight_wait_observations=sum(not r['eligible'] for r in observations),
+                   active_contention_observations=sum(r['core_contention_detected'] for r in observations
+                                                      if not r['label'].endswith('-preflight')),
                    per_run_resources=per_run, restoration='PASS',
-                   reason='Fixed affinity verified, but interactive desktop has unreserved background interference')
+                   strict_window_checks='PASS' if not setup['allow_contention'] else 'not requested',
+                   reason=('Strict low-interference checks passed; no exclusive Windows reservation'
+                           if not setup['allow_contention'] else
+                           'Fixed affinity verified, but interactive desktop has unreserved background interference'))
     (e/'independent-audit.json').write_text(json.dumps(audited, indent=2), encoding='utf8', newline='\n')
     print(json.dumps({k: v for k, v in audited.items() if k not in ['medians', 'per_run_resources']}, indent=2))
 

@@ -6,6 +6,17 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest retry after user closed emulators: [strict Windows window/result](experiments/E004/WINDOWS-STRICT-RESULT-2026-10-08.md).
+Complete48 exact solves, independent scientific/affinity/strict-window/cleanup
+audit PASS. CPU14/sibling15, min observed global idle87.337%; zero active
+contention checks, two preflight waits; thresholds unchanged. First17-solve
+preflight refusal preserved separately. Practical low-interference window
+achieved; optimization signal still INCONCLUSIVE (OFF/MTO geometric median
+ratios0.994322/0.994056, noise envelopes>1). This is timing uncertainty, not
+a remaining setup failure; no acceptance/merge. Next bounded exploratory step:
+LP340 Tier2 under the same Windows window, without relabeling lower tiers PASS.
+Earlier contended negative round and Linux pilot remain separate.
+
 Latest Windows window setup (2026-10-08): [completed setup/result](experiments/E004/WINDOWS-AFFINITY-RESULT-2026-10-08.md).
 Job Object limits owned controller/children to CPU14, sibling15 observed;
 two short probe rounds and final48 exact Tier1 solves/audit/cleanup PASS.

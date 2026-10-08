@@ -21,7 +21,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\DistQLDPC\optimization\exp
 ```
 
 The script confines its controller and descendants to one logical CPU via an
-unnamed Windows Job Object; other applications remain unchanged. It checks
+unnamed Windows Job Object. Before a solve it can wait up to30 seconds for
+the same pair to become eligible; all failed preflights are retained. No timing
+sample starts until eligibility passes, and active-run checks remain strict.
+Other applications remain unchanged. It checks
 global idle >50%/one CPU <=half spare and preflight core/sibling idle>=95%, then
 sibling>=95% every two seconds. This is a practical low-interference eligibility
 check, not a scientifically universal noise threshold. During running, the

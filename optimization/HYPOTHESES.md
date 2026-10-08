@@ -1,6 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
 Latest experiment: [E004 / H-007 INCONCLUSIVE](experiments/E004/README.md).
+Latest [strict Windows retry](experiments/E004/WINDOWS-STRICT-RESULT-2026-10-08.md)
+after emulator shutdown: complete48 exact solves/window/affinity audit PASS,
+zero active contention checks; OFF/MTO geometric median ratios0.994322/0.994056,
+unchanged noise gate INCONCLUSIVE. No disjoint regression in this round;
+preceding contended negative evidence retained. Next scoped exploratory step
+LP340 Tier2; no solver change, new hypothesis or scientific acceptance.
 Latest [Windows fixed-core setup](experiments/E004/WINDOWS-AFFINITY-RESULT-2026-10-08.md):
 48 exact Tier1 solves/affinity audit PASS, background contention remains;
 local numeric REJECT on BB108 MTO (+5.697%, disjoint ranges), controlled status

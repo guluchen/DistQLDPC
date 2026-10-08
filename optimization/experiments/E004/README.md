@@ -1,5 +1,11 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest [strict retry after emulator shutdown](WINDOWS-STRICT-RESULT-2026-10-08.md):
+> practical low-interference window PASS,48 correct solves/affinity/cleanup audit
+> PASS; no active contention checks. OFF/MTO geometric median ratios0.994322/
+> 0.994056, noise gate INCONCLUSIVE. Window setup succeeded; LTO effect remains
+> uncertain. Prior partial/contended negative runs retained separately.
+
 > Latest Windows window setup: [fixed-core validation/result](WINDOWS-AFFINITY-RESULT-2026-10-08.md).
 > Job Object confines owned process tree; probes/48 exact Tier1 solves/audit and
 > restoration PASS. Background interference remains, 55/90 contention observations.
