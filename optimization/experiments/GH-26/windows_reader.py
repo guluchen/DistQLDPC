@@ -19,13 +19,13 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 TREE = HERE.parents[2]
 ASSIGNED_URL = 'HOST_SLOT_NOT_ASSIGNED'
-MODEL_COMMIT = '2657757675bef2dcb63577880f43c27790c99c15'
+MODEL_COMMIT = '419d9e8b69c7b33eec38572de948958de92a1674'
 BASE = '24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 HELPER_SHA = 'ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2'
 SOURCE = {
     'snapshot_fla.h': '3d8ae9138586c3ae6a25ece1fc9ed9db8e2a89444bd0d62420ee8c5354ab81bc',
     'engine_snapshot_fixture.h': 'c2a42ca7db3e91420920940fcab41eba08ce73046c290cd4d04d177cecbd099c',
-    'engine_snapshot_probe.cc': '57d7e44e4dfda112f623076ae574aba298037a7e29e0bebfbf468f248ea0b28c8',
+    'engine_snapshot_probe.cc': '97004ec9a331fe5d63d0993b508943c5be23af9723d422d592d1a647fd2b86e7',
 }
 RUNTIME = {
     'bin/g++.exe': '86bec0e6bef5057ab9065082633d430db5bc443a74489452798818cb0e0c0bd3',
@@ -189,7 +189,7 @@ try:
     pins[out/'executed-window.py'] = HELPER_SHA
     save(out/'preexecution.json', dict(pins=before, git_blob_hashes=blobs, assignment=args.run_assignment,
          compile='single fixture translation unit linked to frozen baseline O3 engine objects; no make or parallel workers',
-         fixture_cases=64, fixture_timeout_sec=60, workload_budget_sec=240,
+         fixture_cases=64, offset_negative_checks=5, fixture_timeout_sec=60, workload_budget_sec=240,
          baseline_cache_provenance_sha256=cache_digest, engine_learning='NOT_RUN',engine_rollback='NOT_RUN'))
     assert not any(os.environ.get(n) for n in ['CXX','CXXFLAGS','LDFLAGS','MAKEFLAGS'])
     os.environ['PATH'] = str(runtime/'bin')+os.pathsep+os.environ['PATH']
@@ -212,10 +212,18 @@ try:
     rows=re.findall(rb'^case=(\d+) signs=(\d+) covered=(\d+) root=(\d+) strengthened=(\d+) original_exact=(\d+) lower=(\d+)\r?$',trace,re.M)
     assert len(rows)==64 and [int(row[0]) for row in rows]==list(range(64)), 'READONLY_REJECT incomplete trace'
     assert b'READONLY_ADAPTER_64_PASS productionTier0=NOT_RUN learning=NOT_RUN rollback=NOT_RUN' in trace, 'READONLY_REJECT missing terminal record'
+    expected_negatives=[b'negative=0 name=wrong-fixed-scalar decline=fixed-search transfer delta',
+                        b'negative=1 name=duplicate-transfer-identity decline=transferred root witness',
+                        b'negative=2 name=missing-transfer-witness decline=fixed-search transfer delta',
+                        b'negative=3 name=uncounted-root-without-transfer decline=uncertified uncounted falsity',
+                        b'negative=4 name=fabricated-nonroot-transfer decline=transferred root witness']
+    negatives=[line for line in trace.splitlines() if line.startswith(b'negative=')]
+    assert negatives==expected_negatives and b'OFFSET_WITNESS_5_DECLINES_PASS productionTier0=NOT_RUN' in trace, 'READONLY_REJECT missing offset decline checks'
     report=dict(cases=64,rows=[[int(v) for v in row] for row in rows],stdout_sha256=sha(out/'reader-fixture.stdout'),
-                binary_sha256=sha(binary),production_tier0='NOT_RUN',learning='NOT_RUN',rollback='NOT_RUN')
+                binary_sha256=sha(binary),production_tier0='NOT_RUN',learning='NOT_RUN',rollback='NOT_RUN',
+                offset_declines=5,negative_records=[line.decode('utf-8') for line in negatives])
     save(out/'reader-report.json',report)
-    summary.update(reader='READONLY_ADAPTER_64_PASS', status='READER_COMPLETE', cases=64,binary_sha256=sha(binary))
+    summary.update(reader='READONLY_ADAPTER_64_PASS', status='READER_COMPLETE', cases=64,offset_declines=5,binary_sha256=sha(binary))
 except BaseException as error:
     summary['error'] = repr(error)
     if 'READONLY_REJECT' in str(error) or str(error)=="Command failed: reader-fixture":
