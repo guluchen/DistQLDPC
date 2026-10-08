@@ -16,7 +16,7 @@ public:
     // Intentional test-only mode coverage; constructor default checked first.
     void testMode(int mode) { ccmin_mode = mode; }
 
-    void run(int scenario, bool quasi, int signs) {
+    void run(int scenario, int caller, int signs) {
         for (int i=0; i<5; ++i) newVar();
         VSIDS = true; // caller activity policy held fixed, not production change
         const Lit a=mkLit(0, signs&1), x=mkLit(1, signs&2),
@@ -45,8 +45,23 @@ public:
         // Original conflict clause is falsified by this legal implication trail.
         formula.push_back({~u, ~a, ~x});
         vec<Lit> learned; learned.push(~u); learned.push(~a); learned.push(~x);
+        const CRef conflict=ca.alloc(learned,false);
+        // Authenticate constructed reason graph rather than assume its legality.
+        for(int v=0;v<nVars();++v) {
+            if(reason(v)==CRef_Undef) continue;
+            const Clause& c=ca[reason(v)];
+            require(var(c[0])==v && value(c[0])==l_True,"true reason head");
+            int head=-1; for(int i=0;i<trail.size();++i) if(var(trail[i])==v) head=i;
+            require(head>=0,"reason head on trail");
+            for(int k=1;k<c.size();++k) {
+                require(value(c[k])==l_False,"false reason antecedent");
+                int preceding=-1;
+                for(int i=0;i<head;++i) if(var(trail[i])==var(c[k])) preceding=i;
+                require(preceding>=0,"acyclic earlier reason antecedent");
+            }
+        }
         // Actual UIP analysis/fixByLookahead need not mark the asserting slot.
-        for (int i=1;i<learned.size();++i) seen[var(learned[i])]=1;
+        if(caller!=2) for (int i=1;i<learned.size();++i) seen[var(learned[i])]=1;
         std::vector<int> assignment, levels, reasons, trailBefore;
         for(int v=0;v<nVars();++v) {
             assignment.push_back(toInt(assigns[v]));
@@ -54,11 +69,13 @@ public:
         }
         for(int i=0;i<trail.size();++i) trailBefore.push_back(toInt(trail[i]));
         int bt=-1,lbd=-1;
-        if(quasi) simplifyQuasiConflictClause(learned,bt,lbd);
+        if(caller==2) { learned.clear(); analyze(conflict,learned,bt,lbd); }
+        else if(caller==1) simplifyQuasiConflictClause(learned,bt,lbd);
         else simplifyConflictClause(learned,bt,lbd);
         const bool retained=scenario==0 || (scenario==3 && ccmin_mode==1);
         require(learned.size()==(retained?3:2), "literal retention/removal");
         require(learned[0]==~u && learned[1]==(scenario==0?~x:~a), "asserting/backtrack literal");
+        if(retained) require(learned[2]==(scenario==0?~a:~x),"retained final literal");
         require(bt==(scenario==0?2:1), "backtrack level");
         require(lbd==(scenario==0?3:2), "exact distinct nonzero levels");
         for(int v=0;v<nVars();++v) {
@@ -93,10 +110,10 @@ int main(int argc,char** argv) {
     unsigned cases=0;
     for(int mode=1;mode<=2;++mode)
         for(int scenario=0;scenario<4;++scenario)
-            for(int quasi=0;quasi<2;++quasi)
+            for(int caller=0;caller<3;++caller)
                 for(int signs=0;signs<8;++signs) {
                     Probe p; require(p.configuredMode()==expected,"actual constructor default");
-                    p.testMode(mode); p.run(scenario,quasi,signs); ++cases;
+                    p.testMode(mode); p.run(scenario,caller,signs); ++cases;
                 }
     std::printf("GH53_HELPER_IMPLICATION_PASS cases=%u default=%d\n",cases,expected);
     return 0;

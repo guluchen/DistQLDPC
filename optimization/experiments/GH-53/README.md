@@ -11,8 +11,8 @@ allocation diagnostics or timings. Draft PR54 is an isolated candidate, not acce
 - Attribution documentation originally suffered Windows line-ending churn;
   a following support commit restores all original LF bytes. Final diff has
   only13 MODIFICATIONS additions,5 NOTICE additions, and1 source literal change.
-- test_minimization.cc is UNCOMPILED test-only preparation:128 direct actual
-  helper cases per binary (two modes, four reason graphs, two helper paths,
+- test_minimization.cc is UNCOMPILED test-only preparation:192 direct/helper+hard-caller
+  helper cases per binary (two modes, four reason graphs, two helper paths plus actual hard analyze,
   eight polarity patterns), exhaustive32-model nonvacuous implication oracle,
   constructor defaults, literal retention, levels/LBD, seen cleanup, immutable
   assignment/trail/reasons. Direct legal reason graph construction is not
