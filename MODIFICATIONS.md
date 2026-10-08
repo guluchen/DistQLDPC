@@ -11,6 +11,13 @@ MIT-licensed (see `src/solver/LICENSE`).
 
 ## Application layer (`src/core/`)
 
+Experimental H010/GH-16 build support: optional engine-only GCC PGO generation
+and use. A `DISTQLDPC_PROFILE_TRAINING` hook dumps engine profiles before the
+fork child's existing `_exit`; default and final profile-use builds exclude
+it. This does not change production solver/encoding, timeout or result semantics.
+No embedded MaxCDCL source change; all attribution retained. See
+`optimization/experiments/GH-16/PROPOSAL.md`; this is not an accepted speedup.
+
 New code, not derived from MaxCDCL.
 
 ### `src/core/distqldpc.cc`

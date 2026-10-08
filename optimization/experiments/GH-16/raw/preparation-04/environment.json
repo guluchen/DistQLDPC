@@ -1,0 +1,82 @@
+{
+  "affinity": {
+    "topology": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ]
+    ],
+    "selected_cpu": 14,
+    "sibling": 15,
+    "original_affinity": 65535,
+    "mask": 16384,
+    "idle_by_cpu": [
+      84.375,
+      91.25,
+      87.8125,
+      90.625,
+      89.0625,
+      90.625,
+      84.6875,
+      85.3125,
+      98.4375,
+      52.8125,
+      90.0,
+      80.99688473520249,
+      84.6875,
+      77.8125,
+      98.4375,
+      99.375
+    ],
+    "sampling_sec": 5,
+    "exclusive_reservation": false,
+    "power_policy_changed": false,
+    "sleep_inhibition": "temporary system requirement",
+    "allow_contention": true,
+    "affinity_enforcement": "Unnamed Windows Job Object JOB_OBJECT_LIMIT_AFFINITY; no breakaway flags",
+    "priority_class": 32768,
+    "original_priority_class": 32,
+    "priority_enforcement": "JOB_OBJECT_LIMIT_PRIORITY_CLASS on owned process tree"
+  },
+  "invocation": [
+    "GH16-prepare-windows.py",
+    "GH16-windows-preparation-04",
+    "--resume-02"
+  ],
+  "driver_sha256": "96b1517b2c4d5ea3d24c8bed48de544e236595fc4980188d1177dd9f8a0c34f6",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "source_hashes": {
+    "Makefile": "85096a2f754e2948c0ce9938b8d83c620e22a4469eb236a11e201e98453364de",
+    "src\\core\\distqldpc.cc": "d87ad69382dcb1f1e487fe78e7978972e6005b3a968b71ec2c06d69e7b2b3d1d",
+    "src\\solver\\Solver.cc": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+    "src\\solver\\SimpSolver.cc": "4f4bdce723dfa5d9166a94377595dbbba5284a6bf33fe4d4f51f1246fd0ce249"
+  }
+}

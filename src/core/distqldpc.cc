@@ -36,6 +36,12 @@
 #include <signal.h>
 #include <errno.h>
 
+#ifdef DISTQLDPC_PROFILE_TRAINING
+extern "C" {
+#include <gcov.h>
+}
+#endif
+
 #include "utils/System.h"
 #include "SimpSolver.h"
 
@@ -766,6 +772,10 @@ static int solve_in_child_fork(
         close(pipefd[1]);
         fflush(stdout);
         fflush(stderr);
+#ifdef DISTQLDPC_PROFILE_TRAINING
+        // Training only: _exit does not run libgcov's normal exit destructor.
+        __gcov_dump();
+#endif
         _exit(d >= 0 ? 0 : 1);
     }
 
