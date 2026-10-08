@@ -6,6 +6,18 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest authorized LP340 Tier2 strict attempt: [initial window refused](experiments/E004/WINDOWS-STRICT-TIER2-RESULT-2026-10-08.md).
+No95%-idle physical-core/SMT pair; zero solver/timing samples, INCONCLUSIVE.
+Emulator instances again observed with different PIDs; later per-core idle
+62.5--88.125%. Strict criteria unchanged; no candidate rejection or Tier3.
+Tier2 driver/audit prepared and syntax-checked. Pending user choice: close
+emulators for a fresh strict attempt, or explicitly choose contended diagnostics.
+Previously completed strict48-run Tier1 remains valid and separate below.
+After user halved emulator virtual CPU count, two5s samples show global idle
+89.141/88.281% but no95%-idle SMT pair; CPU8 idle98--99%, sibling9 idle81--85%.
+No solver started or explicit diagnostic-mode switch; strict continuation pending
+eligible environment. Abundant spare capacity is distinct from per-core quietness.
+
 Latest retry after user closed emulators: [strict Windows window/result](experiments/E004/WINDOWS-STRICT-RESULT-2026-10-08.md).
 Complete48 exact solves, independent scientific/affinity/strict-window/cleanup
 audit PASS. CPU14/sibling15, min observed global idle87.337%; zero active

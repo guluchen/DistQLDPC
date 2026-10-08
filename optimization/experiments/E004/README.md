@@ -1,5 +1,10 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest authorized [strict LP340 Tier2 attempt](WINDOWS-STRICT-TIER2-RESULT-2026-10-08.md):
+> initial95%-idle pair unavailable, emulator instances observed again; zero solver
+> samples, environment INCONCLUSIVE. Driver/audit ready, strict mode retained
+> pending user choice; no scientific rejection or Tier3 launch.
+
 > Latest [strict retry after emulator shutdown](WINDOWS-STRICT-RESULT-2026-10-08.md):
 > practical low-interference window PASS,48 correct solves/affinity/cleanup audit
 > PASS; no active contention checks. OFF/MTO geometric median ratios0.994322/

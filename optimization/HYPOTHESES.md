@@ -1,6 +1,10 @@
 # Hypothesis registry (not an execution queue)
 
 Latest experiment: [E004 / H-007 INCONCLUSIVE](experiments/E004/README.md).
+Latest authorized [strict LP340 follow-up](experiments/E004/WINDOWS-STRICT-TIER2-RESULT-2026-10-08.md)
+refused initial core eligibility; zero solver/timing samples. Emulator instances
+observed again, strict authorization retained pending user's environment/mode
+choice. Tier2 driver/audit ready, no semantic rejection or automatic Tier3.
 Latest [strict Windows retry](experiments/E004/WINDOWS-STRICT-RESULT-2026-10-08.md)
 after emulator shutdown: complete48 exact solves/window/affinity audit PASS,
 zero active contention checks; OFF/MTO geometric median ratios0.994322/0.994056,

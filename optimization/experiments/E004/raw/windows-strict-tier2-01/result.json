@@ -1,0 +1,26 @@
+{
+  "decision": "INCONCLUSIVE",
+  "tier0": "not revalidated in this attempt",
+  "tier2": "not started",
+  "samples": 0,
+  "returncode": 1,
+  "reason": "Initial five-second selection: no physical-core/SMT pair with both threads >=95% idle",
+  "scientific_failure": false,
+  "affinity_changed": false,
+  "sleep_changed": false,
+  "original_selection_samples_retained": false,
+  "invocation": [
+    "python",
+    "-X",
+    "utf8",
+    "DistQLDPC/optimization/experiments/E004/run_windows_affinity_tier2.py",
+    "--prior",
+    "E004-windows-tier2-02",
+    "--cygwin-root",
+    "E004-windows-runtime/cygwin",
+    "--output",
+    "E004-windows-strict-tier2-01",
+    "--preflight-wait-sec",
+    "30"
+  ]
+}
