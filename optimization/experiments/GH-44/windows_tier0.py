@@ -107,6 +107,12 @@ def managed_run(argv,cwd,target,label,timeout,cygwin=False):
     argv=list(map(str,argv))
     if cygwin:argv=[argv[0]]+[cygpath(v) for v in argv[1:]]
     window.previous=module.ticks();time.sleep(2.1);observe(label+"-preflight")
+    identity_guard=time.monotonic()
+    for path,digest in identities.items():
+        assert time.monotonic()-RUN_START<RUN_LIMIT,'Aggregate watchdog expired during identity check'
+        assert sha(path)==digest,'Pre-command identity changed: '+path
+        if time.monotonic()-identity_guard>=2:
+            observe(label+'-identity');identity_guard=time.monotonic()
     command=dict(argv=argv,cwd=str(cwd),timeout_sec=timeout,assignment=args.run_assignment)
     reason=None;start=time.monotonic();last=start;sampled=False
     with (target/(label+".stdout")).open("wb") as stdout,(target/(label+".stderr")).open("wb") as stderr:
@@ -202,6 +208,9 @@ def check_run(argv,label,cwd,limit=20,exact=None,timeout=False,allow_rc=False):
     result=managed_run(argv,cwd,out,label,limit,True)
     if exact is not None:
         assert not result[2],'SCIENCE scientific stderr regression '+label
+        if timeout and result[0]==0:
+            science.append(dict(label=label,result=scientific(result[0],result[1],exact)));save(out/'science.json',science)
+            raise RuntimeError('TEST_COVERAGE: sound completed solve did not exercise required timeout: '+label)
         incomplete=result[0]==1 and not timeout
         science.append(dict(label=label,result=scientific(result[0],result[1],exact,timeout,incomplete)));save(out/'science.json',science)
         if incomplete:raise RuntimeError('Legitimate incomplete solve blocks Tier0 completion: '+label)
@@ -259,6 +268,8 @@ def loaded_modules(pid):
 science=[]
 try:
     assert out.parent==ROOT and out.is_relative_to(ROOT),'Output must be fresh direct workspace child'
+    window=module.Window(True,0x8000);save(out/'window.json',window.selection)
+    window.previous=module.ticks();time.sleep(2.1);observe('assigned-preflight')
     head=subprocess.check_output(['git','-C',str(candidate),'rev-parse','HEAD'],text=True,timeout=10).strip()
     assert head==support_head
     assert not subprocess.check_output(['git','-C',str(candidate),'diff',CAND,head,'--','src','Makefile'],timeout=10),'Pinned production changed'
@@ -279,8 +290,11 @@ try:
     assert len(runtime_manifest)==10216,'Original runtime manifest scope'
     frozen_runtime_file_set={p.relative_to(runtime).as_posix() for p in runtime.rglob('*') if p.is_file()}
     assert frozen_runtime_file_set==set(runtime_manifest),'Original runtime file set changed'
+    identity_guard=time.monotonic()
     for rel,digest in runtime_manifest.items():
         p=runtime/rel;assert sha(p)==digest,'Original runtime changed '+rel;identities[str(p)]=digest
+        assert time.monotonic()-RUN_START<RUN_LIMIT,'Aggregate watchdog expired during initial runtime check'
+        if time.monotonic()-identity_guard>=2:observe('initial-runtime-identity');identity_guard=time.monotonic()
     support=[Path(__file__),HERE/'cpu_isa_gate.cc',HERE/'abi_probe.cc',HERE/'cygwin_test_stats_shim.cc',HERE/'runtime-original.json',helper]
     for p in support:identities[str(p)]=sha(p)
     save(out/'preexecution.json',dict(assignment=args.run_assignment,baseline=BASE,production_candidate=CAND,record_head=head,
@@ -291,18 +305,17 @@ try:
     os.environ['PATH']=str(runtime/'bin')+os.pathsep+os.environ['PATH']
     os.environ.update(LC_ALL='C',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1')
     assert not any(os.environ.get(key) for key in ['MAKEFLAGS','CXX','CXXFLAGS','LDFLAGS']),'Unrecorded build override'
-    window=module.Window(True,0x8000);save(out/'window.json',window.selection)
     compiler=runtime/'bin/g++.exe'
     original_flags=['-Isrc/solver','-Wall','-Wno-parentheses','-O3','-g','-D__STDC_LIMIT_MACROS','-D__STDC_FORMAT_MACROS','-DNDEBUG']
     version_flags={'baseline':original_flags,'candidate':original_flags+['-march=x86-64-v3']}
     result=check_run([compiler,'--version'],'compiler-version',candidate);assert '14.4.0' in result[1],'Compiler version drift'
     gate=out/'portable-isa-gate.exe'
     check_run([compiler,*original_flags,HERE/'cpu_isa_gate.cc','-o',gate],'portable-isa-gate-build',sources['baseline'],60)
+    identities[str(gate)]=sha(gate)
     rc,text,err=check_run([gate],'portable-isa-gate-run',sources['baseline'],10,allow_rc=True)
     if rc!=0:raise RuntimeError('ISA compatibility not established: '+text+err)
     gate_result=json.loads(text);assert gate_result['compatible'] is True,'ISA compatibility not established'
     save(out/'isa-gate.json',dict(cpu=window.selection['selected_cpu'],mask=window.mask,cpuid=gate_result))
-    identities[str(gate)]=sha(gate)
     empty=out/'empty-target.cc';empty.write_text('int provenance_marker;\n',encoding='utf8')
     options={};optimizers={};macros={};abi={}
     for version,flags in version_flags.items():
@@ -315,10 +328,10 @@ try:
         assert '#define __cplusplus 201703L' in macros[version],'Language default drift'
         probe=out/(version+'-abi-probe.exe')
         check_run([compiler,*flags,HERE/'abi_probe.cc','-lz','-o',probe],'abi-build-'+version,sources[version],60)
+        identities[str(probe)]=sha(probe)
         rc,abi[version],err=check_run([probe],'abi-run-'+version,sources[version],10)
         live=json.loads((out/('abi-run-'+version+'.command.json')).read_text(encoding='utf8')).get('loaded_modules',[])
         assert {'cygwin1.dll','cygstdc++-6.dll','cygz.dll'}.issubset({Path(row['path']).name.lower() for row in live}),'Missing actual scientific linkage proof'
-        identities[str(probe)]=sha(probe)
     assert abi['baseline']==abi['candidate'],'ABI/library probe mismatch'
     fp=lambda text:re.findall(r'^\s*(-ffp-contract=\S*|-f(?:fast-math|finite-math-only|unsafe-math-optimizations|rounding-math|signed-zeros|associative-math|reciprocal-math|excess-precision=\S*))\s+(.*?)\s*$',text,re.M)
     assert any(key.startswith('-ffp-contract=') for key,value in fp(optimizers['baseline'])),'FP contraction policy missing'
@@ -327,6 +340,7 @@ try:
     for version,source in sources.items():
         check_run([runtime/'bin/make.exe','-j1','bin/distqldpc'],'build-'+version,source,300)
         binaries[version]=source/'bin/distqldpc.exe';identities[str(binaries[version])]=sha(binaries[version])
+        for obj in (source/'build').glob('*.o'):identities[str(obj)]=sha(obj)
     save(out/'binary-hashes.json',{v:sha(p) for v,p in binaries.items()})
     props={v:pe_properties(p) for v,p in binaries.items()};assert props['baseline']==props['candidate'],'GNU PE security/default manifest changed'
     save(out/'production-pe.json',props)
@@ -373,6 +387,7 @@ try:
         objects=[source/'build'/(n+'.o') for n in ['SimpSolver','Solver','Options','System']]
         check_run([runtime/'bin/g++.exe',*version_flags[version],source/'src/solver/Main.cc',
             HERE/'cygwin_test_stats_shim.cc',*objects,'-lz','-o',binary],version+'-standalone-test-build',source,120)
+        identities[str(binary)]=sha(binary)
     def satisfies(clause,assignment):
         return any(bool(assignment&(1<<(abs(lit)-1)))==(lit>0) for lit in clause)
     cases=[('pms-zero',2,[[-1,2]],[[1],[2]]),
@@ -426,12 +441,15 @@ try:
             tag=version+'-'+phase
             hooked=out/(tag+'-test-only-Solver.cc')
             hooked.write_bytes(b'#include <unistd.h>\n'+body)
+            identities[str(hooked)]=sha(hooked)
             obj=out/(tag+'-test-only-Solver.o')
             flags=version_flags[version]
             check_run([runtime/'bin/g++.exe',*flags,'-c',hooked,'-o',obj],tag+'-hook-build',source,120)
+            identities[str(obj)]=sha(obj)
             binary=out/(tag+'-test-only.exe')
             other=[source/'build'/(name+'.o') for name in ['SimpSolver','Options','System']]
             check_run([runtime/'bin/g++.exe',*flags,source/'src/core/distqldpc.cc',obj,*other,'-lz','-o',binary],tag+'-app-build',source,120)
+            identities[str(binary)]=sha(binary)
             for mode in ['no-card','card-mto']:
                 label=tag+'-timeout-'+mode
                 rc,text,error=check_run([binary,'-v','-'+mode,'-cpu-lim=1',out/'css4'],label,source,20,exact=2,timeout=True)
