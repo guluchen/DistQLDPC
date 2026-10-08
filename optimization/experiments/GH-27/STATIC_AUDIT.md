@@ -26,11 +26,15 @@ it was repaired to honor each original file's line endings and rerun from baseli
 This was source preparation, no build/test attempt or scientific result.
 Upstream notices are preserved; downstream patch documentation describes this unadopted experiment.
 
-Prepared fixture test_enqueue_prefix.cc exercises240 combinations:
+Prepared fixture test_enqueue_prefix.cc now exercises480 combinations:
 hard/satisfied-soft/falsified-NON/falsified-zero-lock/lock1/lock2;
 both literal signs; decision depths0/1/2; explicit real allocated reason versus default;
 direct/aliased incoming core representative; empty/two-member core lists for unlocked
 cases, two-member lists for locked cases (do not invent empty locked cores).
+Independent reviewer identified an uninitialized UBconflictFlag read in the
+original240-case prepared fixture. Before any execution, initialize all printed
+flag/counter state explicitly and exercise UBconflictFlag false/true, doubling cases.
+This is a test-support correction; production58fbae5 is unchanged and no old PASS exists.
 Core lists contain repeated undefined aux, assigned aux and an existing heap entry.
 Calls actual production method and compares state/returns/heap ordering via original/candidate
 traces, plus outcome assertions. This does not establish pipeline-level correctness;

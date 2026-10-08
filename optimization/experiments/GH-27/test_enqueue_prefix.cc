@@ -11,9 +11,12 @@ struct Fixture : Solver {
     Fixture() {
         for (int v=0;v<12;++v) newVar(false,false);
         lk_propagations=0;
+        softConflictFlag=false;
+        UBconflictFlag=false;
     }
     void run(unsigned id, int kind, bool negative, int depth, bool explicitReason,
-             bool alias, bool emptyCore) {
+             bool alias, bool emptyCore, bool initialUB) {
+        UBconflictFlag=initialUB;
         for (int k=0;k<depth;++k) newDecisionLevel();
         uncheckedEnqueue(mkLit(11));
         const int oldTrail=trail.size(), oldHead=qhead;
@@ -87,8 +90,10 @@ int main() {
                     for (int alias=0;alias<2;++alias)
                         for (int empty=0;empty<2;++empty) {
                             if (kind>=4 && empty) continue; // Do not invent an empty locked core.
-                            Fixture f;
-                            f.run(id++,kind,sign!=0,depth,reason!=0,alias!=0,empty!=0);
+                            for (int initialUB=0;initialUB<2;++initialUB) {
+                                Fixture f;
+                                f.run(id++,kind,sign!=0,depth,reason!=0,alias!=0,empty!=0,initialUB!=0);
+                            }
                         }
     return 0;
 }
