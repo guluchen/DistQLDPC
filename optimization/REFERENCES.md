@@ -55,6 +55,16 @@ method or all SLS. [Proposal](experiments/E005/PROPOSAL.md),
 
 ## Other techniques and future entries
 
+H-012, proposed in [Round5](brain/2026-10-08-round5.md), uses key
+`zhang2026enhanced`: [CP2026 publisher record and exact published PDF](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.CP.2026.60),
+metadata checked2026-10-08. Reading depth: sections2/3, Algorithms1–3,
+Proposition6; section3.3 read to exclude RL. Proposed adaptation restricts
+eligible cores to size two. No experiment, full-system reproduction or code
+import. Code licensing must be checked separately from the paper's CC-BY license.
+H010 PGO and H011 scratch reuse are general engineering techniques;
+their inspected code and compiler sources are linked in Round5, not invented
+paper citations.
+
 H007 LTO came from ordinary compiler/program optimization, not a selected
 MaxSAT paper; do not invent a paper source for it. Earlier local hypotheses
 likewise need an honest origin, not an unsupported scholarly attribution.

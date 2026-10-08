@@ -1,5 +1,21 @@
 # Optimization state
 
+Latest user request: [Brain Round5](brain/2026-10-08-round5.md) proposes three
+independent approaches: H010 PGO, H011 one core-processing scratch buffer,
+H012 bounded further lookahead from CP2026. H010 recommended for the next
+single experiment, pending complete solver-profile collection design; all
+untested, no new benchmark or candidate implementation. E006 remains locally
+REJECT/NOT ADOPTED with dedicated-server corroboration pending. Earlier latest
+entries below are chronological. User additionally requests a GitHub-based
+multi-agent coordination mechanism and reusable task prompts; setup only.
+Clarification: each agent independently proposes three methods, selects one,
+and publishes selection/results on GitHub for shared learning. Agents do not
+divide H010 into implementation roles; H010 is only this agent's recommendation.
+[Coordination hub15](https://github.com/guluchen/DistQLDPC/issues/15),
+[primary selection16](https://github.com/guluchen/DistQLDPC/issues/16),
+[protocol/prompt](coordination/independent-agents/README.md) are ready; all new
+experiments UNTESTED, host runner unset, no measurement started by setup.
+
 Latest user decision: [record diagnostic screening and repeat BDD verification
 when server resources are available](experiments/E006/FOLLOWUP-2026-10-08.md).
 The earlier [LTO / E004 shelving](experiments/E004/DISPOSITION-2026-10-08.md)

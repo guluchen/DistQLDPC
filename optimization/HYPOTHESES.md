@@ -1,5 +1,16 @@
 # Hypothesis registry (not an execution queue)
 
+[Brain Round5](brain/2026-10-08-round5.md): **H-010 PGO only**, recommended
+next subject to collection prerequisite; **H-011 reuse only setConflict oldset
+capacity**, profiling-dependent; **H-012 bounded further lookahead**, CP2026
+paper-derived and soundness-audit dependent. All PROPOSED/UNTESTED, independent
+baseline24572d6; no new experiment results or adoption. No FIFO queue, no
+bundling. New paper BibTeX/source provenance retained. User requests GitHub
+multi-agent setup: each agent independently proposes three and selects one,
+with searchable GitHub selections/results and distinct experiments. H010 is
+this agent's recommendation only; independent ideas are not bundled. Shared
+resource scheduling still prohibits uncoordinated concurrent benchmark runs.
+
 Latest H009 follow-up: [exploratory LP340 Tier2 complete](experiments/E006/TIER2-RESULT.md),
 12 correct/audit PASS, affected-mode+6.75% disjoint repeated regression. Local
 REJECT/NOT ADOPTED reinforced, no Tier3 or merge. Explicit user exception leaves
