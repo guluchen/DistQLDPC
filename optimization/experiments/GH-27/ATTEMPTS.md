@@ -27,3 +27,16 @@ underlying vectors to index+1; production uses same init API at Solver.cc
 3384/4240/4889/4929.480 cases and production source unchanged. New support/driver
 must be frozen under a reviewed continuation before another attempt. No old
 failed record becomes PASS, and no performance conclusion follows from this failure.
+
+## Windows attempt02 — full local Tier0 PASS and baseline-only diagnostics
+
+Fresh assignment6065614772, frozen supportdc86b2926f57b9e09682770f93472944d6969804,
+driver7e7a32ab3a1e894f2bac61c73c77981dc7987d1fb872920a4980e9fcb4df9c79,
+corrected480-case fixturee720e19c0e7712e9a10d21124f0408a7e8d6e4592215dd6a98a3f9048246676c.
+Production unchanged58fbae5; baseline24572d6. Actual selectedCPU14/sibling15,
+mask16384, AboveNormal32768. Session59542 exit0; LOCAL_PASS, diagnosticPASS,
+valid_runtrue. All original review scope rerun from full-j1 baseline/candidate builds.
+See TIER0_RESULT.md for exact fixture/scientific/assembly/opportunity evidence and
+raw/windows-attempt-02 for immutable original output. No comparative timing.
+Only runner15724 remained before close, absent afterward; all restorationtrue.
+Resource released6065816741 before retaining evidence or requesting another tier.
