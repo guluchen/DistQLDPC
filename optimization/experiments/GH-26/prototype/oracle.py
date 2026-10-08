@@ -132,17 +132,28 @@ def main():
     input_bytes=payload.encode('utf-8')
     destination.with_suffix('.input.txt').write_bytes(input_bytes)
     destination.with_suffix('.cases.json').write_text(json.dumps(cases,indent=2)+'\n',encoding='utf-8')
-    completed=subprocess.run([args.driver],input=input_bytes,capture_output=True,
-                             check=False,timeout=60)
-    destination.with_suffix('.driver.stdout').write_bytes(completed.stdout)
-    destination.with_suffix('.driver.stderr').write_bytes(completed.stderr)
-    destination.with_suffix('.driver.json').write_text(json.dumps(dict(
-        returncode=completed.returncode,driver_sha256=hashlib.sha256(Path(args.driver).read_bytes()).hexdigest(),
-        stdin_sha256=hashlib.sha256(input_bytes).hexdigest(),cases=len(cases)),indent=2)+'\n',encoding='utf-8')
+    driver_metadata=dict(returncode=None,status='STARTING',
+        driver_sha256=hashlib.sha256(Path(args.driver).read_bytes()).hexdigest(),
+        stdin_sha256=hashlib.sha256(input_bytes).hexdigest(),cases=len(cases))
+    metadata_path=destination.with_suffix('.driver.json')
+    metadata_path.write_text(json.dumps(driver_metadata,indent=2)+'\n',encoding='utf-8')
+    # File-backed child streams preserve partial bytes even when the outer Job
+    # supervisor kills this oracle before subprocess.run returns on timeout.
+    with destination.with_suffix('.driver.stdout').open('wb') as stdout_file, \
+         destination.with_suffix('.driver.stderr').open('wb') as stderr_file:
+        try:
+            completed=subprocess.run([args.driver],input=input_bytes,stdout=stdout_file,
+                                     stderr=stderr_file,check=False,timeout=60)
+            driver_metadata.update(returncode=completed.returncode,status='COMPLETED')
+        except subprocess.TimeoutExpired:
+            driver_metadata['status']='TIMEOUT'
+            raise
+        finally:
+            metadata_path.write_text(json.dumps(driver_metadata,indent=2)+'\n',encoding='utf-8')
     if completed.returncode!=0:
         raise RuntimeError('model driver crash/invalid protocol return: '+str(completed.returncode))
-    stdout_text=completed.stdout.decode('utf-8',errors='strict')
-    stderr_text=completed.stderr.decode('utf-8',errors='strict')
+    stdout_text=destination.with_suffix('.driver.stdout').read_bytes().decode('utf-8',errors='strict')
+    stderr_text=destination.with_suffix('.driver.stderr').read_bytes().decode('utf-8',errors='strict')
     lines=stdout_text.splitlines()
     if len(lines)!=len(cases): raise AssertionError('driver result count mismatch')
     records=[]
