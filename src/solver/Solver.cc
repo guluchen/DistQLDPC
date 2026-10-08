@@ -4075,7 +4075,7 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
     seen[var(binConfl[0])] = 1; seen[var(binConfl[1])] = 1;  pathC = 2;
     if (VSIDS) {
       varBumpActivity(var(binConfl[0]), .1);
-      varBumpActivity(var(binConfl[0]), .1);
+      varBumpActivity(var(binConfl[1]), .1);
     }
   }
   else {

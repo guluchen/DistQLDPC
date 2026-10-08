@@ -61,6 +61,16 @@ in each file are unchanged.
 
 #### Solve loop hooks
 
+#### GH-22 experimental symmetric lookahead activity
+
+- In `lookbackResetTrail`'s VSIDS binary-conflict path, bump the second
+  conflict variable rather than repeating the first `.1` bump. This is a
+  branching heuristic experiment, not a demonstrated bug fix or speedup.
+- Both weights and all objective, bound, encoding, restart and timeout rules
+  remain unchanged. Original MIT headers/attribution are preserved.
+
+#### Solve loop hooks (existing integration)
+
 - Call `emitTryUpdate(UB)` when testing a new upper-bound candidate
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
