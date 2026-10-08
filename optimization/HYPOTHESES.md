@@ -1,6 +1,15 @@
 # Hypothesis registry (not an execution queue)
 
 Latest experiment: [E004 / H-007 INCONCLUSIVE](experiments/E004/README.md).
+Latest execution instruction (2026-10-08) permits one bounded exploratory tier
+forward if evidence cannot clearly reject the method. H-007's next step is
+[BB144 Tier 3 pilot](experiments/E004/TIER3-PILOT-PROPOSAL-2026-10-08.md).
+The pilot completed four correct distance-12 solves; OFF/MTO singleton ratios
+0.979988/0.804853, substantial unequal contention, audit PASS. Still INCONCLUSIVE;
+repeat the BB144 comparison before treating the MTO difference as LTO evidence.
+[Result](experiments/E004/TIER3-PILOT-RESULT-2026-10-08.md).
+This supersedes earlier INCONCLUSIVE execution stops, not scientific promotion
+criteria; other hypotheses remain alternatives rather than a queue.
 Earlier decision: [E001 provisionally shelved / LEARN](experiments/E001/DISPOSITION-2026-10-07.md),
 then [literature/program-optimization revision](brain/2026-10-07-round2-research-revision.md). Initial Round 2 priority is superseded.
 

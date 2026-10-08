@@ -28,6 +28,22 @@ Never obtain a performance improvement by changing benchmark ground truth, timeo
 
 ## Progressive filtering
 
+### User-directed exploratory continuation (2026-10-08)
+
+The user's latest instruction is: if the evidence does not clearly justify
+rejection, advance one tier rather than leave available CPU unused. This
+supersedes the execution stop on an INCONCLUSIVE gate for explicitly bounded
+exploratory follow-ups. It does not turn an inconclusive gate into PASS or
+authorize acceptance, merge, or a controlled performance claim. Record the
+budget, cases, repeat count and provenance before running; keep correctness,
+timeout interpretation and the user's spare-capacity restrictions unchanged.
+Confirmed regressions and semantic mismatches still stop advancement.
+
+For H-007, completed Tier 1 and Windows Tier 2 diagnostics justify the requested
+next exploratory step: the preregistered single-case BB_144_12_12 Tier 3 pilot.
+This is not authorization to launch the complete expensive seven-case suite.
+The scientific promotion criteria below remain unchanged.
+
 Run **Tier 0 → Tier 1 → Tier 2 → Tier 3** in order for each candidate. Do not skip a gate because an idea is promising or a previous candidate passed. A changed candidate must re-enter the applicable validation sequence from Tier 0.
 
 - **Tier 0 — correctness/smoke:** compile and run fast deterministic correctness and smoke checks appropriate to the change, including distance, bound, timeout, and result behavior where affected. For solver behavior/performance changes, require the existing [QDistSAT cross-repo benchmark](QDISTSAT_CROSS_REPO_CI.md) PR check (`LP_136_32_4`, `BB_108_8_10`; `-no-card` and `-card-mto`). Passing correctness is required before performance filtering; shared CI timing is diagnostic only.

@@ -6,6 +6,19 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest execution policy (2026-10-08): the user explicitly requests advancing
+one tier when existing evidence cannot clearly reject a method. This supersedes
+earlier execution stops on INCONCLUSIVE, while leaving scientific promotion,
+correctness, timeout and spare-capacity requirements intact. See
+[policy clarification](../docs/OPTIMIZATION_LOOP_POLICY.md#user-directed-exploratory-continuation-2026-10-08).
+For H-007, the bounded BB_144_12_12 Tier 3 pilot is now complete: four exact
+distance-12 solves, audit PASS, OFF/MTO singleton ratios 0.979988/0.804853.
+Minimum observed idle63.145%; one CPU; 76 contention observations and materially
+different MTO contention prevent attribution. Still INCONCLUSIVE, no acceptance
+or merge; full decisive suite not run. [Result/learning](experiments/E004/TIER3-PILOT-RESULT-2026-10-08.md).
+Next: bounded alternating three-repeat BB144 comparison with contention evidence.
+The older no-Tier-3 scheduling statements below preserve their chronology.
+
 E001 / H-001: **SHELVED / NOT ADOPTED for the current track**, at the user's
 explicit direction after repeated diagnostic GB regressions. Its controlled
 performance decision remains INCONCLUSIVE; no controlled rejection is invented.

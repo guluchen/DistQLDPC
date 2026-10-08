@@ -1,5 +1,12 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest user-directed continuation: [BB144 Tier 3 pilot completed](TIER3-PILOT-RESULT-2026-10-08.md).
+> Four exact distance-12 solves, independent audit PASS; OFF/MTO singleton ratios
+> 0.979988/0.804853. Unequal contention prevents speedup attribution; INCONCLUSIVE.
+> Explicit user instruction permits bounded exploratory advancement on uncertainty,
+> while scientific promotion remains pending. Older no-Tier-3 statements below
+> describe earlier scheduling. Next: alternating repeated BB144 comparison.
+
 > Latest H-007 advancement: [Windows Tier 1 coverage completed](WINDOWS-TIER1-RESULT-2026-10-08.md).
 > 48 new correct diagnostic solves, OFF/MTO median geometric ratios
 > 0.992546/0.994110; both noise envelopes exceed 1. INCONCLUSIVE, no Tier 3.
