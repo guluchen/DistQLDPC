@@ -1,7 +1,7 @@
 """Disabled complete GH41 Linux Tier0; no Tier1 auto-advance or exclusivity claim."""
 import argparse,hashlib,importlib.util,json,os,re,shutil,sys,time,signal
 from pathlib import Path
-ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067673124'
+ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067912776'
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 CAND='66cf8be5a4881643f2063471325e33cecaa0caf1'
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()

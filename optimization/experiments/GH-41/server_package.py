@@ -54,7 +54,7 @@ def main():
     for p in sorted(prep.glob('pms-*-witness.json')):files['windows-provenance/'+p.name]=p.read_bytes()
     for p in sorted(prep.glob('*-offset-coverage.json')):files['windows-provenance/'+p.name]=p.read_bytes()
     assert not any(p.name=='__pycache__' or p.suffix=='.pyc' for p in HERE.rglob('*')),'Fresh prepared support must contain no bytecode caches'
-    support_names=['test_witness.cc','GH41SERVER_PLAN.md']+[p.name for p in sorted(HERE.glob('server_*.py'))]
+    support_names=['test_witness.cc','GH41SERVER_PLAN.md','server_package.py','server_runtime_inventory.py','server_science.py','server_supervisor.py','server_tier0.py','server_launcher.py']
     support_head=subprocess.check_output(['git','-C',str(TREE),'rev-parse','HEAD'],text=True,timeout=10).strip()
     for name in support_names:
         blob=subprocess.check_output(['git','-C',str(TREE),'show',support_head+':optimization/experiments/GH-41/'+name],timeout=10)
@@ -72,5 +72,5 @@ def main():
     files['manifest.json']=(json.dumps(info,indent=2)+'\n').encode()
     out.mkdir()
     for name,data in files.items():p=out/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
-    print(json.dumps(dict(package=str(out),files=len(files),execution='NOT_RUN',assignment='NOT_ASSIGNED')))
+    print(json.dumps(dict(package=str(out),files=len(files),execution='NOT_RUN',assignment=info['server_assignment'])))
 if __name__=='__main__':main()
