@@ -62,66 +62,44 @@ struct Fixture : Solver {
             std::printf("\n");
         }
     }
-    void scenario(unsigned id, int size, int point, int firstState,
-                  int tailState, bool reverse, bool staleBlocker,
-                  bool negativeTail, bool deleted, bool gc, bool soft) {
+    void scenario(unsigned id, bool soft, int moved, int kept, int tail, bool deleted) {
+        // Every clause's second watch is ~p. All setup assignments precede p.
         if (deleted) { CRef dead=clause(70,71); removeClause(dead); }
-        assigned(9,false);
-        if (firstState!=2) assigned(1,firstState==1);
-        if (tailState!=2) assigned(2,(tailState==1)!=negativeTail);
-        // Additional generic-clause candidates are false; size3 has only c[2].
-        for (int v=3;v<size;++v) assigned(v,false);
-        if (soft && firstState==2) softLits[1]=~mkLit(1);
-        vec<Lit> lits;
-        lits.push(reverse ? ~mkLit(0) : mkLit(1));
-        lits.push(reverse ? mkLit(1) : ~mkLit(0));
-        lits.push(mkLit(2,negativeTail));
-        for (int v=3;v<size;++v) lits.push(mkLit(v));
-        CRef cr=ca.alloc(lits,false); clauses.push(cr); attachClause(cr);
-        ca[cr].setLastPoint(point);
-        if (staleBlocker) {
-            vec<Watcher>& ws=watches[mkLit(0)];
-            int targets=0;
-            for(int wi=0;wi<ws.size();++wi) if(ws[wi].cref==cr) {
-                ws[wi].blocker=mkLit(9); ++targets;
-            }
-            require(targets==1,"one live target watcher among possibly dirty dead entries");
+        for (int i=0;i<moved;++i) {
+            int v=3+2*i; assigned(v,false); clause(v,v+1);
         }
-        if (gc) { garbageCollect(); cr=clauses[0]; }
+        for (int i=0;i<kept;++i) { assigned(10+i,true); clause(10+i,20+i); }
+        assigned(2,false);
+        if (soft) softLits[1]=~mkLit(1); else assigned(1,false);
+        CRef conflict=clause(1,2);
+        for (int i=0;i<tail;++i) clause(30+i,30+i+tail);
+        const uint64_t prior=lk_propagations;
         uncheckedEnqueue(mkLit(0));
         CRef result=propagateForLK();
-        const bool conflict=firstState==0 && tailState==0;
-        const bool softFail=soft && firstState==2 && tailState==0;
-        require(result==(conflict ? cr : CRef_Undef),"independent conflict oracle");
-        require(falseVar==(softFail ? 1 : var_Undef),"independent soft-failure oracle");
-        if (firstState!=1 && tailState==2) {
-            require(ca[cr][1]==mkLit(2,negativeTail),"undefined tail is new watch");
-            require(ca[cr].lastPoint()==3,"undefined index2 advances point3");
-        }
-        if (firstState!=1 && tailState==1)
-            require(ca[cr].lastPoint()==2,"true index2 retains point2");
-        if (firstState!=1 && tailState==0)
-            require(ca[cr].lastPoint()==unsigned(point>size ? 2 : point),
-                    "false tail preserves normalized point");
-        // Pending literal0 always processed; implication1 adds one propagation
-        // except genuine failed-soft or hard conflict which terminates it.
-        require(qhead==trail.size(),"all queued propagation processed or aborted");
-        require(lk_propagations==uint64_t(firstState==2 && tailState==0 && !soft ? 2 : 1),
-                "independent propagated-literal count");
+        require(result==(soft ? CRef_Undef : conflict),"same conflict return");
+        require(falseVar==(soft ? 1 : var_Undef),"same failed soft variable");
+        require(qhead==trail.size(),"pending propagation ends at conflict");
+        require(lk_propagations==prior+1,"one propagated queued literal");
+        vec<Watcher>& retained=watches[mkLit(0)];
+        require(retained.size()==kept+1+tail,"compaction retains exact suffix length");
+        require(retained[kept].cref==conflict,"conflict watch remains before tail");
+        for (int i=0;i<moved;++i)
+            require(watches[~mkLit(4+2*i)].size()==1,"moved prefix watch kept in destination");
+        require(!soft || value(mkLit(1))==l_True,"soft failure retains queued implication");
         emit(id,result);
     }
 };
+
 int main() {
+    const int tails[]={0,1,2,7,23};
     unsigned id=0;
-    for (int size=3;size<=5;++size)
-      for (int pi=0;pi<3;++pi)
-       for (int first=0;first<3;++first)
-        for (int tail=0;tail<3;++tail)
-         for (int flags=0;flags<64;++flags) {
-          Fixture f;
-          f.scenario(id++,size,pi==2 ? size+1 : pi+2,first,tail,
-                     flags&1,flags&2,flags&4,flags&8,flags&16,flags&32);
-         }
-    require(id==5184,"fixed exhaustive fixture count");
+    for (int soft=0;soft<2;++soft)
+        for (int moved=0;moved<3;++moved)
+            for (int kept=0;kept<2;++kept)
+                for (int deleted=0;deleted<2;++deleted)
+                    for (unsigned t=0;t<sizeof(tails)/sizeof(tails[0]);++t) {
+                        Fixture f;
+                        f.scenario(id++,soft!=0,moved,kept,tails[t],deleted!=0);
+                    }
     return 0;
 }

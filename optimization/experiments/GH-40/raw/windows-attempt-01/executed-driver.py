@@ -29,7 +29,7 @@ ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 ap.add_argument("--support-sha",required=True)
 args=ap.parse_args()
-ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067129925"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "Preparation only: no host slot"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -197,9 +197,7 @@ def check_run(argv,label,cwd,limit=20,exact=None,timeout=False,allow_rc=False):
     if exact is not None:science.append(dict(label=label,result=scientific(result[0],result[1],exact,timeout)));save(out/'science.json',science)
     elif not allow_rc:
         if 'trace' in label:
-            if result[0]==2 and result[2].startswith('FAIL:'):
-                raise RuntimeError('FIXTURE_ENGINEERING_REVIEW: actual fixture failed '+label+': '+result[2])
-            assert result[0]==0,'SCIENCE actual fixture crash/non-oracle failure '+label+': '+result[2]
+            assert result[0]==0,'SCIENCE production fixture failed '+label+': '+result[2]
         if result[0]!=0:raise RuntimeError('BUILD/TEST command failed '+label+': '+result[2][-2000:])
     return result
 

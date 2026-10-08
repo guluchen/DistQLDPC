@@ -81,11 +81,7 @@ struct Fixture : Solver {
         ca[cr].setLastPoint(point);
         if (staleBlocker) {
             vec<Watcher>& ws=watches[mkLit(0)];
-            int targets=0;
-            for(int wi=0;wi<ws.size();++wi) if(ws[wi].cref==cr) {
-                ws[wi].blocker=mkLit(9); ++targets;
-            }
-            require(targets==1,"one live target watcher among possibly dirty dead entries");
+            require(ws.size()==1,"one target watcher"); ws[0].blocker=mkLit(9);
         }
         if (gc) { garbageCollect(); cr=clauses[0]; }
         uncheckedEnqueue(mkLit(0));
