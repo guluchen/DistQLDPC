@@ -42,7 +42,7 @@ base=package/"baseline"
 candidate=ROOT/"GH44-ISA"
 support_head=subprocess.check_output(['git','-C',str(candidate),'rev-parse','HEAD'],text=True,timeout=10).strip()
 assert support_head==args.support_sha,'Assigned support commit mismatch'
-support_blob=subprocess.check_output(['git','-C',str(candidate),'show',support_head+':optimization/experiments/GH-40/windows_tier1.py'],timeout=10)
+support_blob=subprocess.check_output(['git','-C',str(candidate),'show',support_head+':optimization/experiments/GH-44/windows_tier1.py'],timeout=10)
 assert Path(__file__).read_bytes()==support_blob,'Uncommitted Tier1 driver'
 helper=ROOT/"DistQLDPC/optimization/experiments/E004/windows_cpu_window.py"
 assert sha(helper)=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2','Reviewed helper changed'
@@ -190,7 +190,7 @@ HASHES={'baseline':'5d21d6c0c8daf117470e0dd353086f5a27bf5751f2a8ddb35136f2ac7793
 CASES=['BB_90_8_10','GB_144_12_8','BB_108_8_10','LP_238_44_6']
 MODES=['no-card','card-mto']
 prep=ROOT/'GH44-windows-tier0-01'
-record=candidate/'optimization/experiments/GH-40'
+record=candidate/'optimization/experiments/GH-44'
 binaries={v:prep/(v+'-source')/'bin/distqldpc.exe' for v in HASHES}
 samples=[];inputs={}
 summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',Tier0='PASS',Tier1='NOT_RUN',Tier2='NOT_RUN',Tier3='NOT_RUN',performance='PENDING_ASSIGNED_DIAGNOSTIC',reason='No exclusive OS reservation; report numeric filter separately')
@@ -247,7 +247,7 @@ try:
         driver_sha256=sha(__file__),helper_sha256=sha(helper),parser_sha256=sha(parser),binary_hashes=HASHES,input_hashes=inputs,
         production_preparation_sha256=sha(prep/'preexecution.json'),production_summary_sha256=sha(prep/'summary.json'),original_preparation_pins=preparation_pins,identities=identities,
         hosted_audit_sha256=sha(record/'raw/hosted-09f3201/audit.json'),
-        driver_provenance='Executed GH27 standard Tier1 and corrected GH44 Tier0 bounded Job supervisor/science checker; GH16 AB/BA/AB and E004 immutable numeric filter',
+        driver_provenance='Derived from executed GH40 standard Tier1 driver bbefb3cffa423d4508007e2e82cb7b5bbb6b26a9adc89e3194f2ddf2c030f9dd; GH44 actual Tier0 pins/science, GH16 AB/BA/AB and E004 immutable numeric filter',
         gh16_reviewed_driver_sha256='5f4064eb7d9ce8fe7bc82dfe3862d1431d7f2d946dced3c1d27976bdf0052c21',
         polling_sec=.05,sampling_sec=2,exclusive_reservation=False,internal_limit=180,watchdog=195,aggregate_watchdog=RUN_LIMIT))
     shutil.copy2(Path(__file__),out/'executed-driver.py')
