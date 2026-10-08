@@ -159,6 +159,10 @@ def scientific(rc,text,exact,timeout=False):
 
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 CAND='3fe5afead91cf0527cd39529a6d48b4e19e12041'
+RUNTIME_DLLS={'cygwin1.dll':'959048d1407074097af021708d87bdf5ac1a8f107ff963c8950cd6dc8f21afaf',
+    'cygstdc++-6.dll':'e8677526b0a6fef2a457d4d0e105571e1e350c7ad66c925bd00120cf91410443',
+    'cyggcc_s-seh-1.dll':'af178c2cb5d4756ff5c2523433812c43f1ad91c6eea9c381caa5e8396bfdc134',
+    'cygz.dll':'b3acfadb0f642c8e94d4b5cb4ee527d068f4b2001508af523444766949d67a80'}
 HASHES={'baseline':'cfa5b6ca62b8f1ef7c2e705c01f20454c9a32fe35b4a694ac78c3940d08003f4','candidate':'33f20395f69b032166dee3fb72797d75dd03d52afad3bd7f81b58ddf1140676e'}
 CASES=['BB_90_8_10','GB_144_12_8','BB_108_8_10','LP_238_44_6']
 MODES=['no-card','card-mto']
@@ -168,6 +172,8 @@ binaries={v:prep/(v+'-source')/'bin/distqldpc.exe' for v in HASHES}
 samples=[];inputs={}
 summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',Tier0='PASS',Tier1='NOT_RUN',Tier2='NOT_RUN',Tier3='NOT_RUN',performance='PENDING_ASSIGNED_DIAGNOSTIC',reason='No exclusive OS reservation; report numeric filter separately')
 try:
+    assert sha(helper)=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2','Reviewed resource helper changed'
+    for name,digest in RUNTIME_DLLS.items():assert sha(runtime/'bin'/name)==digest,name
     tier0=json.loads((prep/'summary.json').read_text(encoding='utf8'))
     assert tier0['Tier0']=='PASS' and tier0['diagnostic']=='PASS'
     assert all(tier0['cleanup'].get(k) is True for k in ['job_limit_released','affinity_restored','sleep_requirement_restored','priority_restored'])
@@ -187,7 +193,7 @@ try:
     spec=importlib.util.spec_from_file_location('gh20_numeric_filter',parser);gates=importlib.util.module_from_spec(spec);spec.loader.exec_module(gates)
     assert gates.CASES1==CASES and gates.MODES==MODES
     save(out/'preexecution.json',dict(baseline=BASE,candidate=CAND,record_head=head,assignment=args.run_assignment,
-        driver_sha256=sha(__file__),helper_sha256=sha(helper),parser_sha256=sha(parser),binary_hashes=HASHES,input_hashes=inputs,
+        driver_sha256=sha(__file__),helper_sha256=sha(helper),parser_sha256=sha(parser),binary_hashes=HASHES,input_hashes=inputs,runtime_dll_sha256=RUNTIME_DLLS,
         production_preparation_sha256=sha(prep/'preexecution.json'),production_resume_sha256=sha(prep/'resume.json'),
         hosted_audit_sha256=sha(record/'raw/hosted-3fe5afe/AUDIT.json'),
         driver_provenance='GH17/GH20 bounded file-backed Job runner; GH16 reviewed Tier1 AB/BA/AB and E004 immutable numeric filter',
@@ -257,6 +263,10 @@ finally:
         try:
             if sha(Path(p))!=digest:identity_errors.append(p+' input changed')
         except Exception as error:identity_errors.append(p+': '+repr(error))
+    for name,digest in RUNTIME_DLLS.items():
+        try:
+            if sha(runtime/'bin'/name)!=digest:identity_errors.append(name+' runtime changed')
+        except Exception as error:identity_errors.append(name+': '+repr(error))
     if identity_errors:summary['identity_invalid']=identity_errors
     summary['valid_run']=bool(summary.get('status')=='FILTER_COMPLETE' and len(samples)==48 and not summary.get('cleanup_invalid') and not summary.get('identity_invalid'))
     if not summary['valid_run'] and summary.get('decision')!='REJECTED':summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE')
