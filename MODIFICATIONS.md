@@ -65,6 +65,15 @@ in each file are unchanged.
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
 
+#### Literal-indexed assignment mirror (performance experiment GH-litvals, not adopted unless reviewed)
+
+- Member `litvals` holds `assigns[var(p)] ^ sign(p)` for every literal, bit-exactly
+- Inline `setAssign(Var, lbool)` replaces every direct `assigns[x] = ...` write and
+  updates both literal slots; variable creation pushes both literal slots
+- `value(Lit)` reads `litvals[toInt(p)]`; `value(Var)` and all other `assigns` readers unchanged
+- Optional test-only `-DLITVALS_CHECK` aborts if the mirror ever differs from `assigns ^ sign`
+- Search behaviour is unchanged by construction (verified by byte-identical verbose traces)
+
 ---
 
 ## Files not modified for DistQLDPC integration
