@@ -1,5 +1,5 @@
 """Disabled GH41 native Tier1. Frozen Tier0 binaries; no builds or auto advance."""
-import argparse,hashlib,importlib.util,json,math,os,shutil,signal,statistics,sys
+import argparse,hashlib,importlib.util,json,math,os,re,shutil,signal,statistics,sys
 from pathlib import Path
 ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069089234'
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
@@ -21,6 +21,25 @@ def save(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n',encoding='utf8')
 def read(p):return json.loads(Path(p).read_text(encoding='utf8'))
 def module(name,path):
     spec=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+def incomplete_science(science,rc,text,exact):
+    # Original application has two lawful incomplete trailers. Preserve both
+    # verbatim; the frozen Tier0 parser deliberately tests true TIMEOUT only.
+    statuses=re.findall(r'^s\s+(.*?)\s*$',text,re.M)
+    comments=re.findall(r'^c status:\s*(.*?)\s*$',text,re.M)
+    distance=re.findall(r'^c\s+d\s*:\s*(.*?)\s*$',text,re.M)
+    science.need(rc==1 and statuses==['UNKNOWN'] and len(comments)==1 and
+        comments[0] in ['UNKNOWN','TIMEOUT (child killed after -cpu-lim)'],'Incomplete status/return')
+    science.need(distance==['UNKNOWN'] and not re.search(r'^o(?:\s|$)',text,re.M),'Incomplete fabricated/missing distance or objective')
+    values={'d':None,'objective':None}
+    for key in ['lb','ub']:
+        raw=re.findall(r'^c\s+d_'+key+r':\s*(.*?)\s*$',text,re.M)
+        science.need(bool(raw),'Missing incomplete '+key)
+        for item in raw:
+            if item=='-':continue
+            science.need(re.fullmatch(r'\d+',item) is not None,'Malformed incomplete '+key)
+            value=int(item);science.need(value<=exact if key=='lb' else value>=exact,'Wrong incomplete '+key)
+        values[key]=int(raw[-1]) if re.fullmatch(r'\d+',raw[-1]) else None
+    return dict(values,returncode=rc,timeout=comments[0].startswith('TIMEOUT'),reported_status=comments[0])
 def host_configuration(cpu,sibling):
     paths=['/sys/devices/system/cpu/cpufreq/boost','/sys/devices/system/cpu/intel_pstate/no_turbo','/sys/devices/system/clocksource/clocksource0/current_clocksource']
     for number in [cpu,sibling]:
@@ -176,7 +195,7 @@ def main():
                             measurement={key:command.get(key) for key in ['original_start_monotonic','popen_begin_monotonic','popen_return_monotonic','last_alive_lower_monotonic','exited_upper_monotonic','exit_interval_sec','observed_exit_interval_width_sec','rusage_children_before','rusage_children_after','rusage_children_delta','waited_child_cpu_sec','waited_child_measurement_complete','descriptive_elapsed_minus_cpu_sec','descriptive_cpu_over_elapsed']})
                         samples.append(row);save(out/'samples.json',samples)
                         if rc not in (0,1):raise science.ScienceError('Solver crash/invalid return: '+label)
-                        semantic=science.app(rc,text,exact,timeout=(rc==1));row['semantic']=semantic;row['science']='PASS';save(out/'samples.json',samples)
+                        semantic=incomplete_science(science,rc,text,exact) if rc==1 else science.app(rc,text,exact);row['semantic']=semantic;row['science']='PASS';save(out/'samples.json',samples)
                         if rc==1:raise RuntimeError('Genuine incomplete solve blocks timing filter: '+label)
                         science.need(reference is None or reference==semantic,'Per-case result semantics changed: '+label);reference=semantic
                         assert command['waited_child_measurement_complete'] is True,'Incomplete waited-child usage provenance'
@@ -205,7 +224,10 @@ def main():
                 result['unavailable_configuration_fields']=[k for k,v in configuration_after.items() if not v['available']]
             except BaseException as error:result.update(available_configuration_unchanged=False,configuration_error=repr(error))
         if window is not None:
-            try:window.close();result['cleanup_restoration_confirmed']=True
+            try:
+                window.close();restoration=read(out/'restoration.json')
+                assert restoration['confirmed'] is True and restoration['actual_affinity']==sorted(window.original),'Actual affinity restoration unconfirmed'
+                result['cleanup_restoration_confirmed']=True
             except BaseException as error:result.update(cleanup_restoration_confirmed=False,cleanup_error=repr(error))
         try:identities(full=True);result['full_identity_confirmed']=True
         except BaseException as error:result.update(full_identity_confirmed=False,identity_error=repr(error))
