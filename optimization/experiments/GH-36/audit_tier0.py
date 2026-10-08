@@ -1,7 +1,7 @@
 """Independent exact oracle/raw audit and retention. No solver execution."""
 from pathlib import Path
 import hashlib,json,re,shutil,subprocess,zipfile
-ROOT=Path(__file__).resolve().parent
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[3] if HERE.name=='GH-36' else HERE
 repo=ROOT/'GH36-WITNESS';record=repo/'optimization/experiments/GH-36';out=ROOT/'GH36-windows-tier0-01'
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 read=lambda p:json.loads(p.read_bytes())
