@@ -17,6 +17,14 @@ size bin/distqldpc bin/maxcdcl
 
 Do not override CXXFLAGS. Record exact compiler/environment/default build logs; clean source directories prevent mixed objects. Set CXX consistently only if the existing make built-in selection differs on the host; retain every other flag. Source semantic hashes normalize CRLF only for Git working-tree checkout differences, with original raw hashes also recorded.
 
-Tier0 package preparation pending: tiny independent CSS oracle/WCNF/smoke/timeout pairs and standalone tiny MaxSAT oracle, supervised Windows Job/capacity/cleanup wrapper. Hosted CI and QDistSAT correctness pending; no Tier1/2/3 evidence, medians or speed conclusion.
+Prepared Tier0 support: run_tier0.py uses independent CSS d1/d2/d1 oracles, explicit-mode WCNF pairs, LP34 smoke, forced LP340 timeout/bounds and four tiny standalone unweighted-PMS exhaustive optimum oracles. Main.cc's standalone "optimal:" output/exit/status is checked directly; no invented o-line semantics. windows_assigned_runner.py reuses GH17's bounded file-backed supervisor and Job descendant checks, source/package/runtime provenance guards, continuous capacity telemetry and restoration. It builds candidate DEFAULT Makefile flags and links baseline standalone Main using preserved O3 objects in a copied snapshot. Immutable baseline package remains untouched. Static Python AST parse PASS; scripts NOT executed.
+
+The Windows wrapper intentionally refuses to run until ASSIGNED_URL is replaced with a real fresh scheduler assignment recorded before execution. Use actual candidate/support HEAD, do not label earlier e1aa917 as containing later test support:
+
+```powershell
+python optimization/experiments/GH-21/windows_assigned_runner.py --candidate-sha <actual-HEAD> --run-assignment <frozen-hub-comment-URL> --out optimization/experiments/GH-21/raw/windows-assigned-01
+```
+
+Hosted CI and QDistSAT correctness pending; no local Tier0 execution or Tier1/2/3 evidence, medians or speed conclusion. Baseline standalone parser/engine supports the unweighted-PMS fixtures; candidate must establish baseline's correct oracle results as well. A pre-science build/provenance/harness issue is recorded honestly and cannot be relabeled a scientific mismatch.
 
 Tier1 commands must use fixed explicit no-card/card-mto for BB_90_8_10, GB_144_12_8, BB_108_8_10, LP_238_44_6, three serial pairs AB/BA/AB each and180s parent195s watchdog. See preregistration for gates and resource policy. No timing runner is authorized by this README.
