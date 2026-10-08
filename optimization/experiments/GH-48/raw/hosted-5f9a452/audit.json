@@ -1,0 +1,181 @@
+{
+  "status": "PASS",
+  "scope": "hosted source identity and eight final scientific results, no performance inference",
+  "merge": "22d1af454adacb81446044d13d03de62e9b024d5",
+  "production": "d27cf4d54bc08c6db4b2ffcebfe0372417bb13ef",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "artifact_id": 11580311686,
+  "artifact_sha256": "451d63d84f4d55472d6eba77500175eec12035c63f2b1637381b5739afe20c38",
+  "ordinary_ci": 37846104241,
+  "crossrepo_ci": 37846104190,
+  "job": 113547252432,
+  "gate": {
+    "compatible": true,
+    "level": "x86-64-v2",
+    "leaf1_ecx": 4277809667,
+    "ext_ecx": 4195319
+  },
+  "source_files": [
+    {
+      "path": "src/core/distqldpc.cc",
+      "sha256": "c0626b65f3ff437c08aafeba5dae66c0c98890f3571dd96b64957d8b7312bff2",
+      "merge_blob": "c7e7942d4e436dfb291280cccb6d08c37c8b7f40"
+    },
+    {
+      "path": "src/solver/Dimacs.h",
+      "sha256": "520b138cc11ade29cb9a893c39d7ac15977c8400022e020bfc8d4965ad73c387",
+      "merge_blob": "6c0849617858dd7913a31604442d2705ca4f2098"
+    },
+    {
+      "path": "src/solver/LICENSE",
+      "sha256": "3f4ebf889fbe5dd1992a21a1dee7764f754303668b6a3e120b11320b56cf4362",
+      "merge_blob": "80c9cd918bf9c5e0c05d6b498e2fc882d28d48df"
+    },
+    {
+      "path": "src/solver/Main.cc",
+      "sha256": "8e06ff3817ab2890a93e3132c4aae80c3a923d8826eeb1d7933bdd3a438a6574",
+      "merge_blob": "88484cc51c2063e3142dc6664148e702fc31dfc7"
+    },
+    {
+      "path": "src/solver/README.md",
+      "sha256": "321aef09bd451933dede05c313f748433cbfce567659c4e3b700011313c28207",
+      "merge_blob": "458194331f95c2c766b7a8291f66b2e71137690c"
+    },
+    {
+      "path": "src/solver/SimpSolver.cc",
+      "sha256": "9b0f44cae93420a57bb8b4cdcaeb5fdeee075a42ba886e31c0bb42271da99345",
+      "merge_blob": "514c4199e9b84859628b8d9d25b6ac8745df38c7"
+    },
+    {
+      "path": "src/solver/SimpSolver.h",
+      "sha256": "34d5115162e663ba01b6353ea1a5a1a55310f73d8bb59bce6aab5ad2b2e87b50",
+      "merge_blob": "165264009b77dbf6f4b41a88fdd32814c262c2e0"
+    },
+    {
+      "path": "src/solver/Solver.cc",
+      "sha256": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+      "merge_blob": "30508f197f432598bfb19ab7af2a9860647320e3"
+    },
+    {
+      "path": "src/solver/Solver.h",
+      "sha256": "f85bcb8ea4cb204ad502eb62cc7623c26977e0d56b3a9c80ba9d259d8349fe6c",
+      "merge_blob": "c58819279118a0103e7505da64d491e946ba0335"
+    },
+    {
+      "path": "src/solver/SolverTypes.h",
+      "sha256": "baf1ca68ee0954737c625b59ee04c80083501ac0cf132b4f69403f9b392b410a",
+      "merge_blob": "e2a646f8216b19ac738cb44433f6ab918fe0bfb4"
+    },
+    {
+      "path": "src/solver/clq-n100e2500g1",
+      "sha256": "089ffa6b11643af119f6806b8fe7eaf8a6ef58c3d990e79711a423e587661e88",
+      "merge_blob": "7911be25c8b58c51f848445ab6bf12d740c16c81"
+    },
+    {
+      "path": "src/solver/clq-n150e10058g1",
+      "sha256": "0a17ff924dd53843aa6824e6135820c4adc0c87efb9dabcb781a2a9b7d7603f0",
+      "merge_blob": "aafcc1854b838804d51a504b492c48d755bccb07"
+    },
+    {
+      "path": "src/solver/mtl/Alg.h",
+      "sha256": "9c6500341c6b6a92770707a4b5294aa1b59aaa354d6e4e9212e0041fed8b4a56",
+      "merge_blob": "f7133f38b83c976f9a4a2502168f68cbc1dd21d4"
+    },
+    {
+      "path": "src/solver/mtl/Alloc.h",
+      "sha256": "8994f81228ec02d4dc38c2cd511143922df41d52140a0d198b458f292e06e2da",
+      "merge_blob": "76322b8b606202b7de76d8a50a2e35e2941c896f"
+    },
+    {
+      "path": "src/solver/mtl/Heap.h",
+      "sha256": "60eb8d330edc9f524b8beb92fd0a625470e1d65ceab1c823771a799378cb8f5b",
+      "merge_blob": "b73f9e2105c823a53595876363022a22553438ba"
+    },
+    {
+      "path": "src/solver/mtl/IntTypes.h",
+      "sha256": "77d5cc50cbbaeccc85db25cf3e4a652158e1decbf79ebf92283371ddfb0152df",
+      "merge_blob": "c4881628497ee905eb9faa781989b91c82d1c4e7"
+    },
+    {
+      "path": "src/solver/mtl/Map.h",
+      "sha256": "07692d65db89623e78e46b24df2ae7680f6cadc92b4017bd02290d6536bfce2a",
+      "merge_blob": "8a82d0e284396583814f03018cca780d0ee1945a"
+    },
+    {
+      "path": "src/solver/mtl/Queue.h",
+      "sha256": "2500b04b7b8f25893f0b436883cca541605d786f7c0476416181513ce596116b",
+      "merge_blob": "17567d694588628ae43cf00f5da75f0ccdc1bda5"
+    },
+    {
+      "path": "src/solver/mtl/Sort.h",
+      "sha256": "f5d0ff4a99fcf02dcce5d1c4021a21fd57d11316ea8d78dc89b7a8fa1614abac",
+      "merge_blob": "e9313ef8610d9dd8d03bf298f61034e369f55ea9"
+    },
+    {
+      "path": "src/solver/mtl/Vec.h",
+      "sha256": "3585058b7f6b439d89f99ff81cc85422282e44432fab632e20aeae50811ebf58",
+      "merge_blob": "9e220852e6049c41d566fc04475e0e00ad25cd36"
+    },
+    {
+      "path": "src/solver/mtl/XAlloc.h",
+      "sha256": "190209abdab80a3562125525890254048bb732cfeb5017603c52cc2b00ca62cf",
+      "merge_blob": "1da176028d3458cae0fed04d905f545a1e7f45f7"
+    },
+    {
+      "path": "src/solver/mtl/config.mk",
+      "sha256": "be6dbe7434545d9ef9e842cdb0f42818e311b7c79304fd32b9c667ed5a50c57a",
+      "merge_blob": "b5c36fc6b4918a3c3af6ef58f2ea0baf4a2e9331"
+    },
+    {
+      "path": "src/solver/mtl/template.mk",
+      "sha256": "412d0e3ec0ec0623c26a175348380be847718df1f80cce4e28320247e737c314",
+      "merge_blob": "3f443fc38665bec0e67ecf9b559e1432b38ddec1"
+    },
+    {
+      "path": "src/solver/utils/Makefile",
+      "sha256": "3f5294c5bb13a6cc975606f1bdab5060c62dc5316f7313747ec21bc639218dca",
+      "merge_blob": "204cea5418642ed534d358c76ca1774156fab13f"
+    },
+    {
+      "path": "src/solver/utils/Options.cc",
+      "sha256": "b613436bd6dbda224d73d72271ac1768878940079f78e325e48cc22a4d6428fe",
+      "merge_blob": "ec5a6e930b93fc53de2ae94ba6a66dfff11bbbd1"
+    },
+    {
+      "path": "src/solver/utils/Options.h",
+      "sha256": "ad4325f5f933b07c9f2c98258a2e514bc14bc385ffb6ce2834e3aa8ec55e953d",
+      "merge_blob": "9c1f40699240fa6e0319c2008ba07fb08e00b3cd"
+    },
+    {
+      "path": "src/solver/utils/Options.or",
+      "sha256": "b08478dc4c4ea897009bd070760295436cb3298d44f28d6976687cdff64d8fd7",
+      "merge_blob": "99baf364ec3b36c43dd630645d49096e2fd5f17b"
+    },
+    {
+      "path": "src/solver/utils/ParseUtils.h",
+      "sha256": "9230bb5a52d94fb2b2883dcae054b382c9e2caf88148ad7411704f48b9c0f79b",
+      "merge_blob": "0b550add9bd39431217f57f21276144ae191aadf"
+    },
+    {
+      "path": "src/solver/utils/System.cc",
+      "sha256": "c49aefdd2053eca7e5b055db22ee2a9de89cf76d2482f89ea3bc8d5f68aab3b6",
+      "merge_blob": "c73e52ba586b602d4967cb20bcb815bc988570d0"
+    },
+    {
+      "path": "src/solver/utils/System.h",
+      "sha256": "013021931cd7caffdb8aebc9ec329287f808b0534f41d81eb6c20eb284bd77f1",
+      "merge_blob": "17581927ade6f818f92d727f603b927ec3b56c54"
+    },
+    {
+      "path": "src/solver/utils/System.or",
+      "sha256": "03e232df2f5a1ece00e1e120f4e354732092151ca69ffa6318d79eb939f074a2",
+      "merge_blob": "386b0e2edae9c16789c5bca4467b3d0cd9e3e6ed"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "c263ad617064d5be056b16d50e78c56a350f6727bffb2846abec980ea04f57a4",
+      "merge_blob": "c83783090525e95ad4116aa0607f10730fdaa064"
+    }
+  ],
+  "limitation": "Source Git blob equality does not assert Linux/Windows binary or build reproducibility."
+}

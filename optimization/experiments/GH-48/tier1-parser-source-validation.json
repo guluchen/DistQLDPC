@@ -1,0 +1,63 @@
+{
+  "status": "PURE_SCIENCE_AST_VALIDATION_PASS",
+  "driver_sha256": "f380e948cc34fa9c4b0d90de2efc360e943d976abaa6bf919f7c257ed49d12ad",
+  "checks": [
+    {
+      "case": "lawful_unknown",
+      "result": "PASS"
+    },
+    {
+      "case": "lawful_timeout",
+      "result": "PASS"
+    },
+    {
+      "case": "lawful_dash_bounds",
+      "result": "PASS"
+    },
+    {
+      "case": "missing_d",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "missing_status",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "wrong_lb",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "wrong_ub",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "numeric_d",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "duplicate_d",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "malformed_timeout",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "objective",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "missing_lb",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "missing_ub",
+      "result": "REJECT_EXPECTED"
+    },
+    {
+      "case": "lawful_complete_all_bounds",
+      "result": "PASS"
+    }
+  ],
+  "scope": "AST-extracted scientific function only; no driver/helper imports, compiler, runtime or solver execution"
+}

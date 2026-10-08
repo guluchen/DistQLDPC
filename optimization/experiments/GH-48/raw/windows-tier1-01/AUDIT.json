@@ -1,0 +1,412 @@
+{
+  "status": "48_SCIENCE_AND_MEDIAN_AUDIT_PASS",
+  "formal_decision": "INCONCLUSIVE",
+  "local_numeric_filter": "reject",
+  "local_numeric_reason": "confirmed per-case regression",
+  "support": "db3a898007132456e67cc7240c4a3db00b5f9ea0",
+  "candidate": "d27cf4d54bc08c6db4b2ffcebfe0372417bb13ef",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "binary_hashes": {
+    "baseline": "70582f38a02b8e2b2948867f9ea3680f44ca9e04184bdb7891f1f51a7222693e",
+    "candidate": "ef61efc3d6a4605c19b9c4b279dc95d08914910efb946221030601bfe24c2317"
+  },
+  "driver_sha256": "75d9117274cab3068b38273de7ebe57bc65de33151788be13593b1f31a58e609",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069801563",
+  "cleanup_all_true": true,
+  "only_runner_before_release": 24848,
+  "all_raw_manifest_files_verified": 159,
+  "raw_science_checks": 48,
+  "median_geomeans": {
+    "no-card": 0.9982532727034651,
+    "card-mto": 0.9985036622115661
+  },
+  "groups": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.4593216000066604,
+          2.4578910999989603,
+          2.4510393000091426
+        ],
+        "candidate": [
+          2.459795899980236,
+          2.460181200003717,
+          2.4838116000173613
+        ]
+      },
+      "baseline_median": 2.4578910999989603,
+      "candidate_median": 2.460181200003717,
+      "ratio": 1.0009317337146295,
+      "percent_change": 0.09317337146295124,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.006921499996679,
+          3.051668100000825,
+          3.0165934000106063
+        ],
+        "candidate": [
+          3.080147400003625,
+          3.002520700014429,
+          2.9689034999755677
+        ]
+      },
+      "baseline_median": 3.0165934000106063,
+      "candidate_median": 3.002520700014429,
+      "ratio": 0.9953349032732991,
+      "percent_change": -0.46650967267009014,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.081880399986403,
+          1.0892692999914289,
+          1.0392451000225265
+        ],
+        "candidate": [
+          1.0357230000081472,
+          1.0860356999910437,
+          1.0867450999794528
+        ]
+      },
+      "baseline_median": 1.081880399986403,
+      "candidate_median": 1.0860356999910437,
+      "ratio": 1.0038408127226381,
+      "percent_change": 0.3840812722638143,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.3440392999909818,
+          1.3417654000222683,
+          1.3441130999999586
+        ],
+        "candidate": [
+          1.3516400000080466,
+          1.3463385000068229,
+          1.3467968000040855
+        ]
+      },
+      "baseline_median": 1.3440392999909818,
+      "candidate_median": 1.3467968000040855,
+      "ratio": 1.0020516513268043,
+      "percent_change": 0.20516513268042935,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.082743599981768,
+          3.0530362999998033,
+          3.0814149000216275
+        ],
+        "candidate": [
+          3.0346379000111483,
+          3.119378700008383,
+          3.000874199991813
+        ]
+      },
+      "baseline_median": 3.0814149000216275,
+      "candidate_median": 3.0346379000111483,
+      "ratio": 0.9848196359373251,
+      "percent_change": -1.5180364062674867,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          4.055782699986594,
+          3.8901678000111133,
+          3.9351869999954943
+        ],
+        "candidate": [
+          3.949041399988346,
+          3.9218963000166696,
+          3.861683000024641
+        ]
+      },
+      "baseline_median": 3.9351869999954943,
+      "candidate_median": 3.9218963000166696,
+      "ratio": 0.9966226001511898,
+      "percent_change": -0.33773998488102475,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.12691459999769,
+          2.1196182999992743,
+          2.1181488999864087
+        ],
+        "candidate": [
+          2.117821499996353,
+          2.138212099991506,
+          2.1271329000010155
+        ]
+      },
+      "baseline_median": 2.1196182999992743,
+      "candidate_median": 2.1271329000010155,
+      "ratio": 1.0035452609565334,
+      "percent_change": 0.35452609565334026,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.4562752000056207,
+          2.4542072000040207,
+          2.4569838999886997
+        ],
+        "candidate": [
+          2.522114799998235,
+          2.456323699996574,
+          2.452816399978474
+        ]
+      },
+      "baseline_median": 2.4562752000056207,
+      "candidate_median": 2.456323699996574,
+      "ratio": 1.0000197453408124,
+      "percent_change": 0.0019745340812393763,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    }
+  ],
+  "resource_samples": 87,
+  "capacity_all_eligible": true,
+  "contention_flags": 7,
+  "minimum_global_idle": 82.5381679389313,
+  "minimum_sibling_idle": 91.7910447761194,
+  "flags": [
+    {
+      "label": "fresh-selected-core-isa-gate-preflight",
+      "time": 1791496619.996139,
+      "idle_percent": 85.78088578088578,
+      "half_spare_logical_cpus": 6.862470862470863,
+      "selected_cpu_idle": 92.5925925925926,
+      "sibling_idle": 91.7910447761194,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        76.86567164179104,
+        96.26865671641791,
+        79.1044776119403,
+        93.28358208955224,
+        78.35820895522389,
+        93.28358208955224,
+        91.04477611940298,
+        96.26865671641791,
+        76.86567164179104,
+        72.38805970149254,
+        65.92592592592592,
+        81.95488721804512,
+        92.53731343283582,
+        94.02985074626865,
+        92.5925925925926,
+        91.7910447761194
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "GB_144_12_8-no-card-1-baseline-preflight",
+      "time": 1791496682.66887,
+      "idle_percent": 91.06481481481481,
+      "half_spare_logical_cpus": 7.285185185185185,
+      "selected_cpu_idle": 94.81481481481481,
+      "sibling_idle": 97.79411764705883,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        93.33333333333333,
+        93.28358208955224,
+        86.66666666666667,
+        94.81481481481481,
+        90.37037037037037,
+        95.55555555555556,
+        93.33333333333333,
+        97.77777777777777,
+        84.32835820895522,
+        85.18518518518519,
+        90.44117647058823,
+        67.4074074074074,
+        94.07407407407408,
+        97.77777777777777,
+        94.81481481481481,
+        97.79411764705883
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "GB_144_12_8-card-mto-1-candidate-preflight",
+      "time": 1791496706.4257903,
+      "idle_percent": 96.97955390334573,
+      "half_spare_logical_cpus": 7.758364312267658,
+      "selected_cpu_idle": 94.77611940298507,
+      "sibling_idle": 99.26470588235294,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        97.76119402985074,
+        98.51851851851852,
+        98.51851851851852,
+        98.50746268656717,
+        97.01492537313433,
+        97.76119402985074,
+        98.50746268656717,
+        99.25925925925925,
+        93.28358208955224,
+        94.07407407407408,
+        91.11111111111111,
+        97.03703703703704,
+        97.01492537313433,
+        99.25373134328358,
+        94.77611940298507,
+        99.26470588235294
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "GB_144_12_8-card-mto-2-baseline-preflight",
+      "time": 1791496713.6862395,
+      "idle_percent": 97.8250809810273,
+      "half_spare_logical_cpus": 7.826006478482184,
+      "selected_cpu_idle": 94.81481481481481,
+      "sibling_idle": 100.0,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        97.77777777777777,
+        99.25925925925925,
+        94.81481481481481,
+        100.0,
+        97.03703703703704,
+        99.25925925925925,
+        97.03703703703704,
+        98.51851851851852,
+        99.26470588235294,
+        98.51851851851852,
+        96.32352941176471,
+        99.25925925925925,
+        94.81481481481481,
+        98.51851851851852,
+        94.81481481481481,
+        100.0
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "GB_144_12_8-card-mto-3-baseline-preflight",
+      "time": 1791496717.3205924,
+      "idle_percent": 89.84629715882627,
+      "half_spare_logical_cpus": 7.187703772706102,
+      "selected_cpu_idle": 91.04477611940298,
+      "sibling_idle": 97.03703703703704,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        94.77611940298507,
+        92.53731343283582,
+        81.34328358208955,
+        97.01492537313433,
+        65.67164179104478,
+        96.26865671641791,
+        91.04477611940298,
+        98.50746268656717,
+        84.32835820895522,
+        85.92592592592592,
+        84.44444444444444,
+        97.01492537313433,
+        82.08955223880596,
+        98.50746268656717,
+        91.04477611940298,
+        97.03703703703704
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "BB_108_8_10-card-mto-1-candidate-preflight",
+      "time": 1791496763.0243204,
+      "idle_percent": 88.94589552238806,
+      "half_spare_logical_cpus": 7.115671641791044,
+      "selected_cpu_idle": 94.77611940298507,
+      "sibling_idle": 96.29629629629629,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        88.80597014925372,
+        95.5223880597015,
+        52.23880597014925,
+        93.28358208955224,
+        82.83582089552239,
+        94.02985074626865,
+        82.08955223880596,
+        97.76119402985074,
+        96.26865671641791,
+        81.34328358208955,
+        87.21804511278195,
+        94.77611940298507,
+        86.56716417910448,
+        99.25373134328358,
+        94.77611940298507,
+        96.29629629629629
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_238_44_6-card-mto-1-baseline-preflight",
+      "time": 1791496820.4508362,
+      "idle_percent": 91.72862453531599,
+      "half_spare_logical_cpus": 7.338289962825279,
+      "selected_cpu_idle": 94.81481481481481,
+      "sibling_idle": 94.77611940298507,
+      "affinity": 16384,
+      "idle_by_cpu": [
+        94.77611940298507,
+        93.33333333333333,
+        91.11111111111111,
+        97.77777777777777,
+        96.29629629629629,
+        95.55555555555556,
+        94.07407407407408,
+        94.07407407407408,
+        67.66917293233082,
+        91.7910447761194,
+        76.69172932330827,
+        95.5223880597015,
+        93.33333333333333,
+        95.55555555555556,
+        94.81481481481481,
+        94.77611940298507
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    }
+  ],
+  "performance_limit": "Nonexclusive Windows diagnostic; group medians and ranges retained without posthoc selection. No automatic higher tier or controlled acceptance."
+}

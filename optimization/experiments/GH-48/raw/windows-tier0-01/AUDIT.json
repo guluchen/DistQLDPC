@@ -1,0 +1,90 @@
+{
+  "status": "LOCAL_TIER0_AUDIT_PASS",
+  "original_raw_files": 782,
+  "commands": 185,
+  "app_science_streams": 50,
+  "smoke_streams": 2,
+  "PMS_solves": 72,
+  "PMS_independent_cases": 36,
+  "WCNF_pairs": 15,
+  "genuine_timeouts": 12,
+  "all_interim_fields_checked": true,
+  "runtime_files": 10216,
+  "resource_samples": 248,
+  "resource_flags": 19,
+  "window": {
+    "topology": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ]
+    ],
+    "selected_cpu": 4,
+    "sibling": 5,
+    "original_affinity": 65535,
+    "mask": 16,
+    "idle_by_cpu": [
+      97.8125,
+      100.0,
+      100.0,
+      98.4375,
+      100.0,
+      99.6875,
+      99.375,
+      99.6875,
+      99.68652037617555,
+      99.6875,
+      100.0,
+      98.4375,
+      98.125,
+      97.5,
+      99.0625,
+      99.6875
+    ],
+    "sampling_sec": 5,
+    "exclusive_reservation": false,
+    "power_policy_changed": false,
+    "sleep_inhibition": "temporary system requirement",
+    "allow_contention": true,
+    "affinity_enforcement": "Unnamed Windows Job Object JOB_OBJECT_LIMIT_AFFINITY; no breakaway flags",
+    "priority_class": 32768,
+    "original_priority_class": 32,
+    "priority_enforcement": "JOB_OBJECT_LIMIT_PRIORITY_CLASS on owned process tree"
+  },
+  "binary_hashes": {
+    "baseline": "70582f38a02b8e2b2948867f9ea3680f44ca9e04184bdb7891f1f51a7222693e",
+    "candidate": "ef61efc3d6a4605c19b9c4b279dc95d08914910efb946221030601bfe24c2317"
+  },
+  "support": "5f9a4522ad53b480ec75fe3d38cf7d7bdd361c42",
+  "driver_sha256": "fba3d71d83b874640e15ffb3dd532b3d771d801f5eb113f345d9160d539a37db",
+  "performance": "NOT_MEASURED",
+  "limitation": "No exclusive OS reservation; this correctness audit does not establish speedup or portable deployment; no binary build reproducibility claim."
+}

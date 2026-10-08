@@ -1,0 +1,322 @@
+{
+  "status": "12_SCIENCE_AND_MEDIAN_AUDIT_PASS",
+  "formal_decision": "INCONCLUSIVE",
+  "local_numeric_filter": "inconclusive",
+  "local_numeric_reason": {
+    "no-card": {
+      "median_geomean": 1.0070734960708632,
+      "range_envelope_geomean": 1.0194440747181255,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 0.9956555440125887,
+      "range_envelope_geomean": 1.012814807981397,
+      "no_worse_medians": true
+    }
+  },
+  "support": "fb73879d5cd2976d29789c827be42ee7f656d73a",
+  "candidate": "d27cf4d54bc08c6db4b2ffcebfe0372417bb13ef",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "binary_hashes": {
+    "baseline": "70582f38a02b8e2b2948867f9ea3680f44ca9e04184bdb7891f1f51a7222693e",
+    "candidate": "ef61efc3d6a4605c19b9c4b279dc95d08914910efb946221030601bfe24c2317"
+  },
+  "driver_sha256": "d6d2518225d751ab56dd67ca99e16cb290d03fa432376b8ec5df1c4334876cb5",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6070015624",
+  "cleanup_all_true": true,
+  "only_runner_before_release": 20548,
+  "all_raw_manifest_files_verified": 51,
+  "raw_science_checks": 12,
+  "median_geomeans": {
+    "no-card": 1.0070734960708632,
+    "card-mto": 0.9956555440125887
+  },
+  "groups": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          58.43203219998395,
+          58.59779400000116,
+          58.46721279999474
+        ],
+        "candidate": [
+          59.56818900001235,
+          58.880780400009826,
+          58.334736499993596
+        ]
+      },
+      "baseline_median": 58.46721279999474,
+      "candidate_median": 58.880780400009826,
+      "ratio": 1.0070734960708632,
+      "percent_change": 0.7073496070863161,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          64.7684539000038,
+          65.83224439999321,
+          65.6057284999988
+        ],
+        "candidate": [
+          64.79408300001523,
+          65.59844919998432,
+          65.32070730000851
+        ]
+      },
+      "baseline_median": 65.6057284999988,
+      "candidate_median": 65.32070730000851,
+      "ratio": 0.9956555440125887,
+      "percent_change": -0.43444559874112887,
+      "nonoverlapping_regression": false,
+      "overlap": true
+    }
+  ],
+  "resource_samples": 373,
+  "capacity_all_eligible": true,
+  "contention_flags": 8,
+  "minimum_global_idle": 55.11887433284813,
+  "minimum_sibling_idle": 58.13953488372093,
+  "flags": [
+    {
+      "label": "assigned-preflight",
+      "time": 1791497428.3517842,
+      "idle_percent": 93.55742296918767,
+      "half_spare_logical_cpus": 7.484593837535013,
+      "selected_cpu_idle": 94.77611940298507,
+      "sibling_idle": 94.02985074626865,
+      "affinity": 16,
+      "idle_by_cpu": [
+        83.58208955223881,
+        98.50746268656717,
+        91.04477611940298,
+        92.53731343283582,
+        94.77611940298507,
+        94.02985074626865,
+        96.26865671641791,
+        95.5223880597015,
+        96.26865671641791,
+        88.7218045112782,
+        86.56716417910448,
+        96.2406015037594,
+        94.77611940298507,
+        97.01492537313433,
+        93.28358208955224,
+        97.76119402985074
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-no-card-1-baseline-preflight",
+      "time": 1791497436.3395379,
+      "idle_percent": 94.5479962721342,
+      "half_spare_logical_cpus": 7.5638397017707355,
+      "selected_cpu_idle": 94.81481481481481,
+      "sibling_idle": 97.01492537313433,
+      "affinity": 16,
+      "idle_by_cpu": [
+        87.31343283582089,
+        100.0,
+        93.28358208955224,
+        97.01492537313433,
+        94.81481481481481,
+        97.01492537313433,
+        96.26865671641791,
+        97.76119402985074,
+        79.1044776119403,
+        97.01492537313433,
+        89.55223880597015,
+        94.02985074626865,
+        97.76119402985074,
+        97.01492537313433,
+        96.26865671641791,
+        98.50746268656717
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-no-card-1-candidate",
+      "time": 1791497525.780688,
+      "idle_percent": 84.57522543901281,
+      "half_spare_logical_cpus": 6.766018035121025,
+      "selected_cpu_idle": 0.0,
+      "sibling_idle": 93.89312977099236,
+      "affinity": 16,
+      "idle_by_cpu": [
+        78.03030303030303,
+        97.72727272727273,
+        91.6030534351145,
+        99.24242424242425,
+        0.0,
+        93.89312977099236,
+        98.48484848484848,
+        99.24242424242425,
+        98.47328244274809,
+        93.12977099236642,
+        100.0,
+        74.80916030534351,
+        89.39393939393939,
+        97.01492537313433,
+        55.303030303030305,
+        87.02290076335878
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-no-card-1-candidate",
+      "time": 1791497542.1312962,
+      "idle_percent": 74.56479690522244,
+      "half_spare_logical_cpus": 5.965183752417795,
+      "selected_cpu_idle": 0.0,
+      "sibling_idle": 92.96875,
+      "affinity": 16,
+      "idle_by_cpu": [
+        84.61538461538461,
+        92.96875,
+        82.03125,
+        75.59055118110236,
+        0.0,
+        92.96875,
+        86.71875,
+        72.3076923076923,
+        69.23076923076923,
+        68.46153846153847,
+        66.92307692307692,
+        78.46153846153847,
+        77.6923076923077,
+        91.40625,
+        83.20610687022901,
+        70.45454545454545
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-no-card-2-candidate-preflight",
+      "time": 1791497558.927536,
+      "idle_percent": 91.14219114219114,
+      "half_spare_logical_cpus": 7.291375291375291,
+      "selected_cpu_idle": 89.55223880597015,
+      "sibling_idle": 95.55555555555556,
+      "affinity": 16,
+      "idle_by_cpu": [
+        83.58208955223881,
+        94.77611940298507,
+        89.55223880597015,
+        94.02985074626865,
+        89.55223880597015,
+        95.55555555555556,
+        90.29850746268657,
+        94.02985074626865,
+        85.07462686567165,
+        87.96992481203007,
+        83.70370370370371,
+        91.7910447761194,
+        95.5223880597015,
+        94.02985074626865,
+        93.28358208955224,
+        95.5223880597015
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-card-mto-2-baseline-preflight",
+      "time": 1791498004.469199,
+      "idle_percent": 87.53475440222428,
+      "half_spare_logical_cpus": 7.002780352177942,
+      "selected_cpu_idle": 45.925925925925924,
+      "sibling_idle": 94.07407407407408,
+      "affinity": 16,
+      "idle_by_cpu": [
+        97.77777777777777,
+        94.81481481481481,
+        91.85185185185185,
+        97.03703703703704,
+        45.925925925925924,
+        94.07407407407408,
+        92.5925925925926,
+        94.81481481481481,
+        85.18518518518519,
+        91.04477611940298,
+        84.32835820895522,
+        89.62962962962963,
+        91.11111111111111,
+        95.55555555555556,
+        68.14814814814815,
+        86.66666666666667
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-card-mto-2-baseline",
+      "time": 1791498016.7658162,
+      "idle_percent": 77.44107744107744,
+      "half_spare_logical_cpus": 6.1952861952861955,
+      "selected_cpu_idle": 0.0,
+      "sibling_idle": 94.61538461538461,
+      "affinity": 16,
+      "idle_by_cpu": [
+        90.69767441860465,
+        93.84615384615384,
+        88.37209302325581,
+        93.02325581395348,
+        0.0,
+        94.61538461538461,
+        90.0,
+        96.15384615384616,
+        72.51908396946565,
+        31.53846153846154,
+        65.64885496183206,
+        46.92307692307692,
+        95.38461538461539,
+        95.38461538461539,
+        91.53846153846153,
+        93.84615384615384
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_340_56_8-card-mto-3-baseline",
+      "time": 1791498086.7224436,
+      "idle_percent": 55.11887433284813,
+      "half_spare_logical_cpus": 4.409509946627851,
+      "selected_cpu_idle": 0.0,
+      "sibling_idle": 58.13953488372093,
+      "affinity": 16,
+      "idle_by_cpu": [
+        53.48837209302326,
+        61.24031007751938,
+        51.93798449612403,
+        58.13953488372093,
+        0.0,
+        58.13953488372093,
+        56.58914728682171,
+        62.01550387596899,
+        56.58914728682171,
+        58.91472868217054,
+        61.24031007751938,
+        60.46511627906977,
+        58.13953488372093,
+        62.01550387596899,
+        59.84251968503937,
+        63.28125
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    }
+  ],
+  "exploratory": true,
+  "normal_promotion": false,
+  "performance_limit": "Nonexclusive Windows exploratory diagnostic; group medians and ranges retained without posthoc selection. No automatic higher tier or controlled acceptance."
+}

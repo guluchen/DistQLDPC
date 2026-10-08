@@ -1,0 +1,131 @@
+{
+  "status": "FILTER_COMPLETE",
+  "Tier0": "PASS",
+  "diagnostic": "NOT_RUN",
+  "performance": "WINDOWS_EXPLORATORY_DIAGNOSTIC",
+  "candidate": "d27cf4d54bc08c6db4b2ffcebfe0372417bb13ef",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6070015624",
+  "decision": "INCONCLUSIVE",
+  "Tier1": "FORMAL_INCONCLUSIVE_NUMERIC_REJECT",
+  "Tier2": "12 scientifically correct exploratory solves",
+  "Tier3": "NOT_RUN",
+  "reason": "Numeric direction/variability reported; controlled confirmation pending",
+  "exploratory": true,
+  "normal_promotion": false,
+  "why_not_directly_denied": "Original numeric REJECT reflects only +0.093% BB90 OFF and +0.205% GB144 MTO disjoint changes; six groups overlap, aggregate OFF -0.175% and MTO -0.150%; no material regression established, larger-case benefit remains unproven",
+  "no_material_regression_reviewed": true,
+  "user_one_tier_exception": true,
+  "numeric_filter": "inconclusive",
+  "numeric_reason": {
+    "no-card": {
+      "median_geomean": 1.0070734960708632,
+      "range_envelope_geomean": 1.0194440747181255,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 0.9956555440125887,
+      "range_envelope_geomean": 1.012814807981397,
+      "no_worse_medians": true
+    }
+  },
+  "medians": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          58.43203219998395,
+          58.59779400000116,
+          58.46721279999474
+        ],
+        "candidate": [
+          59.56818900001235,
+          58.880780400009826,
+          58.334736499993596
+        ]
+      },
+      "baseline_median": 58.46721279999474,
+      "candidate_median": 58.880780400009826,
+      "ratio": 1.0070734960708632,
+      "range_envelope": 1.0194440747181255,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          64.7684539000038,
+          65.83224439999321,
+          65.6057284999988
+        ],
+        "candidate": [
+          64.79408300001523,
+          65.59844919998432,
+          65.32070730000851
+        ]
+      },
+      "baseline_median": 65.6057284999988,
+      "candidate_median": 65.32070730000851,
+      "ratio": 0.9956555440125887,
+      "range_envelope": 1.012814807981397,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "legacy_filter_details": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "baseline_raw": [
+        58.43203219998395,
+        58.59779400000116,
+        58.46721279999474
+      ],
+      "candidate_raw": [
+        59.56818900001235,
+        58.880780400009826,
+        58.334736499993596
+      ],
+      "baseline_median": 58.46721279999474,
+      "candidate_median": 58.880780400009826,
+      "median_ratio": 1.0070734960708632,
+      "baseline_range_over_median": 0.002835124030698155,
+      "baseline_min": 58.43203219998395,
+      "baseline_max": 58.59779400000116,
+      "candidate_min": 58.334736499993596,
+      "candidate_max": 59.56818900001235
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "baseline_raw": [
+        64.7684539000038,
+        65.83224439999321,
+        65.6057284999988
+      ],
+      "candidate_raw": [
+        64.79408300001523,
+        65.59844919998432,
+        65.32070730000851
+      ],
+      "baseline_median": 65.6057284999988,
+      "candidate_median": 65.32070730000851,
+      "median_ratio": 0.9956555440125887,
+      "baseline_range_over_median": 0.016214902635970706,
+      "baseline_min": 64.7684539000038,
+      "baseline_max": 65.83224439999321,
+      "candidate_min": 64.79408300001523,
+      "candidate_max": 65.59844919998432
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "valid_run": true
+}
