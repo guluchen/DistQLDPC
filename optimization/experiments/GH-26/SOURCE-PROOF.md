@@ -18,7 +18,7 @@ This restriction is selected before measurements to reduce the downstream core/r
 - setConflict4250 merges disjoint components. A final root's constituent component count is its guaranteed falsification weight before speculative assignments; isetLock at exhaustion is remaining lock, NOT original weight. Snapshot reconstructs all constituent members and original component count.
 - analyzeSoftConflict2190 reads false base literals plus involvedLits when UBconflictFlag. A complete negated nonroot base assignment is a conservative valid conditional conflict seed if the base has no feasible extension with residual cost<UB. Existing analyzer/learned-clause lifetime still needs actual tests.
 - hardenFromQuasiSoftConflict4691 rolls temporary assignments back, resets K and makes bound-dependent implications. FLA does NOT reuse this to harden from merged certificate.
-- auxiVar is exactly softLits[v]!=lit_Undef (Solver.h729). Normalization/partition may remove objective literals; snapshot uses ONLY this active residual objective and skips selected K with base-assigned members, duplicate membership or incompatible literals.
+- auxiVar is exactly softLits[v]!=lit_Undef (Solver.h729). This alone is NOT sufficient residual-cost bookkeeping; see the later offset audit below. Snapshot skips selected K with base-assigned members, duplicate membership or incompatible literals.
 - active hard constraints are recovered from attached watcher CRefs (long/binary), deduplicated and excluding mark1. Root-unit constraints are represented by base trail. This includes temporary cardinality/hardening constraints and valid learned clauses under CURRENT bound. Their existing lifecycle must be exercised when UB changes.
 - Pure snapshot assignments/counters/occurrences do not modify solver assignment, reason, trail, qhead, watches/clauses, activity, K or queues. Production watcher movement from ordinary lookahead already occurred; snapshot retains it unchanged.
 - On certified prune, rollback original speculative suffix using original quasi-conflict restoration, resetConflicts/bumpConflVars as normal successful LA, set existing soft/UB flags and record all negated nonroot base trail literals in involvedLits. No changes to solution offsets, UB update, timeout/result output or parent pipe.
@@ -37,3 +37,40 @@ No source proof is labeled Tier0PASS. No host slot/build/solver/diagnostic/timin
 Before any comparative performance: independent residual brute-force oracle checks every kernel true result against all feasible completions; full-condition learned clauses checked under current bound and lifecycle; positive/negative signs, hard infeasibility, overlap rejection, weight>1 passive unlocking, missing coverage, no-extra repeated falsification, base facts; CSS bounds/timeout/results and required hosted correctness.
 Opportunity diagnostic after assignment: original eligible-core frequency, attempted/covered probes, extraUP and exact valid pruning. No frequency/time share inferred from oldset diagnostics.
 
+## Later source-only offset and bound-lifetime audit (before any engine hook)
+
+solve_6574–6600 filters root-assigned objectives and stores their falsified cost
+in fixedCostBySearch. softLits can still identify these as auxiliary variables.
+After a successful bound, solve_6760–6790 cancels to root, transfers root falseLits
+into fixedCostBySearch and clears falseLits, while the objective-literal arrays
+can retain those assigned literals. Therefore using ALL auxiVar base falsities
+as residual F would DOUBLE COUNT offsets. No production adapter is written.
+
+Required adapter rule: start from current normalized allSoftLits, validate every
+literal against softLits[var], and EXCLUDE a currently base-false soft literal
+unless it appears in the exact current falseLits. Preserve base assignment as a
+hard fact even when its objective cost is excluded. Validate one-to-one
+membership and equality between mapped objective base-false count and
+falseLits.size(); any uncertainty declines FLA without changing solver state.
+Include currently undefined and true active literals normally. K members must
+belong to that residual objective and be base-undefined. This makes the snapshot
+generic cost match the current residual cost, while solutionCost,
+fixedCostBySearch, derivedCost and relaxedCost remain the original offsets.
+
+The kernel itself has no DistQLDPC offsets and its oracle uses exactly its
+declared objective; a model PASS would not prove the future adapter invariant.
+Independent future adapter tests must manufacture nonzero initial fixed cost,
+derived cost and later root-cost transfer, verifying residual UB and full
+reported bounds/optimum against original objectives.
+
+UB is NOT globally monotone. Failed-bound updates relax residual UB after
+cancelUntilBeginning(beginning), then removeLearntClauses6720–6750 deletes all
+three learned lists and hardening/cardinality/iset constraints. The snapshot
+certificate and nogood are valid only for the CURRENT strict residual bound.
+After a feasible solution, the next search tightens the TOTAL objective bound;
+the fixed-root transfer shifts the residual coordinate, and CORE clauses may
+survive while local/tier2 are deleted. Proof obligation: old conditional
+nogood remains valid for the smaller total-bound feasible set under retained
+root facts. Source indicates the intended lifecycle, but direct tests of
+learning, root transfer, tightening and relaxation remain mandatory. Do not
+claim monotone residual UB or persist a certificate through bound relaxation.
