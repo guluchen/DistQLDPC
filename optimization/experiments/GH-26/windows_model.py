@@ -38,7 +38,7 @@ RUNTIME = {
     'bin/cygz.dll': 'b3acfadb0f642c8e94d4b5cb4ee527d068f4b2001508af523444766949d67a80',
     'bin/cygzstd-1.dll': '1cca310acda0c743af8c8b776c453e51975a7822c19d293fde5544c5252ff141',
     'bin/cygisl-23.dll': '0d3ba41e07bfed4222e8ef4159a960bc3e12cce8e254d57d5bd30b2d35604d3b',
-    'bin/cyggmp-10.dll': '44a89e8405b4707d120dd0fbf8b6421d300204e216abdaffdddc4c4a434c6b477',
+    'bin/cyggmp-10.dll': '44a89e8405b4707d120dd0fbf8b6421d300204e216abdafdddc4c4a434c6b477',
     'bin/cygmpc-3.dll': 'a29697e606da2c9ae52468f3fc582b7df689e6773549c4936f1e12329ee1dd34',
     'bin/cygmpfr-6.dll': '9f81066227df4993522f37c75d6b796482426230be9d87bf02c8afd888086e01',
     'bin/cygiconv-2.dll': 'ddb34b3a5538495775c4e1333acf0d5f5b1cf228e38f3b4a7e6438cfc5290e9c',
@@ -68,7 +68,9 @@ pins.update({helper: HELPER_SHA, Path(sys.executable): PYTHON_SHA,
 pins[Path(__file__).resolve()] = sha(__file__)
 def identities():
     actual = {str(p): sha(p) for p in pins}
-    assert all(actual[str(p)] == expected for p, expected in pins.items()), 'Pinned file identity changed'
+    mismatches = {str(p): dict(expected=expected, actual=actual[str(p)])
+                  for p, expected in pins.items() if actual[str(p)] != expected}
+    assert not mismatches, 'Pinned file identity changed: '+repr(mismatches)
     return actual
 
 window = None
