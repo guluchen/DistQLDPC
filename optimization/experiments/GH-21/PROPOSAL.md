@@ -1,0 +1,49 @@
+# Registered issue #21: https://github.com/guluchen/DistQLDPC/issues/21
+
+Owner/session: independent-brain-20261008-round2. Hub: #15. Baseline: 24572d6d09cce9a4a5faa58300a89e0feba9da6a. Status: PROPOSED / UNTESTED; host slot NONE.
+
+DistQLDPC is the downstream CSS distance application with its own instrumented MaxCDCL-derived engine. QDistSAT is its benchmark platform; neither is upstream MaxCDCL. Preserve scientific/bounds/timeout/result semantics and all notices. Each proposal below stands alone; exactly one is selected.
+
+## Three proposals and selection
+
+### A — GCC O2 instead of O3 (rank1, SELECTED)
+Hypothesis: choosing GCC's O2 optimization level, retaining all other build settings, improves runtime on irregular propagation/core/search code enough to offset losing O3 transformations. Code inspection shows pointer-based watcher loops and state-dependent branches; NO cache-miss profile or evidence of over-optimization is established. This tests a code-generation tradeoff, not a claim that fewer instructions or smaller binaries necessarily run faster.
+
+Pinned Makefile:11 uses -O3; the same CXXFLAGS compile all engine objects and both executable entrypoints. Production scope is exactly replace that one token with -O2. Same compiler/version, optimization mode otherwise unchanged: -g, DNDEBUG, include/diagnostic/macros, linker/zlib, exception/aliasing/floating-point policies, original source and CLI retained. No PGO/LTO/native, selective per-file levels, tuning sweep, solver source modification, GH17 scratch or GH20 watch-copy combination. All production src hashes must equal original baseline.
+
+Official GCC14.3 documentation: O3 adds cloning and extra loop transforms beyond O2; target/configuration can affect the actual enabled passes. Record the assigned GCC14.4 compiler's actual -Q --help=optimizers differences and full compile commands as support; documentation version is14.3, not falsely14.4. The optimization-level switch is the ONE conceptual change. It is not a fixed disabled-pass attribution experiment: if a gain appears, do not claim which transform caused it.
+Source: https://gcc.gnu.org/onlinedocs/gcc-14.3.0/gcc/Optimize-Options.html
+
+Expected cases: OFF/MTO potentially across all Tier1 and LP340, particularly irregular solver-heavy work. Gain, sign and size unknown; smaller .text alone does not establish a runtime bottleneck. General engineering, BibTeX NOT APPLICABLE.
+
+Risks: compiler-sensitive latent UB or optimizer bugs, code layout shifting, weaker vectorization/loop optimization regressions, floating-point search order differences, and hardware/compiler specificity. Scientific answers/bounds/timeout behavior must be exact; compare deterministic search/counter traces where meaningful and explain rather than hide any search divergence. Do not silently add -fwrapv, -ffast-math, -fno-exceptions or other corrective performance flags. A crash/mismatch stops/rejects before timing.
+
+Tier0: original O3 vs O2 clean builds, independent tinyCSS d1/d2/d1 oracle both modes; LP34 d2 smoke; exact WCNF pairs with explicit no-card/card-mto, forced LP340 timeout/UNKNOWN bounds semantics, standalone MaxCDCL tiny known-optimum WCNFs, hosted CI/cross-repo LP136/BB108 both modes. Tests must exercise the actual changed Makefile/default flags; no candidate built with silently overwritten CXXFLAGS. Build-support invocation/environment differences recorded equally. Reuse verified immutable E004 baseline binary ONLY with full source/runtime/package manifest verification; new candidate clean objects to prevent mixed flags.
+
+Preparation/validation estimate: several hours, one new candidate build plus verified baseline or baseline rebuild, no training. Record executable/section sizes and disassembly as informational after assignment; no speed prediction or mandatory cache profiler. Full comparative tier cost below. Lowest scientific/engineering risk among this round's choices; broad cheap test independent of PGO.
+
+### B — host instruction-set specialization (rank2, UNSELECTED)
+Mechanism: append only -march=native to original O3 build on each assigned host, keeping original algorithm and all other flags. CPU-dependent instructions may help integer/bit operations; no evidence benefit exists. Rebuild on each target; an executable may not run on another CPU. Preserve exact host/compiler/expanded ISA identity. Fused floating-point instruction availability can affect activity rounding/search order under existing contraction rules even without fast-math, increasing validation risk. No mtune-only/native+LTO+PGO bundle and no architecture sweep.
+Code scope: Makefile CXXFLAGS only, all original src unchanged. Same common scientific tests required; illegal instruction or wrong result rejects; no portable binary adoption claim. Estimate several hours and one candidate build/common tiers. Source: https://gcc.gnu.org/onlinedocs/gcc-14.3.0/gcc/x86-Options.html plus OptimizeOptions contraction section. General engineering, no academic BibTeX.
+
+### C — fixed-cap2 further lookahead (rank3, UNSELECTED)
+Disclosed re-ranking of shared UNSELECTED H012/issue16-C, not novelty or a new claim. After normal lookahead fails to prune, deterministically inspect existing weight-one cores with at most TWO SOFT LITERALS. For every literal's falsification branch, require a valid additional core; complete coverage and intersection merging precede any LB increment. No RL/full-solver import. GH17 oldset peak2 counts core IDs, NOT soft-literal core width, and establishes no eligible-core frequency.
+Primary paper: Zhang, Li, Cherif, Li, Enhanced Lower Bound Computation in Branch-and-Bound for MaxSAT, CP2026, DOI10.4230/LIPIcs.CP.2026.60. Independent reading: official PDF sections2,3.1/3.2 Algorithms1–3 and Proposition6/proof (pp3–9); section3.3 RL excluded; not an independent reproduction of experimental results.
+PDF: https://drops.dagstuhl.de/storage/00lipics/lipics-vol379-cp2026/LIPIcs.CP.2026.60/LIPIcs.CP.2026.60.pdf
+The paper's method/proof concerns its stated MaxCDCL model. Audit downstream unlockReason/seeUnlockLits/core weights/rollback equivalence, absence of same active algorithm and suitable cores before coding. A paper proof does not prove our downstream implementation. Highest risk: double counting/overlap, speculative-state restoration, hard infeasible branches, reason graph, bound lifetime. Exhaustive residual-LB<=exact optimum tests for small partial instances precede CSS/full tiers. Estimate several days plus diagnostic eligible-core counts; speed/pruning-overhead unknown. Preserve attribution; no upstream source import assumed.
+BibTeX retained in proposal companion references.bib using existing key zhang2026enhanced; no shared bibliography edit.
+
+## Prior learning / duplicates
+GH17: production191de68 Tier0 PASS, predicted9/328 allocations saved (2.74%), peak8bytes, no timing; performanceINCONCLUSIVE/low-prioritySHELVED/NOTADOPTED. Different per-operation route justified; no universal allocator rejection.
+E001/E002 and E006 show smaller encoding does not predict speed; E003 did not demonstrate allocator dominance; E004 LTO shelved; E005 fixed SLS no verified caps. Primary issue16 PGO48correct local Tier1 samples approximately2% favorable overall but formalINCONCLUSIVE per coordinator; no acceptance inferred. GH20 selects skip unchanged watcher-tail identity copies; unselected symmetricVSIDS/lazycleanup do not duplicate selected A. Primary mentioned possible Clang/prefetch/VSIDS next but not O2. Open/closed selection search and hub comments inspected before selection; reread after registration. Lower issue number owns any concurrent duplicate original selection.
+
+## Preregistration / resource / decision plan
+Start separately owned worktree/branch from pinned baseline after scheduler ownership acknowledgement; DO NOT stack on GH17, GH16, GH20 or history H001. Store this exact prerecord before one-token implementation. IDs A/B/C issue-local; no global H/E assignment or edits to shared indices.
+Host slot NONE. Primary Windows LP340 is serial under hub6062940581; no builds/profiling/solver/time workloads by us while it owns the host. Metadata/source research only. Future runner requires fresh hub RUN_ASSIGNMENT, global spare>50%, team use<=half spare, oneCPU Job affinity/priority+active2s capacity telemetry and bounded owned-tree cleanup/restore. Diagnostic contention alerts retained; controlled evidence distinct.
+
+Tier0 mismatches/crash/wrong distance/bounds/output/timeout semantics STOP/REJECT and record/escalate. Passing shared CI supports correctness, never performance.
+Tier1 BB_90_8_10, GB_144_12_8, BB_108_8_10, LP_238_44_6; OFF/MTO separately;3/version/case/mode=48 solves; serial sameCPU AB/BA/AB;180s parent195s watchdog per solve, worst156min. Preserve all raw failures/timeout/capacity/identity, per-mode medians/ranges. Aggregate per-mode geometric mean of case runtime ratios, compare each case; do not hide regressions with pooled modes.
+Promotion requires all correct, reproducible positive direction beyond observed repeated variability and no material case regression; no arbitrary universalpercent threshold. Retain uncertainty if contention/overlap could change the decision. No sampling until favorable. Dedicated controlled repeat or separately preregistered contention robustness needed for adoption.
+Tier2 LP_340_56_8 3/version/mode=12solves600/615s, worst123min only by gate or explicitly scoped exploratory exception; exception never implies PASS. No Tier3 registered. No change to ground truth, timeout interpretation or supported CSS/Pauli/logical semantics.
+Current candidate/PR/branch/raw/medians: NONE. Tier0/1/2 NOTRUN. Decision UNTESTED (not performanceACCEPT/REJECT/INCONCLUSIVE). Next: isolated prerecord, one-token source change and prepare actual-default-build validation; request host only when scheduler releases queue.
+

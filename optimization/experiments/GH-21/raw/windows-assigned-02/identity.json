@@ -1,0 +1,148 @@
+{
+  "candidate": "c64b0365a81bc62001194b0d49c481a5092b2ac0",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6063697517",
+  "baseline_manifest_sha256": "3518b99159a0baff318b5d6dd100145a8a73aada6e443b46d4e04e3cc0442315",
+  "baseline_binary_sha256": "22e398cc7558c2a04d5f24bd6db3030ce552c752622027fc2657eff7c1bd1815",
+  "runner_sha256": "211fd79a1c12f50ed2d01901d55942ca073b750ac9cd764150f66d258ecd0079",
+  "helper_sha256": "ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2",
+  "runtime_manifest_sha256": "e1448a286c12ba0508090ce35d416422b04390f1e79d2c73e12e2ecd5ac5b3e7",
+  "selection": {
+    "topology": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ]
+    ],
+    "selected_cpu": 14,
+    "sibling": 15,
+    "original_affinity": 65535,
+    "mask": 16384,
+    "idle_by_cpu": [
+      84.0625,
+      85.3125,
+      87.8125,
+      92.8125,
+      88.4375,
+      89.6875,
+      87.5,
+      91.875,
+      97.8125,
+      80.9375,
+      98.75,
+      85.9375,
+      87.1875,
+      84.6875,
+      97.1875,
+      99.375
+    ],
+    "sampling_sec": 5,
+    "exclusive_reservation": false,
+    "power_policy_changed": false,
+    "sleep_inhibition": "temporary system requirement",
+    "allow_contention": true,
+    "affinity_enforcement": "Unnamed Windows Job Object JOB_OBJECT_LIMIT_AFFINITY; no breakaway flags",
+    "priority_class": 32768,
+    "original_priority_class": 32,
+    "priority_enforcement": "JOB_OBJECT_LIMIT_PRIORITY_CLASS on owned process tree"
+  },
+  "source_hashes": {
+    "src/core/distqldpc.cc": "a2844f379d5efba4567c8502278da37f81510d00907be0e6f1fba4c2b6d950e4",
+    "src/solver/Dimacs.h": "a256b1acb18480561107649a3bf1d93c97f3dbe4779aa5f726814668425ac382",
+    "src/solver/LICENSE": "d7248c7ecb9eb59dec8dbcb33b587a57929330433fcca5d134be0aadc88b1797",
+    "src/solver/Main.cc": "8e06ff3817ab2890a93e3132c4aae80c3a923d8826eeb1d7933bdd3a438a6574",
+    "src/solver/README.md": "d89f2209bc059e53cedcb1bde555077d266148da3d7d3da47b72466e4bb78d47",
+    "src/solver/SimpSolver.cc": "4f4bdce723dfa5d9166a94377595dbbba5284a6bf33fe4d4f51f1246fd0ce249",
+    "src/solver/SimpSolver.h": "09643165ef73a69813a76ee89b3c6c63cdf30ae3ec6978c668d959068add57cb",
+    "src/solver/Solver.cc": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+    "src/solver/Solver.h": "1cebefbb09a2a4238c07ee4832f2058ae4abeda6d03fce1a4cee1bbc913751b4",
+    "src/solver/SolverTypes.h": "aaacd3e3204a962ba95f3fb60e29cc1d4710ca38199266403f58a630437d5c0c",
+    "src/solver/clq-n100e2500g1": "6143b27940eca20b5f6025b5a5d2ff713bd6ca4a1b5eb4f3bc1c6b7e3f70c870",
+    "src/solver/clq-n150e10058g1": "7eb08c43b0219720695dc928381797365820a51050cf239ef1624cd4178fd79c",
+    "src/solver/mtl/Alg.h": "6a795d98b0d2abd0a6ea2fbc3ec38831fba089209691807e10d86be0f65f6c1b",
+    "src/solver/mtl/Alloc.h": "7c31c20f9f3da11647f24636d44201769253d8b3094e1ce7e8d5a800b9d7d20c",
+    "src/solver/mtl/Heap.h": "18f609a5acff12e99d52c9e2acb4d722efb18bc7af43cd89a9f8988d4898f75c",
+    "src/solver/mtl/IntTypes.h": "ae0a20576272b3f68e616397832e4380c5862b1ca9879586d686ddbc70f41451",
+    "src/solver/mtl/Map.h": "2f32e08255cd794752be72d05ec9dcd6968ac75ac31ade7218f808e075b0b199",
+    "src/solver/mtl/Queue.h": "04bd37027b0617376e4336cabd7ef7ce59fc19eeecb8a53eb177574164a06cf9",
+    "src/solver/mtl/Sort.h": "6948de69cfdd0f28eb44283a2be6929ed035fb72d04eb20e056d3b9d03b1b647",
+    "src/solver/mtl/Vec.h": "8b1c7a9f10c30793a1abd93a4b6acfd514fc48daaa94b953423fb884a0e57cc8",
+    "src/solver/mtl/XAlloc.h": "a229eff1f0e1fc23a1e81a10a577105e33c56f05de0164554c417070249613ba",
+    "src/solver/mtl/config.mk": "f3fc1aadd9d8ad26f8813e125da2deceab4c7152e4b7d761c873a29f6bedfaf2",
+    "src/solver/mtl/template.mk": "d903d7c8cd193b34a6199a4074c2b129963d6be38dbea1f2dc27157302faf651",
+    "src/solver/utils/Makefile": "8a7927985583c9a0a4885a0c0211e5a7d5ed10ca2c5120932b8d6b0142515b09",
+    "src/solver/utils/Options.cc": "163e5df82a012005235f86621d47d2f44db1bc623946b9b7d24b4b3abce4d913",
+    "src/solver/utils/Options.h": "d0a359d32a2f9cd070abc6fd23fc4b102ae8c379a8ea7cb9949f1921b37f6555",
+    "src/solver/utils/Options.or": "b08478dc4c4ea897009bd070760295436cb3298d44f28d6976687cdff64d8fd7",
+    "src/solver/utils/ParseUtils.h": "9230bb5a52d94fb2b2883dcae054b382c9e2caf88148ad7411704f48b9c0f79b",
+    "src/solver/utils/System.cc": "51486ba2fb31122b8be48edf463edf9addd861cbe9a9f22b1e6ade9a8d23981b",
+    "src/solver/utils/System.h": "cb0d4e82bdaa1d16f4f71b96a5bde2fcb7f464a0ed3007735a70176a7fb7a93c",
+    "src/solver/utils/System.or": "03e232df2f5a1ece00e1e120f4e354732092151ca69ffa6318d79eb939f074a2",
+    "Makefile": "674045c76bf37125c05b05078b21d86306dbd5fdbc8c613592671ff69d0ea6ad"
+  },
+  "support_hashes": {
+    "audit_hosted.py": "276e491fa98682e2229fbde41971f97a2a27ec19027f1f8b5a3cddcb8de2c784",
+    "runner_common.py": "3ca0cc92a3a2e1be148bf381b3294ed2e8f6ba74a24743936cb3b47e62a018a0",
+    "run_tier0.py": "035240ccebc5e5ee91fd471abf4bc50a7a561e6b7314c909c9309d44b6fa9a61",
+    "windows_assigned_runner.py": "211fd79a1c12f50ed2d01901d55942ca073b750ac9cd764150f66d258ecd0079",
+    "cygwin_test_stats_shim.cc": "969724512f617db48c59484792c388ba65697e8b3125b9c7ae8df9d556057449"
+  },
+  "smoke_input_hashes": {
+    "baseline-copy": {
+      "LP_34_20_2_Gx.txt": "bf09826369fac1adb4ba1820be97972e38bc8c708c631a9a2d38978dd5376de5",
+      "LP_34_20_2_Gz.txt": "84382e94ea4806f2b17f51e7e8563d0cb068a9b45f3d087f19cc60980c4e1811",
+      "LP_34_20_2_Hx.txt": "e671159c88d55b1610481e0629f915e99f18da3284bdab5a0034894edeb86525",
+      "LP_34_20_2_Hz.txt": "d2d10fe7712a4776fde77a1364a60c4e3a49a0c26486062405b167cacde835d0"
+    },
+    "candidate-checkout": {
+      "LP_34_20_2_Gx.txt": "3b44e0168efea722f688aa6d10003bd0afa53175cea5de44419b3cc10ce77847",
+      "LP_34_20_2_Gz.txt": "898f4b41ff712c3b9a23932ba1038ec2275bb1cc716b739e5607e495529769ca",
+      "LP_34_20_2_Hx.txt": "e8fce4fdaa17911816a8fe24ccf9fd37b9a880443096231575899f884f2287ec",
+      "LP_34_20_2_Hz.txt": "ff67e8124758b19f0e8790f850ea60b0559a4726dd233adc7aeef70cd416096d"
+    }
+  },
+  "object_hashes": {
+    "build\\Options.o": "fa71a49b6ccb000e09b021d5a8e6cbde60b12d77aa23db017f6947cebca90639",
+    "build\\SimpSolver.o": "a35b0859dfca602f523e34ce7d671c4ec503e550a5f1e26ff360f1b1a9f07968",
+    "build\\Solver.o": "789faba83f9684745e888becfb4739eb33003e52beb4a85430e11c480b31c557",
+    "build\\System.o": "e995b98a7aea6f206f0f1c4cdd008bfb2797d2aebe99ce319721e0d63d92f5fa"
+  },
+  "input_hashes": {
+    "LP_34_20_2_Gx.txt": "bf09826369fac1adb4ba1820be97972e38bc8c708c631a9a2d38978dd5376de5",
+    "LP_34_20_2_Gz.txt": "84382e94ea4806f2b17f51e7e8563d0cb068a9b45f3d087f19cc60980c4e1811",
+    "LP_34_20_2_Hx.txt": "e671159c88d55b1610481e0629f915e99f18da3284bdab5a0034894edeb86525",
+    "LP_34_20_2_Hz.txt": "d2d10fe7712a4776fde77a1364a60c4e3a49a0c26486062405b167cacde835d0",
+    "LP_340_56_8_Gx.txt": "e05585ec252b84fc94a0de7f9f95732c8c6e4bf11b3a295bbd2fa0277f44589b",
+    "LP_340_56_8_Gz.txt": "383b79ac33a8b2e2842fe2908763ec1e8e82de5a30c8cea52a19d40ee21d5c66",
+    "LP_340_56_8_Hx.txt": "097a76f0030e82b3077259ffda5c74e5009b42efba58a7dabad252c13b348d8a",
+    "LP_340_56_8_Hz.txt": "d5fd553dfa914dad412abf357ed42b0ff79c35b1ee3bad4ef5c83d7b8f33e9e6"
+  }
+}
