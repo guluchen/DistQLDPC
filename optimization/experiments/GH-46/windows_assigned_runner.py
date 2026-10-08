@@ -28,7 +28,7 @@ ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 ap.add_argument("--candidate-sha",required=True)
 args=ap.parse_args()
-ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069534252"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "No RUN_ASSIGNMENT: preparation only"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();assert out.parent==ROOT and out.name=="GH46-windows-tier0-01";out.mkdir(parents=True,exist_ok=False)
