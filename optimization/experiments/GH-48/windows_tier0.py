@@ -9,7 +9,7 @@ drain can hang. QueryInformationJobObject proves owned descendant cleanup.
 import argparse
 import ctypes as C
 import hashlib
-import importlib.util
+import types
 import json
 import os
 from pathlib import Path
@@ -45,9 +45,12 @@ for support_name in ['windows_tier0.py','cpu_isa_gate.cc','abi_probe.cc','cygwin
     support_blob=subprocess.check_output(['git','-C',str(candidate),'show',support_head+':optimization/experiments/GH-48/'+support_name],timeout=10)
     assert (HERE/support_name).read_bytes()==support_blob,'Uncommitted support '+support_name
 helper=ROOT/"DistQLDPC/optimization/experiments/E004/windows_cpu_window.py"
-assert sha(helper)=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2','Reviewed helper changed'
-spec=importlib.util.spec_from_file_location("gh17_window",helper)
-module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+helper_source=helper.read_bytes()
+assert hashlib.sha256(helper_source).hexdigest()=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2','Reviewed helper changed'
+# Compile exactly authenticated source bytes; never consult or delete any .pyc.
+sys.dont_write_bytecode=True;os.environ['PYTHONDONTWRITEBYTECODE']='1'
+module=types.ModuleType('gh48_authenticated_window');module.__file__=str(helper)
+exec(compile(helper_source,str(helper),'exec'),module.__dict__)
 def cygpath(v):
     v=str(v).replace("\\","/")
     if v.startswith("-dump-wcnf="):return "-dump-wcnf="+cygpath(v[len("-dump-wcnf="):])
@@ -84,6 +87,7 @@ def observe(label):
 def clean_owned(reason):
     records=[]
     if current is not None and current.poll() is None:
+        assert current.pid in job_pids(),'Live child ownership unconfirmed; no signaling'
         result=subprocess.run(["taskkill","/PID",str(current.pid),"/T","/F"],
                               capture_output=True,text=True,timeout=10)
         records.append(dict(pid=current.pid,returncode=result.returncode,stdout=result.stdout,stderr=result.stderr))
@@ -316,7 +320,12 @@ try:
     shutil.copy2(Path(__file__),out/'executed-driver.py')
     os.environ['PATH']=str(runtime/'bin')+os.pathsep+os.environ['PATH']
     os.environ.update(LC_ALL='C',OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',MKL_NUM_THREADS='1')
-    assert not any(os.environ.get(key) for key in ['MAKEFLAGS','CXX','CXXFLAGS','LDFLAGS']),'Unrecorded build override'
+    forbidden_build_environment=['MAKEFLAGS','GNUMAKEFLAGS','MFLAGS','MAKEOVERRIDES',
+        'CC','CXX','CPP','CPPFLAGS','CFLAGS','CXXFLAGS','LDFLAGS',
+        'CPATH','C_INCLUDE_PATH','CPLUS_INCLUDE_PATH','OBJC_INCLUDE_PATH',
+        'GCC_EXEC_PREFIX','COMPILER_PATH','LIBRARY_PATH','GCC_COMPARE_DEBUG',
+        'GCC_COMPARE_DEBUG_SECOND','LD_PRELOAD','LD_LIBRARY_PATH','LD_AUDIT','CYGWIN']
+    assert not any(os.environ.get(key) for key in forbidden_build_environment),'Unrecorded compiler/include/link injection'
     compiler=runtime/'bin/g++.exe'
     original_flags=['-Isrc/solver','-Wall','-Wno-parentheses','-O3','-g','-D__STDC_LIMIT_MACROS','-D__STDC_FORMAT_MACROS','-DNDEBUG']
     version_flags={'baseline':original_flags,'candidate':original_flags+['-march=x86-64-v2']}
