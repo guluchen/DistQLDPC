@@ -3,12 +3,12 @@ Only that authenticated session is eligible for TERM/KILL cleanup.
 """
 import argparse,hashlib,json,os,signal,subprocess,sys,time
 from pathlib import Path
-ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068235549'
+ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068419272'
 def proc(pid):
     try:
         raw=Path('/proc',str(pid),'stat').read_text();f=raw[raw.rfind(')')+2:].split()
         return dict(pid=pid,group=int(f[2]),session=int(f[3]),birth=int(f[19]))
-    except FileNotFoundError:return None
+    except (FileNotFoundError,ProcessLookupError):return None
 def members(sid):
     out=[]
     for p in Path('/proc').iterdir():

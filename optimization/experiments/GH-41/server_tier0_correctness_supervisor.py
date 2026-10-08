@@ -1,7 +1,7 @@
 """Disabled GH41 correctness-only capacity guard. NOT a timing/quiet-window guard."""
 import json,os,signal,subprocess,time
 from pathlib import Path
-RUN_ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068235549'
+RUN_ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068419272'
 def save(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n',encoding='utf8')
 def cpus(text):
     out=set()
@@ -25,7 +25,7 @@ def process(pid):
     try:
         raw=Path('/proc',str(pid),'stat').read_text();fields=raw[raw.rfind(')')+2:].split()
         return dict(pid=pid,ppid=int(fields[1]),pgrp=int(fields[2]),session=int(fields[3]),start=int(fields[19]))
-    except FileNotFoundError:return None
+    except (FileNotFoundError,ProcessLookupError):return None
 def session_members(session):
     members=[]
     for path in Path('/proc').iterdir():
