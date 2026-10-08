@@ -11,4 +11,6 @@ not production correctness PASS or a substitute for that gate. No Tier1 until
 correctness established, no discarded input/rewritten assumptions. Peer-source
 review/frozenprovenance/named resource slot required before any execution.
 
-Actual prerecord e74047c preceded candidate8a1673b. SOURCE_PROOF.md records obligations, not tested equivalence. Independent source review requested; all actual validation remains NOT_RUN.
+Actual prerecord e74047c preceded candidate8a1673b. SOURCE_PROOF.md records obligations, not tested equivalence. Independent source review requested; all assigned local validation remains NOT_RUN.
+
+Hosted metadata checkpoint: ordinaryCI37854460588 and QDistSAT37854460582 report SUCCESS on support975fdfa. Actual executed source/ZIP/raw science audit is pending; this metadata alone is not full Tier0 PASS and does not waive knownGH46fixture. Local build/container/census/solver/performance remain NOT_RUN.
