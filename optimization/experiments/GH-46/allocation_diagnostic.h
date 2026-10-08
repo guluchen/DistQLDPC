@@ -26,7 +26,7 @@ struct GH46AllocationCounts {
         return cap+add;
     }
     void dump(bool complete) const {
-        if (!calls || !std::getenv("GH46_REPORT") ||
+        if ((!calls && !complete) || !std::getenv("GH46_REPORT") ||
             std::strcmp(std::getenv("GH46_REPORT"),"1")!=0) return;
         std::fprintf(stderr,
             "GH46_ALLOCATION {\"solver_id\":%llu,\"complete\":%s,\"calls\":%llu,\"populated_calls\":%llu,"
