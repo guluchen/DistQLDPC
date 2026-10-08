@@ -1,5 +1,19 @@
 # Hypothesis registry (not an execution queue)
 
+2026-10-09 latest: no accepted optimization. GH20 locallySHELVED(all8mediansslower),
+GH21 O2 INCONCLUSIVE after exploratoryLP340(OFFneutral/MTO-1.426%, overlap),
+GH22 global symmetricactivity locallyREJECT(OFFGM+12.84%,MTOGM-15.74%). Exact
+durable evidence105cf1c/3d89ec8/c0154aa; noTier3. Formal controlled statuses
+remainINCONCLUSIVE, not universal family rejection.
+
+GH30-A newlyselects explicitMTO-only activity scope, one conditionalexpression,
+fresh baseline/gates; not adopted from GH22 subset. GH30-B fixedClangbackend
+and GH30-C sharedcap2FLA unselected; C activelyGH26-owned. GH26-A cap2FLA
+reranksH012 with verifiedCP2026Bib/proof; model not production correctness.
+GH27-A enqueueprefixinline retains originalsoftbody; fixtureUB setup corrected
+before any execution. Hub15/ownPR29/28/31 preserve independent three proposals
+and selection/provenance. All require own correctness/performance evidence.
+
 2026-10-08 latest: H010/GH16 PGO Tier0 PASS, Tier1 filter INCONCLUSIVE,
 user-exploratory LP340 Tier2 fails to corroborate (~-0.535% OFF/+0.333% MTO,
 overlapping ranges). INCONCLUSIVE / SHELVED / NOT ADOPTED, no Tier3 or merge;

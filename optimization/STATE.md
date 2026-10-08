@@ -1,5 +1,31 @@
 # Optimization state
 
+2026-10-09 Asia/Taipei supersedes pending entries below. Continuous independent
+three-proposal/select-one/execute loop ACTIVE; no accepted optimization.
+Fresh variants remain on24572d6, isolated branches/PRs; no stacked experiments.
+
+GH20 watch-tail:48correct Tier1, all8 medians slower, five disjoint. Local
+SHELVED/NOT ADOPTED/formalINCONCLUSIVE; noTier2/3.105cf1c,564raw verified.
+GH21 O2:60correct results/120bounds, Tier1~0.7–0.8%positive but LP340 OFF+.0108%,
+MTO-1.426%, overlappingranges. INCONCLUSIVE/NOT ADOPTED, noTier3;3d89ec8,472raw
+verified. Windows released6064674507 before next assignment.
+GH22 global symmetric activity:48correct results/96bounds, OFFGM+12.84% versus
+MTOGM-15.74%; OFF BB90/GB144/BB108+9.41/+39.39/+5.97% disjoint regressions.
+GenericlocalREJECT/formalINCONCLUSIVE/noadoption/noTier2/3;c0154aa,594raw verified.
+New mode-specific hypothesis must repeat own gates, never adopt posthoc subset.
+
+Fresh registered independent rounds: GH26 cap2FLA/PR29 proof-first534case snapshot
+model, engineadapter/offset/nogoodlifetime still unimplemented/unverified. GH27
+enqueueprefixinline/PR28 production58fbae5, originalsoftbody retained; reviewer
+caught fixtureUBflag initialization before tests, corrected480cases, guarded
+Tier0prepared7a25708. GH30 MTO-gatedactivity/PR31 prerecorde58aecc beforeb4e568f,
+one existing-mode conditional,640case Tier0prepared; current Windows assignment
+6064771915/supporteafb7e4, no performancePASS yet.
+
+One named host runner; hub15 latest assignments/releases override historical
+prose. Last serverreadonly~45% spare fails user>50%, no remotecompute. Research
+timing claims require controlled evidence; hosted timing informational. NoTier3.
+
 2026-10-08 latest execution update supersedes all running/setup entries below.
 H010/GH16 PGO completed Tier1 and one preregistered user-exploratory Tier2:
 60 scientific results correct. Tier1 medians about2% faster, but its fixed
