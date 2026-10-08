@@ -1273,7 +1273,7 @@ Var Solver::newVar(bool sign, bool dvar)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
-    assigns  .push(l_Undef); litvals.push(l_Undef); litvals.push(l_Undef);
+    assigns  .push(l_Undef); litvals.push(l_Undef); litvals.push(l_Undef ^ true);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);
     activity_VSIDS.push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);
@@ -6065,7 +6065,7 @@ Var Solver::newAuxiVar(bool sign)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
-    assigns  .push(l_Undef); litvals.push(l_Undef); litvals.push(l_Undef);
+    assigns  .push(l_Undef); litvals.push(l_Undef); litvals.push(l_Undef ^ true);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);
     activity_VSIDS.push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);
