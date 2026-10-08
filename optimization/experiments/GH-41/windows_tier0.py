@@ -244,7 +244,7 @@ try:
         exact=min((x|z).bit_count() for x,z in itertools.product(range(1<<n),repeat=2) if all((h&z).bit_count()%2==0 for h in hx) and all((h&x).bit_count()%2==0 for h in hz) and (x not in span(hx) or z not in span(hz)))
         for suffix,rows in zip(['Hx','Hz','Gx','Gz'],[hx,hz,gx,gz]):
             (out/(stem+'_'+suffix+'.txt')).write_text(''.join(' '.join(str((r>>i)&1) for i in range(n))+'\n' for r in rows),encoding='utf8')
-        for mode in ['no-card','card-mto']:
+        for mode in ['no-card','card-sinz','card-mto','card-both','card-both-force']:
             dumps=[]
             for version,binary in binaries.items():
                 label=stem+'-'+mode+'-'+version
@@ -259,7 +259,8 @@ try:
             rc,text,error=check_run([binary,'-'+mode,'-cpu-lim=1',data_root/'LP_340_56_8'],'timeout-'+version+'-'+mode,sources[version],20,allow_rc=True)
             science.append(dict(label='production-1s-'+version+'-'+mode,result=scientific(rc,text,8,timeout=(rc==1))))
             save(out/'science.json',science)
-            assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
+            if rc==1:
+                assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
     # Test-only standalone Main link. No shim in production DistQLDPC.
     standalone={}
     for version,source in sources.items():

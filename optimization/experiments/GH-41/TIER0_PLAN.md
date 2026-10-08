@@ -19,7 +19,9 @@ runtime. Makefile and smoke shell files are LF-normalized; other source bytes
 remain exact git-archive exports. Git archive can apply core.autocrlf, so exported
 source bytes are not falsely described as identical to raw Git blobs.
 
-Retain all 16 small CSS scientific solves, eight identical WCNF comparisons,
+Run all 40 small CSS scientific solves and 20 identical WCNF comparisons,
+covering actual CLI OFF, SINZ, MTO, BOTH and BOTH_FORCE in both versions.
+Retain the original
 40 independent PMS truth-table cases and the 162 complete capped/uncapped Main
 runs, including O1/P1/P2 and a tight positive cap after UB1 fails. Preserve the
 original finite-optimal Main SAT/10 or UNSAT/20 outcome and all bounds/objectives.
