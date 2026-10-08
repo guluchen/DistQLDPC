@@ -1,5 +1,10 @@
 # Hypothesis registry (not an execution queue)
 
+H-007 latest [strict LP340 retry03](experiments/E004/WINDOWS-PRIORITY-RETRY-03-2026-10-08.md):
+one correct OFF pair68.305533s/67.624900s, second candidate resource-aborted
+on sibling idle94.405594%<95%. Partial audit/restoration PASS; no repeated
+median or MTO, still INCONCLUSIVE, not evidence for rejection/adoption.
+
 Latest experiment: [E004 / H-007 INCONCLUSIVE](experiments/E004/README.md).
 Latest [priority configuration/LP340 retry](experiments/E004/WINDOWS-PRIORITY-RESULT-2026-10-08.md):
 AboveNormal job-wide probes PASS for both versions, unchanged LTO-only candidate.

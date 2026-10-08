@@ -6,6 +6,15 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest user-authorized [strict LP340 retry03](experiments/E004/WINDOWS-PRIORITY-RETRY-03-2026-10-08.md):
+one serial OFF pair completed, baseline68.305533s/LTO67.624900s, both exact
+d/objective/LB/UB8. Second candidate resource-aborted at22.362618s when sibling
+idle94.405594% fell below95%; global idle73.078632% remained valid. One active
+contention observation of74 checks; no severe-interference inference. Independent
+partial scientific/identity/affinity/priority/cleanup audit PASS. INCONCLUSIVE,
+no three-repeat medians, MTO, performance conclusion, automatic retry or Tier3.
+No implementation change; settings restored, raw partial evidence retained.
+
 Latest user-requested [AboveNormal priority setup](experiments/E004/WINDOWS-PRIORITY-RESULT-2026-10-08.md):
 shared owned-job priority/parent+fork-child probes verified, timeout/cleanup PASS.
 Same priority for both baseline/LTO, optional CLI flag, no solver optimization

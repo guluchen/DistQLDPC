@@ -1,5 +1,10 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> [User-authorized strict LP340 retry03](WINDOWS-PRIORITY-RETRY-03-2026-10-08.md):
+> two correct OFF solves68.305533s/67.624900s, next candidate resource-aborted
+> at22.363s on sibling idle94.406%<95%. Partial audit and restoration PASS;
+> INCONCLUSIVE, no repeated medians/MTO, no automatic retry or Tier3.
+
 > Latest [user-requested AboveNormal setup and LP340 attempt](WINDOWS-PRIORITY-RESULT-2026-10-08.md):
 > real parent/fork-child probes/timeout/cleanup PASS, both versions share priority.
 > Strict first baseline resource-aborted29.097s at sibling idle90.071%; no completed
