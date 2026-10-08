@@ -6,7 +6,7 @@ from windows_cpu_window import Window, ticks, affinity, descendant_affinities, k
 
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 CAND='e1aa9175c511b72dbb7305f5769b1e11f41bc05f'
-ASSIGNED_URL='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6064121965'
 QDIST='7c4774fffc49856f48a22ae5f9063d00b2661aaa'
 HASHES={'baseline':'22e398cc7558c2a04d5f24bd6db3030ce552c752622027fc2657eff7c1bd1815',
         'candidate':'f2964427f02a49359784305b00b24c082cd05f67c76e5659e9c8f5955e9e16c0'}
@@ -76,6 +76,9 @@ def main():
     assert sha(record/'windows_cpu_window.py')=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2'
     cases=['BB_90_8_10','GB_144_12_8','BB_108_8_10','LP_238_44_6']
     assert cases==gates.CASES1 and gates.MODES==['no-card','card-mto']
+    input_hashes={f'baseline/data/matrices/{case}_{suffix}.txt':manifest['files'][f'baseline/data/matrices/{case}_{suffix}.txt']
+                  for case in cases for suffix in ['Hx','Hz','Gx','Gz']}
+    assert len(input_hashes)==16
     limit=180;watchdog_limit=195
     runtime=root/'E004-windows-runtime/cygwin/bin'
     assert sha(runtime.parent/'etc/setup/installed.db')==reconciliation['runtime_manifest_sha256']
@@ -111,7 +114,7 @@ def main():
               'assignment':a.assignment,'hosted':hosted,'binary_sha256':HASHES,
               'driver_sha256':sha(Path(__file__)),'window_helper_sha256':sha(record/'windows_cpu_window.py'),
               'parser_sha256':sha(pkg/'candidate/optimization/server/run.py'),
-              'tier0_identity':reconciliation,'record_head':head,'manifest':manifest,
+              'tier0_identity':reconciliation,'record_head':head,'manifest':manifest,'input_sha256':input_hashes,
               'platform':platform.uname()._asdict(),'python':sys.version,'invocation':sys.argv,
               'affinity':window.selection,'exclusive_reservation':False,
               'tier':1,'exploratory_exception':False,
@@ -185,7 +188,8 @@ def main():
         result.update(numeric_filter=numeric,numeric_reason=reason,medians=details,
                       correctness='Expected distance/objective/LB/UB identical in all runs')
     except AssertionError as e:
-        result.update(decision='REJECT',reason=str(e),stopped=True)
+        result.update(decision='REJECT',reason=str(e),stopped=True,
+                      scientific_reject=True,scientific_reject_reason=str(e))
     except Exception as e:
         result.update(reason=repr(e),stopped=True)
     finally:
@@ -205,11 +209,15 @@ def main():
             for v,p in binary.items():assert sha(p)==HASHES[v],'Binary changed '+v
             assert sha(record/'windows_cpu_window.py')=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2'
             assert sha(parser)=='9674067528d0f3d7f1393d8732ae10b6a7289fbfd04e1d52f0832f7512e6dac5'
+            assert sha(runtime.parent/'etc/setup/installed.db')==reconciliation['runtime_manifest_sha256'],'Runtime manifest changed'
+            for rel,digest in input_hashes.items():assert sha(pkg/rel)==digest,'Input matrix changed '+rel
         except Exception as error:result.update(identity_invalid=True,identity_failure=repr(error))
         result['valid_run']=('medians' in result and len(samples)==48 and not result.get('cleanup_invalid')
                              and not result.get('identity_invalid') and not result.get('stopped'))
         if result.get('cleanup_invalid') or result.get('identity_invalid'):
-            result.update(decision='INCONCLUSIVE',reason='Cleanup/restoration or frozen identity unconfirmed; filter invalid')
+            result.update(filter_invalid=True)
+            if not result.get('scientific_reject'):
+                result.update(decision='INCONCLUSIVE',reason='Cleanup/restoration or frozen identity unconfirmed; filter invalid')
         save('result.json',result)
         save('SHA256.json',{p.relative_to(out).as_posix():sha(p) for p in out.rglob('*')
                            if p.is_file() and p.name!='SHA256.json'})
