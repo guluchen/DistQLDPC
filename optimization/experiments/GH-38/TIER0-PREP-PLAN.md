@@ -48,3 +48,8 @@ manifest pinned to assigned Git bytes before imports. Main/engine/app object
 hashes, raw build commands, all scientific fields and final identities retained.
 Actual scientific REJECT remains preserved if later cleanup fails. Only AST
 parsing performed; no automatic Tier1/2/3 permission.
+
+
+## Pre-execution source repair after probe publication
+
+No solver or build launched. Reread identified inherited GH38-MTUNE/GH-32 preparation paths, corrected to owned GH38-CLANG/GH-38; audit placeholder inequality restored while exact e78 checksum remains pinned. Both overlay workers now require rc0 explicitly. These are harness corrections only; production79 and all probe evidence unchanged. Assignment remains HOST_SLOT_NOT_ASSIGNED; narrow rereview required before launch. Repair source a35dcd3.
