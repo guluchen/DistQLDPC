@@ -37,7 +37,8 @@ false/true/undefined, orientation/stale-blocker/sign/deletion/GC/soft flags.
 Independent return/falseVar/cursor/propagation oracles supplement byte comparison.
 The unchanged GH27 test_watch_tail and test_watch_tail_gc fixtures provide
 120+120 conflict-suffix/soft-failure/watch-compaction cases per version/build.
-Release and assertion-enabled objects must both be exercised. Extra binary
-conflict and soft-lock coverage and a bounded guarded driver remain to prepare.
+Release and assertion-enabled objects must both be exercised. Additional
+test_binary6 and test_soft_dispatch480 cases and the disabled guarded driver
+are now prepared; see TIER0_PLAN.md. They remain uncompiled/unexecuted.
 
 No compilation/test/profiling/performance run yet; named host slot required.
