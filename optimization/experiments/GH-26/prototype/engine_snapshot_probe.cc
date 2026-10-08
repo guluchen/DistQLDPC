@@ -94,6 +94,13 @@ public:
         return s.str();
     }
     gh26::EngineSnapshot read() {return extract(trailRecord,1,1,offsets);}
+    void forgetCountedRootWithoutTransfer() {falseLits.clear();}
+    void fakeNonrootTransfer() {
+        newDecisionLevel(); falseLits_lim.push(falseLits.size());
+        uncheckedEnqueue(~softLits[3]); qhead=trail.size(); trailRecord=trail.size();
+        offsets.transferred_root_false.push_back(toInt(softLits[3]));
+        fixedCostBySearch+=falseLits.size(); falseLits.clear();
+    }
 };
 static bool literal(int p,int assignment) { return bool(assignment&(1<<(p/2)))!=bool(p&1); }
 int main() {
@@ -138,6 +145,37 @@ int main() {
         }
         require(cases==64,"fixture count");
         std::cout<<"READONLY_ADAPTER_64_PASS productionTier0=NOT_RUN learning=NOT_RUN rollback=NOT_RUN\n";
+        // Separate negative precondition checks: keep all 64 original case=
+        // rows and their protocol/expectations unchanged. No forged witness
+        // can authorize omission of an uncounted root objective.
+        for (int negative=0;negative<5;++negative) {
+            Fixture solver;
+            solver.setup(0,true,negative<3 ? 2 : negative==3 ? 1 : 0);
+            const char* label=0;
+            const char* expected=0;
+            if (negative==0) {
+                label="wrong-fixed-scalar"; expected="fixed-search transfer delta";
+                ++solver.offsets.initial_fixed_search_cost;
+            } else if (negative==1) {
+                label="duplicate-transfer-identity"; expected="transferred root witness";
+                solver.offsets.transferred_root_false.push_back(solver.offsets.transferred_root_false[0]);
+            } else if (negative==2) {
+                label="missing-transfer-witness"; expected="fixed-search transfer delta";
+                solver.offsets.transferred_root_false.clear();
+            } else if (negative==3) {
+                label="uncounted-root-without-transfer"; expected="uncertified uncounted falsity";
+                solver.forgetCountedRootWithoutTransfer();
+            } else {
+                label="fabricated-nonroot-transfer"; expected="transferred root witness";
+                solver.fakeNonrootTransfer();
+            }
+            std::string before=solver.fingerprint();
+            gh26::EngineSnapshot snapshot=solver.read();
+            require(!snapshot.exported && snapshot.decline==expected,"offset negative fixture did not decline correctly");
+            require(before==solver.fingerprint(),"negative adapter decline mutated engine state");
+            std::cout<<"negative="<<negative<<" name="<<label<<" decline="<<snapshot.decline<<'\n';
+        }
+        std::cout<<"OFFSET_WITNESS_5_DECLINES_PASS productionTier0=NOT_RUN\n";
     } catch (const std::exception& e) {
         std::cerr<<e.what()<<'\n'; return 2;
     }
