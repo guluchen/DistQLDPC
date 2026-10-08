@@ -195,4 +195,3 @@ finally:
     save(out/"SHA256.json",{str(p.relative_to(out)):sha(p) for p in sorted(out.rglob("*"))
          if p.is_file() and "baseline-link-snapshot" not in p.parts and p.name!="SHA256.json"})
     print(json.dumps(summary,indent=2),flush=True)
-
