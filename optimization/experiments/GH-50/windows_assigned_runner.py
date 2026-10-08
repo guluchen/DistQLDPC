@@ -42,11 +42,11 @@ helper=HERE/"windows_cpu_window.py"
 # executing it. CRLF checkout normalization is permitted; no content edits are.
 head=subprocess.check_output(["git","-C",str(candidate),"rev-parse","HEAD"],text=True,timeout=20).strip()
 assert head==args.candidate_sha, "Support HEAD differs from assignment"
-assert HERE==candidate/"optimization/experiments/GH-46", "Unexpected support directory"
+assert HERE==candidate/"optimization/experiments/GH-50", "Unexpected support directory"
 preimport_hashes={}
 for name in ["windows_assigned_runner.py","windows_cpu_window.py","runner_common.py","codegen_parser.py","verify_runtime.py","RUNTIME-ORIGINAL-SHA256.json"]:
     path=HERE/name
-    committed=subprocess.check_output(["git","-C",str(candidate),"show",head+":optimization/experiments/GH-46/"+name],timeout=20)
+    committed=subprocess.check_output(["git","-C",str(candidate),"show",head+":optimization/experiments/GH-50/"+name],timeout=20)
     actual=path.read_bytes()
     assert actual.replace(b"\r\n",b"\n")==committed.replace(b"\r\n",b"\n"), "Uncommitted support: "+name
     preimport_hashes[name]=sha(path)
