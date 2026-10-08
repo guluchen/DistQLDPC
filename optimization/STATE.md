@@ -1,5 +1,9 @@
 # Optimization state
 
+Current execution snapshot 2026-10-09 (supersedes older running entries below): loop ACTIVE, no accepted optimization. GH36 recovered exact H003 and passes complete Tier0 at91586a2: 4368 helper cases,16CSS,8 identical WCNF pairs,40 PMS oracles/162 cap and uncapped solves,12 genuine timeouts,all source/runtime/binary/input identities and cleanup. All826 committed raw payloads verified; performance NOT_MEASURED, fixed48solve Tier1 preparing. GH27 Tier1 completes at671aa257 with48correct results/96bounds but OFF GM -0.394% versus MTO +0.610%, mixed tiny changes; INCONCLUSIVE/NOT ADOPTED. One preregistered user-exploratory LP340 Tier2 is sole Windows owner under6066419326/support530a1a2/session27360; not normal promotion or Tier1 PASS. GH32 remains locally REJECTED after7/8 medians slower; fresh GH38 selects fixed Clang22.1.8-3 backend (prerecord2b18bbf, productionb8ddb90), isolated overlay setup unexecuted. GH26 reader64+5 model gate passes, but production FLA remains unverified; next14 conditional fixtures preregistered5661087/support9cf3fb4, disabled. No Tier3.
+
+Fresh read-only server snapshot now79% global spare; fixed pair102/230 has102 fully busy and230 idle. Alternate SMT pairs6/134,8/136 and others observed100% idle over three seconds; this does not prove an exclusive reservation or authorize false exclusive-host attestation. Server benchmark work still requires separate exact protocol and named host slot. Windows owner above; source/metadata helpers pin CPU0. External Mac GH34 remains independent; no inferred acceptance.
+
 Latest completed gates 2026-10-09: GH32 mtune-only Tier0 PASS; all48 Tier1
 results/96bounds correct, but7/8medians slower and OFF/MTO GM+0.809%/+0.908%.
 Fixed localfilter REJECT/NOT ADOPTED, noTier2/3;52335caa,417 exactraw verified.

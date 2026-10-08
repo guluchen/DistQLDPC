@@ -1,5 +1,7 @@
 # Hypothesis registry (not an execution queue)
 
+Latest actual gates 2026-10-09: H003 now implemented caller-only by GH36 after exact historical recovery, productionf8f379d; complete Tier0 passes91586a2, performance not yet measured. GH27 enqueue prefix inline remains INCONCLUSIVE after mixed near-zero Tier1; one user-exploratory LP340 Tier2 runs, no Tier1 PASS. GH32 mtune-only locally REJECTED; GH38-A now owns fixed Clang22.1.8-3 backend, three-proposal rereanking disclosed, isolated setup not executed. GH26 cap2FLA is proof-first only, not production-correct or timed; fourteen conditional fixtures prepared. No accepted optimization, no Tier3, no stacked patches.
+
 2026-10-09 latest: no accepted optimization. GH20 locallySHELVED(all8mediansslower),
 GH21 O2 INCONCLUSIVE after exploratoryLP340(OFFneutral/MTO-1.426%, overlap),
 GH22 global symmetricactivity locallyREJECT(OFFGM+12.84%,MTOGM-15.74%). Exact
