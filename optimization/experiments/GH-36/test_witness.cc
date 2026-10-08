@@ -58,7 +58,7 @@ int main() {
         gz.data.insert(gz.data.end(),{1,1,1}); ++gz.rows;
         gx.data.insert(gx.data.end(),{0,1,1}); ++gx.rows;
         require(verified_logical_row_bound(zero,zero,gx,gz)==oracle(zero,zero,gx,gz),"multirow minimum mismatch");
-        // Exercise the actual assignment in the application builder. All five
+        // Exercise the actual unchanged application builder. All five
         // original encoding modes can receive the same verified inclusive scalar;
         // a cap alone must not make hasCostUB true before search.
         for (int mode=0;mode<5;++mode) {
