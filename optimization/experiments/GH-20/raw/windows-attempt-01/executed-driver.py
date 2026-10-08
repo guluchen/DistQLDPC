@@ -25,7 +25,6 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[3]
 ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
-ap.add_argument("--resume",type=Path)
 args=ap.parse_args()
 assert args.run_assignment=="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6063328992"
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -93,9 +92,7 @@ def managed_run(argv,cwd,target,label,timeout,cygwin=False):
     reason=None;start=time.monotonic();last=start;sampled=False
     with (target/(label+".stdout")).open("wb") as stdout,(target/(label+".stderr")).open("wb") as stderr:
         try:
-            env=dict(os.environ)
-            if cygwin and Path(argv[0]).name.lower()=='make.exe':env['PATH']=cygpath(runtime/'bin')+':/usr/bin:/bin'
-            current=subprocess.Popen(argv,cwd=cwd,stdout=stdout,stderr=stderr,env=env)
+            current=subprocess.Popen(argv,cwd=cwd,stdout=stdout,stderr=stderr)
             # Verify actual owned descendants when present; Job limits also
             # enforce children too short-lived to capture in a sample.
             while current.poll() is None:
@@ -166,8 +163,7 @@ def scientific(rc,text,exact,timeout=False):
 def check_run(argv,label,cwd,limit=20,exact=None,timeout=False,allow_rc=False):
     result=managed_run(argv,cwd,out,label,limit,True)
     if exact is not None:science.append(dict(label=label,result=scientific(result[0],result[1],exact,timeout)));save(out/'science.json',science)
-    elif not allow_rc:
-        if result[0]!=0:raise RuntimeError('BUILD/TEST command failed '+label+': '+result[2][-2000:])
+    elif not allow_rc:assert result[0]==0,'TEST/BUILD failed '+label+': '+result[2][-2000:]
     return result
 
 science=[]
@@ -186,24 +182,6 @@ try:
             assert sha(p)==manifest['files'][rel],rel;inputs[rel]=sha(p)
     sources={v:out/(v+'-source') for v in ['baseline','candidate']}
     source_hashes={v:exported(commit,sources[v]) for v,commit in [('baseline',BASE),('candidate',CAND)]}
-    resumed=None
-    if args.resume:
-        previous=args.resume.resolve();assert previous.is_relative_to(ROOT) and previous.parent==ROOT
-        prior=json.loads((previous/'preexecution.json').read_text(encoding='utf8'))
-        assert prior['production_candidate']==CAND and prior['baseline']==BASE and prior['source_hashes']==source_hashes
-        binary_hashes=json.loads((previous/'binary-hashes.json').read_text(encoding='utf8'))
-        resumed={}
-        for version,source in sources.items():
-            old=previous/(version+'-source')
-            for relative,digest in source_hashes[version].items():assert sha(old/relative)==digest,relative
-            assert json.loads((previous/('build-'+version+'.command.json')).read_text(encoding='utf8'))['returncode']==0
-            assert sha(old/'bin/distqldpc.exe')==binary_hashes[version]
-            shutil.copytree(old/'build',source/'build');shutil.copytree(old/'bin',source/'bin')
-            resumed[version]={str(p.relative_to(source)):sha(p) for d in ['build','bin'] for p in (source/d).rglob('*') if p.is_file()}
-        save(out/'resume.json',dict(prior=str(previous),reason='smoke input staging only; verified unchanged source and prior production binaries',objects_binaries=resumed))
-    for source in sources.values():
-        destination=source/'data/matrices';destination.mkdir(parents=True)
-        for suffix in ['Hx','Hz','Gx','Gz']:shutil.copy2(data_root/('LP_34_20_2_'+suffix+'.txt'),destination)
     diagnostic=out/'diagnostic-source';exported(BASE,diagnostic)
     solver=diagnostic/'src/solver/Solver.cc';core=diagnostic/'src/core/distqldpc.cc'
     s=solver.read_bytes();newline=b'\r\n' if b'\r\n' in s else b'\n'
@@ -236,7 +214,7 @@ try:
     check_run([runtime/'bin/g++.exe','--version'],'compiler',candidate)
     binaries={}
     for version,source in sources.items():
-        check_run([runtime/'bin/make.exe','-j1','bin/distqldpc'],'build-'+version,source,300)
+        check_run([runtime/'bin/make.exe','-j1','all'],'build-'+version,source,300)
         binaries[version]=source/'bin/distqldpc.exe'
         for name in ['test_watch_tail.cc','test_watch_tail_gc.cc']:
             probe=out/(version+'-'+name+'.exe')
@@ -294,8 +272,6 @@ finally:
     if window is not None:
         try:
             clean_owned('final-cleanup');save(out/'job-pids-before-release.json',job_pids())
-        except Exception as error:summary.update(status='INCONCLUSIVE',cleanup_failure=repr(error))
-        try:
             cleanup=window.close();save(out/'cleanup.json',cleanup);summary['cleanup']=cleanup
             assert all(cleanup.get(k) is True for k in ['job_limit_released','affinity_restored','sleep_requirement_restored','priority_restored']),'Resource restoration unconfirmed'
         except Exception as error:summary.update(status='INCONCLUSIVE',cleanup_failure=repr(error))

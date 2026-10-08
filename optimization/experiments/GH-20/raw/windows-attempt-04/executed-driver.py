@@ -25,7 +25,6 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[3]
 ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
-ap.add_argument("--resume",type=Path)
 args=ap.parse_args()
 assert args.run_assignment=="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6063328992"
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -186,24 +185,6 @@ try:
             assert sha(p)==manifest['files'][rel],rel;inputs[rel]=sha(p)
     sources={v:out/(v+'-source') for v in ['baseline','candidate']}
     source_hashes={v:exported(commit,sources[v]) for v,commit in [('baseline',BASE),('candidate',CAND)]}
-    resumed=None
-    if args.resume:
-        previous=args.resume.resolve();assert previous.is_relative_to(ROOT) and previous.parent==ROOT
-        prior=json.loads((previous/'preexecution.json').read_text(encoding='utf8'))
-        assert prior['production_candidate']==CAND and prior['baseline']==BASE and prior['source_hashes']==source_hashes
-        binary_hashes=json.loads((previous/'binary-hashes.json').read_text(encoding='utf8'))
-        resumed={}
-        for version,source in sources.items():
-            old=previous/(version+'-source')
-            for relative,digest in source_hashes[version].items():assert sha(old/relative)==digest,relative
-            assert json.loads((previous/('build-'+version+'.command.json')).read_text(encoding='utf8'))['returncode']==0
-            assert sha(old/'bin/distqldpc.exe')==binary_hashes[version]
-            shutil.copytree(old/'build',source/'build');shutil.copytree(old/'bin',source/'bin')
-            resumed[version]={str(p.relative_to(source)):sha(p) for d in ['build','bin'] for p in (source/d).rglob('*') if p.is_file()}
-        save(out/'resume.json',dict(prior=str(previous),reason='smoke input staging only; verified unchanged source and prior production binaries',objects_binaries=resumed))
-    for source in sources.values():
-        destination=source/'data/matrices';destination.mkdir(parents=True)
-        for suffix in ['Hx','Hz','Gx','Gz']:shutil.copy2(data_root/('LP_34_20_2_'+suffix+'.txt'),destination)
     diagnostic=out/'diagnostic-source';exported(BASE,diagnostic)
     solver=diagnostic/'src/solver/Solver.cc';core=diagnostic/'src/core/distqldpc.cc'
     s=solver.read_bytes();newline=b'\r\n' if b'\r\n' in s else b'\n'
