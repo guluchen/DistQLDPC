@@ -61,16 +61,25 @@ def main():
         rest=owned();save(out/('cleanup-'+str(sequence)+'.json'),dict(actions=actions,remaining=rest));assert not rest,'Owned cleanup incomplete'
     def modules(pid):
         ps=C.WinDLL('psapi',use_last_error=True)
+        # Explicit HANDLE/BOOL/DWORD prototypes; no dependence on the earlier
+        # descendant-affinity call having initialized OpenProcess's signature.
+        k.OpenProcess.argtypes=[C.c_ulong,C.c_int,C.c_ulong]
+        k.OpenProcess.restype=C.c_void_p
         ps.EnumProcessModulesEx.argtypes=[C.c_void_p,C.c_void_p,C.c_ulong,C.POINTER(C.c_ulong),C.c_ulong]
+        ps.EnumProcessModulesEx.restype=C.c_int
         ps.GetModuleFileNameExW.argtypes=[C.c_void_p,C.c_void_p,C.c_wchar_p,C.c_ulong]
+        ps.GetModuleFileNameExW.restype=C.c_ulong
         handle=k.OpenProcess(0x410,False,pid)
         assert handle,'Cannot inspect live linkage'
         try:
             array=(C.c_void_p*4096)();needed=C.c_ulong()
             assert ps.EnumProcessModulesEx(handle,array,C.sizeof(array),C.byref(needed),3) and needed.value<=C.sizeof(array)
+            assert needed.value>0 and needed.value%C.sizeof(C.c_void_p)==0
             result=[]
             for module in array[:needed.value//C.sizeof(C.c_void_p)]:
-                name=C.create_unicode_buffer(32768);assert ps.GetModuleFileNameExW(handle,module,name,len(name))
+                name=C.create_unicode_buffer(32768)
+                length=ps.GetModuleFileNameExW(handle,module,name,len(name))
+                assert 0<length<len(name),'Missing/truncated loaded-module path'
                 p=Path(name.value).resolve();item=dict(path=str(p))
                 if p.is_relative_to(overlay) or p.is_relative_to(runtime):item['sha256']=sha(p)
                 result.append(item)

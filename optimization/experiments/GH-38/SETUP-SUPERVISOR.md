@@ -70,3 +70,11 @@ python GH38-CLANG/optimization/experiments/GH-38/windows_setup_probe.py --out GH
 Only AST parsing and cached metadata resolution have been performed during
 preparation. Actual file operations, Job behavior, archive layouts, driver paths
 and live-module APIs remain engineering UNTESTED until the named bounded run.
+
+Static follow-up explicitly declares OpenProcess HANDLE and PSAPI BOOL/DWORD
+return types within the module inspector; complete aligned module arrays and
+non-truncated path returns are required. Archive-file size<=256MiB, per-package
+expansion<=2GiB and member-count<150000 remain strict engineering gates. Cached
+compressed sizes do not prove expanded member sizes or supported alias layouts;
+those facts will be checked during the assigned pinned extraction, with no
+automatic relaxation if the archive fails them.
