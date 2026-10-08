@@ -1,5 +1,10 @@
 # E006 / H-009: BDD local filter REJECT; server corroboration pending
 
+Paper provenance: [source/version/adaptation mapping](../../REFERENCES.md) and
+[BibTeX](../../references.bib), keys vandesande2025certifiedextended and
+vandesande2026certified. New user-directed [exploratory Tier2](TIER2-PROPOSAL.md)
+is separately authorized after the Tier1 rejection; it does not relabel that gate.
+
 Latest execution: [diagnostic round02](DIAGNOSTIC-02-RESULT.md),48 correct solves,
 independent audit PASS. BB90/GB144 affected-mode gains4.59%/39.45%; BB108/LP238
 regress5.61%/23.32% with disjoint three-run ranges. Local general-purpose screen

@@ -1,5 +1,10 @@
 # Hypothesis registry (not an execution queue)
 
+Latest user-directed action: [one exploratory E006 LP340 Tier2](experiments/E006/TIER2-PROPOSAL.md),
+explicitly requested after Tier1 local REJECT; unchanged candidate, no automatic
+Tier3/acceptance. Source-paper mappings and BibTeX retained in REFERENCES.md
+and references.bib; future paper-derived proposals must link their keys.
+
 Latest H009 evidence: [E006 complete diagnostic round02](experiments/E006/DIAGNOSTIC-02-RESULT.md).
 Local general-purpose screen REJECT / NOT ADOPTED: BB108+5.61% and LP238+23.32%
 repeat with disjoint ranges despite BB90/GB144 gains; all48 science checks and

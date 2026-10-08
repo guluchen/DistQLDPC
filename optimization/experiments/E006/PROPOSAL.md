@@ -4,6 +4,12 @@
 [Round4](../../brain/2026-10-08-round4.md) selects existing research revision H-009.
 Independent baseline24572d6, candidateE006-BDD, no LTO/SLS/row/XOR changes.
 
+Literature provenance (metadata added2026-10-08, original hypothesis unchanged):
+BibTeX keys vandesande2025certifiedextended/vandesande2026certified in
+[references.bib](../../references.bib); exact v1 section0.4/appendix.9 and
+[adaptation mapping](../../REFERENCES.md). The source describes certification
+of known BDD/MDD encodings; our unit-weight BDD trial is not its full method.
+
 Hypothesis: reduced ordered BDD CNF for the same active sum<=k improves exact
 propagation/search relative to downstream MTO. Replace only the MTO construction
 at its existing call site. Fixed original active-literal order, singleton unit

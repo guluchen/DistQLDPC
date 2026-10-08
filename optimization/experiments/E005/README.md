@@ -1,5 +1,9 @@
 # E005 / H-008: REJECTED configuration; performance INCONCLUSIVE
 
+Paper provenance: [source/adaptation mapping](../../REFERENCES.md), BibTeX key
+lubke2025sls in [references.bib](../../references.bib). Metadata supplement
+leaves the original SLS configuration and result unchanged.
+
 2026-10-08. User requests next proposal after shelving LTO. Fresh
 [Brain selection](../../brain/2026-10-08-round3.md) recovers existing H-008;
 [preregistered proposal](PROPOSAL.md) fixes one original-CNF local-search call,

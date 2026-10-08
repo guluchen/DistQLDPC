@@ -54,3 +54,10 @@ Prior relations: E001 changed logical basis, E002 XOR sharing failed locally,
 E003 buffer reuse unproven, E004 LTO shelved. H003 row-only cap never implemented;
 do not bundle it. Formal acceptance requires correctness/reproducible gains/no
 material regression. Partial warm-start failure is not scientific infeasibility.
+# Literature provenance supplement (2026-10-08)
+
+BibTeX key lubke2025sls in [references.bib](../../references.bib); CP2025
+SLS-Enhanced Core-Boosted Linear Search for Anytime Maximum Satisfiability.
+[Source/adaptation mapping](../../REFERENCES.md) records the initial verified-cap
+idea versus our single bounded original-CNF call, not a reproduction of the
+full paper. This supplement leaves the original preregistration/results unchanged.

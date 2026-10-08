@@ -83,6 +83,13 @@ These tiers are experiment policy, not new script modes or a replacement for exi
 
 ## Experiment memory and acceptance
 
+User literature-provenance requirement (2026-10-08): for any paper-derived
+method, record the source paper and retain a BibTeX entry. Use
+optimization/references.bib and REFERENCES.md, linking citation keys from the
+proposal/record. Include exact version, primary DOI/URL, relevant section or
+algorithm, reading depth and the actual adaptation; distinguish paper findings
+from our hypotheses/results and do not invent sources for general optimization.
+
 Keep a durable, discoverable experiment record for every round, including abandoned, failed, rejected, and accepted experiments. Store a versioned record in the repo or link it from a versioned experiment index to durable storage. Do not rely solely on expiring CI artifacts. Each record must contain:
 
 - the hypothesis, proposal, and relevant prior experiment references;

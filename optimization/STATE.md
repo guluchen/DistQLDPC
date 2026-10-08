@@ -9,6 +9,14 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest explicit user override: "跑tier2看看" authorizes one separate exploratory
+E006 LP340 round despite local Tier1 rejection. [Preregistered scope](experiments/E006/TIER2-PROPOSAL.md):
+OFF/MTO,12 serial AB/BA/AB solves,600/615s limits, same unchangedc91b19b,
+capacity guards retained; no Tier1 PASS, adoption or Tier3 implied. Execution
+started on local Windows; record complete/partial results before reconciling.
+User also requires paper provenance/BibTeX: REFERENCES.md/references.bib now
+map H009 and H008 to verified primary sources and exact adaptations.
+
 Latest execution: [E006 diagnostic round02](experiments/E006/DIAGNOSTIC-02-RESULT.md),
 48 correct solves/independent audit PASS. Local general-purpose filter REJECT:
 BB108/LP238 affected-mode regress5.61%/23.32%, disjoint repeated ranges; BB90/
