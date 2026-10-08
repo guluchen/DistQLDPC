@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+Latest H009 follow-up: [exploratory LP340 Tier2 complete](experiments/E006/TIER2-RESULT.md),
+12 correct/audit PASS, affected-mode+6.75% disjoint repeated regression. Local
+REJECT/NOT ADOPTED reinforced, no Tier3 or merge. Explicit user exception leaves
+Tier1 failure intact; server corroboration pending. Next fresh Brain should
+examine propagation/search work before another encoding hypothesis; no automatic
+implementation or specialization. Bibliography/source provenance recorded.
+
 Latest user-directed action: [one exploratory E006 LP340 Tier2](experiments/E006/TIER2-PROPOSAL.md),
 explicitly requested after Tier1 local REJECT; unchanged candidate, no automatic
 Tier3/acceptance. Source-paper mappings and BibTeX retained in REFERENCES.md

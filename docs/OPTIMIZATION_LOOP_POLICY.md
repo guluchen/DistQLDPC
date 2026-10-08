@@ -54,6 +54,13 @@ until a separately preregistered measurement protocol is implemented.
 
 ### User-directed exploratory continuation (2026-10-08)
 
+Subsequent explicit override for E006: after its complete local Tier1 filter
+rejected BB108/LP238 regressions, the user requested "跑tier2看看". The
+[E006 Tier2 preregistration](../optimization/experiments/E006/TIER2-PROPOSAL.md)
+authorizes one LP340 exploratory round despite that rejection, not automatic
+advancement for other rejected methods, Tier1 PASS, acceptance, or Tier3.
+Retain the failed gate and all scientific/capacity limits.
+
 The user's latest instruction is: if the evidence does not clearly justify
 rejection, advance one tier rather than leave available CPU unused. This
 supersedes the execution stop on an INCONCLUSIVE gate for explicitly bounded

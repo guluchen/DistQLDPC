@@ -9,6 +9,16 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest completed [E006 user-directed exploratory LP340 Tier2](experiments/E006/TIER2-RESULT.md):
+12 correct solves, independent identity/science/affinity/priority/capacity/cleanup
+audit PASS. Affected-mode median75.259370s baseline versus80.338636s BDD,
+regression6.75%, fully disjoint ranges; OFF median-1.58%. Five active alerts/393
+checks retained without abort, min global idle56.25%. Local Tier2 numeric REJECT
+reinforces current general-purpose REJECT/NOT ADOPTED. No Tier1 PASS, Tier3 or
+merge; dedicated-server corroboration still pending. Candidate unchangedc91b19b.
+Paper source/adaptation mappings and BibTeX now retained. Older pending/start
+and no-Tier2 entries below are historical, superseded by explicit scoped request.
+
 Latest explicit user override: "跑tier2看看" authorizes one separate exploratory
 E006 LP340 round despite local Tier1 rejection. [Preregistered scope](experiments/E006/TIER2-PROPOSAL.md):
 OFF/MTO,12 serial AB/BA/AB solves,600/615s limits, same unchangedc91b19b,

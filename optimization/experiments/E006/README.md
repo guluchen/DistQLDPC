@@ -1,5 +1,12 @@
 # E006 / H-009: BDD local filter REJECT; server corroboration pending
 
+Latest [user-directed exploratory Tier2](TIER2-RESULT.md):12 correct LP340 solves,
+independent audit/cleanup PASS. Affected-mode baseline75.259370s/BDD80.338636s,
+median+6.75%, disjoint triplets; local numeric REJECT reinforces non-adoption.
+OFF control median-1.58%, resource alerts recorded without abort, minimum global
+idle56.25%. No Tier3/merge. Explicit exception did not relabel Tier1 PASS;
+dedicated-server corroboration remains pending/unmeasured.
+
 Paper provenance: [source/version/adaptation mapping](../../REFERENCES.md) and
 [BibTeX](../../references.bib), keys vandesande2025certifiedextended and
 vandesande2026certified. New user-directed [exploratory Tier2](TIER2-PROPOSAL.md)
