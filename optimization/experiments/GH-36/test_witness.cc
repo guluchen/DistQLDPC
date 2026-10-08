@@ -59,13 +59,15 @@ int main() {
         gx.data.insert(gx.data.end(),{0,1,1}); ++gx.rows;
         require(verified_logical_row_bound(zero,zero,gx,gz)==oracle(zero,zero,gx,gz),"multirow minimum mismatch");
         // Exercise the actual assignment in the application builder. All five
-        // original encoding modes receive the same verified inclusive scalar;
+        // original encoding modes can receive the same verified inclusive scalar;
         // a cap alone must not make hasCostUB true before search.
         for (int mode=0;mode<5;++mode) {
             SimpSolver solver; StabilizerInstance meta; std::vector<Var> aux;
             Matrix h=one_row(1,0), g=one_row(1,1);
             require(build_stabilizer_instance(solver,aux,meta,h,h,g,g,0,mode,-1),"valid builder failed");
-            require(solver.initUB==1,"builder did not supply verified cap");
+            require(solver.initUB==INT32_MAX,"shared builder unexpectedly changed");
+            solver.initUB=verified_logical_row_bound(h,h,g,g);
+            require(solver.initUB==1,"verified scalar mismatch");
             require(!solver.hasCostUB(),"input cap fabricated a solver model");
         }
         printf("WITNESS_ORACLE_PASS cases=%d plus_multirow\n",count);

@@ -42,7 +42,21 @@ older README wording. Test cap-only/no-found-model and actual-found-model
 timeout cases explicitly, using a test-only deterministic interruption hook
 if necessary, never adding a delay/hook to the timed production executable.
 
-Review remaining before implementation/performance: independently confirm no
+Independent reviewer confirms offset writes/calls: solutionCost addClause_1364
+and addHardClausesForSoftClauses5076 occur before cap; derivedCost partition5461
+has sole call5594 in findConflictSoftLits before cap; relaxedCost initialized6598;
+fixedCostBySearch transfer6786 occurs after feasible. Invalid too-low caps can
+terminate without a feasible model; witness validity is therefore essential,
+not an optional heuristic assumption. No new engine fix is included.
+
+Scope narrowed following review: shared builder retains INT32_MAX. Only actual
+maxsat search caller sets the verified cap immediately before solveLimited;
+dump-only and RoundingSat paths do not acquire unnecessary witness scans.
+Application helper semantics/selected conceptual mechanism unchanged. The
+first hosted7566ffb check preceded this scope correction; its source is preserved,
+but latest candidate needs its own hosted checks and artifacts.
+
+Review remaining before performance: independently confirm no
 offset changes during pre-feasible retries; test exact strict-bound inclusivity,
 nonzero offsets, simplification, invalid fallback and model-dependent output.
 Any ambiguous scientific assumption stops for clarification rather than

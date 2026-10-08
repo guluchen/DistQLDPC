@@ -448,7 +448,7 @@ static bool build_stabilizer_instance(
     S.instanceType = 1;
     S.hardWeight = (unsigned)(2 * meta.n + k_log + 64);
     S.UB = S.hardWeight;
-    S.initUB = verified_logical_row_bound(Hx, Hz, Gx, Gz);
+    S.initUB = INT32_MAX;
     S.nbOriVars = 2 * meta.n;
 
     const Var off_x = 0;
@@ -550,6 +550,8 @@ static int min_distance_stabilizer_maxsat(
     /* Wall-clock timeout is enforced by the parent (fork + SIGKILL).
      * Do not set RLIMIT_CPU here: SIGXCPU can stop the child early and
      * surface as UNKNOWN instead of a parent TIMEOUT with bounds. */
+
+    S.initUB = verified_logical_row_bound(Hx, Hz, Gx, Gz);
 
     vec<Lit> dummy;
     lbool ret = S.solveLimited(dummy);
