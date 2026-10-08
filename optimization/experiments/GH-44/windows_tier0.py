@@ -277,7 +277,8 @@ try:
         for suffix in ['Hx','Hz','Gx','Gz']:shutil.copy2(data_root/('LP_34_20_2_'+suffix+'.txt'),p)
     runtime_manifest=json.loads((HERE/'runtime-original.json').read_text(encoding='utf8'))
     assert len(runtime_manifest)==10216,'Original runtime manifest scope'
-    assert {p.relative_to(runtime).as_posix() for p in runtime.rglob('*') if p.is_file()}==set(runtime_manifest),'Original runtime file set changed'
+    frozen_runtime_file_set={p.relative_to(runtime).as_posix() for p in runtime.rglob('*') if p.is_file()}
+    assert frozen_runtime_file_set==set(runtime_manifest),'Original runtime file set changed'
     for rel,digest in runtime_manifest.items():
         p=runtime/rel;assert sha(p)==digest,'Original runtime changed '+rel;identities[str(p)]=digest
     support=[Path(__file__),HERE/'cpu_isa_gate.cc',HERE/'abi_probe.cc',HERE/'cygwin_test_stats_shim.cc',HERE/'runtime-original.json',helper]
@@ -435,7 +436,9 @@ try:
                 label=tag+'-timeout-'+mode
                 rc,text,error=check_run([binary,'-v','-'+mode,'-cpu-lim=1',out/'css4'],label,source,20,exact=2,timeout=True)
                 found=re.findall(r'^c\s+d_ub:\s*(\d+)\s*$',text,re.M)
-                assert bool(found)==(phase=='post-model'),'SCIENCE forced model-tracking phase mismatch'
+                if phase=='post-model' and not found:
+                    raise RuntimeError('TEST_COVERAGE: authenticated post-model timeout lacked model UB; phase not exercised')
+                if phase=='pre-search':assert not found,'SCIENCE pre-search hook unexpectedly emitted model UB'
                 assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
             save(out/(tag+'-hook-hashes.json'),dict(source=sha(hooked),object=sha(obj),binary=sha(binary),production_engine_untouched=True))
             for retained in [hooked,obj,binary]:identities[str(retained)]=sha(retained)
@@ -458,6 +461,15 @@ finally:
                 if not all(cleanup.get(k) is True for k in ['job_limit_released','affinity_restored','sleep_requirement_restored','priority_restored']):summary['cleanup_invalid']=True
             except Exception as error:summary.update(restoration_failure=repr(error),cleanup_invalid=True)
     identity_errors=[]
+    if 'frozen_runtime_file_set' in globals():
+        try:
+            actual_runtime_file_set={p.relative_to(runtime).as_posix() for p in runtime.rglob('*') if p.is_file()}
+            runtime_set_confirmation=dict(pre_count=len(frozen_runtime_file_set),post_count=len(actual_runtime_file_set),
+                identical=actual_runtime_file_set==frozen_runtime_file_set,
+                added=sorted(actual_runtime_file_set-frozen_runtime_file_set),removed=sorted(frozen_runtime_file_set-actual_runtime_file_set))
+            save(out/'runtime-post-file-set.json',runtime_set_confirmation)
+            if not runtime_set_confirmation['identical']:identity_errors.append('Original runtime file set changed after execution')
+        except Exception as error:identity_errors.append('Runtime file-set postcheck failed: '+repr(error))
     for path,digest in identities.items():
         try:
             if sha(path)!=digest:identity_errors.append(path+' changed')
