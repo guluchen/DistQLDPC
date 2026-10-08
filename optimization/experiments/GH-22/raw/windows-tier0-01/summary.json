@@ -1,0 +1,58 @@
+{
+  "status": "PREPARATORY_COMPLETE",
+  "Tier0": "PASS",
+  "diagnostic": "PASS",
+  "performance": "NOT_MEASURED",
+  "candidate": "596510ccda48361b34158927607a58988402ff91",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6063822659",
+  "opportunity": [
+    {
+      "stem": "LP_34_20_2",
+      "mode": "no-card",
+      "counts": {
+        "binary_events": 0,
+        "vsids_events": 0,
+        "distinct_vsids_events": 0
+      },
+      "scientific_expected": 2
+    },
+    {
+      "stem": "LP_34_20_2",
+      "mode": "card-mto",
+      "counts": {
+        "binary_events": 0,
+        "vsids_events": 0,
+        "distinct_vsids_events": 0
+      },
+      "scientific_expected": 2
+    },
+    {
+      "stem": "LP_136_32_4",
+      "mode": "no-card",
+      "counts": {
+        "binary_events": 19,
+        "vsids_events": 19,
+        "distinct_vsids_events": 19
+      },
+      "scientific_expected": 4
+    },
+    {
+      "stem": "LP_136_32_4",
+      "mode": "card-mto",
+      "counts": {
+        "binary_events": 25,
+        "vsids_events": 19,
+        "distinct_vsids_events": 19
+      },
+      "scientific_expected": 4
+    }
+  ],
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  }
+}
