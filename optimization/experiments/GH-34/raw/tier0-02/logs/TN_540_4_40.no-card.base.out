@@ -1,0 +1,62 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/TN_540_4_40_Hx.txt
+c Hz: data/matrices/TN_540_4_40_Hz.txt
+c Gx: data/matrices/TN_540_4_40_Gx.txt
+c Gz: data/matrices/TN_540_4_40_Gz.txt
+c Hx: 270 x 540, Hz: 270 x 540, Gx: 4 x 540, Gz: 4 x 540, logicals: 8
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.15 Mb                                      |
+c Reduced to 3725 vars, 19202 cls (c/v ratio==5.2, grow=0)
+c No iterative elimination performed. (vars=3725, c/v ratio=5.2)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 540, of which 540 unit, 0 nonUnit and 0 empty
+c total nb of literals: 71608
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 548
+c 1 conflict sets found with length 240
+c fixedCost 0, nbSatLits 0, totalFixedVars 548, objForSearch: 540
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 540), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 409 conflicts with init 9591
+
+c UB=2 fails, cnfls=409, hcnfls=371, core 3357, tier2 2, local 356, quasiC: 1 (fixed: 138)
+c prunedLB 2.00, dev 0.00, succRate 0.50, nbSucc 1, nbHardens 358 (fixed 110391), lk: 2, shorten: 0, pureSo 38, nbFlyRd 15, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 4
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 548, nbTested: 1001, counter 21647
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 557, nbTested: 1001, counter 133895
+c nbFailedLits 2, nbI 0, fixedVarsByFL 2, totalFixedVars 575, nbTested: 1260, counter 365500
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 9580 conflicts with init 829
+
+c UB=4 fails, cnfls=9580, hcnfls=1385, core 2712, tier2 159, local 7521, quasiC: 481 (fixed: 65733)
+c prunedLB 2.81, dev 0.71, succRate 0.84, nbSucc 7393, nbHardens 922 (fixed 374364), lk: 8786, shorten: 0, pureSo 803, nbFlyRd 96, nbFixedLH 108
+
+c Cardinality: off (soft-conflict only), UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 549, nbTested: 1001, counter 393224
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 553, nbTested: 1001, counter 500048
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 570, nbTested: 1001, counter 679598
+c ends of initiationization by VSIDS at 19589 conflicts with init -9
+
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/TN_540_4_40_Hx.txt
+c Hz: data/matrices/TN_540_4_40_Hz.txt
+c Gx: data/matrices/TN_540_4_40_Gx.txt
+c Gz: data/matrices/TN_540_4_40_Gz.txt
+c Hx: 270 x 540, Hz: 270 x 540, Gx: 4 x 540, Gz: 4 x 540, logicals: 8
+c d_lb: 4
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

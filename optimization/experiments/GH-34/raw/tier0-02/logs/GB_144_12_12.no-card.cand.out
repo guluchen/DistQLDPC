@@ -1,0 +1,71 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/GB_144_12_12_Hx.txt
+c Hz: data/matrices/GB_144_12_12_Hz.txt
+c Gx: data/matrices/GB_144_12_12_Gx.txt
+c Gz: data/matrices/GB_144_12_12_Gz.txt
+c Hx: 66 x 144, Hz: 66 x 144, Gx: 12 x 144, Gz: 12 x 144, logicals: 24
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.05 Mb                                      |
+c Reduced to 1262 vars, 6638 cls (c/v ratio==5.3, grow=0)
+c No iterative elimination performed. (vars=1262, c/v ratio=5.3)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 144, of which 144 unit, 0 nonUnit and 0 empty
+c total nb of literals: 24644
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 156
+c 1 conflict sets found with length 79
+c fixedCost 0, nbSatLits 0, totalFixedVars 156, objForSearch: 144
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 144), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 183 conflicts with init 9817
+
+c UB=2 fails, cnfls=183, hcnfls=148, core 617, tier2 15, local 118, quasiC: 1 (fixed: 43)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 117 (fixed 8099), lk: 1, shorten: 0, pureSo 35, nbFlyRd 9, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 4
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 166, nbTested: 1001, counter 22231
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 1492 conflicts with init 8691
+
+c UB=4 fails, cnfls=1492, hcnfls=371, core 736, tier2 20, local 985, quasiC: 74 (fixed: 2735)
+c prunedLB 2.77, dev 0.59, succRate 0.84, nbSucc 960, nbHardens 245 (fixed 20348), lk: 1144, shorten: 0, pureSo 162, nbFlyRd 22, nbFixedLH 21
+
+c Cardinality: off (soft-conflict only), UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 156, nbTested: 1001, counter 45937
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 158, nbTested: 1001, counter 97387
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 167, nbTested: 1001, counter 205313
+c ends of initiationization by VSIDS at 11493 conflicts with init -1
+
+c nbFailedLits 0, nbI 5, fixedVarsByFL 5, totalFixedVars 187, nbTested: 1002, counter 401735
+c LRB phase 1: conflicts 7446, phase 20000000, starts 31, UP 457173
+c UB=8 fails, cnfls=18939, hcnfls=921, core 2853, tier2 496, local 6065, quasiC: 2627 (fixed: 118384)
+c prunedLB 4.97, dev 0.95, succRate 0.76, nbSucc 16683, nbHardens 380 (fixed 144440), lk: 22007, shorten: 0, pureSo 377, nbFlyRd 81, nbFixedLH 232
+
+c Cardinality: off (soft-conflict only), UB 16
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 156, nbTested: 1001, counter 446099
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 156, nbTested: 1001, counter 513025
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 156, nbTested: 1001, counter 622722
+c ends of initiationization by VSIDS at 28942 conflicts with init -3
+
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/GB_144_12_12_Hx.txt
+c Hz: data/matrices/GB_144_12_12_Hz.txt
+c Gx: data/matrices/GB_144_12_12_Gx.txt
+c Gz: data/matrices/GB_144_12_12_Gz.txt
+c Hx: 66 x 144, Hz: 66 x 144, Gx: 12 x 144, Gz: 12 x 144, logicals: 24
+c d_lb: 8
+c d_ub: 14
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

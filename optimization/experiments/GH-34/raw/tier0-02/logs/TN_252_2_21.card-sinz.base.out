@@ -1,0 +1,75 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz only
+c Hx: data/matrices/TN_252_2_21_Hx.txt
+c Hz: data/matrices/TN_252_2_21_Hz.txt
+c Gx: data/matrices/TN_252_2_21_Gx.txt
+c Gz: data/matrices/TN_252_2_21_Gz.txt
+c Hx: 126 x 252, Hz: 126 x 252, Gx: 2 x 252, Gz: 2 x 252, logicals: 4
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.06 Mb                                      |
+c Reduced to 1680 vars, 8430 cls (c/v ratio==5.0, grow=0)
+c No iterative elimination performed. (vars=1680, c/v ratio=5.0)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 252, of which 252 unit, 0 nonUnit and 0 empty
+c total nb of literals: 31224
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 256
+c 1 conflict sets found with length 98
+c fixedCost 0, nbSatLits 0, totalFixedVars 256, objForSearch: 252
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 252), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 752 (Sinz) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 52 conflicts with init 9948
+
+c UB=2 fails, cnfls=52, hcnfls=52, core 10, tier2 0, local 42, quasiC: 1 (fixed: 58)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 310), lk: 1, shorten: 0, pureSo 0, nbFlyRd 5, nbFixedLH 0
+
+c Cardinality: 1746 (Sinz) for UB 4
+c nbFailedLits 0, nbI 64, fixedVarsByFL 64, totalFixedVars 321, nbTested: 1727, counter 99322
+c ends of initiationization by VSIDS at 2002 conflicts with init 8050
+
+c UB=4 fails, cnfls=2002, hcnfls=1238, core 927, tier2 124, local 1354, quasiC: 127 (fixed: 6549)
+c prunedLB 3.36, dev 0.63, succRate 0.61, nbSucc 765, nbHardens 1 (fixed 6801), lk: 1246, shorten: 0, pureSo 0, nbFlyRd 31, nbFixedLH 48
+
+c Cardinality: 3710 (Sinz) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 257, nbTested: 1001, counter 241512
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 262, nbTested: 1001, counter 335149
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 271, nbTested: 1001, counter 468842
+c ends of initiationization by VSIDS at 12008 conflicts with init -6
+
+c nbFailedLits 0, nbI 1, fixedVarsByFL 1, totalFixedVars 287, nbTested: 1002, counter 764014
+c LRB phase 1: conflicts 14927, phase 20000000, starts 62, UP 5683512
+c UB=8 fails, cnfls=26935, hcnfls=2593, core 2602, tier2 333, local 4440, quasiC: 3245 (fixed: 273525)
+c prunedLB 5.14, dev 1.01, succRate 0.76, nbSucc 23579, nbHardens 1 (fixed 273777), lk: 30942, shorten: 0, pureSo 0, nbFlyRd 229, nbFixedLH 463
+
+c Cardinality: 7542 (Sinz) for UB 16
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1140050
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1225326
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1360081
+c ends of initiationization by VSIDS at 36956 conflicts with init -21
+
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1619848
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1941900
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 2289435
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 2744089
+c LRB phase 2: conflicts 52006, phase 20000000, starts 157, UP 20139338
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz only
+c Hx: data/matrices/TN_252_2_21_Hx.txt
+c Hz: data/matrices/TN_252_2_21_Hz.txt
+c Gx: data/matrices/TN_252_2_21_Gx.txt
+c Gz: data/matrices/TN_252_2_21_Gz.txt
+c Hx: 126 x 252, Hz: 126 x 252, Gx: 2 x 252, Gz: 2 x 252, logicals: 4
+c d_lb: 8
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN
