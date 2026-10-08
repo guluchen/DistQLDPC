@@ -1,0 +1,3140 @@
+{
+  "status": "EXACT_FUNCTION_CODE_IDENTICAL",
+  "exact_bytes_equal": true,
+  "relative_relocations_equal": true,
+  "baseline": {
+    "symbol": "_ZN7Minisat6Solver14propagateForLKEv",
+    "base": 51040,
+    "bytes": "4157415641554154555756534883ec48c78118060000ffffffff4989ce488d8920020000e800000000498d8ee8010000e800000000496386b8020000413986900200000f8e1d040000b9ffffffffc744242c00000000894c24388d5001498bb6e80100004d8bae20020000418996b8020000498b968802000048632c824989ec48c1e5044801ee8b460885c07e6231dbeb0f660f1f4400004883c301395e087e4f488b064d8b8e58020000488d0cd88b510489d789d0d1ff83e0014c63c7433204013c010f8476020000a80274ca448b014c89f1e8e7e5ffff84c075bb4189be18060000b9ffffffffe9690200006690498d5c2d004c8b3b486343084d8d2cc74d39fd0f84500100004183f40148895c24304c89fd4489642428660f1f4400008b55044d8b8e580200004c8d650889d089d1d1f883e101489841380c010f844d0100008b4d00498b86a0030000488d1c888b4424284989c8448b5b0c4139c3750b448b5b1089431044895b0c4439da741b4489d84489da44895d04d1f883e2014898413814010f84040100008b7b04448b134139fa0f830d010000c7430402000000bf02000000b8020000004183fa027f23e9b9010000660f1f84000000000038d10f84580100004883c0014139c20f8eeb0000008b54830c4863f089d183e201d1f94863c9410fb60c09f6c10274d048988b7c24288b54830c895310897c830c48637b104883f70148c1e7044903be20020000486347083b470c0f84990100008d4801488b1783c601894f08488b4d004c89e548890cc28973044939ed0f85dcfeffff4d29fd488b5c243049c1fd034585ed7e0444296b088344242c01496386b8020000413b86900200000f8ce8fdffff8b4c2438486344242c490186f8050000e9d0000000660f1f840000000000488b45004983c7084c89e5498947f8eb9a0f1f80000000004863c74439d70f8c21ffffff9066662e0f1f84000000000083ff020f86a7000000b802000000eb124438d1744b4883c0014839f80f848e0000008b54830c4863f089d14189d2d1f94183e2014863c9410fb60c09f6c10274cf48988b7c242883f2018b4c830c894b10897c830c4863fae9ecfeffff0f1f008b54b30c4983c708895504488b55004c89e5498957f8894304e9fdfeffff66904183f40141899614090000b9feffffff4589a61009000089c84883c4485b5e5f5d415c415d415e415fc3660f1f440000488b45004589da498d5f0841d1fa4989074963d24489d883e001413204113c010f84820000004489da4c89f1448954243ce81ae3ffff448b54243c84c0741f4989df4c89e5e981feffff8d50014889f9e80000000048634708e953feffff418b8690020000418986b80200004d39ec0f839d0000004889df4c89e60f1f44000048a54c39ee72f9498d45f74829e84883e0f84c8d7c0308498d6c040845899618060000e923feffff418b8690020000418986b80200004d39ec73474889df4c89e60f1f80000000000f1f84000000000048a54c39ee72f9498d45f744894424384829e84883e0f84c8d7c0308498d6c0408e9d5fdffff31c0b9ffffffffe909feffff44894424384989df4c89e5e9b9fdffff4989df4c89e5eb82660f1f440000",
+    "sha256": "1d97a3fe189b2e2723204b372327b5cd9f4a757288f11e3233bc3668dcf2149f",
+    "size": 1168,
+    "relocations": [
+      {
+        "offset": 37,
+        "kind": "IMAGE_REL_AMD64_REL32",
+        "target_addend": "_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv"
+      },
+      {
+        "offset": 49,
+        "kind": "IMAGE_REL_AMD64_REL32",
+        "target_addend": "_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv"
+      },
+      {
+        "offset": 961,
+        "kind": "IMAGE_REL_AMD64_REL32",
+        "target_addend": "_ZN7Minisat3vecINS_6Solver7WatcherEE8capacityEi"
+      }
+    ],
+    "instructions": [
+      {
+        "offset": 0,
+        "bytes": "4157",
+        "assembly": "push   %r15"
+      },
+      {
+        "offset": 2,
+        "bytes": "4156",
+        "assembly": "push   %r14"
+      },
+      {
+        "offset": 4,
+        "bytes": "4155",
+        "assembly": "push   %r13"
+      },
+      {
+        "offset": 6,
+        "bytes": "4154",
+        "assembly": "push   %r12"
+      },
+      {
+        "offset": 8,
+        "bytes": "55",
+        "assembly": "push   %rbp"
+      },
+      {
+        "offset": 9,
+        "bytes": "57",
+        "assembly": "push   %rdi"
+      },
+      {
+        "offset": 10,
+        "bytes": "56",
+        "assembly": "push   %rsi"
+      },
+      {
+        "offset": 11,
+        "bytes": "53",
+        "assembly": "push   %rbx"
+      },
+      {
+        "offset": 12,
+        "bytes": "4883ec48",
+        "assembly": "sub    $0x48,%rsp"
+      },
+      {
+        "offset": 16,
+        "bytes": "c78118060000ff",
+        "assembly": "movl   $0xffffffff,0x618(%rcx)"
+      },
+      {
+        "offset": 23,
+        "bytes": "ffffff",
+        "assembly": ""
+      },
+      {
+        "offset": 26,
+        "bytes": "4989ce",
+        "assembly": "mov    %rcx,%r14"
+      },
+      {
+        "offset": 29,
+        "bytes": "488d8920020000",
+        "assembly": "lea    0x220(%rcx),%rcx"
+      },
+      {
+        "offset": 36,
+        "bytes": "e800000000",
+        "assembly": "call   c789 <_ZN7Minisat6Solver14propagateForLKEv+0x29>"
+      },
+      {
+        "offset": 41,
+        "bytes": "498d8ee8010000",
+        "assembly": "lea    0x1e8(%r14),%rcx"
+      },
+      {
+        "offset": 48,
+        "bytes": "e800000000",
+        "assembly": "call   c795 <_ZN7Minisat6Solver14propagateForLKEv+0x35>"
+      },
+      {
+        "offset": 53,
+        "bytes": "496386b8020000",
+        "assembly": "movslq 0x2b8(%r14),%rax"
+      },
+      {
+        "offset": 60,
+        "bytes": "41398690020000",
+        "assembly": "cmp    %eax,0x290(%r14)"
+      },
+      {
+        "offset": 67,
+        "bytes": "0f8e1d040000",
+        "assembly": "jle    cbc6 <_ZN7Minisat6Solver14propagateForLKEv+0x466>"
+      },
+      {
+        "offset": 73,
+        "bytes": "b9ffffffff",
+        "assembly": "mov    $0xffffffff,%ecx"
+      },
+      {
+        "offset": 78,
+        "bytes": "c744242c000000",
+        "assembly": "movl   $0x0,0x2c(%rsp)"
+      },
+      {
+        "offset": 85,
+        "bytes": "00",
+        "assembly": ""
+      },
+      {
+        "offset": 86,
+        "bytes": "894c2438",
+        "assembly": "mov    %ecx,0x38(%rsp)"
+      },
+      {
+        "offset": 90,
+        "bytes": "8d5001",
+        "assembly": "lea    0x1(%rax),%edx"
+      },
+      {
+        "offset": 93,
+        "bytes": "498bb6e8010000",
+        "assembly": "mov    0x1e8(%r14),%rsi"
+      },
+      {
+        "offset": 100,
+        "bytes": "4d8bae20020000",
+        "assembly": "mov    0x220(%r14),%r13"
+      },
+      {
+        "offset": 107,
+        "bytes": "418996b8020000",
+        "assembly": "mov    %edx,0x2b8(%r14)"
+      },
+      {
+        "offset": 114,
+        "bytes": "498b9688020000",
+        "assembly": "mov    0x288(%r14),%rdx"
+      },
+      {
+        "offset": 121,
+        "bytes": "48632c82",
+        "assembly": "movslq (%rdx,%rax,4),%rbp"
+      },
+      {
+        "offset": 125,
+        "bytes": "4989ec",
+        "assembly": "mov    %rbp,%r12"
+      },
+      {
+        "offset": 128,
+        "bytes": "48c1e504",
+        "assembly": "shl    $0x4,%rbp"
+      },
+      {
+        "offset": 132,
+        "bytes": "4801ee",
+        "assembly": "add    %rbp,%rsi"
+      },
+      {
+        "offset": 135,
+        "bytes": "8b4608",
+        "assembly": "mov    0x8(%rsi),%eax"
+      },
+      {
+        "offset": 138,
+        "bytes": "85c0",
+        "assembly": "test   %eax,%eax"
+      },
+      {
+        "offset": 140,
+        "bytes": "7e62",
+        "assembly": "jle    c850 <_ZN7Minisat6Solver14propagateForLKEv+0xf0>"
+      },
+      {
+        "offset": 142,
+        "bytes": "31db",
+        "assembly": "xor    %ebx,%ebx"
+      },
+      {
+        "offset": 144,
+        "bytes": "eb0f",
+        "assembly": "jmp    c801 <_ZN7Minisat6Solver14propagateForLKEv+0xa1>"
+      },
+      {
+        "offset": 146,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 152,
+        "bytes": "4883c301",
+        "assembly": "add    $0x1,%rbx"
+      },
+      {
+        "offset": 156,
+        "bytes": "395e08",
+        "assembly": "cmp    %ebx,0x8(%rsi)"
+      },
+      {
+        "offset": 159,
+        "bytes": "7e4f",
+        "assembly": "jle    c850 <_ZN7Minisat6Solver14propagateForLKEv+0xf0>"
+      },
+      {
+        "offset": 161,
+        "bytes": "488b06",
+        "assembly": "mov    (%rsi),%rax"
+      },
+      {
+        "offset": 164,
+        "bytes": "4d8b8e58020000",
+        "assembly": "mov    0x258(%r14),%r9"
+      },
+      {
+        "offset": 171,
+        "bytes": "488d0cd8",
+        "assembly": "lea    (%rax,%rbx,8),%rcx"
+      },
+      {
+        "offset": 175,
+        "bytes": "8b5104",
+        "assembly": "mov    0x4(%rcx),%edx"
+      },
+      {
+        "offset": 178,
+        "bytes": "89d7",
+        "assembly": "mov    %edx,%edi"
+      },
+      {
+        "offset": 180,
+        "bytes": "89d0",
+        "assembly": "mov    %edx,%eax"
+      },
+      {
+        "offset": 182,
+        "bytes": "d1ff",
+        "assembly": "sar    $1,%edi"
+      },
+      {
+        "offset": 184,
+        "bytes": "83e001",
+        "assembly": "and    $0x1,%eax"
+      },
+      {
+        "offset": 187,
+        "bytes": "4c63c7",
+        "assembly": "movslq %edi,%r8"
+      },
+      {
+        "offset": 190,
+        "bytes": "43320401",
+        "assembly": "xor    (%r9,%r8,1),%al"
+      },
+      {
+        "offset": 194,
+        "bytes": "3c01",
+        "assembly": "cmp    $0x1,%al"
+      },
+      {
+        "offset": 196,
+        "bytes": "0f8476020000",
+        "assembly": "je     caa0 <_ZN7Minisat6Solver14propagateForLKEv+0x340>"
+      },
+      {
+        "offset": 202,
+        "bytes": "a802",
+        "assembly": "test   $0x2,%al"
+      },
+      {
+        "offset": 204,
+        "bytes": "74ca",
+        "assembly": "je     c7f8 <_ZN7Minisat6Solver14propagateForLKEv+0x98>"
+      },
+      {
+        "offset": 206,
+        "bytes": "448b01",
+        "assembly": "mov    (%rcx),%r8d"
+      },
+      {
+        "offset": 209,
+        "bytes": "4c89f1",
+        "assembly": "mov    %r14,%rcx"
+      },
+      {
+        "offset": 212,
+        "bytes": "e8e7e5ffff",
+        "assembly": "call   ae20 <_ZN7Minisat6Solver21uncheckedEnqueueForLKENS_3LitEj>"
+      },
+      {
+        "offset": 217,
+        "bytes": "84c0",
+        "assembly": "test   %al,%al"
+      },
+      {
+        "offset": 219,
+        "bytes": "75bb",
+        "assembly": "jne    c7f8 <_ZN7Minisat6Solver14propagateForLKEv+0x98>"
+      },
+      {
+        "offset": 221,
+        "bytes": "4189be18060000",
+        "assembly": "mov    %edi,0x618(%r14)"
+      },
+      {
+        "offset": 228,
+        "bytes": "b9ffffffff",
+        "assembly": "mov    $0xffffffff,%ecx"
+      },
+      {
+        "offset": 233,
+        "bytes": "e969020000",
+        "assembly": "jmp    cab7 <_ZN7Minisat6Solver14propagateForLKEv+0x357>"
+      },
+      {
+        "offset": 238,
+        "bytes": "6690",
+        "assembly": "xchg   %ax,%ax"
+      },
+      {
+        "offset": 240,
+        "bytes": "498d5c2d00",
+        "assembly": "lea    0x0(%r13,%rbp,1),%rbx"
+      },
+      {
+        "offset": 245,
+        "bytes": "4c8b3b",
+        "assembly": "mov    (%rbx),%r15"
+      },
+      {
+        "offset": 248,
+        "bytes": "48634308",
+        "assembly": "movslq 0x8(%rbx),%rax"
+      },
+      {
+        "offset": 252,
+        "bytes": "4d8d2cc7",
+        "assembly": "lea    (%r15,%rax,8),%r13"
+      },
+      {
+        "offset": 256,
+        "bytes": "4d39fd",
+        "assembly": "cmp    %r15,%r13"
+      },
+      {
+        "offset": 259,
+        "bytes": "0f8450010000",
+        "assembly": "je     c9b9 <_ZN7Minisat6Solver14propagateForLKEv+0x259>"
+      },
+      {
+        "offset": 265,
+        "bytes": "4183f401",
+        "assembly": "xor    $0x1,%r12d"
+      },
+      {
+        "offset": 269,
+        "bytes": "48895c2430",
+        "assembly": "mov    %rbx,0x30(%rsp)"
+      },
+      {
+        "offset": 274,
+        "bytes": "4c89fd",
+        "assembly": "mov    %r15,%rbp"
+      },
+      {
+        "offset": 277,
+        "bytes": "4489642428",
+        "assembly": "mov    %r12d,0x28(%rsp)"
+      },
+      {
+        "offset": 282,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 288,
+        "bytes": "8b5504",
+        "assembly": "mov    0x4(%rbp),%edx"
+      },
+      {
+        "offset": 291,
+        "bytes": "4d8b8e58020000",
+        "assembly": "mov    0x258(%r14),%r9"
+      },
+      {
+        "offset": 298,
+        "bytes": "4c8d6508",
+        "assembly": "lea    0x8(%rbp),%r12"
+      },
+      {
+        "offset": 302,
+        "bytes": "89d0",
+        "assembly": "mov    %edx,%eax"
+      },
+      {
+        "offset": 304,
+        "bytes": "89d1",
+        "assembly": "mov    %edx,%ecx"
+      },
+      {
+        "offset": 306,
+        "bytes": "d1f8",
+        "assembly": "sar    $1,%eax"
+      },
+      {
+        "offset": 308,
+        "bytes": "83e101",
+        "assembly": "and    $0x1,%ecx"
+      },
+      {
+        "offset": 311,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 313,
+        "bytes": "41380c01",
+        "assembly": "cmp    %cl,(%r9,%rax,1)"
+      },
+      {
+        "offset": 317,
+        "bytes": "0f844d010000",
+        "assembly": "je     c9f0 <_ZN7Minisat6Solver14propagateForLKEv+0x290>"
+      },
+      {
+        "offset": 323,
+        "bytes": "8b4d00",
+        "assembly": "mov    0x0(%rbp),%ecx"
+      },
+      {
+        "offset": 326,
+        "bytes": "498b86a0030000",
+        "assembly": "mov    0x3a0(%r14),%rax"
+      },
+      {
+        "offset": 333,
+        "bytes": "488d1c88",
+        "assembly": "lea    (%rax,%rcx,4),%rbx"
+      },
+      {
+        "offset": 337,
+        "bytes": "8b442428",
+        "assembly": "mov    0x28(%rsp),%eax"
+      },
+      {
+        "offset": 341,
+        "bytes": "4989c8",
+        "assembly": "mov    %rcx,%r8"
+      },
+      {
+        "offset": 344,
+        "bytes": "448b5b0c",
+        "assembly": "mov    0xc(%rbx),%r11d"
+      },
+      {
+        "offset": 348,
+        "bytes": "4139c3",
+        "assembly": "cmp    %eax,%r11d"
+      },
+      {
+        "offset": 351,
+        "bytes": "750b",
+        "assembly": "jne    c8cc <_ZN7Minisat6Solver14propagateForLKEv+0x16c>"
+      },
+      {
+        "offset": 353,
+        "bytes": "448b5b10",
+        "assembly": "mov    0x10(%rbx),%r11d"
+      },
+      {
+        "offset": 357,
+        "bytes": "894310",
+        "assembly": "mov    %eax,0x10(%rbx)"
+      },
+      {
+        "offset": 360,
+        "bytes": "44895b0c",
+        "assembly": "mov    %r11d,0xc(%rbx)"
+      },
+      {
+        "offset": 364,
+        "bytes": "4439da",
+        "assembly": "cmp    %r11d,%edx"
+      },
+      {
+        "offset": 367,
+        "bytes": "741b",
+        "assembly": "je     c8ec <_ZN7Minisat6Solver14propagateForLKEv+0x18c>"
+      },
+      {
+        "offset": 369,
+        "bytes": "4489d8",
+        "assembly": "mov    %r11d,%eax"
+      },
+      {
+        "offset": 372,
+        "bytes": "4489da",
+        "assembly": "mov    %r11d,%edx"
+      },
+      {
+        "offset": 375,
+        "bytes": "44895d04",
+        "assembly": "mov    %r11d,0x4(%rbp)"
+      },
+      {
+        "offset": 379,
+        "bytes": "d1f8",
+        "assembly": "sar    $1,%eax"
+      },
+      {
+        "offset": 381,
+        "bytes": "83e201",
+        "assembly": "and    $0x1,%edx"
+      },
+      {
+        "offset": 384,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 386,
+        "bytes": "41381401",
+        "assembly": "cmp    %dl,(%r9,%rax,1)"
+      },
+      {
+        "offset": 390,
+        "bytes": "0f8404010000",
+        "assembly": "je     c9f0 <_ZN7Minisat6Solver14propagateForLKEv+0x290>"
+      },
+      {
+        "offset": 396,
+        "bytes": "8b7b04",
+        "assembly": "mov    0x4(%rbx),%edi"
+      },
+      {
+        "offset": 399,
+        "bytes": "448b13",
+        "assembly": "mov    (%rbx),%r10d"
+      },
+      {
+        "offset": 402,
+        "bytes": "4139fa",
+        "assembly": "cmp    %edi,%r10d"
+      },
+      {
+        "offset": 405,
+        "bytes": "0f830d010000",
+        "assembly": "jae    ca08 <_ZN7Minisat6Solver14propagateForLKEv+0x2a8>"
+      },
+      {
+        "offset": 411,
+        "bytes": "c7430402000000",
+        "assembly": "movl   $0x2,0x4(%rbx)"
+      },
+      {
+        "offset": 418,
+        "bytes": "bf02000000",
+        "assembly": "mov    $0x2,%edi"
+      },
+      {
+        "offset": 423,
+        "bytes": "b802000000",
+        "assembly": "mov    $0x2,%eax"
+      },
+      {
+        "offset": 428,
+        "bytes": "4183fa02",
+        "assembly": "cmp    $0x2,%r10d"
+      },
+      {
+        "offset": 432,
+        "bytes": "7f23",
+        "assembly": "jg     c935 <_ZN7Minisat6Solver14propagateForLKEv+0x1d5>"
+      },
+      {
+        "offset": 434,
+        "bytes": "e9b9010000",
+        "assembly": "jmp    cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>"
+      },
+      {
+        "offset": 439,
+        "bytes": "660f1f84000000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 446,
+        "bytes": "0000",
+        "assembly": ""
+      },
+      {
+        "offset": 448,
+        "bytes": "38d1",
+        "assembly": "cmp    %dl,%cl"
+      },
+      {
+        "offset": 450,
+        "bytes": "0f8458010000",
+        "assembly": "je     ca80 <_ZN7Minisat6Solver14propagateForLKEv+0x320>"
+      },
+      {
+        "offset": 456,
+        "bytes": "4883c001",
+        "assembly": "add    $0x1,%rax"
+      },
+      {
+        "offset": 460,
+        "bytes": "4139c2",
+        "assembly": "cmp    %eax,%r10d"
+      },
+      {
+        "offset": 463,
+        "bytes": "0f8eeb000000",
+        "assembly": "jle    ca20 <_ZN7Minisat6Solver14propagateForLKEv+0x2c0>"
+      },
+      {
+        "offset": 469,
+        "bytes": "8b54830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%edx"
+      },
+      {
+        "offset": 473,
+        "bytes": "4863f0",
+        "assembly": "movslq %eax,%rsi"
+      },
+      {
+        "offset": 476,
+        "bytes": "89d1",
+        "assembly": "mov    %edx,%ecx"
+      },
+      {
+        "offset": 478,
+        "bytes": "83e201",
+        "assembly": "and    $0x1,%edx"
+      },
+      {
+        "offset": 481,
+        "bytes": "d1f9",
+        "assembly": "sar    $1,%ecx"
+      },
+      {
+        "offset": 483,
+        "bytes": "4863c9",
+        "assembly": "movslq %ecx,%rcx"
+      },
+      {
+        "offset": 486,
+        "bytes": "410fb60c09",
+        "assembly": "movzbl (%r9,%rcx,1),%ecx"
+      },
+      {
+        "offset": 491,
+        "bytes": "f6c102",
+        "assembly": "test   $0x2,%cl"
+      },
+      {
+        "offset": 494,
+        "bytes": "74d0",
+        "assembly": "je     c920 <_ZN7Minisat6Solver14propagateForLKEv+0x1c0>"
+      },
+      {
+        "offset": 496,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 498,
+        "bytes": "8b7c2428",
+        "assembly": "mov    0x28(%rsp),%edi"
+      },
+      {
+        "offset": 502,
+        "bytes": "8b54830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%edx"
+      },
+      {
+        "offset": 506,
+        "bytes": "895310",
+        "assembly": "mov    %edx,0x10(%rbx)"
+      },
+      {
+        "offset": 509,
+        "bytes": "897c830c",
+        "assembly": "mov    %edi,0xc(%rbx,%rax,4)"
+      },
+      {
+        "offset": 513,
+        "bytes": "48637b10",
+        "assembly": "movslq 0x10(%rbx),%rdi"
+      },
+      {
+        "offset": 517,
+        "bytes": "4883f701",
+        "assembly": "xor    $0x1,%rdi"
+      },
+      {
+        "offset": 521,
+        "bytes": "48c1e704",
+        "assembly": "shl    $0x4,%rdi"
+      },
+      {
+        "offset": 525,
+        "bytes": "4903be20020000",
+        "assembly": "add    0x220(%r14),%rdi"
+      },
+      {
+        "offset": 532,
+        "bytes": "48634708",
+        "assembly": "movslq 0x8(%rdi),%rax"
+      },
+      {
+        "offset": 536,
+        "bytes": "3b470c",
+        "assembly": "cmp    0xc(%rdi),%eax"
+      },
+      {
+        "offset": 539,
+        "bytes": "0f8499010000",
+        "assembly": "je     cb1a <_ZN7Minisat6Solver14propagateForLKEv+0x3ba>"
+      },
+      {
+        "offset": 545,
+        "bytes": "8d4801",
+        "assembly": "lea    0x1(%rax),%ecx"
+      },
+      {
+        "offset": 548,
+        "bytes": "488b17",
+        "assembly": "mov    (%rdi),%rdx"
+      },
+      {
+        "offset": 551,
+        "bytes": "83c601",
+        "assembly": "add    $0x1,%esi"
+      },
+      {
+        "offset": 554,
+        "bytes": "894f08",
+        "assembly": "mov    %ecx,0x8(%rdi)"
+      },
+      {
+        "offset": 557,
+        "bytes": "488b4d00",
+        "assembly": "mov    0x0(%rbp),%rcx"
+      },
+      {
+        "offset": 561,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 564,
+        "bytes": "48890cc2",
+        "assembly": "mov    %rcx,(%rdx,%rax,8)"
+      },
+      {
+        "offset": 568,
+        "bytes": "897304",
+        "assembly": "mov    %esi,0x4(%rbx)"
+      },
+      {
+        "offset": 571,
+        "bytes": "4939ed",
+        "assembly": "cmp    %rbp,%r13"
+      },
+      {
+        "offset": 574,
+        "bytes": "0f85dcfeffff",
+        "assembly": "jne    c880 <_ZN7Minisat6Solver14propagateForLKEv+0x120>"
+      },
+      {
+        "offset": 580,
+        "bytes": "4d29fd",
+        "assembly": "sub    %r15,%r13"
+      },
+      {
+        "offset": 583,
+        "bytes": "488b5c2430",
+        "assembly": "mov    0x30(%rsp),%rbx"
+      },
+      {
+        "offset": 588,
+        "bytes": "49c1fd03",
+        "assembly": "sar    $0x3,%r13"
+      },
+      {
+        "offset": 592,
+        "bytes": "4585ed",
+        "assembly": "test   %r13d,%r13d"
+      },
+      {
+        "offset": 595,
+        "bytes": "7e04",
+        "assembly": "jle    c9b9 <_ZN7Minisat6Solver14propagateForLKEv+0x259>"
+      },
+      {
+        "offset": 597,
+        "bytes": "44296b08",
+        "assembly": "sub    %r13d,0x8(%rbx)"
+      },
+      {
+        "offset": 601,
+        "bytes": "8344242c01",
+        "assembly": "addl   $0x1,0x2c(%rsp)"
+      },
+      {
+        "offset": 606,
+        "bytes": "496386b8020000",
+        "assembly": "movslq 0x2b8(%r14),%rax"
+      },
+      {
+        "offset": 613,
+        "bytes": "413b8690020000",
+        "assembly": "cmp    0x290(%r14),%eax"
+      },
+      {
+        "offset": 620,
+        "bytes": "0f8ce8fdffff",
+        "assembly": "jl     c7ba <_ZN7Minisat6Solver14propagateForLKEv+0x5a>"
+      },
+      {
+        "offset": 626,
+        "bytes": "8b4c2438",
+        "assembly": "mov    0x38(%rsp),%ecx"
+      },
+      {
+        "offset": 630,
+        "bytes": "486344242c",
+        "assembly": "movslq 0x2c(%rsp),%rax"
+      },
+      {
+        "offset": 635,
+        "bytes": "490186f8050000",
+        "assembly": "add    %rax,0x5f8(%r14)"
+      },
+      {
+        "offset": 642,
+        "bytes": "e9d0000000",
+        "assembly": "jmp    cab7 <_ZN7Minisat6Solver14propagateForLKEv+0x357>"
+      },
+      {
+        "offset": 647,
+        "bytes": "660f1f84000000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 654,
+        "bytes": "0000",
+        "assembly": ""
+      },
+      {
+        "offset": 656,
+        "bytes": "488b4500",
+        "assembly": "mov    0x0(%rbp),%rax"
+      },
+      {
+        "offset": 660,
+        "bytes": "4983c708",
+        "assembly": "add    $0x8,%r15"
+      },
+      {
+        "offset": 664,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 667,
+        "bytes": "498947f8",
+        "assembly": "mov    %rax,-0x8(%r15)"
+      },
+      {
+        "offset": 671,
+        "bytes": "eb9a",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 673,
+        "bytes": "0f1f8000000000",
+        "assembly": "nopl   0x0(%rax)"
+      },
+      {
+        "offset": 680,
+        "bytes": "4863c7",
+        "assembly": "movslq %edi,%rax"
+      },
+      {
+        "offset": 683,
+        "bytes": "4439d7",
+        "assembly": "cmp    %r10d,%edi"
+      },
+      {
+        "offset": 686,
+        "bytes": "0f8c21ffffff",
+        "assembly": "jl     c935 <_ZN7Minisat6Solver14propagateForLKEv+0x1d5>"
+      },
+      {
+        "offset": 692,
+        "bytes": "90",
+        "assembly": "nop"
+      },
+      {
+        "offset": 693,
+        "bytes": "66662e0f1f8400",
+        "assembly": "data16 cs nopw 0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 700,
+        "bytes": "00000000",
+        "assembly": ""
+      },
+      {
+        "offset": 704,
+        "bytes": "83ff02",
+        "assembly": "cmp    $0x2,%edi"
+      },
+      {
+        "offset": 707,
+        "bytes": "0f86a7000000",
+        "assembly": "jbe    cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>"
+      },
+      {
+        "offset": 713,
+        "bytes": "b802000000",
+        "assembly": "mov    $0x2,%eax"
+      },
+      {
+        "offset": 718,
+        "bytes": "eb12",
+        "assembly": "jmp    ca42 <_ZN7Minisat6Solver14propagateForLKEv+0x2e2>"
+      },
+      {
+        "offset": 720,
+        "bytes": "4438d1",
+        "assembly": "cmp    %r10b,%cl"
+      },
+      {
+        "offset": 723,
+        "bytes": "744b",
+        "assembly": "je     ca80 <_ZN7Minisat6Solver14propagateForLKEv+0x320>"
+      },
+      {
+        "offset": 725,
+        "bytes": "4883c001",
+        "assembly": "add    $0x1,%rax"
+      },
+      {
+        "offset": 729,
+        "bytes": "4839f8",
+        "assembly": "cmp    %rdi,%rax"
+      },
+      {
+        "offset": 732,
+        "bytes": "0f848e000000",
+        "assembly": "je     cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>"
+      },
+      {
+        "offset": 738,
+        "bytes": "8b54830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%edx"
+      },
+      {
+        "offset": 742,
+        "bytes": "4863f0",
+        "assembly": "movslq %eax,%rsi"
+      },
+      {
+        "offset": 745,
+        "bytes": "89d1",
+        "assembly": "mov    %edx,%ecx"
+      },
+      {
+        "offset": 747,
+        "bytes": "4189d2",
+        "assembly": "mov    %edx,%r10d"
+      },
+      {
+        "offset": 750,
+        "bytes": "d1f9",
+        "assembly": "sar    $1,%ecx"
+      },
+      {
+        "offset": 752,
+        "bytes": "4183e201",
+        "assembly": "and    $0x1,%r10d"
+      },
+      {
+        "offset": 756,
+        "bytes": "4863c9",
+        "assembly": "movslq %ecx,%rcx"
+      },
+      {
+        "offset": 759,
+        "bytes": "410fb60c09",
+        "assembly": "movzbl (%r9,%rcx,1),%ecx"
+      },
+      {
+        "offset": 764,
+        "bytes": "f6c102",
+        "assembly": "test   $0x2,%cl"
+      },
+      {
+        "offset": 767,
+        "bytes": "74cf",
+        "assembly": "je     ca30 <_ZN7Minisat6Solver14propagateForLKEv+0x2d0>"
+      },
+      {
+        "offset": 769,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 771,
+        "bytes": "8b7c2428",
+        "assembly": "mov    0x28(%rsp),%edi"
+      },
+      {
+        "offset": 775,
+        "bytes": "83f201",
+        "assembly": "xor    $0x1,%edx"
+      },
+      {
+        "offset": 778,
+        "bytes": "8b4c830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%ecx"
+      },
+      {
+        "offset": 782,
+        "bytes": "894b10",
+        "assembly": "mov    %ecx,0x10(%rbx)"
+      },
+      {
+        "offset": 785,
+        "bytes": "897c830c",
+        "assembly": "mov    %edi,0xc(%rbx,%rax,4)"
+      },
+      {
+        "offset": 789,
+        "bytes": "4863fa",
+        "assembly": "movslq %edx,%rdi"
+      },
+      {
+        "offset": 792,
+        "bytes": "e9ecfeffff",
+        "assembly": "jmp    c969 <_ZN7Minisat6Solver14propagateForLKEv+0x209>"
+      },
+      {
+        "offset": 797,
+        "bytes": "0f1f00",
+        "assembly": "nopl   (%rax)"
+      },
+      {
+        "offset": 800,
+        "bytes": "8b54b30c",
+        "assembly": "mov    0xc(%rbx,%rsi,4),%edx"
+      },
+      {
+        "offset": 804,
+        "bytes": "4983c708",
+        "assembly": "add    $0x8,%r15"
+      },
+      {
+        "offset": 808,
+        "bytes": "895504",
+        "assembly": "mov    %edx,0x4(%rbp)"
+      },
+      {
+        "offset": 811,
+        "bytes": "488b5500",
+        "assembly": "mov    0x0(%rbp),%rdx"
+      },
+      {
+        "offset": 815,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 818,
+        "bytes": "498957f8",
+        "assembly": "mov    %rdx,-0x8(%r15)"
+      },
+      {
+        "offset": 822,
+        "bytes": "894304",
+        "assembly": "mov    %eax,0x4(%rbx)"
+      },
+      {
+        "offset": 825,
+        "bytes": "e9fdfeffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 830,
+        "bytes": "6690",
+        "assembly": "xchg   %ax,%ax"
+      },
+      {
+        "offset": 832,
+        "bytes": "4183f401",
+        "assembly": "xor    $0x1,%r12d"
+      },
+      {
+        "offset": 836,
+        "bytes": "41899614090000",
+        "assembly": "mov    %edx,0x914(%r14)"
+      },
+      {
+        "offset": 843,
+        "bytes": "b9feffffff",
+        "assembly": "mov    $0xfffffffe,%ecx"
+      },
+      {
+        "offset": 848,
+        "bytes": "4589a610090000",
+        "assembly": "mov    %r12d,0x910(%r14)"
+      },
+      {
+        "offset": 855,
+        "bytes": "89c8",
+        "assembly": "mov    %ecx,%eax"
+      },
+      {
+        "offset": 857,
+        "bytes": "4883c448",
+        "assembly": "add    $0x48,%rsp"
+      },
+      {
+        "offset": 861,
+        "bytes": "5b",
+        "assembly": "pop    %rbx"
+      },
+      {
+        "offset": 862,
+        "bytes": "5e",
+        "assembly": "pop    %rsi"
+      },
+      {
+        "offset": 863,
+        "bytes": "5f",
+        "assembly": "pop    %rdi"
+      },
+      {
+        "offset": 864,
+        "bytes": "5d",
+        "assembly": "pop    %rbp"
+      },
+      {
+        "offset": 865,
+        "bytes": "415c",
+        "assembly": "pop    %r12"
+      },
+      {
+        "offset": 867,
+        "bytes": "415d",
+        "assembly": "pop    %r13"
+      },
+      {
+        "offset": 869,
+        "bytes": "415e",
+        "assembly": "pop    %r14"
+      },
+      {
+        "offset": 871,
+        "bytes": "415f",
+        "assembly": "pop    %r15"
+      },
+      {
+        "offset": 873,
+        "bytes": "c3",
+        "assembly": "ret"
+      },
+      {
+        "offset": 874,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 880,
+        "bytes": "488b4500",
+        "assembly": "mov    0x0(%rbp),%rax"
+      },
+      {
+        "offset": 884,
+        "bytes": "4589da",
+        "assembly": "mov    %r11d,%r10d"
+      },
+      {
+        "offset": 887,
+        "bytes": "498d5f08",
+        "assembly": "lea    0x8(%r15),%rbx"
+      },
+      {
+        "offset": 891,
+        "bytes": "41d1fa",
+        "assembly": "sar    $1,%r10d"
+      },
+      {
+        "offset": 894,
+        "bytes": "498907",
+        "assembly": "mov    %rax,(%r15)"
+      },
+      {
+        "offset": 897,
+        "bytes": "4963d2",
+        "assembly": "movslq %r10d,%rdx"
+      },
+      {
+        "offset": 900,
+        "bytes": "4489d8",
+        "assembly": "mov    %r11d,%eax"
+      },
+      {
+        "offset": 903,
+        "bytes": "83e001",
+        "assembly": "and    $0x1,%eax"
+      },
+      {
+        "offset": 906,
+        "bytes": "41320411",
+        "assembly": "xor    (%r9,%rdx,1),%al"
+      },
+      {
+        "offset": 910,
+        "bytes": "3c01",
+        "assembly": "cmp    $0x1,%al"
+      },
+      {
+        "offset": 912,
+        "bytes": "0f8482000000",
+        "assembly": "je     cb78 <_ZN7Minisat6Solver14propagateForLKEv+0x418>"
+      },
+      {
+        "offset": 918,
+        "bytes": "4489da",
+        "assembly": "mov    %r11d,%edx"
+      },
+      {
+        "offset": 921,
+        "bytes": "4c89f1",
+        "assembly": "mov    %r14,%rcx"
+      },
+      {
+        "offset": 924,
+        "bytes": "448954243c",
+        "assembly": "mov    %r10d,0x3c(%rsp)"
+      },
+      {
+        "offset": 929,
+        "bytes": "e81ae3ffff",
+        "assembly": "call   ae20 <_ZN7Minisat6Solver21uncheckedEnqueueForLKENS_3LitEj>"
+      },
+      {
+        "offset": 934,
+        "bytes": "448b54243c",
+        "assembly": "mov    0x3c(%rsp),%r10d"
+      },
+      {
+        "offset": 939,
+        "bytes": "84c0",
+        "assembly": "test   %al,%al"
+      },
+      {
+        "offset": 941,
+        "bytes": "741f",
+        "assembly": "je     cb2e <_ZN7Minisat6Solver14propagateForLKEv+0x3ce>"
+      },
+      {
+        "offset": 943,
+        "bytes": "4989df",
+        "assembly": "mov    %rbx,%r15"
+      },
+      {
+        "offset": 946,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 949,
+        "bytes": "e981feffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 954,
+        "bytes": "8d5001",
+        "assembly": "lea    0x1(%rax),%edx"
+      },
+      {
+        "offset": 957,
+        "bytes": "4889f9",
+        "assembly": "mov    %rdi,%rcx"
+      },
+      {
+        "offset": 960,
+        "bytes": "e800000000",
+        "assembly": "call   cb25 <_ZN7Minisat6Solver14propagateForLKEv+0x3c5>"
+      },
+      {
+        "offset": 965,
+        "bytes": "48634708",
+        "assembly": "movslq 0x8(%rdi),%rax"
+      },
+      {
+        "offset": 969,
+        "bytes": "e953feffff",
+        "assembly": "jmp    c981 <_ZN7Minisat6Solver14propagateForLKEv+0x221>"
+      },
+      {
+        "offset": 974,
+        "bytes": "418b8690020000",
+        "assembly": "mov    0x290(%r14),%eax"
+      },
+      {
+        "offset": 981,
+        "bytes": "418986b8020000",
+        "assembly": "mov    %eax,0x2b8(%r14)"
+      },
+      {
+        "offset": 988,
+        "bytes": "4d39ec",
+        "assembly": "cmp    %r13,%r12"
+      },
+      {
+        "offset": 991,
+        "bytes": "0f839d000000",
+        "assembly": "jae    cbe2 <_ZN7Minisat6Solver14propagateForLKEv+0x482>"
+      },
+      {
+        "offset": 997,
+        "bytes": "4889df",
+        "assembly": "mov    %rbx,%rdi"
+      },
+      {
+        "offset": 1000,
+        "bytes": "4c89e6",
+        "assembly": "mov    %r12,%rsi"
+      },
+      {
+        "offset": 1003,
+        "bytes": "0f1f440000",
+        "assembly": "nopl   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 1008,
+        "bytes": "48a5",
+        "assembly": "movsq  (%rsi),(%rdi)"
+      },
+      {
+        "offset": 1010,
+        "bytes": "4c39ee",
+        "assembly": "cmp    %r13,%rsi"
+      },
+      {
+        "offset": 1013,
+        "bytes": "72f9",
+        "assembly": "jb     cb50 <_ZN7Minisat6Solver14propagateForLKEv+0x3f0>"
+      },
+      {
+        "offset": 1015,
+        "bytes": "498d45f7",
+        "assembly": "lea    -0x9(%r13),%rax"
+      },
+      {
+        "offset": 1019,
+        "bytes": "4829e8",
+        "assembly": "sub    %rbp,%rax"
+      },
+      {
+        "offset": 1022,
+        "bytes": "4883e0f8",
+        "assembly": "and    $0xfffffffffffffff8,%rax"
+      },
+      {
+        "offset": 1026,
+        "bytes": "4c8d7c0308",
+        "assembly": "lea    0x8(%rbx,%rax,1),%r15"
+      },
+      {
+        "offset": 1031,
+        "bytes": "498d6c0408",
+        "assembly": "lea    0x8(%r12,%rax,1),%rbp"
+      },
+      {
+        "offset": 1036,
+        "bytes": "45899618060000",
+        "assembly": "mov    %r10d,0x618(%r14)"
+      },
+      {
+        "offset": 1043,
+        "bytes": "e923feffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 1048,
+        "bytes": "418b8690020000",
+        "assembly": "mov    0x290(%r14),%eax"
+      },
+      {
+        "offset": 1055,
+        "bytes": "418986b8020000",
+        "assembly": "mov    %eax,0x2b8(%r14)"
+      },
+      {
+        "offset": 1062,
+        "bytes": "4d39ec",
+        "assembly": "cmp    %r13,%r12"
+      },
+      {
+        "offset": 1065,
+        "bytes": "7347",
+        "assembly": "jae    cbd2 <_ZN7Minisat6Solver14propagateForLKEv+0x472>"
+      },
+      {
+        "offset": 1067,
+        "bytes": "4889df",
+        "assembly": "mov    %rbx,%rdi"
+      },
+      {
+        "offset": 1070,
+        "bytes": "4c89e6",
+        "assembly": "mov    %r12,%rsi"
+      },
+      {
+        "offset": 1073,
+        "bytes": "0f1f8000000000",
+        "assembly": "nopl   0x0(%rax)"
+      },
+      {
+        "offset": 1080,
+        "bytes": "0f1f8400000000",
+        "assembly": "nopl   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 1087,
+        "bytes": "00",
+        "assembly": ""
+      },
+      {
+        "offset": 1088,
+        "bytes": "48a5",
+        "assembly": "movsq  (%rsi),(%rdi)"
+      },
+      {
+        "offset": 1090,
+        "bytes": "4c39ee",
+        "assembly": "cmp    %r13,%rsi"
+      },
+      {
+        "offset": 1093,
+        "bytes": "72f9",
+        "assembly": "jb     cba0 <_ZN7Minisat6Solver14propagateForLKEv+0x440>"
+      },
+      {
+        "offset": 1095,
+        "bytes": "498d45f7",
+        "assembly": "lea    -0x9(%r13),%rax"
+      },
+      {
+        "offset": 1099,
+        "bytes": "4489442438",
+        "assembly": "mov    %r8d,0x38(%rsp)"
+      },
+      {
+        "offset": 1104,
+        "bytes": "4829e8",
+        "assembly": "sub    %rbp,%rax"
+      },
+      {
+        "offset": 1107,
+        "bytes": "4883e0f8",
+        "assembly": "and    $0xfffffffffffffff8,%rax"
+      },
+      {
+        "offset": 1111,
+        "bytes": "4c8d7c0308",
+        "assembly": "lea    0x8(%rbx,%rax,1),%r15"
+      },
+      {
+        "offset": 1116,
+        "bytes": "498d6c0408",
+        "assembly": "lea    0x8(%r12,%rax,1),%rbp"
+      },
+      {
+        "offset": 1121,
+        "bytes": "e9d5fdffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 1126,
+        "bytes": "31c0",
+        "assembly": "xor    %eax,%eax"
+      },
+      {
+        "offset": 1128,
+        "bytes": "b9ffffffff",
+        "assembly": "mov    $0xffffffff,%ecx"
+      },
+      {
+        "offset": 1133,
+        "bytes": "e909feffff",
+        "assembly": "jmp    c9db <_ZN7Minisat6Solver14propagateForLKEv+0x27b>"
+      },
+      {
+        "offset": 1138,
+        "bytes": "4489442438",
+        "assembly": "mov    %r8d,0x38(%rsp)"
+      },
+      {
+        "offset": 1143,
+        "bytes": "4989df",
+        "assembly": "mov    %rbx,%r15"
+      },
+      {
+        "offset": 1146,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 1149,
+        "bytes": "e9b9fdffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 1154,
+        "bytes": "4989df",
+        "assembly": "mov    %rbx,%r15"
+      },
+      {
+        "offset": 1157,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 1160,
+        "bytes": "eb82",
+        "assembly": "jmp    cb6c <_ZN7Minisat6Solver14propagateForLKEv+0x40c>"
+      },
+      {
+        "offset": 1162,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      }
+    ]
+  },
+  "candidate": {
+    "symbol": "_ZN7Minisat6Solver14propagateForLKEv",
+    "base": 51040,
+    "bytes": "4157415641554154555756534883ec48c78118060000ffffffff4989ce488d8920020000e800000000498d8ee8010000e800000000496386b8020000413986900200000f8e1d040000b9ffffffffc744242c00000000894c24388d5001498bb6e80100004d8bae20020000418996b8020000498b968802000048632c824989ec48c1e5044801ee8b460885c07e6231dbeb0f660f1f4400004883c301395e087e4f488b064d8b8e58020000488d0cd88b510489d789d0d1ff83e0014c63c7433204013c010f8476020000a80274ca448b014c89f1e8e7e5ffff84c075bb4189be18060000b9ffffffffe9690200006690498d5c2d004c8b3b486343084d8d2cc74d39fd0f84500100004183f40148895c24304c89fd4489642428660f1f4400008b55044d8b8e580200004c8d650889d089d1d1f883e101489841380c010f844d0100008b4d00498b86a0030000488d1c888b4424284989c8448b5b0c4139c3750b448b5b1089431044895b0c4439da741b4489d84489da44895d04d1f883e2014898413814010f84040100008b7b04448b134139fa0f830d010000c7430402000000bf02000000b8020000004183fa027f23e9b9010000660f1f84000000000038d10f84580100004883c0014139c20f8eeb0000008b54830c4863f089d183e201d1f94863c9410fb60c09f6c10274d048988b7c24288b54830c895310897c830c48637b104883f70148c1e7044903be20020000486347083b470c0f84990100008d4801488b1783c601894f08488b4d004c89e548890cc28973044939ed0f85dcfeffff4d29fd488b5c243049c1fd034585ed7e0444296b088344242c01496386b8020000413b86900200000f8ce8fdffff8b4c2438486344242c490186f8050000e9d0000000660f1f840000000000488b45004983c7084c89e5498947f8eb9a0f1f80000000004863c74439d70f8c21ffffff9066662e0f1f84000000000083ff020f86a7000000b802000000eb124438d1744b4883c0014839f80f848e0000008b54830c4863f089d14189d2d1f94183e2014863c9410fb60c09f6c10274cf48988b7c242883f2018b4c830c894b10897c830c4863fae9ecfeffff0f1f008b54b30c4983c708895504488b55004c89e5498957f8894304e9fdfeffff66904183f40141899614090000b9feffffff4589a61009000089c84883c4485b5e5f5d415c415d415e415fc3660f1f440000488b45004589da498d5f0841d1fa4989074963d24489d883e001413204113c010f84820000004489da4c89f1448954243ce81ae3ffff448b54243c84c0741f4989df4c89e5e981feffff8d50014889f9e80000000048634708e953feffff418b8690020000418986b80200004d39ec0f839d0000004889df4c89e60f1f44000048a54c39ee72f9498d45f74829e84883e0f84c8d7c0308498d6c040845899618060000e923feffff418b8690020000418986b80200004d39ec73474889df4c89e60f1f80000000000f1f84000000000048a54c39ee72f9498d45f744894424384829e84883e0f84c8d7c0308498d6c0408e9d5fdffff31c0b9ffffffffe909feffff44894424384989df4c89e5e9b9fdffff4989df4c89e5eb82660f1f440000",
+    "sha256": "1d97a3fe189b2e2723204b372327b5cd9f4a757288f11e3233bc3668dcf2149f",
+    "size": 1168,
+    "relocations": [
+      {
+        "offset": 37,
+        "kind": "IMAGE_REL_AMD64_REL32",
+        "target_addend": "_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv"
+      },
+      {
+        "offset": 49,
+        "kind": "IMAGE_REL_AMD64_REL32",
+        "target_addend": "_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv"
+      },
+      {
+        "offset": 961,
+        "kind": "IMAGE_REL_AMD64_REL32",
+        "target_addend": "_ZN7Minisat3vecINS_6Solver7WatcherEE8capacityEi"
+      }
+    ],
+    "instructions": [
+      {
+        "offset": 0,
+        "bytes": "4157",
+        "assembly": "push   %r15"
+      },
+      {
+        "offset": 2,
+        "bytes": "4156",
+        "assembly": "push   %r14"
+      },
+      {
+        "offset": 4,
+        "bytes": "4155",
+        "assembly": "push   %r13"
+      },
+      {
+        "offset": 6,
+        "bytes": "4154",
+        "assembly": "push   %r12"
+      },
+      {
+        "offset": 8,
+        "bytes": "55",
+        "assembly": "push   %rbp"
+      },
+      {
+        "offset": 9,
+        "bytes": "57",
+        "assembly": "push   %rdi"
+      },
+      {
+        "offset": 10,
+        "bytes": "56",
+        "assembly": "push   %rsi"
+      },
+      {
+        "offset": 11,
+        "bytes": "53",
+        "assembly": "push   %rbx"
+      },
+      {
+        "offset": 12,
+        "bytes": "4883ec48",
+        "assembly": "sub    $0x48,%rsp"
+      },
+      {
+        "offset": 16,
+        "bytes": "c78118060000ff",
+        "assembly": "movl   $0xffffffff,0x618(%rcx)"
+      },
+      {
+        "offset": 23,
+        "bytes": "ffffff",
+        "assembly": ""
+      },
+      {
+        "offset": 26,
+        "bytes": "4989ce",
+        "assembly": "mov    %rcx,%r14"
+      },
+      {
+        "offset": 29,
+        "bytes": "488d8920020000",
+        "assembly": "lea    0x220(%rcx),%rcx"
+      },
+      {
+        "offset": 36,
+        "bytes": "e800000000",
+        "assembly": "call   c789 <_ZN7Minisat6Solver14propagateForLKEv+0x29>"
+      },
+      {
+        "offset": 41,
+        "bytes": "498d8ee8010000",
+        "assembly": "lea    0x1e8(%r14),%rcx"
+      },
+      {
+        "offset": 48,
+        "bytes": "e800000000",
+        "assembly": "call   c795 <_ZN7Minisat6Solver14propagateForLKEv+0x35>"
+      },
+      {
+        "offset": 53,
+        "bytes": "496386b8020000",
+        "assembly": "movslq 0x2b8(%r14),%rax"
+      },
+      {
+        "offset": 60,
+        "bytes": "41398690020000",
+        "assembly": "cmp    %eax,0x290(%r14)"
+      },
+      {
+        "offset": 67,
+        "bytes": "0f8e1d040000",
+        "assembly": "jle    cbc6 <_ZN7Minisat6Solver14propagateForLKEv+0x466>"
+      },
+      {
+        "offset": 73,
+        "bytes": "b9ffffffff",
+        "assembly": "mov    $0xffffffff,%ecx"
+      },
+      {
+        "offset": 78,
+        "bytes": "c744242c000000",
+        "assembly": "movl   $0x0,0x2c(%rsp)"
+      },
+      {
+        "offset": 85,
+        "bytes": "00",
+        "assembly": ""
+      },
+      {
+        "offset": 86,
+        "bytes": "894c2438",
+        "assembly": "mov    %ecx,0x38(%rsp)"
+      },
+      {
+        "offset": 90,
+        "bytes": "8d5001",
+        "assembly": "lea    0x1(%rax),%edx"
+      },
+      {
+        "offset": 93,
+        "bytes": "498bb6e8010000",
+        "assembly": "mov    0x1e8(%r14),%rsi"
+      },
+      {
+        "offset": 100,
+        "bytes": "4d8bae20020000",
+        "assembly": "mov    0x220(%r14),%r13"
+      },
+      {
+        "offset": 107,
+        "bytes": "418996b8020000",
+        "assembly": "mov    %edx,0x2b8(%r14)"
+      },
+      {
+        "offset": 114,
+        "bytes": "498b9688020000",
+        "assembly": "mov    0x288(%r14),%rdx"
+      },
+      {
+        "offset": 121,
+        "bytes": "48632c82",
+        "assembly": "movslq (%rdx,%rax,4),%rbp"
+      },
+      {
+        "offset": 125,
+        "bytes": "4989ec",
+        "assembly": "mov    %rbp,%r12"
+      },
+      {
+        "offset": 128,
+        "bytes": "48c1e504",
+        "assembly": "shl    $0x4,%rbp"
+      },
+      {
+        "offset": 132,
+        "bytes": "4801ee",
+        "assembly": "add    %rbp,%rsi"
+      },
+      {
+        "offset": 135,
+        "bytes": "8b4608",
+        "assembly": "mov    0x8(%rsi),%eax"
+      },
+      {
+        "offset": 138,
+        "bytes": "85c0",
+        "assembly": "test   %eax,%eax"
+      },
+      {
+        "offset": 140,
+        "bytes": "7e62",
+        "assembly": "jle    c850 <_ZN7Minisat6Solver14propagateForLKEv+0xf0>"
+      },
+      {
+        "offset": 142,
+        "bytes": "31db",
+        "assembly": "xor    %ebx,%ebx"
+      },
+      {
+        "offset": 144,
+        "bytes": "eb0f",
+        "assembly": "jmp    c801 <_ZN7Minisat6Solver14propagateForLKEv+0xa1>"
+      },
+      {
+        "offset": 146,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 152,
+        "bytes": "4883c301",
+        "assembly": "add    $0x1,%rbx"
+      },
+      {
+        "offset": 156,
+        "bytes": "395e08",
+        "assembly": "cmp    %ebx,0x8(%rsi)"
+      },
+      {
+        "offset": 159,
+        "bytes": "7e4f",
+        "assembly": "jle    c850 <_ZN7Minisat6Solver14propagateForLKEv+0xf0>"
+      },
+      {
+        "offset": 161,
+        "bytes": "488b06",
+        "assembly": "mov    (%rsi),%rax"
+      },
+      {
+        "offset": 164,
+        "bytes": "4d8b8e58020000",
+        "assembly": "mov    0x258(%r14),%r9"
+      },
+      {
+        "offset": 171,
+        "bytes": "488d0cd8",
+        "assembly": "lea    (%rax,%rbx,8),%rcx"
+      },
+      {
+        "offset": 175,
+        "bytes": "8b5104",
+        "assembly": "mov    0x4(%rcx),%edx"
+      },
+      {
+        "offset": 178,
+        "bytes": "89d7",
+        "assembly": "mov    %edx,%edi"
+      },
+      {
+        "offset": 180,
+        "bytes": "89d0",
+        "assembly": "mov    %edx,%eax"
+      },
+      {
+        "offset": 182,
+        "bytes": "d1ff",
+        "assembly": "sar    $1,%edi"
+      },
+      {
+        "offset": 184,
+        "bytes": "83e001",
+        "assembly": "and    $0x1,%eax"
+      },
+      {
+        "offset": 187,
+        "bytes": "4c63c7",
+        "assembly": "movslq %edi,%r8"
+      },
+      {
+        "offset": 190,
+        "bytes": "43320401",
+        "assembly": "xor    (%r9,%r8,1),%al"
+      },
+      {
+        "offset": 194,
+        "bytes": "3c01",
+        "assembly": "cmp    $0x1,%al"
+      },
+      {
+        "offset": 196,
+        "bytes": "0f8476020000",
+        "assembly": "je     caa0 <_ZN7Minisat6Solver14propagateForLKEv+0x340>"
+      },
+      {
+        "offset": 202,
+        "bytes": "a802",
+        "assembly": "test   $0x2,%al"
+      },
+      {
+        "offset": 204,
+        "bytes": "74ca",
+        "assembly": "je     c7f8 <_ZN7Minisat6Solver14propagateForLKEv+0x98>"
+      },
+      {
+        "offset": 206,
+        "bytes": "448b01",
+        "assembly": "mov    (%rcx),%r8d"
+      },
+      {
+        "offset": 209,
+        "bytes": "4c89f1",
+        "assembly": "mov    %r14,%rcx"
+      },
+      {
+        "offset": 212,
+        "bytes": "e8e7e5ffff",
+        "assembly": "call   ae20 <_ZN7Minisat6Solver21uncheckedEnqueueForLKENS_3LitEj>"
+      },
+      {
+        "offset": 217,
+        "bytes": "84c0",
+        "assembly": "test   %al,%al"
+      },
+      {
+        "offset": 219,
+        "bytes": "75bb",
+        "assembly": "jne    c7f8 <_ZN7Minisat6Solver14propagateForLKEv+0x98>"
+      },
+      {
+        "offset": 221,
+        "bytes": "4189be18060000",
+        "assembly": "mov    %edi,0x618(%r14)"
+      },
+      {
+        "offset": 228,
+        "bytes": "b9ffffffff",
+        "assembly": "mov    $0xffffffff,%ecx"
+      },
+      {
+        "offset": 233,
+        "bytes": "e969020000",
+        "assembly": "jmp    cab7 <_ZN7Minisat6Solver14propagateForLKEv+0x357>"
+      },
+      {
+        "offset": 238,
+        "bytes": "6690",
+        "assembly": "xchg   %ax,%ax"
+      },
+      {
+        "offset": 240,
+        "bytes": "498d5c2d00",
+        "assembly": "lea    0x0(%r13,%rbp,1),%rbx"
+      },
+      {
+        "offset": 245,
+        "bytes": "4c8b3b",
+        "assembly": "mov    (%rbx),%r15"
+      },
+      {
+        "offset": 248,
+        "bytes": "48634308",
+        "assembly": "movslq 0x8(%rbx),%rax"
+      },
+      {
+        "offset": 252,
+        "bytes": "4d8d2cc7",
+        "assembly": "lea    (%r15,%rax,8),%r13"
+      },
+      {
+        "offset": 256,
+        "bytes": "4d39fd",
+        "assembly": "cmp    %r15,%r13"
+      },
+      {
+        "offset": 259,
+        "bytes": "0f8450010000",
+        "assembly": "je     c9b9 <_ZN7Minisat6Solver14propagateForLKEv+0x259>"
+      },
+      {
+        "offset": 265,
+        "bytes": "4183f401",
+        "assembly": "xor    $0x1,%r12d"
+      },
+      {
+        "offset": 269,
+        "bytes": "48895c2430",
+        "assembly": "mov    %rbx,0x30(%rsp)"
+      },
+      {
+        "offset": 274,
+        "bytes": "4c89fd",
+        "assembly": "mov    %r15,%rbp"
+      },
+      {
+        "offset": 277,
+        "bytes": "4489642428",
+        "assembly": "mov    %r12d,0x28(%rsp)"
+      },
+      {
+        "offset": 282,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 288,
+        "bytes": "8b5504",
+        "assembly": "mov    0x4(%rbp),%edx"
+      },
+      {
+        "offset": 291,
+        "bytes": "4d8b8e58020000",
+        "assembly": "mov    0x258(%r14),%r9"
+      },
+      {
+        "offset": 298,
+        "bytes": "4c8d6508",
+        "assembly": "lea    0x8(%rbp),%r12"
+      },
+      {
+        "offset": 302,
+        "bytes": "89d0",
+        "assembly": "mov    %edx,%eax"
+      },
+      {
+        "offset": 304,
+        "bytes": "89d1",
+        "assembly": "mov    %edx,%ecx"
+      },
+      {
+        "offset": 306,
+        "bytes": "d1f8",
+        "assembly": "sar    $1,%eax"
+      },
+      {
+        "offset": 308,
+        "bytes": "83e101",
+        "assembly": "and    $0x1,%ecx"
+      },
+      {
+        "offset": 311,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 313,
+        "bytes": "41380c01",
+        "assembly": "cmp    %cl,(%r9,%rax,1)"
+      },
+      {
+        "offset": 317,
+        "bytes": "0f844d010000",
+        "assembly": "je     c9f0 <_ZN7Minisat6Solver14propagateForLKEv+0x290>"
+      },
+      {
+        "offset": 323,
+        "bytes": "8b4d00",
+        "assembly": "mov    0x0(%rbp),%ecx"
+      },
+      {
+        "offset": 326,
+        "bytes": "498b86a0030000",
+        "assembly": "mov    0x3a0(%r14),%rax"
+      },
+      {
+        "offset": 333,
+        "bytes": "488d1c88",
+        "assembly": "lea    (%rax,%rcx,4),%rbx"
+      },
+      {
+        "offset": 337,
+        "bytes": "8b442428",
+        "assembly": "mov    0x28(%rsp),%eax"
+      },
+      {
+        "offset": 341,
+        "bytes": "4989c8",
+        "assembly": "mov    %rcx,%r8"
+      },
+      {
+        "offset": 344,
+        "bytes": "448b5b0c",
+        "assembly": "mov    0xc(%rbx),%r11d"
+      },
+      {
+        "offset": 348,
+        "bytes": "4139c3",
+        "assembly": "cmp    %eax,%r11d"
+      },
+      {
+        "offset": 351,
+        "bytes": "750b",
+        "assembly": "jne    c8cc <_ZN7Minisat6Solver14propagateForLKEv+0x16c>"
+      },
+      {
+        "offset": 353,
+        "bytes": "448b5b10",
+        "assembly": "mov    0x10(%rbx),%r11d"
+      },
+      {
+        "offset": 357,
+        "bytes": "894310",
+        "assembly": "mov    %eax,0x10(%rbx)"
+      },
+      {
+        "offset": 360,
+        "bytes": "44895b0c",
+        "assembly": "mov    %r11d,0xc(%rbx)"
+      },
+      {
+        "offset": 364,
+        "bytes": "4439da",
+        "assembly": "cmp    %r11d,%edx"
+      },
+      {
+        "offset": 367,
+        "bytes": "741b",
+        "assembly": "je     c8ec <_ZN7Minisat6Solver14propagateForLKEv+0x18c>"
+      },
+      {
+        "offset": 369,
+        "bytes": "4489d8",
+        "assembly": "mov    %r11d,%eax"
+      },
+      {
+        "offset": 372,
+        "bytes": "4489da",
+        "assembly": "mov    %r11d,%edx"
+      },
+      {
+        "offset": 375,
+        "bytes": "44895d04",
+        "assembly": "mov    %r11d,0x4(%rbp)"
+      },
+      {
+        "offset": 379,
+        "bytes": "d1f8",
+        "assembly": "sar    $1,%eax"
+      },
+      {
+        "offset": 381,
+        "bytes": "83e201",
+        "assembly": "and    $0x1,%edx"
+      },
+      {
+        "offset": 384,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 386,
+        "bytes": "41381401",
+        "assembly": "cmp    %dl,(%r9,%rax,1)"
+      },
+      {
+        "offset": 390,
+        "bytes": "0f8404010000",
+        "assembly": "je     c9f0 <_ZN7Minisat6Solver14propagateForLKEv+0x290>"
+      },
+      {
+        "offset": 396,
+        "bytes": "8b7b04",
+        "assembly": "mov    0x4(%rbx),%edi"
+      },
+      {
+        "offset": 399,
+        "bytes": "448b13",
+        "assembly": "mov    (%rbx),%r10d"
+      },
+      {
+        "offset": 402,
+        "bytes": "4139fa",
+        "assembly": "cmp    %edi,%r10d"
+      },
+      {
+        "offset": 405,
+        "bytes": "0f830d010000",
+        "assembly": "jae    ca08 <_ZN7Minisat6Solver14propagateForLKEv+0x2a8>"
+      },
+      {
+        "offset": 411,
+        "bytes": "c7430402000000",
+        "assembly": "movl   $0x2,0x4(%rbx)"
+      },
+      {
+        "offset": 418,
+        "bytes": "bf02000000",
+        "assembly": "mov    $0x2,%edi"
+      },
+      {
+        "offset": 423,
+        "bytes": "b802000000",
+        "assembly": "mov    $0x2,%eax"
+      },
+      {
+        "offset": 428,
+        "bytes": "4183fa02",
+        "assembly": "cmp    $0x2,%r10d"
+      },
+      {
+        "offset": 432,
+        "bytes": "7f23",
+        "assembly": "jg     c935 <_ZN7Minisat6Solver14propagateForLKEv+0x1d5>"
+      },
+      {
+        "offset": 434,
+        "bytes": "e9b9010000",
+        "assembly": "jmp    cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>"
+      },
+      {
+        "offset": 439,
+        "bytes": "660f1f84000000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 446,
+        "bytes": "0000",
+        "assembly": ""
+      },
+      {
+        "offset": 448,
+        "bytes": "38d1",
+        "assembly": "cmp    %dl,%cl"
+      },
+      {
+        "offset": 450,
+        "bytes": "0f8458010000",
+        "assembly": "je     ca80 <_ZN7Minisat6Solver14propagateForLKEv+0x320>"
+      },
+      {
+        "offset": 456,
+        "bytes": "4883c001",
+        "assembly": "add    $0x1,%rax"
+      },
+      {
+        "offset": 460,
+        "bytes": "4139c2",
+        "assembly": "cmp    %eax,%r10d"
+      },
+      {
+        "offset": 463,
+        "bytes": "0f8eeb000000",
+        "assembly": "jle    ca20 <_ZN7Minisat6Solver14propagateForLKEv+0x2c0>"
+      },
+      {
+        "offset": 469,
+        "bytes": "8b54830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%edx"
+      },
+      {
+        "offset": 473,
+        "bytes": "4863f0",
+        "assembly": "movslq %eax,%rsi"
+      },
+      {
+        "offset": 476,
+        "bytes": "89d1",
+        "assembly": "mov    %edx,%ecx"
+      },
+      {
+        "offset": 478,
+        "bytes": "83e201",
+        "assembly": "and    $0x1,%edx"
+      },
+      {
+        "offset": 481,
+        "bytes": "d1f9",
+        "assembly": "sar    $1,%ecx"
+      },
+      {
+        "offset": 483,
+        "bytes": "4863c9",
+        "assembly": "movslq %ecx,%rcx"
+      },
+      {
+        "offset": 486,
+        "bytes": "410fb60c09",
+        "assembly": "movzbl (%r9,%rcx,1),%ecx"
+      },
+      {
+        "offset": 491,
+        "bytes": "f6c102",
+        "assembly": "test   $0x2,%cl"
+      },
+      {
+        "offset": 494,
+        "bytes": "74d0",
+        "assembly": "je     c920 <_ZN7Minisat6Solver14propagateForLKEv+0x1c0>"
+      },
+      {
+        "offset": 496,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 498,
+        "bytes": "8b7c2428",
+        "assembly": "mov    0x28(%rsp),%edi"
+      },
+      {
+        "offset": 502,
+        "bytes": "8b54830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%edx"
+      },
+      {
+        "offset": 506,
+        "bytes": "895310",
+        "assembly": "mov    %edx,0x10(%rbx)"
+      },
+      {
+        "offset": 509,
+        "bytes": "897c830c",
+        "assembly": "mov    %edi,0xc(%rbx,%rax,4)"
+      },
+      {
+        "offset": 513,
+        "bytes": "48637b10",
+        "assembly": "movslq 0x10(%rbx),%rdi"
+      },
+      {
+        "offset": 517,
+        "bytes": "4883f701",
+        "assembly": "xor    $0x1,%rdi"
+      },
+      {
+        "offset": 521,
+        "bytes": "48c1e704",
+        "assembly": "shl    $0x4,%rdi"
+      },
+      {
+        "offset": 525,
+        "bytes": "4903be20020000",
+        "assembly": "add    0x220(%r14),%rdi"
+      },
+      {
+        "offset": 532,
+        "bytes": "48634708",
+        "assembly": "movslq 0x8(%rdi),%rax"
+      },
+      {
+        "offset": 536,
+        "bytes": "3b470c",
+        "assembly": "cmp    0xc(%rdi),%eax"
+      },
+      {
+        "offset": 539,
+        "bytes": "0f8499010000",
+        "assembly": "je     cb1a <_ZN7Minisat6Solver14propagateForLKEv+0x3ba>"
+      },
+      {
+        "offset": 545,
+        "bytes": "8d4801",
+        "assembly": "lea    0x1(%rax),%ecx"
+      },
+      {
+        "offset": 548,
+        "bytes": "488b17",
+        "assembly": "mov    (%rdi),%rdx"
+      },
+      {
+        "offset": 551,
+        "bytes": "83c601",
+        "assembly": "add    $0x1,%esi"
+      },
+      {
+        "offset": 554,
+        "bytes": "894f08",
+        "assembly": "mov    %ecx,0x8(%rdi)"
+      },
+      {
+        "offset": 557,
+        "bytes": "488b4d00",
+        "assembly": "mov    0x0(%rbp),%rcx"
+      },
+      {
+        "offset": 561,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 564,
+        "bytes": "48890cc2",
+        "assembly": "mov    %rcx,(%rdx,%rax,8)"
+      },
+      {
+        "offset": 568,
+        "bytes": "897304",
+        "assembly": "mov    %esi,0x4(%rbx)"
+      },
+      {
+        "offset": 571,
+        "bytes": "4939ed",
+        "assembly": "cmp    %rbp,%r13"
+      },
+      {
+        "offset": 574,
+        "bytes": "0f85dcfeffff",
+        "assembly": "jne    c880 <_ZN7Minisat6Solver14propagateForLKEv+0x120>"
+      },
+      {
+        "offset": 580,
+        "bytes": "4d29fd",
+        "assembly": "sub    %r15,%r13"
+      },
+      {
+        "offset": 583,
+        "bytes": "488b5c2430",
+        "assembly": "mov    0x30(%rsp),%rbx"
+      },
+      {
+        "offset": 588,
+        "bytes": "49c1fd03",
+        "assembly": "sar    $0x3,%r13"
+      },
+      {
+        "offset": 592,
+        "bytes": "4585ed",
+        "assembly": "test   %r13d,%r13d"
+      },
+      {
+        "offset": 595,
+        "bytes": "7e04",
+        "assembly": "jle    c9b9 <_ZN7Minisat6Solver14propagateForLKEv+0x259>"
+      },
+      {
+        "offset": 597,
+        "bytes": "44296b08",
+        "assembly": "sub    %r13d,0x8(%rbx)"
+      },
+      {
+        "offset": 601,
+        "bytes": "8344242c01",
+        "assembly": "addl   $0x1,0x2c(%rsp)"
+      },
+      {
+        "offset": 606,
+        "bytes": "496386b8020000",
+        "assembly": "movslq 0x2b8(%r14),%rax"
+      },
+      {
+        "offset": 613,
+        "bytes": "413b8690020000",
+        "assembly": "cmp    0x290(%r14),%eax"
+      },
+      {
+        "offset": 620,
+        "bytes": "0f8ce8fdffff",
+        "assembly": "jl     c7ba <_ZN7Minisat6Solver14propagateForLKEv+0x5a>"
+      },
+      {
+        "offset": 626,
+        "bytes": "8b4c2438",
+        "assembly": "mov    0x38(%rsp),%ecx"
+      },
+      {
+        "offset": 630,
+        "bytes": "486344242c",
+        "assembly": "movslq 0x2c(%rsp),%rax"
+      },
+      {
+        "offset": 635,
+        "bytes": "490186f8050000",
+        "assembly": "add    %rax,0x5f8(%r14)"
+      },
+      {
+        "offset": 642,
+        "bytes": "e9d0000000",
+        "assembly": "jmp    cab7 <_ZN7Minisat6Solver14propagateForLKEv+0x357>"
+      },
+      {
+        "offset": 647,
+        "bytes": "660f1f84000000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 654,
+        "bytes": "0000",
+        "assembly": ""
+      },
+      {
+        "offset": 656,
+        "bytes": "488b4500",
+        "assembly": "mov    0x0(%rbp),%rax"
+      },
+      {
+        "offset": 660,
+        "bytes": "4983c708",
+        "assembly": "add    $0x8,%r15"
+      },
+      {
+        "offset": 664,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 667,
+        "bytes": "498947f8",
+        "assembly": "mov    %rax,-0x8(%r15)"
+      },
+      {
+        "offset": 671,
+        "bytes": "eb9a",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 673,
+        "bytes": "0f1f8000000000",
+        "assembly": "nopl   0x0(%rax)"
+      },
+      {
+        "offset": 680,
+        "bytes": "4863c7",
+        "assembly": "movslq %edi,%rax"
+      },
+      {
+        "offset": 683,
+        "bytes": "4439d7",
+        "assembly": "cmp    %r10d,%edi"
+      },
+      {
+        "offset": 686,
+        "bytes": "0f8c21ffffff",
+        "assembly": "jl     c935 <_ZN7Minisat6Solver14propagateForLKEv+0x1d5>"
+      },
+      {
+        "offset": 692,
+        "bytes": "90",
+        "assembly": "nop"
+      },
+      {
+        "offset": 693,
+        "bytes": "66662e0f1f8400",
+        "assembly": "data16 cs nopw 0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 700,
+        "bytes": "00000000",
+        "assembly": ""
+      },
+      {
+        "offset": 704,
+        "bytes": "83ff02",
+        "assembly": "cmp    $0x2,%edi"
+      },
+      {
+        "offset": 707,
+        "bytes": "0f86a7000000",
+        "assembly": "jbe    cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>"
+      },
+      {
+        "offset": 713,
+        "bytes": "b802000000",
+        "assembly": "mov    $0x2,%eax"
+      },
+      {
+        "offset": 718,
+        "bytes": "eb12",
+        "assembly": "jmp    ca42 <_ZN7Minisat6Solver14propagateForLKEv+0x2e2>"
+      },
+      {
+        "offset": 720,
+        "bytes": "4438d1",
+        "assembly": "cmp    %r10b,%cl"
+      },
+      {
+        "offset": 723,
+        "bytes": "744b",
+        "assembly": "je     ca80 <_ZN7Minisat6Solver14propagateForLKEv+0x320>"
+      },
+      {
+        "offset": 725,
+        "bytes": "4883c001",
+        "assembly": "add    $0x1,%rax"
+      },
+      {
+        "offset": 729,
+        "bytes": "4839f8",
+        "assembly": "cmp    %rdi,%rax"
+      },
+      {
+        "offset": 732,
+        "bytes": "0f848e000000",
+        "assembly": "je     cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>"
+      },
+      {
+        "offset": 738,
+        "bytes": "8b54830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%edx"
+      },
+      {
+        "offset": 742,
+        "bytes": "4863f0",
+        "assembly": "movslq %eax,%rsi"
+      },
+      {
+        "offset": 745,
+        "bytes": "89d1",
+        "assembly": "mov    %edx,%ecx"
+      },
+      {
+        "offset": 747,
+        "bytes": "4189d2",
+        "assembly": "mov    %edx,%r10d"
+      },
+      {
+        "offset": 750,
+        "bytes": "d1f9",
+        "assembly": "sar    $1,%ecx"
+      },
+      {
+        "offset": 752,
+        "bytes": "4183e201",
+        "assembly": "and    $0x1,%r10d"
+      },
+      {
+        "offset": 756,
+        "bytes": "4863c9",
+        "assembly": "movslq %ecx,%rcx"
+      },
+      {
+        "offset": 759,
+        "bytes": "410fb60c09",
+        "assembly": "movzbl (%r9,%rcx,1),%ecx"
+      },
+      {
+        "offset": 764,
+        "bytes": "f6c102",
+        "assembly": "test   $0x2,%cl"
+      },
+      {
+        "offset": 767,
+        "bytes": "74cf",
+        "assembly": "je     ca30 <_ZN7Minisat6Solver14propagateForLKEv+0x2d0>"
+      },
+      {
+        "offset": 769,
+        "bytes": "4898",
+        "assembly": "cltq"
+      },
+      {
+        "offset": 771,
+        "bytes": "8b7c2428",
+        "assembly": "mov    0x28(%rsp),%edi"
+      },
+      {
+        "offset": 775,
+        "bytes": "83f201",
+        "assembly": "xor    $0x1,%edx"
+      },
+      {
+        "offset": 778,
+        "bytes": "8b4c830c",
+        "assembly": "mov    0xc(%rbx,%rax,4),%ecx"
+      },
+      {
+        "offset": 782,
+        "bytes": "894b10",
+        "assembly": "mov    %ecx,0x10(%rbx)"
+      },
+      {
+        "offset": 785,
+        "bytes": "897c830c",
+        "assembly": "mov    %edi,0xc(%rbx,%rax,4)"
+      },
+      {
+        "offset": 789,
+        "bytes": "4863fa",
+        "assembly": "movslq %edx,%rdi"
+      },
+      {
+        "offset": 792,
+        "bytes": "e9ecfeffff",
+        "assembly": "jmp    c969 <_ZN7Minisat6Solver14propagateForLKEv+0x209>"
+      },
+      {
+        "offset": 797,
+        "bytes": "0f1f00",
+        "assembly": "nopl   (%rax)"
+      },
+      {
+        "offset": 800,
+        "bytes": "8b54b30c",
+        "assembly": "mov    0xc(%rbx,%rsi,4),%edx"
+      },
+      {
+        "offset": 804,
+        "bytes": "4983c708",
+        "assembly": "add    $0x8,%r15"
+      },
+      {
+        "offset": 808,
+        "bytes": "895504",
+        "assembly": "mov    %edx,0x4(%rbp)"
+      },
+      {
+        "offset": 811,
+        "bytes": "488b5500",
+        "assembly": "mov    0x0(%rbp),%rdx"
+      },
+      {
+        "offset": 815,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 818,
+        "bytes": "498957f8",
+        "assembly": "mov    %rdx,-0x8(%r15)"
+      },
+      {
+        "offset": 822,
+        "bytes": "894304",
+        "assembly": "mov    %eax,0x4(%rbx)"
+      },
+      {
+        "offset": 825,
+        "bytes": "e9fdfeffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 830,
+        "bytes": "6690",
+        "assembly": "xchg   %ax,%ax"
+      },
+      {
+        "offset": 832,
+        "bytes": "4183f401",
+        "assembly": "xor    $0x1,%r12d"
+      },
+      {
+        "offset": 836,
+        "bytes": "41899614090000",
+        "assembly": "mov    %edx,0x914(%r14)"
+      },
+      {
+        "offset": 843,
+        "bytes": "b9feffffff",
+        "assembly": "mov    $0xfffffffe,%ecx"
+      },
+      {
+        "offset": 848,
+        "bytes": "4589a610090000",
+        "assembly": "mov    %r12d,0x910(%r14)"
+      },
+      {
+        "offset": 855,
+        "bytes": "89c8",
+        "assembly": "mov    %ecx,%eax"
+      },
+      {
+        "offset": 857,
+        "bytes": "4883c448",
+        "assembly": "add    $0x48,%rsp"
+      },
+      {
+        "offset": 861,
+        "bytes": "5b",
+        "assembly": "pop    %rbx"
+      },
+      {
+        "offset": 862,
+        "bytes": "5e",
+        "assembly": "pop    %rsi"
+      },
+      {
+        "offset": 863,
+        "bytes": "5f",
+        "assembly": "pop    %rdi"
+      },
+      {
+        "offset": 864,
+        "bytes": "5d",
+        "assembly": "pop    %rbp"
+      },
+      {
+        "offset": 865,
+        "bytes": "415c",
+        "assembly": "pop    %r12"
+      },
+      {
+        "offset": 867,
+        "bytes": "415d",
+        "assembly": "pop    %r13"
+      },
+      {
+        "offset": 869,
+        "bytes": "415e",
+        "assembly": "pop    %r14"
+      },
+      {
+        "offset": 871,
+        "bytes": "415f",
+        "assembly": "pop    %r15"
+      },
+      {
+        "offset": 873,
+        "bytes": "c3",
+        "assembly": "ret"
+      },
+      {
+        "offset": 874,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 880,
+        "bytes": "488b4500",
+        "assembly": "mov    0x0(%rbp),%rax"
+      },
+      {
+        "offset": 884,
+        "bytes": "4589da",
+        "assembly": "mov    %r11d,%r10d"
+      },
+      {
+        "offset": 887,
+        "bytes": "498d5f08",
+        "assembly": "lea    0x8(%r15),%rbx"
+      },
+      {
+        "offset": 891,
+        "bytes": "41d1fa",
+        "assembly": "sar    $1,%r10d"
+      },
+      {
+        "offset": 894,
+        "bytes": "498907",
+        "assembly": "mov    %rax,(%r15)"
+      },
+      {
+        "offset": 897,
+        "bytes": "4963d2",
+        "assembly": "movslq %r10d,%rdx"
+      },
+      {
+        "offset": 900,
+        "bytes": "4489d8",
+        "assembly": "mov    %r11d,%eax"
+      },
+      {
+        "offset": 903,
+        "bytes": "83e001",
+        "assembly": "and    $0x1,%eax"
+      },
+      {
+        "offset": 906,
+        "bytes": "41320411",
+        "assembly": "xor    (%r9,%rdx,1),%al"
+      },
+      {
+        "offset": 910,
+        "bytes": "3c01",
+        "assembly": "cmp    $0x1,%al"
+      },
+      {
+        "offset": 912,
+        "bytes": "0f8482000000",
+        "assembly": "je     cb78 <_ZN7Minisat6Solver14propagateForLKEv+0x418>"
+      },
+      {
+        "offset": 918,
+        "bytes": "4489da",
+        "assembly": "mov    %r11d,%edx"
+      },
+      {
+        "offset": 921,
+        "bytes": "4c89f1",
+        "assembly": "mov    %r14,%rcx"
+      },
+      {
+        "offset": 924,
+        "bytes": "448954243c",
+        "assembly": "mov    %r10d,0x3c(%rsp)"
+      },
+      {
+        "offset": 929,
+        "bytes": "e81ae3ffff",
+        "assembly": "call   ae20 <_ZN7Minisat6Solver21uncheckedEnqueueForLKENS_3LitEj>"
+      },
+      {
+        "offset": 934,
+        "bytes": "448b54243c",
+        "assembly": "mov    0x3c(%rsp),%r10d"
+      },
+      {
+        "offset": 939,
+        "bytes": "84c0",
+        "assembly": "test   %al,%al"
+      },
+      {
+        "offset": 941,
+        "bytes": "741f",
+        "assembly": "je     cb2e <_ZN7Minisat6Solver14propagateForLKEv+0x3ce>"
+      },
+      {
+        "offset": 943,
+        "bytes": "4989df",
+        "assembly": "mov    %rbx,%r15"
+      },
+      {
+        "offset": 946,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 949,
+        "bytes": "e981feffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 954,
+        "bytes": "8d5001",
+        "assembly": "lea    0x1(%rax),%edx"
+      },
+      {
+        "offset": 957,
+        "bytes": "4889f9",
+        "assembly": "mov    %rdi,%rcx"
+      },
+      {
+        "offset": 960,
+        "bytes": "e800000000",
+        "assembly": "call   cb25 <_ZN7Minisat6Solver14propagateForLKEv+0x3c5>"
+      },
+      {
+        "offset": 965,
+        "bytes": "48634708",
+        "assembly": "movslq 0x8(%rdi),%rax"
+      },
+      {
+        "offset": 969,
+        "bytes": "e953feffff",
+        "assembly": "jmp    c981 <_ZN7Minisat6Solver14propagateForLKEv+0x221>"
+      },
+      {
+        "offset": 974,
+        "bytes": "418b8690020000",
+        "assembly": "mov    0x290(%r14),%eax"
+      },
+      {
+        "offset": 981,
+        "bytes": "418986b8020000",
+        "assembly": "mov    %eax,0x2b8(%r14)"
+      },
+      {
+        "offset": 988,
+        "bytes": "4d39ec",
+        "assembly": "cmp    %r13,%r12"
+      },
+      {
+        "offset": 991,
+        "bytes": "0f839d000000",
+        "assembly": "jae    cbe2 <_ZN7Minisat6Solver14propagateForLKEv+0x482>"
+      },
+      {
+        "offset": 997,
+        "bytes": "4889df",
+        "assembly": "mov    %rbx,%rdi"
+      },
+      {
+        "offset": 1000,
+        "bytes": "4c89e6",
+        "assembly": "mov    %r12,%rsi"
+      },
+      {
+        "offset": 1003,
+        "bytes": "0f1f440000",
+        "assembly": "nopl   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 1008,
+        "bytes": "48a5",
+        "assembly": "movsq  (%rsi),(%rdi)"
+      },
+      {
+        "offset": 1010,
+        "bytes": "4c39ee",
+        "assembly": "cmp    %r13,%rsi"
+      },
+      {
+        "offset": 1013,
+        "bytes": "72f9",
+        "assembly": "jb     cb50 <_ZN7Minisat6Solver14propagateForLKEv+0x3f0>"
+      },
+      {
+        "offset": 1015,
+        "bytes": "498d45f7",
+        "assembly": "lea    -0x9(%r13),%rax"
+      },
+      {
+        "offset": 1019,
+        "bytes": "4829e8",
+        "assembly": "sub    %rbp,%rax"
+      },
+      {
+        "offset": 1022,
+        "bytes": "4883e0f8",
+        "assembly": "and    $0xfffffffffffffff8,%rax"
+      },
+      {
+        "offset": 1026,
+        "bytes": "4c8d7c0308",
+        "assembly": "lea    0x8(%rbx,%rax,1),%r15"
+      },
+      {
+        "offset": 1031,
+        "bytes": "498d6c0408",
+        "assembly": "lea    0x8(%r12,%rax,1),%rbp"
+      },
+      {
+        "offset": 1036,
+        "bytes": "45899618060000",
+        "assembly": "mov    %r10d,0x618(%r14)"
+      },
+      {
+        "offset": 1043,
+        "bytes": "e923feffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 1048,
+        "bytes": "418b8690020000",
+        "assembly": "mov    0x290(%r14),%eax"
+      },
+      {
+        "offset": 1055,
+        "bytes": "418986b8020000",
+        "assembly": "mov    %eax,0x2b8(%r14)"
+      },
+      {
+        "offset": 1062,
+        "bytes": "4d39ec",
+        "assembly": "cmp    %r13,%r12"
+      },
+      {
+        "offset": 1065,
+        "bytes": "7347",
+        "assembly": "jae    cbd2 <_ZN7Minisat6Solver14propagateForLKEv+0x472>"
+      },
+      {
+        "offset": 1067,
+        "bytes": "4889df",
+        "assembly": "mov    %rbx,%rdi"
+      },
+      {
+        "offset": 1070,
+        "bytes": "4c89e6",
+        "assembly": "mov    %r12,%rsi"
+      },
+      {
+        "offset": 1073,
+        "bytes": "0f1f8000000000",
+        "assembly": "nopl   0x0(%rax)"
+      },
+      {
+        "offset": 1080,
+        "bytes": "0f1f8400000000",
+        "assembly": "nopl   0x0(%rax,%rax,1)"
+      },
+      {
+        "offset": 1087,
+        "bytes": "00",
+        "assembly": ""
+      },
+      {
+        "offset": 1088,
+        "bytes": "48a5",
+        "assembly": "movsq  (%rsi),(%rdi)"
+      },
+      {
+        "offset": 1090,
+        "bytes": "4c39ee",
+        "assembly": "cmp    %r13,%rsi"
+      },
+      {
+        "offset": 1093,
+        "bytes": "72f9",
+        "assembly": "jb     cba0 <_ZN7Minisat6Solver14propagateForLKEv+0x440>"
+      },
+      {
+        "offset": 1095,
+        "bytes": "498d45f7",
+        "assembly": "lea    -0x9(%r13),%rax"
+      },
+      {
+        "offset": 1099,
+        "bytes": "4489442438",
+        "assembly": "mov    %r8d,0x38(%rsp)"
+      },
+      {
+        "offset": 1104,
+        "bytes": "4829e8",
+        "assembly": "sub    %rbp,%rax"
+      },
+      {
+        "offset": 1107,
+        "bytes": "4883e0f8",
+        "assembly": "and    $0xfffffffffffffff8,%rax"
+      },
+      {
+        "offset": 1111,
+        "bytes": "4c8d7c0308",
+        "assembly": "lea    0x8(%rbx,%rax,1),%r15"
+      },
+      {
+        "offset": 1116,
+        "bytes": "498d6c0408",
+        "assembly": "lea    0x8(%r12,%rax,1),%rbp"
+      },
+      {
+        "offset": 1121,
+        "bytes": "e9d5fdffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 1126,
+        "bytes": "31c0",
+        "assembly": "xor    %eax,%eax"
+      },
+      {
+        "offset": 1128,
+        "bytes": "b9ffffffff",
+        "assembly": "mov    $0xffffffff,%ecx"
+      },
+      {
+        "offset": 1133,
+        "bytes": "e909feffff",
+        "assembly": "jmp    c9db <_ZN7Minisat6Solver14propagateForLKEv+0x27b>"
+      },
+      {
+        "offset": 1138,
+        "bytes": "4489442438",
+        "assembly": "mov    %r8d,0x38(%rsp)"
+      },
+      {
+        "offset": 1143,
+        "bytes": "4989df",
+        "assembly": "mov    %rbx,%r15"
+      },
+      {
+        "offset": 1146,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 1149,
+        "bytes": "e9b9fdffff",
+        "assembly": "jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>"
+      },
+      {
+        "offset": 1154,
+        "bytes": "4989df",
+        "assembly": "mov    %rbx,%r15"
+      },
+      {
+        "offset": 1157,
+        "bytes": "4c89e5",
+        "assembly": "mov    %r12,%rbp"
+      },
+      {
+        "offset": 1160,
+        "bytes": "eb82",
+        "assembly": "jmp    cb6c <_ZN7Minisat6Solver14propagateForLKEv+0x40c>"
+      },
+      {
+        "offset": 1162,
+        "bytes": "660f1f440000",
+        "assembly": "nopw   0x0(%rax,%rax,1)"
+      }
+    ]
+  },
+  "scientific_certification": "NOT_ESTABLISHED",
+  "performance": "NOT_MEASURED",
+  "automatic_solver_or_timing": false
+}

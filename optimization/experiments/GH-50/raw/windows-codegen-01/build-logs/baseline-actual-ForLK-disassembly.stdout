@@ -1,0 +1,410 @@
+
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH50-windows-codegen-01/baseline-source/build/Solver.o:     file format pe-x86-64
+
+
+Disassembly of section .text:
+
+000000000000c760 <_ZN7Minisat6Solver14propagateForLKEv>:
+    c760:	41 57                	push   %r15
+    c762:	41 56                	push   %r14
+    c764:	41 55                	push   %r13
+    c766:	41 54                	push   %r12
+    c768:	55                   	push   %rbp
+    c769:	57                   	push   %rdi
+    c76a:	56                   	push   %rsi
+    c76b:	53                   	push   %rbx
+    c76c:	48 83 ec 48          	sub    $0x48,%rsp
+    c770:	c7 81 18 06 00 00 ff 	movl   $0xffffffff,0x618(%rcx)
+    c777:	ff ff ff 
+    c77a:	49 89 ce             	mov    %rcx,%r14
+    c77d:	48 8d 89 20 02 00 00 	lea    0x220(%rcx),%rcx
+    c784:	e8 00 00 00 00       	call   c789 <_ZN7Minisat6Solver14propagateForLKEv+0x29>
+			c785: IMAGE_REL_AMD64_REL32	_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv
+    c789:	49 8d 8e e8 01 00 00 	lea    0x1e8(%r14),%rcx
+    c790:	e8 00 00 00 00       	call   c795 <_ZN7Minisat6Solver14propagateForLKEv+0x35>
+			c791: IMAGE_REL_AMD64_REL32	_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv
+    c795:	49 63 86 b8 02 00 00 	movslq 0x2b8(%r14),%rax
+    c79c:	41 39 86 90 02 00 00 	cmp    %eax,0x290(%r14)
+    c7a3:	0f 8e 1d 04 00 00    	jle    cbc6 <_ZN7Minisat6Solver14propagateForLKEv+0x466>
+    c7a9:	b9 ff ff ff ff       	mov    $0xffffffff,%ecx
+    c7ae:	c7 44 24 2c 00 00 00 	movl   $0x0,0x2c(%rsp)
+    c7b5:	00 
+    c7b6:	89 4c 24 38          	mov    %ecx,0x38(%rsp)
+    c7ba:	8d 50 01             	lea    0x1(%rax),%edx
+    c7bd:	49 8b b6 e8 01 00 00 	mov    0x1e8(%r14),%rsi
+    c7c4:	4d 8b ae 20 02 00 00 	mov    0x220(%r14),%r13
+    c7cb:	41 89 96 b8 02 00 00 	mov    %edx,0x2b8(%r14)
+    c7d2:	49 8b 96 88 02 00 00 	mov    0x288(%r14),%rdx
+    c7d9:	48 63 2c 82          	movslq (%rdx,%rax,4),%rbp
+    c7dd:	49 89 ec             	mov    %rbp,%r12
+    c7e0:	48 c1 e5 04          	shl    $0x4,%rbp
+    c7e4:	48 01 ee             	add    %rbp,%rsi
+    c7e7:	8b 46 08             	mov    0x8(%rsi),%eax
+    c7ea:	85 c0                	test   %eax,%eax
+    c7ec:	7e 62                	jle    c850 <_ZN7Minisat6Solver14propagateForLKEv+0xf0>
+    c7ee:	31 db                	xor    %ebx,%ebx
+    c7f0:	eb 0f                	jmp    c801 <_ZN7Minisat6Solver14propagateForLKEv+0xa1>
+    c7f2:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+    c7f8:	48 83 c3 01          	add    $0x1,%rbx
+    c7fc:	39 5e 08             	cmp    %ebx,0x8(%rsi)
+    c7ff:	7e 4f                	jle    c850 <_ZN7Minisat6Solver14propagateForLKEv+0xf0>
+    c801:	48 8b 06             	mov    (%rsi),%rax
+    c804:	4d 8b 8e 58 02 00 00 	mov    0x258(%r14),%r9
+    c80b:	48 8d 0c d8          	lea    (%rax,%rbx,8),%rcx
+    c80f:	8b 51 04             	mov    0x4(%rcx),%edx
+    c812:	89 d7                	mov    %edx,%edi
+    c814:	89 d0                	mov    %edx,%eax
+    c816:	d1 ff                	sar    $1,%edi
+    c818:	83 e0 01             	and    $0x1,%eax
+    c81b:	4c 63 c7             	movslq %edi,%r8
+    c81e:	43 32 04 01          	xor    (%r9,%r8,1),%al
+    c822:	3c 01                	cmp    $0x1,%al
+    c824:	0f 84 76 02 00 00    	je     caa0 <_ZN7Minisat6Solver14propagateForLKEv+0x340>
+    c82a:	a8 02                	test   $0x2,%al
+    c82c:	74 ca                	je     c7f8 <_ZN7Minisat6Solver14propagateForLKEv+0x98>
+    c82e:	44 8b 01             	mov    (%rcx),%r8d
+    c831:	4c 89 f1             	mov    %r14,%rcx
+    c834:	e8 e7 e5 ff ff       	call   ae20 <_ZN7Minisat6Solver21uncheckedEnqueueForLKENS_3LitEj>
+    c839:	84 c0                	test   %al,%al
+    c83b:	75 bb                	jne    c7f8 <_ZN7Minisat6Solver14propagateForLKEv+0x98>
+    c83d:	41 89 be 18 06 00 00 	mov    %edi,0x618(%r14)
+    c844:	b9 ff ff ff ff       	mov    $0xffffffff,%ecx
+    c849:	e9 69 02 00 00       	jmp    cab7 <_ZN7Minisat6Solver14propagateForLKEv+0x357>
+    c84e:	66 90                	xchg   %ax,%ax
+    c850:	49 8d 5c 2d 00       	lea    0x0(%r13,%rbp,1),%rbx
+    c855:	4c 8b 3b             	mov    (%rbx),%r15
+    c858:	48 63 43 08          	movslq 0x8(%rbx),%rax
+    c85c:	4d 8d 2c c7          	lea    (%r15,%rax,8),%r13
+    c860:	4d 39 fd             	cmp    %r15,%r13
+    c863:	0f 84 50 01 00 00    	je     c9b9 <_ZN7Minisat6Solver14propagateForLKEv+0x259>
+    c869:	41 83 f4 01          	xor    $0x1,%r12d
+    c86d:	48 89 5c 24 30       	mov    %rbx,0x30(%rsp)
+    c872:	4c 89 fd             	mov    %r15,%rbp
+    c875:	44 89 64 24 28       	mov    %r12d,0x28(%rsp)
+    c87a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+    c880:	8b 55 04             	mov    0x4(%rbp),%edx
+    c883:	4d 8b 8e 58 02 00 00 	mov    0x258(%r14),%r9
+    c88a:	4c 8d 65 08          	lea    0x8(%rbp),%r12
+    c88e:	89 d0                	mov    %edx,%eax
+    c890:	89 d1                	mov    %edx,%ecx
+    c892:	d1 f8                	sar    $1,%eax
+    c894:	83 e1 01             	and    $0x1,%ecx
+    c897:	48 98                	cltq
+    c899:	41 38 0c 01          	cmp    %cl,(%r9,%rax,1)
+    c89d:	0f 84 4d 01 00 00    	je     c9f0 <_ZN7Minisat6Solver14propagateForLKEv+0x290>
+    c8a3:	8b 4d 00             	mov    0x0(%rbp),%ecx
+    c8a6:	49 8b 86 a0 03 00 00 	mov    0x3a0(%r14),%rax
+    c8ad:	48 8d 1c 88          	lea    (%rax,%rcx,4),%rbx
+    c8b1:	8b 44 24 28          	mov    0x28(%rsp),%eax
+    c8b5:	49 89 c8             	mov    %rcx,%r8
+    c8b8:	44 8b 5b 0c          	mov    0xc(%rbx),%r11d
+    c8bc:	41 39 c3             	cmp    %eax,%r11d
+    c8bf:	75 0b                	jne    c8cc <_ZN7Minisat6Solver14propagateForLKEv+0x16c>
+    c8c1:	44 8b 5b 10          	mov    0x10(%rbx),%r11d
+    c8c5:	89 43 10             	mov    %eax,0x10(%rbx)
+    c8c8:	44 89 5b 0c          	mov    %r11d,0xc(%rbx)
+    c8cc:	44 39 da             	cmp    %r11d,%edx
+    c8cf:	74 1b                	je     c8ec <_ZN7Minisat6Solver14propagateForLKEv+0x18c>
+    c8d1:	44 89 d8             	mov    %r11d,%eax
+    c8d4:	44 89 da             	mov    %r11d,%edx
+    c8d7:	44 89 5d 04          	mov    %r11d,0x4(%rbp)
+    c8db:	d1 f8                	sar    $1,%eax
+    c8dd:	83 e2 01             	and    $0x1,%edx
+    c8e0:	48 98                	cltq
+    c8e2:	41 38 14 01          	cmp    %dl,(%r9,%rax,1)
+    c8e6:	0f 84 04 01 00 00    	je     c9f0 <_ZN7Minisat6Solver14propagateForLKEv+0x290>
+    c8ec:	8b 7b 04             	mov    0x4(%rbx),%edi
+    c8ef:	44 8b 13             	mov    (%rbx),%r10d
+    c8f2:	41 39 fa             	cmp    %edi,%r10d
+    c8f5:	0f 83 0d 01 00 00    	jae    ca08 <_ZN7Minisat6Solver14propagateForLKEv+0x2a8>
+    c8fb:	c7 43 04 02 00 00 00 	movl   $0x2,0x4(%rbx)
+    c902:	bf 02 00 00 00       	mov    $0x2,%edi
+    c907:	b8 02 00 00 00       	mov    $0x2,%eax
+    c90c:	41 83 fa 02          	cmp    $0x2,%r10d
+    c910:	7f 23                	jg     c935 <_ZN7Minisat6Solver14propagateForLKEv+0x1d5>
+    c912:	e9 b9 01 00 00       	jmp    cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>
+    c917:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    c91e:	00 00 
+    c920:	38 d1                	cmp    %dl,%cl
+    c922:	0f 84 58 01 00 00    	je     ca80 <_ZN7Minisat6Solver14propagateForLKEv+0x320>
+    c928:	48 83 c0 01          	add    $0x1,%rax
+    c92c:	41 39 c2             	cmp    %eax,%r10d
+    c92f:	0f 8e eb 00 00 00    	jle    ca20 <_ZN7Minisat6Solver14propagateForLKEv+0x2c0>
+    c935:	8b 54 83 0c          	mov    0xc(%rbx,%rax,4),%edx
+    c939:	48 63 f0             	movslq %eax,%rsi
+    c93c:	89 d1                	mov    %edx,%ecx
+    c93e:	83 e2 01             	and    $0x1,%edx
+    c941:	d1 f9                	sar    $1,%ecx
+    c943:	48 63 c9             	movslq %ecx,%rcx
+    c946:	41 0f b6 0c 09       	movzbl (%r9,%rcx,1),%ecx
+    c94b:	f6 c1 02             	test   $0x2,%cl
+    c94e:	74 d0                	je     c920 <_ZN7Minisat6Solver14propagateForLKEv+0x1c0>
+    c950:	48 98                	cltq
+    c952:	8b 7c 24 28          	mov    0x28(%rsp),%edi
+    c956:	8b 54 83 0c          	mov    0xc(%rbx,%rax,4),%edx
+    c95a:	89 53 10             	mov    %edx,0x10(%rbx)
+    c95d:	89 7c 83 0c          	mov    %edi,0xc(%rbx,%rax,4)
+    c961:	48 63 7b 10          	movslq 0x10(%rbx),%rdi
+    c965:	48 83 f7 01          	xor    $0x1,%rdi
+    c969:	48 c1 e7 04          	shl    $0x4,%rdi
+    c96d:	49 03 be 20 02 00 00 	add    0x220(%r14),%rdi
+    c974:	48 63 47 08          	movslq 0x8(%rdi),%rax
+    c978:	3b 47 0c             	cmp    0xc(%rdi),%eax
+    c97b:	0f 84 99 01 00 00    	je     cb1a <_ZN7Minisat6Solver14propagateForLKEv+0x3ba>
+    c981:	8d 48 01             	lea    0x1(%rax),%ecx
+    c984:	48 8b 17             	mov    (%rdi),%rdx
+    c987:	83 c6 01             	add    $0x1,%esi
+    c98a:	89 4f 08             	mov    %ecx,0x8(%rdi)
+    c98d:	48 8b 4d 00          	mov    0x0(%rbp),%rcx
+    c991:	4c 89 e5             	mov    %r12,%rbp
+    c994:	48 89 0c c2          	mov    %rcx,(%rdx,%rax,8)
+    c998:	89 73 04             	mov    %esi,0x4(%rbx)
+    c99b:	49 39 ed             	cmp    %rbp,%r13
+    c99e:	0f 85 dc fe ff ff    	jne    c880 <_ZN7Minisat6Solver14propagateForLKEv+0x120>
+    c9a4:	4d 29 fd             	sub    %r15,%r13
+    c9a7:	48 8b 5c 24 30       	mov    0x30(%rsp),%rbx
+    c9ac:	49 c1 fd 03          	sar    $0x3,%r13
+    c9b0:	45 85 ed             	test   %r13d,%r13d
+    c9b3:	7e 04                	jle    c9b9 <_ZN7Minisat6Solver14propagateForLKEv+0x259>
+    c9b5:	44 29 6b 08          	sub    %r13d,0x8(%rbx)
+    c9b9:	83 44 24 2c 01       	addl   $0x1,0x2c(%rsp)
+    c9be:	49 63 86 b8 02 00 00 	movslq 0x2b8(%r14),%rax
+    c9c5:	41 3b 86 90 02 00 00 	cmp    0x290(%r14),%eax
+    c9cc:	0f 8c e8 fd ff ff    	jl     c7ba <_ZN7Minisat6Solver14propagateForLKEv+0x5a>
+    c9d2:	8b 4c 24 38          	mov    0x38(%rsp),%ecx
+    c9d6:	48 63 44 24 2c       	movslq 0x2c(%rsp),%rax
+    c9db:	49 01 86 f8 05 00 00 	add    %rax,0x5f8(%r14)
+    c9e2:	e9 d0 00 00 00       	jmp    cab7 <_ZN7Minisat6Solver14propagateForLKEv+0x357>
+    c9e7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+    c9ee:	00 00 
+    c9f0:	48 8b 45 00          	mov    0x0(%rbp),%rax
+    c9f4:	49 83 c7 08          	add    $0x8,%r15
+    c9f8:	4c 89 e5             	mov    %r12,%rbp
+    c9fb:	49 89 47 f8          	mov    %rax,-0x8(%r15)
+    c9ff:	eb 9a                	jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>
+    ca01:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    ca08:	48 63 c7             	movslq %edi,%rax
+    ca0b:	44 39 d7             	cmp    %r10d,%edi
+    ca0e:	0f 8c 21 ff ff ff    	jl     c935 <_ZN7Minisat6Solver14propagateForLKEv+0x1d5>
+    ca14:	90                   	nop
+    ca15:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+    ca1c:	00 00 00 00 
+    ca20:	83 ff 02             	cmp    $0x2,%edi
+    ca23:	0f 86 a7 00 00 00    	jbe    cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>
+    ca29:	b8 02 00 00 00       	mov    $0x2,%eax
+    ca2e:	eb 12                	jmp    ca42 <_ZN7Minisat6Solver14propagateForLKEv+0x2e2>
+    ca30:	44 38 d1             	cmp    %r10b,%cl
+    ca33:	74 4b                	je     ca80 <_ZN7Minisat6Solver14propagateForLKEv+0x320>
+    ca35:	48 83 c0 01          	add    $0x1,%rax
+    ca39:	48 39 f8             	cmp    %rdi,%rax
+    ca3c:	0f 84 8e 00 00 00    	je     cad0 <_ZN7Minisat6Solver14propagateForLKEv+0x370>
+    ca42:	8b 54 83 0c          	mov    0xc(%rbx,%rax,4),%edx
+    ca46:	48 63 f0             	movslq %eax,%rsi
+    ca49:	89 d1                	mov    %edx,%ecx
+    ca4b:	41 89 d2             	mov    %edx,%r10d
+    ca4e:	d1 f9                	sar    $1,%ecx
+    ca50:	41 83 e2 01          	and    $0x1,%r10d
+    ca54:	48 63 c9             	movslq %ecx,%rcx
+    ca57:	41 0f b6 0c 09       	movzbl (%r9,%rcx,1),%ecx
+    ca5c:	f6 c1 02             	test   $0x2,%cl
+    ca5f:	74 cf                	je     ca30 <_ZN7Minisat6Solver14propagateForLKEv+0x2d0>
+    ca61:	48 98                	cltq
+    ca63:	8b 7c 24 28          	mov    0x28(%rsp),%edi
+    ca67:	83 f2 01             	xor    $0x1,%edx
+    ca6a:	8b 4c 83 0c          	mov    0xc(%rbx,%rax,4),%ecx
+    ca6e:	89 4b 10             	mov    %ecx,0x10(%rbx)
+    ca71:	89 7c 83 0c          	mov    %edi,0xc(%rbx,%rax,4)
+    ca75:	48 63 fa             	movslq %edx,%rdi
+    ca78:	e9 ec fe ff ff       	jmp    c969 <_ZN7Minisat6Solver14propagateForLKEv+0x209>
+    ca7d:	0f 1f 00             	nopl   (%rax)
+    ca80:	8b 54 b3 0c          	mov    0xc(%rbx,%rsi,4),%edx
+    ca84:	49 83 c7 08          	add    $0x8,%r15
+    ca88:	89 55 04             	mov    %edx,0x4(%rbp)
+    ca8b:	48 8b 55 00          	mov    0x0(%rbp),%rdx
+    ca8f:	4c 89 e5             	mov    %r12,%rbp
+    ca92:	49 89 57 f8          	mov    %rdx,-0x8(%r15)
+    ca96:	89 43 04             	mov    %eax,0x4(%rbx)
+    ca99:	e9 fd fe ff ff       	jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>
+    ca9e:	66 90                	xchg   %ax,%ax
+    caa0:	41 83 f4 01          	xor    $0x1,%r12d
+    caa4:	41 89 96 14 09 00 00 	mov    %edx,0x914(%r14)
+    caab:	b9 fe ff ff ff       	mov    $0xfffffffe,%ecx
+    cab0:	45 89 a6 10 09 00 00 	mov    %r12d,0x910(%r14)
+    cab7:	89 c8                	mov    %ecx,%eax
+    cab9:	48 83 c4 48          	add    $0x48,%rsp
+    cabd:	5b                   	pop    %rbx
+    cabe:	5e                   	pop    %rsi
+    cabf:	5f                   	pop    %rdi
+    cac0:	5d                   	pop    %rbp
+    cac1:	41 5c                	pop    %r12
+    cac3:	41 5d                	pop    %r13
+    cac5:	41 5e                	pop    %r14
+    cac7:	41 5f                	pop    %r15
+    cac9:	c3                   	ret
+    caca:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+    cad0:	48 8b 45 00          	mov    0x0(%rbp),%rax
+    cad4:	45 89 da             	mov    %r11d,%r10d
+    cad7:	49 8d 5f 08          	lea    0x8(%r15),%rbx
+    cadb:	41 d1 fa             	sar    $1,%r10d
+    cade:	49 89 07             	mov    %rax,(%r15)
+    cae1:	49 63 d2             	movslq %r10d,%rdx
+    cae4:	44 89 d8             	mov    %r11d,%eax
+    cae7:	83 e0 01             	and    $0x1,%eax
+    caea:	41 32 04 11          	xor    (%r9,%rdx,1),%al
+    caee:	3c 01                	cmp    $0x1,%al
+    caf0:	0f 84 82 00 00 00    	je     cb78 <_ZN7Minisat6Solver14propagateForLKEv+0x418>
+    caf6:	44 89 da             	mov    %r11d,%edx
+    caf9:	4c 89 f1             	mov    %r14,%rcx
+    cafc:	44 89 54 24 3c       	mov    %r10d,0x3c(%rsp)
+    cb01:	e8 1a e3 ff ff       	call   ae20 <_ZN7Minisat6Solver21uncheckedEnqueueForLKENS_3LitEj>
+    cb06:	44 8b 54 24 3c       	mov    0x3c(%rsp),%r10d
+    cb0b:	84 c0                	test   %al,%al
+    cb0d:	74 1f                	je     cb2e <_ZN7Minisat6Solver14propagateForLKEv+0x3ce>
+    cb0f:	49 89 df             	mov    %rbx,%r15
+    cb12:	4c 89 e5             	mov    %r12,%rbp
+    cb15:	e9 81 fe ff ff       	jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>
+    cb1a:	8d 50 01             	lea    0x1(%rax),%edx
+    cb1d:	48 89 f9             	mov    %rdi,%rcx
+    cb20:	e8 00 00 00 00       	call   cb25 <_ZN7Minisat6Solver14propagateForLKEv+0x3c5>
+			cb21: IMAGE_REL_AMD64_REL32	_ZN7Minisat3vecINS_6Solver7WatcherEE8capacityEi
+    cb25:	48 63 47 08          	movslq 0x8(%rdi),%rax
+    cb29:	e9 53 fe ff ff       	jmp    c981 <_ZN7Minisat6Solver14propagateForLKEv+0x221>
+    cb2e:	41 8b 86 90 02 00 00 	mov    0x290(%r14),%eax
+    cb35:	41 89 86 b8 02 00 00 	mov    %eax,0x2b8(%r14)
+    cb3c:	4d 39 ec             	cmp    %r13,%r12
+    cb3f:	0f 83 9d 00 00 00    	jae    cbe2 <_ZN7Minisat6Solver14propagateForLKEv+0x482>
+    cb45:	48 89 df             	mov    %rbx,%rdi
+    cb48:	4c 89 e6             	mov    %r12,%rsi
+    cb4b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+    cb50:	48 a5                	movsq  (%rsi),(%rdi)
+    cb52:	4c 39 ee             	cmp    %r13,%rsi
+    cb55:	72 f9                	jb     cb50 <_ZN7Minisat6Solver14propagateForLKEv+0x3f0>
+    cb57:	49 8d 45 f7          	lea    -0x9(%r13),%rax
+    cb5b:	48 29 e8             	sub    %rbp,%rax
+    cb5e:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+    cb62:	4c 8d 7c 03 08       	lea    0x8(%rbx,%rax,1),%r15
+    cb67:	49 8d 6c 04 08       	lea    0x8(%r12,%rax,1),%rbp
+    cb6c:	45 89 96 18 06 00 00 	mov    %r10d,0x618(%r14)
+    cb73:	e9 23 fe ff ff       	jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>
+    cb78:	41 8b 86 90 02 00 00 	mov    0x290(%r14),%eax
+    cb7f:	41 89 86 b8 02 00 00 	mov    %eax,0x2b8(%r14)
+    cb86:	4d 39 ec             	cmp    %r13,%r12
+    cb89:	73 47                	jae    cbd2 <_ZN7Minisat6Solver14propagateForLKEv+0x472>
+    cb8b:	48 89 df             	mov    %rbx,%rdi
+    cb8e:	4c 89 e6             	mov    %r12,%rsi
+    cb91:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    cb98:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+    cb9f:	00 
+    cba0:	48 a5                	movsq  (%rsi),(%rdi)
+    cba2:	4c 39 ee             	cmp    %r13,%rsi
+    cba5:	72 f9                	jb     cba0 <_ZN7Minisat6Solver14propagateForLKEv+0x440>
+    cba7:	49 8d 45 f7          	lea    -0x9(%r13),%rax
+    cbab:	44 89 44 24 38       	mov    %r8d,0x38(%rsp)
+    cbb0:	48 29 e8             	sub    %rbp,%rax
+    cbb3:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+    cbb7:	4c 8d 7c 03 08       	lea    0x8(%rbx,%rax,1),%r15
+    cbbc:	49 8d 6c 04 08       	lea    0x8(%r12,%rax,1),%rbp
+    cbc1:	e9 d5 fd ff ff       	jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>
+    cbc6:	31 c0                	xor    %eax,%eax
+    cbc8:	b9 ff ff ff ff       	mov    $0xffffffff,%ecx
+    cbcd:	e9 09 fe ff ff       	jmp    c9db <_ZN7Minisat6Solver14propagateForLKEv+0x27b>
+    cbd2:	44 89 44 24 38       	mov    %r8d,0x38(%rsp)
+    cbd7:	49 89 df             	mov    %rbx,%r15
+    cbda:	4c 89 e5             	mov    %r12,%rbp
+    cbdd:	e9 b9 fd ff ff       	jmp    c99b <_ZN7Minisat6Solver14propagateForLKEv+0x23b>
+    cbe2:	49 89 df             	mov    %rbx,%r15
+    cbe5:	4c 89 e5             	mov    %r12,%rbp
+    cbe8:	eb 82                	jmp    cb6c <_ZN7Minisat6Solver14propagateForLKEv+0x40c>
+    cbea:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+
+Disassembly of section .text$_ZN7Minisat10BoolOptionD1Ev:
+
+Disassembly of section .text$_ZN7Minisat9IntOptionD1Ev:
+
+Disassembly of section .text$_ZN7Minisat12DoubleOptionD1Ev:
+
+Disassembly of section .text$_ZN7Minisat3vecIPNS_6OptionEED1Ev:
+
+Disassembly of section .text$_ZN7Minisat10BoolOptionD0Ev:
+
+Disassembly of section .text$_ZN7Minisat9IntOptionD0Ev:
+
+Disassembly of section .text$_ZN7Minisat12DoubleOptionD0Ev:
+
+Disassembly of section .text$_ZN7Minisat10BoolOption5parseEPKc:
+
+Disassembly of section .text$_ZN7Minisat9IntOption5parseEPKc:
+
+Disassembly of section .text$_ZN7Minisat12DoubleOption5parseEPKc:
+
+Disassembly of section .text$_ZN7Minisat10BoolOption4helpEb:
+
+Disassembly of section .text$_ZN7Minisat12DoubleOption4helpEb:
+
+Disassembly of section .text$_ZN7Minisat9IntOption4helpEb:
+
+Disassembly of section .text$_ZN7Minisat6Option13getOptionListEv:
+
+Disassembly of section .text$_ZN7Minisat6Solver15varBumpActivityEid:
+
+Disassembly of section .text$_ZN7Minisat6Solver15claBumpActivityERNS_6ClauseE:
+
+Disassembly of section .text$_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEED1Ev:
+
+Disassembly of section .text$_ZN7Minisat4HeapINS_6Solver10VarOrderLtEED1Ev:
+
+Disassembly of section .text$_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv:
+
+Disassembly of section .text$_ZN7Minisat6Solver7binDRUPINS_3vecINS_3LitEEEEEvhRKT_P9__sFILE64:
+
+Disassembly of section .text$_ZN7Minisat3vecINS_3LitEE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecINS_3LitEE4pushERKS1_:
+
+Disassembly of section .text$_ZN7Minisat3vecIPNS_6OptionEE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecIPNS_6OptionEE4pushERKS2_:
+
+Disassembly of section .text$_ZN7Minisat15RegionAllocatorIjE8capacityEj:
+
+Disassembly of section .text$_ZN7Minisat15ClauseAllocator5relocERjRS0_:
+
+Disassembly of section .text$_ZN7Minisat3vecIiE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecIiE4pushERKi:
+
+Disassembly of section .text$_ZN7Minisat6Solver14setDecisionVarEib:
+
+Disassembly of section .text$_ZN7Minisat3vecINS_6Solver7WatcherEE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat4sortIj14reduceTIER2_ltEEvPT_iT0_:
+
+Disassembly of section .text$_ZN7Minisat3vecIjE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecIjE4pushERKj:
+
+Disassembly of section .text$_ZN7Minisat3vecINS_5lboolEE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecINS_6Solver7VarDataEE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecIdE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecIcE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecImE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat4HeapINS_6Solver10VarOrderLtEE13percolateDownEi:
+
+Disassembly of section .text$_ZN7Minisat4sortIj11reduceDB_ltEEvPT_iT0_:
+
+Disassembly of section .text$_ZN7Minisat4sortIj13reduceCORE_ltEEvPT_iT0_:
+
+Disassembly of section .text$_ZN7Minisat3vecINS0_INS_6Solver7WatcherEEEE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat3vecINS0_INS_3LitEEEE8capacityEi:
+
+Disassembly of section .text$_ZN7Minisat6Solver24newAuxiVarForCardinalityEv:
+
+Disassembly of section .text$_ZN7Minisat3vecINS0_IiEEE8capacityEi:
+
+Disassembly of section .text.startup:
