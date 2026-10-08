@@ -9,3 +9,12 @@ Known GH46 valid family1-variant1 anomaly MUST be retained as a gate. Neither re
 
 No performance timings. Fixture/compiler errors are engineeringINCON; valid derived-clause/model/bound/status mismatch or crash scientificREJECT; missing substantive caller coverage INCON. Preregister precise finite costs and actual generated-case identities before named execution. Fixture is source-only UNCOMPILED, not READY for scheduler.
 
+
+### Source-only fixture extension prerecord
+Before adding the next fixture variant: extend each four-graph/eight-polarity/
+both-mode group to actual `analyze(CRef, ...)` on its falsified three-literal
+hard conflict, not only direct simplification. Total192 cases per binary.
+Allocate the conflict clause in the actual allocator, retain it as a hard
+oracle premise, and authenticate every reason head/false earlier antecedent
+before calling. No solver/build execution. This supplements the hard caller
+only; quasi/weighted/aux-bound caller and actual propagation remain pending.
