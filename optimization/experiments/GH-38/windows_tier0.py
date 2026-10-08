@@ -23,7 +23,7 @@ ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 ap.add_argument("--candidate-sha",required=True)
 args=ap.parse_args()
-ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067887138"
 PROBE02_AUDIT_SHA256="e78abbc71f26d3ed1fa973b0cbfce9cf908352745be125e6a442dc0bd5d9daaf"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "No RUN_ASSIGNMENT: preparation only"
 assert args.run_assignment==ASSIGNED_URL
