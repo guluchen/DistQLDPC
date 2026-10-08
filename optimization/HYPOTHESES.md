@@ -1,32 +1,20 @@
 # Hypothesis registry (not an execution queue)
 
-Current execution snapshot 2026-10-09: loop ACTIVE, no accepted optimization.
-GH36 generic validated-row cap passed full Tier0 and all48 Tier1 science/96bounds,
-but serious OFF regressions (BB90+8.454%, GB144+18.720%, disjoint ranges) reject
-the generic candidate. MTO GM-24.681% motivates a separately preregistered scope,
-not posthoc adoption. Evidence9994d7b retains984 verified public raw Git blobs;
-no GH36 Tier2/3. GH41 selects MTO-only validated-row cap from exactly three fresh
-ranked proposals, prerecord06e0c0e before production66cf8be, PR43/support339784f.
-Full21,840 mode-scoped oracle gates prepared, not executed; own fresh timing required.
-GH27 exploratory LP340 Tier2 completes: OFF-0.224%, MTO-0.146%, all ranges overlap;
-INCONCLUSIVE/NOT ADOPTED, no Tier3, evidencea7d48b8. GH32 remains locallyREJECTED.
-GH38 initial minimal Clang setup is ENGINEERING INCONCLUSIVE because default
-linking omitted original GNU manifest. Preregistered correction79db804 uses Clang
-codegen plus original GNU linking; corrected probe02 prepared, unexecuted, PR39.
-GH40 ternary fast path retry02 currently owns Windows under6067315838/support
-94f906a/session36709, actual CPU8/sibling9. Prior baseline fixture dirty-watch
-setup failure retained6889b5c; no candidate science or speed inference from failure.
-GH26 fourteen conditional fixture attempt failed compilation before tests; API
-repair prepared, production FLA correctness still unestablished. Publication of
-its exact failed evidence is under an automatic approval review block/audit.
-No accepted optimization, no Tier3, no stacked candidates. Latest hub15 named
-assignment/release comments govern host ownership; other source helpers pin CPU0.
+Current execution snapshot 2026-10-09: continuous independent exactly-three-proposals/select-one loop ACTIVE; no accepted optimization, no Tier3.
 
-Read-only server snapshot observed about79% global spare and several quiet SMT
-pairs, but fixed CPU102 remains busy. Observed idle pairs do not establish an
-exclusive reservation. Linux replay support remains unexecuted and requires its
-own exact protocol and host assignment. External Mac GH34 is independent; no
-acceptance inferred from unreviewed reports.
+GH40 ternary specialization: full corrected Tier0 PASS, all48 Tier1 scientific results correct but ALL8 baseline/candidate timing ranges disjoint and slower. OFF GM+3.0326%, MTO GM+4.0506%; local REJECT/NOT_ADOPTED, no Tier2/3. Durable0b5b46cc/877 exact public raw blobs; controlled performance uncorroborated.
+
+GH38 Clang22 O3 codegen/originalGNU14 linking79db804: corrected compatibility and full local Tier0 PASS, independent root/reviewer original raw science/provenance PASS,398 public raw blobs exact. Corrected hosted actual9ed mergeba1f source/Makefile and artifact456cd1 eight final science PASS retained18f2aad. Standard48 Tier1 is CURRENT sole Windows owner6068139292/supportf640d4c/driver34b2de68/session5606, actualCPU14/sibling15. Frozen baseline22e398/candidate62d1ca, no rebuild. No performance conclusion yet; no automaticTier2/3.
+
+GH41 MTO-only original validated-row scalar cap66cf8be: fresh prerecord06e0c0e, exact hosted source/final science PASS89b6781. Linux attempt01 missing C++ runtime inventory stopped before science, retained6ccf280. Retry02 built both production binaries and completed37 partial app records, but strict quiet guard stopped before css-fallback-card-both-baseline-dump. Full scientific gate incomplete/engineering INCONCLUSIVE, no reported mismatch and no timing measured. Complete781-member archive/all730 original hashes authenticated and retained13f9e8f; identities/cleanup/full-runtime-post/owned-empty/restoration verified, release6068167175. BEFORE retry03,13f9e8f preregisters correctness-only globalspare>50/half-spare singleCPU policy; all resource samples/science corpus/timeouts mandatory and performance guard remains separate. New source-only disabled orchestration under review, no current Linux worker.
+
+GH44 fixed -march=x86-64-v3 only with original generic tuning: exactly3 ranked proposals, prerecord9b18d99 before production4a820ac, issue44/PR45. Source-only queued after GH38 Windows release. Actual selected-core CPUID/OSXSAVE/XCR0, compiler target/FP/ABI/runtime and complete Tier0 must precede candidate execution. No accepted ISA improvement or inherited mtune/Clang result.
+
+GH36 generic witness cap remains local REJECT9994d7b/984raw for serious OFF regressions despite MTO GM-24.681%; it motivated separately scoped GH41, no generic Tier2/3. GH27 exploratory LP340 tiny overlapping gains remains INCONCLUSIVE/NOT_ADOPTEDa7d48b8. GH30 MTO activity LP340+114.202% and GH32 mtune remain REJECT; earlier experiments preserved below.
+
+GH26 conditional fixture compile API failure before science is durably published49f381e; earlier automatic publication block resolved, no current block. Narrow MiniSat size()==0 repair prepared/unrun. Full production cap2FLA correctness still unestablished; limited pure-model/reader proofs do not establish weighted-K/rollback production correctness.
+
+Latest GitHub hub15 named assignments/releases govern host ownership. One runner per host, no stacked conceptual change. Other agents' source/metadata pin Windows CPU0. Research-grade speed claims require controlled dedicated-server corroboration; observed quietness is not an exclusive reservation. Correctness elapsed times never become benchmark evidence. External Mac GH34 remains independent/unreviewed by integrator.
 
 ## Earlier registry snapshots (historical, superseded)
 
