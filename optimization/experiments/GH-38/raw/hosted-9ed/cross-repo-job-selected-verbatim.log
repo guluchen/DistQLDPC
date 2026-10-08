@@ -1,0 +1,30 @@
+2026-10-08T19:47:15.4297930Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +ba1f0fea3541ec55377be6a8d3c34922c72ae314:refs/remotes/pull/39/merge
+2026-10-08T19:47:18.0351825Z  * [new ref]         ba1f0fea3541ec55377be6a8d3c34922c72ae314 -> pull/39/merge
+2026-10-08T19:47:18.0376495Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/39/merge
+2026-10-08T19:47:18.1396753Z Note: switching to 'refs/remotes/pull/39/merge'.
+2026-10-08T19:47:18.1481897Z [command]/usr/bin/git log -1 --format=%H
+2026-10-08T19:47:18.1513541Z ba1f0fea3541ec55377be6a8d3c34922c72ae314
+2026-10-08T19:47:19.1621339Z HEAD is now at 24572d6 Point CI smoke at LP_34_20_2 after the QDistSAT rename.
+2026-10-08T19:47:19.1692750Z [command]/usr/bin/git log -1 --format=%H
+2026-10-08T19:47:19.7027181Z   repository: guluchen/QDistSAT
+2026-10-08T19:47:19.7934113Z Syncing repository: guluchen/QDistSAT
+2026-10-08T19:47:20.0627934Z [command]/usr/bin/git remote add origin https://github.com/guluchen/QDistSAT
+2026-10-08T19:47:21.1043612Z From https://github.com/guluchen/QDistSAT
+2026-10-08T19:47:21.1727016Z [command]/usr/bin/git log -1 --format=%H
+2026-10-08T19:47:29.8853571Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/SimpSolver.o src/solver/SimpSolver.cc
+2026-10-08T19:47:29.8857948Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Solver.o src/solver/Solver.cc
+2026-10-08T19:47:29.8861566Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Options.o src/solver/utils/Options.cc
+2026-10-08T19:47:29.8867983Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/System.o src/solver/utils/System.cc
+2026-10-08T19:47:36.3741001Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -o bin/distqldpc src/core/distqldpc.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz
+2026-10-08T19:47:36.3744027Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -o bin/maxcdcl src/solver/Main.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz
+2026-10-08T19:47:37.8942654Z clang++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/distqldpc.o src/core/distqldpc.cc
+2026-10-08T19:47:37.8947557Z clang++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/SimpSolver.o src/solver/SimpSolver.cc
+2026-10-08T19:47:37.8951381Z clang++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Solver.o src/solver/Solver.cc
+2026-10-08T19:47:37.8953839Z clang++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Options.o src/solver/utils/Options.cc
+2026-10-08T19:47:39.2565788Z clang++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/System.o src/solver/utils/System.cc
+2026-10-08T19:47:39.3315667Z clang++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Main.o src/solver/Main.cc
+2026-10-08T19:47:44.0859814Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -o bin/distqldpc build/distqldpc.o build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz
+2026-10-08T19:47:44.0863440Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -o bin/maxcdcl build/Main.o build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz
+2026-10-08T19:48:05.8354132Z Scientific results match: **YES**
+2026-10-08T19:48:06.8229928Z SHA256 digest of uploaded artifact zip is 456cd1d5c08d0b1dc469e3fe007f537f8f986dc2ecb6ada5dc0e68d2d4454634
+2026-10-08T19:48:07.1502940Z [36;1m  echo "QDistSAT detected a scientific-result mismatch between baseline and candidate DistQLDPC."[0m

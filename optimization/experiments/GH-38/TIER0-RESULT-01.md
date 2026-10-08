@@ -10,6 +10,6 @@ Entire13,084 overlay catalog unchanged before/after,10,216 original runtime unch
 
 Full unchanged streams/commands/fixtures/metadata/executed support229 public files in raw/windows-tier0-01/PUBLIC-SHA256.json, test exe/objects retained locally with published hashes. Existing initial/corrected engineering probe evidence immutable. No secrets detected by credential-pattern scan before exact-path publication.
 
-Current9ed ordinaryCI37834543195/cross37834543188SUCCESS; artifact11575720313 ZIP SHA256456cd1d5c08d0b1dc469e3fe007f537f8f986dc2ecb6ada5dc0e68d2d4454634 verified/all8final science results equal. Hosted executedmergeba1f0fea3541ec55377be6a8d3c34922c72ae314 source/Makefile identity still needs independent proof before performance; Linux hosted result cannot establish Windows timing.
+Current9ed ordinaryCI37834543195/cross37834543188SUCCESS; artifact11575720313 ZIP SHA256456cd1d5c08d0b1dc469e3fe007f537f8f986dc2ecb6ada5dc0e68d2d4454634 verified/all8final science results equal. Hosted executedmergeba1f0fea3541ec55377be6a8d3c34922c72ae314 source tree8869065f and Makefile exact production identity independently proved; full artifact science correct; Linux hosted result cannot establish Windows timing.
 
 Next: independent review of full raw and hosted executed-source identity, then prerecord/fresh named standard48Tier1 assignment. No Tier1/2/3 executed or automatically authorized. DistQLDPC downstream instrumented MaxCDCL-derived engine and QDistSAT benchmark platform remain distinct.
