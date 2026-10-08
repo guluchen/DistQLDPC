@@ -3931,6 +3931,7 @@ bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
 
 CRef Solver::propagateForLK() {
   falseVar = var_Undef;
+  Var firstSoftFailure = var_Undef;
   CRef    confl = CRef_Undef;
   int     num_props = 0;
   watches.cleanAll();
@@ -3951,8 +3952,7 @@ CRef Solver::propagateForLK() {
       }
       if (value(imp) == l_Undef) {
 	if (!uncheckedEnqueueForLK(imp, wbin[k].cref)) {
-	  falseVar = var(imp);
-	  return CRef_Undef;
+	  if (firstSoftFailure == var_Undef) firstSoftFailure = var(imp);
 	}
       }
     }
@@ -4029,11 +4029,7 @@ CRef Solver::propagateForLK() {
 	}
 	else {
 	  if (!uncheckedEnqueueForLK(first, cr)) {
-	    qhead = trail.size();
-	    // Copy the remaining watches:
-	    while (i < end)
-	      *j++ = *i++;
-	    falseVar = var(first);
+	    if (firstSoftFailure == var_Undef) firstSoftFailure = var(first);
 	  }
 	}
     NextClause:;
@@ -4044,6 +4040,7 @@ CRef Solver::propagateForLK() {
     // 	  break;
   }
   lk_propagations += num_props;
+  if (confl == CRef_Undef) falseVar = firstSoftFailure;
   return confl;
 }
 
