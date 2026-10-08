@@ -1,0 +1,541 @@
+{
+  "baseline_sha": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "candidate_sha": "467433133851f25a1ab76b662ca93250acf46d03",
+  "qdistsat_sha": "7c4774fffc49856f48a22ae5f9063d00b2661aaa",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6062940581",
+  "hosted": {
+    "candidate_sha": "467433133851f25a1ab76b662ca93250acf46d03",
+    "baseline_sha": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+    "qdistsat_sha": "7c4774fffc49856f48a22ae5f9063d00b2661aaa",
+    "artifact_id": 11558338471,
+    "artifact_sha256": "cf722192a8ba30f6494852fe426cf3ecc9cb349f0237e6b8061c5dda490c2837",
+    "job": 113375200324,
+    "workflow_runs": [
+      {
+        "id": 37795915838,
+        "name": "QDistSAT cross-repo benchmark",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 60,
+        "jobs_url": "https://api.github.com/repos/guluchen/DistQLDPC/actions/runs/37795915838/jobs",
+        "logs_url": "https://api.github.com/repos/guluchen/DistQLDPC/actions/runs/37795915838/logs",
+        "workflow_id": 363896883
+      },
+      {
+        "id": 37795915802,
+        "name": "CI",
+        "status": "completed",
+        "conclusion": "success",
+        "run_number": 129,
+        "jobs_url": "https://api.github.com/repos/guluchen/DistQLDPC/actions/runs/37795915802/jobs",
+        "logs_url": "https://api.github.com/repos/guluchen/DistQLDPC/actions/runs/37795915802/logs",
+        "workflow_id": 363863023
+      }
+    ]
+  },
+  "binary_sha256": {
+    "baseline": "9574ed70921663b2ef5036a06980aed71a8278a5fa0270c25fa059448851ad5f",
+    "candidate": "2c7896d35cf569e6f78ec25e2f9f2d5c148ee9196b99e0e21e802139695beb3b"
+  },
+  "driver_sha256": "5f4064eb7d9ce8fe7bc82dfe3862d1431d7f2d946dced3c1d27976bdf0052c21",
+  "window_helper_sha256": "ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2",
+  "parser_sha256": "9674067528d0f3d7f1393d8732ae10b6a7289fbfd04e1d52f0832f7512e6dac5",
+  "profiles": {
+    "status": "PASS",
+    "counts": {
+      "Minisat::Solver::search": 89,
+      "Minisat::Solver::propagate": 375867
+    },
+    "profiles": {
+      "#cygdrive#c#Users#yfc#Documents#Codex#2026-10-07#you-are-the-execution-agent-for#GH16-PGO#build#Options.gcda": "c58a90cb15aa2d22c34c552e5f5e73ab0d2a01b336c4cdb3cfe6ab5326019462",
+      "#cygdrive#c#Users#yfc#Documents#Codex#2026-10-07#you-are-the-execution-agent-for#GH16-PGO#build#SimpSolver.gcda": "a2fe515a1a5fc90125b5f85dc26d575dca624332133c974aa133ba3684099381",
+      "#cygdrive#c#Users#yfc#Documents#Codex#2026-10-07#you-are-the-execution-agent-for#GH16-PGO#build#Solver.gcda": "655dca7c77fa0ff52e9c5acaee78775fedd31c93d8b2a82fca33d1e23e8cb4a5",
+      "#cygdrive#c#Users#yfc#Documents#Codex#2026-10-07#you-are-the-execution-agent-for#GH16-PGO#build#System.gcda": "c7d554215bcb71830297914c2a5122f8280f4d0cc7396511312bb25660ee1405"
+    }
+  },
+  "source_reconciliation": {
+    "Makefile": {
+      "executed_hash": "85096a2f754e2948c0ce9938b8d83c620e22a4469eb236a11e201e98453364de",
+      "previous_commit_byte_hash": "85096a2f754e2948c0ce9938b8d83c620e22a4469eb236a11e201e98453364de",
+      "matches_executed": true,
+      "LF_content_identical": true,
+      "current_byte_hash": "251d15940fbe1f5975d1e31ae9c94dce2772df1dc4d45324a556c33d74e7c78f",
+      "LF_content_sha256": "251d15940fbe1f5975d1e31ae9c94dce2772df1dc4d45324a556c33d74e7c78f"
+    },
+    "src/core/distqldpc.cc": {
+      "executed_hash": "d87ad69382dcb1f1e487fe78e7978972e6005b3a968b71ec2c06d69e7b2b3d1d",
+      "previous_commit_byte_hash": "d87ad69382dcb1f1e487fe78e7978972e6005b3a968b71ec2c06d69e7b2b3d1d",
+      "matches_executed": true,
+      "LF_content_identical": true,
+      "current_byte_hash": "392f163dcc421c9836e41bff2da3b95ac0f3bd8e1c1273998a21280d6bfaeb9f",
+      "LF_content_sha256": "392f163dcc421c9836e41bff2da3b95ac0f3bd8e1c1273998a21280d6bfaeb9f"
+    },
+    "src/solver/Solver.cc": {
+      "executed_hash": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+      "previous_commit_byte_hash": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+      "matches_executed": true,
+      "LF_content_identical": true,
+      "current_byte_hash": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+      "LF_content_sha256": "aecaea724d63a93eaaba670798d4188d53987f0faa96ef5e619dc0e724932e43"
+    },
+    "src/solver/SimpSolver.cc": {
+      "executed_hash": "4f4bdce723dfa5d9166a94377595dbbba5284a6bf33fe4d4f51f1246fd0ce249",
+      "previous_commit_byte_hash": "9b0f44cae93420a57bb8b4cdcaeb5fdeee075a42ba886e31c0bb42271da99345",
+      "matches_executed": true,
+      "LF_content_identical": true,
+      "current_byte_hash": "4f4bdce723dfa5d9166a94377595dbbba5284a6bf33fe4d4f51f1246fd0ce249",
+      "LF_content_sha256": "9b0f44cae93420a57bb8b4cdcaeb5fdeee075a42ba886e31c0bb42271da99345"
+    }
+  },
+  "manifest": {
+    "experiment": "E004",
+    "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+    "candidate": "5b13a2c01b6e0a4dec6a88ad5bbccdbf15df2030",
+    "qdistsat": "7c4774fffc49856f48a22ae5f9063d00b2661aaa",
+    "scope": "One LTO concept; diagnostic Tier 1 cannot promote; no Tier 3",
+    "files": {
+      "baseline/AGENTS.md": "20da5ed28ee516816ad2cbfcd47f2a50d4e394145a2ebf7674d3f08bd874d21e",
+      "baseline/data/matrices/BB_108_8_10_Gx.txt": "a38bc70bf3ef3a44ebc044b264b2881771a722df83773f3c5577d924df6fc08e",
+      "baseline/data/matrices/BB_108_8_10_Gz.txt": "5292d7560d7db868eff0a6c4ba0a97165c193b97084968b3c3574fac1ff28971",
+      "baseline/data/matrices/BB_108_8_10_Hx.txt": "c89441f4e417475fef2205b6aa76ae8062abe823b068b5d176f47fd12168212b",
+      "baseline/data/matrices/BB_108_8_10_Hz.txt": "4f098c52399fb2eeebcd80152fc6e153e642cfb7aa624640184a133f9c755c83",
+      "baseline/data/matrices/BB_90_8_10_Gx.txt": "7508803e78b256e7aff3b66f5dd839e1f734db3892c4369ff8b5b6d1d09833dd",
+      "baseline/data/matrices/BB_90_8_10_Gz.txt": "2d36853dcedfa2b791a9aab60143e9ff5af7ebf39121032653be9ab7ecd7bc52",
+      "baseline/data/matrices/BB_90_8_10_Hx.txt": "1e29683b1b66b68415fd65beb9646ade7485947c941be3bcb41e4b292a32005a",
+      "baseline/data/matrices/BB_90_8_10_Hz.txt": "21205b54bd764be453bcf25d94ab6873853e2abfc3542422ad52ecf87a0801f3",
+      "baseline/data/matrices/GB_144_12_8_Gx.txt": "18c9aa2f6a703cd0965006cff891dc707bac830d0c5e8422f1e9b86f6a2c30b3",
+      "baseline/data/matrices/GB_144_12_8_Gz.txt": "d1ecc23eccb7bff55e44f6a86dd7c45b5fdd26b1c81a916a0e4f0bff68e7051d",
+      "baseline/data/matrices/GB_144_12_8_Hx.txt": "21f34ef83d5bde789f30807e68f2e1e2a69687d1de5ec7888e16d2a921ff607b",
+      "baseline/data/matrices/GB_144_12_8_Hz.txt": "f37dd09fc00276c3d6ba05cc77905d9e2ff7a5f58ee1561dbb0a8fd000ac2476",
+      "baseline/data/matrices/LP_136_32_4_Gx.txt": "8e975369a2601dd6b7236a3c6fcfce32a022d79c9e8fac6d35cd812b2632e945",
+      "baseline/data/matrices/LP_136_32_4_Gz.txt": "e699e67cfd04baa4e820fb66af1744376d123a301108ef1be64632dc3dae09ef",
+      "baseline/data/matrices/LP_136_32_4_Hx.txt": "eae70b8b9d763bb1112bd2219ec5b9db894ebc8c0318f2a9433239e6d91cb2ab",
+      "baseline/data/matrices/LP_136_32_4_Hz.txt": "feef75c05abf642cb39cc07bd699126cb3e776f639278cad70a2935c4c1ed403",
+      "baseline/data/matrices/LP_238_44_6_Gx.txt": "971c015fb671bc8ab0a323a1acc906bfb9e65ed3bb87343f1341a45232be04e3",
+      "baseline/data/matrices/LP_238_44_6_Gz.txt": "eed362a9b682485dda05bc8c685c9affec696a19f875940f1537562da00ce042",
+      "baseline/data/matrices/LP_238_44_6_Hx.txt": "6e42eafba57c62f9e185d219bc029c2aa3934fd21cbdda76efd46abe4d4a25f3",
+      "baseline/data/matrices/LP_238_44_6_Hz.txt": "be0dbcc33cdcabefa56254e65186f6d2fe0a831c2bcc43ea16806a077f06f8d5",
+      "baseline/data/matrices/LP_340_56_8_Gx.txt": "e05585ec252b84fc94a0de7f9f95732c8c6e4bf11b3a295bbd2fa0277f44589b",
+      "baseline/data/matrices/LP_340_56_8_Gz.txt": "383b79ac33a8b2e2842fe2908763ec1e8e82de5a30c8cea52a19d40ee21d5c66",
+      "baseline/data/matrices/LP_340_56_8_Hx.txt": "097a76f0030e82b3077259ffda5c74e5009b42efba58a7dabad252c13b348d8a",
+      "baseline/data/matrices/LP_340_56_8_Hz.txt": "d5fd553dfa914dad412abf357ed42b0ff79c35b1ee3bad4ef5c83d7b8f33e9e6",
+      "baseline/data/matrices/LP_34_20_2_Gx.txt": "bf09826369fac1adb4ba1820be97972e38bc8c708c631a9a2d38978dd5376de5",
+      "baseline/data/matrices/LP_34_20_2_Gz.txt": "84382e94ea4806f2b17f51e7e8563d0cb068a9b45f3d087f19cc60980c4e1811",
+      "baseline/data/matrices/LP_34_20_2_Hx.txt": "e671159c88d55b1610481e0629f915e99f18da3284bdab5a0034894edeb86525",
+      "baseline/data/matrices/LP_34_20_2_Hz.txt": "d2d10fe7712a4776fde77a1364a60c4e3a49a0c26486062405b167cacde835d0",
+      "baseline/docs/OPTIMIZATION_LOOP_POLICY.md": "8dae821fd18ffcc0c7a44778e8e7e52849768d505dc56a5019de609663d1facb",
+      "baseline/docs/QDISTSAT_CROSS_REPO_CI.md": "4f606fd82ea3428850d337b566ab0f227030593f00bc714c32324ce31db923f4",
+      "baseline/LICENSE": "fdbdc9efa8a8049fafbe544af6b046edd40b26a1d6b5202da06acaf799a25718",
+      "baseline/Makefile": "a237812982eeb6c58776bc8c8bf910228da2c7da6e6f8feb56a56682aecfb94e",
+      "baseline/MODIFICATIONS.md": "a47aa48c4856cea00709ab0aec2777eda4b68b1e2b750bf702ce015675c79d47",
+      "baseline/NOTICE": "194469fad182a2caa683cf55ead1f92262b67b0da09b3ee6c8b687176b6a40a6",
+      "baseline/README.md": "def2f6040408b304533489272a88d2070f24dede4fc53193617f50373e886b11",
+      "baseline/scripts/smoke_test.sh": "56b9e3e906aed38a3ed148ec926345ba0b7b35634e1eb5c295c910e9309be5c0",
+      "baseline/src/core/distqldpc.cc": "c0626b65f3ff437c08aafeba5dae66c0c98890f3571dd96b64957d8b7312bff2",
+      "baseline/src/solver/clq-n100e2500g1": "089ffa6b11643af119f6806b8fe7eaf8a6ef58c3d990e79711a423e587661e88",
+      "baseline/src/solver/clq-n150e10058g1": "0a17ff924dd53843aa6824e6135820c4adc0c87efb9dabcb781a2a9b7d7603f0",
+      "baseline/src/solver/Dimacs.h": "520b138cc11ade29cb9a893c39d7ac15977c8400022e020bfc8d4965ad73c387",
+      "baseline/src/solver/LICENSE": "3f4ebf889fbe5dd1992a21a1dee7764f754303668b6a3e120b11320b56cf4362",
+      "baseline/src/solver/Main.cc": "8e06ff3817ab2890a93e3132c4aae80c3a923d8826eeb1d7933bdd3a438a6574",
+      "baseline/src/solver/mtl/Alg.h": "9c6500341c6b6a92770707a4b5294aa1b59aaa354d6e4e9212e0041fed8b4a56",
+      "baseline/src/solver/mtl/Alloc.h": "8994f81228ec02d4dc38c2cd511143922df41d52140a0d198b458f292e06e2da",
+      "baseline/src/solver/mtl/config.mk": "be6dbe7434545d9ef9e842cdb0f42818e311b7c79304fd32b9c667ed5a50c57a",
+      "baseline/src/solver/mtl/Heap.h": "60eb8d330edc9f524b8beb92fd0a625470e1d65ceab1c823771a799378cb8f5b",
+      "baseline/src/solver/mtl/IntTypes.h": "77d5cc50cbbaeccc85db25cf3e4a652158e1decbf79ebf92283371ddfb0152df",
+      "baseline/src/solver/mtl/Map.h": "07692d65db89623e78e46b24df2ae7680f6cadc92b4017bd02290d6536bfce2a",
+      "baseline/src/solver/mtl/Queue.h": "2500b04b7b8f25893f0b436883cca541605d786f7c0476416181513ce596116b",
+      "baseline/src/solver/mtl/Sort.h": "f5d0ff4a99fcf02dcce5d1c4021a21fd57d11316ea8d78dc89b7a8fa1614abac",
+      "baseline/src/solver/mtl/template.mk": "412d0e3ec0ec0623c26a175348380be847718df1f80cce4e28320247e737c314",
+      "baseline/src/solver/mtl/Vec.h": "3585058b7f6b439d89f99ff81cc85422282e44432fab632e20aeae50811ebf58",
+      "baseline/src/solver/mtl/XAlloc.h": "190209abdab80a3562125525890254048bb732cfeb5017603c52cc2b00ca62cf",
+      "baseline/src/solver/README.md": "321aef09bd451933dede05c313f748433cbfce567659c4e3b700011313c28207",
+      "baseline/src/solver/SimpSolver.cc": "9b0f44cae93420a57bb8b4cdcaeb5fdeee075a42ba886e31c0bb42271da99345",
+      "baseline/src/solver/SimpSolver.h": "34d5115162e663ba01b6353ea1a5a1a55310f73d8bb59bce6aab5ad2b2e87b50",
+      "baseline/src/solver/Solver.cc": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+      "baseline/src/solver/Solver.h": "f85bcb8ea4cb204ad502eb62cc7623c26977e0d56b3a9c80ba9d259d8349fe6c",
+      "baseline/src/solver/SolverTypes.h": "baf1ca68ee0954737c625b59ee04c80083501ac0cf132b4f69403f9b392b410a",
+      "baseline/src/solver/utils/Makefile": "3f5294c5bb13a6cc975606f1bdab5060c62dc5316f7313747ec21bc639218dca",
+      "baseline/src/solver/utils/Options.cc": "b613436bd6dbda224d73d72271ac1768878940079f78e325e48cc22a4d6428fe",
+      "baseline/src/solver/utils/Options.h": "ad4325f5f933b07c9f2c98258a2e514bc14bc385ffb6ce2834e3aa8ec55e953d",
+      "baseline/src/solver/utils/Options.or": "b08478dc4c4ea897009bd070760295436cb3298d44f28d6976687cdff64d8fd7",
+      "baseline/src/solver/utils/ParseUtils.h": "9230bb5a52d94fb2b2883dcae054b382c9e2caf88148ad7411704f48b9c0f79b",
+      "baseline/src/solver/utils/System.cc": "c49aefdd2053eca7e5b055db22ee2a9de89cf76d2482f89ea3bc8d5f68aab3b6",
+      "baseline/src/solver/utils/System.h": "013021931cd7caffdb8aebc9ec329287f808b0534f41d81eb6c20eb284bd77f1",
+      "baseline/src/solver/utils/System.or": "03e232df2f5a1ece00e1e120f4e354732092151ca69ffa6318d79eb939f074a2",
+      "candidate/AGENTS.md": "20da5ed28ee516816ad2cbfcd47f2a50d4e394145a2ebf7674d3f08bd874d21e",
+      "candidate/data/matrices/BB_108_8_10_Gx.txt": "a38bc70bf3ef3a44ebc044b264b2881771a722df83773f3c5577d924df6fc08e",
+      "candidate/data/matrices/BB_108_8_10_Gz.txt": "5292d7560d7db868eff0a6c4ba0a97165c193b97084968b3c3574fac1ff28971",
+      "candidate/data/matrices/BB_108_8_10_Hx.txt": "c89441f4e417475fef2205b6aa76ae8062abe823b068b5d176f47fd12168212b",
+      "candidate/data/matrices/BB_108_8_10_Hz.txt": "4f098c52399fb2eeebcd80152fc6e153e642cfb7aa624640184a133f9c755c83",
+      "candidate/data/matrices/BB_90_8_10_Gx.txt": "7508803e78b256e7aff3b66f5dd839e1f734db3892c4369ff8b5b6d1d09833dd",
+      "candidate/data/matrices/BB_90_8_10_Gz.txt": "2d36853dcedfa2b791a9aab60143e9ff5af7ebf39121032653be9ab7ecd7bc52",
+      "candidate/data/matrices/BB_90_8_10_Hx.txt": "1e29683b1b66b68415fd65beb9646ade7485947c941be3bcb41e4b292a32005a",
+      "candidate/data/matrices/BB_90_8_10_Hz.txt": "21205b54bd764be453bcf25d94ab6873853e2abfc3542422ad52ecf87a0801f3",
+      "candidate/data/matrices/GB_144_12_8_Gx.txt": "18c9aa2f6a703cd0965006cff891dc707bac830d0c5e8422f1e9b86f6a2c30b3",
+      "candidate/data/matrices/GB_144_12_8_Gz.txt": "d1ecc23eccb7bff55e44f6a86dd7c45b5fdd26b1c81a916a0e4f0bff68e7051d",
+      "candidate/data/matrices/GB_144_12_8_Hx.txt": "21f34ef83d5bde789f30807e68f2e1e2a69687d1de5ec7888e16d2a921ff607b",
+      "candidate/data/matrices/GB_144_12_8_Hz.txt": "f37dd09fc00276c3d6ba05cc77905d9e2ff7a5f58ee1561dbb0a8fd000ac2476",
+      "candidate/data/matrices/LP_136_32_4_Gx.txt": "8e975369a2601dd6b7236a3c6fcfce32a022d79c9e8fac6d35cd812b2632e945",
+      "candidate/data/matrices/LP_136_32_4_Gz.txt": "e699e67cfd04baa4e820fb66af1744376d123a301108ef1be64632dc3dae09ef",
+      "candidate/data/matrices/LP_136_32_4_Hx.txt": "eae70b8b9d763bb1112bd2219ec5b9db894ebc8c0318f2a9433239e6d91cb2ab",
+      "candidate/data/matrices/LP_136_32_4_Hz.txt": "feef75c05abf642cb39cc07bd699126cb3e776f639278cad70a2935c4c1ed403",
+      "candidate/data/matrices/LP_238_44_6_Gx.txt": "971c015fb671bc8ab0a323a1acc906bfb9e65ed3bb87343f1341a45232be04e3",
+      "candidate/data/matrices/LP_238_44_6_Gz.txt": "eed362a9b682485dda05bc8c685c9affec696a19f875940f1537562da00ce042",
+      "candidate/data/matrices/LP_238_44_6_Hx.txt": "6e42eafba57c62f9e185d219bc029c2aa3934fd21cbdda76efd46abe4d4a25f3",
+      "candidate/data/matrices/LP_238_44_6_Hz.txt": "be0dbcc33cdcabefa56254e65186f6d2fe0a831c2bcc43ea16806a077f06f8d5",
+      "candidate/data/matrices/LP_340_56_8_Gx.txt": "e05585ec252b84fc94a0de7f9f95732c8c6e4bf11b3a295bbd2fa0277f44589b",
+      "candidate/data/matrices/LP_340_56_8_Gz.txt": "383b79ac33a8b2e2842fe2908763ec1e8e82de5a30c8cea52a19d40ee21d5c66",
+      "candidate/data/matrices/LP_340_56_8_Hx.txt": "097a76f0030e82b3077259ffda5c74e5009b42efba58a7dabad252c13b348d8a",
+      "candidate/data/matrices/LP_340_56_8_Hz.txt": "d5fd553dfa914dad412abf357ed42b0ff79c35b1ee3bad4ef5c83d7b8f33e9e6",
+      "candidate/data/matrices/LP_34_20_2_Gx.txt": "bf09826369fac1adb4ba1820be97972e38bc8c708c631a9a2d38978dd5376de5",
+      "candidate/data/matrices/LP_34_20_2_Gz.txt": "84382e94ea4806f2b17f51e7e8563d0cb068a9b45f3d087f19cc60980c4e1811",
+      "candidate/data/matrices/LP_34_20_2_Hx.txt": "e671159c88d55b1610481e0629f915e99f18da3284bdab5a0034894edeb86525",
+      "candidate/data/matrices/LP_34_20_2_Hz.txt": "d2d10fe7712a4776fde77a1364a60c4e3a49a0c26486062405b167cacde835d0",
+      "candidate/docs/OPTIMIZATION_LOOP_POLICY.md": "8dae821fd18ffcc0c7a44778e8e7e52849768d505dc56a5019de609663d1facb",
+      "candidate/docs/QDISTSAT_CROSS_REPO_CI.md": "4f606fd82ea3428850d337b566ab0f227030593f00bc714c32324ce31db923f4",
+      "candidate/LICENSE": "fdbdc9efa8a8049fafbe544af6b046edd40b26a1d6b5202da06acaf799a25718",
+      "candidate/Makefile": "534e871f677bdde90071ba073dad0eb3a063db35bef060b3743f1b2161626d25",
+      "candidate/MODIFICATIONS.md": "a47aa48c4856cea00709ab0aec2777eda4b68b1e2b750bf702ce015675c79d47",
+      "candidate/NOTICE": "194469fad182a2caa683cf55ead1f92262b67b0da09b3ee6c8b687176b6a40a6",
+      "candidate/optimization/server/run.py": "9674067528d0f3d7f1393d8732ae10b6a7289fbfd04e1d52f0832f7512e6dac5",
+      "candidate/optimization/tests/tier0.py": "1cb29eb16702781adf4079a132d58821ab6499838ab6e907d6d3d94fe1074aa9",
+      "candidate/optimization/tests/tier0_lto.py": "50d2e1c7d897b0a617e2fe1441a6f7ae8692e22bedb24d7d24a838be4a27c4fd",
+      "candidate/README.md": "def2f6040408b304533489272a88d2070f24dede4fc53193617f50373e886b11",
+      "candidate/scripts/smoke_test.sh": "56b9e3e906aed38a3ed148ec926345ba0b7b35634e1eb5c295c910e9309be5c0",
+      "candidate/src/core/distqldpc.cc": "c0626b65f3ff437c08aafeba5dae66c0c98890f3571dd96b64957d8b7312bff2",
+      "candidate/src/solver/clq-n100e2500g1": "089ffa6b11643af119f6806b8fe7eaf8a6ef58c3d990e79711a423e587661e88",
+      "candidate/src/solver/clq-n150e10058g1": "0a17ff924dd53843aa6824e6135820c4adc0c87efb9dabcb781a2a9b7d7603f0",
+      "candidate/src/solver/Dimacs.h": "520b138cc11ade29cb9a893c39d7ac15977c8400022e020bfc8d4965ad73c387",
+      "candidate/src/solver/LICENSE": "3f4ebf889fbe5dd1992a21a1dee7764f754303668b6a3e120b11320b56cf4362",
+      "candidate/src/solver/Main.cc": "8e06ff3817ab2890a93e3132c4aae80c3a923d8826eeb1d7933bdd3a438a6574",
+      "candidate/src/solver/mtl/Alg.h": "9c6500341c6b6a92770707a4b5294aa1b59aaa354d6e4e9212e0041fed8b4a56",
+      "candidate/src/solver/mtl/Alloc.h": "8994f81228ec02d4dc38c2cd511143922df41d52140a0d198b458f292e06e2da",
+      "candidate/src/solver/mtl/config.mk": "be6dbe7434545d9ef9e842cdb0f42818e311b7c79304fd32b9c667ed5a50c57a",
+      "candidate/src/solver/mtl/Heap.h": "60eb8d330edc9f524b8beb92fd0a625470e1d65ceab1c823771a799378cb8f5b",
+      "candidate/src/solver/mtl/IntTypes.h": "77d5cc50cbbaeccc85db25cf3e4a652158e1decbf79ebf92283371ddfb0152df",
+      "candidate/src/solver/mtl/Map.h": "07692d65db89623e78e46b24df2ae7680f6cadc92b4017bd02290d6536bfce2a",
+      "candidate/src/solver/mtl/Queue.h": "2500b04b7b8f25893f0b436883cca541605d786f7c0476416181513ce596116b",
+      "candidate/src/solver/mtl/Sort.h": "f5d0ff4a99fcf02dcce5d1c4021a21fd57d11316ea8d78dc89b7a8fa1614abac",
+      "candidate/src/solver/mtl/template.mk": "412d0e3ec0ec0623c26a175348380be847718df1f80cce4e28320247e737c314",
+      "candidate/src/solver/mtl/Vec.h": "3585058b7f6b439d89f99ff81cc85422282e44432fab632e20aeae50811ebf58",
+      "candidate/src/solver/mtl/XAlloc.h": "190209abdab80a3562125525890254048bb732cfeb5017603c52cc2b00ca62cf",
+      "candidate/src/solver/README.md": "321aef09bd451933dede05c313f748433cbfce567659c4e3b700011313c28207",
+      "candidate/src/solver/SimpSolver.cc": "9b0f44cae93420a57bb8b4cdcaeb5fdeee075a42ba886e31c0bb42271da99345",
+      "candidate/src/solver/SimpSolver.h": "34d5115162e663ba01b6353ea1a5a1a55310f73d8bb59bce6aab5ad2b2e87b50",
+      "candidate/src/solver/Solver.cc": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+      "candidate/src/solver/Solver.h": "f85bcb8ea4cb204ad502eb62cc7623c26977e0d56b3a9c80ba9d259d8349fe6c",
+      "candidate/src/solver/SolverTypes.h": "baf1ca68ee0954737c625b59ee04c80083501ac0cf132b4f69403f9b392b410a",
+      "candidate/src/solver/utils/Makefile": "3f5294c5bb13a6cc975606f1bdab5060c62dc5316f7313747ec21bc639218dca",
+      "candidate/src/solver/utils/Options.cc": "b613436bd6dbda224d73d72271ac1768878940079f78e325e48cc22a4d6428fe",
+      "candidate/src/solver/utils/Options.h": "ad4325f5f933b07c9f2c98258a2e514bc14bc385ffb6ce2834e3aa8ec55e953d",
+      "candidate/src/solver/utils/Options.or": "b08478dc4c4ea897009bd070760295436cb3298d44f28d6976687cdff64d8fd7",
+      "candidate/src/solver/utils/ParseUtils.h": "9230bb5a52d94fb2b2883dcae054b382c9e2caf88148ad7411704f48b9c0f79b",
+      "candidate/src/solver/utils/System.cc": "c49aefdd2053eca7e5b055db22ee2a9de89cf76d2482f89ea3bc8d5f68aab3b6",
+      "candidate/src/solver/utils/System.h": "013021931cd7caffdb8aebc9ec329287f808b0534f41d81eb6c20eb284bd77f1",
+      "candidate/src/solver/utils/System.or": "03e232df2f5a1ece00e1e120f4e354732092151ca69ffa6318d79eb939f074a2",
+      "idle_tier1_lto.py": "84afb50b6e6d1c6be5c349b9ccd114e052e621d9b1c5f95c8bb515ff12893601",
+      "implementation.patch": "f350f2176b9ee9e5385e1b1871ae0541ba333de4ad5a6e3315ed5ebd1feba2d7",
+      "PROPOSAL.md": "c17aa5627871529c2a78b987bf1e5d7371728d576484ae07d1fd64f489d25c1a",
+      "qdistsat/AGENTS.md": "f92e2771c3bb617dd33de9f351e4bfcf2103bdb75ab90250f7521d7010b4e5de",
+      "qdistsat/benchmarks/compare_distqldpc_binaries.py": "092935ccaaa52453779662d41d648f3108a3274bb1f68d464976182afe972574",
+      "qdistsat/data/BB/BB_108_8_10_Gx.txt": "a38bc70bf3ef3a44ebc044b264b2881771a722df83773f3c5577d924df6fc08e",
+      "qdistsat/data/BB/BB_108_8_10_Gz.txt": "5292d7560d7db868eff0a6c4ba0a97165c193b97084968b3c3574fac1ff28971",
+      "qdistsat/data/BB/BB_108_8_10_Hx.txt": "c89441f4e417475fef2205b6aa76ae8062abe823b068b5d176f47fd12168212b",
+      "qdistsat/data/BB/BB_108_8_10_Hz.txt": "4f098c52399fb2eeebcd80152fc6e153e642cfb7aa624640184a133f9c755c83",
+      "qdistsat/data/LP/LP_136_32_4_Gx.txt": "8e975369a2601dd6b7236a3c6fcfce32a022d79c9e8fac6d35cd812b2632e945",
+      "qdistsat/data/LP/LP_136_32_4_Gz.txt": "e699e67cfd04baa4e820fb66af1744376d123a301108ef1be64632dc3dae09ef",
+      "qdistsat/data/LP/LP_136_32_4_Hx.txt": "eae70b8b9d763bb1112bd2219ec5b9db894ebc8c0318f2a9433239e6d91cb2ab",
+      "qdistsat/data/LP/LP_136_32_4_Hz.txt": "feef75c05abf642cb39cc07bd699126cb3e776f639278cad70a2935c4c1ed403",
+      "qdistsat/data/README.md": "63792f23b4757f19f226c822ce5c2ed3826d727cca9ef6fa4568dde6e8607666",
+      "qdistsat/LICENSE": "fdbdc9efa8a8049fafbe544af6b046edd40b26a1d6b5202da06acaf799a25718",
+      "qdistsat/NOTICE": "a33ca1f849d6fa9b4d6aa8754f94629517b0a284046c726de4c53323d60d35ef",
+      "qdistsat/README.md": "58bbc1ff9d708afcc5ceaececa71ad19492363b27ded0870fb40320b90356629"
+    }
+  },
+  "platform": {
+    "system": "Windows",
+    "node": "DESKTOP-9NILU90",
+    "release": "10",
+    "version": "10.0.19045",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel"
+  },
+  "python": "3.13.14 (tags/v3.13.14:fd17997, Jun 10 2026, 13:03:48) [MSC v.1944 64 bit (AMD64)]",
+  "invocation": [
+    "optimization/experiments/GH-16/windows_tier1.py",
+    "--workspace",
+    "C:/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for",
+    "--output",
+    "C:/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH16-windows-tier2-exploratory-01",
+    "--assignment",
+    "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6062940581",
+    "--tier",
+    "2",
+    "--tier1-evidence",
+    "C:/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH16-windows-tier1-01"
+  ],
+  "affinity": {
+    "topology": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ]
+    ],
+    "selected_cpu": 14,
+    "sibling": 15,
+    "original_affinity": 65535,
+    "mask": 16384,
+    "idle_by_cpu": [
+      83.125,
+      81.5625,
+      80.3125,
+      84.0625,
+      76.875,
+      75.9375,
+      72.8125,
+      83.125,
+      90.3125,
+      71.5625,
+      96.25,
+      74.6875,
+      82.8125,
+      80.0,
+      85.3125,
+      95.9375
+    ],
+    "sampling_sec": 5,
+    "exclusive_reservation": false,
+    "power_policy_changed": false,
+    "sleep_inhibition": "temporary system requirement",
+    "allow_contention": true,
+    "affinity_enforcement": "Unnamed Windows Job Object JOB_OBJECT_LIMIT_AFFINITY; no breakaway flags",
+    "priority_class": 32768,
+    "original_priority_class": 32,
+    "priority_enforcement": "JOB_OBJECT_LIMIT_PRIORITY_CLASS on owned process tree"
+  },
+  "exclusive_reservation": false,
+  "tier": 2,
+  "prior_tier1": {
+    "decision": "INCONCLUSIVE",
+    "tier0": "PASS",
+    "tier1": "48 scientifically correct solves",
+    "tier2": "NOT_RUN",
+    "tier3": "NOT_RUN",
+    "reason": "Windows diagnostic: no exclusive reservation; never research-grade evidence",
+    "numeric_filter": "inconclusive",
+    "numeric_reason": {
+      "no-card": {
+        "median_geomean": 0.9799386485452973,
+        "range_envelope_geomean": 1.0208159470650273,
+        "no_worse_medians": false
+      },
+      "card-mto": {
+        "median_geomean": 0.979528635185214,
+        "range_envelope_geomean": 0.9986563437927354,
+        "no_worse_medians": true
+      }
+    },
+    "medians": [
+      {
+        "case": "BB_90_8_10",
+        "mode": "no-card",
+        "raw": {
+          "baseline": [
+            2.766696900012903,
+            3.0534411999979056,
+            2.891961800021818
+          ],
+          "candidate": [
+            2.896147000021301,
+            2.7866651999938767,
+            2.863335100002587
+          ]
+        },
+        "baseline_median": 2.891961800021818,
+        "candidate_median": 2.863335100002587,
+        "ratio": 0.9901012869468002,
+        "range_envelope": 1.0467886814807197,
+        "nonoverlapping_regression": false
+      },
+      {
+        "case": "BB_90_8_10",
+        "mode": "card-mto",
+        "raw": {
+          "baseline": [
+            3.444926399999531,
+            3.407071800000267,
+            3.73014709999552
+          ],
+          "candidate": [
+            3.4759729000215884,
+            3.3663482000119984,
+            3.38582550000865
+          ]
+        },
+        "baseline_median": 3.444926399999531,
+        "candidate_median": 3.38582550000865,
+        "ratio": 0.9828440746975352,
+        "range_envelope": 1.0202229668366003,
+        "nonoverlapping_regression": false
+      },
+      {
+        "case": "GB_144_12_8",
+        "mode": "no-card",
+        "raw": {
+          "baseline": [
+            1.2429041999857873,
+            1.1885824000055436,
+            1.287125400005607
+          ],
+          "candidate": [
+            1.1785891000181437,
+            1.1667591999867,
+            1.188992400013376
+          ]
+        },
+        "baseline_median": 1.2429041999857873,
+        "candidate_median": 1.1785891000181437,
+        "ratio": 0.9482541776201423,
+        "range_envelope": 1.000344948745523,
+        "nonoverlapping_regression": false
+      },
+      {
+        "case": "GB_144_12_8",
+        "mode": "card-mto",
+        "raw": {
+          "baseline": [
+            1.6178863000241108,
+            1.4770805000152905,
+            1.482880199997453
+          ],
+          "candidate": [
+            1.4471506999980193,
+            1.4667343000182882,
+            1.412237400014419
+          ]
+        },
+        "baseline_median": 1.482880199997453,
+        "candidate_median": 1.4471506999980193,
+        "ratio": 0.9759053361158271,
+        "range_envelope": 0.992995507017461,
+        "nonoverlapping_regression": false
+      },
+      {
+        "case": "BB_108_8_10",
+        "mode": "no-card",
+        "raw": {
+          "baseline": [
+            3.3105612999934237,
+            3.3531659999862313,
+            3.32228490000125
+          ],
+          "candidate": [
+            3.4418066999933217,
+            3.323956099979114,
+            3.2240926999947987
+          ]
+        },
+        "baseline_median": 3.32228490000125,
+        "candidate_median": 3.323956099979114,
+        "ratio": 1.0005030272924105,
+        "range_envelope": 1.0396444554584017,
+        "nonoverlapping_regression": false
+      },
+      {
+        "case": "BB_108_8_10",
+        "mode": "card-mto",
+        "raw": {
+          "baseline": [
+            4.451057199999923,
+            4.2120448000205215,
+            4.245703699998558
+          ],
+          "candidate": [
+            4.167117300006794,
+            4.158562099997653,
+            4.145664300012868
+          ]
+        },
+        "baseline_median": 4.245703699998558,
+        "candidate_median": 4.158562099997653,
+        "ratio": 0.9794753458652957,
+        "range_envelope": 0.9893335654897334,
+        "nonoverlapping_regression": false
+      },
+      {
+        "case": "LP_238_44_6",
+        "mode": "no-card",
+        "raw": {
+          "baseline": [
+            2.2477022999955807,
+            2.2598216999904253,
+            2.2773730999906547
+          ],
+          "candidate": [
+            2.2184361000254285,
+            2.2152314000122715,
+            2.2419965000008233
+          ]
+        },
+        "baseline_median": 2.2598216999904253,
+        "candidate_median": 2.2184361000254285,
+        "ratio": 0.9816863427919238,
+        "range_envelope": 0.9974614965715127,
+        "nonoverlapping_regression": false
+      },
+      {
+        "case": "LP_238_44_6",
+        "mode": "card-mto",
+        "raw": {
+          "baseline": [
+            2.7444827999861445,
+            2.660091099998681,
+            2.688519500021357
+          ],
+          "candidate": [
+            2.634486100025242,
+            2.639828099985607,
+            2.613601400022162
+          ]
+        },
+        "baseline_median": 2.688519500021357,
+        "candidate_median": 2.634486100025242,
+        "ratio": 0.9799021729261456,
+        "range_envelope": 0.9923825917040646,
+        "nonoverlapping_regression": false
+      }
+    ],
+    "correctness": "Expected distance/objective/LB/UB identical in all runs"
+  },
+  "exploratory_exception": true,
+  "compiler": "g++ (GCC) 14.4.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "power_scheme": "\u96fb\u6e90\u914d\u7f6e GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (\u5e73\u8861)"
+}

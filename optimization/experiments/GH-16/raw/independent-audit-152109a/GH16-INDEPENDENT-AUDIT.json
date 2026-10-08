@@ -1,0 +1,109 @@
+{
+  "tiers": [
+    {
+      "directory": "GH16-windows-tier1-01",
+      "samples": 48,
+      "emitted_bounds": 96,
+      "resource_checks": 85,
+      "contention": 24,
+      "active_contention": 3,
+      "min_idle": 65.88289534347625,
+      "min_sibling": 85.9375,
+      "recomputed": [
+        {
+          "case": "BB_90_8_10",
+          "mode": "no-card",
+          "ratio": 0.9901012869468002,
+          "envelope": 1.0467886814807197,
+          "regression": false
+        },
+        {
+          "case": "BB_90_8_10",
+          "mode": "card-mto",
+          "ratio": 0.9828440746975352,
+          "envelope": 1.0202229668366003,
+          "regression": false
+        },
+        {
+          "case": "GB_144_12_8",
+          "mode": "no-card",
+          "ratio": 0.9482541776201423,
+          "envelope": 1.000344948745523,
+          "regression": false
+        },
+        {
+          "case": "GB_144_12_8",
+          "mode": "card-mto",
+          "ratio": 0.9759053361158271,
+          "envelope": 0.992995507017461,
+          "regression": false
+        },
+        {
+          "case": "BB_108_8_10",
+          "mode": "no-card",
+          "ratio": 1.0005030272924105,
+          "envelope": 1.0396444554584017,
+          "regression": false
+        },
+        {
+          "case": "BB_108_8_10",
+          "mode": "card-mto",
+          "ratio": 0.9794753458652957,
+          "envelope": 0.9893335654897334,
+          "regression": false
+        },
+        {
+          "case": "LP_238_44_6",
+          "mode": "no-card",
+          "ratio": 0.9816863427919238,
+          "envelope": 0.9974614965715127,
+          "regression": false
+        },
+        {
+          "case": "LP_238_44_6",
+          "mode": "card-mto",
+          "ratio": 0.9799021729261456,
+          "envelope": 0.9923825917040646,
+          "regression": false
+        }
+      ],
+      "identity_and_cleanup": "PASS",
+      "decision": "INCONCLUSIVE appropriate"
+    },
+    {
+      "directory": "GH16-windows-tier2-exploratory-01",
+      "samples": 12,
+      "emitted_bounds": 24,
+      "resource_checks": 400,
+      "contention": 71,
+      "active_contention": 68,
+      "min_idle": 52.63157894736842,
+      "min_sibling": 67.76315789473684,
+      "recomputed": [
+        {
+          "case": "LP_340_56_8",
+          "mode": "no-card",
+          "ratio": 0.9946487083949924,
+          "envelope": 1.022068715459844,
+          "regression": false
+        },
+        {
+          "case": "LP_340_56_8",
+          "mode": "card-mto",
+          "ratio": 1.003327175981669,
+          "envelope": 1.1148851648700338,
+          "regression": false
+        }
+      ],
+      "identity_and_cleanup": "PASS",
+      "decision": "INCONCLUSIVE appropriate"
+    }
+  ],
+  "provenance": {
+    "profiles": "4frozen hashes PASS",
+    "driver_helper_parser": "PASS",
+    "raw_manifest_count": 594,
+    "exact_git_blob_bytes": "PASS",
+    "record_commit": "152109a903b1ce606333e6a06649dd9def56adf2"
+  }
+}
