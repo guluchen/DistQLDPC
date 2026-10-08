@@ -2,6 +2,7 @@
 #include "engine_snapshot_fixture.h"
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <stdexcept>
 
 using namespace Minisat;
@@ -12,9 +13,12 @@ class Fixture : public gh26::EngineSnapshotFixture {
 public:
     std::vector<std::vector<int> > original_hard;
     std::vector<int> original_soft;
+    gh26::OffsetWitness offsets;
     void setup(int signs,bool covered,int root_mode) {
         for (int i=0;i<4;++i) newVar();
         UB=100; UBconflictFlag=false; softConflictFlag=false; falseVar=var_Undef;
+        LHconfl=CRef_Undef; hardenEnable=false;
+        LOOKAHEAD=lk_propagations=nbLKsuccess=totalPrunedLB=totalPrunedLB2=0;
         fixedCostBySearch=0; derivedCost=0; relaxedCost=0;
         for (int i=0;i<4;++i) {
             Lit p=mkLit(i,i<3 && (signs&(1<<i))!=0);
@@ -29,7 +33,13 @@ public:
         if (root_mode!=0) {
             uncheckedEnqueue(root_mode==3 ? softLits[3] : ~softLits[3]);
             qhead=trail.size();
-            if (root_mode==2) { fixedCostBySearch=falseLits.size(); falseLits.clear(); }
+            if (root_mode==2) {
+                // Capture the literal identities BEFORE the same scalar cost
+                // transfer/clear operations used by the baseline success path.
+                offsets.initial_fixed_search_cost=fixedCostBySearch;
+                for (int i=0;i<falseLits.size();++i) offsets.transferred_root_false.push_back(toInt(falseLits[i]));
+                fixedCostBySearch+=falseLits.size(); falseLits.clear();
+            }
         }
         trailRecord=trail.size();
         isets.init(0); isets[0].push(0);
@@ -40,12 +50,25 @@ public:
     }
     std::string fingerprint() {
         std::ostringstream s;
+        s<<std::setprecision(17);
         s<<qhead<<','<<trailRecord<<','<<UB<<','<<fixedCostBySearch<<','<<derivedCost<<','<<relaxedCost;
+        s<<" flags"<<ok<<','<<UBconflictFlag<<','<<softConflictFlag<<','<<falseVar<<','<<hardenEnable<<','<<LHconfl;
+        s<<" counters"<<solves<<','<<starts<<','<<decisions<<','<<propagations<<','<<conflicts
+         <<','<<clauses_literals<<','<<learnts_literals<<','<<LOOKAHEAD<<','<<lk_propagations
+         <<','<<nbLKsuccess<<','<<totalPrunedLB<<','<<totalPrunedLB2<<','<<counter;
+        s<<" allocator"<<ca.size()<<','<<ca.wasted();
         for (int v=0;v<nVars();++v)
             s<<';'<<toInt(assigns[v])<<','<<vardata[v].reason<<','<<vardata[v].level
              <<','<<seen[v]<<','<<involved[v]<<','<<inConflict[v]<<','<<inConflicts[v]
              <<','<<softVarLocked[v]<<','<<unlockReason[v]<<','<<orderHeapAuxi.inHeap(v)
-             <<','<<order_heap_VSIDS.inHeap(v)<<','<<order_heap_CHB.inHeap(v);
+             <<','<<order_heap_VSIDS.inHeap(v)<<','<<order_heap_CHB.inHeap(v)
+             <<','<<activityLB[v]<<','<<activity_VSIDS[v]<<','<<activity_CHB[v]
+             <<','<<seen2[v]<<','<<toInt(softLits[v]);
+        for (int i=0;i<orderHeapAuxi.size();++i) s<<" H"<<orderHeapAuxi[i];
+        for (int i=0;i<order_heap_VSIDS.size();++i) s<<" V"<<order_heap_VSIDS[i];
+        for (int i=0;i<order_heap_CHB.size();++i) s<<" B"<<order_heap_CHB[i];
+        for (int i=0;i<involvedLits.size();++i) s<<" I"<<toInt(involvedLits[i]);
+        for (int i=0;i<allSoftLits.size();++i) s<<" S"<<toInt(allSoftLits[i]);
         for (int i=0;i<trail.size();++i) s<<" t"<<toInt(trail[i]);
         for (int i=0;i<trail_lim.size();++i) s<<" l"<<trail_lim[i];
         for (int i=0;i<falseLits.size();++i) s<<" f"<<toInt(falseLits[i]);
@@ -70,7 +93,7 @@ public:
         }
         return s.str();
     }
-    gh26::EngineSnapshot read() {return extract(trailRecord,1,1);}
+    gh26::EngineSnapshot read() {return extract(trailRecord,1,1,offsets);}
 };
 static bool literal(int p,int assignment) { return bool(assignment&(1<<(p/2)))!=bool(p&1); }
 int main() {

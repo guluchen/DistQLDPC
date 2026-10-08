@@ -7,8 +7,16 @@
 #include <set>
 #include <string>
 #include <cstdint>
+#include <limits>
 
 namespace gh26 {
+// Must be captured at actual normalization/root-cost transfer boundaries.
+// The reader cannot reconstruct historical transfer identity from a scalar.
+struct OffsetWitness {
+    std::uint64_t initial_fixed_search_cost;
+    std::vector<int> transferred_root_false;
+    OffsetWitness() : initial_fixed_search_cost(0) {}
+};
 struct EngineSnapshot {
     Snapshot model;
     std::vector<int> conditional_nogood;
@@ -23,6 +31,21 @@ struct EngineSnapshot {
 // Protected-state exposure by ordinary inheritance, not a production friend or
 // private/public macro. Test fixture setup is added separately after review.
 class EngineSnapshotFixture : public Minisat::Solver {
+    bool verifyLiveList(const Minisat::vec<Minisat::CRef>& list,
+                        const std::set<Minisat::CRef>& emitted, EngineSnapshot& out) {
+        for (int i=0;i<list.size();++i) {
+            Minisat::CRef cr=list[i];
+            // Bounds are only a guard. Complete Clause-start provenance is a
+            // caller precondition from real ca.alloc/attachClause/relocAll.
+            if (cr>=ca.size()) { out.decline="live list reference"; return false; }
+            const Minisat::Clause& clause=ca[cr];
+            if (clause.mark()==1) continue;
+            if (clause.reloced() || clause.size()<2 || emitted.count(cr)==0) {
+                out.decline="live hard clause not attached"; return false;
+            }
+        }
+        return true;
+    }
     bool appendWatchedClauses(EngineSnapshot& out, bool binary,
                              std::set<Minisat::CRef>& emitted) {
         for (int v=0;v<nVars();++v) for (int s=0;s<2;++s) {
@@ -32,6 +55,8 @@ class EngineSnapshotFixture : public Minisat::Solver {
             const Minisat::vec<Watcher>& list=binary ? watches_bin[key] : watches[key];
             for (int j=0;j<list.size();++j) {
                 Minisat::CRef cr=list[j].cref;
+                // cr<size does not prove this is an allocation boundary or
+                // a complete Clause; actual watcher provenance is required.
                 if (cr>=ca.size()) { out.decline="watcher allocator reference"; return false; }
                 const Minisat::Clause& clause=ca[cr];
                 if (clause.mark()==1) continue;
@@ -52,7 +77,8 @@ class EngineSnapshotFixture : public Minisat::Solver {
         return true;
     }
 public:
-    EngineSnapshot extract(int record, int count_isets, int count_conflicts) {
+    EngineSnapshot extract(int record, int count_isets, int count_conflicts,
+                           const OffsetWitness& offsets) {
         EngineSnapshot out;
         out.residual_ub=UB;
         out.fixed_search_cost=fixedCostBySearch;
@@ -85,6 +111,19 @@ public:
                 out.decline="current falseLits mapping"; return out;
             }
         }
+        std::set<int> transferred;
+        for (std::size_t i=0;i<offsets.transferred_root_false.size();++i) {
+            int p=offsets.transferred_root_false[i],v=p/2;
+            if (p<0 || v>=nVars() || !transferred.insert(p).second ||
+                out.model.base[v]<0 || out.model.base[v]!=(p&1) || level(v)!=0 ||
+                false_literals.count(p)!=0 || Minisat::toInt(softLits[v])!=p) {
+                out.decline="transferred root witness"; return out;
+            }
+        }
+        if (offsets.initial_fixed_search_cost>std::numeric_limits<std::uint64_t>::max()-transferred.size() ||
+            offsets.initial_fixed_search_cost+transferred.size()!=fixedCostBySearch) {
+            out.decline="fixed-search transfer delta"; return out;
+        }
         std::vector<int> objective(nVars(),-1);
         std::set<int> all_objective_variables;
         for (int i=0;i<allSoftLits.size();++i) {
@@ -97,7 +136,9 @@ public:
             // A root falsity already moved into fixedCostBySearch contributes
             // no residual cost, but remains a hard alpha fact above.
             if (false_at_base && false_literals.count(p)==0) {
-                if (level(v)!=0) { out.decline="nonroot uncounted falsity"; return out; }
+                if (level(v)!=0 || transferred.count(p)==0) {
+                    out.decline="uncertified uncounted falsity"; return out;
+                }
                 continue;
             }
             objective[v]=p;
@@ -107,6 +148,10 @@ public:
         if (out.base_false!=falseLits.size()) {
             out.decline="residual false count"; return out;
         }
+        for (std::set<int>::const_iterator i=transferred.begin();i!=transferred.end();++i)
+            if (all_objective_variables.count(*i/2)==0) {
+                out.decline="transfer outside normalized objective"; return out;
+            }
         std::set<int> components, members;
         for (int root=0;root<count_isets;++root) {
             if (finalIset[root]<0 || finalIset[root]>=count_isets) {
@@ -146,6 +191,11 @@ public:
         }
         std::set<Minisat::CRef> emitted;
         if (!appendWatchedClauses(out,true,emitted) || !appendWatchedClauses(out,false,emitted)) return out;
+        if (!verifyLiveList(clauses,emitted,out) || !verifyLiveList(learnts_core,emitted,out) ||
+            !verifyLiveList(learnts_tier2,emitted,out) || !verifyLiveList(learnts_local,emitted,out) ||
+            !verifyLiveList(hardens,emitted,out) || !verifyLiveList(cardinalityC,emitted,out) ||
+            !verifyLiveList(isetClauses,emitted,out) || !verifyLiveList(hardSoftClauses,emitted,out) ||
+            !verifyLiveList(hardLearnts,emitted,out) || !verifyLiveList(softLearnts,emitted,out)) return out;
         out.exported=true;
         return out;
     }
