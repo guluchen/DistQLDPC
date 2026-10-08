@@ -1,0 +1,11 @@
+# Assigned pure model result
+
+MODEL_ORACLE_PASS / valid_run=true. All 534 fixed oracle records checked; 15 kernels returned strengthening, all independently bounded by exhaustive exact residual objective. This is not production Tier0 and no performance was measured. Fixed case count consists of 16 focused, 512 fixed-seed generated and 6 invalid-precondition decline cases. No kernel or parameters changed for attempt02.
+
+Assignment issue15 comment6065013173; RUN_START6065023570; RELEASE6065035798. Frozen model8438131b07901a9182e3212aed18b027b1773650; execution support24cb2404d56fe3d3c92f052dd253658718eb4082; exact runner SHA256e19a8df8c092976cd018fdb4c6b7b11e00a84bb872c9fe069fb701b8645509ba. GCC14.4.0 one-TU O0 build and oracle each returned0, build stderr empty. Binary SHA256bfbac82d7c0967eab6414243ab0043aea955915b7c86607f3611748065d70740.
+
+Raw archive `raw.zip` SHA25655af296741d2b25a1b0b4e77b23f65243caeb22ca2e58f174741e54741b12b57, 1,322,759 bytes, stores the complete untouched GH26-windows-model-02 directory, including executed runner/helper/model files, binary, all fixed vectors and exact stdin, child stdout/stderr, oracle report, compiler/oracle byte streams, exact commands, pins, resource selection/observations, cleanup/restoration and per-file SHA256 manifest. Archive extraction does not normalize line endings. Independent PowerShell metadata audit found zero manifest mismatches.
+
+Owned cleanup actions=[]/remaining=[]; restoration flags all true; actual final affinity65535 matches original and actual Normal priority32 matches original. Source/support/runtime identities unchanged. OneCPU mask64, global idle preflights94.73–98.32%, half-spare logicalCPU7.57–7.86. Commands completed before the next 2-second sample; no claim of observed child samples or controlled/exclusive host reservation. Slot released only after the independent metadata audit.
+
+Attempt01 remains separately engineering INCONCLUSIVE before all computation. Neither attempt proves actual-engine residual objective mapping, old K extraction, conflict analyzer integration, complete rollback or learned-clause lifetime. Those obligations must pass separate assigned engine adapter tests before performance.
