@@ -28,6 +28,7 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[3]
 ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
+ap.add_argument("--support-sha",required=True)
 args=ap.parse_args()
 ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "Preparation only: no host slot"
@@ -39,6 +40,10 @@ runtime=ROOT/"E004-windows-runtime/cygwin"
 package=ROOT/"E004-windows-tier2-02/E004-server-package"
 base=package/"baseline"
 candidate=ROOT/"GH27-ENQUEUE"
+support_head=subprocess.check_output(['git','-C',str(candidate),'rev-parse','HEAD'],text=True,timeout=10).strip()
+assert support_head==args.support_sha,'Assigned support commit mismatch'
+support_blob=subprocess.check_output(['git','-C',str(candidate),'show',support_head+':optimization/experiments/GH-27/windows_tier1.py'],timeout=10)
+assert Path(__file__).read_bytes()==support_blob,'Uncommitted Tier1 driver'
 helper=ROOT/"DistQLDPC/optimization/experiments/E004/windows_cpu_window.py"
 assert sha(helper)=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2','Reviewed helper changed'
 spec=importlib.util.spec_from_file_location("gh27_window",helper)
@@ -146,11 +151,12 @@ def scientific(rc,text,exact,timeout=False):
     # Reject malformed fields, every interim bound/objective/d, not only final values.
     values={}
     specs={'lb':(r'^c\s+d_lb:\s*(.*?)\s*$',{'-'}),'ub':(r'^c\s+d_ub:\s*(.*?)\s*$',{'-'}),
-           'd':(r'^c\s+d\s*:\s*(.*?)\s*$',{'UNKNOWN'}),'objective':(r'^o\s+(.*?)\s*$',set())}
+           'd':(r'^c\s+d\s*:\s*(.*?)\s*$',{'UNKNOWN'}),'objective':(r'^o(?:\s+(.*?))?\s*$',set())}
     for key,(pattern,sentinels) in specs.items():
         raw=re.findall(pattern,text,re.M);nums=[]
         for item in raw:
             if item in sentinels:continue
+            assert item is not None,'SCIENCE missing objective'
             assert re.fullmatch(r'\d+',item),'SCIENCE malformed '+key+': '+item
             value=int(item);nums.append(value)
             assert value<=exact if key=='lb' else value==exact if key=='d' else value>=exact,'SCIENCE wrong interim '+key
@@ -201,6 +207,7 @@ try:
     hosted=json.loads((record/'raw/hosted-7a25708/AUDIT.json').read_text(encoding='utf8'))
     assert hosted['status']=='PASS' and hosted['production']==CAND
     head=subprocess.check_output(['git','-C',str(candidate),'rev-parse','HEAD'],text=True,timeout=10).strip()
+    assert head==support_head,'Assigned support HEAD changed'
     assert not subprocess.check_output(['git','-C',str(candidate),'diff',CAND,head,'--','src','Makefile'],timeout=10)
     manifest=json.loads((package/'manifest.json').read_text(encoding='utf8'))
     assert manifest['baseline']==BASE and manifest['qdistsat']=='7c4774fffc49856f48a22ae5f9063d00b2661aaa'

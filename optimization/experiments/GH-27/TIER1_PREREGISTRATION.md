@@ -26,7 +26,9 @@ blocks execution before output creation or CPU acquisition. AST parse is a stati
 preparation check, not a test run. Independent coordinator review and a fresh
 explicit RUN_ASSIGNMENT must freeze the actual support/driver before execution.
 Then replace only the sentinel with that exact assigned URL, commit and record
-actual execution identity. No Tier1 workload is currently assigned or started.
+actual execution identity; pass that exact HEAD via required --support-sha.
+The runner verifies HEAD and its exact committed driver bytes before importing
+the capacity helper. No Tier1 workload is currently assigned or started.
 
 The actual successful preparation summary/preexecution/binary/manifest files are
 pinned by literal SHA256. Original Tier0 source/support/runtime/input identities
@@ -51,7 +53,8 @@ interim/final lower bound>truth or upper/objective<truth, wrong distance, change
 complete/timeout status/exit semantics, or nonmatching exact final tuple. Genuine
 rc1 TIMEOUT/UNKNOWN is verified but blocks the timing filter; retain it without
 fabricating medians. No partial run can promote. Same exact checker as successful
-Tier0, including trying-distance syntax and all completed final fields.
+Tier0, including trying-distance syntax and all completed final fields, with
+the missing bare-o objective token additionally rejected explicitly.
 
 Numeric filter is fixed before execution: each of eight case/mode groups reports
 all raw values and medians; unchanged E004 judge rejects a nonoverlapping per-case
