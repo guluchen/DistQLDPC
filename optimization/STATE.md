@@ -1,5 +1,20 @@
 # Optimization state
 
+Latest completed gates 2026-10-09: GH32 mtune-only Tier0 PASS; all48 Tier1
+results/96bounds correct, but7/8medians slower and OFF/MTO GM+0.809%/+0.908%.
+Fixed localfilter REJECT/NOT ADOPTED, noTier2/3;52335caa,417 exactraw verified.
+GH27 full corrected Tier0 PASS plus required hosted/source audit,3687551/635
+archive members/42publicraw; now fixed48Tier1 owner6066022135/supportdc2ef350/
+session10198, not yet performance verdict. GH26 reader attempt01 engineering
+compile failure retained; retry02 passes64+5 exact tests atd0cc20bd, with complete
+cleanup/restoration. This is limited test-only reader proof, no production FLA
+Tier0/learning/rollback/GC/private-state proof or speed claim. Root GH36/PR37
+recovered H003 prerecord12e2343; application candidatef8f379d only sets validated
+row cap in actual MaxSAT search caller, source offsets independently audited;
+Tier0 supporta6cdbcb prepared/disabled, local tests/performance NOT RUN.
+GH32 owner begins fresh exactly-three/select-one Brain after negative learning;
+all hosts remain serial and all variants from24572d6. No accepted optimization.
+
 Latest 2026-10-09 update supersedes running entries below. Loop ACTIVE; no
 accepted optimization. GH30 MTO-only activity Tier0 PASS and60 correct results/
 120 bounds, but LP340 MTO65.412343->140.114365s (+114.202%), all repeated ranges

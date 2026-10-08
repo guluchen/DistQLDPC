@@ -211,7 +211,9 @@ Tier 0/1/2 gates unchanged and no Tier 3 authorized by this revision.
 **H-003 — verified witness through existing initUB.** Originally unselected,
 Latest selection: recovered as GH36-A (issue36), prerecord12e2343 on fresh
 baseline24572d6, after GH30 medium-case rejection. Source proof/implementation
-and all tiers pending; no inferred performance gain or acceptance. Its scalar
+was followed by application-only candidatef8f379d (PR37), independently reviewed
+offset/+1 proof; actual MaxSAT caller only. Local Tier0/performance pending;
+supporta6cdbcb prepared but disabled. No inferred performance gain or acceptance. Its scalar
 cap is not a solver-discovered model or certified optimum. The historical
 screen below remains feasibility evidence only.
 historically ranked #1 in the initial Round 2 using an independent read-only
