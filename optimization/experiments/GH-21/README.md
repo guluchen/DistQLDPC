@@ -25,6 +25,8 @@ The Windows wrapper intentionally refuses to run until ASSIGNED_URL is replaced 
 python optimization/experiments/GH-21/windows_assigned_runner.py --candidate-sha <actual-HEAD> --run-assignment <frozen-hub-comment-URL> --out optimization/experiments/GH-21/raw/windows-assigned-01
 ```
 
-Hosted CI and QDistSAT correctness pending; no local Tier0 execution or Tier1/2/3 evidence, medians or speed conclusion. Baseline standalone parser/engine supports the unweighted-PMS fixtures; candidate must establish baseline's correct oracle results as well. A pre-science build/provenance/harness issue is recorded honestly and cannot be relabeled a scientific mismatch.
+Hosted ordinary CI and QDistSAT correctness PASS for production e1aa917, durable evidence in [HOSTED-RESULT](HOSTED-RESULT.md); no local Tier0 execution or Tier1/2/3 evidence, medians or speed conclusion. Baseline standalone parser/engine supports the unweighted-PMS fixtures; candidate must establish baseline's correct oracle results as well. A pre-science build/provenance/harness issue is recorded honestly and cannot be relabeled a scientific mismatch.
+
+Read-only review fixes before any local execution: CSS/smoke/timeout validate EVERY emitted bound/objective/distance against the oracle; external watchdog raises INCONCLUSIVE unless a scientific failure is established. The assigned supervisor marks valid_run=false and exits nonzero on any failure, including unconfirmed owned cleanup or any false Job/affinity/priority/sleep restoration flag. Restoration is attempted even after cleanup fails. These prepared paths still need assigned execution evidence; no claim that every abort path was exercised.
 
 Tier1 commands must use fixed explicit no-card/card-mto for BB_90_8_10, GB_144_12_8, BB_108_8_10, LP_238_44_6, three serial pairs AB/BA/AB each and180s parent195s watchdog. See preregistration for gates and resource policy. No timing runner is authorized by this README.

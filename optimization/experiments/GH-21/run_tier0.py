@@ -20,6 +20,17 @@ def span(rows):
     return values
 
 
+def assert_all_bounds(text,oracle):
+    """Validate every emitted scientific update, not only its final value."""
+    lower=list(map(int,re.findall(r"^c\s+d_lb:\s*(\d+)\s*$",text,re.M)))
+    upper=list(map(int,re.findall(r"^c\s+d_ub:\s*(\d+)\s*$",text,re.M)))
+    distance=list(map(int,re.findall(r"^c\s+d\s*:\s*(\d+)\s*$",text,re.M)))
+    objective=list(map(int,re.findall(r"^o\s+(-?\d+)\s*$",text,re.M)))
+    assert all(v<=oracle for v in lower),('unsound lower bound',lower,oracle)
+    assert all(v>=oracle for v in upper+objective),('unsound upper bound',upper,objective,oracle)
+    assert all(v==oracle for v in distance),('wrong certified distance',distance,oracle)
+
+
 def main():
     parser=argparse.ArgumentParser()
     for name in ["baseline-bin","candidate-bin","baseline-maxsat","candidate-maxsat","data-root","out"]:
@@ -54,6 +65,7 @@ def main():
                     label=stem+"-"+mode+"-"+version
                     result=execute([binary,"-v","-cpu-lim=5","-"+mode,out/stem],label,binary.parent.parent)
                     assert result[0]==0 and semantic(result[1])==(exact,exact,exact,exact),result
+                    assert_all_bounds(result[1],exact)
                     wcnf=out/(label+".wcnf")
                     result=execute([binary,"-"+mode,"-dump-only","-dump-wcnf="+str(wcnf),out/stem],label+"-dump",binary.parent.parent)
                     assert result[0]==0,result
@@ -92,14 +104,19 @@ def main():
                 result=execute([binary,"-"+mode,"-cpu-lim=20",args.data_root.resolve()/"LP_34_20_2"],
                                "smoke-"+version+"-"+mode,binary.parent.parent,35)
                 assert result[0]==0 and semantic(result[1])==(2,2,2,2),result
+                assert_all_bounds(result[1],2)
                 result=execute([binary,"-"+mode,"-cpu-lim=1",args.data_root.resolve()/"LP_340_56_8"],
                                "timeout-"+version+"-"+mode,binary.parent.parent)
                 assert result[0]==1 and "s UNKNOWN" in result[1] and "c status: TIMEOUT" in result[1],result
                 assert semantic(result[1])[:2]==(None,None),result
+                assert_all_bounds(result[1],8)
                 assert all(int(v)<=8 for v in re.findall(r"^c\s+d_lb:\s*(\d+)",result[1],re.M)),result
                 assert all(int(v)>=8 for v in re.findall(r"^c\s+d_ub:\s*(\d+)",result[1],re.M)),result
         summary.update(Tier0="LOCAL_PASS",checks=checks,reason="CSS oracle, CNF, smoke, timeout and standalone MaxSAT oracle checks")
-    except (AssertionError,subprocess.TimeoutExpired) as error:
+    except subprocess.TimeoutExpired as error:
+        summary.update(Tier0="INCONCLUSIVE",reason="External watchdog interruption; no scientific mismatch established: "+str(error))
+        raise
+    except AssertionError as error:
         summary.update(decision="REJECT",Tier0="REJECT",reason=str(error))
         raise
     except Exception as error:

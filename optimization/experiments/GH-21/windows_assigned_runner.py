@@ -189,9 +189,21 @@ finally:
         try:
             clean_owned("final-cleanup")
             save(out/"job-pids-before-release.json",job_pids())
-            summary["cleanup"]=window.close()
         except Exception as error:summary["cleanup_failure"]=repr(error)
+        # Always attempt restoration, including when owned cleanup fails.
+        try:
+            summary["cleanup"]=window.close()
+            required=["job_limit_released","affinity_restored","sleep_requirement_restored","priority_restored"]
+            if not all(summary["cleanup"].get(k) is True for k in required):
+                summary["restoration_failure"]="Not all Job/affinity/priority/sleep restoration checks succeeded"
+        except Exception as error:summary["restoration_failure"]=repr(error)
+    success=(summary["status"]=="PREPARATORY_COMPLETE" and summary["Tier0"]=="LOCAL_PASS"
+             and "cleanup_failure" not in summary and "restoration_failure" not in summary
+             and window is not None)
+    summary["valid_run"]=success
+    if not success and summary["status"]!="REJECT":summary["status"]="INCONCLUSIVE"
     save(out/"summary.json",summary)
     save(out/"SHA256.json",{str(p.relative_to(out)):sha(p) for p in sorted(out.rglob("*"))
          if p.is_file() and "baseline-link-snapshot" not in p.parts and p.name!="SHA256.json"})
     print(json.dumps(summary,indent=2),flush=True)
+if not summary["valid_run"]:sys.exit(1)
