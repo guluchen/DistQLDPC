@@ -25,7 +25,7 @@ The Windows wrapper intentionally refuses to run until ASSIGNED_URL is replaced 
 python optimization/experiments/GH-21/windows_assigned_runner.py --candidate-sha <actual-HEAD> --run-assignment <frozen-hub-comment-URL> --out optimization/experiments/GH-21/raw/windows-assigned-01
 ```
 
-Hosted ordinary CI and QDistSAT correctness PASS for production e1aa917, durable evidence in [HOSTED-RESULT](HOSTED-RESULT.md); no local Tier0 execution or Tier1/2/3 evidence, medians or speed conclusion. Baseline standalone parser/engine supports the unweighted-PMS fixtures; candidate must establish baseline's correct oracle results as well. A pre-science build/provenance/harness issue is recorded honestly and cannot be relabeled a scientific mismatch.
+Hosted ordinary CI/QDistSAT and assigned local Tier0 PASS for unchanged productione1aa917, actual executed supportc64b036. See [HOSTED-RESULT](HOSTED-RESULT.md), [TIER0-RESULT](TIER0-RESULT.md), [preserved attempts](ATTEMPTS.md). All expected CSS/PMS results, WCNFs, smoke, bounds and actual timeout semantics verified; independent raw audit PASS. Performance UNTESTED; no Tier1/2/3 medians or adoption. Windows released6063808335; fresh assignment required for timing.
 
 Read-only review fixes before any local execution: CSS/smoke/timeout validate EVERY emitted bound/objective/distance against the oracle; external watchdog raises INCONCLUSIVE unless a scientific failure is established. The assigned supervisor marks valid_run=false and exits nonzero on any failure, including unconfirmed owned cleanup or any false Job/affinity/priority/sleep restoration flag. Restoration is attempted even after cleanup fails. These prepared paths still need assigned execution evidence; no claim that every abort path was exercised.
 
