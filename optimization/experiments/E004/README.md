@@ -1,5 +1,10 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest H-007 advancement: [Windows Tier 1 coverage completed](WINDOWS-TIER1-RESULT-2026-10-08.md).
+> 48 new correct diagnostic solves, OFF/MTO median geometric ratios
+> 0.992546/0.994110; both noise envelopes exceed 1. INCONCLUSIVE, no Tier 3.
+> Controlled follow-up prepared; actual reservation and live helper validation pending.
+
 > Latest: [2026-10-08 Windows fallback ready](TIER2-WINDOWS-COMPLETE-2026-10-08.md).
 > Cygwin/GCC installed, Tier 0 PASS, all 12 LP340 diagnostic solves correct.
 > OFF/MTO median ratios 0.987788/0.993750; small gains, desktop/control limitations.

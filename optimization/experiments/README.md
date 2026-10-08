@@ -13,6 +13,9 @@ Same H-007, INCONCLUSIVE; Windows driver prepared but integration unexecuted.
 2026-10-08 [follow-up](E004/TIER2-WINDOWS-COMPLETE-2026-10-08.md) completed setup,
 Tier 0 and 12 correct LP340 diagnostics; Windows fallback now usable. Small
 OFF/MTO median gains do not establish controlled promotion. E004 INCONCLUSIVE.
+Latest [H-007 advancement](E004/WINDOWS-TIER1-RESULT-2026-10-08.md): 48 additional
+correct Windows Tier 1 solves, noise gate unmet; controlled execution prepared
+pending real reservation and live helper validation. No new higher-tier run.
 
 Earlier: E001 is provisionally shelved / not adopted by explicit user decision;
 controlled performance remains INCONCLUSIVE. Its [LEARN record](E001/DISPOSITION-2026-10-07.md)

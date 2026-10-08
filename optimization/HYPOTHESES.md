@@ -38,6 +38,9 @@ and automatic review rejected installer launch; no new solver samples.
 2026-10-08: [Windows setup completed](experiments/E004/TIER2-WINDOWS-COMPLETE-2026-10-08.md),
 Tier 0 PASS, 12 correct LP340 diagnostics; small positive medians but no controlled
 promotion. H-007 remains INCONCLUSIVE; no new hypothesis or Tier 3.
+Later advancement adds 48 correct Windows Tier 1 diagnostics: all medians mildly
+favorable, both noise envelopes >1; still INCONCLUSIVE. Controlled run prepared,
+not executed. [Latest learning](experiments/E004/WINDOWS-TIER1-RESULT-2026-10-08.md).
 
 **H-002 — exact XOR-prefix sharing (E002).** Originally an unselected alternative
 from the same old Brain as H-001, not the next queued task. Later executed as an

@@ -44,6 +44,14 @@ prefers this Windows host as fallback when server resources are unavailable;
 keep environment/results separate and do not treat this as a scheduled monitor.
 
 H-008 SLS/H-009 BDD remain unimplemented alternatives, not an execution queue.
+
+Latest user request to advance H-007: [one Windows Tier 1 coverage round](experiments/E004/WINDOWS-TIER1-RESULT-2026-10-08.md)
+completed, 48 correct solves/audit PASS, no rebuild or optimization changes.
+OFF/MTO median geometric ratios 0.992546/0.994110 but both noise envelopes >1;
+numerical and controlled status INCONCLUSIVE. Current CPU230 still busy, no
+lease. [Controlled follow-up](experiments/E004/CONTROLLED-FOLLOWUP.md) prepared and
+driver staged; requires actual exclusive/stable window and live lease/recovery
+validation. No new Tier 2/3, acceptance, merge or next hypothesis.
 Next: controlled E004 Tier 1 if worth resolving; otherwise explicit shelving
 and a fresh Brain before choosing another idea. Do not promote small noisy gains.
 H-003/H-005/H-006 and original witness screen remain historical candidates.
