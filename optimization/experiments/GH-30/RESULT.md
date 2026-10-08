@@ -53,3 +53,12 @@ untested H003 verifiedinputwitness through existinginitUB (engineering origin),
 with freshthree-proposalranking/claim/prerecord and residual/strictbound/timeout
 proof beforeimplementation. No SLS/activity/compiler combination or claimed gain.
 Other independent agents keep their separate proposals and share evidence inhub15.
+
+Additional read-only mechanism observation from all six retained Tier2 MTO
+stdout streams (raw/windows-tier2-exploratory-01/LP_340_56_8-card-mto-<1..3>-
+<baseline|candidate>.stdout): final counters are identical within each version
+across all three repeats. Baseline nbLK320948/nbSuccLK249851/nbLKup722451099;
+candidate697527/538730/1591767011. These actual saved search counters support a
+changed search path with roughly doubled lookahead work, rather than an
+explanation based solely on wall timing. They do not quantify CPU interference
+or replace controlled corroboration. No new solver/diagnostic run was performed.
