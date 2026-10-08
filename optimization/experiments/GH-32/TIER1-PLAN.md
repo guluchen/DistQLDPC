@@ -1,0 +1,21 @@
+# Fixed Windows Tier1 prerecord
+
+Tier0 LOCAL_PASS at frozen support3953a4cbfb5826a1402196d18a8ac292cd0f4870; exact raw record ec8d76cca7d72b66c44716a9d4f85cffe023354f.215 public raw hashes and exact Git blobs verified, original source/binary/runtime/helper/inputs and all emitted scientific fields audited. No performance evidence yet. Selected experiment remains ONLY original O3 plus -mtune=native source6b99e1322dd49332b6a96bcc41571bc4aea0e9ec, host-specific rocketlake tuning and originalx86-64 ISA; no new source/flag/algorithm idea.
+
+Await a fresh coordinator RUN_ASSIGNMENT before execution; current GH27 host owner must finish/release first. Driver URL remains HOST_SLOT_NOT_ASSIGNED until assignment is read/frozen/committed. Freeze actual supportHEAD and exact helper/parser/source/runtime/input identities before importing support; no binary rebuild, compiler tuning, flags sweep, new installation, PGO/LTO/nativeISA or changed scientific ground truth.
+
+Exactly48 serial solves: BB_90_8_10, GB_144_12_8, BB_108_8_10, LP_238_44_6, each OFF and MTO, baseline/candidate3 each, within each case/mode repeat1 AB,repeat2 BA,repeat3 AB. Preserve all raw timings; median of3, candidate/baseline ratios, per-mode geometric means and sample ranges. All16 matrices must match immutable E004 baseline manifest before/after. Internal CPU limit180s/watchdog195s per solve; no repeats beyond fixed48. Expected few minutes from existing same-case runs; worst-case ~2.5hours plus capacity preflights. Stop on science mismatch/crash/wrongdistance/bound/resultsemantics; preserve REJECT even cleanup laterfails. Externalwatchdog/capacity/engineering failures INCONCLUSIVE unless an actual scientific mismatch established.
+
+Frozen production binaries: baseline22e398cc7558c2a04d5f24bd6db3030ce552c752622027fc2657eff7c1bd1815 from preserved original24572d6 O3 package; native candidate41e1ecdfe4cf1cbd503172dd3f40ef77d2280995438add1dfbdb641d4b0d9d11 from actual Tier0 default build. TestMain shim is NEVER timed. Same Windows runtime GCC14.4/Cygwin libraries, helperab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2. E004 immutable parser9674067528d0f3d7f1393d8732ae10b6a7289fbfd04e1d52f0832f7512e6dac5 used only its legacy numeric filter; independent strict raw scientific validation is mandatory. Its LTO candidate executable is NEVER run.
+
+Strict raw LB/UB/d/objective fields: documented bound '-' and distance UNKNOWN sentinels only; otherwise nonnegative integer, allLB<=oracle,allUB/objective>=oracle,alld==oracle. Inspect every status line, known UNKNOWN/TIMEOUT pairing only for rc1; successful application exits0 with exact finald/objective/LB/UB and no status/UNKNOWN/TIMEOUT line. Any incomplete result stops and remains INCONCLUSIVE if legitimate timeout, not a successful timing. Baseline/candidate scientific parse identical.
+
+Use reviewed temporary oneCPU Job/AboveNormal and helper dynamically selects actual CPU once, aggregate spare>50% and oneCPU<=half spare, sampling2s and descendant affinity/priority checks. No teammate workload on samehost untilrelease. Windowsdiagnostic allow-contention consistent with user's standing request; retain all alerts and never use shared/noisy timings as controlled scientific conclusion. Bounded ownedJob watchdog/taskkill with fresh PID membership recheck, empty owned-descendant proof and all4 affinity/priority/sleep/Job restoration checks mandatory. Final binaries/helper/parser/source/support/runtime/installedDB/matrices immutability required; failureinvalidatesfilter and supervisor exitsnonzero.
+
+Formal performance remains INCONCLUSIVE without sufficiently controlled confirmation, even a positive sampled numeric direction. Reproducible serious sampled regression can support local REJECT/NOTADOPTED. No automaticTier2/3. Only if this fixedTier1 cannot directly denybenefit and no material regression, a separately preregistered ONE LP340exploratoryTier2 may be requested under user's existing standing exception; a new hostassignment is still required.
+
+Prepared command (no execution yet):
+
+```powershell
+python GH32-MTUNE\optimization\experiments\GH-32\windows_tier1.py --workspace . --output GH32-windows-tier1-01 --assignment <frozen-hub-URL> --support-sha <actual-frozen-HEAD>
+```
