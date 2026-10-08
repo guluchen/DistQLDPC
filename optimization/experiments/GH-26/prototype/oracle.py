@@ -128,9 +128,22 @@ def main():
     args=parser.parse_args()
     cases=fixtures()+list(generated_cases())+list(declined_inputs())
     payload=''.join(protocol(c) for c in cases)
-    completed=subprocess.run([args.driver],input=payload,text=True,capture_output=True,
-                             check=True,timeout=60)
-    lines=completed.stdout.splitlines()
+    destination=Path(args.output)
+    input_bytes=payload.encode('utf-8')
+    destination.with_suffix('.input.txt').write_bytes(input_bytes)
+    destination.with_suffix('.cases.json').write_text(json.dumps(cases,indent=2)+'\n',encoding='utf-8')
+    completed=subprocess.run([args.driver],input=input_bytes,capture_output=True,
+                             check=False,timeout=60)
+    destination.with_suffix('.driver.stdout').write_bytes(completed.stdout)
+    destination.with_suffix('.driver.stderr').write_bytes(completed.stderr)
+    destination.with_suffix('.driver.json').write_text(json.dumps(dict(
+        returncode=completed.returncode,driver_sha256=hashlib.sha256(Path(args.driver).read_bytes()).hexdigest(),
+        stdin_sha256=hashlib.sha256(input_bytes).hexdigest(),cases=len(cases)),indent=2)+'\n',encoding='utf-8')
+    if completed.returncode!=0:
+        raise RuntimeError('model driver crash/invalid protocol return: '+str(completed.returncode))
+    stdout_text=completed.stdout.decode('utf-8',errors='strict')
+    stderr_text=completed.stderr.decode('utf-8',errors='strict')
+    lines=stdout_text.splitlines()
     if len(lines)!=len(cases): raise AssertionError('driver result count mismatch')
     records=[]
     for case,line in zip(cases,lines):
@@ -154,9 +167,9 @@ def main():
                             exact=exact,feasible=len(models)))
     report=dict(status='MODEL_ORACLE_PASS',production_tier0='NOT_RUN',
                 driver_sha256=hashlib.sha256(Path(args.driver).read_bytes()).hexdigest(),
-                stdin_sha256=hashlib.sha256(payload.encode()).hexdigest(),
+                stdin_sha256=hashlib.sha256(input_bytes).hexdigest(),
                 cases=len(records),strengthened=sum(bool(r['result'][0]) for r in records),
-                records=records,stdout=completed.stdout,stderr=completed.stderr)
+                records=records,stdout=stdout_text,stderr=stderr_text)
     Path(args.output).write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 
 
