@@ -30,7 +30,7 @@ ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 ap.add_argument("--support-sha",required=True)
 args=ap.parse_args()
-ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6066022135"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "Preparation only: no host slot"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -147,7 +147,7 @@ def managed_run(argv,cwd,target,label,timeout,cygwin=False):
     return current.returncode,text,error
 
 
-def scientific(rc,text,exact,timeout=False):
+def scientific(rc,text,exact,timeout=False,incomplete=False):
     # Reject malformed fields, every interim bound/objective/d, not only final values.
     values={}
     specs={'lb':(r'^c\s+d_lb:\s*(.*?)\s*$',{'-'}),'ub':(r'^c\s+d_ub:\s*(.*?)\s*$',{'-'}),
@@ -167,11 +167,13 @@ def scientific(rc,text,exact,timeout=False):
     comments=re.findall(r'^c status:\s*(.*?)\s*$',text,re.M)
     unknown=bool(re.search(r'^s UNKNOWN\s*$',text,re.M))
     timed=bool(re.search(r'^c status: TIMEOUT\b',text,re.M))
-    if timeout:
-        assert rc==1 and unknown and timed,'SCIENCE timeout status/return'
-        assert statuses==['UNKNOWN'] and len(comments)==1 and comments[0].startswith('TIMEOUT'),'SCIENCE changed timeout output semantics'
-        assert values['d'] is None and values['objective'] is None,'SCIENCE timeout reported optimum'
-        assert not re.search(r'^o\b',text,re.M),'SCIENCE timeout objective'
+    if timeout or incomplete:
+        assert rc==1 and unknown,'SCIENCE incomplete status/return'
+        assert statuses==['UNKNOWN'] and len(comments)==1,'SCIENCE changed incomplete output semantics'
+        assert comments[0]=='UNKNOWN' or comments[0].startswith('TIMEOUT'),'SCIENCE malformed incomplete status'
+        if timeout:assert timed,'SCIENCE requested timeout status missing'
+        assert values['d'] is None and values['objective'] is None,'SCIENCE incomplete solve reported optimum'
+        assert not re.search(r'^o\b',text,re.M),'SCIENCE incomplete objective'
     else:
         assert rc==0 and not unknown and not timed,'SCIENCE complete return/status'
         assert not statuses and not comments,'SCIENCE unexpected completed status'
@@ -254,7 +256,7 @@ try:
                     samples.append(row);save(out/'samples.json',samples)
                     assert rc in [0,1],'SCIENCE crash '+label
                     if rc==1:
-                        scientific(rc,text,expected,timeout=True)
+                        scientific(rc,text,expected,incomplete=True)
                         raise RuntimeError('Genuine incomplete solve blocks timing filter: '+label)
                     scientific(rc,text,expected)
                     assert reference is None or semantic==reference,'SCIENCE semantic mismatch '+label
