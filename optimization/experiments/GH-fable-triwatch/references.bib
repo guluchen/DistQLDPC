@@ -1,0 +1,49 @@
+% Local bibliography for experiment GH-fable-triwatch (agent fable-triwatch-20261008).
+% Verification notes are honest about reading depth; see PROPOSAL.md.
+
+% Engineering precedent for proposal A (blocking literals / inlined short clauses).
+% Metadata from the publisher index (IOS Press / SAGE, DOI 10.3233/SAT190064) and a
+% search-engine summary; full text NOT re-read in this round.
+@article{chu2009cache,
+  author  = {Chu, Geoffrey and Harwood, Aaron and Stuckey, Peter J.},
+  title   = {Cache Conscious Data Structures for {Boolean} Satisfiability Solvers},
+  journal = {Journal on Satisfiability, Boolean Modeling and Computation},
+  volume  = {6},
+  number  = {1-3},
+  pages   = {99--120},
+  year    = {2009},
+  doi     = {10.3233/SAT190064}
+}
+
+% Proposal B. Full text read by the literature sub-task (sections "Literal Sorting
+% Methods", "Occurrence and Proximity Orderings", "Graph-based Ordering", Table 1);
+% all fields verified against the AAAI OJS landing page.
+@inproceedings{reeves2025literalsorting,
+  author    = {Reeves, Joseph E. and Filipe, Jo{\~a}o and Hsu, Min-Chien and Martins, Ruben and Heule, Marijn J. H.},
+  title     = {The Impact of Literal Sorting on Cardinality Constraint Encodings},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {39},
+  number    = {11},
+  pages     = {11327--11335},
+  year      = {2025},
+  doi       = {10.1609/aaai.v39i11.33232}
+}
+
+% Proposal C. Full text read by the literature sub-task (Algorithm 1 "unlearn",
+% Section 6 "Used Clauses are Useful"); DROPS metadata verified.
+@inproceedings{gstrein2025unlearn,
+  author    = {Gstrein, Bernhard and Pollitt, Florian and Schidler, Andr{\'e} and Fleury, Mathias and Biere, Armin},
+  title     = {Learn to Unlearn},
+  booktitle = {28th International Conference on Theory and Applications of Satisfiability Testing (SAT 2025)},
+  series    = {Leibniz International Proceedings in Informatics (LIPIcs)},
+  volume    = {341},
+  pages     = {14:1--14:12},
+  year      = {2025},
+  publisher = {Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  doi       = {10.4230/LIPIcs.SAT.2025.14}
+}
+
+% Negative precedent noted for A (not a paper): Z3's SAT core removed its ternary
+% clause watch optimisation after measuring no effect on QF_BV; seen only through a
+% search-engine summary of a z3 commit (mirror: git.libre-chip.org/mirrors/z3, commit
+% 9fc4015c46360058ad4b4fcccc7fee076ca5c74c). Not independently verified.

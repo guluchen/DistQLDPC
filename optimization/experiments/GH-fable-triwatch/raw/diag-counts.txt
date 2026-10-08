@@ -1,0 +1,18 @@
+# Diagnostic counters from an instrumented copy of baseline 24572d6 (diag-instrumentation.patch),
+# GCC 16.2 (Homebrew) -O3, Apple M3 Max, macOS 27.0.1. Counts only; wall times from this build are NOT performance evidence.
+# propagateForLK: calls, propagated literals, binary-watch visits, long-watch visits, outcomes of long-watch visits,
+# and clause-size histogram of the visits that dereferenced the clause (blocker not true).
+BB_90_8_10 -no-card: c DIAG propagateForLK calls 4447662, lits 31401788, binvisit 14046666, longvisit 315887909, blockerTrue 250539367, firstTrue 1011045, newWatch1 21123914, true1 2281512, newWatch2 20078028, true2 704902, unit 20135469, conflict 13672, learntVisit 25697697
+BB_90_8_10 -no-card: c DIAG clause-size buckets of dereferenced visits: <=3 22181008, 4 19640056, 5-6 2046751, 7-8 974194, 9-12 3242012, 13-16 3526772, 17-32 8119474, >32 5618275
+LP_238_44_6 -card-mto: c DIAG propagateForLK calls 2262316, lits 20811822, binvisit 5950259, longvisit 103879475, blockerTrue 63977595, firstTrue 172538, newWatch1 13836412, true1 475892, newWatch2 10512205, true2 159103, unit 14742362, conflict 3368, learntVisit 12273061
+LP_238_44_6 -card-mto: c DIAG clause-size buckets of dereferenced visits: <=3 10800993, 4 16812142, 5-6 115611, 7-8 104593, 9-12 256795, 13-16 277212, 17-32 967597, >32 10566937
+GB_144_12_8 -no-card: c DIAG propagateForLK calls 2314208, lits 14457688, binvisit 6178073, longvisit 65323359, blockerTrue 44744099, firstTrue 218219, newWatch1 4280727, true1 475625, newWatch2 7162959, true2 193658, unit 8244214, conflict 3858, learntVisit 3048661
+GB_144_12_8 -no-card: c DIAG clause-size buckets of dereferenced visits: <=3 7151771, 4 10396652, 5-6 84951, 7-8 95102, 9-12 270319, 13-16 294915, 17-32 988688, >32 1296862
+BB_108_8_10 -card-mto: c DIAG propagateForLK calls 5894258, lits 41060971, binvisit 18086123, longvisit 349159522, blockerTrue 269943678, firstTrue 964242, newWatch1 25151920, true1 2262965, newWatch2 24048520, true2 711280, unit 26062399, conflict 14518, learntVisit 28011658
+BB_108_8_10 -card-mto: c DIAG clause-size buckets of dereferenced visits: <=3 29249553, 4 22671922, 5-6 1615288, 7-8 1216997, 9-12 2425009, 13-16 3837536, 17-32 9818547, >32 8380992
+# Post-preprocessing clause-size histograms of the exported WCNF (hard clauses; weight-first format; -dump-only):
+BB_90_8_10:  size2 180, size3 970, size4 1312, size16 1, size180 1 (+90 unit soft)
+LP_238_44_6: size2 476, size3 2798, size4 6768, size88 1, size476 1 (+238 unit soft)
+GB_144_12_8: size2 288, size3 1292, size4 3360, size24 1, size288 1 (+144 unit soft)
+BB_108_8_10: size2 216, size3 1196, size4 1576, size16 1, size216 1 (+108 unit soft)
+LP_340_56_8: size2 680, size3 4228, size4 11744, size112 1, size680 1 (+340 unit soft)

@@ -1,0 +1,656 @@
+Analysis of sampling distqldpc (pid 94279) every 1 millisecond
+Process:         distqldpc [94279]
+Path:            /Users/USER/Library/Application Support/Claude/*/distqldpc
+Load Address:    0x100a08000
+Identifier:      distqldpc
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  distqldpc [94274]
+Target Type:     live task (Roots Present)
+
+Date/Time:       2026-10-08 23:30:08.534 +0800
+Launch Time:     2026-10-08 23:30:08.402 +0800
+OS Version:      macOS 27.0.1 (26A434)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+----
+
+Call graph:
+    1217 Thread_3190405   DispatchQueue_1: com.apple.main-thread  (serial)
+      1204 start  (in dyld) + 6688  [0x1924f3e80]
+      + 1204 main  (in distqldpc) + 3700  [0x100a3b314]  distqldpc.cc:967
+      +   1204 Minisat::SimpSolver::solve_(bool, bool)  (in distqldpc) + 44  [0x100a15638]  SimpSolver.cc:157
+      +     801 Minisat::Solver::solve_()  (in distqldpc) + 1688  [0x100a38878]  Solver.cc:6681
+      +     ! 693 Minisat::Solver::search(int&)  (in distqldpc) + 540  [0x100a376bc]  Solver.cc:3652
+      +     ! : 553 Minisat::Solver::lookahead()  (in distqldpc) + 660  [0x100a36b74]  Solver.cc:4897
+      +     ! : | 104 Minisat::Solver::propagateForLK()  (in distqldpc) + 300  [0x100a2396c]  Solver.cc:3967
+      +     ! : | 50 Minisat::Solver::propagateForLK()  (in distqldpc) + 552,568  [0x100a23a68,0x100a23a78]  Solver.cc:4041
+      +     ! : | 47 Minisat::Solver::propagateForLK()  (in distqldpc) + 400,428,...  [0x100a239d0,0x100a239ec,...]  Solver.cc:3986
+      +     ! : | 42 Minisat::Solver::propagateForLK()  (in distqldpc) + 624  [0x100a23ab0]  Solver.cc:3980
+      +     ! : | 40 Minisat::Solver::propagateForLK()  (in distqldpc) + 452  [0x100a23a04]  Solver.cc:3992
+      +     ! : | 36 Minisat::Solver::propagateForLK()  (in distqldpc) + 716,740  [0x100a23b0c,0x100a23b24]  Solver.cc:4010
+      +     ! : | 34 Minisat::Solver::propagateForLK()  (in distqldpc) + 652,692  [0x100a23acc,0x100a23af4]  Solver.cc:4003
+      +     ! : | 24 Minisat::Solver::propagateForLK()  (in distqldpc) + 544  [0x100a23a60]  Solver.cc:3959
+      +     ! : | 21 Minisat::Solver::propagateForLK()  (in distqldpc) + 288,292  [0x100a23960,0x100a23964]  Solver.cc:3962
+      +     ! : | 20 Minisat::Solver::propagateForLK()  (in distqldpc) + 408  [0x100a239d8]  Solver.cc:3997
+      +     ! : | 19 Minisat::Solver::propagateForLK()  (in distqldpc) + 120,128,...  [0x100a238b8,0x100a238c0,...]  Solver.cc:3946
+      +     ! : | 14 Minisat::Solver::propagateForLK()  (in distqldpc) + 580,596,...  [0x100a23a84,0x100a23a94,...]  Solver.cc:3938
+      +     ! : | 14 Minisat::Solver::propagateForLK()  (in distqldpc) + 880  [0x100a23bb0]  Solver.cc:4022
+      +     ! : | 11 Minisat::Solver::propagateForLK()  (in distqldpc) + 672  [0x100a23ae0]  Solver.cc:4014
+      +     ! : | 11 Minisat::Solver::propagateForLK()  (in distqldpc) + 924  [0x100a23bdc]  Solver.cc:4031
+      +     ! : | + 8 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 80,68  [0x100a21f90,0x100a21f84]  Solver.cc:3908
+      +     ! : | + 2 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 104  [0x100a21fa8]  Solver.cc:3929
+      +     ! : | + 1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 40  [0x100a21f68]  Solver.cc:3904
+      +     ! : | 9 Minisat::Solver::propagateForLK()  (in distqldpc) + 332  [0x100a2398c]  Solver.cc:3977
+      +     ! : | 8 Minisat::Solver::propagateForLK()  (in distqldpc) + 312  [0x100a23978]  Solver.cc:3969
+      +     ! : | 6 Minisat::Solver::propagateForLK()  (in distqldpc) + 324  [0x100a23984]  Solver.cc:3970
+      +     ! : | 4 Minisat::Solver::propagateForLK()  (in distqldpc) + 200  [0x100a23908]  Solver.cc:3953
+      +     ! : | + 2 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 104  [0x100a21fa8]  Solver.cc:3929
+      +     ! : | + 1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 68  [0x100a21f84]  Solver.cc:3908
+      +     ! : | + 1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 348  [0x100a2209c]  Solver.cc:3923
+      +     ! : | +   1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 348  [0x100a2209c]  Solver.cc:3923
+      +     ! : | +     1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 192  [0x100a212e0]  Solver.cc:5104
+      +     ! : | 4 Minisat::Solver::propagateForLK()  (in distqldpc) + 872,1008  [0x100a23ba8,0x100a23c30]  Solver.cc:4048
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 108,76  [0x100a238ac,0x100a2388c]  Solver.cc:3939
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 268  [0x100a2394c]  Solver.cc:3961
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 368,372  [0x100a239b0,0x100a239b4]  Solver.cc:3984
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 708  [0x100a23b04]  Solver.cc:4004
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 924  [0x100a23bdc]  Solver.cc:4031
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 188,200  [0x100a238fc,0x100a23908]  Solver.cc:3953
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 340  [0x100a23994]  Solver.cc:3979
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 444  [0x100a239fc]  Solver.cc:3987
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 488  [0x100a23a28]  Solver.cc:3993
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 752  [0x100a23b30]  Solver.cc:4009
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 896  [0x100a23bc0]  Solver.cc:4023
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 48  [0x100a23870]  Solver.cc:3937
+      +     ! : | + 1 DYLD-STUB$$Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()  (in distqldpc) + 4  [0x100a3b854]
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 240  [0x100a23930]  Solver.cc:3942
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 140  [0x100a238cc]  Solver.cc:3947
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 168  [0x100a238e8]  Solver.cc:3948
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 256  [0x100a23940]  Solver.cc:3968
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 528  [0x100a23a50]  Solver.cc:3994
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 800  [0x100a23b60]  Solver.cc:3998
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 1172  [0x100a23cd4]  Solver.cc:4027
+      +     ! : 47 Minisat::Solver::lookahead()  (in distqldpc) + 764  [0x100a36bdc]  Solver.cc:4940
+      +     ! : | 10 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 460  [0x100a22a8c]  Solver.cc:4127
+      +     ! : | 5 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1272  [0x100a22db8]  Solver.cc:4158
+      +     ! : | 4 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1156,1164  [0x100a22d44,0x100a22d4c]  Solver.cc:4193
+      +     ! : | 3 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 452  [0x100a22a84]  Solver.cc:4123
+      +     ! : | 3 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1328  [0x100a22df0]  Solver.cc:4175
+      +     ! : | 3 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 756  [0x100a22bb4]  Solver.cc:4181
+      +     ! : | 3 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : | + 3 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : | +   3 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 136,192,...  [0x100a212a8,0x100a212e0,...]  Solver.cc:5104
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1212  [0x100a22d7c]  Solver.cc:4120
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 484  [0x100a22aa4]  Solver.cc:4125
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 676  [0x100a22b64]  Solver.cc:4166
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 720  [0x100a22b90]  Solver.cc:4171
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 2068  [0x100a230d4]  Solver.cc:4071
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1228  [0x100a22d8c]  Solver.cc:4144
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1308  [0x100a22ddc]  Solver.cc:4161
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 660  [0x100a22b54]  Solver.cc:4169
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 752  [0x100a22bb0]  Solver.cc:4173
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1368  [0x100a22e18]  Solver.cc:4177
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 780  [0x100a22bcc]  Solver.cc:4186
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1176  [0x100a22d58]  Solver.cc:4194
+      +     ! : 39 Minisat::Solver::lookahead()  (in distqldpc) + 620  [0x100a36b4c]  Solver.cc:4887
+      +     ! : | 3 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 28  [0x100a1821c]  Solver.cc:4222
+      +     ! : | 2 ???  (in <unknown binary>)  [0x1e4]
+      +     ! : | + 2 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340,416  [0x100a18354,0x100a183a0]  Solver.cc:4220
+      +     ! : | 2 ???  (in <unknown binary>)  [0x22c]
+      +     ! : | + 2 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 344,416  [0x100a18358,0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x1eb]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x1f5]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x1ff]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x201]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 308  [0x100a18334]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x203]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 140  [0x100a1828c]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x206]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x20d]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x20f]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x210]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x211]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x227]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x22f]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x231]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x235]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 396  [0x100a1838c]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x23f]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x243]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x256]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x259]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x262]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x26f]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x27a]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x283]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 344  [0x100a18358]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x287]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 408  [0x100a18398]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x292]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x295]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x297]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x2a2]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x2aa]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x2b5]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 396  [0x100a1838c]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x2c3]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 Minisat::Solver::lookahead()  (in distqldpc) + 620  [0x100a36b4c]  Solver.cc:4887
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 136  [0x100a18288]  Solver.cc:4220
+      +     ! : | 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 16  [0x100a18210]  Solver.cc:4220
+      +     ! : 25 Minisat::Solver::lookahead()  (in distqldpc) + 2620  [0x100a3731c]  Solver.cc:5012
+      +     ! : | 18 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 436  [0x100a2a620]  Solver.cc:4740
+      +     ! : | + 17 Minisat::SimpSolver::garbageCollect()  (in distqldpc) + 136  [0x100a0f7b8]  SimpSolver.cc:877
+      +     ! : | + ! 9 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 152,204,...  [0x100a1cbb8,0x100a1cbec,...]  Solver.cc:7072
+      +     ! : | + ! 3 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 3952  [0x100a1da90]  Solver.cc:7101
+      +     ! : | + ! : 2 DYLD-STUB$$Minisat::ClauseAllocator::reloc(unsigned int&, Minisat::ClauseAllocator&)  (in distqldpc) + 4  [0x100a3b6ec]
+      +     ! : | + ! : 1 Minisat::ClauseAllocator::reloc(unsigned int&, Minisat::ClauseAllocator&)  (in distqldpc) + 28  [0x100a1c680]  SolverTypes.h:301
+      +     ! : | + ! 2 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 1556,1568  [0x100a1d134,0x100a1d140]  Solver.cc:7067
+      +     ! : | + ! 2 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 264  [0x100a1cc28]  Solver.cc:7072
+      +     ! : | + ! : 2 DYLD-STUB$$Minisat::RegionAllocator<unsigned int>::capacity(unsigned int)  (in distqldpc) + 4  [0x100a3b6f8]
+      +     ! : | + ! 1 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 144  [0x100a1cbb0]  Solver.cc:7071
+      +     ! : | + 1 Minisat::Solver::reduceHardens()  (in distqldpc) + 172  [0x100a1e86c]  Solver.cc:5881
+      +     ! : | +   1 Minisat::Solver::removeClause(unsigned int)  (in distqldpc) + 284  [0x100a1c17c]  Solver.cc:1479
+      +     ! : | +     1 Minisat::Solver::detachClause(unsigned int, bool)  (in distqldpc) + 240  [0x100a1bcdc]  Solver.cc:1453
+      +     ! : | 2 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 320  [0x100a2a5ac]  Solver.cc:4709
+      +     ! : | + 1 Minisat::Solver::resetConflicts(int)  (in distqldpc) + 232  [0x100a202e8]  Solver.cc:4306
+      +     ! : | + 1 Minisat::Solver::resetConflicts(int)  (in distqldpc) + 244  [0x100a202f4]  Solver.cc:4307
+      +     ! : | 1 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 120  [0x100a2a4e4]  Solver.cc:4699
+      +     ! : | 1 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 160  [0x100a2a50c]  Solver.cc:4700
+      +     ! : | + 1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 12  [0x100a2122c]  Solver.cc:5104
+      +     ! : | 1 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 1076  [0x100a2a8a0]  Solver.cc:4703
+      +     ! : | + 1 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      +     ! : | +   1 _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+      +     ! : | +     1 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x1926f0b2c]
+      +     ! : | +       1 xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib) + 512  [0x1926e1210]
+      +     ! : | 1 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 372  [0x100a2a5e0]  Solver.cc:4720
+      +     ! : | + 1 Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 2124  [0x100a26d5c]  Solver.cc:4670
+      +     ! : | +   1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 432  [0x100a19e90]  Solver.cc:2121
+      +     ! : | 1 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 908  [0x100a2a7f8]  Solver.cc:4756
+      +     ! : |   1 Minisat::ClauseAllocator::alloc<Minisat::vec<Minisat::Lit>>(Minisat::vec<Minisat::Lit> const&, bool) (.constprop.0)  (in distqldpc) + 140  [0x100a1cacc]  ParseUtils.h:278
+      +     ! : 14 Minisat::Solver::lookahead()  (in distqldpc) + 564  [0x100a36b14]  Solver.cc:4901
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1272  [0x100a22db8]  Solver.cc:4158
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 712  [0x100a22b88]  Solver.cc:4168
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 660  [0x100a22b54]  Solver.cc:4169
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1212  [0x100a22d7c]  Solver.cc:4120
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 460  [0x100a22a8c]  Solver.cc:4127
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 620  [0x100a22b2c]  Solver.cc:4164
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 676  [0x100a22b64]  Solver.cc:4166
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 756  [0x100a22bb4]  Solver.cc:4181
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 780  [0x100a22bcc]  Solver.cc:4186
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1156  [0x100a22d44]  Solver.cc:4193
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : |   1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : |     1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 208  [0x100a212f0]  Solver.cc:5104
+      +     ! : 4 Minisat::Solver::lookahead()  (in distqldpc) + 2024  [0x100a370c8]  Solver.cc:5034
+      +     ! : | 3 Minisat::Solver::resetConflicts(int)  (in distqldpc) + 380,396,...  [0x100a2037c,0x100a2038c,...]  Solver.cc:4307
+      +     ! : | 1 Minisat::Solver::resetConflicts(int)  (in distqldpc) + 156  [0x100a2029c]  Solver.cc:4301
+      +     ! : 3 Minisat::Solver::lookahead()  (in distqldpc) + 2240  [0x100a371a0]  Solver.cc:4949
+      +     ! : | 3 Minisat::Solver::setConflict(int&)  (in distqldpc) + 448,460  [0x100a35a80,0x100a35a8c]  Solver.cc:4254
+      +     ! : 2 Minisat::Solver::lookahead()  (in distqldpc) + 2412  [0x100a3724c]  Solver.cc:5003
+      +     ! : | 2 Minisat::Solver::bumpConflVars()  (in distqldpc) + 168,188  [0x100a21bc8,0x100a21bdc]  Solver.cc:4215
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 296  [0x100a36a08]  Solver.cc:4868
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 652  [0x100a36b6c]  Solver.cc:4896
+      +     ! : | 1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 88  [0x100a21f98]  Solver.cc:3908
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 952  [0x100a36c98]  Solver.cc:5001
+      +     ! : | 1 Minisat::Solver::lookahead()  (in distqldpc) + 952  [0x100a36c98]  Solver.cc:5001
+      +     ! : |   1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 208  [0x100a212f0]  Solver.cc:5104
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 2404  [0x100a37244]  Solver.cc:5003
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 1828  [0x100a37004]  Solver.cc:5024
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 2032  [0x100a370d0]  Solver.cc:5035
+      +     ! :   1 Minisat::Solver::bumpConflVars()  (in distqldpc) + 104  [0x100a21b88]  Solver.cc:4213
+      +     ! :     1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 12  [0x100a2122c]  Solver.cc:5104
+      +     ! 46 Minisat::Solver::search(int&)  (in distqldpc) + 976  [0x100a37870]  Solver.cc:3682
+      +     ! : 22 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1380  [0x100a25a50]  Solver.cc:2398
+      +     ! : | 15 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1904  [0x100a1b4f0]  Solver.cc:2432
+      +     ! : | + 7 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 244,236,...  [0x100a1a4f4,0x100a1a4ec,...]  Solver.cc:1833
+      +     ! : | + 3 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 372  [0x100a1a574]  Solver.cc:1821
+      +     ! : | + 2 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 136,208  [0x100a1a488,0x100a1a4d0]  Solver.cc:1831
+      +     ! : | + 1 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 124  [0x100a1a47c]  Solver.cc:1823
+      +     ! : | + 1 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 220  [0x100a1a4dc]  Solver.cc:1832
+      +     ! : | + 1 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 508  [0x100a1a5fc]  Solver.cc:1849
+      +     ! : | 3 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1088  [0x100a1b1c0]  Solver.cc:2487
+      +     ! : | 1 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 456  [0x100a1af48]  Solver.cc:2469
+      +     ! : | 1 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 468  [0x100a1af54]  Solver.cc:2470
+      +     ! : | 1 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1120  [0x100a1b1e0]  Solver.cc:2489
+      +     ! : | 1 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1164  [0x100a1b20c]  Solver.cc:2492
+      +     ! : 12 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 3052  [0x100a260d8]  Solver.cc:2401
+      +     ! : | 3 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 520,528,...  [0x100a19ee8,0x100a19ef0,...]  Solver.cc:2144
+      +     ! : | 2 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 396  [0x100a19e6c]  Solver.cc:2118
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 60  [0x100a19d1c]  Solver.cc:2090
+      +     ! : | + 1 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      +     ! : | +   1 _xzm_xzone_malloc_tiny  (in libsystem_malloc.dylib) + 456  [0x1926e4c14]
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 356  [0x100a19e44]  Solver.cc:2108
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1116  [0x100a1a13c]  Solver.cc:2123
+      +     ! : | + 1 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      +     ! : | +   1 _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+      +     ! : | +     1 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x1926f0b2c]
+      +     ! : | +       1 default_zone_realloc  (in libsystem_malloc.dylib) + 20  [0x1926b4d0c]
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 556  [0x100a19f0c]  Solver.cc:2142
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 512  [0x100a19ee0]  Solver.cc:2143
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1164  [0x100a1a16c]  Solver.cc:2148
+      +     ! : | + 1 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      +     ! : | +   1 _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+      +     ! : | +     1 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x1926f0b2c]
+      +     ! : | +       1 xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib) + 996  [0x1926e13f4]
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 664  [0x100a19f78]  Solver.cc:2169
+      +     ! : 5 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 740,712,...  [0x100a257d0,0x100a257b4,...]  Solver.cc:2333
+      +     ! : 2 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1276  [0x100a259e8]  Solver.cc:2253
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 2908  [0x100a26048]  Solver.cc:2255
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 2660  [0x100a25f50]  Solver.cc:2278
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 756  [0x100a257e0]  Solver.cc:2334
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1044  [0x100a25900]  Solver.cc:2374
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1108  [0x100a25940]  Solver.cc:2378
+      +     ! 31 Minisat::Solver::search(int&)  (in distqldpc) + 456  [0x100a37668]  Solver.cc:3650
+      +     ! : 6 Minisat::Solver::propagate()  (in distqldpc) + 248  [0x100a278c8]  Solver.cc:1987
+      +     ! : 3 Minisat::Solver::propagate()  (in distqldpc) + 116,164,...  [0x100a27844,0x100a27874,...]  Solver.cc:1953
+      +     ! : 3 Minisat::Solver::propagate()  (in distqldpc) + 348  [0x100a2792c]  Solver.cc:2007
+      +     ! : 3 Minisat::Solver::propagate()  (in distqldpc) + 672  [0x100a27a70]  Solver.cc:2024
+      +     ! : 2 Minisat::Solver::propagate()  (in distqldpc) + 32  [0x100a277f0]  Solver.cc:1941
+      +     ! : | 2 Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()  (in distqldpc) + 152,164  [0x100a195b8,0x100a195c4]  ParseUtils.h:367
+      +     ! : 2 Minisat::Solver::propagate()  (in distqldpc) + 624  [0x100a27a40]  Solver.cc:1965
+      +     ! : | 2 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 216  [0x100a27718]  Solver.cc:1902
+      +     ! : |   2 pow  (in libsystem_m.dylib) + 44,348  [0x1a343b06c,0x1a343b19c]
+      +     ! : 2 Minisat::Solver::propagate()  (in distqldpc) + 400  [0x100a27960]  Solver.cc:2013
+      +     ! : 2 Minisat::Solver::propagate()  (in distqldpc) + 436  [0x100a27984]  Solver.cc:2014
+      +     ! : 2 Minisat::Solver::propagate()  (in distqldpc) + 944  [0x100a27b80]  Solver.cc:2052
+      +     ! : | 1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 28  [0x100a2765c]  Solver.cc:1895
+      +     ! : | 1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 172  [0x100a276ec]  Solver.cc:1917
+      +     ! : 2 Minisat::Solver::propagate()  (in distqldpc) + 488  [0x100a279b8]  Solver.cc:2066
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 516  [0x100a279d4]  Solver.cc:1944
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 144  [0x100a27860]  Solver.cc:1955
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 288  [0x100a278f0]  Solver.cc:1998
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 644  [0x100a27a54]  Solver.cc:1999
+      +     ! 19 Minisat::Solver::search(int&)  (in distqldpc) + 1024  [0x100a378a0]  Solver.cc:3687
+      +     ! : 10 Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc) + 272  [0x100a27310]  Solver.cc:1515
+      +     ! : | 5 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 116,200  [0x100a27194,0x100a271e8]  Heap.h:64
+      +     ! : | 2 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 156  [0x100a271bc]  Heap.h:66
+      +     ! : | 1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 144  [0x100a271b0]  Heap.h:70
+      +     ! : | 1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 148  [0x100a271b4]  Heap.h:71
+      +     ! : | 1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 44  [0x100a2714c]  Solver.h:65
+      +     ! : 5 Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc) + 1004,932  [0x100a275ec,0x100a275a4]  Solver.cc:1513
+      +     ! : 2 Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc) + 252  [0x100a272fc]  Solver.cc:1515
+      +     ! : 1 Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc) + 176  [0x100a272b0]  Solver.cc:1508
+      +     ! : 1 Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc) + 304  [0x100a27330]  Solver.cc:1523
+      +     ! 5 Minisat::Solver::search(int&)  (in distqldpc) + 752  [0x100a37790]  Solver.cc:3804
+      +     ! : 3 Minisat::Solver::pickBranchLit()  (in distqldpc) + 636,664  [0x100a17a7c,0x100a17a98]  Solver.cc:1566
+      +     ! : 1 Minisat::Solver::pickBranchLit()  (in distqldpc) + 480  [0x100a179e0]  Solver.cc:1563
+      +     ! : 1 Minisat::Solver::pickBranchLit()  (in distqldpc) + 340  [0x100a17954]  Solver.cc:1573
+      +     ! 2 Minisat::Solver::search(int&)  (in distqldpc) + 1660  [0x100a37b1c]  Solver.cc:3686
+      +     ! : 1 Minisat::Solver::analyze(unsigned int, Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 260  [0x100a24ee4]  Solver.cc:1715
+      +     ! : 1 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1904  [0x100a1b4f0]  Solver.cc:2432
+      +     ! :   1 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 236  [0x100a1a4ec]  Solver.cc:1833
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 2276  [0x100a37d84]  Solver.cc:3598
+      +     ! : 1 Minisat::Solver::lookaheadForRestart()  (in distqldpc) + 544  [0x100a35fb0]  Solver.cc:3382
+      +     ! :   1 Minisat::Solver::propagateForLK()  (in distqldpc) + 544  [0x100a23a60]  Solver.cc:3959
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 2524  [0x100a37e7c]  Solver.cc:3622
+      +     ! : 1 Minisat::Solver::simplifyAll()  (in distqldpc) + 88  [0x100a2975c]  Solver.cc:1058
+      +     ! :   1 Minisat::Solver::simplifyLearnt_core()  (in distqldpc) + 400  [0x100a284fc]  Solver.cc:744
+      +     ! :     1 Minisat::Solver::simplifyLearnt(Minisat::Clause&, unsigned int, Minisat::vec<Minisat::Lit>&)  (in distqldpc) + 596  [0x100a24434]  Solver.cc:668
+      +     ! :       1 Minisat::Solver::simplePropagate()  (in distqldpc) + 280  [0x100a23e64]  Solver.cc:309
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 2040  [0x100a37c98]  Solver.cc:3650
+      +     ! : 1 Minisat::Solver::harden()  (in distqldpc) + 636  [0x100a2a028]  Solver.cc:5968
+      +     ! :   1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 28  [0x100a2765c]  Solver.cc:1895
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 2048  [0x100a37ca0]  Solver.cc:3650
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 248  [0x100a278c8]  Solver.cc:1987
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 1080  [0x100a378d8]  Solver.cc:3700
+      +     !   1 Minisat::ClauseAllocator::alloc<Minisat::vec<Minisat::Lit>>(Minisat::vec<Minisat::Lit> const&, bool) (.constprop.0)  (in distqldpc) + 156  [0x100a1cadc]  ParseUtils.h:278
+      +     402 Minisat::Solver::solve_()  (in distqldpc) + 1408  [0x100a38760]  Solver.cc:6655
+      +     ! 377 Minisat::Solver::search(int&)  (in distqldpc) + 540  [0x100a376bc]  Solver.cc:3652
+      +     ! : 300 Minisat::Solver::lookahead()  (in distqldpc) + 660  [0x100a36b74]  Solver.cc:4897
+      +     ! : | 42 Minisat::Solver::propagateForLK()  (in distqldpc) + 452  [0x100a23a04]  Solver.cc:3992
+      +     ! : | 41 Minisat::Solver::propagateForLK()  (in distqldpc) + 300  [0x100a2396c]  Solver.cc:3967
+      +     ! : | 27 Minisat::Solver::propagateForLK()  (in distqldpc) + 624  [0x100a23ab0]  Solver.cc:3980
+      +     ! : | 25 Minisat::Solver::propagateForLK()  (in distqldpc) + 400,416,...  [0x100a239d0,0x100a239e0,...]  Solver.cc:3986
+      +     ! : | 17 Minisat::Solver::propagateForLK()  (in distqldpc) + 552  [0x100a23a68]  Solver.cc:4041
+      +     ! : | 16 Minisat::Solver::propagateForLK()  (in distqldpc) + 652,692,...  [0x100a23acc,0x100a23af4,...]  Solver.cc:4003
+      +     ! : | 15 Minisat::Solver::propagateForLK()  (in distqldpc) + 716  [0x100a23b0c]  Solver.cc:4010
+      +     ! : | 14 Minisat::Solver::propagateForLK()  (in distqldpc) + 408  [0x100a239d8]  Solver.cc:3997
+      +     ! : | 11 Minisat::Solver::propagateForLK()  (in distqldpc) + 544  [0x100a23a60]  Solver.cc:3959
+      +     ! : | 9 Minisat::Solver::propagateForLK()  (in distqldpc) + 324  [0x100a23984]  Solver.cc:3970
+      +     ! : | 9 Minisat::Solver::propagateForLK()  (in distqldpc) + 444  [0x100a239fc]  Solver.cc:3987
+      +     ! : | 9 Minisat::Solver::propagateForLK()  (in distqldpc) + 672  [0x100a23ae0]  Solver.cc:4014
+      +     ! : | 8 Minisat::Solver::propagateForLK()  (in distqldpc) + 128,104,...  [0x100a238c0,0x100a238a8,...]  Solver.cc:3946
+      +     ! : | 7 Minisat::Solver::propagateForLK()  (in distqldpc) + 288  [0x100a23960]  Solver.cc:3962
+      +     ! : | 7 Minisat::Solver::propagateForLK()  (in distqldpc) + 332  [0x100a2398c]  Solver.cc:3977
+      +     ! : | 5 Minisat::Solver::propagateForLK()  (in distqldpc) + 880  [0x100a23bb0]  Solver.cc:4022
+      +     ! : | 5 Minisat::Solver::propagateForLK()  (in distqldpc) + 924  [0x100a23bdc]  Solver.cc:4031
+      +     ! : | + 4 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 80,68  [0x100a21f90,0x100a21f84]  Solver.cc:3908
+      +     ! : | + 1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 40  [0x100a21f68]  Solver.cc:3904
+      +     ! : | 4 Minisat::Solver::propagateForLK()  (in distqldpc) + 312  [0x100a23978]  Solver.cc:3969
+      +     ! : | 4 Minisat::Solver::propagateForLK()  (in distqldpc) + 472,488  [0x100a23a18,0x100a23a28]  Solver.cc:3993
+      +     ! : | 4 Minisat::Solver::propagateForLK()  (in distqldpc) + 708  [0x100a23b04]  Solver.cc:4004
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 108  [0x100a238ac]  Solver.cc:3939
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 268  [0x100a2394c]  Solver.cc:3961
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 364,368  [0x100a239ac,0x100a239b0]  Solver.cc:3984
+      +     ! : | 3 Minisat::Solver::propagateForLK()  (in distqldpc) + 752  [0x100a23b30]  Solver.cc:4009
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 48  [0x100a23870]  Solver.cc:3937
+      +     ! : | + 1 DYLD-STUB$$Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()  (in distqldpc) + 4  [0x100a3b854]
+      +     ! : | + 1 Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()  (in distqldpc) + 8  [0x100a19528]  ParseUtils.h:368
+      +     ! : | 2 Minisat::Solver::propagateForLK()  (in distqldpc) + 240  [0x100a23930]  Solver.cc:3942
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 168  [0x100a238e8]  Solver.cc:3948
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 200  [0x100a23908]  Solver.cc:3953
+      +     ! : | + 1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 40  [0x100a21f68]  Solver.cc:3904
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 340  [0x100a23994]  Solver.cc:3979
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 800  [0x100a23b60]  Solver.cc:3998
+      +     ! : | 1 Minisat::Solver::propagateForLK()  (in distqldpc) + 896  [0x100a23bc0]  Solver.cc:4023
+      +     ! : 33 Minisat::Solver::lookahead()  (in distqldpc) + 764  [0x100a36bdc]  Solver.cc:4940
+      +     ! : | 8 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1108,980,...  [0x100a22d14,0x100a22c94,...]  Solver.cc:4182
+      +     ! : | 4 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 660  [0x100a22b54]  Solver.cc:4169
+      +     ! : | 4 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : | + 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : | + ! 2 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 192,208  [0x100a212e0,0x100a212f0]  Solver.cc:5104
+      +     ! : | + 1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 56  [0x100a21258]  Solver.cc:5103
+      +     ! : | + 1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 12  [0x100a2122c]  Solver.cc:5104
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 460  [0x100a22a8c]  Solver.cc:4127
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1836  [0x100a22fec]  Solver.cc:4145
+      +     ! : | + 2 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      +     ! : | +   2 _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+      +     ! : | +     2 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x1926f0b2c]
+      +     ! : | +       1 xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib) + 996  [0x1926e13f4]
+      +     ! : | +       ! 1 _platform_memmove  (in libsystem_platform.dylib) + 180  [0x1928d3e14]
+      +     ! : | +       1 xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib) + 1028  [0x1926e1414]
+      +     ! : | +         1 _xzm_free  (in libsystem_malloc.dylib) + 1384  [0x1926e8c68]
+      +     ! : | +           1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x1928850f8]
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 696  [0x100a22b78]  Solver.cc:4167
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 752  [0x100a22bb0]  Solver.cc:4173
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1212  [0x100a22d7c]  Solver.cc:4120
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1412  [0x100a22e44]  Solver.cc:4145
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 740  [0x100a22ba4]  Solver.cc:4172
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1728  [0x100a22f80]  Solver.cc:4175
+      +     ! : | + 1 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      +     ! : | +   1 _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+      +     ! : | +     1 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x1926f0b2c]
+      +     ! : | +       1 xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib) + 896  [0x1926e1390]
+      +     ! : | +         1 _xzm_xzone_malloc_tiny  (in libsystem_malloc.dylib) + 28  [0x1926e4a68]
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1368  [0x100a22e18]  Solver.cc:4177
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 756  [0x100a22bb4]  Solver.cc:4181
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 780  [0x100a22bcc]  Solver.cc:4186
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1164  [0x100a22d4c]  Solver.cc:4193
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1196  [0x100a22d6c]  Solver.cc:4195
+      +     ! : 20 Minisat::Solver::lookahead()  (in distqldpc) + 620  [0x100a36b4c]  Solver.cc:4887
+      +     ! : | 1 ???  (in <unknown binary>)  [0x1e5]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x1ed]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 308  [0x100a18334]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x1fc]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 344  [0x100a18358]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x20e]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x218]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x226]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 308  [0x100a18334]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x229]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x230]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x246]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x248]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 416  [0x100a183a0]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x24d]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 308  [0x100a18334]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x253]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x263]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x291]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x294]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x29b]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 340  [0x100a18354]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x2b1]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 308  [0x100a18334]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x2b5]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 308  [0x100a18334]  Solver.cc:4220
+      +     ! : | 1 ???  (in <unknown binary>)  [0x2c1]
+      +     ! : | + 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 244  [0x100a182f4]  Solver.cc:4238
+      +     ! : | 1 Minisat::Solver::pickAuxiVar()  (in distqldpc) + 28  [0x100a1821c]  Solver.cc:4222
+      +     ! : 12 Minisat::Solver::lookahead()  (in distqldpc) + 564  [0x100a36b14]  Solver.cc:4901
+      +     ! : | 5 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1088,1108,...  [0x100a22d00,0x100a22d14,...]  Solver.cc:4182
+      +     ! : | 2 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 452  [0x100a22a84]  Solver.cc:4123
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 460  [0x100a22a8c]  Solver.cc:4127
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 660  [0x100a22b54]  Solver.cc:4169
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1328  [0x100a22df0]  Solver.cc:4175
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : | + 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+      +     ! : | +   1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 208  [0x100a212f0]  Solver.cc:5104
+      +     ! : | 1 Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1176  [0x100a22d58]  Solver.cc:4194
+      +     ! : 8 Minisat::Solver::lookahead()  (in distqldpc) + 2620  [0x100a3731c]  Solver.cc:5012
+      +     ! : | 6 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 436  [0x100a2a620]  Solver.cc:4740
+      +     ! : | + 6 Minisat::SimpSolver::garbageCollect()  (in distqldpc) + 136  [0x100a0f7b8]  SimpSolver.cc:877
+      +     ! : | +   2 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 152,364  [0x100a1cbb8,0x100a1cc8c]  Solver.cc:7072
+      +     ! : | +   1 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 56  [0x100a1cb58]  Solver.cc:7064
+      +     ! : | +   ! 1 Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()  (in distqldpc) + 176  [0x100a195d0]  ParseUtils.h:367
+      +     ! : | +   1 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 264  [0x100a1cc28]  Solver.cc:7072
+      +     ! : | +   ! 1 Minisat::RegionAllocator<unsigned int>::capacity(unsigned int)  (in distqldpc) + 0  [0x100a0e968]  Alloc.h:88
+      +     ! : | +   1 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 860  [0x100a1ce7c]  Solver.cc:7074
+      +     ! : | +   1 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 3876  [0x100a1da44]  Solver.cc:7099
+      +     ! : | 1 Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc) + 372  [0x100a2a5e0]  Solver.cc:4720
+      +     ! : | + 1 Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 852  [0x100a26864]  Solver.cc:4650
+      +     ! : | 1 _xzm_free_main  (in libsystem_malloc.dylib) + 420  [0x1926ed060]
+      +     ! : 2 Minisat::Solver::lookahead()  (in distqldpc) + 2412  [0x100a3724c]  Solver.cc:5003
+      +     ! : | 2 Minisat::Solver::bumpConflVars()  (in distqldpc) + 248,292  [0x100a21c18,0x100a21c44]  Solver.cc:4215
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 652  [0x100a36b6c]  Solver.cc:4896
+      +     ! : | 1 Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 88  [0x100a21f98]  Solver.cc:3908
+      +     ! : 1 Minisat::Solver::lookahead()  (in distqldpc) + 2144  [0x100a37140]  Solver.cc:5053
+      +     ! :   1 _xzm_free_main  (in libsystem_malloc.dylib) + 392  [0x1926ed044]
+      +     ! 9 Minisat::Solver::search(int&)  (in distqldpc) + 976  [0x100a37870]  Solver.cc:3682
+      +     ! : 3 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 3052  [0x100a260d8]  Solver.cc:2401
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 396  [0x100a19e6c]  Solver.cc:2118
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1116  [0x100a1a13c]  Solver.cc:2123
+      +     ! : | + 1 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      +     ! : | +   1 _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+      +     ! : | +     1 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x1926f0b2c]
+      +     ! : | +       1 xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib) + 896  [0x1926e1390]
+      +     ! : | +         1 _xzm_xzone_malloc_tiny  (in libsystem_malloc.dylib) + 28  [0x1926e4a68]
+      +     ! : | 1 Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1008  [0x100a1a0d0]  Solver.cc:2152
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 2728  [0x100a25f94]  Solver.cc:2272
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 904  [0x100a25874]  Solver.cc:2356
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1044  [0x100a25900]  Solver.cc:2374
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1828  [0x100a25c10]  Solver.cc:2379
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1180  [0x100a25988]  Solver.cc:2392
+      +     ! : 1 Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1380  [0x100a25a50]  Solver.cc:2398
+      +     ! :   1 Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc) + 1904  [0x100a1b4f0]  Solver.cc:2432
+      +     ! :     1 Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc) + 392  [0x100a1a588]  Solver.cc:1839
+      +     ! 7 Minisat::Solver::search(int&)  (in distqldpc) + 456  [0x100a37668]  Solver.cc:3650
+      +     ! : 3 Minisat::Solver::propagate()  (in distqldpc) + 348,660  [0x100a2792c,0x100a27a64]  Solver.cc:2007
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 164  [0x100a27874]  Solver.cc:1953
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 624  [0x100a27a40]  Solver.cc:1965
+      +     ! : | 1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 32  [0x100a27660]  Solver.cc:1895
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 248  [0x100a278c8]  Solver.cc:1987
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 488  [0x100a279b8]  Solver.cc:2066
+      +     ! 2 Minisat::Solver::search(int&)  (in distqldpc) + 2048  [0x100a37ca0]  Solver.cc:3650
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 624  [0x100a27a40]  Solver.cc:1953
+      +     ! : 1 Minisat::Solver::propagate()  (in distqldpc) + 944  [0x100a27b80]  Solver.cc:2052
+      +     ! :   1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 28  [0x100a2765c]  Solver.cc:1895
+      +     ! 2 Minisat::Solver::search(int&)  (in distqldpc) + 752  [0x100a37790]  Solver.cc:3804
+      +     ! : 2 Minisat::Solver::pickBranchLit()  (in distqldpc) + 340,420  [0x100a17954,0x100a179a4]  Solver.cc:1573
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 2040  [0x100a37c98]  Solver.cc:3650
+      +     ! : 1 Minisat::Solver::harden()  (in distqldpc) + 288  [0x100a29ecc]  Solver.cc:5923
+      +     ! :   1 Minisat::SimpSolver::garbageCollect()  (in distqldpc) + 136  [0x100a0f7b8]  SimpSolver.cc:877
+      +     ! :     1 Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc) + 436  [0x100a1ccd4]  Solver.cc:7072
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 1024  [0x100a378a0]  Solver.cc:3687
+      +     ! : 1 Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc) + 344  [0x100a27358]  Solver.cc:1525
+      +     ! :   1 Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 36  [0x100a21244]  Solver.cc:5104
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 1080  [0x100a378d8]  Solver.cc:3700
+      +     ! : 1 Minisat::ClauseAllocator::alloc<Minisat::vec<Minisat::Lit>>(Minisat::vec<Minisat::Lit> const&, bool) (.constprop.0)  (in distqldpc) + 140  [0x100a1cacc]  ParseUtils.h:278
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 1552  [0x100a37ab0]  Solver.cc:3766
+      +     ! : 1 Minisat::Solver::simplify(bool)  (in distqldpc) + 180  [0x100a27d14]  Solver.cc:2882
+      +     ! :   1 Minisat::Solver::safeRemoveSatisfied(Minisat::vec<unsigned int>&, unsigned int)  (in distqldpc) + 172  [0x100a1c470]  Solver.cc:2835
+      +     ! :     1 Minisat::Solver::safeRemoveSatisfied(Minisat::vec<unsigned int>&, unsigned int)  (in distqldpc) + 284  [0x100a1c4e0]  Solver.cc:2834
+      +     ! 1 Minisat::Solver::search(int&)  (in distqldpc) + 2216  [0x100a37d48]  Solver.cc:3841
+      +     !   1 Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc) + 408  [0x100a27398]  Solver.cc:1502
+      +     1 Minisat::Solver::solve_()  (in distqldpc) + 3356  [0x100a38efc]  Solver.cc:6763
+      +       1 Minisat::Solver::removeLearntClauses()  (in distqldpc) + 480  [0x100a1fea0]  Solver.cc:5134
+      +         1 Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()  (in distqldpc) + 164  [0x100a195c4]  ParseUtils.h:367
+      7 ???  (in <unknown binary>)  [0x16f3f5cb0]
+      + 7 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+      +   3 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 156  [0x100a271bc]  Heap.h:66
+      +   1 DYLD-STUB$$Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 0  [0x100a3b7cc]
+      +   1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 200  [0x100a271e8]  Heap.h:64
+      +   1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 144  [0x100a271b0]  Heap.h:70
+      +   1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 44  [0x100a2714c]  Solver.h:65
+      1 ???  (in <unknown binary>)  [0x1208]
+      + 1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+      +   1 DYLD-STUB$$Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 0  [0x100a3b7cc]
+      1 ???  (in <unknown binary>)  [0x7ba6e14000]
+      + 1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+      +   1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 28  [0x100a2713c]  Heap.h:62
+      1 ???  (in <unknown binary>)  [0x4e100a2a7f8]
+      + 1 _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+      +   1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+      +     1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 144  [0x100a271b0]  Heap.h:70
+      1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+      + 1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 156  [0x100a271bc]  Heap.h:66
+      1 Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+      + 1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+      +   1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 144  [0x100a271b0]  Heap.h:70
+      1 Minisat::vec<Minisat::Solver::Watcher>::capacity(int)  (in distqldpc) + 104  [0x100a22188]  Vec.h:99
+        1 Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+          1 Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc) + 116  [0x100a27194]  Heap.h:64
+
+Total number in stack (recursive counted multiple, when >=5):
+        52       Minisat::Solver::pickAuxiVar()  (in distqldpc) + 0  [0x100a18200]  Solver.cc:4220
+        10       Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc) + 0  [0x100a21220]  Solver.cc:5104
+        8       Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc) + 1192  [0x100a22d68]  Solver.cc:4194
+        8       Minisat::vec<Minisat::Lit>::capacity(int)  (in distqldpc) + 104  [0x100a0f908]  Vec.h:99
+        7       Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc) + 300  [0x100a2776c]  Solver.cc:1905
+        7       _realloc  (in libsystem_malloc.dylib) + 456  [0x1926f1358]
+        6       _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x1926f0b2c]
+        5       Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc) + 0  [0x100a21f40]  Solver.cc:3908
+
+Sort by top of stack, same collapsed (when >= 5):
+        Minisat::Solver::propagateForLK()  (in distqldpc)        830
+        Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc)        94
+        Minisat::Solver::pickAuxiVar()  (in distqldpc)        59
+        Minisat::Solver::propagate()  (in distqldpc)        33
+        Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc)        22
+        Minisat::Heap<Minisat::Solver::VarOrderLt>::percolateDown(int)  (in distqldpc)        21
+        Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        17
+        Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc)        17
+        Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc)        17
+        Minisat::Solver::insertAuxiVarOrder(int)  (in distqldpc)        14
+        Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        12
+        Minisat::Solver::cancelUntil(int) (.part.0)  (in distqldpc)        10
+        Minisat::Solver::pickBranchLit()  (in distqldpc)        7
+        Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        7
+        Minisat::Solver::resetConflicts(int)  (in distqldpc)        6
+        Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::cleanAll()  (in distqldpc)        5
+        Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc)        5
+
+Binary Images:
+       0x100a08000 -        0x100a45807 +distqldpc (0) <EA917B76-F07E-3505-BA07-628FCD32A94D> /Users/*/Library/Application Support/Claude/*/distqldpc
+       0x100c94000 -        0x100ca8cdf +libgcc_s.1.1.dylib (0) <91CFCEBC-F782-3E8C-92DE-C008D3F05CF8> /opt/homebrew/*/libgcc_s.1.1.dylib
+       0x101084000 -        0x101280c4f +libstdc++.6.dylib (0) <3216E13E-E236-3670-A44E-E1852EC15DBA> /opt/homebrew/*/libstdc++.6.dylib
+       0x192440000 -        0x19248f5f7  libobjc.A.dylib (973.1) <C0680DF6-9900-3C29-A071-95A031686EF8> /usr/lib/libobjc.A.dylib
+       0x192490000 -        0x19249a23f  libsharedcache.dylib (0) <BBF95357-BEBF-3D89-8900-2BBB14A667C5> /usr/lib/libsharedcache.dylib
+       0x19249b000 -        0x1924c1d3b  libdyld.dylib (27062) <62863BCA-DD60-3D32-A9DB-89099BA6F3D7> /usr/lib/system/libdyld.dylib
+       0x1924c2000 -        0x1925816e3  dyld (1.0.0 - 27062) <D341DDCB-7969-3A9C-8E03-0CF4751398A9> /usr/lib/dyld
+       0x192582000 -        0x19258501f  libsystem_blocks.dylib (98.1) <6F304731-D95D-3501-B4AD-F2934F7F2446> /usr/lib/system/libsystem_blocks.dylib
+       0x192586000 -        0x1925db0df  libxpc.dylib (3298.1.1) <0791121F-B5FC-3F84-BF04-115E86D2D882> /usr/lib/system/libxpc.dylib
+       0x1925dc000 -        0x1925fbc13  libsystem_trace.dylib (1966.1.1) <B48A8E3E-A12A-3342-8321-428B555E965E> /usr/lib/system/libsystem_trace.dylib
+       0x1925fc000 -        0x1926b0f27  libcorecrypto.dylib (2109.0.22) <807AA6C9-5D8A-3CA5-B4CE-FACE5296EF6A> /usr/lib/system/libcorecrypto.dylib
+       0x1926b1000 -        0x192706c5f  libsystem_malloc.dylib (886.0.8) <2339CB57-FE5A-3154-A206-A76059C749EB> /usr/lib/system/libsystem_malloc.dylib
+       0x192707000 -        0x19274d19f  libdispatch.dylib (1605.0.2) <022BF08F-0B3A-3225-9E65-16D1553CE90D> /usr/lib/system/libdispatch.dylib
+       0x19274e000 -        0x192750d2b  libsystem_featureflags.dylib (108) <20C1CAB2-1F13-3426-8146-9CAE9FF2A33D> /usr/lib/system/libsystem_featureflags.dylib
+       0x192751000 -        0x1927d3ca3  libsystem_c.dylib (1786.0.3) <FBA7B23E-AA60-3A90-9AA4-A7A2E0AD63EE> /usr/lib/system/libsystem_c.dylib
+       0x1927d4000 -        0x192869033  libc++.1.dylib (2200.27) <1E9BA4AA-B5DA-3CF3-80AC-4B880049573F> /usr/lib/libc++.1.dylib
+       0x19286a000 -        0x192883eff  libc++abi.dylib (2200.27) <A21743EE-6E1C-3E74-97EA-7AF793DE4BDF> /usr/lib/libc++abi.dylib
+       0x192884000 -        0x1928c29ab  libsystem_kernel.dylib (13432.1.9) <F63BF418-8F75-34A4-AAF1-8CAF2B9B6A05> /usr/lib/system/libsystem_kernel.dylib
+       0x1928c3000 -        0x1928cf91b  libsystem_pthread.dylib (553.0.1) <5A1828C3-CBC2-3B85-BD07-C8ED10021A41> /usr/lib/system/libsystem_pthread.dylib
+       0x1928d0000 -        0x1928d94f3  libsystem_platform.dylib (402.0.1.0.1) <080E4444-A0FB-3913-9756-4E470015F32F> /usr/lib/system/libsystem_platform.dylib
+       0x1928da000 -        0x192908903  libsystem_info.dylib (603) <BC387AEB-1CEF-3513-92D7-D7F913596711> /usr/lib/system/libsystem_info.dylib
+       0x196a32000 -        0x196a3bb13  libsystem_darwin.dylib (1786.0.3) <4E66C888-993C-3E6A-A8DA-A949C01C5B67> /usr/lib/system/libsystem_darwin.dylib
+       0x196e8c000 -        0x196e9db8b  libsystem_notify.dylib (368) <58FD36D8-37A7-311C-80F2-8E64DD8710CF> /usr/lib/system/libsystem_notify.dylib
+       0x198fe9000 -        0x199003d93  libsystem_networkextension.dylib (2340.1.2) <22E1D190-486F-324F-ABA4-F36AB841BFE9> /usr/lib/system/libsystem_networkextension.dylib
+       0x199091000 -        0x1990a8247  libsystem_asl.dylib (409) <B4D449B7-A821-3A9A-8019-E917B291F10A> /usr/lib/system/libsystem_asl.dylib
+       0x19a03c000 -        0x19a03cf2f  libobjcMsgSend.dylib (973.1) <41179EDE-DC97-3BBE-8848-6400D12C1436> /usr/lib/objc/libobjcMsgSend.dylib
+       0x19b188000 -        0x19b18fedf  libsystem_symptoms.dylib (2394.0.4) <60EE7884-9F4E-3184-A6AC-FA40A7A0297D> /usr/lib/system/libsystem_symptoms.dylib
+       0x19f520000 -        0x19f55aaeb  libsystem_containermanager.dylib (833.0.8.0.1) <08A57205-555D-3792-8931-9D5B585AF326> /usr/lib/system/libsystem_containermanager.dylib
+       0x1a0b73000 -        0x1a0b77317  libsystem_configuration.dylib (1446) <F3EB66A7-7A24-3AE5-B6E8-9A37BB00F119> /usr/lib/system/libsystem_configuration.dylib
+       0x1a0b78000 -        0x1a0b7ee03  libsystem_sandbox.dylib (3051.0.52) <1E892B56-092E-3832-BDE3-DCE356D7A4FA> /usr/lib/system/libsystem_sandbox.dylib
+       0x1a203c000 -        0x1a203cf2f  libobjcMsgSend1.dylib (973.1) <B40D9B2A-E1EE-37ED-8004-711A1F263DE1> /usr/lib/objc/libobjcMsgSend1.dylib
+       0x1a275c000 -        0x1a275ef93  libquarantine.dylib (217.0.4) <7FD4AE22-86EF-382B-83F5-ADF9336C1160> /usr/lib/system/libquarantine.dylib
+       0x1a2e6e000 -        0x1a2e741e7  libsystem_coreservices.dylib (203) <57248E07-11A5-3857-918E-4A3A63B69FE8> /usr/lib/system/libsystem_coreservices.dylib
+       0x1a3427000 -        0x1a3435b87  libz.1.dylib (105) <09881E57-159D-3E5F-B9EB-B708249AC31E> /usr/lib/libz.1.dylib
+       0x1a3436000 -        0x1a3473b27  libsystem_m.dylib (3326.0.1) <A3FB340F-3ED5-30F4-8B64-9D5860F64D35> /usr/lib/system/libsystem_m.dylib
+       0x1a3474000 -        0x1a3474b47  libcharset.1.dylib (121) <3C9B584E-740A-3664-A1B0-52E561EA4B0B> /usr/lib/libcharset.1.dylib
+       0x1a3475000 -        0x1a34784f7  libmacho.dylib (27062) <50DEADEC-3E99-3519-AFC3-4A3FEB3F14C3> /usr/lib/system/libmacho.dylib
+       0x1a3492000 -        0x1a349e707  libcommonCrypto.dylib (600041) <41C99F45-C5E6-39DB-B1F2-A1BEA9D242A4> /usr/lib/system/libcommonCrypto.dylib
+       0x1a349f000 -        0x1a34a8c87  libunwind.dylib (2200.5) <3070AB81-B082-39E8-8A00-EF88DDE9AC47> /usr/lib/system/libunwind.dylib
+       0x1a34b0000 -        0x1a34ba7eb  libcopyfile.dylib (260.0.3) <72D95AF9-BF5E-3A84-81A6-BCC5BDB99857> /usr/lib/system/libcopyfile.dylib
+       0x1a34bb000 -        0x1a34be8bf  libcompiler_rt.dylib (103.4) <DFB5CE7F-A36E-36AA-BECE-1392D3D43607> /usr/lib/system/libcompiler_rt.dylib
+       0x1a34bf000 -        0x1a34c4077  libsystem_collections.dylib (1786.0.3) <1E8022D4-5A37-3A7A-8936-603E6FA88358> /usr/lib/system/libsystem_collections.dylib
+       0x1a34c5000 -        0x1a34c7f1f  libsystem_secinit.dylib (182) <DE037464-4C5D-3E96-A33F-2A4557CC6A20> /usr/lib/system/libsystem_secinit.dylib
+       0x1a34c8000 -        0x1a34ca97f  libremovefile.dylib (96) <E6E6DFCF-6B2C-3F30-A59D-816CAB1190CE> /usr/lib/system/libremovefile.dylib
+       0x1a34cb000 -        0x1a34cbe27  libkeymgr.dylib (31) <5EC997EF-3ADA-360B-9FCD-5F940C83FA4E> /usr/lib/system/libkeymgr.dylib
+       0x1a34cc000 -        0x1a34d4af7  libsystem_dnssd.dylib (3111.0.5.0.1) <DE22096F-1E5B-3D6E-8164-771582DD6391> /usr/lib/system/libsystem_dnssd.dylib
+       0x1a34d5000 -        0x1a34d9f1b  libcache.dylib (95) <80BAE197-E285-3F6E-A1EE-B77FE37D7E5D> /usr/lib/system/libcache.dylib
+       0x1a34da000 -        0x1a34db8f3  libSystem.B.dylib (1359) <4FDC9AA6-B344-37FE-B8C6-A4C94A038F57> /usr/lib/libSystem.B.dylib
+       0x1a3514000 -        0x1a351b0a3  libiconv.2.dylib (121) <C343D6F7-6932-30E8-8E8F-F756946D8413> /usr/lib/libiconv.2.dylib
+       0x1aa03c000 -        0x1aa03cf2f  libobjcMsgSend2.dylib (973.1) <BD27A84B-C9AE-3282-BBEA-3B6119837B5A> /usr/lib/objc/libobjcMsgSend2.dylib
+       0x1b203c000 -        0x1b203cf2f  libobjcMsgSend3.dylib (973.1) <C0860D68-DDFC-3BD7-8B06-DB0645CBBED4> /usr/lib/objc/libobjcMsgSend3.dylib
+       0x1ba03c000 -        0x1ba03cf2f  libobjcMsgSend4.dylib (973.1) <A6153BF5-622B-3B01-81B6-F64A365EF613> /usr/lib/objc/libobjcMsgSend4.dylib
+       0x1c203c000 -        0x1c203cf2f  libobjcMsgSend5.dylib (973.1) <3913A71C-B29A-3AEA-820B-BEC40AC1861A> /usr/lib/objc/libobjcMsgSend5.dylib
+       0x1ca03c000 -        0x1ca03cf2f  libobjcMsgSend6.dylib (973.1) <9BC523A3-E167-3F6C-8CAE-0F3EBA671791> /usr/lib/objc/libobjcMsgSend6.dylib
+       0x1d203c000 -        0x1d203cf2f  libobjcMsgSend7.dylib (973.1) <248B7BCE-5B4C-34C7-A340-43D5228628C5> /usr/lib/objc/libobjcMsgSend7.dylib
+       0x1da03c000 -        0x1da03cf2f  libobjcMsgSend8.dylib (973.1) <3E041BAD-A8E8-3069-B741-78CD1A45B176> /usr/lib/objc/libobjcMsgSend8.dylib
+       0x1e203c000 -        0x1e203cf2f  libobjcMsgSend9.dylib (973.1) <34A67969-21A0-39D6-BB81-8FDA5A2409DB> /usr/lib/objc/libobjcMsgSend9.dylib
+       0x1ea03c000 -        0x1ea03cf2f  libobjcMsgSend10.dylib (973.1) <678186C0-8EAD-3B35-8CBB-00285B41E4A0> /usr/lib/objc/libobjcMsgSend10.dylib
+       0x1f203c000 -        0x1f203cf2f  libobjcMsgSend11.dylib (973.1) <E05CB08C-E956-36FA-8967-AE8E346A8D2C> /usr/lib/objc/libobjcMsgSend11.dylib
+       0x21a03c000 -        0x21a03cf2f  libobjcMsgSend12.dylib (973.1) <10AB03AA-FF1F-3FDC-9DFB-BFC40042C501> /usr/lib/objc/libobjcMsgSend12.dylib
+       0x22203c000 -        0x22203cf2f  libobjcMsgSend13.dylib (973.1) <ABF53427-FA6F-3D0D-8F9D-7AD795CA5C92> /usr/lib/objc/libobjcMsgSend13.dylib
+       0x22a03c000 -        0x22a03cf2f  libobjcMsgSend14.dylib (973.1) <9A844C46-A6DA-34D4-8EBF-2AD775C30684> /usr/lib/objc/libobjcMsgSend14.dylib
+       0x23203c000 -        0x23203cf2f  libobjcMsgSend15.dylib (973.1) <7C995666-2B2D-3284-AA0A-EBF7C922838E> /usr/lib/objc/libobjcMsgSend15.dylib
+       0x23a03c000 -        0x23a03cf2f  libobjcMsgSend16.dylib (973.1) <B6C0E14B-53AE-3E22-9ED5-1729C49F46F2> /usr/lib/objc/libobjcMsgSend16.dylib
+       0x24203c000 -        0x24203cf2f  libobjcMsgSend17.dylib (973.1) <07B4CF85-251B-301B-832B-20B315A59E19> /usr/lib/objc/libobjcMsgSend17.dylib
+       0x24a03c000 -        0x24a03cf2f  libobjcMsgSend18.dylib (973.1) <43E575B7-04DB-3999-A633-1A3B638BA6E3> /usr/lib/objc/libobjcMsgSend18.dylib
+       0x25203c000 -        0x25203cf2f  libobjcMsgSend19.dylib (973.1) <736F4D85-76F7-3B28-8D87-C07E8F7A0EF4> /usr/lib/objc/libobjcMsgSend19.dylib
+       0x25a03c000 -        0x25a03cf2f  libobjcMsgSend20.dylib (973.1) <74E67C8B-6BCA-3184-A18E-A97F370052C6> /usr/lib/objc/libobjcMsgSend20.dylib
+       0x26203c000 -        0x26203cf2f  libobjcMsgSend21.dylib (973.1) <CC0D732F-98E7-3888-9E15-70984DA2FB04> /usr/lib/objc/libobjcMsgSend21.dylib
+       0x26a03c000 -        0x26a03cf2f  libobjcMsgSend22.dylib (973.1) <85A60286-5DE3-32BA-B18C-2A498B065C88> /usr/lib/objc/libobjcMsgSend22.dylib
+       0x27203c000 -        0x27203cf2f  libobjcMsgSend23.dylib (973.1) <5452A0D2-6B19-39BE-ADDD-80B7BCDE3A98> /usr/lib/objc/libobjcMsgSend23.dylib
+       0x27a03c000 -        0x27a03cf2f  libobjcMsgSend24.dylib (973.1) <94BBF2D6-722B-350D-8557-4D25A8E8D53A> /usr/lib/objc/libobjcMsgSend24.dylib
+       0x28203c000 -        0x28203cf2f  libobjcMsgSend25.dylib (973.1) <35481387-5A8E-3AE4-86A6-94CEB3CC8726> /usr/lib/objc/libobjcMsgSend25.dylib
+       0x29a03c000 -        0x29a03cf2f  libobjcMsgSend26.dylib (973.1) <9E0C8664-E7F4-39D1-AAFC-BD92B255E4E8> /usr/lib/objc/libobjcMsgSend26.dylib
+       0x2a203c000 -        0x2a203cf2f  libobjcMsgSend27.dylib (973.1) <FD424935-55A9-3650-955A-EED3441A1D19> /usr/lib/objc/libobjcMsgSend27.dylib
+       0x2aa03c000 -        0x2aa03cf2f  libobjcMsgSend28.dylib (973.1) <09BA7B97-7DF7-3C7F-932A-B6847662FC49> /usr/lib/objc/libobjcMsgSend28.dylib
+       0x2b203c000 -        0x2b203cf2f  libobjcMsgSend29.dylib (973.1) <36D5BA3F-2139-30B0-8558-556764BE9813> /usr/lib/objc/libobjcMsgSend29.dylib
+       0x2ba03c000 -        0x2ba03cf2f  libobjcMsgSend30.dylib (973.1) <9F05564A-9D12-372C-98FC-E9F0E6BE4F04> /usr/lib/objc/libobjcMsgSend30.dylib
+       0x2bed56000 -        0x2bed5cfe5  libRosetta.dylib (385) <E359944B-D230-33F9-A04E-0C3B17C3326E> /usr/lib/libRosetta.dylib
+       0x2bf745000 -        0x2bf74875b  libsystem_darwindirectory.dylib (129.0.1) <61264923-2AA5-3658-B8C4-550C71E9D4B3> /usr/lib/system/libsystem_darwindirectory.dylib
+       0x2bf749000 -        0x2bf753d9b  libsystem_eligibility.dylib (446.1.3) <EDDE8E9C-A2CF-3931-BBB3-321CB852EB30> /usr/lib/system/libsystem_eligibility.dylib
+       0x2bf754000 -        0x2bf75d42b  libsystem_sanitizers.dylib (32) <7138ED99-7AA0-34EA-B35B-20EF6ADB1EED> /usr/lib/system/libsystem_sanitizers.dylib
+       0x2bf75e000 -        0x2bf75ea13  libsystem_trial.dylib (511) <6AE48824-EC44-3A8C-B501-BE57DBE892E7> /usr/lib/system/libsystem_trial.dylib
+       0x2c203c000 -        0x2c203cf2f  libobjcMsgSend31.dylib (973.1) <0985E20F-78C3-3466-A2B2-DBB95F7104A3> /usr/lib/objc/libobjcMsgSend31.dylib
+       0x2ca03c000 -        0x2ca03cf2f  libobjcMsgSend32.dylib (973.1) <0D309D58-D576-3E5D-AD4B-6D55AB491702> /usr/lib/objc/libobjcMsgSend32.dylib
+       0x2d203c000 -        0x2d203cf2f  libobjcMsgSend33.dylib (973.1) <346E0484-48FA-369B-8A64-93B5F5341CFE> /usr/lib/objc/libobjcMsgSend33.dylib
+       0x2da03c000 -        0x2da03cf2f  libobjcMsgSend34.dylib (973.1) <6A31F809-BCBE-3E01-A367-E91FDACCE324> /usr/lib/objc/libobjcMsgSend34.dylib
