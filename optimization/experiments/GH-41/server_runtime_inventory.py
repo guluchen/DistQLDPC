@@ -32,7 +32,9 @@ def main():
     for name in ['cc1plus','collect2','as','ld']:
         result=query([compiler,'-print-prog-name='+name]);path=result if '/' in result else shutil.which(result,path='/usr/bin:/bin')
         programs.append(pin(path))
-    zlib=query([compiler,'-print-file-name=libz.so']);assert '/' in zlib,'Native zlib development library unresolved';programs.append(pin(zlib))
+    for library in ['libz.so','libstdc++.so','libgcc_s.so.1']:
+        result=query([compiler,'-print-file-name='+library]);assert '/' in result,'Native production library unresolved: '+library
+        programs.append(pin(result))
     compiler_headers=Path(query([compiler,'-print-file-name=include']));assert compiler_headers.is_absolute()
     for directory in [Path('/usr/include'),compiler_headers]:
         assert directory.is_dir()
