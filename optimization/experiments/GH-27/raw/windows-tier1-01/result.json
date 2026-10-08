@@ -1,0 +1,263 @@
+{
+  "status": "FILTER_COMPLETE",
+  "Tier0": "PASS",
+  "diagnostic": "NOT_RUN",
+  "performance": "WINDOWS_DIAGNOSTIC",
+  "candidate": "58fbae546e74c158c21070cd10106e94d6bd2b98",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6066022135",
+  "decision": "INCONCLUSIVE",
+  "Tier1": "48 scientifically correct solves",
+  "Tier2": "NOT_RUN",
+  "Tier3": "NOT_RUN",
+  "reason": "Numeric direction/variability reported; controlled confirmation pending",
+  "numeric_filter": "reject",
+  "numeric_reason": "confirmed per-case regression",
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.515567299997201,
+          2.4513097000017297,
+          2.4483794999832753
+        ],
+        "candidate": [
+          2.4551589000038803,
+          2.4540600000182167,
+          2.533195900003193
+        ]
+      },
+      "baseline_median": 2.4513097000017297,
+      "candidate_median": 2.4551589000038803,
+      "ratio": 1.0015702626241587,
+      "range_envelope": 1.0346418518944864,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.9702494999801274,
+          2.9883516000118107,
+          2.9875605999841355
+        ],
+        "candidate": [
+          2.989082400017651,
+          3.0058545999927446,
+          2.9998490999860223
+        ]
+      },
+      "baseline_median": 2.9875605999841355,
+      "candidate_median": 2.9998490999860223,
+      "ratio": 1.0041132220052547,
+      "range_envelope": 1.0119872421535145,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.0371070000110194,
+          1.0838637000124436,
+          1.0832982999854721
+        ],
+        "candidate": [
+          1.035299600014696,
+          1.0849026000068989,
+          1.0733907999820076
+        ]
+      },
+      "baseline_median": 1.0832982999854721,
+      "candidate_median": 1.0733907999820076,
+      "ratio": 0.9908543196240617,
+      "range_envelope": 1.0460855051555642,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.342058599984739,
+          1.33993470002315,
+          1.3421058999956585
+        ],
+        "candidate": [
+          1.341711499990197,
+          1.3422265999834053,
+          1.3404743999999482
+        ]
+      },
+      "baseline_median": 1.342058599984739,
+      "candidate_median": 1.341711499990197,
+      "ratio": 0.9997413674823543,
+      "range_envelope": 1.0017104564574792,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.0237587000010535,
+          2.996693900000537,
+          3.0236078000161797
+        ],
+        "candidate": [
+          3.0348367000115104,
+          3.0525398000027053,
+          3.0269868000177667
+        ]
+      },
+      "baseline_median": 3.0236078000161797,
+      "candidate_median": 3.0348367000115104,
+      "ratio": 1.0037137422370952,
+      "range_envelope": 1.0186358373146347,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.862882199988235,
+          3.8644762999902014,
+          3.8781347000040114
+        ],
+        "candidate": [
+          3.870028400007868,
+          3.8556821000238415,
+          3.892063799983589
+        ]
+      },
+      "baseline_median": 3.8644762999902014,
+      "candidate_median": 3.870028400007868,
+      "ratio": 1.001436701790015,
+      "range_envelope": 1.0075543592800844,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.1370760000136215,
+          2.119107799982885,
+          2.0718144999991637
+        ],
+        "candidate": [
+          2.0941071000124793,
+          2.1173503000172786,
+          2.0683879000134766
+        ]
+      },
+      "baseline_median": 2.119107799982885,
+      "candidate_median": 2.0941071000124793,
+      "ratio": 0.9882022519238486,
+      "range_envelope": 1.0219787051486189,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.4559282999834977,
+          2.509389699989697,
+          2.4536512999911793
+        ],
+        "candidate": [
+          2.4795959000184666,
+          2.6669135999982245,
+          2.5031270000035875
+        ]
+      },
+      "baseline_median": 2.4559282999834977,
+      "candidate_median": 2.5031270000035875,
+      "ratio": 1.0192182727893184,
+      "range_envelope": 1.0869163030654811,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "legacy_filter_details": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        2.515567299997201,
+        2.4513097000017297,
+        2.4483794999832753
+      ],
+      "candidate_raw": [
+        2.4551589000038803,
+        2.4540600000182167,
+        2.533195900003193
+      ],
+      "baseline_median": 2.4513097000017297,
+      "candidate_median": 2.4551589000038803,
+      "median_ratio": 1.0015702626241587,
+      "baseline_range_over_median": 0.0274089398062915,
+      "baseline_min": 2.4483794999832753,
+      "baseline_max": 2.515567299997201,
+      "candidate_min": 2.4540600000182167,
+      "candidate_max": 2.533195900003193
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "baseline_raw": [
+        1.0371070000110194,
+        1.0838637000124436,
+        1.0832982999854721
+      ],
+      "candidate_raw": [
+        1.035299600014696,
+        1.0849026000068989,
+        1.0733907999820076
+      ],
+      "baseline_median": 1.0832982999854721,
+      "candidate_median": 1.0733907999820076,
+      "median_ratio": 0.9908543196240617,
+      "baseline_range_over_median": 0.04316142654525648,
+      "baseline_min": 1.0371070000110194,
+      "baseline_max": 1.0838637000124436,
+      "candidate_min": 1.035299600014696,
+      "candidate_max": 1.0849026000068989
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        3.0237587000010535,
+        2.996693900000537,
+        3.0236078000161797
+      ],
+      "candidate_raw": [
+        3.0348367000115104,
+        3.0525398000027053,
+        3.0269868000177667
+      ],
+      "baseline_median": 3.0236078000161797,
+      "candidate_median": 3.0348367000115104,
+      "median_ratio": 1.0037137422370952,
+      "baseline_range_over_median": 0.008951160927806798,
+      "baseline_min": 2.996693900000537,
+      "baseline_max": 3.0237587000010535,
+      "candidate_min": 3.0269868000177667,
+      "candidate_max": 3.0525398000027053
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "valid_run": true
+}
