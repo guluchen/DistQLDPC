@@ -1,7 +1,7 @@
 """Disabled GH41 native Tier1. Frozen Tier0 binaries; no builds or auto advance."""
 import argparse,hashlib,importlib.util,json,math,os,re,shutil,signal,statistics,sys
 from pathlib import Path
-ASSIGNED_URL='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069447421'
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 CAND='66cf8be5a4881643f2063471325e33cecaa0caf1'
 TIER0_MANIFEST_SHA='ecf1f127d1d6f130fa99d954220e10f70a8accec5b6d7d01de2b14ab1118deeb'

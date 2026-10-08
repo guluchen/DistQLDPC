@@ -4,7 +4,7 @@ No CLI, build/science orchestration, or claim of a reserved/exclusive host.
 """
 import json,os,signal,subprocess,time,resource
 from pathlib import Path
-RUN_ASSIGNMENT='HOST_SLOT_NOT_ASSIGNED'
+RUN_ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069447421'
 HELPER_SHA='0bf26454f93bdb2d1d3973d212f141c1e3af174c4954d35df2ab98abddee0229'
 
 def lease_identity():
