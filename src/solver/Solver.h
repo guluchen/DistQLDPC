@@ -280,6 +280,8 @@ protected:
                         watches_bin,      // Watches for binary clauses only.
                         watches;          // 'watches[lit]' is a list of constraints watching 'lit' (will go there if literal becomes true).
     vec<lbool>          assigns;          // The current assignments.
+    vec<lbool>          litvals;          // DistQLDPC: literal-indexed mirror, litvals[toInt(p)] == assigns[var(p)] ^ sign(p).
+    inline void         setAssign(Var v, lbool b) { assigns[v] = b; litvals[2*v] = b; litvals[2*v+1] = b ^ true; }
     vec<char>           polarity;         // The preferred polarity of each variable.
     vec<char>           decision;         // Declares if a variable is eligible for selection in the decision heuristic.
     vec<Lit>            trail;            // Assignment stack; stores all assigments made in the order they were made.
@@ -793,7 +795,15 @@ inline void     Solver::newDecisionLevel()                      { trail_lim.push
 inline int      Solver::decisionLevel ()      const   { return trail_lim.size(); }
 inline uint32_t Solver::abstractLevel (Var x) const   { return 1 << (level(x) & 31); }
 inline lbool    Solver::value         (Var x) const   { return assigns[x]; }
-inline lbool    Solver::value         (Lit p) const   { return assigns[var(p)] ^ sign(p); }
+#ifdef LITVALS_CHECK
+inline lbool    Solver::value         (Lit p) const   {
+    if (toInt(p) < 0 || toInt(p) >= litvals.size()) { fprintf(stderr, "LITVALS_CHECK bad lit %d\n", toInt(p)); abort(); }
+    lbool r = litvals[toInt(p)]; lbool e = assigns[var(p)] ^ sign(p);
+    if (toInt(r) != toInt(e)) { fprintf(stderr, "LITVALS_CHECK mismatch lit %d\n", toInt(p)); abort(); }
+    return r; }
+#else
+inline lbool    Solver::value         (Lit p) const   { return litvals[toInt(p)]; }
+#endif
 inline lbool    Solver::modelValue    (Var x) const   { return model[x]; }
 inline lbool    Solver::modelValue    (Lit p) const   { return model[var(p)] ^ sign(p); }
 inline int      Solver::nAssigns      ()      const   { return trail.size(); }
