@@ -19,14 +19,16 @@ After a fresh assignment, in a new empty user-owned directory:
 
 ```bash
 set -euo pipefail
+: "${GH27_RECORD_COMMIT:?exact coordinator-frozen replay/support commit required}"
 test ! -e repository && test ! -e baseline && test ! -e candidate && test ! -e record && test ! -e raw
 git clone https://github.com/guluchen/DistQLDPC.git repository
 git -C repository fetch origin experiment/gh27-lk-enqueue
 git -C repository worktree add --detach ../baseline 24572d6d09cce9a4a5faa58300a89e0feba9da6a
 git -C repository worktree add --detach ../candidate 58fbae546e74c158c21070cd10106e94d6bd2b98
-git -C repository worktree add --detach ../record 7a257083d7f9988612954d93c9ed4c81f1e4fc67
+git -C repository worktree add --detach ../record "$GH27_RECORD_COMMIT"
 rec="$PWD/record/optimization/experiments/GH-27"
 mkdir raw
+git -C record rev-parse HEAD >raw/record-commit.txt
 git -C candidate diff 24572d6 HEAD -- src Makefile >raw/production.diff
 lease() {
   local label="$1" seconds="$2"; shift 2
@@ -64,9 +66,10 @@ for fixture in test_enqueue_prefix test_watch_tail test_watch_tail_gc; do
 done
 ```
 
-The pinned support contains corrected480-case fixture and reviewed Windows driver,
-not this later document. Freeze the current document/parser/input-map commit too
-before an actual server run. Default-O3 and assertion-enabled debug method fixtures,
+Reviewed support7a25708 contains the corrected480-case fixture and Windows driver;
+later recordc54efb2 adds this document/parser/input map. Freeze an exact replay
+record including all of them in GH27_RECORD_COMMIT before an actual server run.
+Default-O3 and assertion-enabled debug method fixtures,
 tiny12 CSS/6 paired WCNF comparisons,72 exact tiny PMS solves and four genuine
 1s LP340 UNKNOWN timeouts must all pass Linux Tier0 before any timing. The commands
 above cover only release fixtures/original smoke; do not label them the full gate.
