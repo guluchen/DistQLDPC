@@ -130,8 +130,10 @@ public:
         for(int i=1;i<ps.size();++i)need(value(ps[i])==l_False,"learned suffix not false after backtrack");
         if(ps.size()==1)uncheckedEnqueue(ps[0]);
         else {
-            need(lbd<=core_lbd_cut,"fixture expected CORE learner");
-            CRef cr=ca.alloc(ps,true);ca[cr].set_lbd(lbd);learnts_core.push(cr);
+            // search subtracts one from analyzer LBD before installation.
+            int stored_lbd=lbd-1;
+            need(stored_lbd<=core_lbd_cut,"fixture expected CORE learner");
+            CRef cr=ca.alloc(ps,true);ca[cr].set_lbd(stored_lbd);learnts_core.push(cr);
             ca[cr].mark(CORE);ca[cr].touched()=conflicts;claBumpActivity(ca[cr]);
             attachClause(cr);uncheckedEnqueue(ps[0],cr);
         }
