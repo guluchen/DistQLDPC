@@ -1,5 +1,11 @@
 # E004 / H-007 result: INCONCLUSIVE
 
+> Latest Windows window setup: [fixed-core validation/result](WINDOWS-AFFINITY-RESULT-2026-10-08.md).
+> Job Object confines owned process tree; probes/48 exact Tier1 solves/audit and
+> restoration PASS. Background interference remains, 55/90 contention observations.
+> Numeric filter REJECT on BB108 MTO, controlled status INCONCLUSIVE; no advancement
+> from this negative local round. [Strict launcher/user guide](WINDOWS-WINDOW-GUIDE.md).
+
 > Latest user-directed continuation: [BB144 Tier 3 pilot completed](TIER3-PILOT-RESULT-2026-10-08.md).
 > Four exact distance-12 solves, independent audit PASS; OFF/MTO singleton ratios
 > 0.979988/0.804853. Unequal contention prevents speedup attribution; INCONCLUSIVE.

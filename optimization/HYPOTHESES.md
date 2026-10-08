@@ -1,6 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
 Latest experiment: [E004 / H-007 INCONCLUSIVE](experiments/E004/README.md).
+Latest [Windows fixed-core setup](experiments/E004/WINDOWS-AFFINITY-RESULT-2026-10-08.md):
+48 exact Tier1 solves/affinity audit PASS, background contention remains;
+local numeric REJECT on BB108 MTO (+5.697%, disjoint ranges), controlled status
+INCONCLUSIVE. Strict low-interference launcher prepared; no further tier from
+this local negative round. No new solver concept or hypothesis selected.
 Latest execution instruction (2026-10-08) permits one bounded exploratory tier
 forward if evidence cannot clearly reject the method. H-007's next step is
 [BB144 Tier 3 pilot](experiments/E004/TIER3-PILOT-PROPOSAL-2026-10-08.md).

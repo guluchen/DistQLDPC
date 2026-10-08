@@ -1,0 +1,236 @@
+{
+  "selection": {
+    "topology": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ]
+    ],
+    "selected_cpu": 6,
+    "sibling": 7,
+    "original_affinity": 65535,
+    "mask": 64,
+    "idle_by_cpu": [
+      85.3125,
+      84.6875,
+      90.0,
+      81.875,
+      87.8125,
+      80.3125,
+      90.0,
+      88.4375,
+      88.125,
+      69.0625,
+      92.1875,
+      40.625,
+      94.375,
+      81.25,
+      91.25,
+      72.8125
+    ],
+    "sampling_sec": 5,
+    "exclusive_reservation": false,
+    "power_policy_changed": false,
+    "sleep_inhibition": "temporary system requirement",
+    "allow_contention": true
+  },
+  "records": [
+    {
+      "version": "baseline",
+      "command": [
+        "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\E004-windows-tier2-02\\E004-server-package\\baseline\\bin\\distqldpc.exe",
+        "-v",
+        "-cpu-lim=1",
+        "-no-card",
+        "/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_108_8_10"
+      ],
+      "returncode": 1,
+      "affinities": [
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        },
+        {
+          "pid": 23516,
+          "mask": 64
+        },
+        {
+          "pid": 24996,
+          "mask": 64
+        }
+      ],
+      "child_observed": true
+    },
+    {
+      "version": "candidate",
+      "command": [
+        "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\E004-windows-tier2-02\\E004-server-package\\candidate\\bin\\distqldpc.exe",
+        "-v",
+        "-cpu-lim=1",
+        "-no-card",
+        "/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_108_8_10"
+      ],
+      "returncode": 1,
+      "affinities": [
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        },
+        {
+          "pid": 5548,
+          "mask": 64
+        },
+        {
+          "pid": 20684,
+          "mask": 64
+        }
+      ],
+      "child_observed": true
+    }
+  ],
+  "cleanup": {
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535
+  }
+}

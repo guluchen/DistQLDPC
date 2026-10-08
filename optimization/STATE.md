@@ -6,6 +6,17 @@ resume-only scheduling instruction. Evidence requirements are unchanged.
 
 ## Immediate state
 
+Latest Windows window setup (2026-10-08): [completed setup/result](experiments/E004/WINDOWS-AFFINITY-RESULT-2026-10-08.md).
+Job Object limits owned controller/children to CPU14, sibling15 observed;
+two short probe rounds and final48 exact Tier1 solves/audit/cleanup PASS.
+Two earlier setup/monitor failures retained separately (19/26 exact completions).
+90 resource checks, min idle65.839%,55 contention observations; no quiet/exclusive
+window achieved. Numeric filter REJECT: BB108 MTO median+5.697% with disjoint
+ranges; controlled H-007 still INCONCLUSIVE, candidate unmerged. Emulator process
+and331 observed thread masks allow all CPUs0-15. Next: user may pause heavy
+applications then use the strict launcher; no further tier from this local
+negative round. The earlier Linux exploratory pilot remains separate evidence.
+
 Latest execution policy (2026-10-08): the user explicitly requests advancing
 one tier when existing evidence cannot clearly reject a method. This supersedes
 earlier execution stops on INCONCLUSIVE, while leaving scientific promotion,
