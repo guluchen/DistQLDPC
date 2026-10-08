@@ -6,7 +6,7 @@ from windows_cpu_window import Window, ticks, affinity, descendant_affinities, k
 
 BASE='24572d6d09cce9a4a5faa58300a89e0feba9da6a'
 CAND='e1aa9175c511b72dbb7305f5769b1e11f41bc05f'
-ASSIGNED_URL='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNED_URL='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6064431256'
 QDIST='7c4774fffc49856f48a22ae5f9063d00b2661aaa'
 HASHES={'baseline':'22e398cc7558c2a04d5f24bd6db3030ce552c752622027fc2657eff7c1bd1815',
         'candidate':'f2964427f02a49359784305b00b24c082cd05f67c76e5659e9c8f5955e9e16c0'}
