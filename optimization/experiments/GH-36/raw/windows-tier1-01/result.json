@@ -1,0 +1,219 @@
+{
+  "status": "FILTER_COMPLETE",
+  "Tier0": "PASS",
+  "diagnostic": "NOT_RUN",
+  "performance": "WINDOWS_DIAGNOSTIC",
+  "candidate": "f8f379ddb7d7cc4a0f8dc1d62f670b2e97bd22a1",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6066696217",
+  "decision": "INCONCLUSIVE",
+  "Tier1": "48 scientifically correct solves",
+  "Tier2": "NOT_RUN",
+  "Tier3": "NOT_RUN",
+  "reason": "Numeric direction/variability reported; controlled confirmation pending",
+  "numeric_filter": "reject",
+  "numeric_reason": "confirmed per-case regression",
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.446725999994669,
+          2.4219447000068612,
+          2.4487098999961745
+        ],
+        "candidate": [
+          2.6330366999900434,
+          2.6949574000027496,
+          2.6535764999862295
+        ]
+      },
+      "baseline_median": 2.446725999994669,
+      "candidate_median": 2.6535764999862295,
+      "ratio": 1.0845417508916042,
+      "range_envelope": 1.1127245803734145,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.9521784000098705,
+          2.936665199988056,
+          2.9516004000033718
+        ],
+        "candidate": [
+          2.581543500011321,
+          2.5782045999949332,
+          2.6153482999943662
+        ]
+      },
+      "baseline_median": 2.9516004000033718,
+      "candidate_median": 2.581543500011321,
+      "ratio": 0.8746250000536564,
+      "range_envelope": 0.8905844288974458,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.0329803999920841,
+          1.036178700014716,
+          1.033152100018924
+        ],
+        "candidate": [
+          1.2277755000104662,
+          1.2265545000263955,
+          1.1634104000113439
+        ]
+      },
+      "baseline_median": 1.033152100018924,
+      "candidate_median": 1.2265545000263955,
+      "ratio": 1.1871964447479988,
+      "range_envelope": 1.1885757948745928,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.2964180000126362,
+          1.3389705999870785,
+          1.3456680999952368
+        ],
+        "candidate": [
+          0.7129315999918617,
+          0.7161783999763429,
+          0.7137317000015173
+        ]
+      },
+      "baseline_median": 1.3389705999870785,
+      "candidate_median": 0.7137317000015173,
+      "ratio": 0.5330450870305928,
+      "range_envelope": 0.5524286148212708,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.1593398000113666,
+          3.016926499985857,
+          3.0315141000028234
+        ],
+        "candidate": [
+          3.188910800003214,
+          3.1766637999971863,
+          3.1473360000236426
+        ]
+      },
+      "baseline_median": 3.0315141000028234,
+      "candidate_median": 3.1766637999971863,
+      "ratio": 1.0478802655063448,
+      "range_envelope": 1.0570064600573341,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.8666408999997657,
+          3.801658399985172,
+          3.8286210000223946
+        ],
+        "candidate": [
+          3.3484078999899793,
+          3.3374431999982335,
+          3.348750500008464
+        ]
+      },
+      "baseline_median": 3.8286210000223946,
+      "candidate_median": 3.3484078999899793,
+      "ratio": 0.8745728292172021,
+      "range_envelope": 0.8808657032471737,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.068596899975091,
+          2.100561699975515,
+          2.0675976000202354
+        ],
+        "candidate": [
+          1.805099799996242,
+          1.802843599987682,
+          1.8549364999926183
+        ]
+      },
+      "baseline_median": 2.068596899975091,
+      "candidate_median": 1.805099799996242,
+      "ratio": 0.872620373750912,
+      "range_envelope": 0.8971457985705072,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.441028400004143,
+          2.4209915999963414,
+          2.43773069998133
+        ],
+        "candidate": [
+          1.9189025000086986,
+          1.9240616999741178,
+          1.98182220000308
+        ]
+      },
+      "baseline_median": 2.43773069998133,
+      "candidate_median": 1.9240616999741178,
+      "ratio": 0.7892839434597323,
+      "range_envelope": 0.8185993706075126,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "legacy_filter_details": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        2.446725999994669,
+        2.4219447000068612,
+        2.4487098999961745
+      ],
+      "candidate_raw": [
+        2.6330366999900434,
+        2.6949574000027496,
+        2.6535764999862295
+      ],
+      "baseline_median": 2.446725999994669,
+      "candidate_median": 2.6535764999862295,
+      "median_ratio": 1.0845417508916042,
+      "baseline_range_over_median": 0.0109391897537246,
+      "baseline_min": 2.4219447000068612,
+      "baseline_max": 2.4487098999961745,
+      "candidate_min": 2.6330366999900434,
+      "candidate_max": 2.6949574000027496
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "valid_run": true
+}

@@ -1,0 +1,81 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Hx.txt
+c Hz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Hz.txt
+c Gx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Gx.txt
+c Gz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Gz.txt
+c Hx: 45 x 90, Hz: 45 x 90, Gx: 8 x 90, Gz: 8 x 90, logicals: 16
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 564 vars, 2464 cls (c/v ratio==4.4, grow=0)
+c No iterative elimination performed. (vars=564, c/v ratio=4.4)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 90, of which 90 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8714
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 106
+c 1 conflict sets found with length 52
+c fixedCost 0, nbSatLits 0, totalFixedVars 106, objForSearch: 90
+
+c provided UB: 11
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 90), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 267 (MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 7 conflicts with init 9993
+
+c UB=2 fails, cnfls=7, hcnfls=7, core 5, tier2 0, local 0, quasiC: 1 (fixed: 25)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 115), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 563 (MTO) for UB 4
+c ends of initiationization by VSIDS at 411 conflicts with init 9596
+
+c UB=4 fails, cnfls=411, hcnfls=229, core 1321, tier2 115, local 160, quasiC: 11 (fixed: 308)
+c prunedLB 2.74, dev 0.54, succRate 0.79, nbSucc 140, nbHardens 182 (fixed 12457), lk: 177, shorten: 0, pureSo 43, nbFlyRd 12, nbFixedLH 2
+
+c Cardinality: 788 (MTO) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 106, nbTested: 945, counter 18135
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 114, nbTested: 937, counter 87911
+c ends of initiationization by VSIDS at 5973 conflicts with init 4438
+
+c UB=8 fails, cnfls=5973, hcnfls=407, core 2904, tier2 577, local 2926, quasiC: 870 (fixed: 22044)
+c prunedLB 4.91, dev 0.96, succRate 0.75, nbSucc 5300, nbHardens 239 (fixed 36590), lk: 7023, shorten: 0, pureSo 128, nbFlyRd 38, nbFixedLH 69
+
+c Cardinality: 921 (MTO) for UB 11
+c UB=11 succs, confls=6037, hconfls=452, core 68, tier2 7, local 13,  10 soft cls unsat (0 at L0), 106 fixed vars at L0, softCnfl 129, nbFlyRd 39, nbFixedLH 69
+c nbHardens 241 (fixed 36724), shorten: 0, prunedLB 5.94, dev 1.39, succRate 0.64, nbSucc 18, lk: 28, shorten: 0, quasiC: 876 (fixed: 22178)
+
+c ends of initiationization by VSIDS at 6037 conflicts with init 9936
+
+
+c Cardinality: 921 (MTO) for UB 10
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 106, nbTested: 1001, counter 143026
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 107, nbTested: 1001, counter 204923
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 110, nbTested: 1001, counter 317765
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 113, nbTested: 1001, counter 466277
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 126, nbTested: 1001, counter 662485
+c ***** top quasi confl at level 0*****
+c ***** top quasi confl at level 0*****
+c LRB phase 1: conflicts 35527, phase 20000000, starts 125, UP 1451601
+c UB=10 fails, cnfls=41564, hcnfls=1821, core 3223, tier2 881, local 3174, quasiC: 8159 (fixed: 203119)
+c prunedLB 5.62, dev 1.31, succRate 0.67, nbSucc 33588, nbHardens 572 (fixed 229672), lk: 50044, shorten: 0, pureSo 700, nbFlyRd 197, nbFixedLH 561
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 10, maxsat: 80, hardConflicts: 1821
+c nbLK: 57274, nbSuccLK: 39046(68.17%), nbLKup: 27494460(1645.49%), hardens 572 (fixed 229672), dynVars 886, shorten: 0
+c MaxSAT: OPTIMAL, Pauli weight 10 (reported cost 10), vars 1826 (base 286 + aux 654)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Hx.txt
+c Hz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Hz.txt
+c Gx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Gx.txt
+c Gz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/E004-windows-tier2-02/E004-server-package/baseline/data/matrices/BB_90_8_10_Gz.txt
+c Hx: 45 x 90, Hz: 45 x 90, Gx: 8 x 90, Gz: 8 x 90, logicals: 16
+c d_lb: 10
+c d_ub: 10
+c d  : 10
+o 10
