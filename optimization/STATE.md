@@ -1,5 +1,23 @@
 # Optimization state
 
+Latest 2026-10-09 update supersedes running entries below. Loop ACTIVE; no
+accepted optimization. GH30 MTO-only activity Tier0 PASS and60 correct results/
+120 bounds, but LP340 MTO65.412343->140.114365s (+114.202%), all repeated ranges
+disjoint. Local REJECT/NOT ADOPTED; formal controlled corroboration unexecuted,
+no Tier3. Evidence0a236635,627 exact public raw payloads verified; PR31 isolated.
+GH26 snapshot model534 cases PASS/15 stronger; reader64 fixtures uncompiled,
+production adapter unverified. GH27 Tier0 attempt01 fixture compilation failed
+before any scientific test, cleanup verified; repair51d4a566 preserves candidate
+58fbae5, pending fresh retry. GH32 tuning-only candidate6b99e13 current Windows
+Tier0 owner under6065434429/support3953a4cb/session32941; not a performance PASS.
+Root new GH36 recovers exact historical untested H003: verified original logical
+rows through existing initUB scalar, fresh baseline24572d6/prerecord12e2343.
+Source proof first, no combined optimization. Shared unselected Clang/prefetch
+proposals re-ranked explicitly. External GH34 Mac literal mirror is separate
+host/mechanism; its claims require its own evidence, no inferred acceptance.
+Latest hub15 assignments govern host ownership. Server44-45% spare still below
+user>50% threshold, no remote computation. No Tier3 has been authorized.
+
 2026-10-09 Asia/Taipei supersedes pending entries below. Continuous independent
 three-proposal/select-one/execute loop ACTIVE; no accepted optimization.
 Fresh variants remain on24572d6, isolated branches/PRs; no stacked experiments.
