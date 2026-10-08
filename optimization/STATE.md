@@ -1,8 +1,34 @@
 # Optimization state
 
-Current execution snapshot 2026-10-09 (supersedes older running entries below): loop ACTIVE, no accepted optimization. GH36 recovered exact H003 and passes complete Tier0 at91586a2: 4368 helper cases,16CSS,8 identical WCNF pairs,40 PMS oracles/162 cap and uncapped solves,12 genuine timeouts,all source/runtime/binary/input identities and cleanup. All826 committed raw payloads verified; performance NOT_MEASURED, fixed48solve Tier1 preparing. GH27 Tier1 completes at671aa257 with48correct results/96bounds but OFF GM -0.394% versus MTO +0.610%, mixed tiny changes; INCONCLUSIVE/NOT ADOPTED. One preregistered user-exploratory LP340 Tier2 is sole Windows owner under6066419326/support530a1a2/session27360; not normal promotion or Tier1 PASS. GH32 remains locally REJECTED after7/8 medians slower; fresh GH38 selects fixed Clang22.1.8-3 backend (prerecord2b18bbf, productionb8ddb90), isolated overlay setup unexecuted. GH26 reader64+5 model gate passes, but production FLA remains unverified; next14 conditional fixtures preregistered5661087/support9cf3fb4, disabled. No Tier3.
+Current execution snapshot 2026-10-09: loop ACTIVE, no accepted optimization.
+GH36 generic validated-row cap passed full Tier0 and all48 Tier1 science/96bounds,
+but serious OFF regressions (BB90+8.454%, GB144+18.720%, disjoint ranges) reject
+the generic candidate. MTO GM-24.681% motivates a separately preregistered scope,
+not posthoc adoption. Evidence9994d7b retains984 verified public raw Git blobs;
+no GH36 Tier2/3. GH41 selects MTO-only validated-row cap from exactly three fresh
+ranked proposals, prerecord06e0c0e before production66cf8be, PR43/support339784f.
+Full21,840 mode-scoped oracle gates prepared, not executed; own fresh timing required.
+GH27 exploratory LP340 Tier2 completes: OFF-0.224%, MTO-0.146%, all ranges overlap;
+INCONCLUSIVE/NOT ADOPTED, no Tier3, evidencea7d48b8. GH32 remains locallyREJECTED.
+GH38 initial minimal Clang setup is ENGINEERING INCONCLUSIVE because default
+linking omitted original GNU manifest. Preregistered correction79db804 uses Clang
+codegen plus original GNU linking; corrected probe02 prepared, unexecuted, PR39.
+GH40 ternary fast path retry02 currently owns Windows under6067315838/support
+94f906a/session36709, actual CPU8/sibling9. Prior baseline fixture dirty-watch
+setup failure retained6889b5c; no candidate science or speed inference from failure.
+GH26 fourteen conditional fixture attempt failed compilation before tests; API
+repair prepared, production FLA correctness still unestablished. Publication of
+its exact failed evidence is under an automatic approval review block/audit.
+No accepted optimization, no Tier3, no stacked candidates. Latest hub15 named
+assignment/release comments govern host ownership; other source helpers pin CPU0.
 
-Fresh read-only server snapshot now79% global spare; fixed pair102/230 has102 fully busy and230 idle. Alternate SMT pairs6/134,8/136 and others observed100% idle over three seconds; this does not prove an exclusive reservation or authorize false exclusive-host attestation. Server benchmark work still requires separate exact protocol and named host slot. Windows owner above; source/metadata helpers pin CPU0. External Mac GH34 remains independent; no inferred acceptance.
+Read-only server snapshot observed about79% global spare and several quiet SMT
+pairs, but fixed CPU102 remains busy. Observed idle pairs do not establish an
+exclusive reservation. Linux replay support remains unexecuted and requires its
+own exact protocol and host assignment. External Mac GH34 is independent; no
+acceptance inferred from unreviewed reports.
+
+## Earlier execution snapshots (historical, superseded)
 
 Latest completed gates 2026-10-09: GH32 mtune-only Tier0 PASS; all48 Tier1
 results/96bounds correct, but7/8medians slower and OFF/MTO GM+0.809%/+0.908%.

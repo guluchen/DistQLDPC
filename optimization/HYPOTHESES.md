@@ -1,6 +1,34 @@
 # Hypothesis registry (not an execution queue)
 
-Latest actual gates 2026-10-09: H003 now implemented caller-only by GH36 after exact historical recovery, productionf8f379d; complete Tier0 passes91586a2, performance not yet measured. GH27 enqueue prefix inline remains INCONCLUSIVE after mixed near-zero Tier1; one user-exploratory LP340 Tier2 runs, no Tier1 PASS. GH32 mtune-only locally REJECTED; GH38-A now owns fixed Clang22.1.8-3 backend, three-proposal rereanking disclosed, isolated setup not executed. GH26 cap2FLA is proof-first only, not production-correct or timed; fourteen conditional fixtures prepared. No accepted optimization, no Tier3, no stacked patches.
+Current execution snapshot 2026-10-09: loop ACTIVE, no accepted optimization.
+GH36 generic validated-row cap passed full Tier0 and all48 Tier1 science/96bounds,
+but serious OFF regressions (BB90+8.454%, GB144+18.720%, disjoint ranges) reject
+the generic candidate. MTO GM-24.681% motivates a separately preregistered scope,
+not posthoc adoption. Evidence9994d7b retains984 verified public raw Git blobs;
+no GH36 Tier2/3. GH41 selects MTO-only validated-row cap from exactly three fresh
+ranked proposals, prerecord06e0c0e before production66cf8be, PR43/support339784f.
+Full21,840 mode-scoped oracle gates prepared, not executed; own fresh timing required.
+GH27 exploratory LP340 Tier2 completes: OFF-0.224%, MTO-0.146%, all ranges overlap;
+INCONCLUSIVE/NOT ADOPTED, no Tier3, evidencea7d48b8. GH32 remains locallyREJECTED.
+GH38 initial minimal Clang setup is ENGINEERING INCONCLUSIVE because default
+linking omitted original GNU manifest. Preregistered correction79db804 uses Clang
+codegen plus original GNU linking; corrected probe02 prepared, unexecuted, PR39.
+GH40 ternary fast path retry02 currently owns Windows under6067315838/support
+94f906a/session36709, actual CPU8/sibling9. Prior baseline fixture dirty-watch
+setup failure retained6889b5c; no candidate science or speed inference from failure.
+GH26 fourteen conditional fixture attempt failed compilation before tests; API
+repair prepared, production FLA correctness still unestablished. Publication of
+its exact failed evidence is under an automatic approval review block/audit.
+No accepted optimization, no Tier3, no stacked candidates. Latest hub15 named
+assignment/release comments govern host ownership; other source helpers pin CPU0.
+
+Read-only server snapshot observed about79% global spare and several quiet SMT
+pairs, but fixed CPU102 remains busy. Observed idle pairs do not establish an
+exclusive reservation. Linux replay support remains unexecuted and requires its
+own exact protocol and host assignment. External Mac GH34 is independent; no
+acceptance inferred from unreviewed reports.
+
+## Earlier registry snapshots (historical, superseded)
 
 2026-10-09 latest: no accepted optimization. GH20 locallySHELVED(all8mediansslower),
 GH21 O2 INCONCLUSIVE after exploratoryLP340(OFFneutral/MTO-1.426%, overlap),
