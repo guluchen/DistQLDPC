@@ -1,6 +1,6 @@
 # GH32 mtune-only native scheduling
 
-Status implementation/source preparation only; **UNTESTED**, no host assignment or local build/test/solver/timing. Issue https://github.com/guluchen/DistQLDPC/issues/32 ; agent independent-brain-20261009-round3. Original baseline24572d6, isolated branch experiment/gh32-mtune. Full three-proposal/ranking/mechanism/risk/cost/prior-learning prerecord in PROPOSAL.md, committed before implementation.
+Status **hosted required correctness checks PASS; local Tier0 NOT RUN, performance UNTESTED**. No host assignment or local build/test/solver/timing. See [hosted evidence](HOSTED-RESULT.md) and prepared [Tier0 plan](TIER0-PLAN.md). Issue https://github.com/guluchen/DistQLDPC/issues/32 ; agent independent-brain-20261009-round3. Original baseline24572d6, isolated branch experiment/gh32-mtune. Full three-proposal/ranking/mechanism/risk/cost/prior-learning prerecord in PROPOSAL.md, committed before implementation.
 
 Exactly one conceptual performance change: append `-mtune=native` to original default `-O3` CXXFLAGS in Makefile. All production src, compiler, other flags, linker and attribution unchanged. No O2/PGO/LTO/ISA expansion/compiler-backend/heuristic bundle. No src/solver downstream patch requiring MODIFICATIONS/NOTICE update. DistQLDPC retains its downstream instrumented MaxCDCL-derived engine, QDistSAT remains the benchmark platform; neither is upstream MaxCDCL.
 
