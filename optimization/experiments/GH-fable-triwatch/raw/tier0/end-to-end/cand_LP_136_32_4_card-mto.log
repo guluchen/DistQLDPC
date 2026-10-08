@@ -1,0 +1,71 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: data/matrices/LP_136_32_4_Hx.txt
+c Hz: data/matrices/LP_136_32_4_Hz.txt
+c Gx: data/matrices/LP_136_32_4_Gx.txt
+c Gz: data/matrices/LP_136_32_4_Gz.txt
+c Hx: 60 x 136, Hz: 60 x 136, Gx: 32 x 136, Gz: 32 x 136, logicals: 64
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.04 Mb                                      |
+c Reduced to 1072 vars, 5274 cls (c/v ratio==4.9, grow=0)
+c No iterative elimination performed. (vars=1072, c/v ratio=4.9)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 136, of which 136 unit, 0 nonUnit and 0 empty
+c total nb of literals: 19336
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 184
+c 1 conflict sets found with length 91
+c fixedCost 0, nbSatLits 0, totalFixedVars 184, objForSearch: 136
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 136), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 405 (MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 54 conflicts with init 9946
+
+c UB=2 fails, cnfls=54, hcnfls=54, core 39, tier2 5, local 17, quasiC: 1 (fixed: 16)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 152), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 871 (MTO) for UB 4
+c nbFailedLits 3, nbI 0, fixedVarsByFL 5, totalFixedVars 202, nbTested: 1462, counter 26744
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 1561 conflicts with init 8493
+
+c UB=4 fails, cnfls=1561, hcnfls=572, core 862, tier2 33, local 685, quasiC: 85 (fixed: 3632)
+c prunedLB 2.56, dev 0.61, succRate 0.82, nbSucc 875, nbHardens 183 (fixed 21720), lk: 1063, shorten: 0, pureSo 115, nbFlyRd 25, nbFixedLH 20
+
+c Cardinality: 1176 (MTO) for UB 8
+c UB=8 succs, confls=2040, hconfls=602, core 146, tier2 344, local 234,  6 soft cls unsat (0 at L0), 184 fixed vars at L0, softCnfl 115, nbFlyRd 27, nbFixedLH 23
+c nbHardens 187 (fixed 22825), shorten: 0, prunedLB 3.89, dev 0.54, succRate 0.93, nbSucc 449, lk: 482, shorten: 0, quasiC: 95 (fixed: 4244)
+
+c ends of initiationization by VSIDS at 2040 conflicts with init 9521
+
+
+c Cardinality: 1177 (MTO) for UB 6
+c UB=6 succs, confls=2343, hconfls=771, core 704, tier2 367, local 429,  4 soft cls unsat (0 at L0), 185 fixed vars at L0, softCnfl 134, nbFlyRd 37, nbFixedLH 27
+c nbHardens 213 (fixed 25278), shorten: 0, prunedLB 2.54, dev 0.81, succRate 0.66, nbSucc 115, lk: 174, shorten: 0, quasiC: 98 (fixed: 4389)
+
+c LRB phase 1: conflicts 303, phase 20000000, starts 3, UP 27924
+c UB=4 fails, cnfls=2343, hcnfls=771, core 704, tier2 367, local 429, quasiC: 98 (fixed: 4389)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 213 (fixed 25278), lk: 0, shorten: 0, pureSo 134, nbFlyRd 37, nbFixedLH 27
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 4, maxsat: 132, hardConflicts: 771
+c nbLK: 1721, nbSuccLK: 1439(83.61%), nbLKup: 1060722(564.76%), hardens 213 (fixed 25278), dynVars 1094, shorten: 0
+c MaxSAT: OPTIMAL, Pauli weight 4 (reported cost 4), vars 2966 (base 472 + aux 1400)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: data/matrices/LP_136_32_4_Hx.txt
+c Hz: data/matrices/LP_136_32_4_Hz.txt
+c Gx: data/matrices/LP_136_32_4_Gx.txt
+c Gz: data/matrices/LP_136_32_4_Gz.txt
+c Hx: 60 x 136, Hz: 60 x 136, Gx: 32 x 136, Gz: 32 x 136, logicals: 64
+c d_lb: 4
+c d_ub: 4
+c d  : 4
+o 4
