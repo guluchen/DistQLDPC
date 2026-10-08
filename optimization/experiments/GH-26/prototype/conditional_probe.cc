@@ -111,15 +111,15 @@ public:
         }
         UBconflictFlag=softConflictFlag=true;vec<Lit> out;bt=lbd=-1;
         analyzeSoftConflict(out,bt,lbd);
-        need(!UBconflictFlag&&!softConflictFlag&&falseVar==var_Undef&&involvedLits.empty(),"analyzer flags not cleared");
+        need(!UBconflictFlag&&!softConflictFlag&&falseVar==var_Undef&&involvedLits.size()==0,"analyzer flags not cleared");
         need(falseLits.size()==int(beforeFalse.size()),"temporary falseLits size leaked");
         for(int i=0;i<falseLits.size();++i)need(toInt(falseLits[i])==beforeFalse[i],"temporary falseLits payload leaked");
         for(int v=0;v<6;++v)need(!seen[v]&&!involved[v],"analyzer seen/involved leaked");
-        need(add_tmp.empty(),"analyzer activity scratch leaked");
+        need(add_tmp.size()==0,"analyzer activity scratch leaked");
         for(int i=0;i<out.size();++i)learned.push_back(toInt(out[i]));
-        if(root) {need(out.empty()&&bt==0&&lbd==0,"root maxConflLevel0 exit mismatch");return;}
+        if(root) {need(out.size()==0&&bt==0&&lbd==0,"root maxConflLevel0 exit mismatch");return;}
         validate(learned,int(UB));
-        need(!out.empty()&&value(out[0])==l_False,"missing asserting literal");
+        need(out.size()!=0&&value(out[0])==l_False,"missing asserting literal");
         for(auto p:learned)need(std::find(s.conditional_nogood.begin(),s.conditional_nogood.end(),p)!=s.conditional_nogood.end(),"unexpected learned literal");
         if(shape==1)need(out.size()==2&&out[0]==~mkLit(4)&&bt==1&&lbd==2,"independent two-level analyzer shape");
         else need(out.size()==1&&out[0]==q&&bt==0&&lbd==1,"unit analyzer shape");
@@ -162,8 +162,8 @@ public:
         for(int a=0;a<64;++a)if(feasibleOriginal(a)&&cost(a)<expanded&&!clause(learned,a)) {witness=a;break;}
         need(witness>=0,"relaxation lacks lost-validity witness");
         cancelUntilBeginning(beginning);removeLearntClauses();UB=expanded;
-        need(trail.empty()&&trail_lim.empty()&&falseLits.empty()&&falseLits_lim.empty(),"conditional root/decision trail survived relaxation");
-        need(learnts_core.empty()&&learnts_tier2.empty()&&learnts_local.empty()&&hardens.empty()&&cardinalityC.empty()&&isetClauses.empty(),"conditional clause list survived relaxation");
+        need(trail.size()==0&&trail_lim.size()==0&&falseLits.size()==0&&falseLits_lim.size()==0,"conditional root/decision trail survived relaxation");
+        need(learnts_core.size()==0&&learnts_tier2.size()==0&&learnts_local.size()==0&&hardens.size()==0&&cardinalityC.size()==0&&isetClauses.size()==0,"conditional clause list survived relaxation");
         need(fixedCostBySearch==0&&value(q)==l_Undef&&value(mkLit(5))==l_Undef,"conditional root offset survived relaxation");
         std::set<std::vector<int> > expected,actual;
         for(auto c:original) {std::sort(c.begin(),c.end());expected.insert(c);}
