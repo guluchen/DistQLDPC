@@ -28,7 +28,7 @@ ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 ap.add_argument("--support-sha",required=True)
 args=ap.parse_args()
-ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6066154475"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "Preparation only: no host slot"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -208,6 +208,7 @@ try:
     runtime_pins={name:sha(runtime/'bin'/name) for name in ['g++.exe','make.exe','objdump.exe','bash.exe','cygwin1.dll','cygstdc++-6.dll','cyggcc_s-seh-1.dll','cygz.dll']}
     assert sha(helper)=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2', 'Reviewed helper changed'
     frozen={p.name:sha(p) for p in [Path(__file__),HERE/'test_witness.cc',HERE/'cygwin_test_stats_shim.cc',helper]}
+    shutil.copy2(Path(__file__),out/'executed-driver.py')
     save(out/'preexecution.json',dict(assignment=args.run_assignment,production_candidate=CAND,record_head=head,baseline=BASE,
         support=frozen,input_hashes=inputs,source_hashes=source_hashes,
         runtime_hashes=runtime_pins,
@@ -255,7 +256,9 @@ try:
     for version,binary in binaries.items():
         check_run([runtime/'bin/bash.exe',sources[version]/'scripts/smoke_test.sh',binary],'smoke-'+version,sources[version],20)
         for mode in ['no-card','card-mto']:
-            rc,text,error=check_run([binary,'-'+mode,'-cpu-lim=1',data_root/'LP_340_56_8'],'timeout-'+version+'-'+mode,sources[version],20,exact=8,timeout=True)
+            rc,text,error=check_run([binary,'-'+mode,'-cpu-lim=1',data_root/'LP_340_56_8'],'timeout-'+version+'-'+mode,sources[version],20,allow_rc=True)
+            science.append(dict(label='production-1s-'+version+'-'+mode,result=scientific(rc,text,8,timeout=(rc==1))))
+            save(out/'science.json',science)
             assert not re.search(r'^o(?:\s|$)',text,re.M),'SCIENCE timeout objective fabricated'
     # Test-only standalone Main link. No shim in production DistQLDPC.
     standalone={}
