@@ -1,0 +1,7 @@
+# Corrected model attempt02 queue
+
+Attempt01 is retained under `results/model-01/`. It stopped before helper import/Job creation/compiler/oracle, so no host state changed and model remained NOT_RUN. The guard caught a 65-character transcription error in the GMP DLL pin. Actual DLL SHA256 is `44a89e8405b4707d120dd0fbf8b6421d300204e216abdafdddc4c4a434c6b477`; every other hard pin was compared by metadata and matched. This is an engineering INCONCLUSIVE, no scientific result.
+
+Corrected support commit `c2bfd6694d4ce16dc992026d7a5b4ede73ca44b9`, runner SHA256 `748ad130f46854e277728999e78f612a8d58c3bd735db9d6f44db3bc51a88fa9`, frozen model commit `8438131b07901a9182e3212aed18b027b1773650`. Only the erroneous DLL pin and detailed mismatch diagnostic changed; source, flags, exact 534 vectors and time limits did not. The old assignment URL remains in this preparation version and must be replaced and recommitted for the NEW attempt02 assignment before launch. It is not authorization to launch again.
+
+Fresh output for a future assigned one-shot attempt is `GH26-windows-model-02`; same model-only 240-second workload budget, compiler <=120 seconds, oracle <=60 seconds outer plus bounded Job-owned cleanup. No production engine Tier0/performance claim. Current GH30 standard Tier1 exclusively owns Windows; all GH26 computation is queued until a new explicit root RUN_ASSIGNMENT. Root confirms routine corrected retry does not require PI confirmation. Report and release only after ownership/restoration/identities audit.
