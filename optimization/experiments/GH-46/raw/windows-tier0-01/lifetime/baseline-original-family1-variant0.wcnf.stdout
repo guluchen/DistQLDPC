@@ -1,0 +1,58 @@
+c This is COMiniSatPS.
+c ============================[ Problem Statistics ]=============================
+c |                                                                             |
+c initial UB: 2147483647
+c |  Number of variables:            10                                         |
+c |  Number of clauses:              15                                         |
+c |  Parse time:                   0.00 s                                       |
+c |                                                                             |
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 10, of which 10 unit, 0 nonUnit and 0 empty
+c total nb of literals: 45
+c conflLits 2, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 0
+c init nbIsets: 2
+c nbIsets after pass 1: 1
+c isets 1, derivedCost 1
+c 2 conflict sets found with length 6
+c fixedCost 0, nbSatLits 0, totalFixedVars 0, objForSearch: 9
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 9), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 47 (Sinz+MTO) for UB 2
+c ends of initiationization by VSIDS at 1 conflicts with init 9999
+
+c UB=2 fails, cnfls=1, hcnfls=1, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 2.00, dev 0.00, succRate 1.00, nbSucc 1, nbHardens 1 (fixed 9), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 94 (Sinz+MTO) for UB 4
+c UB=4 succs, confls=6, hconfls=6, core 5, tier2 0, local 0,  3 soft cls unsat (0 at L0), 0 fixed vars at L0, softCnfl 0, nbFlyRd 1, nbFixedLH 0
+c nbHardens 3 (fixed 9), shorten: 0, prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, lk: 0, shorten: 0, quasiC: 0 (fixed: 0)
+
+c ends of initiationization by VSIDS at 6 conflicts with init 9995
+
+
+c Cardinality: 85 (Sinz+MTO) for UB 3
+c LRB phase 1: conflicts 9, phase 20000000, starts 1, UP 97
+c UB=3 fails, cnfls=15, hcnfls=15, core 4, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 3 (fixed 9), lk: 0, shorten: 0, pureSo 0, nbFlyRd 7, nbFixedLH 0
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 4, maxsat: 6, hardConflicts: 15
+c nbLK: 2, nbSuccLK: 1(50.00%), nbLKup: 23(10.22%), hardens 3 (fixed 9), dynVars 84, shorten: 0
+c restarts              : 4
+c conflicts             : 15             (inf /sec)
+c decisions             : 24             (0.00 % random) (inf /sec)
+c propagations          : 225            (inf /sec)
+c conflict literals     : 36             (7.69 % deleted)
+c CPU time              : 0 s
+c nbSimplifyAll         : 0
+c s_propagations        : 84          
+c s_cost_ratio          : 37.33%
+
+s UNSATISFIABLE

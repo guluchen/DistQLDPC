@@ -1,0 +1,66 @@
+{
+  "status": "REJECT",
+  "Tier0": "REJECT",
+  "diagnostic": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "candidate": "51245c61ec2ed441abaa53c70799a31b7925bc38",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069534252",
+  "production_checks": "LOCAL_PASS",
+  "reason": "AssertionError('SCIENCE malformed/missing optimum')",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH46-LOOKAHEAD-SCRATCH\\optimization\\experiments\\GH-46\\windows_assigned_runner.py\", line 305, in <module>\n    run_lifetime.run(fixture_execute,sources,observed_mains,mains,observed_apps,oracle_dir,out/\"tier0\",out)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH46-LOOKAHEAD-SCRATCH\\optimization\\experiments\\GH-46\\run_lifetime.py\", line 61, in run\n    results[variant]=standalone(result,row[\"optimum\"])\n                     ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\GH46-LOOKAHEAD-SCRATCH\\optimization\\experiments\\GH-46\\run_lifetime.py\", line 13, in standalone\n    assert values and all(re.fullmatch(r\"\\d+\",x.strip()) for x in values),\"SCIENCE malformed/missing optimum\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: SCIENCE malformed/missing optimum\n",
+  "production_report": {
+    "decision": "INCONCLUSIVE",
+    "Tier0": "LOCAL_PASS",
+    "performance": "NOT_MEASURED",
+    "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6069534252",
+    "hosted_cross_repo": "REQUIRED_PENDING",
+    "checks": [
+      {
+        "fixture": "css1",
+        "oracle_distance": 1,
+        "initial_CNF_identical": true
+      },
+      {
+        "fixture": "css4",
+        "oracle_distance": 2,
+        "initial_CNF_identical": true
+      },
+      {
+        "fixture": "css5",
+        "oracle_distance": 1,
+        "initial_CNF_identical": true
+      },
+      {
+        "fixture": "pms-zero",
+        "oracle_cost": 0,
+        "standalone_semantics_identical": true
+      },
+      {
+        "fixture": "pms-conflict",
+        "oracle_cost": 1,
+        "standalone_semantics_identical": true
+      },
+      {
+        "fixture": "pms-triangle",
+        "oracle_cost": 2,
+        "standalone_semantics_identical": true
+      },
+      {
+        "fixture": "pms-cycle",
+        "oracle_cost": 2,
+        "standalone_semantics_identical": true
+      }
+    ],
+    "reason": "CSS oracle, CNF, smoke, timeout and standalone MaxSAT oracle checks"
+  },
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "support_cache_absent_after": true,
+  "valid_run": false
+}
