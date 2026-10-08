@@ -8,8 +8,8 @@ arm64-apple-darwin27.0.0), original Makefile flags `-O3 -g -DNDEBUG ...`.
 
 | Binary | SHA256 |
 |---|---|
-| baseline `bin/distqldpc` | see `raw/tier0-check-02/binaries.sha256` |
-| candidate `bin/distqldpc` | see `raw/tier0-check-02/binaries.sha256` |
+| baseline `bin/distqldpc` | `ac43af52144330f72d838667c82851511bc208f1cb35966359126c2d6a69eb26` |
+| candidate `bin/distqldpc` | `0549c4ecc9cdf65fa807a1a7556667787bedcebdff674ed2296032168fc61b8b` |
 
 ## Attempt history
 Candidate 9735547 failed the bit-exact check (see ATTEMPTS.md); fixed as a1b90ad,

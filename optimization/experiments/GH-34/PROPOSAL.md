@@ -155,3 +155,10 @@ replication ~10 min; Tier2 <= ~40 min.
 Disposition rules: any semantic mismatch, assertion failure or crash ->
 REJECT and stop. Otherwise ACCEPT/REJECT/INCONCLUSIVE strictly by the gates
 above; inconclusive is not PASS; no repeat-until-favourable.
+
+## Identifier note (added after registration)
+
+This preregistration was committed as `GH-PENDING` before the issue existed. GitHub
+issue https://github.com/guluchen/DistQLDPC/issues/34 was then created, so
+GH-<issue> = GH-34 and the hypotheses are GH-34-A (selected), GH-34-B, GH-34-C.
+The text above is otherwise unchanged from commit b51fab3.
