@@ -1,5 +1,20 @@
 # Optimization state
 
+2026-10-08 execution update supersedes the Round5 setup-only state below:
+[H010/GH-16 PGO PR19](https://github.com/guluchen/DistQLDPC/pull/19),
+production4674331, local+hosted Tier0 PASS with independent artifact/science/
+source-identity audit. Actual immutable PGO-use binary and fixed small profiles
+now enter the prerecorded48-solve Windows Tier1 diagnostic under
+[host assignment](https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6062796854).
+No performance conclusion, Tier2/3 or adoption yet. Evidence lives on its own
+experiment/gh16-pgo branch; no source from this history branch is used as baseline.
+[GH-17 scratch reuse PR18](https://github.com/guluchen/DistQLDPC/pull/18)
+passes local+hosted Tier0; four diagnostic solves suggest9 of328 allocations
+saved, peak scratch8bytes. Nonzero opportunity, performance UNMEASURED/
+INCONCLUSIVE, low priority/unadopted; do not invent a measured rejection.
+Its owner prepares a fresh independent three-proposal round. One runner perhost.
+No feasible optimization has been established yet; continuous loop remains active.
+
 Latest explicit user instruction: continuously repeat three-proposal Brain,
 select one, analyze/execute and preserve learning until a feasible optimization
 is supported. A rejected round returns to fresh Brain; scientific and resource

@@ -10,7 +10,10 @@ overall task; each new attempt needs fresh rationale, not outcome-seeking retrie
 
 Coordination hub: [GitHub issue15](https://github.com/guluchen/DistQLDPC/issues/15).
 Reusable instruction: [AGENT_PROMPT.md](AGENT_PROMPT.md).
-This setup creates records/protocol only; no optimization is executed.
+Initial setup created records/protocol only. Execution now proceeds in each
+independent issue/PR: primary PGO [PR19](https://github.com/guluchen/DistQLDPC/pull/19)
+and scratch reuse [PR18](https://github.com/guluchen/DistQLDPC/pull/18).
+Use hub comments for latest ownership, reached gates and results.
 
 Initial selection: [primary agent issue16](https://github.com/guluchen/DistQLDPC/issues/16),
 three proposals H010/H011/H012, H010 selected/UNTESTED. Other agents independently

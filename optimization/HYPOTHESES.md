@@ -1,5 +1,16 @@
 # Hypothesis registry (not an execution queue)
 
+2026-10-08 execution update: primary selected H010 is now
+[GH-16/PR19](https://github.com/guluchen/DistQLDPC/pull/19), one PGO concept,
+source4674331; complete Tier0 PASS, Windows Tier1 diagnostic running under
+assigned host slot, performance decision pending. Independent GH-17-A selects
+the same oldset reuse opportunity as unselected H011, openly acknowledging prior
+suggestion; [PR18](https://github.com/guluchen/DistQLDPC/pull/18) Tier0 PASS.
+Diagnostic allocation replay suggests9/328 saved, peak8bytes; no timing result,
+formal INCONCLUSIVE/low priority, no universal rejection. GH-17-B/C remain
+unselected. New rounds independently propose three and register one; prior
+setup-only/untested statements below are chronology, not current execution status.
+
 [Brain Round5](brain/2026-10-08-round5.md): **H-010 PGO only**, recommended
 next subject to collection prerequisite; **H-011 reuse only setConflict oldset
 capacity**, profiling-dependent; **H-012 bounded further lookahead**, CP2026
