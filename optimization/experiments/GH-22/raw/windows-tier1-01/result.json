@@ -1,0 +1,219 @@
+{
+  "status": "FILTER_COMPLETE",
+  "Tier0": "PASS",
+  "diagnostic": "NOT_RUN",
+  "performance": "WINDOWS_DIAGNOSTIC",
+  "candidate": "596510ccda48361b34158927607a58988402ff91",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6064232111",
+  "decision": "INCONCLUSIVE",
+  "Tier1": "48 scientifically correct solves",
+  "Tier2": "NOT_RUN",
+  "Tier3": "NOT_RUN",
+  "reason": "Numeric direction/variability reported; controlled confirmation pending",
+  "numeric_filter": "reject",
+  "numeric_reason": "confirmed per-case regression",
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.7130011999979615,
+          2.6866762999852654,
+          2.705501999997068
+        ],
+        "candidate": [
+          2.9898243000207003,
+          2.940628900018055,
+          2.9601553000102285
+        ]
+      },
+      "baseline_median": 2.705501999997068,
+      "candidate_median": 2.9601553000102285,
+      "ratio": 1.0941242327721201,
+      "range_envelope": 1.112833838612079,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.2831195000035223,
+          3.2834451000089757,
+          3.25635670000338
+        ],
+        "candidate": [
+          2.7633990999893285,
+          2.804514699993888,
+          2.7581369999970775
+        ]
+      },
+      "baseline_median": 3.2831195000035223,
+      "candidate_median": 2.7633990999893285,
+      "ratio": 0.841699213198412,
+      "range_envelope": 0.8612430880164256,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.1588573000044562,
+          1.1596161000197753,
+          1.1580274000007194
+        ],
+        "candidate": [
+          1.6134492000273895,
+          1.6153087000129744,
+          1.6153675999958068
+        ]
+      },
+      "baseline_median": 1.1588573000044562,
+      "candidate_median": 1.6153087000129744,
+      "ratio": 1.3938805925516136,
+      "range_envelope": 1.3949303790176324,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.4727384999860078,
+          1.4665385000116657,
+          1.4228851000079885
+        ],
+        "candidate": [
+          1.1525651000265498,
+          1.1497877000074368,
+          1.1486889999941923
+        ]
+      },
+      "baseline_median": 1.4665385000116657,
+      "candidate_median": 1.1497877000074368,
+      "ratio": 0.7840146712809044,
+      "range_envelope": 0.8100197971150861,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.340159200015478,
+          3.318694300018251,
+          3.2870205999934115
+        ],
+        "candidate": [
+          3.5166706000163686,
+          3.5419947000045795,
+          3.516914599982556
+        ]
+      },
+      "baseline_median": 3.318694300018251,
+      "candidate_median": 3.516914599982556,
+      "ratio": 1.0597283997996485,
+      "range_envelope": 1.0775699732492334,
+      "nonoverlapping_regression": true
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          4.306823499995517,
+          4.224261299998034,
+          4.1848729000194
+        ],
+        "candidate": [
+          3.8204537000274286,
+          3.772276400006376,
+          3.783579599985387
+        ]
+      },
+      "baseline_median": 4.224261299998034,
+      "candidate_median": 3.783579599985387,
+      "ratio": 0.8956783994368787,
+      "range_envelope": 0.912919888202511,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.2296856000029948,
+          2.2220815000182483,
+          2.152214300003834
+        ],
+        "candidate": [
+          2.2290414000162855,
+          2.2489827999961562,
+          2.1653714000131004
+        ]
+      },
+      "baseline_median": 2.2220815000182483,
+      "candidate_median": 2.2290414000162855,
+      "ratio": 1.0031321533427013,
+      "range_envelope": 1.0449622976634574,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.491109900001902,
+          2.5711461000028066,
+          2.5378231999929994
+        ],
+        "candidate": [
+          2.163986300001852,
+          2.254563499998767,
+          2.0940682999789715
+        ]
+      },
+      "baseline_median": 2.5378231999929994,
+      "candidate_median": 2.163986300001852,
+      "ratio": 0.8526938756048181,
+      "range_envelope": 0.9050437718532793,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "legacy_filter_details": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "baseline_raw": [
+        2.7130011999979615,
+        2.6866762999852654,
+        2.705501999997068
+      ],
+      "candidate_raw": [
+        2.9898243000207003,
+        2.940628900018055,
+        2.9601553000102285
+      ],
+      "baseline_median": 2.705501999997068,
+      "candidate_median": 2.9601553000102285,
+      "median_ratio": 1.0941242327721201,
+      "baseline_range_over_median": 0.009730135114564576,
+      "baseline_min": 2.6866762999852654,
+      "baseline_max": 2.7130011999979615,
+      "candidate_min": 2.940628900018055,
+      "candidate_max": 2.9898243000207003
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "valid_run": true
+}
