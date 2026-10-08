@@ -1,0 +1,16 @@
+In file included from /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH38-CLANG/src/solver/Main.cc:52:
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH38-CLANG/src/solver/Dimacs.h:132:9: warning: variable 'vars' set but not used [-Wunused-but-set-variable]
+  132 |     int vars    = 0;
+      |         ^
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH38-CLANG/src/solver/Main.cc:92:45: warning: format specifies type 'unsigned long long' but the argument has type 'uint64_t' (aka 'unsigned long') [-Wformat]
+   92 |         printf("c nbSimplifyAll         : %llu\n", solver.nbSimplifyAll);
+      |                                           ~~~~     ^~~~~~~~~~~~~~~~~~~~
+      |                                           %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH38-CLANG/src/solver/Main.cc:187:33: warning: format specifies type 'unsigned long long' but the argument has type 'uint64_t' (aka 'unsigned long') [-Wformat]
+  187 |         printf("c initial UB: %llu\n", S.initUB);
+      |                               ~~~~     ^~~~~~~~
+      |                               %lu
+/cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH38-CLANG/src/solver/Main.cc:108:13: warning: unused function 'SIGINT_exit' [-Wunused-function]
+  108 | static void SIGINT_exit(int signum) {
+      |             ^~~~~~~~~~~
+4 warnings generated.
