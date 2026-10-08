@@ -1,0 +1,51 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Hx.txt
+c Hz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Hz.txt
+c Gx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Gx.txt
+c Gz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Gz.txt
+c Hx: 1 x 5, Hz: 1 x 5, Gx: 3 x 5, Gz: 3 x 5, logicals: 6
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.00 Mb                                      |
+c Reduced to 21 vars, 50 cls (c/v ratio==2.4, grow=0)
+c No iterative elimination performed. (vars=21, c/v ratio=2.4)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 5, of which 5 unit, 0 nonUnit and 0 empty
+c total nb of literals: 152
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 8
+c 1 conflict sets found with length 4
+c fixedCost 0, nbSatLits 0, totalFixedVars 8, objForSearch: 5
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 5), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 23 (Sinz+MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c UB=2 succs, confls=0, hconfls=0, core 0, tier2 0, local 0,  1 soft cls unsat (0 at L0), 12 fixed vars at L0, softCnfl 0, nbFlyRd 0, nbFixedLH 0
+c nbHardens 3 (fixed 6), shorten: 0, prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, lk: 1, shorten: 0, quasiC: 1 (fixed: 1)
+
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 1 (fixed: 1)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 3 (fixed 6), lk: 0, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 1, maxsat: 4, hardConflicts: 0
+c nbLK: 2, nbSuccLK: 0(0.00%), nbLKup: 28(68.29%), hardens 3 (fixed 6), dynVars 8, shorten: 0
+c MaxSAT: OPTIMAL, Pauli weight 1 (reported cost 1), vars 45 (base 21 + aux 16)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Hx.txt
+c Hz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Hz.txt
+c Gx: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Gx.txt
+c Gz: /cygdrive/c/Users/yfc/Documents/Codex/2026-10-07/you-are-the-execution-agent-for/GH48-windows-tier0-01/css5_Gz.txt
+c Hx: 1 x 5, Hz: 1 x 5, Gx: 3 x 5, Gz: 3 x 5, logicals: 6
+c d_lb: 1
+c d_ub: 1
+c d  : 1
+o 1
