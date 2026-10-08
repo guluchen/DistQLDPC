@@ -1,7 +1,7 @@
 """Disabled GH41 correctness-only capacity guard. NOT a timing/quiet-window guard."""
 import json,os,signal,subprocess,time
 from pathlib import Path
-RUN_ASSIGNMENT='HOST_SLOT_NOT_ASSIGNED'
+RUN_ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6068235549'
 def save(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n',encoding='utf8')
 def cpus(text):
     out=set()
