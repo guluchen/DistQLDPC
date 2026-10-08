@@ -309,6 +309,8 @@ protected:
     vec<char>           seen;
     vec<Lit>            analyze_stack;
     vec<Lit>            analyze_toclear;
+    // Storage only: logical contents are cleared at each substantive lookahead entry.
+    vec<Lit>            lookahead_learnt_scratch;
     vec<Lit>            add_tmp;
     vec<Lit>            add_oc;
 

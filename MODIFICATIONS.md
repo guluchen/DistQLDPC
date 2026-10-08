@@ -33,6 +33,16 @@ in each file are unchanged.
 
 ### `Solver.h` / `Solver.cc`
 
+#### Experimental lookahead learnt-literal storage reuse (GH46)
+
+- One Solver-owned `lookahead_learnt_scratch` retains only storage capacity across
+  substantive `lookahead()` calls; logical size is cleared at the original local
+  vector declaration point. Existing lookback clearing, literal order, core and
+  trail rollback, allocator copies, bounds and result reporting are unchanged.
+- No general vector/allocator, other scratch buffer, heuristic or encoding patch.
+- Experimental candidate only: correctness/allocation opportunity/performance
+  are untested; see `optimization/experiments/GH-46/PROPOSAL.md`.
+
 #### Bounds pipe (search progress → parent process)
 
 - `setBoundsPipe(int write_fd)` — attach write end of pipe

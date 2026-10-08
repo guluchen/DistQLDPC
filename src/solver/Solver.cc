@@ -4875,7 +4875,8 @@ bool Solver::lookahead() {
     // else printf("fdf ");
   }
   int nbIsets=0;
-  vec<Lit> out_learnt;
+  vec<Lit>& out_learnt = lookahead_learnt_scratch;
+  out_learnt.clear();
 #ifdef printTestedVar
   printf("\n\nc **********lookahead: %llu, lb: %d, NbFalseLits: %d, thres: %d, UB: %llu\n", LOOKAHEAD, lb, falseLits.size(), thres, UB);
 #endif
