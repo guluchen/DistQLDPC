@@ -1,0 +1,139 @@
+{
+  "artifact": {
+    "artifacts": [
+      {
+        "id": 11560511160,
+        "name": "qdistsat-cross-repo-benchmark",
+        "size_in_bytes": 1477717,
+        "url": "https://api.github.com/repos/guluchen/DistQLDPC/actions/artifacts/11560511160",
+        "archive_download_url": "https://api.github.com/repos/guluchen/DistQLDPC/actions/artifacts/11560511160/zip",
+        "expired": false,
+        "created_at": "2026-10-08T15:24:31Z",
+        "expires_at": "2026-10-22T15:24:30Z",
+        "updated_at": "2026-10-08T15:24:31Z",
+        "digest": "sha256:6be99b272ab54ff99a91e9e868c226d11d490375d044a4dea871e4f4784682cb",
+        "workflow_run": {
+          "id": 37800390671,
+          "repository_id": 1248148051,
+          "head_repository_id": 1248148051,
+          "head_branch": "experiment/gh20-watch-tail",
+          "head_sha": "3fe5afead91cf0527cd39529a6d48b4e19e12041"
+        }
+      }
+    ]
+  },
+  "jobs": {
+    "jobs": [
+      {
+        "id": 113390703280,
+        "name": "compare",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 37800390671,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Check out candidate DistQLDPC",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Resolve baseline commit",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Check out baseline DistQLDPC",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "Check out QDistSAT benchmark platform",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "Install build dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "Build baseline and candidate",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "Compare production lookahead watch state (GH-20)",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Compare on selected QDistSAT instances",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Upload benchmark report",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10
+          },
+          {
+            "name": "Escalate scientific mismatch",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11
+          },
+          {
+            "name": "Enforce scientific-result consistency",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12
+          },
+          {
+            "name": "Post Check out QDistSAT benchmark platform",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22
+          },
+          {
+            "name": "Post Check out baseline DistQLDPC",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23
+          },
+          {
+            "name": "Post Check out candidate DistQLDPC",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25
+          }
+        ]
+      }
+    ]
+  },
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "candidate": "3fe5afead91cf0527cd39529a6d48b4e19e12041",
+  "ordinary_ci": 37800390764,
+  "cross_repo": 37800390671
+}
