@@ -30,7 +30,7 @@ ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 ap.add_argument("--support-sha",required=True)
 args=ap.parse_args()
-ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6070015624"
 assert ASSIGNED_URL!="HOST_SLOT_NOT_ASSIGNED", "Preparation only: no host slot"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
