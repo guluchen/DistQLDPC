@@ -1,0 +1,115 @@
+{
+  "status": "FILTER_COMPLETE",
+  "Tier0": "PASS",
+  "diagnostic": "NOT_RUN",
+  "performance": "WINDOWS_DIAGNOSTIC",
+  "candidate": "b4e568fba2f9ec936a6bb35cb4a0127ba469dcd2",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6065052137",
+  "decision": "INCONCLUSIVE",
+  "Tier1": "completed separately",
+  "Tier2": "12 scientifically correct solves",
+  "Tier3": "NOT_RUN",
+  "reason": "Numeric direction/variability reported; controlled confirmation pending",
+  "numeric_filter": "reject",
+  "numeric_reason": "confirmed per-case regression",
+  "medians": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          59.084849700011546,
+          58.71250699998927,
+          58.85734200000297
+        ],
+        "candidate": [
+          59.41545519998181,
+          59.39184959998238,
+          58.81550669998978
+        ]
+      },
+      "baseline_median": 58.85734200000297,
+      "candidate_median": 59.39184959998238,
+      "ratio": 1.0090814090785714,
+      "range_envelope": 1.0119727164774732,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          65.34521249998943,
+          65.44639199998346,
+          65.4123430000036
+        ],
+        "candidate": [
+          140.95208459999412,
+          140.11436520001735,
+          140.05915139999706
+        ]
+      },
+      "baseline_median": 65.4123430000036,
+      "candidate_median": 140.11436520001735,
+      "ratio": 2.142017221428831,
+      "range_envelope": 2.1570376651543817,
+      "nonoverlapping_regression": true
+    }
+  ],
+  "legacy_filter_details": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "baseline_raw": [
+        59.084849700011546,
+        58.71250699998927,
+        58.85734200000297
+      ],
+      "candidate_raw": [
+        59.41545519998181,
+        59.39184959998238,
+        58.81550669998978
+      ],
+      "baseline_median": 58.85734200000297,
+      "candidate_median": 59.39184959998238,
+      "median_ratio": 1.0090814090785714,
+      "baseline_range_over_median": 0.006326189518076674,
+      "baseline_min": 58.71250699998927,
+      "baseline_max": 59.084849700011546,
+      "candidate_min": 58.81550669998978,
+      "candidate_max": 59.41545519998181
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "baseline_raw": [
+        65.34521249998943,
+        65.44639199998346,
+        65.4123430000036
+      ],
+      "candidate_raw": [
+        140.95208459999412,
+        140.11436520001735,
+        140.05915139999706
+      ],
+      "baseline_median": 65.4123430000036,
+      "candidate_median": 140.11436520001735,
+      "median_ratio": 2.142017221428831,
+      "baseline_range_over_median": 0.0015467952278368398,
+      "baseline_min": 65.34521249998943,
+      "baseline_max": 65.44639199998346,
+      "candidate_min": 140.05915139999706,
+      "candidate_max": 140.95208459999412
+    }
+  ],
+  "correctness": "Expected distance/objective/LB/UB identical in all runs",
+  "cleanup": {
+    "job_limit_released": true,
+    "affinity_restored": true,
+    "sleep_requirement_restored": true,
+    "final_mask": 65535,
+    "priority_restored": true,
+    "final_priority_class": 32
+  },
+  "valid_run": true
+}
