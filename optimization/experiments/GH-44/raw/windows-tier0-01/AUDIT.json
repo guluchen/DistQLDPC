@@ -1,0 +1,90 @@
+{
+  "status": "LOCAL_TIER0_AUDIT_PASS",
+  "original_raw_files": 782,
+  "commands": 185,
+  "app_science_streams": 50,
+  "smoke_streams": 2,
+  "PMS_solves": 72,
+  "PMS_independent_cases": 36,
+  "WCNF_pairs": 15,
+  "genuine_timeouts": 12,
+  "all_interim_fields_checked": true,
+  "runtime_files": 10216,
+  "resource_samples": 252,
+  "resource_flags": 57,
+  "window": {
+    "topology": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ]
+    ],
+    "selected_cpu": 8,
+    "sibling": 9,
+    "original_affinity": 65535,
+    "mask": 256,
+    "idle_by_cpu": [
+      97.8125,
+      98.4375,
+      95.3125,
+      98.75,
+      99.05956112852665,
+      98.4375,
+      98.75,
+      99.375,
+      100.0,
+      99.0625,
+      99.375,
+      98.74608150470219,
+      98.4375,
+      97.80564263322884,
+      99.0625,
+      99.05956112852665
+    ],
+    "sampling_sec": 5,
+    "exclusive_reservation": false,
+    "power_policy_changed": false,
+    "sleep_inhibition": "temporary system requirement",
+    "allow_contention": true,
+    "affinity_enforcement": "Unnamed Windows Job Object JOB_OBJECT_LIMIT_AFFINITY; no breakaway flags",
+    "priority_class": 32768,
+    "original_priority_class": 32,
+    "priority_enforcement": "JOB_OBJECT_LIMIT_PRIORITY_CLASS on owned process tree"
+  },
+  "binary_hashes": {
+    "baseline": "5d21d6c0c8daf117470e0dd353086f5a27bf5751f2a8ddb35136f2ac779325a8",
+    "candidate": "42ebb16923087a68472cb5b821f470fd5f08be565033a82acf2d67765b78168e"
+  },
+  "support": "09f32016f6da1d6218f534b0c3f8ae16d1b52614",
+  "driver_sha256": "08dba010b4cbf09cb63997d811957953c0024f34c66b82506a2ec8aed9287c48",
+  "performance": "NOT_MEASURED",
+  "limitation": "No exclusive OS reservation; this correctness audit does not establish speedup or portable deployment; no binary build reproducibility claim."
+}
