@@ -3,3 +3,23 @@
 0002.gate.LP_340_56_8.no-card.1.candidate 85.963s o 8 load=1.71
 0003.gate.LP_340_56_8.no-card.1.baseline 86.400s o 8 load=2.11
 0004.gate.LP_340_56_8.no-card.2.baseline 86.449s o 8 load=1.64
+0005.gate.LP_340_56_8.no-card.2.candidate 86.309s o 8 load=1.72
+0006.gate.LP_340_56_8.card-mto.0.baseline 59.919s o 8 load=1.79
+0007.gate.LP_340_56_8.card-mto.0.candidate 59.843s o 8 load=1.50
+0008.gate.LP_340_56_8.card-mto.1.candidate 59.818s o 8 load=1.41
+0009.gate.LP_340_56_8.card-mto.1.baseline 60.019s o 8 load=1.47
+0010.gate.LP_340_56_8.card-mto.2.baseline 60.004s o 8 load=1.91
+0011.gate.LP_340_56_8.card-mto.2.candidate 59.853s o 8 load=2.82
+{
+ "stopped": null,
+ "n_samples": 12,
+ "finished": "2026-10-09T01:34:25+0800",
+ "binary_sha256_after": {
+  "baseline": "ac43af52144330f72d838667c82851511bc208f1cb35966359126c2d6a69eb26",
+  "candidate": "0549c4ecc9cdf65fa807a1a7556667787bedcebdff674ed2296032168fc61b8b"
+ },
+ "input_sha256_after_ok": true
+}
+gate no-card geomean 0.99494 envelope 1.00094 positive False flags []
+gate card-mto geomean 0.99732 envelope 0.9989 positive True flags []
+exit=0
