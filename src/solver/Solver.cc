@@ -4024,15 +4024,21 @@ CRef Solver::propagateForLK() {
 	  confl = cr;
 	  qhead = trail.size();
 	  // Copy the remaining watches:
-	  while (i < end)
-	    *j++ = *i++;
+	  if (i == j)
+	    i = j = end;
+	  else
+	    while (i < end)
+	      *j++ = *i++;
 	}
 	else {
 	  if (!uncheckedEnqueueForLK(first, cr)) {
 	    qhead = trail.size();
 	    // Copy the remaining watches:
-	    while (i < end)
-	      *j++ = *i++;
+	    if (i == j)
+	      i = j = end;
+	    else
+	      while (i < end)
+	        *j++ = *i++;
 	    falseVar = var(first);
 	  }
 	}

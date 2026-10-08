@@ -53,6 +53,8 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
   - Best-solution tracking and printing on timeout / interrupt
   - Configurable cardinality encoding modes (Sinz / MTO / off)
+  - GH-20 isolated, unadopted experiment: skip identical watch-tail self copies
+    in lookahead propagation; retain original nonidentity compaction
 
 Modified files (partial list): Solver.h, Solver.cc
 
