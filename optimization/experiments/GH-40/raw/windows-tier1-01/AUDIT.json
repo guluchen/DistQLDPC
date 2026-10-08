@@ -1,0 +1,326 @@
+{
+  "status": "48_SCIENCE_PASS_LOCAL_NOT_ADOPTED_ALL_EIGHT_SLOWER",
+  "formal_decision": "INCONCLUSIVE",
+  "local_numeric_filter": "reject",
+  "local_numeric_reason": "confirmed per-case regression",
+  "support": "09c32ed8151233ba3eac9a0477277a00a2e110a0",
+  "candidate": "2a7332fbe8958e9ff694d5ab62e50fe79185583c",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "binary_hashes": {
+    "baseline": "a88464461b69d3eb3f3b1bbb3e4221b322c191656952df43b5ebde023f5a11af",
+    "candidate": "c6005150bd5378d3477a4aae0796a2756958b49d04e7ee6e590aeb301ad4187c"
+  },
+  "driver_sha256": "bbefb3cffa423d4508007e2e82cb7b5bbb6b26a9adc89e3194f2ddf2c030f9dd",
+  "assignment": "https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6067775885",
+  "cleanup_all_true": true,
+  "only_runner_before_release": 14708,
+  "release_comment": 6067854318,
+  "all_raw_manifest_files_verified": 154,
+  "raw_science_checks": 48,
+  "median_geomeans": {
+    "no-card": 1.0303263460448258,
+    "card-mto": 1.0405062850419726
+  },
+  "groups": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.472067099995911,
+          2.453164500009734,
+          2.4695733999833465
+        ],
+        "candidate": [
+          2.5995148999791127,
+          2.5043167999829166,
+          2.50277580000693
+        ]
+      },
+      "baseline_median": 2.4695733999833465,
+      "candidate_median": 2.5043167999829166,
+      "ratio": 1.014068583667043,
+      "percent_change": 1.406858366704311,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.9966131999972276,
+          2.9702923000149895,
+          2.955167400010396
+        ],
+        "candidate": [
+          3.0844975000072736,
+          3.08023220000905,
+          3.034677299991017
+        ]
+      },
+      "baseline_median": 2.9702923000149895,
+      "candidate_median": 3.08023220000905,
+      "ratio": 1.0370131586017663,
+      "percent_change": 3.701315860176635,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.0360671000089496,
+          1.0351880999805871,
+          1.036321899999166
+        ],
+        "candidate": [
+          1.0892109999840613,
+          1.0837163000251167,
+          1.084254699992016
+        ]
+      },
+      "baseline_median": 1.0360671000089496,
+      "candidate_median": 1.084254699992016,
+      "ratio": 1.0465101150134486,
+      "percent_change": 4.651011501344859,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.2920078999886755,
+          1.2925437000230886,
+          1.2909113000205252
+        ],
+        "candidate": [
+          1.346803299995372,
+          1.3456809999770485,
+          1.419760499993572
+        ]
+      },
+      "baseline_median": 1.2920078999886755,
+      "candidate_median": 1.346803299995372,
+      "ratio": 1.0424110409906757,
+      "percent_change": 4.241104099067572,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.052825799997663,
+          2.968784199998481,
+          3.016675699996995
+        ],
+        "candidate": [
+          3.080033700010972,
+          3.144567499984987,
+          3.0845822999835946
+        ]
+      },
+      "baseline_median": 3.016675699996995,
+      "candidate_median": 3.0845822999835946,
+      "ratio": 1.0225104077268456,
+      "percent_change": 2.251040772684565,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.8000058000034187,
+          3.824052899988601,
+          3.871352799993474
+        ],
+        "candidate": [
+          3.9193310999835376,
+          3.9466650999966078,
+          4.041671100014355
+        ]
+      },
+      "baseline_median": 3.824052899988601,
+      "candidate_median": 3.9466650999966078,
+      "ratio": 1.0320634162797204,
+      "percent_change": 3.2063416279720425,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.0675162999832537,
+          2.056040600000415,
+          2.068434300017543
+        ],
+        "candidate": [
+          2.1298257999878842,
+          2.149033399997279,
+          2.147186000016518
+        ]
+      },
+      "baseline_median": 2.0675162999832537,
+      "candidate_median": 2.147186000016518,
+      "ratio": 1.03853401302515,
+      "percent_change": 3.8534013025149916,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.42334400000982,
+          2.440714199998183,
+          2.4735794000152964
+        ],
+        "candidate": [
+          2.5669185999722686,
+          2.564283899992006,
+          2.541163799993228
+        ]
+      },
+      "baseline_median": 2.440714199998183,
+      "candidate_median": 2.564283899992006,
+      "ratio": 1.0506285004585603,
+      "percent_change": 5.062850045856027,
+      "nonoverlapping_regression": true,
+      "overlap": false
+    }
+  ],
+  "resource_samples": 85,
+  "capacity_all_eligible": true,
+  "contention_flags": 4,
+  "minimum_global_idle": 85.2504638218924,
+  "minimum_sibling_idle": 88.88888888888889,
+  "flags": [
+    {
+      "label": "BB_90_8_10-card-mto-1-baseline-preflight",
+      "time": 1791488900.5850506,
+      "idle_percent": 91.50326797385621,
+      "half_spare_logical_cpus": 7.3202614379084965,
+      "selected_cpu_idle": 91.04477611940298,
+      "sibling_idle": 95.5223880597015,
+      "affinity": 16,
+      "idle_by_cpu": [
+        97.01492537313433,
+        97.01492537313433,
+        91.7910447761194,
+        95.5223880597015,
+        91.04477611940298,
+        95.5223880597015,
+        97.01492537313433,
+        97.01492537313433,
+        97.01492537313433,
+        75.93984962406014,
+        94.77611940298507,
+        56.390977443609025,
+        94.77611940298507,
+        96.26865671641791,
+        94.02985074626865,
+        92.53731343283582
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "GB_144_12_8-card-mto-3-baseline-preflight",
+      "time": 1791488964.10777,
+      "idle_percent": 85.2504638218924,
+      "half_spare_logical_cpus": 6.820037105751392,
+      "selected_cpu_idle": 89.62962962962963,
+      "sibling_idle": 88.88888888888889,
+      "affinity": 16,
+      "idle_by_cpu": [
+        85.18518518518519,
+        93.28358208955224,
+        83.70370370370371,
+        96.29629629629629,
+        89.62962962962963,
+        88.88888888888889,
+        94.07407407407408,
+        82.96296296296296,
+        79.25925925925925,
+        62.6865671641791,
+        52.985074626865675,
+        83.70370370370371,
+        92.5925925925926,
+        92.53731343283582,
+        91.11111111111111,
+        94.81481481481481
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "BB_108_8_10-no-card-2-baseline-preflight",
+      "time": 1791488986.644756,
+      "idle_percent": 91.26984126984127,
+      "half_spare_logical_cpus": 7.301587301587301,
+      "selected_cpu_idle": 94.02985074626865,
+      "sibling_idle": 94.02985074626865,
+      "affinity": 16,
+      "idle_by_cpu": [
+        94.02985074626865,
+        94.77611940298507,
+        85.07462686567165,
+        94.02985074626865,
+        94.02985074626865,
+        94.02985074626865,
+        93.28358208955224,
+        97.01492537313433,
+        69.40298507462687,
+        81.95488721804512,
+        84.9624060150376,
+        96.26865671641791,
+        94.02985074626865,
+        94.77611940298507,
+        97.76119402985074,
+        94.77611940298507
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    },
+    {
+      "label": "LP_238_44_6-card-mto-3-baseline-preflight",
+      "time": 1791489081.8221703,
+      "idle_percent": 92.02425373134328,
+      "half_spare_logical_cpus": 7.361940298507462,
+      "selected_cpu_idle": 92.53731343283582,
+      "sibling_idle": 97.76119402985074,
+      "affinity": 16,
+      "idle_by_cpu": [
+        69.40298507462687,
+        99.25373134328358,
+        92.53731343283582,
+        96.26865671641791,
+        92.53731343283582,
+        97.76119402985074,
+        94.77611940298507,
+        98.50746268656717,
+        99.25373134328358,
+        64.17910447761194,
+        88.80597014925372,
+        91.7910447761194,
+        94.02985074626865,
+        98.50746268656717,
+        95.5223880597015,
+        99.25373134328358
+      ],
+      "core_contention_detected": true,
+      "eligible": true
+    }
+  ],
+  "performance_limit": "Nonexclusive Windows diagnostic; all8 medians and all8 disjoint sample ranges are slower; controlled scientific conclusion remains inconclusive; local proposal shelved, no higher tier authorized"
+}
