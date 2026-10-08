@@ -23,14 +23,21 @@ so verifies fallback without treating malformed bases as a new scientific spec.
 Original smoke scripts for both versions; actual LP3401s timeout/no-model4.
 
 Standalone Main test-only symmetric Cygwin statistics shim, no production link
-change.39 independent exact-assignment PMS fixtures (four originals+32 seeded+
-three explicit objective-offset fixtures), both original engines with/without
-provided cap =156 solves, plus two loose-witness runs on the fixed-root fixture.
+change.40 independent exact-assignment PMS fixtures (four originals+32 seeded+
+three explicit objective-offset fixtures+one six-literal negative hard clause
+with six positive unit soft clauses). Both original engines with/without
+provided cap =160 solves, plus two loose-witness runs on the fixed-root fixture.
 Both its witnesses have independently verified costs1/2; require actual logged
 providedUB1/2 (offset1) rather than inferring residual coverage from a fixture
 name. A missing normalization/coverage record is an engineering test-coverage
 gap, never a fabricated scientific mismatch. Each cap is a retained feasible
-assignment, independently enumerated from fixture constraints, including
+assignment cost. Require independently optimal positive cap with actually logged
+providedUB>=2 and a real failed initial UB1 in each version; the six-literal
+fixture targets this without relying on an inferred residual offset. Its exact
+optimum is independently enumerated before search. Missing coverage blocks
+Tier0 as an engineering test gap; do not claim loose-root cap covers a positive
+residual optimum. Every witness is independently enumerated from fixture
+constraints, including
 cap==offset and cap==offset+1/root falsity/empty-soft cost. This is test evidence,
 never benchmark ground truth supplied by the optimization.
 Original standalone Main CLI accepts only positive initUB; a requested zero

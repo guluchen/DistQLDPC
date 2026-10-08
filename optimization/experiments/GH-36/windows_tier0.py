@@ -273,7 +273,8 @@ try:
         ('pms-cycle',4,[[-1,-2],[-2,-3],[-3,-4],[-4,-1]],[[1],[2],[3],[4]])]
     cases.extend([('pms-root-cap-offset',2,[[-1]],[[1],[2]]),
                   ('pms-root-cap-offset-plus-one',4,[[-1],[-2,-3]],[[1],[2],[3],[4]]),
-                  ('pms-empty-soft-offset',3,[[-1,-2]],[[],[1],[2],[3]])])
+                  ('pms-empty-soft-offset',3,[[-1,-2]],[[],[1],[2],[3]]),
+                  ('pms-tight-positive-residual',6,[[-1,-2,-3,-4,-5,-6]],[[1],[2],[3],[4],[5],[6]])])
     import random
     rng=random.Random(20261008)
     for index in range(32):
@@ -285,6 +286,7 @@ try:
             hard.append(clause)
         cases.append(('pms-seed-%02d'%index,n,hard,[[v] for v in range(1,n+1)]))
     oracle=[]
+    tight_positive_residual=[]
     for stem,n,hard,soft in cases:
         exact=min(sum(not satisfies(c,a) for c in soft) for a in range(1<<n)
                   if all(satisfies(c,a) for c in hard))
@@ -316,6 +318,11 @@ try:
             accepted=cap if cap>0 else 2147483647 # Original Main CLI ignores zero.
             assert initial==[str(accepted)],'SCIENCE original cap CLI semantics changed'
             provided_results.append((rc,statuses,int(optimal[-1])))
+            provided=re.findall(r'^c provided UB:\s*(\d+)\s*$',text,re.M)
+            if cap>0 and provided and int(provided[0])>=2 and re.search(r'^c UB=1 fails,',text,re.M):
+                tight_positive_residual.append(dict(stem=stem,version=version,verified_cost=cap,exact=exact,
+                    strict_providedUB=int(provided[0]),observed_failed_initial_bound=1))
+                save(out/'tight-positive-residual-coverage.json',tight_positive_residual)
             save(out/(stem+'-witness.json'),dict(assignment=witness,verified_weight=cap,oracle=exact,original_Main_accepted_initUB=accepted))
         assert provided_results[0]==provided_results[1],'SCIENCE provided-bound engine result mismatch'
         if stem=='pms-root-cap-offset':
@@ -332,6 +339,8 @@ try:
                 if re.findall(r'^c provided UB:\s*(\d+)\s*$',first,re.M)!=['1']:
                     raise RuntimeError('TEST_COVERAGE: fixed offset normalization not reached as expected')
                 save(out/(stem+'-'+version+'-offset-coverage.json'),dict(offset=1,strict_P=[1,2],verified_assignments=[witness,loose_witness],costs=[cap,loose_cap],oracle=exact))
+    if set(row['version'] for row in tight_positive_residual)!={'baseline','candidate'}:
+        raise RuntimeError('TEST_COVERAGE: tight positive residual cap after failed initial bound was not exercised')
     for version,source in sources.items():
         original=(source/'src/solver/Solver.cc').read_bytes()
         for phase in ['pre-search','post-model']:
