@@ -1,0 +1,85 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: data/matrices/TN_252_2_21_Hx.txt
+c Hz: data/matrices/TN_252_2_21_Hz.txt
+c Gx: data/matrices/TN_252_2_21_Gx.txt
+c Gz: data/matrices/TN_252_2_21_Gz.txt
+c Hx: 126 x 252, Hz: 126 x 252, Gx: 2 x 252, Gz: 2 x 252, logicals: 4
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.06 Mb                                      |
+c Reduced to 1680 vars, 8430 cls (c/v ratio==5.0, grow=0)
+c No iterative elimination performed. (vars=1680, c/v ratio=5.0)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 252, of which 252 unit, 0 nonUnit and 0 empty
+c total nb of literals: 31224
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 256
+c 1 conflict sets found with length 98
+c fixedCost 0, nbSatLits 0, totalFixedVars 256, objForSearch: 252
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 252), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 753 (MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 15 conflicts with init 9985
+
+c UB=2 fails, cnfls=15, hcnfls=15, core 10, tier2 3, local 2, quasiC: 1 (fixed: 58)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 310), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 1627 (MTO) for UB 4
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 18123
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 3504 conflicts with init 6511
+
+c UB=4 fails, cnfls=3504, hcnfls=747, core 4702, tier2 221, local 2595, quasiC: 169 (fixed: 13617)
+c prunedLB 2.66, dev 0.58, succRate 0.87, nbSucc 2435, nbHardens 353 (fixed 75951), lk: 2809, shorten: 0, pureSo 323, nbFlyRd 51, nbFixedLH 57
+
+c Cardinality: 2192 (MTO) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 119474
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 257, nbTested: 1001, counter 186271
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 272, nbTested: 1001, counter 332914
+c ends of initiationization by VSIDS at 13507 conflicts with init -3
+
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 312, nbTested: 1001, counter 584385
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 360, nbTested: 1001, counter 931853
+c LRB phase 1: conflicts 17323, phase 20000000, starts 63, UP 1365985
+c UB=8 fails, cnfls=30830, hcnfls=1711, core 2394, tier2 48, local 7533, quasiC: 3665 (fixed: 301525)
+c prunedLB 5.09, dev 1.00, succRate 0.76, nbSucc 25936, nbHardens 575 (fixed 391853), lk: 34235, shorten: 0, pureSo 750, nbFlyRd 275, nbFixedLH 537
+
+c Cardinality: 2473 (MTO) for UB 16
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 985359
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1069123
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1202244
+c ends of initiationization by VSIDS at 40882 conflicts with init -52
+
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1439408
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 1760153
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 2077438
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 2492897
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 2953037
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 3510201
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 4134847
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 4795709
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 5466310
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 6249135
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 7168923
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 256, nbTested: 1001, counter 8563127
+c LRB phase 2: conflicts 261415, phase 20000000, starts 605, UP 20092431
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: data/matrices/TN_252_2_21_Hx.txt
+c Hz: data/matrices/TN_252_2_21_Hz.txt
+c Gx: data/matrices/TN_252_2_21_Gx.txt
+c Gz: data/matrices/TN_252_2_21_Gz.txt
+c Hx: 126 x 252, Hz: 126 x 252, Gx: 2 x 252, Gz: 2 x 252, logicals: 4
+c d_lb: 8
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

@@ -1,0 +1,70 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/TN_684_2_29_Hx.txt
+c Hz: data/matrices/TN_684_2_29_Hz.txt
+c Gx: data/matrices/TN_684_2_29_Gx.txt
+c Gz: data/matrices/TN_684_2_29_Gz.txt
+c Hx: 342 x 684, Hz: 342 x 684, Gx: 2 x 684, Gz: 2 x 684, logicals: 4
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.17 Mb                                      |
+c Reduced to 4538 vars, 22382 cls (c/v ratio==4.9, grow=0)
+c No iterative elimination performed. (vars=4538, c/v ratio=4.9)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 684, of which 684 unit, 0 nonUnit and 0 empty
+c total nb of literals: 82440
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 688
+c 1 conflict sets found with length 183
+c fixedCost 0, nbSatLits 0, totalFixedVars 688, objForSearch: 684
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 684), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 111 conflicts with init 9889
+
+c UB=2 fails, cnfls=111, hcnfls=97, core 741, tier2 5, local 55, quasiC: 1 (fixed: 194)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 77 (fixed 33744), lk: 1, shorten: 0, pureSo 14, nbFlyRd 26, nbFixedLH 0
+
+c Cardinality: off (soft-conflict only), UB 4
+c nbFailedLits 0, nbI 1, fixedVarsByFL 1, totalFixedVars 706, nbTested: 1511, counter 42757
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 728, nbTested: 1001, counter 229499
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 748, nbTested: 1001, counter 566166
+c ends of initiationization by VSIDS at 10119 conflicts with init -8
+
+c LRB phase 1: conflicts 1501, phase 20000000, starts 10, UP 414877
+c UB=4 fails, cnfls=11620, hcnfls=1903, core 13946, tier2 828, local 9921, quasiC: 850 (fixed: 168607)
+c prunedLB 2.95, dev 0.67, succRate 0.78, nbSucc 8622, nbHardens 887 (fixed 528611), lk: 11031, shorten: 0, pureSo 1096, nbFlyRd 173, nbFixedLH 237
+
+c Cardinality: off (soft-conflict only), UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 688, nbTested: 1001, counter 892675
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 688, nbTested: 1001, counter 1039096
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 692, nbTested: 1001, counter 1262426
+c ends of initiationization by VSIDS at 21623 conflicts with init -3
+
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 708, nbTested: 1001, counter 1743981
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 724, nbTested: 1001, counter 2276687
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 780, nbTested: 1001, counter 3012535
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 787, nbTested: 1001, counter 3977761
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 883, nbTested: 1001, counter 5089209
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 899, nbTested: 1001, counter 6222094
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 1079, nbTested: 1001, counter 7716991
+c LRB phase 2: conflicts 106795, phase 20000000, starts 265, UP 20027632
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/TN_684_2_29_Hx.txt
+c Hz: data/matrices/TN_684_2_29_Hz.txt
+c Gx: data/matrices/TN_684_2_29_Gx.txt
+c Gz: data/matrices/TN_684_2_29_Gz.txt
+c Hx: 342 x 684, Hz: 342 x 684, Gx: 2 x 684, Gz: 2 x 684, logicals: 4
+c d_lb: 4
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN
