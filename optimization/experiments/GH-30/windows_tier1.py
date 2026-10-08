@@ -28,7 +28,7 @@ ap=argparse.ArgumentParser();ap.add_argument("--out",type=Path,required=True)
 ap.add_argument("--run-assignment",required=True)
 # Fresh standalone Tier1 output only; no timing resume/cherry-picking
 args=ap.parse_args()
-ASSIGNED_URL="HOST_SLOT_NOT_ASSIGNED"
+ASSIGNED_URL="https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6064930405"
 assert re.search(r"issuecomment-\d+$",ASSIGNED_URL), "Preparation only: no host slot"
 assert args.run_assignment==ASSIGNED_URL
 out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -172,7 +172,7 @@ MODES=['no-card','card-mto']
 prep=ROOT/'GH30-windows-tier0-01'
 record=candidate/'optimization/experiments/GH-30'
 binaries={v:prep/(v+'-source')/'bin/distqldpc.exe' for v in HASHES}
-samples=[];inputs={}
+samples=[];inputs={}; support_pins={}
 summary.update(status='INCONCLUSIVE',decision='INCONCLUSIVE',Tier0='PASS',Tier1='NOT_RUN',Tier2='NOT_RUN',Tier3='NOT_RUN',performance='PENDING_ASSIGNED_DIAGNOSTIC',reason='No exclusive OS reservation; report numeric filter separately')
 try:
     assert sha(helper)=='ab2f2edc50af1587e901e18fc2e9d03d6bf86c297ff9e5736099a3538a29b2b2','Reviewed resource helper changed'
@@ -195,6 +195,7 @@ try:
     relative=str(parser.relative_to(package)).replace('\\','/');assert sha(parser)==manifest['files'][relative]
     spec=importlib.util.spec_from_file_location('gh30_numeric_filter',parser);gates=importlib.util.module_from_spec(spec);spec.loader.exec_module(gates)
     assert gates.CASES1==CASES and gates.MODES==MODES
+    support_pins={str(p):sha(p) for p in [Path(__file__),helper,parser,record/'raw/hosted-b4e568f/AUDIT.json']}
     save(out/'preexecution.json',dict(baseline=BASE,candidate=CAND,record_head=head,assignment=args.run_assignment,
         driver_sha256=sha(__file__),helper_sha256=sha(helper),parser_sha256=sha(parser),binary_hashes=HASHES,input_hashes=inputs,runtime_dll_sha256=RUNTIME_DLLS,
         production_preparation_sha256=sha(prep/'preexecution.json'),production_oracle_sha256=sha(prep/'pms-oracle.json'),
@@ -258,6 +259,10 @@ finally:
                 if not all(cleanup.get(k) is True for k in ['job_limit_released','affinity_restored','sleep_requirement_restored','priority_restored']):summary['cleanup_invalid']=True
             except Exception as error:summary.update(restoration_failure=repr(error),cleanup_invalid=True)
     identity_errors=[]
+    for p,digest in support_pins.items():
+        try:
+            if sha(Path(p))!=digest:identity_errors.append(p+' support changed')
+        except Exception as error:identity_errors.append(p+': '+repr(error))
     for version,binary in binaries.items():
         try:
             if sha(binary)!=HASHES[version]:identity_errors.append(version+' binary changed')
