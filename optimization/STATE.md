@@ -11,8 +11,10 @@ explicit direction after repeated diagnostic GB regressions. Its controlled
 performance decision remains INCONCLUSIVE; no controlled rejection is invented.
 Correctness PASS, no Tier 2/3 or merge; all five complete diagnostic rounds
 (144 Windows + 96 yfclab2 solves) and interrupted attempts remain preserved.
-CPU-isolation installation was deferred and is not installed; ordinary spare
-capacity use remains authorized within the user's limits.
+CPU-isolation installation was initially deferred, then explicitly authorized
+and installed on 2026-10-08. [Setup/validation record](server/isolation/SETUP-2026-10-08.md):
+helper and timer ready, but busy CPU230 prevented live isolation validation;
+no lease remains. Ordinary spare-capacity use stays within the user's limits.
 
 Current experiment: [E004 / H-007 LTO](experiments/E004/README.md), authorized
 by acceptance of the revised recommendation. Independent baseline 24572d6;

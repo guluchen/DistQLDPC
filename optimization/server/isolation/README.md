@@ -1,5 +1,11 @@
 # yfclab2 fixed-core lease setup
 
+Latest: [2026-10-08 continuation](SETUP-2026-10-08.md). Explicitly authorized
+installation completed; restricted helper and recovery timer are installed.
+Busy CPU230 prevented the first lease; safe refusal/cleanup verified. Successful
+isolation and recovery tests remain pending. The deferred status below is
+historical; no controlled performance claim or live isolation PASS is implied.
+
 This is benchmark infrastructure, not an E001 optimization. It changes no
 DistQLDPC/QDistSAT solver, input, timeout/result meaning or scientific semantics.
 

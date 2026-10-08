@@ -18,8 +18,21 @@ TIMER = Path('/etc/systemd/system/distqldpc-bench-recover.timer')
 
 def secure_parent(path):
     info = path.parent.stat()
-    if info.st_uid != 0 or info.st_mode & 0o022 or path.parent.is_symlink():
+    if info.st_uid != 0 or info.st_mode & 0o022 or path.parent.is_symlink() or not path.parent.is_dir():
         raise RuntimeError('Installation directory must be root-owned and not writable by others: '+str(path.parent))
+
+
+def ensure_helper_directory():
+    directory = HELPER.parent
+    if directory.is_symlink():
+        raise RuntimeError('Refusing symlink installation directory: '+str(directory))
+    if not directory.exists():
+        # Only create this one missing directory under a verified root-owned
+        # parent. Never recursively create parents or change existing permissions.
+        secure_parent(directory)
+        directory.mkdir(mode=0o755)
+        os.chmod(directory, 0o755)
+    secure_parent(HELPER)
 
 
 def atomic(path, data, mode):
@@ -76,6 +89,11 @@ def main():
         ap.error('Run this installer with sudo')
     pwd.getpwnam('yfc')
     files = content()
+    if args.action == 'install':
+        ensure_helper_directory()
+    elif not any(path.exists() or path.is_symlink() for path in files):
+        print('Already uninstalled')
+        return
     for path, (data, mode) in files.items():
         secure_parent(path)
         if path.is_symlink():

@@ -1,0 +1,4 @@
+{
+  "remote_command": "stat -c %U:%G:%a /usr/local/sbin /usr/local/sbin/distqldpc-cpu-run /etc/sudoers.d/distqldpc-bench /etc/systemd/system/distqldpc-bench-recover.service /etc/systemd/system/distqldpc-bench-recover.timer; sha256sum /usr/local/sbin/distqldpc-cpu-run; systemctl show distqldpc-bench-recover.timer --property=ActiveState --property=UnitFileState; sudo -n /usr/local/sbin/distqldpc-cpu-run status",
+  "returncode": 0
+}
