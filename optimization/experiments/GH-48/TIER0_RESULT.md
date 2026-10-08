@@ -2,7 +2,8 @@
 
 Tier 0: PASS after full local execution, independent raw audit, and separately
 retained hosted source/science audit. Overall experiment: INCONCLUSIVE; no
-performance tier has run and no optimization is adopted.
+optimization is adopted. The subsequent standard48 Tier1 is complete, scientifically
+correct but numerically rejected/formally INCONCLUSIVE; see TIER1_RESULT.md.
 
 Immutable production `d27cf4d54bc08c6db4b2ffcebfe0372417bb13ef` contains only
 the original Make compile flags plus `-march=x86-64-v2`. Baseline is
