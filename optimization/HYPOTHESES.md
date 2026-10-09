@@ -1,5 +1,14 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 guarded prefetch Windows Tier1 final INCONCLUSIVE (2026-10-09), whole
+actual audit2fbd70a3 PASS_DIAGNOSTIC_TIER1_ACTUAL_EVIDENCE_ONLY. All48 scientific
+results unchanged; all eight candidate medians slower, OFF/MTO GM+1.6629%/
++1.6868%. Original numeric rejection retained separately from uncertain formal
+disposition. No acceptance/Tier2/Tier3; candidate remains isolated. Native
+certification source repair f4d addresses three provenance gaps pending
+independent re-review; no native workload or controlled performance conclusion.
+Historical launched/pending entries below superseded.
+
 GH64 Windows Tier1 actual launched (2026-10-09), source067/sourcefreeze bb50d909,
 full correctness9d6 verified before timing; original48scope/judge, formalWindows
 diagnosticINCON/pointsignal separate. Slot15/6075006395 soleWindowsworker.

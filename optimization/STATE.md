@@ -1,5 +1,16 @@
 # Optimization state
 
+GH64 Windows Tier1 complete / INCONCLUSIVE (2026-10-09): independent whole
+audit2fbd70a3 authenticates48 scientific outcomes,161raw and all timing/source/
+runtime/cleanup evidence. All eight candidate medians slower; OFF/MTO geometric
+mean slowdowns1.6629%/1.6868%, eight paired intervals above1 and sixteen overlap1.
+One contention flag; retain original numeric REJECT as diagnostic, no formal
+Tier1 PASS/adoption/Tier2/Tier3. Assignment15/6075006395 released6075079784;
+no root solver active. Safe raw timings and medians in GH64-TIER1-WINDOWS01-RESULT.
+Native certification remains unexecuted: whole source review b2b3 identified
+three provenance guards; narrow f4d repair submitted for independent re-review.
+No native collector/build/lease/solver yet. Historical RUNNING below superseded.
+
 GH64 Windows Tier1 diagnostic RUNNING (2026-10-09):actualfull9d6 prerequisites
 complete; narrow source06735c93 READY, reviewed833da rootliteralfinalbb50d909,
 input16f574, sole slot15/6075006395. Exactly48 original-app observations,
