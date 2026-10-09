@@ -1,5 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 LP340 exploration final INCONCLUSIVE, independently retained/audited3e7ae88c
+(2026-10-09). One correct baseline solve; candidate capacity-aborted, no comparison.
+No acceptance/rejection inferred from incomplete timing; no replacement samples.
+GH64 full gate source review found engineering aggregate-prelaunch-budget issue,
+unexecuted, not a candidate scientific failure. Repair before any full execution.
+
 GH63 bounded LP340 Tier2 exploration stopped INCONCLUSIVE (2026-10-09),
 mandatory spare-capacity guard during first candidate; only baselineOFF1 complete,
 scientific d8. No pair/medians/favorable retry/performance conclusion. Cleanup
