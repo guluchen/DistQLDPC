@@ -1,5 +1,24 @@
 # GH63 full application gate — actual run in progress
 
+Terminal update: actual zero exit, assignment released6073752534; independent
+audit PASS_FULL_WINDOWS_LOCAL_CORRECTNESS_ONLY. All54 application results/204
+scientific fields,162 PMS checks/40 independent oracles,40 equal dumps,12 genuine
+timeouts and2 smokes pass. All269 commands finish naturally. Entire961-payload
+raw catalogue7f613f7b0a9e40c46b47f45376712689dba50cc5caba238b060dd32b06badfb7,
+145-package files,531 protected actual identities and actual compiled objects/
+executables are independently rehashed. Source/flags/object order, four separate
+hook inverse transformations and production noncontamination verified. Full
+Python2563/Cygwin10216 pre/post/current sets, owned cleanup and all restores pass.
+Final audit2eb75c26596c741d5f30fbdccbdf42c42ba7cc1a0e5f345fb1dadabdab3432db;
+private original raw/audits preserved. The verifier's first CRLF expectation
+failure is archived; corrected expectation matches the originally reviewed
+test-hook-only normalization, followed by a complete fresh read-only reaudit.
+No solver/input/raw change and no scientific mismatch. This supersedes the
+in-progress lines in the immutable prerecord history below. Correctness certified
+only for this actual Windows/Cygwin baseline/candidate; no Linux or performance
+equivalence claim. Baseline-only census assignment6073808156 now active, no
+performance/Tier1/2/3 or optimization acceptance.
+
 Hypothesis remains exactly GH63 size-two computeLBD specialization;
 baseline72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7 versus
 candidate38782bb2286667c57b1d1bc1e6f76c9f4302defa. Independently audited

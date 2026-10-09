@@ -1,5 +1,15 @@
 # Optimization state
 
+GH63 full actual Windows Tier0 certified PASS (2026-10-09), superseding RUNNING:
+Independent audit2eb75c26 confirms54app/204sciencefields,162PMS/40oracles,
+40equalWCNF,12genuineTO and2smokes, all269naturalcommands; actual961raw files/
+145package/531protectedbyte identities+runtime/cleanup/restore verified. Raw
+catalog7f613f7b, assignment6073586232 released6073752534. See observations/
+GH63-FULL01-PRERECORD.md. NativeLinux/performance still pending. Baseline-only
+census01 now RUNNING assignment6073808156 with source-reviewed805b26dd/frozen
+supportc180604f/packagec9bd77a3, eightbounded20s/35s calls, no candidate timing.
+No Tier1/2/3 or accepted optimization; continuous goal ACTIVE.
+
 GH63 full application Windows gate RUNNING, assignment6073586232 (2026-10-09):
 exact72/387 packagec2abd571+support8337de90 independently source-reviewedfadd9f3e,
 actual interpreter check/app links and first tinyCSS results pass. Full scope
