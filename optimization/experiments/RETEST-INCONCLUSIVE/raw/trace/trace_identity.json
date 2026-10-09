@@ -1,0 +1,1888 @@
+{
+ "meta": {
+  "host": "yfclab2 (Linux, GCC 13.3), taskset -c 0-63,128-191, 4 concurrent runs",
+  "limit": 120,
+  "cwd": "/home/yfc/mac-agent-20261009/base72",
+  "sha256": {
+   "base1": "b943c2c94d67574505112a06e1bb806aec378fbbc79e9edca4a1c5236283e00e",
+   "base2": "b943c2c94d67574505112a06e1bb806aec378fbbc79e9edca4a1c5236283e00e",
+   "gh34-litvals": "8be62eede2298f6f7feba5a74fcb197e917558fea722da9224dac2da5b64e585",
+   "gh21-o2": "d83dbd20ab453e295c7513a014738a93c23125fa16cf32d6669db9f72ca6c812",
+   "gh48-isa-v2": "a935d86b94b64e38cc0d1e4ef71a82b5273deac56fc1a793cd84dbeacb22f635",
+   "gh20-watch-tail": "9c281e71685ad0cd462011e7f0a6f14fdaf88cd73fed3bb6429b4b8dc94134a3",
+   "gh64-prefetch": "4b49ffa7480378957a5bb6acfcae358a9a31706e92997ab4324fa44d0b0e86eb",
+   "h007-lto": "41bfa59ca9f6b99a23c6e60d99aaab57ff13cfb2fcd1b15858bf51bffe991696",
+   "gh16-pgo": "cef1978b6b4d83b3e25cb66a76307d42ab1d98f282604bf882be4492e8ff4d43"
+  },
+  "started": "2026-10-09T20:32:04+0800",
+  "finished": "2026-10-09T20:33:13+0800",
+  "summary": {
+   "base2": {
+    "identical": 10
+   },
+   "gh34-litvals": {
+    "identical": 10
+   },
+   "gh21-o2": {
+    "identical": 10
+   },
+   "gh48-isa-v2": {
+    "identical": 10
+   },
+   "gh20-watch-tail": {
+    "identical": 10
+   },
+   "gh64-prefetch": {
+    "identical": 10
+   },
+   "h007-lto": {
+    "identical": 10
+   },
+   "gh16-pgo": {
+    "identical": 10
+   }
+  }
+ },
+ "results": [
+  {
+   "cand": "base2",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.93
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.6
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.63
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    2.06
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.84
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    6.14
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.17
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    3.76
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "base2",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.79
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.6
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.62
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    2.11
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.73
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    5.98
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.27
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    3.71
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "gh34-litvals",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.76
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.69
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.57
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    2.09
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.62
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    5.95
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.24
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    3.73
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "gh21-o2",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.83
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.82
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.61
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    2.06
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.75
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    6.02
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.16
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    4.0
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "gh48-isa-v2",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.9
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.68
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.61
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    2.05
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.72
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    6.03
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.36
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    4.09
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "gh20-watch-tail",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.87
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.83
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.61
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    2.13
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.86
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    6.07
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.15
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    3.69
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "gh64-prefetch",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.76
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.55
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.62
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    2.0
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.71
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    5.93
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.32
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    3.69
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "h007-lto",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "BB_90_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.86,
+    3.65
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608",
+    "f6a0df8b7b8a051231bdd28fccebf04fbb2c9f2338341052a7dd73e1678e0608"
+   ],
+   "bytes": [
+    5504,
+    5504
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "BB_90_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.72,
+    4.58
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12",
+    "318ecb21333cbbaa9d0bf91c3d51a692ef7c7d13ac4b8ca0482f2df1e767bb12"
+   ],
+   "bytes": [
+    5409,
+    5409
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "GB_144_12_8",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    1.6,
+    1.53
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0",
+    "b100dcebdea41c59340714550552810c09c21f91c9570d32cd26bc8fabc0baa0"
+   ],
+   "bytes": [
+    6550,
+    6550
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "GB_144_12_8",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    2.02,
+    1.91
+   ],
+   "result": "o 8",
+   "sha_out": [
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b",
+    "0eb7abd0c62e3d8ce59b8d97e67ea67de13a5abc99624d7f604f6a403d01f08b"
+   ],
+   "bytes": [
+    5779,
+    5779
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "BB_108_8_10",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    4.84,
+    4.51
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6",
+    "5eca0cc436c3534d2d72f094577c41ec6d7f1516d2d293f1a4ea35e4e03410c6"
+   ],
+   "bytes": [
+    5551,
+    5551
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "BB_108_8_10",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    6.04,
+    5.73
+   ],
+   "result": "o 10",
+   "sha_out": [
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9",
+    "8f13e0cc05c1f4b01280f0e82c823209a4fa7cd416400be7c95cd4162d187ee9"
+   ],
+   "bytes": [
+    5598,
+    5598
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "LP_238_44_6",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.33,
+    3.0
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b",
+    "e3d5bd16a370eff85322397f988cdba2ef44dbd498457afdedec3b88cbfe0d0b"
+   ],
+   "bytes": [
+    4174,
+    4174
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "LP_238_44_6",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    3.89,
+    3.78
+   ],
+   "result": "o 6",
+   "sha_out": [
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1",
+    "d4c840a9c66ce5136dd3a885861cb4b628de135206bfc8fff8aec909419006b1"
+   ],
+   "bytes": [
+    4128,
+    4128
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "LP_34_20_2",
+   "mode": "no-card",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31",
+    "793fa3e3ffd1e773e7f48ec42c9d64f3634b95ed879563d45f7a0665f97b3b31"
+   ],
+   "bytes": [
+    3203,
+    3203
+   ]
+  },
+  {
+   "cand": "gh16-pgo",
+   "stem": "LP_34_20_2",
+   "mode": "card-mto",
+   "kind": "identical",
+   "rc": [
+    0,
+    0
+   ],
+   "wall": [
+    0.02,
+    0.02
+   ],
+   "result": "o 2",
+   "sha_out": [
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8",
+    "07964fc5adaa49e09c03d3c8b02593b2454617b219ac3b4ff39a8e50e3cfa3f8"
+   ],
+   "bytes": [
+    3129,
+    3129
+   ]
+  }
+ ]
+}

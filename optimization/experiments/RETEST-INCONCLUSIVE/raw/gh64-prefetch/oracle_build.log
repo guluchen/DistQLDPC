@@ -1,0 +1,18 @@
+In file included from src/solver/Solver.h:53,
+                 from tests/test_partition_soft_literals.cc:3:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+tests/test_partition_soft_literals.cc: In member function ‘void Probe::test(int, int, int)’:
+tests/test_partition_soft_literals.cc:37:4: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   37 |    if(!hard)continue;++checked;
+      |    ^~
+tests/test_partition_soft_literals.cc:37:22: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   37 |    if(!hard)continue;++checked;
+      |                      ^~
