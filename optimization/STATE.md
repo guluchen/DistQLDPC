@@ -1,5 +1,15 @@
 # Optimization state
 
+GH63 baseline census actual DONE / independently audited (2026-10-09):
+Supersedes historical census RUNNING entries below. All eight expected science
+results/32 fields and complete FINAL protocols pass; size-two calls27.95–31.04%
+of baseline diagnostic LBD calls, not CPU-time share or proven speedup. Audit
+1db088ea / raw109 catalog5f606405; see observations/GH63-CENSUS01-RESULT.md.
+Actual full Windows Tier0 remains certified2eb75c26. Census runner exited zero,
+owned cleanup/restoration audited; no active root worker. Next separately
+preregister/source-review Tier1 with original frozen full01 production apps,
+never census binaries. Tier1/2/3 NOT_RUN, optimization INCONCLUSIVE; goal ACTIVE.
+
 GH63 full actual Windows Tier0 certified PASS (2026-10-09), superseding RUNNING:
 Independent audit2eb75c26 confirms54app/204sciencefields,162PMS/40oracles,
 40equalWCNF,12genuineTO and2smokes, all269naturalcommands; actual961raw files/

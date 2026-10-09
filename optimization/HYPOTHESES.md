@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 census prerequisite DONE (2026-10-09), superseding RUNNING below:
+Independent1db088ea confirms eight complete baseline diagnostic counts and
+32 scientific fields. Size-two call fraction27.95–31.04% establishes opportunity
+only, not runtime share or net speedup; full Windows Tier0 actual2eb75c26 PASS.
+See observations/GH63-CENSUS01-RESULT.md. Tier1 comparison preparation next,
+original frozen uninstrumented apps only; no accepted optimization/no Tier2/3.
+
 GH63 full actual Windows Tier0 certified PASS (2026-10-09), superseding RUNNING:
 Independent audit2eb75c26 confirms54app/204sciencefields,162PMS/40oracles,
 40equalWCNF,12genuineTO and2smokes, all269naturalcommands; actual961raw files/
