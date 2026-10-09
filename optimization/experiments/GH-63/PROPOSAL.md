@@ -34,4 +34,3 @@ Current: A SELECTED / SOURCE_PREPARATION; candidate/PR/host/binary/performance U
 Issue: https://github.com/guluchen/DistQLDPC/issues/63
 Hub registration: https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6072632510
 Ownership: exclusive experiment/gh63-binary-lbd in GH63-BINARY-LBD. This record is committed before implementation; no production or test source changes exist yet.
-
