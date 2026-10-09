@@ -1,5 +1,9 @@
 # Hypothesis registry (not an execution queue)
 
+Native GH64 certification source re-review7567a1ef remains NOT_READY (2026-10-09):
+two remaining linker provenance guards, no scientific hypothesis change or
+native workload. Narrow source repair requested; N1/N2 independently closed.
+
 GH64 guarded prefetch Windows Tier1 final INCONCLUSIVE (2026-10-09), whole
 actual audit2fbd70a3 PASS_DIAGNOSTIC_TIER1_ACTUAL_EVIDENCE_ONLY. All48 scientific
 results unchanged; all eight candidate medians slower, OFF/MTO GM+1.6629%/

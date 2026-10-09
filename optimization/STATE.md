@@ -1,5 +1,12 @@
 # Optimization state
 
+Native GH64 source rereview7567a1ef (2026-10-09): SOURCE_NOT_READY_REMAINING_
+LINK_SELECTION_PROVENANCE. Python search-path absence and executable-alias
+bindings repaired; linker-script earlier absent candidates and static/dynamic
+selection still require narrow source fixes. No native execution/scientific
+failure. GH58 original sentinel-index crash remains repaired in mergedPR59;
+corrected B002 Windows full certificate authenticates its finite test scope.
+
 GH64 Windows Tier1 complete / INCONCLUSIVE (2026-10-09): independent whole
 audit2fbd70a3 authenticates48 scientific outcomes,161raw and all timing/source/
 runtime/cleanup evidence. All eight candidate medians slower; OFF/MTO geometric
