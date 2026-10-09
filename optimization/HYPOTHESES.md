@@ -1,5 +1,16 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 native metadata03 actual retained/independentlyaudited8735639d (2026-10-09),
+sourceb6a90 READY377e, runtimea1f24/24373files, package61ad audited4808. No native
+compile/lease/scientific PASS or controlled performance evidence. Root literal
+freeze and one bounded Tier0 next; guardedprefetch concept remains unchanged.
+
+GH64 native b87d whole source READY and fresh145package audited4808 (2026-10-09).
+Actual trusted metadata attempt01 refused a system-stdlib symlink provenance
+boundary; raw retained, no runtime manifest/lease/compilation/scientific workload.
+Exact origin supports a narrow explicit system-file exception for re-review,
+not an optimization change or scientific REJECT. No acceptance/Tier promotion.
+
 Native GH64 certification source re-review7567a1ef remains NOT_READY (2026-10-09):
 two remaining linker provenance guards, no scientific hypothesis change or
 native workload. Narrow source repair requested; N1/N2 independently closed.

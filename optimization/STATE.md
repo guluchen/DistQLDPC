@@ -1,5 +1,21 @@
 # Optimization state
 
+GH64 fresh native metadata03 retained and independently audited (2026-10-09):
+runtimea1f24ffc/24373files, whole audit8735639d PASS_RETAINED_NATIVE_METADATA_ONLY.
+Sourcepeerb6a90 READY377e; failed metadata01/02 preserved. Fresh145Git package61ad
+already audited4808. Root literal freeze source prepared for review, no native
+upload/lease/compilation/solver yet. Next sole guarded native Tier0 attempt,
+then whole raw audit including separatehelper release; no nativePASS/performance
+claim/adoption/Tier2/Tier3. Historical missing-metadata states below superseded.
+
+GH64 native source/package progress (2026-10-09): b87d42d2 independentlyREADY
+pending root freeze on c8e7; fresh145sourcepackage61ad independentlyaudited4808.
+Actual metadata attempt01 declined a root-owned stdlib configuration symlink
+outside allowed roots; all raw retained727e. No runtime manifest/lease/compile/
+solver or scientific mismatch. Exact origin diagnosed read-only; narrow system
+alias exception source repair requested before new named metadata attempt.
+Windows negative Tier1 stillINCONCLUSIVE, no adoption/Tier2/Tier3.
+
 Native GH64 source rereview7567a1ef (2026-10-09): SOURCE_NOT_READY_REMAINING_
 LINK_SELECTION_PROVENANCE. Python search-path absence and executable-alias
 bindings repaired; linker-script earlier absent candidates and static/dynamic
