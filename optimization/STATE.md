@@ -1,5 +1,16 @@
 # Optimization state
 
+GH63 Tier1 whole-raw audit DONE / formal INCONCLUSIVE (2026-10-09):
+Independentbe7b3c0c authenticates159raw/1346protected,48science/192finalfields,
+all8medians/24pairedexit intervals/runtime/currentidentities/cleanup/all4restore.
+All24 paired speed-ratio intervals contain1; original numeric REJECT remains,
+all8medians slower/no robust separated regression. Standing-user bounded LP340
+Tier2 exploratory plan preparing, not formalTier1PASS/promotion; no new solve.
+GH64 actualtargeted01 nowTERMINAL0;11+80/1+316each/fulltranscriptequal passes,
+rawb36a1699, assignment6074321290 released6074384909. Whole-raw audit/actual
+hint mechanism review pending; see observations/GH64-WINDOWS-TARGETED01.md.
+No active root solverworker, no acceptedoptimization/Tier3; goal ACTIVE.
+
 GH63 Tier1 actual48 Windows diagnostic TERMINAL (2026-10-09):
 Supersedes RUNNING below. All48 retained eligible scientifically correct,
 natural zero exit, cleanup/all4restore/postidentities pass; assignment6074204309

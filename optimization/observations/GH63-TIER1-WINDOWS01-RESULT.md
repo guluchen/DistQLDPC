@@ -1,5 +1,20 @@
 # GH63 Windows Tier1 diagnostic01: complete, independent raw audit pending
 
+Independent whole-raw audit now COMPLETE, superseding pending text below:
+PASS_DIAGNOSTIC_TIER1_ACTUAL_EVIDENCE_ONLY, audit
+be7b3c0c6a9203ec68af72c391f8d680c61212843f17e343c04d752ad3ca605c.
+All159 raw payloads/1346 protected identities,48 science outcomes/192 final
+scientific fields, exact timing/order/interval arithmetic and original judge
+recompute; runtime/interpreter current hashes, owned cleanup and all4restores
+pass. No interim bound events were present in these particular outputs; this
+does not replace the previous full application interim/timeout correctness gate.
+All24 paired conservative speed-ratio intervals contain1; two preflight noise
+observations occurred. Median geomean OFF+0.41145%, MTO+0.22023%. No causal
+noise explanation or robust separated regression is established. Formal
+INCONCLUSIVE is confirmed, with the original numeric REJECT retained separately.
+Standing-user bounded one-tier LP340 exploration may be separately prerecorded;
+it is not formal Tier1 PASS or authorization to promote/merge/run Tier3.
+
 One conceptual change: exact-size-two computeLBD loop expansion, candidate
 38782bb2286667c57b1d1bc1e6f76c9f4302defa versus corrected baseline
 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7. No paper-derived method.

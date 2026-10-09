@@ -1,5 +1,13 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 actualTier1 evidence independently auditedbe7b3c0c (2026-10-09):
+FormalINCONCLUSIVE, originalpointREJECT retained; all24conservativepairedratio
+intervals contain1, all8mediansslower/no robust separated regression. Bounded
+standing-user LP340 Tier2exploratory prerecord preparing, noformalTier1PASS.
+GH64 actualtargeted01 11+80/1+316each/transcriptmatch passes, rawb36a1699;
+independentraw/actualhintreview pending, fullappcorrectness stillmandatory.
+See observations/GH64-WINDOWS-TARGETED01.md. Noacceptance/activeworker/Tier3.
+
 GH63 Tier1 actual diagnostic complete (2026-10-09), superseding RUNNING:
 48sciencecorrect; all8 candidate medians slower0.0134–1.4254%, original numeric
 point-range REJECT at BB90MTO. Quietfalse, conservative corroborationfalse;
