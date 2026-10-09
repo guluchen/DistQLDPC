@@ -1,0 +1,70 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz only
+c Hx: data/matrices/LP_136_32_4_Hx.txt
+c Hz: data/matrices/LP_136_32_4_Hz.txt
+c Gx: data/matrices/LP_136_32_4_Gx.txt
+c Gz: data/matrices/LP_136_32_4_Gz.txt
+c Hx: 60 x 136, Hz: 60 x 136, Gx: 32 x 136, Gz: 32 x 136, logicals: 64
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.04 Mb                                      |
+c Reduced to 1072 vars, 5274 cls (c/v ratio==4.9, grow=0)
+c No iterative elimination performed. (vars=1072, c/v ratio=4.9)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 136, of which 136 unit, 0 nonUnit and 0 empty
+c total nb of literals: 19336
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 184
+c 1 conflict sets found with length 91
+c fixedCost 0, nbSatLits 0, totalFixedVars 184, objForSearch: 136
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 136), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 404 (Sinz) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 128 conflicts with init 9872
+
+c UB=2 fails, cnfls=128, hcnfls=128, core 42, tier2 10, local 86, quasiC: 1 (fixed: 17)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 153), lk: 1, shorten: 0, pureSo 0, nbFlyRd 4, nbFixedLH 0
+
+c Cardinality: 934 (Sinz) for UB 4
+c nbFailedLits 5, nbI 6, fixedVarsByFL 97, totalFixedVars 286, nbTested: 1377, counter 68144
+c ends of initiationization by VSIDS at 1656 conflicts with init 8472
+
+c UB=4 fails, cnfls=1656, hcnfls=1261, core 716, tier2 82, local 989, quasiC: 98 (fixed: 2758)
+c prunedLB 3.26, dev 0.60, succRate 0.45, nbSucc 396, nbHardens 1 (fixed 2894), lk: 871, shorten: 0, pureSo 0, nbFlyRd 37, nbFixedLH 69
+
+c Cardinality: 1970 (Sinz) for UB 8
+c UB=8 succs, confls=2480, hconfls=1274, core 557, tier2 238, local 369,  6 soft cls unsat (0 at L0), 184 fixed vars at L0, softCnfl 0, nbFlyRd 38, nbFixedLH 69
+c nbHardens 1 (fixed 3508), shorten: 0, prunedLB 4.72, dev 0.59, succRate 0.97, nbSucc 811, lk: 840, shorten: 0, quasiC: 109 (fixed: 3372)
+
+c ends of initiationization by VSIDS at 2480 conflicts with init 9176
+
+
+c Cardinality: 1456 (Sinz) for UB 6
+c UB=6 succs, confls=2493, hconfls=1281, core 563, tier2 242, local 375,  4 soft cls unsat (0 at L0), 184 fixed vars at L0, softCnfl 0, nbFlyRd 40, nbFixedLH 71
+c nbHardens 1 (fixed 3508), shorten: 0, prunedLB 3.50, dev 0.50, succRate 0.43, nbSucc 6, lk: 14, shorten: 0, quasiC: 110 (fixed: 3372)
+
+c LRB phase 1: conflicts 13, phase 20000000, starts 1, UP 3046
+c UB=4 fails, cnfls=2493, hcnfls=1281, core 563, tier2 242, local 375, quasiC: 110 (fixed: 3372)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 3508), lk: 0, shorten: 0, pureSo 0, nbFlyRd 40, nbFixedLH 71
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 4, maxsat: 132, hardConflicts: 1281
+c nbLK: 1727, nbSuccLK: 1213(70.24%), nbLKup: 1163488(266.51%), hardens 1 (fixed 3508), dynVars 1589, shorten: 0
+c MaxSAT: OPTIMAL, Pauli weight 4 (reported cost 4), vars 3461 (base 472 + aux 1400)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz only
+c Hx: data/matrices/LP_136_32_4_Hx.txt
+c Hz: data/matrices/LP_136_32_4_Hz.txt
+c Gx: data/matrices/LP_136_32_4_Gx.txt
+c Gz: data/matrices/LP_136_32_4_Gz.txt
+c Hx: 60 x 136, Hz: 60 x 136, Gx: 32 x 136, Gz: 32 x 136, logicals: 64
+c d_lb: 4
+c d_ub: 4
+c d  : 4
+o 4
