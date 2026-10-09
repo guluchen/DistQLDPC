@@ -4253,6 +4253,10 @@ void Solver::lkCollectKeptUnlocked(vec<Var>& kept) {
       kept.push(unLockedVars[c]);
 }
 
+#ifdef LKPREFIX_CHECK
+static unsigned long long lkPartialEvents = 0, lkKeptLits = 0;
+static void lkReportEvents() { fprintf(stderr, "LKPREFIX_EVENTS partial=%llu kept_literals=%llu\n", lkPartialEvents, lkKeptLits); }
+#endif
 bool Solver::lkReapplyKeptUnlocks(const vec<Var>& kept) {
   for (int c = 0; c < kept.size(); c++) {
     Var v = kept[c];
@@ -4276,6 +4280,8 @@ bool Solver::lkReapplyKeptUnlocks(const vec<Var>& kept) {
     }
   }
 #ifdef LKPREFIX_CHECK
+  { static bool reg = false; if (!reg) { reg = true; atexit(lkReportEvents); }
+    if (trail.size() > trailRecord) { lkPartialEvents++; lkKeptLits += trail.size() - trailRecord; } }
   lkCheckPrefix();
 #endif
   return true;
