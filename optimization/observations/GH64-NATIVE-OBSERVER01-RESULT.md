@@ -33,7 +33,11 @@ stderr and exit are retained privately, without substituting another run.
 
 A separate actual post-check found the helper inactive, no experiment group,
 no observer output or controller streams, and exactly the same resource
-configuration as before launch. Independent terminal-data audit is pending.
+configuration as before launch. Independent terminal-data audit
+`14387c602ef08cbee9ad4174052a0629189918fa09d40544b509d3c7a4c8ab11`
+confirms exit 1, no acquired event, no observer execution, and identical
+pre/post configuration. The original eight captures were archived unchanged
+under catalogue `5295235c86e71fad82385857e2896e994c8bf7031216f3397f70c51390b5d833`.
 The [slot release](https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6077251401)
 records this terminal outcome. No active scientific runner remains.
 

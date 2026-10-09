@@ -5,7 +5,8 @@ source08df READY / literal-freeze6a7f PASS; nativeT1 sole pure-judge blocker
 repaired and independently5c8a READY. Uploaded bytes/runtime verified, then
 resource acquisition declined before any observer/controller/solver process.
 Actual separate post-check inactive/no group/no outputs/resource configuration
-exactly restored; independent terminal audit pending. Slot15/6077203565 released
+exactly restored; independent terminal audit14387c60 confirms denied/no execution.
+Original8 captures archived5295235c. Slot15/6077203565 released
 15/6077251401. No active scientific runner, observer runtime PASS or native
 timing samples; performance INCONCLUSIVE, Windows negative48 retained.
 See observations/GH64-NATIVE-OBSERVER01-RESULT.md. No adoption/Tier2/3.

@@ -3,7 +3,8 @@
 GH64 native observer attempt01 declined before acquisition (2026-10-09),
 source08df READY/freeze6a7f PASS; nativeT1 pure-judge repair independently5c8a
 READY. No observer scenarios or native timing executed. Separate actual post
-resource restoration observed; independent terminal audit pending, slot released.
+resource restoration independently audited14387c60, original8 captures archived,
+slot released.
 Same sole prefetch hypothesis remains performance INCONCLUSIVE; original
 Windows negative48 and native certified Tier0 unchanged. No adoption/Tier2/3.
 
