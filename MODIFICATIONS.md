@@ -33,6 +33,17 @@ in each file are unchanged.
 
 ### `Solver.h` / `Solver.cc`
 
+#### Retired soft literals after preprocessing partition (GH58)
+
+After partition replaces a conflicting soft set with its existing aggregate
+representative, remove inactive entries from both unit and non-unit soft-literal
+lists. Previously only the unit list was compacted, allowing initial lookahead
+to enqueue `lit_Undef` from a retired auxiliary member. Preserve the existing
+representative clauses, derived-cost accounting and surviving order; rebuild
+heaps when either list loses members. This is a downstream correctness repair,
+not a change to MaxSAT costs or quantum-code distance semantics. See
+`optimization/investigations/GH58/` for the original failure and validation.
+
 #### Bounds pipe (search progress → parent process)
 
 - `setBoundsPipe(int write_fd)` — attach write end of pipe

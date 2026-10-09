@@ -1,0 +1,40 @@
+{
+  "status": "SOURCE_READY_LIMITED_STATE_DIAGNOSTIC_ONLY",
+  "reviewed_commit": "6d18c31b7cd2dd62469ab4bca9bc7938b8ce6087",
+  "prerecord": "4d622ef7670d51eca1ebde1a0cced75cc7016a6f",
+  "hashes": {
+    "run.py": "de03e04095a557ce8d5e03784d2e3322f3b8c445c3b3b801b38429a782446668",
+    "launcher.py": "e80c24ea43b214b678dc11fc6e7f0333a6b34b82377d68a42596618867388bc6"
+  },
+  "finite_AST_delta": "PASS: onlynamespace/state-signalstatus/read-onlygdb command additions; remainder sameAST as audited19b934a",
+  "read_only_added_commands": [
+    "set print elements 24",
+    "info registers rax rcx rdx rsi r8 r9 r10 r11 rbp",
+    "p this->qhead",
+    "p this->trail",
+    "p this->trail.data[this->qhead-1]",
+    "p this->assigns",
+    "p this->watches_bin.occs",
+    "p this->watches_bin.occs.data[this->trail.data[this->qhead-1].x]",
+    "p p",
+    "p k",
+    "p wbin",
+    "p $_siginfo",
+    "info proc status"
+  ],
+  "guards_reused": [
+    "originalbinary/input/runtime/helper/source pins",
+    "inner15s outer90s plus TERM3/KILL5 cleanup",
+    "ownedbirth PG/entireSID cleanup including inferior",
+    "allownedabsence/restore/identity required for valid_evidence",
+    "debuggerexit0 never sciencePASS; science_pass=False"
+  ],
+  "limitations": [
+    "STATE_PROBE_CAPTURED_SIGSEGV certifies only signal+frames, not success of every newly requested field read",
+    "missing/optimized-out/invalidpointer read must be interpreted from retained raw, no inferred header/cause",
+    "set print elements modifies debugger presentation only; directdata indexing/no overloaded inferior methods or calls",
+    "actual stack/pointer/source interpretation required before minimal repair; no newbaseline/performance"
+  ],
+  "module_imported": false,
+  "solver_compiler_debugger_executed": false
+}

@@ -1,0 +1,741 @@
+
+/home/yfc/GH41-linux-tier0-04/baseline/bin/maxcdcl:     file format elf64-x86-64
+
+
+Disassembly of section .init:
+
+Disassembly of section .plt:
+
+Disassembly of section .plt.got:
+
+Disassembly of section .plt.sec:
+
+Disassembly of section .text:
+
+0000000000018ea0 <_ZN7Minisat6Solver20simplepropagateForLKEv>:
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5608
+   18ea0:	f3 0f 1e fa          	endbr64
+   18ea4:	41 57                	push   %r15
+   18ea6:	48 89 f8             	mov    %rdi,%rax
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5612
+   18ea9:	48 81 c7 20 02 00 00 	add    $0x220,%rdi
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5608
+   18eb0:	41 56                	push   %r14
+   18eb2:	41 55                	push   %r13
+   18eb4:	41 54                	push   %r12
+   18eb6:	55                   	push   %rbp
+   18eb7:	53                   	push   %rbx
+   18eb8:	48 83 ec 38          	sub    $0x38,%rsp
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5609
+   18ebc:	c7 87 f8 03 00 00 ff 	movl   $0xffffffff,0x3f8(%rdi)
+   18ec3:	ff ff ff 
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5612
+   18ec6:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+   18ecb:	e8 80 57 01 00       	call   2e650 <_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5613
+   18ed0:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   18ed5:	48 8d b8 e8 01 00 00 	lea    0x1e8(%rax),%rdi
+   18edc:	e8 6f 57 01 00       	call   2e650 <_ZN7Minisat8OccListsINS_3LitENS_3vecINS_6Solver7WatcherEEENS3_14WatcherDeletedEE8cleanAllEv>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5614
+   18ee1:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   18ee6:	48 63 90 b8 02 00 00 	movslq 0x2b8(%rax),%rdx
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5614 (discriminator 1)
+   18eed:	39 90 90 02 00 00    	cmp    %edx,0x290(%rax)
+   18ef3:	0f 8e 97 05 00 00    	jle    19490 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x5f0>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5610
+   18ef9:	c7 44 24 18 ff ff ff 	movl   $0xffffffff,0x18(%rsp)
+   18f00:	ff 
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5611
+   18f01:	45 31 ed             	xor    %r13d,%r13d
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5610
+   18f04:	48 89 c5             	mov    %rax,%rbp
+   18f07:	45 89 ee             	mov    %r13d,%r14d
+_ZN7Minisat3vecINS_3LitEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   18f0a:	4c 8b 9d 88 02 00 00 	mov    0x288(%rbp),%r11
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5615
+   18f11:	8d 42 01             	lea    0x1(%rdx),%eax
+_ZN7Minisat3vecINS0_INS_6Solver7WatcherEEEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   18f14:	48 8b 9d 20 02 00 00 	mov    0x220(%rbp),%rbx
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5615
+   18f1b:	89 85 b8 02 00 00    	mov    %eax,0x2b8(%rbp)
+_ZN7Minisat3vecINS0_INS_6Solver7WatcherEEEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   18f21:	48 8b 85 e8 01 00 00 	mov    0x1e8(%rbp),%rax
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5615 (discriminator 1)
+   18f28:	49 63 14 93          	movslq (%r11,%rdx,4),%rdx
+   18f2c:	48 89 d6             	mov    %rdx,%rsi
+_ZN7Minisat3vecINS0_INS_6Solver7WatcherEEEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   18f2f:	48 c1 e2 04          	shl    $0x4,%rdx
+   18f33:	48 01 d0             	add    %rdx,%rax
+_ZNK7Minisat3vecINS_6Solver7WatcherEE4sizeEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:63
+   18f36:	48 63 48 08          	movslq 0x8(%rax),%rcx
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5622 (discriminator 1)
+   18f3a:	85 c9                	test   %ecx,%ecx
+   18f3c:	0f 8e e6 00 00 00    	jle    19028 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x188>
+   18f42:	48 8b 00             	mov    (%rax),%rax
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   18f45:	4c 8b 85 58 02 00 00 	mov    0x258(%rbp),%r8
+   18f4c:	4c 8d 0c c8          	lea    (%rax,%rcx,8),%r9
+   18f50:	eb 13                	jmp    18f65 <_ZN7Minisat6Solver20simplepropagateForLKEv+0xc5>
+   18f52:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5622 (discriminator 1)
+   18f58:	48 83 c0 08          	add    $0x8,%rax
+   18f5c:	4c 39 c8             	cmp    %r9,%rax
+   18f5f:	0f 84 c3 00 00 00    	je     19028 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x188>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5623 (discriminator 1)
+   18f65:	8b 48 04             	mov    0x4(%rax),%ecx
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   18f68:	41 89 ca             	mov    %ecx,%r10d
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   18f6b:	41 89 cf             	mov    %ecx,%r15d
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   18f6e:	41 d1 fa             	sar    $1,%r10d
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   18f71:	41 83 e7 01          	and    $0x1,%r15d
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   18f75:	49 63 fa             	movslq %r10d,%rdi
+   18f78:	4d 8d 2c 38          	lea    (%r8,%rdi,1),%r13
+_ZNK7Minisat5lbooleoEb():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:113
+   18f7c:	45 0f b6 65 00       	movzbl 0x0(%r13),%r12d
+   18f81:	45 31 fc             	xor    %r15d,%r12d
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5624 (discriminator 1)
+   18f84:	41 80 fc 01          	cmp    $0x1,%r12b
+   18f88:	0f 84 22 03 00 00    	je     192b0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x410>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5629 (discriminator 1)
+   18f8e:	41 83 e4 02          	and    $0x2,%r12d
+   18f92:	74 c4                	je     18f58 <_ZN7Minisat6Solver20simplepropagateForLKEv+0xb8>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5630 (discriminator 1)
+   18f94:	44 8b 20             	mov    (%rax),%r12d
+_ZN7Minisat6Solver27simpleuncheckedEnqueueForLKENS_3LitEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5601 (discriminator 3)
+   18f97:	45 88 7d 00          	mov    %r15b,0x0(%r13)
+_ZN7Minisat3vecINS_6Solver7VarDataEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   18f9b:	4c 8b ad a8 02 00 00 	mov    0x2a8(%rbp),%r13
+_ZN7Minisat6Solver27simpleuncheckedEnqueueForLKENS_3LitEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5604 (discriminator 1)
+   18fa2:	44 8b bd a0 02 00 00 	mov    0x2a0(%rbp),%r15d
+_ZN7Minisat3vecINS_6Solver7VarDataEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   18fa9:	4d 8d 6c fd 00       	lea    0x0(%r13,%rdi,8),%r13
+_ZN7Minisat6Solver27simpleuncheckedEnqueueForLKENS_3LitEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5603 (discriminator 1)
+   18fae:	45 89 65 00          	mov    %r12d,0x0(%r13)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5604 (discriminator 1)
+   18fb2:	45 8d 67 01          	lea    0x1(%r15),%r12d
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5604 (discriminator 2)
+   18fb6:	45 89 65 04          	mov    %r12d,0x4(%r13)
+_ZN7Minisat3vecINS_3LitEE5push_ERKS1_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:75
+   18fba:	4c 63 a5 90 02 00 00 	movslq 0x290(%rbp),%r12
+   18fc1:	45 8d 6c 24 01       	lea    0x1(%r12),%r13d
+   18fc6:	44 89 ad 90 02 00 00 	mov    %r13d,0x290(%rbp)
+   18fcd:	43 89 0c a3          	mov    %ecx,(%r11,%r12,4)
+_ZNK7Minisat3LitneES0_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:67
+   18fd1:	48 8b 8d 88 06 00 00 	mov    0x688(%rbp),%rcx
+   18fd8:	8b 0c b9             	mov    (%rcx,%rdi,4),%ecx
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5631 (discriminator 2)
+   18fdb:	83 f9 fe             	cmp    $0xfffffffe,%ecx
+   18fde:	0f 84 74 ff ff ff    	je     18f58 <_ZN7Minisat6Solver20simplepropagateForLKEv+0xb8>
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   18fe4:	41 89 cc             	mov    %ecx,%r12d
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   18fe7:	83 e1 01             	and    $0x1,%ecx
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   18fea:	41 d1 fc             	sar    $1,%r12d
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   18fed:	4d 63 e4             	movslq %r12d,%r12
+_ZNK7Minisat5lbooleoEb():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:113
+   18ff0:	43 32 0c 20          	xor    (%r8,%r12,1),%cl
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5631 (discriminator 1)
+   18ff4:	80 f9 01             	cmp    $0x1,%cl
+   18ff7:	0f 85 5b ff ff ff    	jne    18f58 <_ZN7Minisat6Solver20simplepropagateForLKEv+0xb8>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5631 (discriminator 2)
+   18ffd:	48 8b 8d 18 07 00 00 	mov    0x718(%rbp),%rcx
+   19004:	44 8b 24 b9          	mov    (%rcx,%rdi,4),%r12d
+   19008:	45 85 e4             	test   %r12d,%r12d
+   1900b:	0f 85 47 ff ff ff    	jne    18f58 <_ZN7Minisat6Solver20simplepropagateForLKEv+0xb8>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5632 (discriminator 1)
+   19011:	44 89 95 18 06 00 00 	mov    %r10d,0x618(%rbp)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5633
+   19018:	c7 44 24 18 ff ff ff 	movl   $0xffffffff,0x18(%rsp)
+   1901f:	ff 
+   19020:	e9 a2 02 00 00       	jmp    192c7 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x427>
+   19025:	0f 1f 00             	nopl   (%rax)
+_ZN7Minisat3vecINS0_INS_6Solver7WatcherEEEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   19028:	4c 8d 2c 13          	lea    (%rbx,%rdx,1),%r13
+_ZN7MinisatcoENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:73
+   1902c:	89 f2                	mov    %esi,%edx
+_ZN7Minisat3vecINS_6Solver7WatcherEEcvPS2_Ev():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:60
+   1902e:	4d 8b 5d 00          	mov    0x0(%r13),%r11
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 2)
+   19032:	49 63 45 08          	movslq 0x8(%r13),%rax
+_ZN7MinisatcoENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:73
+   19036:	83 f2 01             	xor    $0x1,%edx
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 2)
+   19039:	49 8d 04 c3          	lea    (%r11,%rax,8),%rax
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 1)
+   1903d:	4d 89 d8             	mov    %r11,%r8
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 2)
+   19040:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 1)
+   19045:	4c 39 d8             	cmp    %r11,%rax
+   19048:	0f 84 6f 01 00 00    	je     191bd <_ZN7Minisat6Solver20simplepropagateForLKEv+0x31d>
+   1904e:	44 89 74 24 1c       	mov    %r14d,0x1c(%rsp)
+   19053:	4d 89 de             	mov    %r11,%r14
+   19056:	4c 89 6c 24 20       	mov    %r13,0x20(%rsp)
+   1905b:	eb 23                	jmp    19080 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1e0>
+   1905d:	0f 1f 00             	nopl   (%rax)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5656
+   19060:	45 89 60 04          	mov    %r12d,0x4(%r8)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5657
+   19064:	49 8b 00             	mov    (%r8),%rax
+   19067:	49 83 c6 08          	add    $0x8,%r14
+   1906b:	4d 89 f8             	mov    %r15,%r8
+   1906e:	49 89 46 f8          	mov    %rax,-0x8(%r14)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 1)
+   19072:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   19077:	49 39 c0             	cmp    %rax,%r8
+   1907a:	0f 84 20 01 00 00    	je     191a0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x300>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5639
+   19080:	41 8b 48 04          	mov    0x4(%r8),%ecx
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   19084:	48 8b b5 58 02 00 00 	mov    0x258(%rbp),%rsi
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5641
+   1908b:	4d 8d 78 08          	lea    0x8(%r8),%r15
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   1908f:	89 c8                	mov    %ecx,%eax
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   19091:	89 cf                	mov    %ecx,%edi
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   19093:	d1 f8                	sar    $1,%eax
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   19095:	83 e7 01             	and    $0x1,%edi
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   19098:	48 98                	cltq
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5640 (discriminator 1)
+   1909a:	40 38 3c 06          	cmp    %dil,(%rsi,%rax,1)
+   1909e:	74 c4                	je     19064 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1c4>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5644
+   190a0:	41 8b 38             	mov    (%r8),%edi
+_ZN7Minisat15RegionAllocatorIjEixEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Alloc.h:63
+   190a3:	48 8b 85 a0 03 00 00 	mov    0x3a0(%rbp),%rax
+   190aa:	4c 8d 2c b8          	lea    (%rax,%rdi,4),%r13
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5644
+   190ae:	49 89 f9             	mov    %rdi,%r9
+_ZNK7Minisat3LiteqES0_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:66
+   190b1:	45 8b 65 0c          	mov    0xc(%r13),%r12d
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5647 (discriminator 2)
+   190b5:	41 39 d4             	cmp    %edx,%r12d
+   190b8:	75 0c                	jne    190c6 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x226>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5648 (discriminator 2)
+   190ba:	45 8b 65 10          	mov    0x10(%r13),%r12d
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5648 (discriminator 3)
+   190be:	41 89 55 10          	mov    %edx,0x10(%r13)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5648 (discriminator 2)
+   190c2:	45 89 65 0c          	mov    %r12d,0xc(%r13)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5655 (discriminator 1)
+   190c6:	44 39 e1             	cmp    %r12d,%ecx
+   190c9:	74 12                	je     190dd <_ZN7Minisat6Solver20simplepropagateForLKEv+0x23d>
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   190cb:	44 89 e0             	mov    %r12d,%eax
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   190ce:	44 89 e1             	mov    %r12d,%ecx
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   190d1:	d1 f8                	sar    $1,%eax
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   190d3:	83 e1 01             	and    $0x1,%ecx
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   190d6:	48 98                	cltq
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5655 (discriminator 1)
+   190d8:	38 0c 06             	cmp    %cl,(%rsi,%rax,1)
+   190db:	74 83                	je     19060 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1c0>
+_ZN7Minisat6Clause9lastPointEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:242
+   190dd:	45 8b 5d 04          	mov    0x4(%r13),%r11d
+_ZNK7Minisat6Clause4sizeEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:194
+   190e1:	41 8b 7d 00          	mov    0x0(%r13),%edi
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5660 (discriminator 2)
+   190e5:	44 39 df             	cmp    %r11d,%edi
+   190e8:	0f 83 02 01 00 00    	jae    191f0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x350>
+_ZN7Minisat6Clause12setLastPointEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:241
+   190ee:	41 c7 45 04 02 00 00 	movl   $0x2,0x4(%r13)
+   190f5:	00 
+_ZN7Minisat6Clause9lastPointEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:242
+   190f6:	41 bb 02 00 00 00    	mov    $0x2,%r11d
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5662 (discriminator 1)
+   190fc:	bb 02 00 00 00       	mov    $0x2,%ebx
+   19101:	83 ff 02             	cmp    $0x2,%edi
+   19104:	0f 8e db 01 00 00    	jle    192e5 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x445>
+   1910a:	48 63 c3             	movslq %ebx,%rax
+   1910d:	44 89 5c 24 10       	mov    %r11d,0x10(%rsp)
+   19112:	49 8d 4c 85 00       	lea    0x0(%r13,%rax,4),%rcx
+   19117:	eb 13                	jmp    1912c <_ZN7Minisat6Solver20simplepropagateForLKEv+0x28c>
+   19119:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+   19120:	48 83 c1 04          	add    $0x4,%rcx
+   19124:	39 fb                	cmp    %edi,%ebx
+   19126:	0f 8d 74 01 00 00    	jge    192a0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x400>
+_ZN7Minisat5lboolC4Eh():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:106
+   1912c:	8b 41 0c             	mov    0xc(%rcx),%eax
+   1912f:	4c 63 d3             	movslq %ebx,%r10
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5662 (discriminator 2)
+   19132:	83 c3 01             	add    $0x1,%ebx
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   19135:	41 89 c3             	mov    %eax,%r11d
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   19138:	83 e0 01             	and    $0x1,%eax
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   1913b:	41 d1 fb             	sar    $1,%r11d
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   1913e:	4d 63 db             	movslq %r11d,%r11
+_ZNK7Minisat5lbooleoEb():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:113
+   19141:	42 32 04 1e          	xor    (%rsi,%r11,1),%al
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5663 (discriminator 1)
+   19145:	3c 01                	cmp    $0x1,%al
+   19147:	74 d7                	je     19120 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x280>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5668 (discriminator 2)
+   19149:	43 8b 44 95 0c       	mov    0xc(%r13,%r10,4),%eax
+   1914e:	41 89 45 10          	mov    %eax,0x10(%r13)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5668 (discriminator 3)
+   19152:	43 89 54 95 0c       	mov    %edx,0xc(%r13,%r10,4)
+_ZN7MinisatcoENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:73
+   19157:	49 63 4d 10          	movslq 0x10(%r13),%rcx
+_ZN7Minisat3vecINS0_INS_6Solver7WatcherEEEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   1915b:	48 83 f1 01          	xor    $0x1,%rcx
+   1915f:	48 c1 e1 04          	shl    $0x4,%rcx
+   19163:	48 03 8d 20 02 00 00 	add    0x220(%rbp),%rcx
+_ZN7Minisat3vecINS_6Solver7WatcherEE4pushERKS2_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74
+   1916a:	48 63 41 08          	movslq 0x8(%rcx),%rax
+   1916e:	3b 41 0c             	cmp    0xc(%rcx),%eax
+   19171:	0f 84 09 02 00 00    	je     19380 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x4e0>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 3)
+   19177:	48 8b 39             	mov    (%rcx),%rdi
+   1917a:	8d 70 01             	lea    0x1(%rax),%esi
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5667 (discriminator 1)
+   1917d:	4d 89 f8             	mov    %r15,%r8
+_ZN7Minisat3vecINS_6Solver7WatcherEE4pushERKS2_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 3)
+   19180:	89 71 08             	mov    %esi,0x8(%rcx)
+   19183:	48 8d 04 c7          	lea    (%rdi,%rax,8),%rax
+   19187:	44 89 08             	mov    %r9d,(%rax)
+   1918a:	44 89 60 04          	mov    %r12d,0x4(%rax)
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 1)
+   1918e:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+_ZN7Minisat6Clause12setLastPointEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:241
+   19193:	41 89 5d 04          	mov    %ebx,0x4(%r13)
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5637 (discriminator 1)
+   19197:	49 39 c0             	cmp    %rax,%r8
+   1919a:	0f 85 e0 fe ff ff    	jne    19080 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1e0>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5709
+   191a0:	4d 89 f3             	mov    %r14,%r11
+   191a3:	4c 8b 6c 24 20       	mov    0x20(%rsp),%r13
+   191a8:	44 8b 74 24 1c       	mov    0x1c(%rsp),%r14d
+   191ad:	4d 29 d8             	sub    %r11,%r8
+   191b0:	49 c1 f8 03          	sar    $0x3,%r8
+_ZN7Minisat3vecINS_6Solver7WatcherEE6shrinkEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:64 (discriminator 1)
+   191b4:	45 85 c0             	test   %r8d,%r8d
+   191b7:	7e 04                	jle    191bd <_ZN7Minisat6Solver20simplepropagateForLKEv+0x31d>
+   191b9:	45 29 45 08          	sub    %r8d,0x8(%r13)
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5614
+   191bd:	48 63 95 b8 02 00 00 	movslq 0x2b8(%rbp),%rdx
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5618
+   191c4:	41 83 c6 01          	add    $0x1,%r14d
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5614 (discriminator 1)
+   191c8:	3b 95 90 02 00 00    	cmp    0x290(%rbp),%edx
+   191ce:	0f 8c 36 fd ff ff    	jl     18f0a <_ZN7Minisat6Solver20simplepropagateForLKEv+0x6a>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5714
+   191d4:	4d 63 ee             	movslq %r14d,%r13
+   191d7:	48 89 e8             	mov    %rbp,%rax
+   191da:	4c 01 a8 f8 05 00 00 	add    %r13,0x5f8(%rax)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5715
+   191e1:	e9 e1 00 00 00       	jmp    192c7 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x427>
+   191e6:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+   191ed:	00 00 00 
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5662 (discriminator 1)
+   191f0:	44 89 db             	mov    %r11d,%ebx
+   191f3:	41 39 fb             	cmp    %edi,%r11d
+   191f6:	0f 8c 0e ff ff ff    	jl     1910a <_ZN7Minisat6Solver20simplepropagateForLKEv+0x26a>
+   191fc:	0f 1f 40 00          	nopl   0x0(%rax)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5674 (discriminator 1)
+   19200:	41 83 fb 02          	cmp    $0x2,%r11d
+   19204:	0f 86 db 00 00 00    	jbe    192e5 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x445>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5674
+   1920a:	4c 89 44 24 10       	mov    %r8,0x10(%rsp)
+   1920f:	49 8d 7d 14          	lea    0x14(%r13),%rdi
+   19213:	bb 02 00 00 00       	mov    $0x2,%ebx
+   19218:	eb 13                	jmp    1922d <_ZN7Minisat6Solver20simplepropagateForLKEv+0x38d>
+   1921a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5674 (discriminator 1)
+   19220:	48 83 c7 04          	add    $0x4,%rdi
+   19224:	41 39 db             	cmp    %ebx,%r11d
+   19227:	0f 84 b3 00 00 00    	je     192e0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x440>
+_ZN7Minisat5lboolC4Eh():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:106
+   1922d:	8b 0f                	mov    (%rdi),%ecx
+   1922f:	4c 63 d3             	movslq %ebx,%r10
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5674 (discriminator 2)
+   19232:	83 c3 01             	add    $0x1,%ebx
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   19235:	41 89 c8             	mov    %ecx,%r8d
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   19238:	89 c8                	mov    %ecx,%eax
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   1923a:	41 d1 f8             	sar    $1,%r8d
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   1923d:	83 e0 01             	and    $0x1,%eax
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   19240:	4d 63 c0             	movslq %r8d,%r8
+_ZNK7Minisat5lbooleoEb():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:113
+   19243:	42 32 04 06          	xor    (%rsi,%r8,1),%al
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5675 (discriminator 1)
+   19247:	3c 01                	cmp    $0x1,%al
+   19249:	74 d5                	je     19220 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x380>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5680 (discriminator 2)
+   1924b:	43 8b 44 95 0c       	mov    0xc(%r13,%r10,4),%eax
+_ZN7MinisatcoENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:73
+   19250:	83 f1 01             	xor    $0x1,%ecx
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5680 (discriminator 2)
+   19253:	41 89 45 10          	mov    %eax,0x10(%r13)
+_ZN7Minisat3vecINS0_INS_6Solver7WatcherEEEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   19257:	48 63 c1             	movslq %ecx,%rax
+   1925a:	48 c1 e0 04          	shl    $0x4,%rax
+   1925e:	48 03 85 20 02 00 00 	add    0x220(%rbp),%rax
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5680 (discriminator 3)
+   19265:	43 89 54 95 0c       	mov    %edx,0xc(%r13,%r10,4)
+_ZN7Minisat3vecINS_6Solver7WatcherEE4pushERKS2_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74
+   1926a:	48 63 48 08          	movslq 0x8(%rax),%rcx
+   1926e:	3b 48 0c             	cmp    0xc(%rax),%ecx
+   19271:	0f 84 39 01 00 00    	je     193b0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x510>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 3)
+   19277:	8d 71 01             	lea    0x1(%rcx),%esi
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5679 (discriminator 1)
+   1927a:	4d 89 f8             	mov    %r15,%r8
+_ZN7Minisat3vecINS_6Solver7WatcherEE4pushERKS2_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 3)
+   1927d:	89 70 08             	mov    %esi,0x8(%rax)
+   19280:	48 8b 30             	mov    (%rax),%rsi
+   19283:	48 8d 0c ce          	lea    (%rsi,%rcx,8),%rcx
+   19287:	44 89 09             	mov    %r9d,(%rcx)
+   1928a:	44 89 61 04          	mov    %r12d,0x4(%rcx)
+_ZN7Minisat6Clause12setLastPointEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:241
+   1928e:	41 89 5d 04          	mov    %ebx,0x4(%r13)
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5683
+   19292:	e9 db fd ff ff       	jmp    19072 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1d2>
+   19297:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   1929e:	00 00 
+   192a0:	44 8b 5c 24 10       	mov    0x10(%rsp),%r11d
+   192a5:	e9 56 ff ff ff       	jmp    19200 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x360>
+   192aa:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+_ZN7MinisatcoENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:73
+   192b0:	83 f6 01             	xor    $0x1,%esi
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5625 (discriminator 1)
+   192b3:	89 8d 14 09 00 00    	mov    %ecx,0x914(%rbp)
+_ZN7MinisatcoENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:73
+   192b9:	89 b5 10 09 00 00    	mov    %esi,0x910(%rbp)
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5626
+   192bf:	c7 44 24 18 fe ff ff 	movl   $0xfffffffe,0x18(%rsp)
+   192c6:	ff 
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5716
+   192c7:	8b 44 24 18          	mov    0x18(%rsp),%eax
+   192cb:	48 83 c4 38          	add    $0x38,%rsp
+   192cf:	5b                   	pop    %rbx
+   192d0:	5d                   	pop    %rbp
+   192d1:	41 5c                	pop    %r12
+   192d3:	41 5d                	pop    %r13
+   192d5:	41 5e                	pop    %r14
+   192d7:	41 5f                	pop    %r15
+   192d9:	c3                   	ret
+   192da:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+   192e0:	4c 8b 44 24 10       	mov    0x10(%rsp),%r8
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   192e5:	44 89 e3             	mov    %r12d,%ebx
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5687
+   192e8:	45 89 60 04          	mov    %r12d,0x4(%r8)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5688
+   192ec:	49 8b 00             	mov    (%r8),%rax
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   192ef:	45 89 e2             	mov    %r12d,%r10d
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   192f2:	d1 fb                	sar    $1,%ebx
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   192f4:	41 83 e2 01          	and    $0x1,%r10d
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5688
+   192f8:	4d 8d 5e 08          	lea    0x8(%r14),%r11
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   192fc:	48 63 cb             	movslq %ebx,%rcx
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5688
+   192ff:	49 89 06             	mov    %rax,(%r14)
+_ZNK7Minisat3vecINS_3LitEE4sizeEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:63
+   19302:	48 63 85 90 02 00 00 	movslq 0x290(%rbp),%rax
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   19309:	48 8d 3c 0e          	lea    (%rsi,%rcx,1),%rdi
+_ZNK7Minisat5lbooleoEb():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:113
+   1930d:	44 0f b6 2f          	movzbl (%rdi),%r13d
+   19311:	45 31 d5             	xor    %r10d,%r13d
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5689 (discriminator 1)
+   19314:	41 80 fd 01          	cmp    $0x1,%r13b
+   19318:	0f 84 23 01 00 00    	je     19441 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x5a1>
+_ZN7Minisat6Solver27simpleuncheckedEnqueueForLKENS_3LitEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5601 (discriminator 3)
+   1931e:	44 88 17             	mov    %r10b,(%rdi)
+_ZN7Minisat3vecINS_6Solver7VarDataEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   19321:	48 8b bd a8 02 00 00 	mov    0x2a8(%rbp),%rdi
+_ZN7Minisat6Solver27simpleuncheckedEnqueueForLKENS_3LitEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5604 (discriminator 1)
+   19328:	44 8b b5 a0 02 00 00 	mov    0x2a0(%rbp),%r14d
+_ZN7Minisat3vecINS_6Solver7VarDataEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:87
+   1932f:	48 8d 3c cf          	lea    (%rdi,%rcx,8),%rdi
+_ZN7Minisat6Solver27simpleuncheckedEnqueueForLKENS_3LitEj():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5603 (discriminator 1)
+   19333:	44 89 0f             	mov    %r9d,(%rdi)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5604 (discriminator 1)
+   19336:	45 8d 4e 01          	lea    0x1(%r14),%r9d
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5604 (discriminator 2)
+   1933a:	44 89 4f 04          	mov    %r9d,0x4(%rdi)
+_ZN7Minisat3vecINS_3LitEE5push_ERKS1_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:75
+   1933e:	4c 8b 8d 88 02 00 00 	mov    0x288(%rbp),%r9
+   19345:	8d 78 01             	lea    0x1(%rax),%edi
+   19348:	89 bd 90 02 00 00    	mov    %edi,0x290(%rbp)
+   1934e:	45 89 24 81          	mov    %r12d,(%r9,%rax,4)
+_ZNK7Minisat3LitneES0_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:67
+   19352:	48 8b 85 88 06 00 00 	mov    0x688(%rbp),%rax
+   19359:	8b 04 88             	mov    (%rax,%rcx,4),%eax
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5699
+   1935c:	83 f8 fe             	cmp    $0xfffffffe,%eax
+   1935f:	74 14                	je     19375 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x4d5>
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   19361:	41 89 c1             	mov    %eax,%r9d
+_ZN7Minisat4signENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:75
+   19364:	83 e0 01             	and    $0x1,%eax
+_ZN7Minisat3varENS_3LitE():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:76
+   19367:	41 d1 f9             	sar    $1,%r9d
+_ZNK7Minisat3vecINS_5lboolEEixEi():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:86
+   1936a:	4d 63 c9             	movslq %r9d,%r9
+_ZNK7Minisat5lbooleoEb():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/SolverTypes.h:113
+   1936d:	42 32 04 0e          	xor    (%rsi,%r9,1),%al
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5698 (discriminator 1)
+   19371:	3c 01                	cmp    $0x1,%al
+   19373:	74 6b                	je     193e0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x540>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5688
+   19375:	4d 89 de             	mov    %r11,%r14
+   19378:	4d 89 f8             	mov    %r15,%r8
+   1937b:	e9 f2 fc ff ff       	jmp    19072 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1d2>
+_ZN7Minisat3vecINS_6Solver7WatcherEE4pushERKS2_():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 1)
+   19380:	8d 70 01             	lea    0x1(%rax),%esi
+   19383:	48 89 cf             	mov    %rcx,%rdi
+   19386:	89 54 24 2c          	mov    %edx,0x2c(%rsp)
+   1938a:	44 89 4c 24 28       	mov    %r9d,0x28(%rsp)
+   1938f:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
+   19394:	e8 97 57 01 00       	call   2eb30 <_ZN7Minisat3vecINS_6Solver7WatcherEE8capacityEi>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 3)
+   19399:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+   1939e:	8b 54 24 2c          	mov    0x2c(%rsp),%edx
+   193a2:	44 8b 4c 24 28       	mov    0x28(%rsp),%r9d
+   193a7:	48 63 41 08          	movslq 0x8(%rcx),%rax
+   193ab:	e9 c7 fd ff ff       	jmp    19177 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x2d7>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 1)
+   193b0:	8d 71 01             	lea    0x1(%rcx),%esi
+   193b3:	48 89 c7             	mov    %rax,%rdi
+   193b6:	89 54 24 2c          	mov    %edx,0x2c(%rsp)
+   193ba:	44 89 4c 24 28       	mov    %r9d,0x28(%rsp)
+   193bf:	48 89 44 24 10       	mov    %rax,0x10(%rsp)
+   193c4:	e8 67 57 01 00       	call   2eb30 <_ZN7Minisat3vecINS_6Solver7WatcherEE8capacityEi>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/mtl/Vec.h:74 (discriminator 3)
+   193c9:	48 8b 44 24 10       	mov    0x10(%rsp),%rax
+   193ce:	8b 54 24 2c          	mov    0x2c(%rsp),%edx
+   193d2:	44 8b 4c 24 28       	mov    0x28(%rsp),%r9d
+   193d7:	48 63 48 08          	movslq 0x8(%rax),%rcx
+   193db:	e9 97 fe ff ff       	jmp    19277 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x3d7>
+_ZN7Minisat6Solver20simplepropagateForLKEv():
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5699 (discriminator 2)
+   193e0:	48 8b 85 18 07 00 00 	mov    0x718(%rbp),%rax
+   193e7:	8b 04 88             	mov    (%rax,%rcx,4),%eax
+   193ea:	85 c0                	test   %eax,%eax
+   193ec:	0f 85 83 ff ff ff    	jne    19375 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x4d5>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5702
+   193f2:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5700 (discriminator 1)
+   193f7:	89 bd b8 02 00 00    	mov    %edi,0x2b8(%rbp)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5702
+   193fd:	49 39 c7             	cmp    %rax,%r15
+   19400:	0f 83 aa 00 00 00    	jae    194b0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x610>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5688
+   19406:	4c 89 df             	mov    %r11,%rdi
+   19409:	4c 89 fe             	mov    %r15,%rsi
+   1940c:	0f 1f 40 00          	nopl   0x0(%rax)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5703
+   19410:	48 a5                	movsq  %ds:(%rsi),%es:(%rdi)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5702
+   19412:	48 39 c6             	cmp    %rax,%rsi
+   19415:	72 f9                	jb     19410 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x570>
+   19417:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   1941c:	48 83 e8 09          	sub    $0x9,%rax
+   19420:	4c 29 c0             	sub    %r8,%rax
+   19423:	48 c1 e8 03          	shr    $0x3,%rax
+   19427:	4c 8d 34 c5 08 00 00 	lea    0x8(,%rax,8),%r14
+   1942e:	00 
+   1942f:	4f 8d 04 37          	lea    (%r15,%r14,1),%r8
+   19433:	4d 01 de             	add    %r11,%r14
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5704 (discriminator 1)
+   19436:	89 9d 18 06 00 00    	mov    %ebx,0x618(%rbp)
+   1943c:	e9 31 fc ff ff       	jmp    19072 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1d2>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5691 (discriminator 1)
+   19441:	89 85 b8 02 00 00    	mov    %eax,0x2b8(%rbp)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5693
+   19447:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+   1944c:	49 39 c7             	cmp    %rax,%r15
+   1944f:	73 4f                	jae    194a0 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x600>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5688
+   19451:	4c 89 df             	mov    %r11,%rdi
+   19454:	4c 89 fe             	mov    %r15,%rsi
+   19457:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+   1945e:	00 00 
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5694
+   19460:	48 a5                	movsq  %ds:(%rsi),%es:(%rdi)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5693
+   19462:	48 39 c6             	cmp    %rax,%rsi
+   19465:	72 f9                	jb     19460 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x5c0>
+   19467:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5690
+   1946c:	44 89 4c 24 18       	mov    %r9d,0x18(%rsp)
+   19471:	48 83 e8 09          	sub    $0x9,%rax
+   19475:	4c 29 c0             	sub    %r8,%rax
+   19478:	48 c1 e8 03          	shr    $0x3,%rax
+   1947c:	4c 8d 34 c5 08 00 00 	lea    0x8(,%rax,8),%r14
+   19483:	00 
+   19484:	4f 8d 04 37          	lea    (%r15,%r14,1),%r8
+   19488:	4d 01 de             	add    %r11,%r14
+   1948b:	e9 e2 fb ff ff       	jmp    19072 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1d2>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5610
+   19490:	c7 44 24 18 ff ff ff 	movl   $0xffffffff,0x18(%rsp)
+   19497:	ff 
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5614 (discriminator 1)
+   19498:	45 31 ed             	xor    %r13d,%r13d
+   1949b:	e9 3a fd ff ff       	jmp    191da <_ZN7Minisat6Solver20simplepropagateForLKEv+0x33a>
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5690
+   194a0:	44 89 4c 24 18       	mov    %r9d,0x18(%rsp)
+/home/yfc/GH41-linux-tier0-04/baseline/src/solver/Solver.cc:5688
+   194a5:	4d 89 de             	mov    %r11,%r14
+   194a8:	4d 89 f8             	mov    %r15,%r8
+   194ab:	e9 c2 fb ff ff       	jmp    19072 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x1d2>
+   194b0:	4d 89 de             	mov    %r11,%r14
+   194b3:	4d 89 f8             	mov    %r15,%r8
+   194b6:	e9 7b ff ff ff       	jmp    19436 <_ZN7Minisat6Solver20simplepropagateForLKEv+0x596>
+
+Disassembly of section .fini:

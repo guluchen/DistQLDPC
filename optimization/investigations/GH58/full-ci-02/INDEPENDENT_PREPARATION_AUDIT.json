@@ -1,0 +1,301 @@
+{
+  "verdict": "STATIC_AST_AND_PURE_ORACLES_PASS_NOT_EXECUTION",
+  "files": {
+    "CI-ADAPTER-PRERECORD.md": "53d38ea7b9833c3dc6fa8f15a05138f73ddd8271f829b877c1e6b11fe75f7836",
+    "ci.py": "f4ef1e21e4f3c39f5a422101a682f5528e2d4e3b5a37f31ecd1870291f8c246d",
+    "corpus.py": "8d01dd0549fa1514f81b8bd361c93297fef56187e3a9eec22ba4443fcde94f7a",
+    "freeze_metadata.py": "f416abb695c6c9c7ce0833de2f965570837f84daf941c9586aad2a2ecca6dad8",
+    "full.py": "538e7b8b463526ecb56d788d1b58f9c8f9de0d20bcf754ed861d0363705e6318",
+    "guard.py": "747eb57bec08e2f219c9e1588f2246431ecc7ab7f150c401c7970c489aa46102",
+    "launcher.py": "77f312bae150ee21bd2b2673a139f3b29678a420e1da8d9c7b37e8465af07ffe",
+    "PRERECORD.md": "3c6a9f554bc310638c9e4aa37036e86dafcad384203102e29d56143f06205038",
+    "README.md": "efb25cd01032af3cc00bb4b69ab277fd0f2c4574d51ce7b923aa5a2bd79dfba0",
+    "science.py": "13d3ce09b464ecaaf4ddc5849ab8d852f319532bd8d4da82d3c3a369f3d2ce76"
+  },
+  "parser_cases": [
+    {
+      "name": "pms-sat",
+      "pass_": true,
+      "expected": "PASS"
+    },
+    {
+      "name": "pms-unsat",
+      "pass_": true,
+      "expected": "PASS"
+    },
+    {
+      "name": "garbage",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "negative",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "duplicate",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "missing",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "wrong-cost",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "complete",
+      "pass_": true,
+      "expected": "PASS"
+    },
+    {
+      "name": "incomplete-timeout",
+      "pass_": true,
+      "expected": "PASS"
+    },
+    {
+      "name": "incomplete-unrequested",
+      "pass_": true,
+      "expected": "CoverageGap"
+    },
+    {
+      "name": "early-complete-timeout",
+      "pass_": true,
+      "expected": "CoverageGap"
+    },
+    {
+      "name": "lawful-unknown-timeout-gap",
+      "pass_": true,
+      "expected": "CoverageGap"
+    },
+    {
+      "name": "missing-lb",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "missing-d",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "bad-timeout-prefix",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "wrong-interim",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "negative",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "bare-o",
+      "pass_": true,
+      "expected": "ScienceError"
+    },
+    {
+      "name": "css1",
+      "exact": 1,
+      "pass_": true
+    },
+    {
+      "name": "css4",
+      "exact": 2,
+      "pass_": true
+    },
+    {
+      "name": "css5",
+      "exact": 1,
+      "pass_": true
+    },
+    {
+      "name": "css-fallback",
+      "exact": 1,
+      "pass_": true
+    },
+    {
+      "name": "post-model-missing-incumbent-coverage",
+      "pass_": true,
+      "expected": "CoverageGap"
+    },
+    {
+      "name": "pre-search-minus",
+      "pass_": true,
+      "expected": "PASS"
+    }
+  ],
+  "PMS_oracles": 40,
+  "targeted_oracles": 11,
+  "hooks": [
+    {
+      "version": "baseline",
+      "original_sha": "47047cd1e2cb9c71eef570c01b22d2e004a436bed641a0fa00ccb4dffdad7015",
+      "pre_search_sites": 1,
+      "post_model_sites": 1,
+      "source_only": true
+    },
+    {
+      "version": "candidate",
+      "original_sha": "c1360169ca4066e69e2c5ea64f86fd36deb41e5a1db76697b7874f007c873afc",
+      "pre_search_sites": 1,
+      "post_model_sites": 1,
+      "source_only": true
+    }
+  ],
+  "support_imported": false,
+  "compiler_executed": false,
+  "solver_executed": false,
+  "CI_or_server_Tier0": "NOT_RUN",
+  "fixed_server_watchdog": "SOURCE_PREPARED_DISABLED_UNEXECUTED",
+  "followup_source_review": [
+    "CI production_rebuilt=True",
+    "Actual completed solver invalid rc authenticated before cleanup/identity can mask scientific rejection",
+    "Malformed engineering compiler/build/ldd UTF8 remains engineering INCONCLUSIVE",
+    "Ordinary CI logs actual GNU context; does not claim frozen server GCC13runtime"
+  ],
+  "pure_mock_guard_cases": [
+    {
+      "name": "returned-sigsegv-with-cleanupfailure",
+      "outcome": "ScienceError",
+      "record": {
+        "argv": [
+          "/mock/maxcdcl"
+        ],
+        "cwd": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\tmpqzie6giz",
+        "label": "mock",
+        "limit": 1,
+        "leader": {
+          "pid": 998877,
+          "session": 998877,
+          "group": 998877,
+          "birth": 123
+        },
+        "returncode": -11,
+        "science_reject": true,
+        "science_error": "Actual returned solver crash/invalid rc mock rc=-11",
+        "cleanup_error": "RuntimeError('mock cleanup failure')"
+      },
+      "native_process_started": false
+    },
+    {
+      "name": "returned-invalidrc-with-cleanupfailure",
+      "outcome": "ScienceError",
+      "record": {
+        "argv": [
+          "/mock/maxcdcl"
+        ],
+        "cwd": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\tmpzypeth_0",
+        "label": "mock",
+        "limit": 1,
+        "leader": {
+          "pid": 998877,
+          "session": 998877,
+          "group": 998877,
+          "birth": 123
+        },
+        "returncode": 3,
+        "science_reject": true,
+        "science_error": "Actual returned solver crash/invalid rc mock rc=3",
+        "cleanup_error": "RuntimeError('mock cleanup failure')"
+      },
+      "native_process_started": false
+    },
+    {
+      "name": "returned-abort-before-postidentityfailure",
+      "outcome": "ScienceError",
+      "record": {
+        "argv": [
+          "/mock/maxcdcl"
+        ],
+        "cwd": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\tmpl8x4zbaj",
+        "label": "mock",
+        "limit": 1,
+        "leader": {
+          "pid": 998877,
+          "session": 998877,
+          "group": 998877,
+          "birth": 123
+        },
+        "returncode": -6,
+        "science_reject": true,
+        "science_error": "Actual returned solver crash/invalid rc mock rc=-6",
+        "owned_empty": true
+      },
+      "native_process_started": false
+    },
+    {
+      "name": "successful-rc-postidentityfailure",
+      "outcome": "RuntimeError",
+      "record": {
+        "argv": [
+          "/mock/maxcdcl"
+        ],
+        "cwd": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\tmpj73gf89p",
+        "label": "mock",
+        "limit": 1,
+        "leader": {
+          "pid": 998877,
+          "session": 998877,
+          "group": 998877,
+          "birth": 123
+        },
+        "returncode": 10,
+        "owned_empty": true
+      },
+      "native_process_started": false
+    },
+    {
+      "name": "watchdog-kill-cleanupfailure",
+      "outcome": "TimeoutExpired",
+      "record": {
+        "argv": [
+          "/mock/maxcdcl"
+        ],
+        "cwd": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\tmpv7kjocwy",
+        "label": "mock",
+        "limit": 1,
+        "leader": {
+          "pid": 998877,
+          "session": 998877,
+          "group": 998877,
+          "birth": 123
+        },
+        "engineering_error": "TimeoutExpired('mock', 1)",
+        "cleanup_error": "RuntimeError('mock cleanup failure')"
+      },
+      "native_process_started": false
+    },
+    {
+      "name": "normal-rc-success",
+      "outcome": "PASS",
+      "record": {
+        "argv": [
+          "/mock/maxcdcl"
+        ],
+        "cwd": "C:\\Users\\yfc\\Documents\\Codex\\2026-10-07\\you-are-the-execution-agent-for\\tmpi9_48z5e",
+        "label": "mock",
+        "limit": 1,
+        "leader": {
+          "pid": 998877,
+          "session": 998877,
+          "group": 998877,
+          "birth": 123
+        },
+        "returncode": 10,
+        "owned_empty": true
+      },
+      "native_process_started": false
+    }
+  ],
+  "mock_processes_only": true
+}

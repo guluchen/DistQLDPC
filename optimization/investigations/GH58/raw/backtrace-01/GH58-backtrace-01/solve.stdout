@@ -1,0 +1,23 @@
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Program received signal SIGSEGV, Segmentation fault.
+Minisat::Solver::simplepropagateForLK (this=this@entry=0x7fffffffe1f0) at src/solver/mtl/Vec.h:87
+87	    T&       operator [] (int index)       { return data[index]; }
+#0  Minisat::Solver::simplepropagateForLK (this=this@entry=0x7fffffffe1f0) at src/solver/mtl/Vec.h:87
+#1  0x0000555555574bd1 in Minisat::Solver::detectInitConflicts (this=this@entry=0x7fffffffe1f0) at src/solver/Solver.cc:5804
+#2  0x000055555558127c in Minisat::Solver::solve_ (this=this@entry=0x7fffffffe1f0) at src/solver/Solver.cc:6566
+#3  0x0000555555557906 in Minisat::Solver::solveLimited (assumps=<synthetic pointer>..., this=0x7fffffffe1f0) at src/solver/Solver.h:836
+#4  main (argc=<optimized out>, argv=<optimized out>) at src/solver/Main.cc:217
+rip            0x55555556cf65      0x55555556cf65 <Minisat::Solver::simplepropagateForLK()+197>
+rsp            0x7fffffffde50      0x7fffffffde50
+rbp            0x7fffffffe1f0      0x7fffffffe1f0
+=> 0x55555556cf65 <_ZN7Minisat6Solver20simplepropagateForLKEv+197>:	mov    0x4(%rax),%ecx
+   0x55555556cf68 <_ZN7Minisat6Solver20simplepropagateForLKEv+200>:	mov    %ecx,%r10d
+   0x55555556cf6b <_ZN7Minisat6Solver20simplepropagateForLKEv+203>:	mov    %ecx,%r15d
+   0x55555556cf6e <_ZN7Minisat6Solver20simplepropagateForLKEv+206>:	sar    $1,%r10d
+   0x55555556cf71 <_ZN7Minisat6Solver20simplepropagateForLKEv+209>:	and    $0x1,%r15d
+   0x55555556cf75 <_ZN7Minisat6Solver20simplepropagateForLKEv+213>:	movslq %r10d,%rdi
+   0x55555556cf78 <_ZN7Minisat6Solver20simplepropagateForLKEv+216>:	lea    (%r8,%rdi,1),%r13
+   0x55555556cf7c <_ZN7Minisat6Solver20simplepropagateForLKEv+220>:	movzbl 0x0(%r13),%r12d
+$1 = 11

@@ -5510,8 +5510,16 @@ void Solver::partition() {
     if (softLits[var(unitSoftLits[i])] != lit_Undef)
       unitSoftLits[j++] = unitSoftLits[i];
   unitSoftLits.shrink(i-j);
+  bool removedSoftLits = i > j;
+  // partition() has already replaced these members and accounted for their cost.
+  // Retire inactive auxiliary soft literals as well as inactive unit literals.
+  for(i=0, j=0; i<nonUnitSoftLits.size(); i++)
+    if (softLits[var(nonUnitSoftLits[i])] != lit_Undef)
+      nonUnitSoftLits[j++] = nonUnitSoftLits[i];
+  nonUnitSoftLits.shrink(i-j);
+  removedSoftLits = removedSoftLits || i > j;
   printf("c isets %d, derivedCost %llu\n", nbIsets, derivedCost);
-  if (i>j)
+  if (removedSoftLits)
     rebuildOrderHeap();
   
   for(i=0; i<allSoftLits.size(); i++) {

@@ -1,0 +1,75 @@
+{
+  "status": "SOURCE_READY_DIAGNOSTIC_ONLY",
+  "reviewed_commit": "19b934a267169417517f79fc451e83012007f86e",
+  "prerecord": "e319a86a0781206cc20015573e2f0fad36f6b7d7",
+  "hashes": {
+    "run.py": "88118994c9e9da21ebd503857a07e547319f47361300774e6f05f41e3cc515c7",
+    "launcher.py": "20d81d8ebd51a8e5b0c9aee21c43e617179a9b2e56d81ba775d78bf14b4f31d4"
+  },
+  "reused_GH46_review": [
+    "unchanged proc/members/lease/oracle AST",
+    "90s outer watchdog+bounded3/5 cleanup; nameddisabled assignment/source pins",
+    "full original raw/runtime/source/binary/input identity before/after",
+    "fixed resource helper guard/rootexclusive cpus102230/UID1004/NoNewPrivs"
+  ],
+  "new_checks": [
+    "GDB hash3832cc pinned",
+    "--nx/--nh/-iex auto-load off; startup-shell off; bounded bt20/registers/instructions/siginfo only",
+    "native debugger ownPG but same owned outerSID; inner checks every session member exceptself",
+    "outer enumerates all owned session PGs with fresh birth/member checks before signaling",
+    "valid_evidence false for dangling inferior; debugger0 is never sciencePASS",
+    "source only original baseline245 with exact300B fixture; no src/build repair or performance"
+  ],
+  "diagnostic_AST_cases": [
+    {
+      "case": "signal_frames",
+      "status": "BACKTRACE_CAPTURED_SIGSEGV",
+      "science_pass": false
+    },
+    {
+      "case": "no_frames",
+      "status": "DIAGNOSTIC_INCONCLUSIVE",
+      "science_pass": false
+    },
+    {
+      "case": "nonzero_debugger",
+      "status": "DIAGNOSTIC_INCONCLUSIVE",
+      "science_pass": false
+    },
+    {
+      "case": "invalid_utf8",
+      "status": "DIAGNOSTIC_INCONCLUSIVE",
+      "science_pass": false
+    },
+    {
+      "case": "ordinary_exit",
+      "status": "DIAGNOSTIC_INCONCLUSIVE",
+      "science_pass": false
+    }
+  ],
+  "cleanup_AST_cases": [
+    {
+      "case": "clean",
+      "valid_evidence": true
+    },
+    {
+      "case": "dangling_inferior",
+      "valid_evidence": false
+    },
+    {
+      "case": "cleanup_error",
+      "valid_evidence": false
+    },
+    {
+      "case": "restore_error",
+      "valid_evidence": false
+    },
+    {
+      "case": "identity_changed",
+      "valid_evidence": false
+    }
+  ],
+  "modules_imported": false,
+  "solver_or_compiler_or_debugger_executed": false,
+  "classification": "No causal/upstream/OOM/repair conclusion before actual evidence"
+}
