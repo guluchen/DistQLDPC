@@ -5197,15 +5197,17 @@ void Solver::emitBoundsUpdate() {
         return;
     char buf[64];
     int n;
-    if (infeasibleUB > 0) {
+    if (infeasibleUB > 0 && !boundsHideLB) {
+        uint64_t lbv = getCostLB(); if (lbv > boundsCap) lbv = boundsCap;
         n = snprintf(buf, sizeof(buf), "LB %llu\n",
-                     (unsigned long long)getCostLB());
+                     (unsigned long long)lbv);
         if (n > 0)
             (void)write(bounds_pipe_w, buf, (size_t)n);
     }
     if (bestSolutionFound) {
+        uint64_t ubv = getCostUB(); if (ubv > boundsCap) ubv = boundsCap;
         n = snprintf(buf, sizeof(buf), "UB %llu\n",
-                     (unsigned long long)getCostUB());
+                     (unsigned long long)ubv);
         if (n > 0)
             (void)write(bounds_pipe_w, buf, (size_t)n);
     }
