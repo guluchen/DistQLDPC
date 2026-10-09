@@ -55,6 +55,7 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Configurable cardinality encoding modes (Sinz / MTO / off)
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
+  - Literal-indexed assignment mirror used by Solver::value(Lit) (experimental)
 
 Modified files (partial list): Solver.h, Solver.cc
 

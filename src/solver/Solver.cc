@@ -404,7 +404,7 @@ void Solver::updateIsetLock(int savedFalseLits) {
 void Solver::simpleUncheckEnqueue(Lit p, CRef from){
   assert(value(p) == l_Undef);
   Var v = var(p);
-  assigns[v] = lbool(!sign(p)); // this makes a lbool object whose value is sign(p)
+  setAssign(v, lbool(!sign(p))); // this makes a lbool object whose value is sign(p)
   // vardata[x] = mkVarData(from, decisionLevel());
   vardata[v].reason = from;
   vardata[v].level = decisionLevel() + 1;
@@ -428,7 +428,7 @@ void Solver::cancelUntilTrailRecord()
     for (int c = trail.size() - 1; c >= trailRecord; c--)
     {
         Var x = var(trail[c]);
-        assigns[x] = l_Undef;
+        setAssign(x, l_Undef);
         
     }
     qhead = trailRecord;
@@ -924,7 +924,7 @@ void Solver::cancelUntilTrailRecord1()
     for (int c = trail.size() - 1; c >= trailRecord; c--)
     {
         Var x = var(trail[c]);
-        assigns[x] = l_Undef;
+        setAssign(x, l_Undef);
 	seen2[toInt(trail[c])] = counter;
     }
     qhead = trailRecord;
@@ -945,7 +945,7 @@ void Solver::cancelUntilTrailRecord2()
     for (int c = trail.size() - 1; c >= trailRecord; c--)
     {
         Var x = var(trail[c]);
-        assigns[x] = l_Undef;
+        setAssign(x, l_Undef);
 	if (seen2[toInt(trail[c])] == counter)
 	  add_tmp.push(trail[c]);
     }
@@ -1273,7 +1273,7 @@ Var Solver::newVar(bool sign, bool dvar)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
-    assigns  .push(l_Undef);
+    assigns  .push(l_Undef); litvals.push(l_Undef); litvals.push(l_Undef ^ true);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);
     activity_VSIDS.push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);
@@ -1519,7 +1519,7 @@ void Solver::cancelUntil(int level) {
                 canceled[x] = conflicts;
 #endif
             }
-            assigns [x] = l_Undef;
+            setAssign(x, l_Undef);
             if (phase_saving > 1 || (phase_saving == 1) && c > trail_lim.last())
 	      polarity[x] = sign(trail[c]);
 	    insertAuxiVarOrder(x);
@@ -1907,7 +1907,7 @@ void Solver::uncheckedEnqueue(Lit p, CRef from)
 #endif
     }
     
-    assigns[x] = lbool(!sign(p));
+    setAssign(x, lbool(!sign(p)));
     vardata[x] = mkVarData(from, decisionLevel());
     trail.push_(p);
     if (auxiVar(x) && value(softLits[x]) == l_False) {// a soft clause is falsified
@@ -3230,7 +3230,7 @@ void Solver::hardenForRestart(int nbIsets, int trailRecord) {
     toHarden.clear();
     for(int i=trailRecord; i< trail.size(); i++) {
       Var v=var(trail[i]);
-      assigns[v] = l_Undef;
+      setAssign(v, l_Undef);
       if (auxiVar(v)) {
 	assert(v>=0 && v<activityLB.size());
 	activityLB[v] = (1-stepSizeLB)*activityLB[v];
@@ -3297,7 +3297,7 @@ void Solver::simplelookback(CRef confl, Var falseVar, vec<Lit>& lits, vec<Lit>& 
 	for(index = trail.size() - 1; index >= trailRecord; index--) {
 	  Lit q = trail[index]; Var vv = var(q);
 	  assert(!seen[vv]);
-	  assigns[vv] = l_Undef;
+	  setAssign(vv, l_Undef);
 	  if (auxiVar(vv))
 	    insertAuxiVarOrder(vv);
 	}
@@ -3461,7 +3461,7 @@ int Solver::lookaheadForRestart() {
   else {
     for(int i=trailRecord; i< trail.size(); i++) {
       Var v=var(trail[i]);
-      assigns[v] = l_Undef;
+      setAssign(v, l_Undef);
       if (auxiVar(v)) {
 	assert(v>=0 && v<activityLB.size());
 	activityLB[v] = (1-stepSizeLB)*activityLB[v];
@@ -3899,7 +3899,7 @@ static double luby(double y, int x){
 bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
     assert(value(p) == l_Undef);
     Var v = var(p);
-    assigns[v] = lbool(!sign(p)); // this makes a lbool object whose value is sign(p)
+    setAssign(v, lbool(!sign(p))); // this makes a lbool object whose value is sign(p)
     // vardata[x] = mkVarData(from, decisionLevel());
     vardata[v].reason = from;
     vardata[v].level = decisionLevel() + 1;
@@ -4126,7 +4126,7 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
       if (pathC == 0 && falseVar == var_Undef && isetsLits[nbIsets].size() == 0
 	  && (!last || (auxiVar(var(p)) && inConflicts[var(p)] == NON && p == softLits[v]))) {
 	//printf("y %u %d %d\n", confl, (auxiVar(v) ? toInt(value(softLits[v])) : -7), out_learnt.size());
-	out_learnt[0] = ~p; assigns[v] = l_Undef;
+	out_learnt[0] = ~p; setAssign(v, l_Undef);
 	if (last && auxiVar(v) && inConflicts[v] == NON && p == softLits[v])
 	  isetsLits[nbIsets].push(p);
 	if (auxiVar(v))
@@ -4135,7 +4135,7 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	  Lit q = trail[index];
 	  Var vv = var(q);
 	  assert(!seen[vv]);
-	  assigns[vv] = l_Undef;
+	  setAssign(vv, l_Undef);
 	  if (auxiVar(vv))
 	    insertAuxiVarOrder(vv);
 	}
@@ -4192,7 +4192,7 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
     }
     else if (auxiVar(v))
       insertAuxiVarOrder(v);
-    assigns[v] = l_Undef;
+    setAssign(v, l_Undef);
   }
   qhead = trailRecord;
   trail.shrink(trail.size() - trailRecord);
@@ -4693,7 +4693,7 @@ void Solver::hardenFromQuasiSoftConflict(int trailRecord, int nbIsets) {
   toHarden.clear();
   for(int i=trailRecord; i< trail.size(); i++) {
     Var v=var(trail[i]);
-    assigns[v] = l_Undef;
+    setAssign(v, l_Undef);
     if (auxiVar(v)) {
       assert(v>=0 && v<activityLB.size());
       activityLB[v] = (1-stepSizeLB)*activityLB[v];
@@ -5020,7 +5020,7 @@ bool Solver::lookahead() {
   else {
     for(int i=trailRecord; i< trail.size(); i++) {
       Var v=var(trail[i]);
-      assigns[v] = l_Undef;
+      setAssign(v, l_Undef);
       if (auxiVar(v)) {
 	assert(v>=0 && v<activityLB.size());
 	activityLB[v] = (1-stepSizeLB)*activityLB[v];
@@ -5162,7 +5162,7 @@ void Solver::cancelUntilBeginning(int begnning) {
       canceled[x] = conflicts;
 #endif
     }
-    assigns [x] = l_Undef;
+    setAssign(x, l_Undef);
     if (phase_saving > 1 || (phase_saving == 1) && c > trail_lim.last())
       polarity[x] = sign(trail[c]);
     insertAuxiVarOrder(x);
@@ -5606,7 +5606,7 @@ bool Solver::findConflictSoftLits() {
 void Solver::simpleuncheckedEnqueueForLK(Lit p, CRef from){
     assert(value(p) == l_Undef);
     Var v = var(p);
-    assigns[v] = lbool(!sign(p)); // this makes a lbool object whose value is sign(p)
+    setAssign(v, lbool(!sign(p))); // this makes a lbool object whose value is sign(p)
     // vardata[x] = mkVarData(from, decisionLevel());
     vardata[v].reason = from;
     vardata[v].level = decisionLevel() + 1;
@@ -5781,7 +5781,7 @@ void Solver::simplelookbackResetTrail(CRef confl, bool fromFalseVar) {
     }
     else if (auxiVar(v))
       insertAuxiVarOrder(v);
-    assigns[v] = l_Undef;
+    setAssign(v, l_Undef);
   }
   qhead = trailRecord;
   trail.shrink(trail.size() - trailRecord);
@@ -5860,7 +5860,7 @@ bool Solver::detectInitConflicts() {
   // involvedClauses.clear();
   for(int i=trailRecord; i< trail.size(); i++) {
     Var v=var(trail[i]);
-    assigns[v] = l_Undef;
+    setAssign(v, l_Undef);
   }
   trail.shrink(trail.size() - trailRecord);
   qhead = trailRecord;
@@ -6065,7 +6065,7 @@ Var Solver::newAuxiVar(bool sign)
     imply[toInt(p)] = lit_Undef;
     imply[toInt(~p)] = lit_Undef;
     decision[v] = false;
-    assigns[v] = l_Undef;
+    setAssign(v, l_Undef);
     return v;
   }
     int v = nVars();
@@ -6073,7 +6073,7 @@ Var Solver::newAuxiVar(bool sign)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
-    assigns  .push(l_Undef);
+    assigns  .push(l_Undef); litvals.push(l_Undef); litvals.push(l_Undef ^ true);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);
     activity_VSIDS.push(rnd_init_act ? drand(random_seed) * 0.00001 : 0);
@@ -6187,7 +6187,7 @@ inline Var Solver::newAuxiVarForCardinality() {
   activity_CHB[v] = 0;
   activity_VSIDS[v] = 0;
   // decision[v] = true;
-  assigns[v] = l_Undef;
+  setAssign(v, l_Undef);
   assert(!auxiVar(v));
   setDecisionVar(v, true);
   // //  if (!order_heap_CHB.inHeap(v))
