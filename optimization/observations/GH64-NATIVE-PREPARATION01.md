@@ -88,5 +88,25 @@ retains values for existing fields, with no invented empty values or OS change.
 Second verification authenticated145 source files,13 support files and24,373
 runtime files plus aliases; helper inactive status and pre-lease root cpusets
 were captured. Actual helper acquisition and owned worker/launcher were then
-observed live. Native Tier0 is RUNNING, launch64/6075931060; no correctness or
-performance certificate until terminal whole-raw and separate release audit.
+observed live. Native Tier0 launch64/6075931060 subsequently completed in the
+same original run, actual SSH/helper exit0; no restart or favorable sample retry.
+
+Worker reports NATIVE_FULL_TIER0_LOCAL_PASS: 54applications,162PMS,40dumps,
+12genuine timeouts,two smokes, plus original11targeted/81partition/316ordered
+prefetch cases perrole. All1,126raw payloads/315command records are retained,
+catalog6bedb46cb34738b1f2805699781f6b29854443e59aea88de15ba64de0c51e4bb.
+Root locally rehashed every original payload against this catalogue. This is
+retention and worker status, pending independent whole scientific adjudication.
+
+Separate actual root postcapture93324fef1b96aa10d27f9f055c6b1e9d2f7edd75d34dedb83860a98634788c4a
+confirms helper inactive, experiment cgroup absent, allfive root cpuset entries
+exactly restored, and318recorded processbirth identities absent. Independent
+postcapture source-format reviewcbf6970cad0941ada5cffe4dce5d719ef6b4f2e6291fd35397c42ed21dc2f529
+accepts the intended original-capture parser contract; whole terminal NDJSON,
+all command identities and science remain for the independent native auditor.
+Linux slot released15/6076424483. No performance/adoption/Tier2/Tier3 claim.
+
+A source-only self-contained Git bundle282dd5fc7b52eaec0b07190c83f732772acc4d5b9766ec706fadaaba33ba67da
+was verified, transferred and unpacked into a fresh bare object repository only
+after the experiment lease ended, for exact72d1/b632 source-object comparison.
+It is separate from the145payload production package and is not a rebuild.

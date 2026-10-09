@@ -1,14 +1,15 @@
 # Optimization state
 
-GH64 native targeted+full Tier0 ACTUAL RUNNING (2026-10-09), sole Linuxslot
-15/6075764821; launch64/6075931060. Independently audited actualfreeze d1c611,
-finalsupporta799/package61ad/runtimea1f currentuploadedallbytes rehashed before
-installedhelper acquisition. Actual helper active and original unprivileged
-owned groups observed; commands completing under6600/6660 bounded plan.
-Root session67136 remains live: poll same handle, never restart on observation
-timeout. Whole terminal raw/native science/owned cleanup/separatehelper release
-and rootcpuset restore must be independently audited before native certificate.
-No nativePASS/performance/adoption/Tier2/Tier3; earlier pending states superseded.
+GH64 native targeted+full Tier0 ACTUAL TERMINAL (2026-10-09), original sole
+Linuxslot15/6075764821 released15/6076424483; actual SSH/helper exit0. Worker
+NATIVE_FULL_TIER0_LOCAL_PASS: 54applications/162PMS/40dumps/12timeouts/2smokes,
+11targeted and316ordered prefetch cases perrole. Complete1126payload raw
+catalog6bedb46c/315commands retained and locally hash-verified unchanged.
+Separate actual postcapture93324fef: helperinactive/cgroupabsent/all5rootcpuset
+entries exactlyrestored/318recorded processbirth identities absent. Independent
+postcapture source-format reviewcbf697 READY; whole native science/runtime/Git/
+terminalNDJSON audit pending. No performance/adoption/Tier2/Tier3. Earlier
+RUNNING states below are historical and superseded.
 
 GH64 fresh native metadata03 retained and independently audited (2026-10-09):
 runtimea1f24ffc/24373files, whole audit8735639d PASS_RETAINED_NATIVE_METADATA_ONLY.
