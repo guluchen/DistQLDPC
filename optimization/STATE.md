@@ -1,5 +1,48 @@
 # Optimization state
 
+Latest completed evidence (2026-10-09), superseding pending entries below:
+
+GH41 MTO-only original-row cap: isolated Tier1 all48 science PASS,
+MTO geometric mean -25.1116%, OFF +0.82518% with overlapping ranges.
+One separately preregistered exploratory LP_340 Tier2 completed all12 science
+PASS: OFF median98.7189358091->98.6340393680s (-0.085998%, overlap), MTO
+110.0351084089->81.6285848380s (-25.815873%, disjoint CPU/exit intervals and
+all3 paired wins). Independent whole-raw audit PASS; durable eadd2f32,
+89 actual Git payloads. Original numeric decision INCONCLUSIVE; old engineering
+conjunction false. SPECIALIZED_DIAGNOSTIC only, no adoption/promotion/Tier3.
+Forced root-supervisor-death recovery remains untested. Linux released6070249218.
+
+GH48 fixed-v2: one exploratory LP_340 Tier2 completed12 correct scientific
+results, OFF +0.70735% / MTO -0.43445%, both ranges overlap. Original numeric
+INCONCLUSIVE; formal INCONCLUSIVE/practical SHELVE/NOT_ADOPTED, no Tier3.
+All1014 public raw blobs durable aa2c21e5; Windows released6070253570.
+
+GH50 cached binary value: codegen-only gate found original GCC already shares
+the load. Actual1168 function bytes and3 relative relocations identical.
+SHELVE, science NOT_TESTED, no solver/performance run. Public70 original text
+payloads plus original73 catalog and71-public-blob proof008aa87/6a64fe47;
+three original debug objects retained locally, not claimed publicly exported.
+PR51 closed unmerged; Windows released6069991354.
+
+GH26 cap2FLA bounded source/model investigations closed SHELVED/UNPROVEN
+at8ebf543; full weighted-K/rollback correctness not established.
+Fresh independent selections: GH52 deferred soft failure/PR56 (prerecord05aff35
+before production02e746c, IJCAI2026 section3.3/Algorithm3 citation and Bib retained),
+GH53 default ccmin2->1/PR54 (c27660a before08971d1, source closure766504bf),
+GH55 guarded Vec doubling/PR57 (e74047c before8a1673b). These are source-only;
+no host assignment/full scientific certification or performance result.
+
+GH46 valid original-baseline WCNF crash remains mandatory and unresolved,
+not waived/dropped or attributed to upstream MaxCDCL. One existing unmodified
+native baseline cross-host check preregistered d9bb9fe, disabled source4058d97
+under fresh peer review. No repair/new baseline designation. User scientific
+anomaly direction remains pending. Original24572d6 baseline is immutable.
+
+Continuous exactly-three/select-one loop ACTIVE, no accepted optimization.
+Latest GitHub hub15 assignment/release comments govern host ownership.
+
+## Earlier snapshot (superseded by completed evidence above)
+
 Current execution snapshot 2026-10-09: continuous independent exactly-three-proposals/select-one loop ACTIVE; no accepted optimization, no Tier3.
 
 GH40 ternary specialization: full corrected Tier0 PASS, all48 Tier1 scientific results correct but ALL8 baseline/candidate timing ranges disjoint and slower. OFF GM+3.0326%, MTO GM+4.0506%; local REJECT/NOT_ADOPTED, no Tier2/3. Durable0b5b46cc/877 exact public raw blobs; controlled performance uncorroborated.
