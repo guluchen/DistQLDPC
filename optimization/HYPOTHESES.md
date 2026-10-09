@@ -1,5 +1,13 @@
 # Hypothesis registry (not an execution queue)
 
+B002 corrected SOURCE baseline registered (issue62, 2026-10-09):
+72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7; exact32 production/build source
+identities in baselines/B002/SOURCE.json equal validated b2e1274. Binary/runtime
+certification PENDING, no old binary relabeling or performance promotion.
+Independent agents are preparing fresh three-proposal/select-one rounds; root
+coordinates finite certification and host assignment. No accepted optimization
+or Tier3. This supersedes earlier new-source-not-designated entries below.
+
 GH58 correctness repair ACCEPT / MERGED (2026-10-09), superseding pending entries:
 PR59 merged as 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7 after exact safe
 head b2e1274 passed CI37871089889, QDistSAT37871089865 and full finite
