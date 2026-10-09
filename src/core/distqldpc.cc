@@ -663,11 +663,8 @@ struct HalfSymInfo {
     double seconds;
 };
 
+/* Shared by GH-85 and GH-87 (GH-92 dedup): drops exact duplicates of earlier candidates. */
 static void add_candidate(std::vector<SymCandidate>& out, const std::string& desc, const std::vector<int>& perm) {
-    bool ident = true;
-    for (size_t i = 0; i < perm.size() && ident; i++)
-        if (perm[i] != (int)i) ident = false;
-    if (ident) return;
     for (size_t k = 0; k < out.size(); k++)
         if (out[k].perm == perm) return;
     SymCandidate c;
@@ -676,11 +673,17 @@ static void add_candidate(std::vector<SymCandidate>& out, const std::string& des
     out.push_back(c);
 }
 
-/* GH-75 candidate family (generic index maps; none assumed, all verified). */
-static std::vector<SymCandidate> symmetry_candidates(int n) {
+/* GH-75 candidate family (generic index maps; none assumed, all verified), shared by GH-85 and
+ * GH-87 (GH-92 dedup). The identity is seeded first so that family members equal to it or to an
+ * earlier member are dropped; with_identity=false (GH-85 half automorphisms) then removes it,
+ * which gives exactly GH-85's list (identity and duplicates rejected, same order);
+ * with_identity=true (GH-87 dual maps, rs Hz = rs Hx type codes) keeps it first, as in GH-87. */
+static std::vector<SymCandidate> candidate_family(int n, bool with_identity) {
     std::vector<SymCandidate> out;
     char buf[96];
     std::vector<int> p((size_t)n);
+    for (int i = 0; i < n; i++) p[i] = i;
+    add_candidate(out, "identity", p);
     for (int L = 2; L <= n; L++) {
         if (n % L) continue;
         const int B = n / L;
@@ -729,6 +732,7 @@ static std::vector<SymCandidate> symmetry_candidates(int n) {
             add_candidate(out, buf, p);
         }
     }
+    if (!with_identity) out.erase(out.begin());
     return out;
 }
 
@@ -754,7 +758,7 @@ static HalfSymInfo find_half_symmetry(const Matrix& Hpar, const Matrix& Glog)
     const Gf2Basis bH = basis_of(sH, n), bHG = basis_of(sHG, n);
     std::vector<int> par((size_t)n);
     for (int i = 0; i < n; i++) par[i] = i;
-    const std::vector<SymCandidate> cands = symmetry_candidates(n);
+    const std::vector<SymCandidate> cands = candidate_family(n, false);
     info.candidates = (int)cands.size();
     for (size_t k = 0; k < cands.size(); k++) {
         const std::vector<int>& pi = cands[k].perm;
@@ -956,13 +960,88 @@ static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
     if (len > 0) (void)write(pipe_w, buf, (size_t)len);
 }
 
+/* ---- GH-87: dual-half elimination (extension of GH-73; idea: unselected proposal GH-78-B).
+ * X half F_X = ker(Hz) \ ker([Hz;Gx]), Z half F_Z = ker(Hx) \ ker([Hx;Gz]). If a qubit permutation
+ * pi satisfies pi(rs Hz) = rs Hx and pi(rs [Hz;Gx]) = rs [Hx;Gz], then (dot products are permutation
+ * invariant) pi(ker Hz) = ker Hx and pi(ker [Hz;Gx]) = ker [Hx;Gz], so v |-> pi v is a weight-
+ * preserving bijection F_X -> F_Z and dX = dZ: the X half alone yields d, and its proven LB/UB are
+ * global. Equalities are verified over GF(2): equal ranks, and every permuted source row reduces to
+ * zero in an RREF basis of the target space (a permutation preserves rank). Candidates: identity,
+ * then the generic GH-75 family (none assumed, all verified). GH-92: the GF(2) basis, row supports
+ * and the candidate family are the single shared copies defined in the GH-85 block above
+ * (Gf2Basis, append_supports, basis_of, permuted_rows_in, candidate_family(n, true)). */
+struct DualMapInfo {
+    int n, rank_hz, rank_hx, rank_hzgx, rank_hxgz, candidates;
+    std::vector<std::string> maps;   /* verified dual maps, in candidate order (first = used) */
+    double seconds;
+};
+
+/* Verified XZ-dual maps of the two CSS half instances. all=false stops at the first one. */
+static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool all)
+{
+    const double t0 = cpuTime();
+    DualMapInfo info;
+    const int n = Hx.cols;
+    info.n = n;
+    RowSupports sHz, sHzGx, sHx, sHxGz;
+    append_supports(sHz, Hz);
+    append_supports(sHzGx, Hz);
+    append_supports(sHzGx, Gx);
+    append_supports(sHx, Hx);
+    append_supports(sHxGz, Hx);
+    append_supports(sHxGz, Gz);
+    const Gf2Basis bHx = basis_of(sHx, n), bHxGz = basis_of(sHxGz, n);
+    info.rank_hx = bHx.rank();
+    info.rank_hxgz = bHxGz.rank();
+    info.rank_hz = basis_of(sHz, n).rank();
+    info.rank_hzgx = basis_of(sHzGx, n).rank();
+    info.candidates = 0;
+    if (info.rank_hz == info.rank_hx && info.rank_hzgx == info.rank_hxgz) {
+        const std::vector<SymCandidate> cands = candidate_family(n, true);
+        info.candidates = (int)cands.size();
+        for (size_t k = 0; k < cands.size(); k++) {
+            const std::vector<int>& pi = cands[k].perm;
+            if (!permuted_rows_in(sHz, pi, bHx) || !permuted_rows_in(sHzGx, pi, bHxGz)) continue;
+            info.maps.push_back(cands[k].desc);
+            if (!all) break;
+        }
+    }
+    info.seconds = cpuTime() - t0;
+    return info;
+}
+
 static int min_distance_css_interleaved(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int verb, int pipe_w, int card_mode, bool symbreak)
+    int verb, int pipe_w, int card_mode, bool symbreak, bool dualskip)
 {
     if (Hx.cols != Hz.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols) die("matrix column mismatch");
     const uint64_t n = (uint64_t)Hx.cols, INF = UINT64_MAX;
     CssHalf hs[2] = { {"X", &Hz, &Gx, Gx.rows > 0, 1, INF}, {"Z", &Hx, &Gz, Gz.rows > 0, 1, INF} };
+    /* GH-92 (stack of GH-87 on GH-85): dual-map detection first, then per-half symmetry detection on
+     * every half that is still solved. Soundness of the combination: a verified XZ-dual map proves
+     * dX = dZ (weight-preserving bijection F_X -> F_Z, see the GH-87 block), so solving only the X
+     * half is exact and its bounds are global. The orbit clauses added to the X half come only from
+     * verified *plain* automorphisms of that half (never from the XZ-dual map, which is not one);
+     * they preserve, for every w, the existence of an X-half solution of weight <= w, hence every
+     * oracle answer (FOUND/NONE/OPT under any cap) and the X half's optimum. Therefore the stack
+     * returns dX = d with only proven global bounds. When the Z half is eliminated, symmetry
+     * breaking is still applied to the X half (the half that is solved); without a dual map both
+     * halves get their own clauses exactly as in GH-85. -no-dualskip = GH-85, -no-symbreak = GH-87. */
+    /* GH-87: a verified XZ-dual map proves dX = dZ; the Z half is then eliminated (treated as absent),
+     * so every bound below is the X half's, which is global. */
+    if (dualskip && hs[0].exists && hs[1].exists) {
+        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, false);
+        if (!dm.maps.empty()) hs[1].exists = false;
+        if (verb > 0) {
+            if (!dm.maps.empty())
+                printf("c dualskip: dual map '%s' verified (rank Hz=Hx=%d, [Hz;Gx]=[Hx;Gz]=%d, cpu %.3fs): dX = dZ, solving X half only\n",
+                       dm.maps[0].c_str(), dm.rank_hx, dm.rank_hxgz, dm.seconds);
+            else
+                printf("c dualskip: no dual map (ranks Hz %d Hx %d [Hz;Gx] %d [Hx;Gz] %d, %d candidates, cpu %.3fs): both halves\n",
+                       dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.seconds);
+            fflush(stdout);
+        }
+    }
     /* GH-85: per-half verified orbits, detected once and used by every oracle call of that half. */
     for (int k = 0; symbreak && k < 2; k++) {
         if (!hs[k].exists) continue;
@@ -1040,6 +1119,7 @@ static int min_distance_css_interleaved(
 
 static bool g_css_joint = false;   /* -joint: original symplectic joint encoding */
 static bool g_half_symbreak = true; /* GH-85: per-half orbit clauses in the split path; -no-symbreak disables */
+static bool g_dualskip = true;     /* GH-87: eliminate one half under a verified XZ-dual map; -no-dualskip disables */
 
 static int parse_roundingsat_cost(const std::string& out)
 {
@@ -1255,7 +1335,7 @@ static int solve_in_child_fork(
             d = min_distance_stabilizer_roundingsat(
                 Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
         } else if (!g_css_joint) {
-            d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode, g_half_symbreak);
+            d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode, g_half_symbreak, g_dualskip);
         } else {
             d = min_distance_stabilizer_maxsat(
                 Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
@@ -1366,6 +1446,7 @@ int main(int argc, char** argv) {
     bool dump_only = false;
     bool native_parity_opb = false;
     bool symbreak_report = false;  /* GH-85 */
+    bool dualskip_report = false;  /* GH-87 */
 
     for (int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "-cpu-lim=", 9))
@@ -1403,6 +1484,10 @@ int main(int argc, char** argv) {
             g_half_symbreak = false;
         else if (!strcmp(argv[i], "-symbreak-report"))
             symbreak_report = true;
+        else if (!strcmp(argv[i], "-no-dualskip"))
+            g_dualskip = false;
+        else if (!strcmp(argv[i], "-dualskip-report"))
+            dualskip_report = true;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
@@ -1416,6 +1501,9 @@ int main(int argc, char** argv) {
             printf("  Symmetry (split only): default adds optimum-preserving orbit clauses per CSS half from\n");
             printf("            verified half automorphisms; -no-symbreak disables them;\n");
             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
+            printf("  Dual halves (split only): default solves only the X half when a verified XZ-dual qubit\n");
+            printf("            permutation proves dX = dZ; -no-dualskip disables; -dualskip-report prints the\n");
+            printf("            verified dual maps and exits\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -1448,6 +1536,22 @@ int main(int argc, char** argv) {
         else printf("c symbreak X: no logical rows (half absent)\n");
         if (Gz.rows > 0) print_half_symmetry(find_half_symmetry(Hx, Gz), "c symbreak Z:", true);
         else printf("c symbreak Z: no logical rows (half absent)\n");
+        if (!dualskip_report) return 0;
+    }
+
+    if (dualskip_report) {   /* GH-87 */
+        if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
+            die("matrix column mismatch");
+        printf("c dualskip report: %s\n", prefix);
+        if (Gx.rows == 0 || Gz.rows == 0) {
+            printf("c dualskip: a half has no logical rows (Gx %d, Gz %d): not applicable\n", Gx.rows, Gz.rows);
+            return 0;
+        }
+        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, true);
+        printf("c dualskip: n=%d rank Hz=%d Hx=%d [Hz;Gx]=%d [Hx;Gz]=%d candidates=%d verified_maps=%zu detect_cpu=%.3fs used=%s\n",
+               dm.n, dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.maps.size(), dm.seconds,
+               dm.maps.empty() ? "none" : dm.maps[0].c_str());
+        for (size_t k = 0; k < dm.maps.size(); k++) printf("c dualskip map: %s\n", dm.maps[k].c_str());
         return 0;
     }
 
