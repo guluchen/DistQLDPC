@@ -1,0 +1,2 @@
+# GH-85 attribution head-to-head (informational, not a gate; written before running)
+Same Mac, harness tier1_mac_dist.py, 4 Tier1 cases x OFF/MTO, 3+3 AB/BA/AB (no replication), "baseline" = GH-73 frozen ../frozen73n/cand (adc3e31f...), "candidate" = GH-85 frozen ../frozen85/cand (1c6f028a...). Purpose: isolate the per-half symmetry-breaking contribution on top of the split (review MINOR 3). Plus LP340 3+3 both modes.

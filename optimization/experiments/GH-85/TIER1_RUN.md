@@ -1,0 +1,2 @@
+# GH-85 Tier1 run record (coordinator, before launch)
+Mac, frozen ../frozen73n/base/distqldpc (72d1fe1, 3f2fbc42...) vs ../frozen85/cand/distqldpc (1c6f028a...), GH-60 bound-soundness runner unchanged, 4 cases x OFF/MTO, 3+3 AB/BA/AB + 10 replication pairs, 180/195 s, TIMING_LOCK held. Unchanged GH16 judge vs baseline. Attribution vs GH-73 (same host, earlier run) informational. Tier2 LP340 only if positive with no regression flag. Single attempt.

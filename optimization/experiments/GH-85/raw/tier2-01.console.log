@@ -1,0 +1,25 @@
+0000.gate.LP_340_56_8.no-card.0.baseline 84.951s o 8 load=1.58
+0001.gate.LP_340_56_8.no-card.0.candidate 1.531s o 8 load=1.66
+0002.gate.LP_340_56_8.no-card.1.candidate 1.532s o 8 load=1.66
+0003.gate.LP_340_56_8.no-card.1.baseline 85.513s o 8 load=1.61
+0004.gate.LP_340_56_8.no-card.2.baseline 85.379s o 8 load=1.44
+0005.gate.LP_340_56_8.no-card.2.candidate 1.529s o 8 load=1.39
+0006.gate.LP_340_56_8.card-mto.0.baseline 59.341s o 8 load=1.39
+0007.gate.LP_340_56_8.card-mto.0.candidate 1.623s o 8 load=1.29
+0008.gate.LP_340_56_8.card-mto.1.candidate 1.611s o 8 load=1.29
+0009.gate.LP_340_56_8.card-mto.1.baseline 59.393s o 8 load=1.29
+0010.gate.LP_340_56_8.card-mto.2.baseline 59.382s o 8 load=1.66
+0011.gate.LP_340_56_8.card-mto.2.candidate 1.637s o 8 load=2.98
+{
+ "stopped": null,
+ "n_samples": 12,
+ "finished": "2026-10-09T19:20:14+0800",
+ "binary_sha256_after": {
+  "baseline": "3f2fbc4215e17c4a5b5e62d1f10f99619bdf6efaea7881acb46157effe78c9dc",
+  "candidate": "1c6f028aed17754e1e36f9b1ffd7b54299ec2fa017a829b6c39ff84ff48c2940"
+ },
+ "input_sha256_after_ok": true
+}
+gate no-card geomean 0.01793 envelope 0.01803 positive True flags []
+gate card-mto geomean 0.02733 envelope 0.02758 positive True flags []
+exit=0

@@ -558,6 +558,17 @@ public:
     void emitBoundsUpdate();
     void emitTryUpdate(uint64_t try_val);
     int bounds_pipe_w;
+    // DistQLDPC GH-73 (interleaved CSS split): multi-instance search controls.
+    uint64_t initLB = 0;              // known: no solution with total cost < initLB
+    bool     strictUB = false;        // initUB is a hard cap: never search above it
+    bool     stopAtFirstSolution = false;
+    bool     startAtCap = false;      // with strictUB: first UB test is the cap itself (find, then descend)
+    uint64_t boundsLbCap = UINT64_MAX, boundsUbCap = UINT64_MAX;  // caps on emitted LB/UB
+    bool     boundsHideLB = false;    // do not emit LB (not a global bound)
+    // Former function-local statics, now per instance (identical for single-instance runs).
+    uint64_t srch_prevUB = 0, card_prevUB = 0, lk_prevUB = 0;
+    int      lk_thres = 2, lk_prevConflicts = 0, lk_maxSuccLB = 0, lk_nbSample = 0, lk_myLH = 0, lk_mySucc = 0;
+    double   lk_sumLB = 0, lk_sumSQLB = 0, lk_coef = 2;
     bool feasible;
     bool bestSolutionFound;
     uint64_t bestSup;

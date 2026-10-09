@@ -1,0 +1,15 @@
+wl; bash scripts/smoke_test.sh "$C" > $O/smoke.txt 2>&1; echo "smoke=$?"
+:
+:
+:
+for code in LP_34_20_2 BB_72_12_6 TN_36_8_4; do for m in default no-card; do f="
+smoke=0
+LP_34_20_2 default joint-vs-base=IDENTICAL nosymbreak-vs-gh73=IDENTICAL base:o 2 cand:o 2
+LP_34_20_2 no-card joint-vs-base=IDENTICAL nosymbreak-vs-gh73=IDENTICAL base:o 2 cand:o 2
+BB_72_12_6 default joint-vs-base=IDENTICAL nosymbreak-vs-gh73=IDENTICAL base:o 6 cand:o 6
+BB_72_12_6 no-card joint-vs-base=IDENTICAL nosymbreak-vs-gh73=IDENTICAL base:o 6 cand:o 6
+TN_36_8_4 default joint-vs-base=IDENTICAL nosymbreak-vs-gh73=IDENTICAL base:o 4 cand:o 4
+TN_36_8_4 no-card joint-vs-base=IDENTICAL nosymbreak-vs-gh73=IDENTICAL base:o 4 cand:o 4
+MAC_DONE
+
+[exited with code 0]
