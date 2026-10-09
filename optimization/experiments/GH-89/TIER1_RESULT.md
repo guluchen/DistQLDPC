@@ -8,7 +8,7 @@ Mac, timing lock, tier1_mac_dist.py; all samples correct (o = d, sound bounds), 
 | BB_108_8_10 | 2.275 | 0.153 | 0.0673 | 2.328 | 0.175 | 0.0752 |
 | LP_238_44_6 | 1.219 | 0.318 | 0.2609 | 1.157 | 0.250 | 0.2161 |
 Gate geomean OFF 0.1050 (envelope 0.1479), MTO 0.0957 (envelope 0.0973). Replication (10 pairs): OFF 0.1036, MTO 0.0964.
-Reference on the same host: GH-85 0.159 / 0.145, GH-76 alone and GH-73 0.485 / 0.498.
+Reference on the same host: GH-85 0.159 / 0.145, GH-73 0.485 / 0.498 (GH-76 alone: see GH-76 records).
 ## Attribution vs GH-85 (frozen85/cand 1c6f028a… as base), informational
 | Case | OFF ratio | MTO ratio |
 |---|---:|---:|
