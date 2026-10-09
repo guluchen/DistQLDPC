@@ -55,6 +55,8 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Configurable cardinality encoding modes (Sinz / MTO / off)
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
+  - Experimental guarded next-long-clause prefetch in lookahead propagation
+    (GH64), with search and scientific semantics intended unchanged; untested
 
 Modified files (partial list): Solver.h, Solver.cc
 
