@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 Tier1 actual48 Windows diagnostic RUNNING (2026-10-09):
+Assignment6074204309, source review7b892d63/final literalfreeze10b900ff;
+first two original-app science observations retained. Not complete/performance
+PASS; fixed48 protocol/policy unchanged, no formal acceptance or Tier2/3.
+Historical unexecuted030e engineering findings resolved/archived, not scientific
+candidate rejection. GH64 separate source-only preparation proceeds.
+
 GH63 Tier1 source preparation (2026-10-09), not measured:
 Plan97556c20 reviewedfb56bec0; disabled030e77e1 adapter requires narrow harness
 verdict-priority repairs and independent re-review before execution. Candidate

@@ -1,5 +1,14 @@
 # Optimization state
 
+GH63 Tier1 actual Windows diagnostic RUNNING (2026-10-09):
+Supersedes pre-execution repair/review status below. Independent narrow review
+7b892d63 READY_DISABLED_LIMITED after archived030e/ae17 findings; exact support
+literal freeze10b900ff, original plan97556c20/inputbe06b15a, named assignment
+6074204309. Actual interpreter guard passes and first two samples retained;
+48 fixed serial samples remain incomplete until terminal plus independent audit.
+Preserve/poll the actual runner, never restart on observation timeout. No formal
+Tier1 PASS/ACCEPT or Tier2/3, continuous goal ACTIVE; GH64 source-only meanwhile.
+
 GH63 Tier1 adapter constructed DISABLED / source review (2026-10-09):
 Preregistered48 sample plan97556c20 independently reviewedfb56bec0; fresh16Git
 input packagebe06b15a and original12full01production pins checked. Stable030e77e1
