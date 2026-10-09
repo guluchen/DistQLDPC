@@ -1,5 +1,10 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 full adapter audit300684fc SOURCE_NOT_READY_DISABLED (2026-10-09),
+one engineering remaining-budget-before-Popen blocker; exact145package402f
+authenticated and full scientific scope unchanged. Narrow source repair underway,
+not a production hypothesis change or scientific REJECT; no full workload yet.
+
 GH63 LP340 exploration final INCONCLUSIVE, independently retained/audited3e7ae88c
 (2026-10-09). One correct baseline solve; candidate capacity-aborted, no comparison.
 No acceptance/rejection inferred from incomplete timing; no replacement samples.

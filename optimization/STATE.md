@@ -1,5 +1,12 @@
 # Optimization state
 
+GH64 full source audit complete (2026-10-09):300684fc SOURCE_NOT_READY_DISABLED.
+One engineering blocker: no fresh remaining-budget check immediately before
+Popen after preflight; must refuse exhausted aggregate and record/use mincap.
+No actual full workload/scientific failure. Exact145 package402f446f authenticated;
+54/162/40/12/2 scope unchanged. Narrow source repair requested with immutable
+a1de draft+review archive first; independent rereview required before freeze/run.
+
 GH63 LP340 incomplete raw independently audited (2026-10-09):
 3e7ae88c PASS_INCOMPLETE_ATTEMPT_RETENTION_AUDIT_ONLY authenticates21raw,
 source inverse/12productionpins/runtime/current inventories, baseline4finalfields,
