@@ -138,7 +138,8 @@ class Clause {
     struct {
       unsigned size      : 32;
       unsigned lastPoint : 32;
-      unsigned lbd       : 24;
+      unsigned lbd       : 23;
+      unsigned lkskip    : 1;   // DistQLDPC GH-69: conflict-learnt clause (lookahead skips it while LOCAL)
       unsigned mark      : 2;
       unsigned simplified     : 2;
         unsigned learnt    : 1;
@@ -165,6 +166,7 @@ class Clause {
         header.lbd       = ps.size();
         header.removable = 1;
 	header.lastPoint = 2;
+	header.lkskip = 0;
 	//	header.involved  = 0;
 		//simplify
 		//
@@ -239,6 +241,8 @@ public:
 	/* unsigned used() {return header.used;} */
 
 	void setLastPoint(unsigned b) {header.lastPoint = b;}
+	void setLkskip(unsigned b) {header.lkskip = b;}
+	unsigned lkskip() const {return header.lkskip;}
 	unsigned lastPoint() {return header.lastPoint;}
 
 	/* void setInvolved(unsigned b) {header.involved = b;} */
@@ -311,6 +315,7 @@ class ClauseAllocator : public RegionAllocator<uint32_t>
 	//	to[cr].setUsed(c.used());
 	to[cr].set_lbd(c.lbd());
 	to[cr].setLastPoint(c.lastPoint());
+	to[cr].setLkskip(c.lkskip());
 	//	to[cr].setInvolved(c.involved());
         if (to[cr].learnt()){
             to[cr].touched() = c.touched();

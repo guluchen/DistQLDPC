@@ -3132,6 +3132,7 @@ void Solver::splitClauses(vec<CRef>& cs) {
 
   communLits.push(p);
   CRef cr2 = ca.alloc(communLits, true);
+  ca[cr2].setLkskip(1); // GH-69
   attachClause(cr2); ca[cr2].mark(clauseType); ca[cr2].set_lbd(lbd);
   if (clauseType == CORE) {
     learnts_core.push(cr2); ca[cr2].touched() = conflicts;
@@ -3698,6 +3699,7 @@ lbool Solver::search(int& nof_conflicts)
                 uncheckedEnqueue(learnt_clause[0]);
             }else{
                 CRef cr = ca.alloc(learnt_clause, true);
+                ca[cr].setLkskip(1); // GH-69
 		if (learnt_clause.size() > splitClauseSize && lbd<=tier2_lbd_cut) {
 		  if (softLearnt)
 		    softLearnts.push(cr);
@@ -3929,6 +3931,11 @@ bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
     return true;
 }
 
+#ifdef LKSKIP_CHECK
+static unsigned long long lkSkipped = 0, lkReasonChecks = 0;
+static void lkSkipReport() { fprintf(stderr, "LKSKIP_EVENTS skipped_visits=%llu reason_checks=%llu\n", lkSkipped, lkReasonChecks); }
+static struct LkSkipReg { LkSkipReg() { atexit(lkSkipReport); } } lkSkipReg;
+#endif
 CRef Solver::propagateForLK() {
   falseVar = var_Undef;
   CRef    confl = CRef_Undef;
@@ -3965,6 +3972,14 @@ CRef Solver::propagateForLK() {
 	// Make sure the false literal is data[1]:
 	CRef     cr = i->cref;
 	Clause&  c = ca[cr];
+	// GH-69: lookahead ignores LOCAL-tier conflict-learnt clauses (sound: fewer valid clauses).
+	// All lookahead assignments are undone later, so leaving this watcher in place is safe.
+	if (c.lkskip() && c.mark() == LOCAL) {
+#ifdef LKSKIP_CHECK
+	  lkSkipped++;
+#endif
+	  *j++ = *i++; continue;
+	}
 	Lit      false_lit = ~p;
 	if (c[0] == false_lit)
 	  c[0] = c[1], c[1] = false_lit;
@@ -4080,6 +4095,9 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
   }
   else {
     Clause& c = ca[confl];
+#ifdef LKSKIP_CHECK
+    if (c.lkskip() && c.mark() == LOCAL) { fprintf(stderr, "LKSKIP_CHECK: skipped clause used as lookahead conflict\n"); abort(); }
+#endif
     // if (!c.involved()) {
     //   involvedClauses.push(confl);
     //   c.setInvolved(1);
@@ -4150,6 +4168,9 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	if (auxiVar(v))
 	  insertAuxiVarOrder(v);
 	Clause& rc = ca[confl];
+#ifdef LKSKIP_CHECK
+	lkReasonChecks++; if (rc.lkskip() && rc.mark() == LOCAL) { fprintf(stderr, "LKSKIP_CHECK: skipped clause used as lookahead reason\n"); abort(); }
+#endif
 	// if (!rc.involved()) {
 	//   involvedClauses.push(confl);
 	//   rc.setInvolved(1);
@@ -4774,6 +4795,7 @@ void Solver::fixByLookahead(vec<Lit>& out_learnt) {
     uncheckedEnqueue(out_learnt[0]);
   else {
     CRef cr = ca.alloc(out_learnt, true);
+    ca[cr].setLkskip(1); // GH-69
     if (out_learnt.size() > splitClauseSize && lbd<=tier2_lbd_cut)
       hardLearnts.push(cr);
     ca[cr].set_lbd(lbd);

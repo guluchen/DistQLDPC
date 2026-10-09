@@ -65,6 +65,15 @@ in each file are unchanged.
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
 
+#### Lookahead skips local-tier learnt clauses (performance experiment GH-69, not adopted unless reviewed)
+
+- New clause header bit `lkskip` (taken from the LBD field, copied on relocation), set only on
+  clauses created by conflict learning
+- `propagateForLK` leaves clauses with `lkskip` and mark `LOCAL` untouched; promoted clauses are used
+  again; main propagation, hardening/cardinality/iset/original clauses unchanged
+- Search behaviour changes; optional test-only `-DLKSKIP_CHECK` asserts skipped clauses are never
+  lookahead reasons or conflicts
+
 ---
 
 ## Files not modified for DistQLDPC integration
