@@ -32,3 +32,19 @@ is preserved. Fresh exporter02 exports all current canonical Git bodies and
 acknowledges old donor NOTICE/MOD/Solver differences; actual package review
 independently verified all76 Git bodies,69 old fixtures and12 new matrices.
 No old candidate engine, failed scientific sample or production edit was reused.
+
+## Retained progress observation
+
+Active probe04 at UTC epoch1791543041.2054002 confirms the same live helper
+birth3667070/139945345, isolated102/230 and108 completed command records;
+summary remains absent. Phase probe02 records11 targeted Main results,
+46 original application results and4 genuine one-second production timeouts.
+These are partial recorded outputs, not a full Tier0 certificate.
+
+Independent source review of the disabled retained-evidence auditor found four
+engineering gaps: hook flag representation, exact command/terminal checks,
+complete observed-birth release coverage and original baseline artifact binding.
+Reporta28201cb records no actual scientific mismatch. Narrow auditor repairs
+are in progress; the scientific worker, candidate and live attempt are unchanged.
+Root prepared read-only post-release and download-byte checks, neither executed
+before actual terminal/release evidence. No timing or promotion claim follows.
