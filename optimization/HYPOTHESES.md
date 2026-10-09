@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH83 balanced originalHx/Hz candidateaea3 nativeTier1 ACTUALRUN tool28403,
+assignment6079697113 after fullcore4f335/sourcee343/input9e2/freezefc043 PASS;
+current original48serial measurement schedule, no summary/verdict/adoption.
+Allraw/resource interference retained; no Tier2/3. Same only idea, original72
+engine shared by actualfreshapps, no olderoptimizationstack. Earlier timing
+NOT_RUN/preparation states below are historical and superseded.
+
 GH83 balanced original Hx/Hz association candidateaea3: full retained native
 application core Tier0 PASS actualaudit4f33584b,192commands/90apps/348fields/
 41Main/40dumps/12TO/2smoke/2304Pauli, focused CNF and hosted checks also PASS.

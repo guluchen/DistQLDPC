@@ -1,5 +1,15 @@
 # Optimization state
 
+GH83 native Tier1 ACTUAL RUNNING (2026-10-09), sole scientific tool28403,
+assignment15/6079697113 RUN confirmed6079776381. Full retained core Tier0 PASS,
+sourcee343/input9e2c/freezefc043 independent PASS. Actualremote13support/16input/
+773corepayload/eightconsumedpins/full24373runtime verified BEFOREhelperacquired
+isolated102/230; actualownerbirth captured. Original48serial OFF/MTO schedule,
+singlebalancedHx/Hz idea unchanged; no builds/relinks/prefetchstack/warmups.
+No timing conclusion yet, allraw/interference retained. Observe samehandle;
+do not restart on observation timeout. No adoption/Tier2/3. See GH83 native
+running record. Prior no-runner/preparation entries below superseded.
+
 GH83 complete retained core Tier0 independent PASS (2026-10-09), actual audit02
 4f33584b:192cmds/90apps/348sciencefields/41Main/40dumps/12TO/2smoke/2304Pauli.
 All774 original raw files verified; exact cataloguecfd63f92 has773 entries.
