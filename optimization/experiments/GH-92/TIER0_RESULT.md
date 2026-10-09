@@ -72,8 +72,8 @@ timing evidence.
   sinz d=10); 0 only by the baseline. Every emitted d_lb <= d <= every emitted d_ub; zero unsound results.
 * Post-hoc (`posthoc_science.py`): **123/123 candidate timeouts emitted a d_lb** (POSTHOC_PASS); of 123
   runs timing out in both, candidate final d_lb higher in 123, lower in 0 (diagnostic only).
-* New vs both parents' sweeps: BB_144_14_14 now completes (d=14, all modes; neither GH-85 nor GH-87 did
-  within 60 s) and GB_144_12_12 card-sinz completes (d=12). TN_648_10_71 (named 71 known wrong, PI
+* New vs both parents' sweeps: BB_144_14_14 now completes (d=14, all modes; neither GH-85 nor GH-87 did in their
+  yfclab2 sweeps within 60 s) and GB_144_12_12 card-sinz completes (d=12). TN_648_10_71 (named 71 known wrong, PI
   escalation): no d_ub emitted by either version (cand d_lb 9, base 4-8); nothing to report.
 
 ## Hosted
