@@ -1,5 +1,20 @@
 # Optimization state
 
+B002 Windows standalone targeted certificate PASS (2026-10-09):
+Fresh72d1 GNU14.4/Cygwin build, original300Bopt5 and all11PMS+80/1partition
+checks; independent whole-raw audit8ab9b616 PASS, ownedcleanup/allrestore passed.
+See baselines/B002/WINDOWS_TARGETED02_RESULT.md. Only targeted standalone:
+fullapplication Tier0/nativeLinux/performance still pending. No speedclaim.
+GH63 independent exactly3/select1: size2 computeLBD loop expansion, PR66,
+source38782bb fromB002;17productionlines,41,472-call state fixture source-ready
+but uncompiled. Ordinary/crossrepo CI success, actualstate/fullgate pending.
+GH64 independent exactly3/select1: guarded next-long-clause prefetch in
+propagateForLK, PR65/sourceb632a1c fromB002;5productionlines,316-case focused
+propagation fixture source-ready but uncompiled. Prior7bdeCI/pilot actual
+eight finalscientificresults agree; fullscience/codegen/performance pending.
+No combined ideas/newsemantic assumptions/no accepted optimization/noTier3.
+Continuous goal ACTIVE; mandatoryoriginal regression remains for everycandidate.
+
 B002 corrected SOURCE baseline registered (issue62, 2026-10-09):
 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7; exact32 production/build source
 identities in baselines/B002/SOURCE.json equal validated b2e1274. Binary/runtime
