@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 LP340 bounded Tier2 exploration launched after independent sourceb2897adf
+review (2026-10-09), finalsupportfa1bc383/assignment15/6074588336. Prior Tier1
+formalINCON/numericREJECT preserved; no formal promotion or automatic Tier3.
+GH64 targeted and emitted-hint proofs complete; full application prerecord
+5b4ec6e3 published64/6074583691, source-only adapter preparation underway.
+No optimization accepted; exact final scientific raw audits still required.
+
 GH64 actualtargeted01 audita017e811 and actualprefetch mechanismd4f8e983 pass
 (2026-10-09). Focused science only, fullapplication gate stillrequired before
 performance; nohotness/speedbenefit or adoption. See observations/

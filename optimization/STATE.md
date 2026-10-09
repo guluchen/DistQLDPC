@@ -1,5 +1,15 @@
 # Optimization state
 
+GH63 bounded LP340 exploratory Tier2 RUNNING (2026-10-09):
+Independent source reviewb2897adf passed; reviewed8184edf6 root literal-only
+freeze fa1bc383, input8ed1ed22, sole Windows assignment15/6074588336.
+Exactly12 original application observations, OFF/MTO AB/BA/AB,180/195;
+3600 aggregate/3660 outer+10. Prior Tier1 INCONCLUSIVE and numeric REJECT
+remain; this standing-user exploratory step is not formal promotion/ACCEPT.
+GH64 full application PLAN5b4ec6e3 published64/6074583691 before adapter;
+disabled source construction only, no simultaneous compiler/solver/Job.
+No Tier3 or accepted optimization; historical worker statuses below superseded.
+
 GH64 actual targeted01 independently certified (2026-10-09):
 Audita017e811 PASS_TARGETED_STANDALONE_ONLY verifies225raw/266protected,
 bothfresh engines/22PMS/80+1each/316orderedIDs each/complete transcripts/43cmds,
