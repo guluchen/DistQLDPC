@@ -19,10 +19,13 @@ Hosted CI37914800935 and QDistSAT cross-repo37914800707 completed successfully:
 LP136 and BB108 distances match in OFF/MTO against corrected baseline72d1.
 The tested PR merge is5be5c0449baafa3758adcebb3258f1497e4c7a93. Shared CI
 timings are informational only; this pilot is not full scientific Tier0.
-Native focused/full Tier0 and Tier1/Tier2/Tier3 NOT_RUN. Independent focused
-runner source review found three engineering blockers (validator classification,
-command-record IO gating, final prelaunch deadline); narrow repairs pending,
-no actual scientific mismatch or production-candidate alteration.
+Native focused tests completed PASS_GATE_CNF_ONLY (72rows/9086assignments per
+version, actual helper/outer0,41rawpayloads; independent audit22379706 PASS).
+The three engineering runner blockers were repaired and independently reviewed
+before execution. Acquisition01 declined before reservation;02 succeeded after
+a new eligible snapshot. Cleanup independently captured, all13births absent.
+See FOCUSED-ATTEMPT01.md and FOCUSED-RESULT01.md. Full scientific Tier0 and
+Tier1/Tier2/Tier3 NOT_RUN; no actual scientific mismatch or candidate alteration.
 The only production change is XOR association; logical rows/Pauli OR/objective/
 nontriviality/engine/bounds/timeouts/output meanings stay unchanged. Projection
 proof and focused actual-helper checks precede full science and performance.

@@ -1,5 +1,13 @@
 # Hypothesis registry (not an execution queue)
 
+2026-10-09 GH83 balanced original check XOR candidateaea3ee0/draftPR84:
+native focused tests PASS_GATE_CNF_ONLY, 72 rows/9086 assignments per version;
+independent retained audit22379706 complete. Hosted CI/cross-repo PASS.
+Full application Tier0 and performance Tier1/2/3 NOT_RUN; no adoption.
+Logical chains, engine and Pauli objective unchanged. Same gate count and
+shorter dependency depth are structural evidence, not measured speed.
+Earlier focused pending source states below are historical.
+
 GH-83-A SELECTED after fresh three-proposal Brain (2026-10-09): original Hx/Hz
 stabilizer XOR association becomes balanced in live application only. B redundant
 check-pair equations/C demandwatchcleanup remainUNSELECTED. Publicprerecordissue83

@@ -1,5 +1,18 @@
 # Optimization state
 
+GH83 focused native tests completed (2026-10-09). Independent audit22379706
+verified 41 raw payloads, nine commands, exact helper extraction and compiled
+pins, and independently brute-forced 72 rows/9086 assignments per version:
+PASS_GATE_CNF_ONLY. Acquisition01 declined before execution;02 succeeded
+after a fresh eligible snapshot. Actual helper/outer exit0; separate post-check
+confirms 13 recorded births absent and all original resource settings restored.
+Slot released15/6079036735. Hosted CI37914800935 and cross-repo37914800707
+PASS; original artifact retained. Candidateaea3ee0 remains isolated in draftPR84.
+Full application Tier0 NOT_RUN; disabled integration source preparation active.
+Tier1/2/3 NOT_RUN, performance INCONCLUSIVE, no adoption. Earlier focused
+pending states below are historical. Independently verified TN648 distance<=52
+data anomaly recorded separately; no ground truth changed, not a GH83 failure.
+
 GH83 new Brain registered before edits (2026-10-09), issue83/hub15/6078486042.
 Exactlythree/selectA originalstabilizer XOR balanced association, baseline72d1
 fresh isolatedbranch experiment/gh-83-balanced-stabilizer-xor; no GH64 stacking.
