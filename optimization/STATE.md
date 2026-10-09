@@ -3,8 +3,9 @@
 GH63 actual Windows targeted01 PASS (2026-10-09), superseding uncompiled below:
 Fresh38782bb from corrected72d1, all11 WCNF including original300Bopt5,
 partition80+1 and actual-method LBD41,472 state comparisons pass. Actual
-production CODE/relocations differ; useful callsite review and independent
-whole-raw audit pending. Assignment6073411783 released6073442449, zero exit,
+production CODE/relocations differ; independent whole-raw audit b7698c4a PASS.
+Static review7f615cc7 observes actual size2 path plus outlining/code growth;
+hotness/net benefit unproven. Assignment6073411783 released6073442449, zero exit,
 ownedcleanup/allrestore pass. See observations/GH63-WINDOWS-TARGETED01.md.
 TARGETED_NOT_FULL_TIER0, application/census/performance still pending;
 no accepted optimization, no Tier1/2/3 and no active root Windows runner.

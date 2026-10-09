@@ -16,13 +16,23 @@ Actual standalone results: all11 independent WCNF cases PASS, original valid
 LBD whole-state fixture41,472 calls PASS including unsigned stamp wrap. No
 wrong result or crash. Owned Jobs empty and all four setting restores pass;
 source, support, actual objects/executables and runtime identity checks pass.
-Independent whole-raw audit and actual-callsite review remain pending.
+Independent whole-raw audit PASS_TARGETED_STANDALONE_ONLY verifies all133 raw
+payloads,102 package files,15 support files and259 protected actual identities,
+including four fresh engine objects and three actual executables. Python2563
+and Cygwin10216 sets agree before/after/current; all26 commands finish naturally.
+Audit SHA256b7698c4a8f01815acc14e2a371d39e86ba9cdac9ad6b01ee79b60275d50eb5e3.
 
 Eight actual production Solver.o objdump commands preserve headers, bytes,
 relocations and disassembly for both versions. All CODE sections are included;
 the parser rejects an unrecognized CODE header as engineering INCONCLUSIVE.
 Actual CODE/relocations differ in .text and newAuxiVarForCardinality COMDAT.
-Different bytes do not establish useful loop removal, hotness or speedup.
+Independent actual-callsite review observes the size-two path's two direct
+literal/stamp bodies instead of the generic loop backedge at two production
+vec callers. The compiler also outlines a helper and adds call/return/dispatch
+cost; .text grows145280 to146432 bytes (+1152). The auxiliary COMDAT difference
+is a relocated call operand/layout effect. These are actual mechanism evidence,
+not a hotness or net speedup conclusion. Static review
+SHA2567f615cc7037164df2d5eace8166c29ea9e56731b844b3a7116dce0cfe4bbc8f3.
 
 Package SHA2560934a01b9fdd7dedb130b59023b41e3ef6a8e4fe6e5de5019b6c85f32c822c28;
 supportde55603038c3da433c90f6d7a469da128808167ee4a3d8f235b5033ca99c45e0;
