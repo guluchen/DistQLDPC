@@ -1,5 +1,19 @@
 # Optimization state
 
+Native GH46 correctness update (2026-10-09): one existing unchanged original245
+Linux Main with exact valid300B WCNF also SIGSEGV(-11), no final optimum/status.
+Independent1024-model oracle optimum5/witness472/216hard-feasible. No candidate,
+build, second solve, performance or baseline repair. Full raw evidence/authentic
+failure independently audited; actual own processes absent/helperinactive/root
+CPU0-255 restored. Slot6071652509 released6071677051. Tier0gate REJECT/STOP;
+cause unestablished, not Windows-only, no attribution to upstream MaxCDCL.
+Known fixture remains mandatory. Scientific anomaly direction pending user;
+no new baseline designation or candidate certification/promotion through failure.
+25 original Git raw blobs preserved fd85ce5; initial public push rejected by
+automatic review, scoped25-payload content/known-credential check subsequently
+PASS; independent public-safety check and publication remain pending.
+
+
 Latest completed evidence (2026-10-09), superseding pending entries below:
 
 GH41 MTO-only original-row cap: isolated Tier1 all48 science PASS,
