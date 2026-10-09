@@ -23,6 +23,7 @@ New code, not derived from MaxCDCL.
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
 | Quiet / debug | Default `verb=0`; child stdout to `/dev/null`; `-v` / `-debug` for solver log |
 | CLI flags | `-no-card`, `-card-sinz`, `-card-mto`, `-card-both-force`, `-cpu-lim`, `-q` |
+| Symmetry breaking (GH-75) | MaxCDCL solve path only: generic candidate qubit permutations are kept only if GF(2) row-space checks prove they are plain or XZ-dual automorphisms of the encoded problem (rs Hx, rs Hz, rs[Hz;Gx], rs[Hx;Gz]); optimum-preserving orbit clauses over the `w` variables (unit clause for transitive groups). `-no-symbreak` restores the original encoding; `-symbreak-report` prints generators/orbits. Dumps and RoundingSat keep the original encoding. See `optimization/experiments/GH-75/`. |
 
 ---
 

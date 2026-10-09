@@ -178,6 +178,258 @@ struct StabilizerInstance {
     int base_vars;
 };
 
+/*
+ * GH-75: code-automorphism orbit symmetry breaking (MaxCDCL solve path only).
+ *
+ * Encoded feasible set F = {(x,z): Hz x = 0, Hx z = 0, Gx x != 0 or Gz z != 0}.
+ * A qubit permutation pi (support moved by pi) is accepted as
+ *   plain   if pi(rs Hx) = rs Hx, pi(rs Hz) = rs Hz, pi(rs[Hz;Gx]) = rs[Hz;Gx],
+ *           pi(rs[Hx;Gz]) = rs[Hx;Gz]           -> (x,z) |-> (pi x, pi z) maps F onto F;
+ *   XZ-dual if pi(rs Hx) = rs Hz, pi(rs Hz) = rs Hx, pi(rs[Hz;Gx]) = rs[Hx;Gz],
+ *           pi(rs[Hx;Gz]) = rs[Hz;Gx]           -> (x,z) |-> (pi z, pi x) maps F onto F.
+ * Both preserve the Pauli weight |supp x U supp z|. Equalities are verified over GF(2)
+ * (every permuted row reduces to zero against an RREF basis of the target space, and the
+ * ranks agree). For orbits O_1..O_k of the generated group on qubits, every optimum can be
+ * moved so that its support contains r_j = min O_j for some j, so the hard clause
+ * (w_{r_1} v ... v w_{r_k}) preserves the optimum and the soundness of all bounds.
+ * Candidate permutations are generic index maps (block/strided cyclic shifts, 2D
+ * translations, block swaps with group inverse); none is assumed, all are verified.
+ * Domain-specific adaptation of static symmetry breaking (Crawford et al. KR'96;
+ * Satsuma, Anders/Brenner/Rattan, SAT 2024, DOI 10.4230/LIPIcs.SAT.2024.4).
+ */
+struct Gf2Basis {
+    int words;
+    std::vector<std::vector<uint64_t> > rows;
+    std::vector<int> piv;
+
+    explicit Gf2Basis(int n) : words((n + 63) / 64) {}
+
+    /* Reduce v against the RREF basis; true iff v ends up zero (v in span). */
+    bool reduce(std::vector<uint64_t>& v) const {
+        for (size_t k = 0; k < rows.size(); k++) {
+            const int p = piv[k];
+            if ((v[p >> 6] >> (p & 63)) & 1) {
+                const std::vector<uint64_t>& r = rows[k];
+                for (int w = 0; w < words; w++) v[w] ^= r[w];
+            }
+        }
+        for (int w = 0; w < words; w++)
+            if (v[w]) return false;
+        return true;
+    }
+
+    void insert(std::vector<uint64_t> v) {
+        if (reduce(v)) return;
+        int p = -1;
+        for (int w = 0; w < words && p < 0; w++)
+            if (v[w]) p = w * 64 + __builtin_ctzll(v[w]);
+        for (size_t k = 0; k < rows.size(); k++)
+            if ((rows[k][p >> 6] >> (p & 63)) & 1)
+                for (int w = 0; w < words; w++) rows[k][w] ^= v[w];
+        rows.push_back(v);
+        piv.push_back(p);
+    }
+
+    int rank() const { return (int)rows.size(); }
+};
+
+/* Row supports of a (stacked) 0/1 matrix. */
+typedef std::vector<std::vector<int> > RowSupports;
+
+static void append_supports(RowSupports& out, const Matrix& M) {
+    for (int r = 0; r < M.rows; r++) {
+        std::vector<int> s;
+        for (int c = 0; c < M.cols; c++)
+            if (getm(M, r, c)) s.push_back(c);
+        if (!s.empty()) out.push_back(s);
+    }
+}
+
+static Gf2Basis basis_of(const RowSupports& rs, int n) {
+    Gf2Basis B(n);
+    std::vector<uint64_t> v((size_t)B.words);
+    for (size_t r = 0; r < rs.size(); r++) {
+        std::fill(v.begin(), v.end(), 0);
+        for (size_t t = 0; t < rs[r].size(); t++) v[rs[r][t] >> 6] |= 1ULL << (rs[r][t] & 63);
+        B.insert(v);
+    }
+    return B;
+}
+
+/* pi(rows of src) subset of span(dst). */
+static bool permuted_rows_in(const RowSupports& src, const std::vector<int>& pi, const Gf2Basis& dst) {
+    std::vector<uint64_t> v((size_t)dst.words);
+    for (size_t r = 0; r < src.size(); r++) {
+        std::fill(v.begin(), v.end(), 0);
+        for (size_t t = 0; t < src[r].size(); t++) {
+            const int c = pi[src[r][t]];
+            v[c >> 6] |= 1ULL << (c & 63);
+        }
+        if (!dst.reduce(v)) return false;
+    }
+    return true;
+}
+
+struct SymCandidate {
+    std::string desc;
+    std::vector<int> perm;
+};
+
+struct SymBreakInfo {
+    int n;
+    std::vector<std::string> generators; /* "plain <desc>" / "dual <desc>" */
+    std::vector<int> orbit_of;           /* orbit representative (min) per qubit */
+    std::vector<int> reps;               /* sorted orbit minima */
+    int candidates;
+    double seconds;
+};
+
+static void add_candidate(std::vector<SymCandidate>& out, const std::string& desc, const std::vector<int>& perm) {
+    bool ident = true;
+    for (size_t i = 0; i < perm.size() && ident; i++)
+        if (perm[i] != (int)i) ident = false;
+    if (ident) return;
+    for (size_t k = 0; k < out.size(); k++)
+        if (out[k].perm == perm) return;
+    SymCandidate c;
+    c.desc = desc;
+    c.perm = perm;
+    out.push_back(c);
+}
+
+static std::vector<SymCandidate> symmetry_candidates(int n) {
+    std::vector<SymCandidate> out;
+    char buf[96];
+    std::vector<int> p((size_t)n);
+    for (int L = 2; L <= n; L++) {
+        if (n % L) continue;
+        const int B = n / L;
+        /* contiguous blocks of size L, cyclic shift by 1 inside each block */
+        for (int i = 0; i < n; i++) p[i] = (i / L) * L + ((i % L) + 1) % L;
+        snprintf(buf, sizeof(buf), "blockshift L=%d", L);
+        add_candidate(out, buf, p);
+        /* B interleaved blocks (index = a*B + b), cyclic shift of a */
+        for (int i = 0; i < n; i++) p[i] = (((i / B) + 1) % L) * B + (i % B);
+        snprintf(buf, sizeof(buf), "stridedshift L=%d", L);
+        add_candidate(out, buf, p);
+        /* 2D translations inside contiguous blocks of size L = l*m, local index a*m+b */
+        for (int l = 2; l < L; l++) {
+            if (L % l) continue;
+            const int m = L / l;
+            if (m < 2) continue;
+            for (int i = 0; i < n; i++) {
+                const int base = (i / L) * L, loc = i % L, a = loc / m, b = loc % m;
+                p[i] = base + ((a + 1) % l) * m + b;
+            }
+            snprintf(buf, sizeof(buf), "2dshift-a L=%d (%dx%d)", L, l, m);
+            add_candidate(out, buf, p);
+            for (int i = 0; i < n; i++) {
+                const int base = (i / L) * L, loc = i % L, a = loc / m, b = loc % m;
+                p[i] = base + a * m + (b + 1) % m;
+            }
+            snprintf(buf, sizeof(buf), "2dshift-b L=%d (%dx%d)", L, l, m);
+            add_candidate(out, buf, p);
+        }
+    }
+    if (n % 2 == 0) {
+        const int h = n / 2;
+        for (int i = 0; i < n; i++) p[i] = (i + h) % n;
+        add_candidate(out, "halfswap", p);
+        /* swap halves with group inverse g -> -g, cyclic Z_h */
+        for (int i = 0; i < n; i++) {
+            const int g = i % h, side = i / h;
+            p[i] = (1 - side) * h + (h - g) % h;
+        }
+        add_candidate(out, "halfswap-inverse Z_h", p);
+        /* swap halves with inverse in Z_l x Z_m, local index a*m+b */
+        for (int l = 2; l < h; l++) {
+            if (h % l) continue;
+            const int m = h / l;
+            if (m < 2) continue;
+            for (int i = 0; i < n; i++) {
+                const int g = i % h, side = i / h, a = g / m, b = g % m;
+                p[i] = (1 - side) * h + ((l - a) % l) * m + (m - b) % m;
+            }
+            snprintf(buf, sizeof(buf), "halfswap-inverse Z_%d x Z_%d", l, m);
+            add_candidate(out, buf, p);
+        }
+    }
+    return out;
+}
+
+static int uf_find(std::vector<int>& par, int a) {
+    while (par[a] != a) {
+        par[a] = par[par[a]];
+        a = par[a];
+    }
+    return a;
+}
+
+static SymBreakInfo find_code_symmetry(
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz)
+{
+    const double t0 = cpuTime();
+    SymBreakInfo info;
+    const int n = Hx.cols;
+    info.n = n;
+    RowSupports sHx, sHz, sHzGx, sHxGz;
+    append_supports(sHx, Hx);
+    append_supports(sHz, Hz);
+    append_supports(sHzGx, Hz);
+    append_supports(sHzGx, Gx);
+    append_supports(sHxGz, Hx);
+    append_supports(sHxGz, Gz);
+    const Gf2Basis bHx = basis_of(sHx, n), bHz = basis_of(sHz, n);
+    const Gf2Basis bHzGx = basis_of(sHzGx, n), bHxGz = basis_of(sHxGz, n);
+    const bool dual_ranks = bHx.rank() == bHz.rank() && bHzGx.rank() == bHxGz.rank();
+
+    std::vector<int> par((size_t)n);
+    for (int i = 0; i < n; i++) par[i] = i;
+
+    const std::vector<SymCandidate> cands = symmetry_candidates(n);
+    info.candidates = (int)cands.size();
+    for (size_t k = 0; k < cands.size(); k++) {
+        const std::vector<int>& pi = cands[k].perm;
+        bool ok_plain =
+            permuted_rows_in(sHx, pi, bHx) && permuted_rows_in(sHz, pi, bHz) &&
+            permuted_rows_in(sHzGx, pi, bHzGx) && permuted_rows_in(sHxGz, pi, bHxGz);
+        bool ok_dual = dual_ranks &&
+            permuted_rows_in(sHx, pi, bHz) && permuted_rows_in(sHz, pi, bHx) &&
+            permuted_rows_in(sHzGx, pi, bHxGz) && permuted_rows_in(sHxGz, pi, bHzGx);
+        if (ok_plain) info.generators.push_back("plain " + cands[k].desc);
+        if (ok_dual) info.generators.push_back("dual " + cands[k].desc);
+        if (ok_plain || ok_dual)
+            for (int i = 0; i < n; i++) {
+                const int a = uf_find(par, i), b = uf_find(par, pi[i]);
+                if (a != b) par[a < b ? b : a] = a < b ? a : b;
+            }
+    }
+    info.orbit_of.resize((size_t)n);
+    for (int i = 0; i < n; i++) {
+        info.orbit_of[i] = uf_find(par, i);
+        if (info.orbit_of[i] == i) info.reps.push_back(i);
+    }
+    info.seconds = cpuTime() - t0;
+    return info;
+}
+
+static void print_symmetry_info(const SymBreakInfo& info, const char* prefix) {
+    const int k = (int)info.reps.size();
+    printf("%s n=%d candidates=%d verified_generators=%zu orbits=%d detect_cpu=%.3fs clause=%s\n",
+           prefix, info.n, info.candidates, info.generators.size(), k, info.seconds,
+           k == info.n ? "none" : (k == 1 ? "unit" : "orbit-chain"));
+    for (size_t g = 0; g < info.generators.size(); g++)
+        printf("%s generator: %s\n", prefix, info.generators[g].c_str());
+    if (k < info.n) {
+        std::vector<int> size((size_t)info.n, 0);
+        for (int i = 0; i < info.n; i++) size[info.orbit_of[i]]++;
+        printf("%s orbit reps (size):", prefix);
+        for (int j = 0; j < k && j < 64; j++) printf(" %d(%d)", info.reps[j], size[info.reps[j]]);
+        printf(k > 64 ? " ...\n" : "\n");
+    }
+    fflush(stdout);
+}
+
 /* Aux bits for sum(x_i) = b + 2*a0 + 4*a1 + ... with Boolean a_j. */
 static int parity_aux_count(int n, bool xor_one)
 {
@@ -394,7 +646,8 @@ static bool build_stabilizer_instance(
     std::vector<Var>& aux,
     StabilizerInstance& meta,
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int verb, int card_mode, int bounds_pipe_w)
+    int verb, int card_mode, int bounds_pipe_w,
+    const std::vector<int>* symbreak_orbit = NULL)
 {
     meta.n = Hx.cols;
     if (Hz.cols != meta.n || Gx.cols != meta.n || Gz.cols != meta.n) die("matrix column mismatch");
@@ -486,6 +739,67 @@ static bool build_stabilizer_instance(
         sc.push_back(~wi);
         add_soft_clause(S, sc, 1);
     }
+    /* GH-75: optimum-preserving orbit symmetry breaking (see find_code_symmetry).
+     * Orbits O_1..O_k ordered by their minima r_j. For an optimum P let j* be the first
+     * orbit met by supp(P); a group element moving a qubit of supp(P) n O_j* to r_j*
+     * keeps every orbit setwise, so we may require: r_j* in supp and supp misses
+     * O_1..O_{j*-1}. Aux p_j <-> (supp meets O_1 u ... u O_j), j = 1..k-1.
+     *   (w_{r_1} v ... v w_{r_k});  for q in O_j \ {r_j}: (-w_q v w_{r_j} v p_{j-1})
+     * (p_0 = false). Transitive group: unit clause w_{r_1}. */
+    if (symbreak_orbit && (int)symbreak_orbit->size() == meta.n) {
+        const std::vector<int>& orb = *symbreak_orbit;
+        std::vector<int> reps, idx((size_t)meta.n, -1);
+        for (int i = 0; i < meta.n; i++)
+            if (orb[i] == i) {
+                idx[i] = (int)reps.size();
+                reps.push_back(i);
+            }
+        const int k = (int)reps.size();
+        if (k < meta.n) {
+            std::vector<Lit> sb;
+            for (int j = 0; j < k; j++) sb.push_back(mkLit(off_w + reps[j]));
+            add_hard_clause(S, sb);
+        }
+        if (k > 1 && k < meta.n) {
+            std::vector<std::vector<int> > members((size_t)k);
+            for (int i = 0; i < meta.n; i++) members[idx[orb[i]]].push_back(i);
+            std::vector<Lit> pref((size_t)k);
+            for (int j = 0; j + 1 < k; j++) {
+                Var v = ensure_var(S, S.nVars());
+                aux.push_back(v);
+                pref[j] = mkLit(v);
+            }
+            for (int j = 0; j + 1 < k; j++) {
+                /* p_j -> p_{j-1} v OR_{q in O_j} w_q ;  p_{j-1} -> p_j ;  w_q -> p_j */
+                std::vector<Lit> up;
+                up.push_back(~pref[j]);
+                if (j > 0) up.push_back(pref[j - 1]);
+                for (size_t t = 0; t < members[j].size(); t++)
+                    up.push_back(mkLit(off_w + members[j][t]));
+                add_hard_clause(S, up);
+                if (j > 0) {
+                    std::vector<Lit> c;
+                    c.push_back(~pref[j - 1]); c.push_back(pref[j]);
+                    add_hard_clause(S, c);
+                }
+                for (size_t t = 0; t < members[j].size(); t++) {
+                    std::vector<Lit> c;
+                    c.push_back(~mkLit(off_w + members[j][t])); c.push_back(pref[j]);
+                    add_hard_clause(S, c);
+                }
+            }
+            for (int j = 0; j < k; j++)
+                for (size_t t = 0; t < members[j].size(); t++) {
+                    const int q = members[j][t];
+                    if (q == reps[j]) continue;
+                    std::vector<Lit> c;
+                    c.push_back(~mkLit(off_w + q));
+                    c.push_back(mkLit(off_w + reps[j]));
+                    if (j > 0) c.push_back(pref[j - 1]);
+                    add_hard_clause(S, c);
+                }
+        }
+    }
 
     S.parsing = false;
     S.setFrozenVars();
@@ -497,13 +811,23 @@ static bool build_stabilizer_instance(
 static int min_distance_stabilizer_maxsat(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int cpu_lim, int verb, int bounds_pipe_w, int card_mode,
-    const char* dump_wcnf_path)
+    const char* dump_wcnf_path, bool symbreak)
 {
     (void)cpu_lim;
     SimpSolver S;
     std::vector<Var> aux;
     StabilizerInstance meta;
-    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
+    std::vector<int> sb_orbit;
+    if (symbreak && Gx.rows + Gz.rows > 0 && Hz.cols == Hx.cols && Gx.cols == Hx.cols &&
+        Gz.cols == Hx.cols) {
+        SymBreakInfo info = find_code_symmetry(Hx, Hz, Gx, Gz);
+        if (verb > 0)
+            print_symmetry_info(info, "c symbreak:");
+        if ((int)info.reps.size() < info.n)
+            sb_orbit = info.orbit_of;
+    }
+    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w,
+                                   sb_orbit.empty() ? NULL : &sb_orbit))
         return INT_MAX;
 
     if (dump_wcnf_path && dump_wcnf_path[0])
@@ -733,7 +1057,7 @@ static void print_bounds(const BoundsBook& b) {
 static int solve_in_child_fork(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int cpu_lim, int verb, int card_mode, SolverBackend backend,
-    const char* roundingsat_bin, const char* dump_wcnf_path,
+    const char* roundingsat_bin, const char* dump_wcnf_path, bool symbreak,
     BoundsBook& out, bool& timed_out, ProgressState& prog)
 {
     int pipefd[2];
@@ -759,7 +1083,7 @@ static int solve_in_child_fork(
                 Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
         } else {
             d = min_distance_stabilizer_maxsat(
-                Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
+                Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path, symbreak);
         }
         if (d < 0)
             pipe_write_result(pipefd[1], -1, false);
@@ -866,6 +1190,8 @@ int main(int argc, char** argv) {
     const char* dump_opb_path = NULL;
     bool dump_only = false;
     bool native_parity_opb = false;
+    bool symbreak = true;          /* GH-75 orbit clause (MaxCDCL path only) */
+    bool symbreak_report = false;
 
     for (int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "-cpu-lim=", 9))
@@ -878,6 +1204,10 @@ int main(int argc, char** argv) {
             dump_only = true;
         else if (!strcmp(argv[i], "-native-parity-opb"))
             native_parity_opb = true;
+        else if (!strcmp(argv[i], "-no-symbreak"))
+            symbreak = false;
+        else if (!strcmp(argv[i], "-symbreak-report"))
+            symbreak_report = true;
         else if (!strncmp(argv[i], "-roundingsat=", 13)) {
             backend = SOLVER_ROUNDINGSAT;
             roundingsat_bin = argv[i] + 13;
@@ -904,6 +1234,9 @@ int main(int argc, char** argv) {
             printf("  Options: -cpu-lim=N  -v|-debug  -q  -dump-wcnf=PATH  -dump-opb=PATH  -dump-only\n");
             printf("           -native-parity-opb  GF(2) parity as PB equalities (OPB dump only)\n");
             printf("  Solver: default MaxCDCL; -roundingsat[=BIN] uses external RoundingSat on WCNF\n");
+            printf("  Symmetry: default adds one optimum-preserving clause from verified code\n");
+            printf("            automorphisms (MaxCDCL only); -no-symbreak disables it;\n");
+            printf("            -symbreak-report prints generators/orbits and exits\n");
             printf("  Cardinality: default Sinz+MTO (Sinz if n<=100); -no-card | -card-sinz | -card-mto\n");
             printf("               -card-both-force  always Sinz+MTO regardless of n\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
@@ -929,6 +1262,14 @@ int main(int argc, char** argv) {
     Matrix Hz = load_matrix(hz_path.c_str());
     Matrix Gx = load_matrix(gx_path.c_str());
     Matrix Gz = load_matrix(gz_path.c_str());
+
+    if (symbreak_report) {
+        if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
+            die("matrix column mismatch");
+        printf("c symbreak report: %s\n", prefix);
+        print_symmetry_info(find_code_symmetry(Hx, Hz, Gx, Gz), "c symbreak:");
+        return 0;
+    }
 
     if (dump_only) {
         if (!dump_stabilizer_instance(
@@ -966,7 +1307,7 @@ int main(int argc, char** argv) {
     ProgressState prog(false);
     int d = solve_in_child_fork(
         Hx, Hz, Gx, Gz, cpu_lim, verb, card_mode, backend,
-        roundingsat_bin, dump_wcnf_path, book, timed_out, prog);
+        roundingsat_bin, dump_wcnf_path, symbreak, book, timed_out, prog);
 
     if (verb > 0 || !prog.bounds_printed || timed_out || !book.optimal)
         print_bounds(book);
