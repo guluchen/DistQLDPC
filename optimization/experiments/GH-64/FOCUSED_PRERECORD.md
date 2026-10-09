@@ -11,7 +11,7 @@ blocker/undefined tail), unit (undefined blocker/false tail), hard conflict
 (false blocker/false tail), soft unit failure (undefined blocker/false tail
 and opposite mapped soft literal). For lengths2/3 enumerate all36 pairs;
 length1 all6 actions; length0 once. Each with/without lazy-deleted prefix and
-with/without explicit GC before propagation:314 cases per engine. Length3
+with/without explicit GC before propagation:316 cases per engine. Length3
 adds a satisfied suffix to exercise last-next and compaction. No truth supplied
 to production binaries. One fresh Solver per case,16 variables.
 
