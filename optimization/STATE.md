@@ -1,5 +1,16 @@
 # Optimization state
 
+GH64 full Windows Tier0 independently certified (2026-10-09):9d6ac056 PASS_FULL_
+WINDOWS_LOCAL_CORRECTNESS_ONLY validates963raw043e/524protected/12productionpins,
+54app204fields/162PMS40independenttruth/40equaldumps/12trueTO/2smoke/269commands,
+current source/runtime/cache/file sets/all4restores/ownedempty/outer0/PIDabsence.
+Assignment15/6074731164 released15/6074888931; no root solver active.
+Conditional Tier1 plan c5b24fae published64/6074808431 before adapter; source
+review must separate original point rejection from uncertain formal disposition.
+Fresh server read-only snapshot found fixed pair available/inactive helper,
+no lease/build/native certificate acquired; native conditional plan prepared.
+No optimization ACCEPT/performance evidence/Tier3. Historical status below superseded.
+
 GH64 full finite application Tier0 RUNNING (2026-10-09):
 Independent source rereviewc350b3c2 resolves sole budget blocker; exact inverse
 to original draft plus ten unchanged payloads. Reviewed620225 archived, root

@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 full Windows actual9d6ac056 independentlyPASS (2026-10-09),54/162/40/12/2
+plus raw/source/runtime/cleanup authentic; no performance/native equivalence.
+Tier1 source review pending point-signal vs formal uncertainty clarification;
+full963 raw043e and twelveactualproductionpins available, input16f574140c fresh.
+Native controlled certification source plan prepared after current read-only
+availability snapshot, no native lease/build/solver yet. No adoption/Tier3.
+
 GH64 repaired full harness independentlySOURCE_READY c350b3c2 (2026-10-09),
 rootfinal813983b3/package402f/slot15/6074731164; full finite Tier0 actual launched.
 No source-only scientific PASS or performance claim; sole guardedprefetch hypothesis,
