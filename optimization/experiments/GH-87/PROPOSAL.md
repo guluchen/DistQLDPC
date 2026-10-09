@@ -103,3 +103,18 @@ elsewhere apart from microseconds-to-milliseconds detection.
 
 Stop after Tier0 + cross-repo. Freeze a read-only Mac candidate binary outside build trees
 for the coordinator (Tier1/Tier2 timing vs 72d1fe1; GH-73 informational).
+
+## Amendment A1 (2026-10-09, before any science-sweep result; recorded in ATTEMPTS.md)
+
+First implementation `4766d31` marked the Z half absent and left GH-73's driver literally
+unchanged. Its first `-v` traces (BB_72_12_6, TN_36_8_4) showed a wasted step: with the
+Z half gone, GH-73's tie-break phase (which needs two unfinished halves) is skipped and the
+X half goes straight to phase 2b, whose optimisation is capped at U = the X half's *own*
+incumbent, so the solver first re-finds a weight-U solution before descending. Amended
+(`src/core/distqldpc.cc` only, active only when the Z half was eliminated): phase 2b caps
+the X half at U-1 when its own incumbent equals U (seek strictly better; OPT improves U,
+NONE proves lb = U = d). With `-no-dualskip` the cap is U exactly as in GH-73 (byte-identity
+check unchanged). Soundness is unaffected: the strict-cap NONE/OPT semantics are GH-73's
+(phase 2a probes at U-1, phase 2b NONE path), and every bound remains the X half's, which
+is global since dX = dZ. The aborted Mac checks / partial server sweep of `4766d31` are
+retained as superseded evidence.

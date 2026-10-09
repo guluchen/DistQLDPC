@@ -874,9 +874,10 @@ static int min_distance_css_interleaved(
     CssHalf hs[2] = { {"X", &Hz, &Gx, Gx.rows > 0, 1, INF}, {"Z", &Hx, &Gz, Gz.rows > 0, 1, INF} };
     /* GH-87: a verified XZ-dual map proves dX = dZ; the Z half is then eliminated (treated as absent),
      * so every bound below is the X half's, which is global. */
+    bool z_eliminated = false;
     if (dualskip && hs[0].exists && hs[1].exists) {
         DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, false);
-        if (!dm.maps.empty()) hs[1].exists = false;
+        if (!dm.maps.empty()) { hs[1].exists = false; z_eliminated = true; }
         if (verb > 0) {
             if (!dm.maps.empty())
                 printf("c dualskip: dual map '%s' verified (rank Hz=Hx=%d, [Hz;Gx]=[Hx;Gz]=%d, cpu %.3fs): dX = dZ, solving X half only\n",
@@ -936,7 +937,11 @@ static int min_distance_css_interleaved(
         if (h.lb >= U) { done[k] = true; continue; }
         uint64_t lbc = U;
         if (!done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
-        HalfStatus st = run_css_half(h, U, false, verb, card_mode, pipe_w, lbc, U, false, v);
+        /* GH-87: with the Z half eliminated the X half holds the global incumbent itself, so its
+         * optimisation only seeks weight <= U-1 (no re-find of its own incumbent): OPT improves U,
+         * NONE proves lb = U. Without elimination the cap stays U exactly as in GH-73. */
+        const uint64_t cap = (z_eliminated && h.ub == U) ? U - 1 : U;
+        HalfStatus st = run_css_half(h, cap, false, verb, card_mode, pipe_w, lbc, U, false, v);
         if (st == HALF_OPT) { h.lb = h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
         else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = U; }
         else { pipe_write_result(pipe_w, -1, false); return -1; }
