@@ -13,7 +13,16 @@ check-pair equations; unselected C uses demand dirty-watch cleanup. Neither is
 combined with A. Corrected baseline72d1fe18; isolated candidate branch
 `experiment/gh-83-balanced-stabilizer-xor`, with no GH64 prefetch patch.
 
-Status IMPLEMENTING, benefit unproved. Tier0/Tier1/Tier2/Tier3 NOT_RUN.
+Status IMPLEMENTED_PENDING_FULL_TIER0, benefit unproved. Candidate commit
+aea3ee070392c4f610f17dec4646a977d03b9509 is preserved in draft PR84.
+Hosted CI37914800935 and QDistSAT cross-repo37914800707 completed successfully:
+LP136 and BB108 distances match in OFF/MTO against corrected baseline72d1.
+The tested PR merge is5be5c0449baafa3758adcebb3258f1497e4c7a93. Shared CI
+timings are informational only; this pilot is not full scientific Tier0.
+Native focused/full Tier0 and Tier1/Tier2/Tier3 NOT_RUN. Independent focused
+runner source review found three engineering blockers (validator classification,
+command-record IO gating, final prelaunch deadline); narrow repairs pending,
+no actual scientific mismatch or production-candidate alteration.
 The only production change is XOR association; logical rows/Pauli OR/objective/
 nontriviality/engine/bounds/timeouts/output meanings stay unchanged. Projection
 proof and focused actual-helper checks precede full science and performance.
