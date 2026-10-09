@@ -1,5 +1,31 @@
 # Optimization state
 
+GH58 correctness repair ACCEPT / MERGED (2026-10-09), superseding pending entries:
+PR59 merged as 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7 after exact safe
+head b2e1274 passed CI37871089889, QDistSAT37871089865 and full finite
+correctness37871089896. Minimal final-partition auxiliary-list retirement and
+heap rebuild fix preserves clauses, cost offsets and scientific semantics.
+Original valid300B crash fixture now answers independent optimum5. Ordinary
+11 oracle/80+1 partition tests pass. Independently audited full run37869743600
+passed54 application checks/204 science fields,162PMS,40dump comparisons,
+2smokes and12genuine timeout checks; required cross-repo all8 results match.
+Exact production src+Make b2 match frozen c6/f06; independent source/math
+and raw/scope audits pass. See merged optimization/investigations/GH58/DECISION.md.
+The 958-file evidence commit149960e remains isolated locally: automatic review
+rejected raw environment-bearing publication; only a safe summary and public CI
+links were subsequently published. Detailed original debugger state also remains
+private, with public safe summaries/hashes. No rejected payload was bypassed.
+Original source-tree tar contains four already-public original tracked .or
+copies, never used by fresh GNU builds; earlier source-only label is imprecise.
+Fixed-core acquisition was refused before compilation/solve; Linux/Windows
+have no active root worker, and prepared Windows fallback remains unexecuted.
+This accepts a correctness repair only: performanceNOT_MEASURED, Tier1/2/3
+NOT_RUN, no accepted optimization and no new performance baseline designated.
+All original245 history and failed/inconclusive experiments remain valid records;
+none is retroactively promoted. Continuous optimization goal remains ACTIVE.
+Next separately register the corrected baseline and resume independent exactly
+three-proposals/select-one experiments with unchanged tier/resource gates.
+
 GH58 correctness repair ACTIVE (2026-10-09), superseding pending-user entries:
 User explicitly authorized attempting original-program repair. Separate issue58 /
 draftPR59 / branch repair/gh58-original-baseline-crash from immutable24572d6.
