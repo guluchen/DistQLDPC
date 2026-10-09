@@ -1,5 +1,16 @@
 # Optimization state
 
+GH64 acquired observer attempt02 TERMINAL1 (2026-10-09): assignment-only source
+ad244 READY/supporta20af; slot15/6077311720 released15/6077401546. Four scenarios
+completed; fifth remaining-cap local3sec exhausted before child launch, lasttwo
+NOT_RUN. Driveraggregate56.72<60; no observer PASS/solver/scientific timing.
+Actual separate post helperinactive/groupabsent/recordedidentitiesabsent/all5
+resource entries unchanged; independent whole18raw audit384b6ee2 confirms.
+Measurement repair/budget prerecord published64/6077428127 before source edits;
+no solver/judge/scientific schedule change. Measurement overhead
+and finite testbudget diagnosis ongoing, nativeTier1 NOT_RUN/INCONCLUSIVE.
+See observations/GH64-NATIVE-OBSERVER02-RESULT.md; no adoption/Tier2/3.
+
 GH64 native observer attempt01 TERMINAL BEFORE ACQUISITION (2026-10-09):
 source08df READY / literal-freeze6a7f PASS; nativeT1 sole pure-judge blocker
 repaired and independently5c8a READY. Uploaded bytes/runtime verified, then

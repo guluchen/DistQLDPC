@@ -1,5 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 acquired observer02 terminal1 (2026-10-09): 4scenarios completed/fifth local
+remaining-budget failed BEFORElaunch, last2NOT_RUN. No solver/scientific timing
+or observer PASS; cleanup/restoration independently384b6ee2 audited over18raw.
+Measurement harness diagnosis/repair only; same prefetch hypothesis and original
+numeric judge preserved, native performance INCONCLUSIVE/no adoption/Tier2/3.
+
 GH64 native observer attempt01 declined before acquisition (2026-10-09),
 source08df READY/freeze6a7f PASS; nativeT1 pure-judge repair independently5c8a
 READY. No observer scenarios or native timing executed. Separate actual post
