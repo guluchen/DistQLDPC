@@ -1,5 +1,14 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 actual Windows targeted01 PASS (2026-10-09), superseding uncompiled below:
+Fresh38782bb from corrected72d1, all11 WCNF including original300Bopt5,
+partition80+1 and actual-method LBD41,472 state comparisons pass. Actual
+production CODE/relocations differ; useful callsite review and independent
+whole-raw audit pending. Assignment6073411783 released6073442449, zero exit,
+ownedcleanup/allrestore pass. See observations/GH63-WINDOWS-TARGETED01.md.
+TARGETED_NOT_FULL_TIER0, application/census/performance still pending;
+no accepted optimization, no Tier1/2/3 and no active root Windows runner.
+
 B002 Windows standalone targeted certificate PASS (2026-10-09):
 Fresh72d1 GNU14.4/Cygwin build, original300Bopt5 and all11PMS+80/1partition
 checks; independent whole-raw audit8ab9b616 PASS, ownedcleanup/allrestore passed.
