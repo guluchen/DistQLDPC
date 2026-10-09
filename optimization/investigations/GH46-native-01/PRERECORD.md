@@ -29,7 +29,8 @@ Use the existing restricted CPU102/sibling230 lease, global spare>50% and two
 reserved CPUs<=half spare. Source and metadata work stay on CPU0. No other runner
 may use this host. No performance conclusion follows from elapsed time.
 
-Engineering process limit5 seconds, parent aggregate90 seconds; root helper
+Engineering process limit5 seconds, parent deadline90 seconds (including all
+postchecks), with bounded owned TERM3/KILL5-second cleanup; root helper
 lease remains bounded by its existing7200 maximum. Expected native execution
 milliseconds, plus full identity checks. A lawful engineering timeout is
 INCONCLUSIVE, not a correct scientific answer. No source/compiler/configuration,

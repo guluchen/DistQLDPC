@@ -22,6 +22,8 @@ def proc(pid):
  except (FileNotFoundError,ProcessLookupError):return None
 def members(sid):
  return [r for p in Path('/proc').iterdir() if p.name.isdigit() and (r:=proc(int(p.name))) is not None and r['session']==sid]
+def group_members(pg):
+ return [r for p in Path('/proc').iterdir() if p.name.isdigit() and (r:=proc(int(p.name))) is not None and r['group']==pg]
 def lease():
  root=Path('/sys/fs/cgroup');g=root/'distqldpc-bench';helper=Path('/usr/local/sbin/distqldpc-cpu-run')
  st=helper.stat();assert st.st_uid==0 and not st.st_mode&0o022 and sha(helper)==HELPER_SHA
@@ -72,25 +74,33 @@ def main():
   for p,h in runtime['critical_files'].items():assert sha(p)==h
   command=[str(binary),'-verb=1',str(fixture)];save(out/'command.json',dict(argv=command,cwd=str(t0/'baseline'),engineering_limit=5,assignment=ASSIGNMENT))
   with (out/'solve.stdout').open('wb') as stdout,(out/'solve.stderr').open('wb') as stderr:
-   child=subprocess.Popen(command,cwd=t0/'baseline',stdout=stdout,stderr=stderr,start_new_session=True)
-   leader=proc(child.pid);assert leader and leader['group']==leader['session']==child.pid;save(out/'child.json',leader)
+   child=subprocess.Popen(command,cwd=t0/'baseline',stdout=stdout,stderr=stderr,process_group=0)
+   leader=proc(child.pid);assert leader and leader['group']==child.pid and leader['session']==os.getsid(0);save(out/'child.json',leader)
    try:child.wait(timeout=5)
    except subprocess.TimeoutExpired:result['status']='ENGINEERING_TIMEOUT';raise
-  text=(out/'solve.stdout').read_bytes().decode('utf8',errors='replace');rc=child.returncode
-  vals=re.findall(r'optimal:\s*([^\s,]+)',text);statuses=re.findall(r'^s\s+(.*?)\s*$',text,re.M)
-  correct=rc in (10,20) and bool(vals) and all(re.fullmatch(r'\d+',v) and int(v)==5 for v in vals) and statuses==(['SATISFIABLE'] if rc==10 else ['UNSATISFIABLE'])
-  result.update(status='NATIVE_ONE_CASE_CORRECT_WINDOWS_ANOMALY_UNRESOLVED' if correct else 'NATIVE_SCIENTIFIC_ANOMALY_REPRODUCED',returncode=rc,science_pass=correct,reported_optima=vals,statuses=statuses,oracle=truth)
+  rawtext=(out/'solve.stdout').read_bytes();rc=child.returncode
+  try:text=rawtext.decode('utf8');utf8_valid=True
+  except UnicodeDecodeError:text=rawtext.decode('utf8',errors='replace');utf8_valid=False
+  tails=re.findall(r'optimal:([^\r\n]*)',text);vals=[x.strip().split()[0].split(',')[0] if x.strip() else '' for x in tails]
+  statuses=re.findall(r'^s\s+(.*?)\s*$',text,re.M)
+  correct=utf8_valid and rc in (10,20) and bool(vals) and all(re.fullmatch(r'\d+',v) and int(v)==5 for v in vals) and statuses==(['SATISFIABLE'] if rc==10 else ['UNSATISFIABLE'])
+  result.update(status='NATIVE_ONE_CASE_CORRECT_WINDOWS_ANOMALY_UNRESOLVED' if correct else 'NATIVE_SCIENTIFIC_ANOMALY_REPRODUCED',returncode=rc,science_pass=correct,reported_optima=vals,statuses=statuses,utf8_valid=utf8_valid,oracle=truth)
  except BaseException as e:result['error']=repr(e)
  finally:
-  if child is not None:
-   if child.poll() is None:
-    now=proc(child.pid);assert leader and now==leader,'Changed owned leader; no signaling'
-    os.killpg(child.pid,signal.SIGKILL);child.wait(timeout=5)
-   result['remaining_owned_session']=members(child.pid);result['owned_empty']=not result['remaining_owned_session'];result['actual_returncode']=child.returncode
-  os.sched_setaffinity(0,original);result['actual_affinity']=sorted(os.sched_getaffinity(0));result['actual_restore']=os.sched_getaffinity(0)==original
+  result['owned_empty']=False;result['actual_restore']=False
+  try:
+   if child is not None:
+    if child.poll() is None:
+     now=proc(child.pid);assert leader and now==leader,'Changed owned leader; no signaling'
+     os.killpg(child.pid,signal.SIGKILL);child.wait(timeout=5)
+    result['remaining_owned_group']=group_members(child.pid);result['owned_empty']=not result['remaining_owned_group'];result['actual_returncode']=child.returncode
+  except BaseException as e:result['cleanup_error']=repr(e)
+  try:
+   os.sched_setaffinity(0,original);result['actual_affinity']=sorted(os.sched_getaffinity(0));result['actual_restore']=os.sched_getaffinity(0)==original
+  except BaseException as e:result['restore_error']=repr(e)
   try:identities();result['full_recorded_identity_post']=True;result['post_lease']=lease()
   except BaseException as e:result.update(full_recorded_identity_post=False,identity_error=repr(e))
-  result['valid_evidence']=bool(result.get('owned_empty') and result['actual_restore'] and result.get('full_recorded_identity_post'))
+  result['valid_evidence']=bool(result.get('owned_empty') and result['actual_restore'] and result.get('full_recorded_identity_post') and not result.get('cleanup_error') and not result.get('restore_error'))
   save(out/'result.json',result);save(out/'SHA256.json',{str(p.relative_to(out)):sha(p) for p in sorted(out.rglob('*')) if p.is_file() and p.name!='SHA256.json'})
   print(json.dumps(result),flush=True)
  return 0 if result['valid_evidence'] else 1
