@@ -1,0 +1,45 @@
+{
+ "argv": [
+  "optimization/experiments/GH-67/tier1_mac.py",
+  "--base",
+  "../frozen67/base/distqldpc",
+  "--cand",
+  "../frozen67/cand/distqldpc",
+  "--out",
+  "optimization/experiments/GH-67/raw/tier1-cand",
+  "--replicate",
+  "10"
+ ],
+ "binaries": {
+  "baseline": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/frozen67/base/distqldpc",
+  "candidate": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/frozen67/cand/distqldpc"
+ },
+ "binary_sha256": {
+  "baseline": "ac43af52144330f72d838667c82851511bc208f1cb35966359126c2d6a69eb26",
+  "candidate": "43c0af4c08af7add95a9dda039646ea57bc7bcdfa90c2102f00b22a8fcbec70d"
+ },
+ "input_sha256": {
+  "data/matrices/BB_90_8_10_Gx.txt": "7508803e78b256e7aff3b66f5dd839e1f734db3892c4369ff8b5b6d1d09833dd",
+  "data/matrices/BB_90_8_10_Gz.txt": "2d36853dcedfa2b791a9aab60143e9ff5af7ebf39121032653be9ab7ecd7bc52",
+  "data/matrices/BB_90_8_10_Hx.txt": "1e29683b1b66b68415fd65beb9646ade7485947c941be3bcb41e4b292a32005a",
+  "data/matrices/BB_90_8_10_Hz.txt": "21205b54bd764be453bcf25d94ab6873853e2abfc3542422ad52ecf87a0801f3",
+  "data/matrices/GB_144_12_8_Gx.txt": "18c9aa2f6a703cd0965006cff891dc707bac830d0c5e8422f1e9b86f6a2c30b3",
+  "data/matrices/GB_144_12_8_Gz.txt": "d1ecc23eccb7bff55e44f6a86dd7c45b5fdd26b1c81a916a0e4f0bff68e7051d",
+  "data/matrices/GB_144_12_8_Hx.txt": "21f34ef83d5bde789f30807e68f2e1e2a69687d1de5ec7888e16d2a921ff607b",
+  "data/matrices/GB_144_12_8_Hz.txt": "f37dd09fc00276c3d6ba05cc77905d9e2ff7a5f58ee1561dbb0a8fd000ac2476",
+  "data/matrices/BB_108_8_10_Gx.txt": "a38bc70bf3ef3a44ebc044b264b2881771a722df83773f3c5577d924df6fc08e",
+  "data/matrices/BB_108_8_10_Gz.txt": "5292d7560d7db868eff0a6c4ba0a97165c193b97084968b3c3574fac1ff28971",
+  "data/matrices/BB_108_8_10_Hx.txt": "c89441f4e417475fef2205b6aa76ae8062abe823b068b5d176f47fd12168212b",
+  "data/matrices/BB_108_8_10_Hz.txt": "4f098c52399fb2eeebcd80152fc6e153e642cfb7aa624640184a133f9c755c83",
+  "data/matrices/LP_238_44_6_Gx.txt": "971c015fb671bc8ab0a323a1acc906bfb9e65ed3bb87343f1341a45232be04e3",
+  "data/matrices/LP_238_44_6_Gz.txt": "eed362a9b682485dda05bc8c685c9affec696a19f875940f1537562da00ce042",
+  "data/matrices/LP_238_44_6_Hx.txt": "6e42eafba57c62f9e185d219bc029c2aa3934fd21cbdda76efd46abe4d4a25f3",
+  "data/matrices/LP_238_44_6_Hz.txt": "be0dbcc33cdcabefa56254e65186f6d2fe0a831c2bcc43ea16806a077f06f8d5"
+ },
+ "host": "macOS-27.0.1-arm64-arm-64bit",
+ "machine": "arm64",
+ "cpu": "Apple M6",
+ "ncpu": 12,
+ "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+ "started": "2026-10-09T12:07:18+0800"
+}

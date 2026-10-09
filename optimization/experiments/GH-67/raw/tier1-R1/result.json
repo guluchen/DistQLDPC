@@ -1,0 +1,184 @@
+{
+ "stopped": null,
+ "n_samples": 48,
+ "finished": "2026-10-09T12:13:56+0800",
+ "binary_sha256_after": {
+  "baseline": "ac43af52144330f72d838667c82851511bc208f1cb35966359126c2d6a69eb26",
+  "candidate": "2dc9826a7de42eeb8bc112e111c42fcb566c351c66337c586b589fafede70481"
+ },
+ "input_sha256_after_ok": true,
+ "gate": {
+  "no-card": {
+   "rows": [
+    {
+     "case": "BB_90_8_10",
+     "baseline": [
+      1.883276417,
+      1.874857167,
+      1.8770100829999992
+     ],
+     "candidate": [
+      1.8830095000000002,
+      1.8806865830000001,
+      1.8783915830000009
+     ],
+     "median_b": 1.8770100829999992,
+     "median_c": 1.8806865830000001,
+     "ratio": 1.0019587001866952,
+     "range_envelope": 1.0043482421719863,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "GB_144_12_8",
+     "baseline": [
+      0.6597377499999979,
+      0.6582465420000005,
+      0.665147417
+     ],
+     "candidate": [
+      0.6736964999999984,
+      0.6699032500000008,
+      0.6717053750000019
+     ],
+     "median_b": 0.6597377499999979,
+     "median_c": 0.6717053750000019,
+     "ratio": 1.0181399730423248,
+     "range_envelope": 1.0234713849814616,
+     "nonoverlapping_regression": true,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "BB_108_8_10",
+     "baseline": [
+      2.297225417,
+      2.2932810829999966,
+      2.2812819589999975
+     ],
+     "candidate": [
+      2.2883438750000025,
+      2.3004810410000047,
+      2.299413417000004
+     ],
+     "median_b": 2.2932810829999966,
+     "median_c": 2.299413417000004,
+     "ratio": 1.0026740437731188,
+     "range_envelope": 1.008415918043039,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "LP_238_44_6",
+     "baseline": [
+      1.2040731669999971,
+      1.2052516660000094,
+      1.2089593329999957
+     ],
+     "candidate": [
+      1.2031640829999972,
+      1.205379165999993,
+      1.1987363329999994
+     ],
+     "median_b": 1.2052516660000094,
+     "median_c": 1.2031640829999972,
+     "ratio": 0.9982679277209046,
+     "range_envelope": 1.0010846508632445,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    }
+   ],
+   "median_ratio_geomean": 1.0052314092883055,
+   "envelope_geomean": 1.009293859251115,
+   "all_medians_nonworse": false,
+   "numeric_positive": false,
+   "regression_flags": [
+    "GB_144_12_8"
+   ]
+  },
+  "card-mto": {
+   "rows": [
+    {
+     "case": "BB_90_8_10",
+     "baseline": [
+      1.6691674169999988,
+      1.671859083000001,
+      1.6590796670000003
+     ],
+     "candidate": [
+      1.6721994169999999,
+      1.6693507499999978,
+      1.6691022079999982
+     ],
+     "median_b": 1.6691674169999988,
+     "median_c": 1.6693507499999978,
+     "ratio": 1.0001098349980546,
+     "range_envelope": 1.0079078481045598,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "GB_144_12_8",
+     "baseline": [
+      1.1209665410000014,
+      1.113014458000002,
+      1.1133877079999976
+     ],
+     "candidate": [
+      1.1217814579999974,
+      1.1122416249999993,
+      1.1252609589999985
+     ],
+     "median_b": 1.1133877079999976,
+     "median_c": 1.1217814579999974,
+     "ratio": 1.007538928209543,
+     "range_envelope": 1.011003002622268,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "BB_108_8_10",
+     "baseline": [
+      2.3332349579999985,
+      2.3308172909999954,
+      2.341094083999998
+     ],
+     "candidate": [
+      2.3312928750000026,
+      2.331232,
+      2.3338356670000024
+     ],
+     "median_b": 2.3332349579999985,
+     "median_c": 2.3312928750000026,
+     "ratio": 0.9991676436214291,
+     "range_envelope": 1.0012949861027984,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "LP_238_44_6",
+     "baseline": [
+      1.1436912919999997,
+      1.1504745000000014,
+      1.1434727500000008
+     ],
+     "candidate": [
+      1.1427688750000016,
+      1.1393108339999998,
+      1.1514714999999995
+     ],
+     "median_b": 1.1436912919999997,
+     "median_c": 1.1427688750000016,
+     "ratio": 0.999193473792753,
+     "range_envelope": 1.0069951382750475,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    }
+   ],
+   "median_ratio_geomean": 1.0014963501353817,
+   "envelope_geomean": 1.0067941233095181,
+   "all_medians_nonworse": false,
+   "numeric_positive": false,
+   "regression_flags": []
+  }
+ }
+}
