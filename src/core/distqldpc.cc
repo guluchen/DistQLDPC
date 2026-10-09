@@ -672,13 +672,221 @@ static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
     if (len > 0) (void)write(pipe_w, buf, (size_t)len);
 }
 
+/* ---- GH-87: dual-half elimination (extension of GH-73; idea: unselected proposal GH-78-B).
+ * X half F_X = ker(Hz) \ ker([Hz;Gx]), Z half F_Z = ker(Hx) \ ker([Hx;Gz]). If a qubit permutation
+ * pi satisfies pi(rs Hz) = rs Hx and pi(rs [Hz;Gx]) = rs [Hx;Gz], then (dot products are permutation
+ * invariant) pi(ker Hz) = ker Hx and pi(ker [Hz;Gx]) = ker [Hx;Gz], so v |-> pi v is a weight-
+ * preserving bijection F_X -> F_Z and dX = dZ: the X half alone yields d, and its proven LB/UB are
+ * global. Equalities are verified over GF(2): equal ranks, and every permuted source row reduces to
+ * zero in an RREF basis of the target space (a permutation preserves rank). Candidates: identity,
+ * then the generic GH-75 family (none assumed, all verified). GF(2) basis, row supports and the
+ * candidate family are reused from GH-75 (bbe5055) / GH-85 (cc7e5ea). */
+struct Gf2Basis {
+    int words;
+    std::vector<std::vector<uint64_t> > rows;
+    std::vector<int> piv;
+
+    explicit Gf2Basis(int n) : words((n + 63) / 64) {}
+
+    /* Reduce v against the RREF basis; true iff v ends up zero (v in span). */
+    bool reduce(std::vector<uint64_t>& v) const {
+        for (size_t k = 0; k < rows.size(); k++) {
+            const int p = piv[k];
+            if ((v[p >> 6] >> (p & 63)) & 1) {
+                const std::vector<uint64_t>& r = rows[k];
+                for (int w = 0; w < words; w++) v[w] ^= r[w];
+            }
+        }
+        for (int w = 0; w < words; w++)
+            if (v[w]) return false;
+        return true;
+    }
+
+    void insert(std::vector<uint64_t> v) {
+        if (reduce(v)) return;
+        int p = -1;
+        for (int w = 0; w < words && p < 0; w++)
+            if (v[w]) p = w * 64 + __builtin_ctzll(v[w]);
+        for (size_t k = 0; k < rows.size(); k++)
+            if ((rows[k][p >> 6] >> (p & 63)) & 1)
+                for (int w = 0; w < words; w++) rows[k][w] ^= v[w];
+        rows.push_back(v);
+        piv.push_back(p);
+    }
+
+    int rank() const { return (int)rows.size(); }
+};
+
+typedef std::vector<std::vector<int> > RowSupports;
+
+static void append_supports(RowSupports& out, const Matrix& M) {
+    for (int r = 0; r < M.rows; r++) {
+        std::vector<int> s;
+        for (int c = 0; c < M.cols; c++)
+            if (getm(M, r, c)) s.push_back(c);
+        if (!s.empty()) out.push_back(s);
+    }
+}
+
+static Gf2Basis basis_of(const RowSupports& rs, int n) {
+    Gf2Basis B(n);
+    std::vector<uint64_t> v((size_t)B.words);
+    for (size_t r = 0; r < rs.size(); r++) {
+        std::fill(v.begin(), v.end(), 0);
+        for (size_t t = 0; t < rs[r].size(); t++) v[rs[r][t] >> 6] |= 1ULL << (rs[r][t] & 63);
+        B.insert(v);
+    }
+    return B;
+}
+
+/* pi(rows of src) subset of span(dst). */
+static bool permuted_rows_in(const RowSupports& src, const std::vector<int>& pi, const Gf2Basis& dst) {
+    std::vector<uint64_t> v((size_t)dst.words);
+    for (size_t r = 0; r < src.size(); r++) {
+        std::fill(v.begin(), v.end(), 0);
+        for (size_t t = 0; t < src[r].size(); t++) {
+            const int c = pi[src[r][t]];
+            v[c >> 6] |= 1ULL << (c & 63);
+        }
+        if (!dst.reduce(v)) return false;
+    }
+    return true;
+}
+
+struct SymCandidate {
+    std::string desc;
+    std::vector<int> perm;
+};
+
+static void add_candidate(std::vector<SymCandidate>& out, const std::string& desc, const std::vector<int>& perm) {
+    for (size_t k = 0; k < out.size(); k++)
+        if (out[k].perm == perm) return;
+    SymCandidate c;
+    c.desc = desc;
+    c.perm = perm;
+    out.push_back(c);
+}
+
+/* Identity first (rs Hz = rs Hx type codes), then the GH-75 generic index maps. */
+static std::vector<SymCandidate> dual_candidates(int n) {
+    std::vector<SymCandidate> out;
+    char buf[96];
+    std::vector<int> p((size_t)n);
+    for (int i = 0; i < n; i++) p[i] = i;
+    add_candidate(out, "identity", p);
+    for (int L = 2; L <= n; L++) {
+        if (n % L) continue;
+        const int B = n / L;
+        for (int i = 0; i < n; i++) p[i] = (i / L) * L + ((i % L) + 1) % L;
+        snprintf(buf, sizeof(buf), "blockshift L=%d", L);
+        add_candidate(out, buf, p);
+        for (int i = 0; i < n; i++) p[i] = (((i / B) + 1) % L) * B + (i % B);
+        snprintf(buf, sizeof(buf), "stridedshift L=%d", L);
+        add_candidate(out, buf, p);
+        for (int l = 2; l < L; l++) {
+            if (L % l) continue;
+            const int m = L / l;
+            if (m < 2) continue;
+            for (int i = 0; i < n; i++) {
+                const int base = (i / L) * L, loc = i % L, a = loc / m, b = loc % m;
+                p[i] = base + ((a + 1) % l) * m + b;
+            }
+            snprintf(buf, sizeof(buf), "2dshift-a L=%d (%dx%d)", L, l, m);
+            add_candidate(out, buf, p);
+            for (int i = 0; i < n; i++) {
+                const int base = (i / L) * L, loc = i % L, a = loc / m, b = loc % m;
+                p[i] = base + a * m + (b + 1) % m;
+            }
+            snprintf(buf, sizeof(buf), "2dshift-b L=%d (%dx%d)", L, l, m);
+            add_candidate(out, buf, p);
+        }
+    }
+    if (n % 2 == 0) {
+        const int h = n / 2;
+        for (int i = 0; i < n; i++) p[i] = (i + h) % n;
+        add_candidate(out, "halfswap", p);
+        for (int i = 0; i < n; i++) {
+            const int g = i % h, side = i / h;
+            p[i] = (1 - side) * h + (h - g) % h;
+        }
+        add_candidate(out, "halfswap-inverse Z_h", p);
+        for (int l = 2; l < h; l++) {
+            if (h % l) continue;
+            const int m = h / l;
+            if (m < 2) continue;
+            for (int i = 0; i < n; i++) {
+                const int g = i % h, side = i / h, a = g / m, b = g % m;
+                p[i] = (1 - side) * h + ((l - a) % l) * m + (m - b) % m;
+            }
+            snprintf(buf, sizeof(buf), "halfswap-inverse Z_%d x Z_%d", l, m);
+            add_candidate(out, buf, p);
+        }
+    }
+    return out;
+}
+
+struct DualMapInfo {
+    int n, rank_hz, rank_hx, rank_hzgx, rank_hxgz, candidates;
+    std::vector<std::string> maps;   /* verified dual maps, in candidate order (first = used) */
+    double seconds;
+};
+
+/* Verified XZ-dual maps of the two CSS half instances. all=false stops at the first one. */
+static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool all)
+{
+    const double t0 = cpuTime();
+    DualMapInfo info;
+    const int n = Hx.cols;
+    info.n = n;
+    RowSupports sHz, sHzGx, sHx, sHxGz;
+    append_supports(sHz, Hz);
+    append_supports(sHzGx, Hz);
+    append_supports(sHzGx, Gx);
+    append_supports(sHx, Hx);
+    append_supports(sHxGz, Hx);
+    append_supports(sHxGz, Gz);
+    const Gf2Basis bHx = basis_of(sHx, n), bHxGz = basis_of(sHxGz, n);
+    info.rank_hx = bHx.rank();
+    info.rank_hxgz = bHxGz.rank();
+    info.rank_hz = basis_of(sHz, n).rank();
+    info.rank_hzgx = basis_of(sHzGx, n).rank();
+    info.candidates = 0;
+    if (info.rank_hz == info.rank_hx && info.rank_hzgx == info.rank_hxgz) {
+        const std::vector<SymCandidate> cands = dual_candidates(n);
+        info.candidates = (int)cands.size();
+        for (size_t k = 0; k < cands.size(); k++) {
+            const std::vector<int>& pi = cands[k].perm;
+            if (!permuted_rows_in(sHz, pi, bHx) || !permuted_rows_in(sHzGx, pi, bHxGz)) continue;
+            info.maps.push_back(cands[k].desc);
+            if (!all) break;
+        }
+    }
+    info.seconds = cpuTime() - t0;
+    return info;
+}
+
 static int min_distance_css_interleaved(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int verb, int pipe_w, int card_mode)
+    int verb, int pipe_w, int card_mode, bool dualskip)
 {
     if (Hx.cols != Hz.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols) die("matrix column mismatch");
     const uint64_t n = (uint64_t)Hx.cols, INF = UINT64_MAX;
     CssHalf hs[2] = { {"X", &Hz, &Gx, Gx.rows > 0, 1, INF}, {"Z", &Hx, &Gz, Gz.rows > 0, 1, INF} };
+    /* GH-87: a verified XZ-dual map proves dX = dZ; the Z half is then eliminated (treated as absent),
+     * so every bound below is the X half's, which is global. */
+    if (dualskip && hs[0].exists && hs[1].exists) {
+        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, false);
+        if (!dm.maps.empty()) hs[1].exists = false;
+        if (verb > 0) {
+            if (!dm.maps.empty())
+                printf("c dualskip: dual map '%s' verified (rank Hz=Hx=%d, [Hz;Gx]=[Hx;Gz]=%d, cpu %.3fs): dX = dZ, solving X half only\n",
+                       dm.maps[0].c_str(), dm.rank_hx, dm.rank_hxgz, dm.seconds);
+            else
+                printf("c dualskip: no dual map (ranks Hz %d Hx %d [Hz;Gx] %d [Hx;Gz] %d, %d candidates, cpu %.3fs): both halves\n",
+                       dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.seconds);
+            fflush(stdout);
+        }
+    }
     uint64_t U = INF, v = 0, lastLB = 0;
     /* Phase 1: doubling feasibility tests on both halves; anytime global LB. */
     for (uint64_t m = 1; ; m = (m >= n ? n : 2 * m)) {
@@ -744,6 +952,7 @@ static int min_distance_css_interleaved(
 }
 
 static bool g_css_joint = false;   /* -joint: original symplectic joint encoding */
+static bool g_dualskip = true;     /* GH-87: eliminate one half under a verified XZ-dual map; -no-dualskip disables */
 
 static int parse_roundingsat_cost(const std::string& out)
 {
@@ -959,7 +1168,7 @@ static int solve_in_child_fork(
             d = min_distance_stabilizer_roundingsat(
                 Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
         } else if (!g_css_joint) {
-            d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode);
+            d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode, g_dualskip);
         } else {
             d = min_distance_stabilizer_maxsat(
                 Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
@@ -1069,6 +1278,7 @@ int main(int argc, char** argv) {
     const char* dump_opb_path = NULL;
     bool dump_only = false;
     bool native_parity_opb = false;
+    bool dualskip_report = false;  /* GH-87 */
 
     for (int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "-cpu-lim=", 9))
@@ -1102,6 +1312,10 @@ int main(int argc, char** argv) {
             card_mode = 4;
         else if (!strcmp(argv[i], "-joint"))
             g_css_joint = true;
+        else if (!strcmp(argv[i], "-no-dualskip"))
+            g_dualskip = false;
+        else if (!strcmp(argv[i], "-dualskip-report"))
+            dualskip_report = true;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
@@ -1112,6 +1326,9 @@ int main(int argc, char** argv) {
             printf("  Cardinality: default Sinz+MTO (Sinz if n<=100); -no-card | -card-sinz | -card-mto\n");
             printf("               -card-both-force  always Sinz+MTO regardless of n\n");
             printf("  Formulation: default CSS split d=min(dX,dZ), interleaved bound search; -joint = original symplectic joint encoding\n");
+            printf("  Dual halves (split only): default solves only the X half when a verified XZ-dual qubit\n");
+            printf("            permutation proves dX = dZ; -no-dualskip disables; -dualskip-report prints the\n");
+            printf("            verified dual maps and exits\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -1135,6 +1352,22 @@ int main(int argc, char** argv) {
     Matrix Hz = load_matrix(hz_path.c_str());
     Matrix Gx = load_matrix(gx_path.c_str());
     Matrix Gz = load_matrix(gz_path.c_str());
+
+    if (dualskip_report) {   /* GH-87 */
+        if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
+            die("matrix column mismatch");
+        printf("c dualskip report: %s\n", prefix);
+        if (Gx.rows == 0 || Gz.rows == 0) {
+            printf("c dualskip: a half has no logical rows (Gx %d, Gz %d): not applicable\n", Gx.rows, Gz.rows);
+            return 0;
+        }
+        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, true);
+        printf("c dualskip: n=%d rank Hz=%d Hx=%d [Hz;Gx]=%d [Hx;Gz]=%d candidates=%d verified_maps=%zu detect_cpu=%.3fs used=%s\n",
+               dm.n, dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.maps.size(), dm.seconds,
+               dm.maps.empty() ? "none" : dm.maps[0].c_str());
+        for (size_t k = 0; k < dm.maps.size(); k++) printf("c dualskip map: %s\n", dm.maps[k].c_str());
+        return 0;
+    }
 
     if (dump_only) {
         if (!dump_stabilizer_instance(

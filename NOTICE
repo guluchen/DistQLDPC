@@ -59,6 +59,10 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
 
 Modified files (partial list): Solver.h, Solver.cc
 
+  src/core/distqldpc.cc also contains GH-87 dual-half elimination (an
+  original use of verified XZ-dual qubit permutations to prove dX = dZ in
+  the GH-73 split; GF(2) checks reused from GH-75). No third-party code.
+
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
 substantial portions, per the MIT license.
