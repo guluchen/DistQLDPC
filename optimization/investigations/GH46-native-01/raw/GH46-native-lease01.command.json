@@ -1,0 +1,7 @@
+[
+  "ssh",
+  "-o",
+  "BatchMode=yes",
+  "yfclab2",
+  "taskset -c 0 sudo -n /usr/local/sbin/distqldpc-cpu-run run --cwd /home/yfc -- /usr/bin/env PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3.12 -B /home/yfc/GH46-native-source-01/launcher.py --assignment 'https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6071652509' --source-sha dfe5373f894f790d003c9d61761da3c7c163ef8977f57f2f054b61f3f9052686 --launcher-sha 7ad5238150a9ad750d3cb862789f01cfb7b4bb7e737151de3165e79be645a5a3"
+]
