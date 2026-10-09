@@ -33,6 +33,15 @@ in each file are unchanged.
 
 ### `Solver.h` / `Solver.cc`
 
+#### Experimental two-literal LBD calculation (GH63)
+
+For exactly two literals, `computeLBD` expands the original counted loop into
+two sequential copies of its body. The single counter increment, zero-level
+checks, stamp comparisons and conditional writes retain their original order,
+including counter wrapping. All other sizes retain the original loop. This
+isolated performance experiment is unvalidated and not an adopted optimization;
+see `optimization/experiments/GH-63/`. Original upstream headers remain intact.
+
 #### Retired soft literals after preprocessing partition (GH58)
 
 After partition replaces a conflicting soft set with its existing aggregate
