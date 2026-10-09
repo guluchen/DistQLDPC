@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 native observer attempt01 declined before acquisition (2026-10-09),
+source08df READY/freeze6a7f PASS; nativeT1 pure-judge repair independently5c8a
+READY. No observer scenarios or native timing executed. Separate actual post
+resource restoration observed; independent terminal audit pending, slot released.
+Same sole prefetch hypothesis remains performance INCONCLUSIVE; original
+Windows negative48 and native certified Tier0 unchanged. No adoption/Tier2/3.
+
 GH64 same-concept native Tier1 prerecordc316674/source21be9120 published64/6076750252
 before new adapter construction (2026-10-09). Fresh16matricesb8c03 independently
 6123 authenticates32Git blobs; native ELF hint56c1f720 baseline0/candidate1,

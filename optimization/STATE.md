@@ -1,5 +1,15 @@
 # Optimization state
 
+GH64 native observer attempt01 TERMINAL BEFORE ACQUISITION (2026-10-09):
+source08df READY / literal-freeze6a7f PASS; nativeT1 sole pure-judge blocker
+repaired and independently5c8a READY. Uploaded bytes/runtime verified, then
+resource acquisition declined before any observer/controller/solver process.
+Actual separate post-check inactive/no group/no outputs/resource configuration
+exactly restored; independent terminal audit pending. Slot15/6077203565 released
+15/6077251401. No active scientific runner, observer runtime PASS or native
+timing samples; performance INCONCLUSIVE, Windows negative48 retained.
+See observations/GH64-NATIVE-OBSERVER01-RESULT.md. No adoption/Tier2/3.
+
 GH64 native Tier1 prerecord PUBLISHED before adapter (2026-10-09): c316674,
 source21be9120, issue64/6076750252. Same sole guarded-prefetch72d1/b632, original
 48case/mode/role/repeat order and walljudge,6600/6660+3/5 bounded plan; no new
