@@ -1,7 +1,7 @@
 """Disabled: one unchanged native baseline solve; no candidate/build/performance."""
 from pathlib import Path
 import argparse,hashlib,json,os,re,signal,subprocess,sys,time
-ASSIGNMENT='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6071941982'
 FIXTURE_SHA='ae851ec8bb80b3a638c40184d5203259ecade373e5598df2c79dbd7d12eb52d4'
 BIN_SHA='86db7efcf42388e76a8fe9e2afc2bfff417ad55d296ce5dc59c2ff84bde32d09'
 RAW_SHA='ecf1f127d1d6f130fa99d954220e10f70a8accec5b6d7d01de2b14ab1118deeb'
