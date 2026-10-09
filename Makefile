@@ -12,6 +12,12 @@ CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O3 -g \
            -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG
 LDFLAGS  = -lz
 
+# Experimental opt-in; use a clean build when changing this setting.
+LTO ?= 0
+ifeq ($(LTO),1)
+CXXFLAGS += -flto=1
+endif
+
 ENGINE_OBJS = \
 	$(BUILD)/SimpSolver.o \
 	$(BUILD)/Solver.o \
