@@ -1,5 +1,10 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 repaired full harness independentlySOURCE_READY c350b3c2 (2026-10-09),
+rootfinal813983b3/package402f/slot15/6074731164; full finite Tier0 actual launched.
+No source-only scientific PASS or performance claim; sole guardedprefetch hypothesis,
+full54/162/40/12/2 scope preserved. GH63 finalINCON retained, no automaticTier3.
+
 GH64 full adapter audit300684fc SOURCE_NOT_READY_DISABLED (2026-10-09),
 one engineering remaining-budget-before-Popen blocker; exact145package402f
 authenticated and full scientific scope unchanged. Narrow source repair underway,

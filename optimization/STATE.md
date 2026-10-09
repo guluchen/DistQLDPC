@@ -1,5 +1,13 @@
 # Optimization state
 
+GH64 full finite application Tier0 RUNNING (2026-10-09):
+Independent source rereviewc350b3c2 resolves sole budget blocker; exact inverse
+to original draft plus ten unchanged payloads. Reviewed620225 archived, root
+literal-only finalsupport813983b3/package402f446f; sole assignment15/6074731164.
+Actual corresponding targeted64 engines/Main reused; two fresh original apps,
+four separate timeout hooks. Full54/162/40/12/2 or INCONCLUSIVE,3600/3660+10.
+No GH63 optimization mixture, performance run or Tier3; actual raw audit follows.
+
 GH64 full source audit complete (2026-10-09):300684fc SOURCE_NOT_READY_DISABLED.
 One engineering blocker: no fresh remaining-budget check immediately before
 Popen after preflight; must refuse exhausted aggregate and record/use mincap.
