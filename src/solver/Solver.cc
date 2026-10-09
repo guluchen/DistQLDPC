@@ -3962,6 +3962,11 @@ CRef Solver::propagateForLK() {
 	if (value(blocker) == l_True) {
 	  *j++ = *i++; continue;
 	}
+#if defined(__GNUC__)
+	// Prefetch only a live next clause that may need inspection (GH64).
+	if (end - i > 1 && value((i + 1)->blocker) != l_True)
+	  __builtin_prefetch(ca.lea((i + 1)->cref), 0, 1);
+#endif
 	// Make sure the false literal is data[1]:
 	CRef     cr = i->cref;
 	Clause&  c = ca[cr];

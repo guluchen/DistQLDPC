@@ -33,6 +33,14 @@ in each file are unchanged.
 
 ### `Solver.h` / `Solver.cc`
 
+#### Guarded lookahead clause prefetch (GH64 experiment)
+
+In `propagateForLK`, after a current blocker miss, prefetch the next long
+watcher's live clause address only when that watch exists and its blocker is
+not true. Fixed read/locality1 hint on GNU-compatible compilers; no search,
+clause, reason, bound or encoding change. Preregistered in issue64; untested
+and not adopted. Preserve upstream MaxCDCL notices and attribution.
+
 #### Retired soft literals after preprocessing partition (GH58)
 
 After partition replaces a conflicting soft set with its existing aggregate
