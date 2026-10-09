@@ -1,5 +1,14 @@
 # Optimization state
 
+GH63 LP340 exploratory Tier2 attempt TERMINAL / INCONCLUSIVE (2026-10-09):
+Baseline OFF first solve returned0, d/lb/ub/objective8, wall upper65.159441s.
+Candidate OFF first solve stopped by mandatory spare-capacity guard; no complete
+pair or medians. Inner cleanup wait10s failure retained; outer Job empty,
+post support/Python verification and all four settings restoration recorded.
+Assignment15/6074588336 released15/6074639736; incomplete raw archived,
+independent audit pending. No replacement sample/Tier3/performance conclusion.
+GH64 full gate remains source preparation only. Historical RUNNING below superseded.
+
 GH63 bounded LP340 exploratory Tier2 RUNNING (2026-10-09):
 Independent source reviewb2897adf passed; reviewed8184edf6 root literal-only
 freeze fa1bc383, input8ed1ed22, sole Windows assignment15/6074588336.

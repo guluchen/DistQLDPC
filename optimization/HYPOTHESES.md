@@ -1,5 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 bounded LP340 Tier2 exploration stopped INCONCLUSIVE (2026-10-09),
+mandatory spare-capacity guard during first candidate; only baselineOFF1 complete,
+scientific d8. No pair/medians/favorable retry/performance conclusion. Cleanup
+wait failure retained, outer Job empty/all4restored; independent raw audit pending.
+No formal Tier1/Tier2 PASS or adoption; GH64 full application source preparation.
+
 GH63 LP340 bounded Tier2 exploration launched after independent sourceb2897adf
 review (2026-10-09), finalsupportfa1bc383/assignment15/6074588336. Prior Tier1
 formalINCON/numericREJECT preserved; no formal promotion or automatic Tier3.
