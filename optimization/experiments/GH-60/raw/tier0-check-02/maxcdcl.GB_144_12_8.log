@@ -1,0 +1,100 @@
+WARNING! DIMACS header mismatch: wrong number of variables.
+c This is COMiniSatPS.
+c ============================[ Problem Statistics ]=============================
+c |                                                                             |
+c initial UB: 2147483647
+c |  Number of variables:          1737                                         |
+c |  Number of clauses:            4942                                         |
+c |  Parse time:                   0.00 s                                       |
+c |                                                                             |
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 144, of which 144 unit, 0 nonUnit and 0 empty
+c total nb of literals: 18204
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 0
+c 1 conflict sets found with length 81
+c fixedCost 0, nbSatLits 0, totalFixedVars 0, objForSearch: 144
+
+c no UB provided, search from scratch...
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 144), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+
+c Cardinality: 429 (Sinz+MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 4 conflicts with init 9996
+
+c UB=2 fails, cnfls=4, hcnfls=4, core 2, tier2 0, local 0, quasiC: 1 (fixed: 53)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 197), lk: 1, shorten: 0, pureSo 0, nbFlyRd 1, nbFixedLH 0
+
+c Cardinality: 919 (Sinz+MTO) for UB 4
+c ends of initiationization by VSIDS at 875 conflicts with init 9129
+
+c UB=4 fails, cnfls=875, hcnfls=442, core 336, tier2 62, local 436, quasiC: 29 (fixed: 1275)
+c prunedLB 2.73, dev 0.59, succRate 0.83, nbSucc 372, nbHardens 187 (fixed 24415), lk: 449, shorten: 0, pureSo 62, nbFlyRd 12, nbFixedLH 4
+
+c Cardinality: 1248 (Sinz+MTO) for UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 3, nbTested: 1001, counter 44437
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 22, nbTested: 1001, counter 125412
+c ***** top quasi confl at level 0*****
+c ***** top quasi confl at level 0*****
+c ends of initiationization by VSIDS at 6206 conflicts with init 4669
+
+c UB=8 fails, cnfls=6206, hcnfls=630, core 1962, tier2 733, local 2835, quasiC: 670 (fixed: 30892)
+c prunedLB 5.30, dev 1.02, succRate 0.75, nbSucc 5024, nbHardens 232 (fixed 57298), lk: 6698, shorten: 0, pureSo 182, nbFlyRd 41, nbFixedLH 83
+
+c Cardinality: 1433 (Sinz+MTO) for UB 16
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 0, nbTested: 1001, counter 171290
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 0, nbTested: 1001, counter 240502
+c UB=16 succs, confls=11652, hconfls=754, core 170, tier2 378, local 5266,  15 soft cls unsat (0 at L0), 0 fixed vars at L0, softCnfl 190, nbFlyRd 79, nbFixedLH 131
+c nbHardens 237 (fixed 106021), shorten: 0, prunedLB 9.39, dev 1.34, succRate 0.73, nbSucc 5314, lk: 7298, shorten: 0, quasiC: 1668 (fixed: 79464)
+
+c ends of initiationization by VSIDS at 11652 conflicts with init 4554
+
+LKPREFIX_EVENTS partial=56553 kept_literals=2048098
+
+c Cardinality: 1434 (Sinz+MTO) for UB 15
+c UB=15 succs, confls=13156, hconfls=908, core 251, tier2 401, local 6719,  13 soft cls unsat (0 at L0), 0 fixed vars at L0, softCnfl 192, nbFlyRd 97, nbFixedLH 171
+c nbHardens 239 (fixed 118113), shorten: 0, prunedLB 9.28, dev 1.33, succRate 0.70, nbSucc 1348, lk: 1932, shorten: 0, quasiC: 1911 (fixed: 91443)
+
+
+c Cardinality: 1435 (Sinz+MTO) for UB 13
+c UB=13 succs, confls=13739, hconfls=930, core 433, tier2 408, local 7269,  12 soft cls unsat (0 at L0), 0 fixed vars at L0, softCnfl 198, nbFlyRd 98, nbFixedLH 177
+c nbHardens 242 (fixed 123295), shorten: 0, prunedLB 7.74, dev 1.41, succRate 0.71, nbSucc 555, lk: 785, shorten: 0, quasiC: 2015 (fixed: 96574)
+
+
+c Cardinality: 1434 (Sinz+MTO) for UB 12
+c UB=12 succs, confls=14085, hconfls=958, core 515, tier2 545, local 7564,  10 soft cls unsat (0 at L0), 0 fixed vars at L0, softCnfl 200, nbFlyRd 99, nbFixedLH 180
+c nbHardens 245 (fixed 125919), shorten: 0, prunedLB 7.29, dev 1.21, succRate 0.71, nbSucc 316, lk: 443, shorten: 0, quasiC: 2066 (fixed: 98984)
+
+
+c Cardinality: 1435 (Sinz+MTO) for UB 10
+c UB=10 succs, confls=14263, hconfls=983, core 699, tier2 648, local 7697,  9 soft cls unsat (0 at L0), 0 fixed vars at L0, softCnfl 205, nbFlyRd 101, nbFixedLH 182
+c nbHardens 250 (fixed 127047), shorten: 0, prunedLB 6.51, dev 1.08, succRate 0.76, nbSucc 148, lk: 195, shorten: 0, quasiC: 2082 (fixed: 99794)
+
+
+c Cardinality: 1436 (Sinz+MTO) for UB 9
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 1, nbTested: 1001, counter 354884
+c UB=9 succs, confls=16526, hconfls=1041, core 2505, tier2 630, local 8139,  8 soft cls unsat (0 at L0), 7 fixed vars at L0, softCnfl 239, nbFlyRd 110, nbFixedLH 202
+c nbHardens 271 (fixed 141777), shorten: 0, prunedLB 5.98, dev 1.05, succRate 0.75, nbSucc 2171, lk: 2894, shorten: 0, quasiC: 2399 (fixed: 113640)
+
+c LRB phase 1: conflicts 4874, phase 20000000, starts 30, UP 259165
+c UB=8 fails, cnfls=16526, hcnfls=1041, core 2505, tier2 630, local 8139, quasiC: 2399 (fixed: 113640)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 271 (fixed 141777), lk: 0, shorten: 0, pureSo 239, nbFlyRd 110, nbFixedLH 202
+c ===============================================================================
+c initCost: 0, fixedBySearch: 0, optimal: 8, maxsat: 136, hardConflicts: 1041
+c nbLK: 20696, nbSuccLK: 15248(73.68%), nbLKup: 14629410(1613.68%), hardens 271 (fixed 141777), dynVars 4086, shorten: 0
+c restarts              : 107
+c conflicts             : 16526          (19452 /sec)
+c decisions             : 44875          (0.00 % random) (52820 /sec)
+c propagations          : 906587         (1067103 /sec)
+c conflict literals     : 502863         (31.16 % deleted)
+c CPU time              : 0.849578 s
+c nbSimplifyAll         : 5
+c s_propagations        : 71386       
+c s_cost_ratio          : 7.87%
+
+s UNSATISFIABLE
