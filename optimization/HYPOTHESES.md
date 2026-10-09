@@ -1,5 +1,17 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 native observer independently CERTIFIED PASS (2026-10-09), actual report
+d0fa3a6d covering all7 original scenarios and separate release. Same sole guarded
+prefetch hypothesis; disabled Tier1 integration fa5684fb pending finite peer
+review. No new solver concept, native timing or adoption; Windows48 negative
+evidence unchanged. Historical pending-audit statements below superseded.
+
+GH64 repaired observer seven LOCAL_PASS/terminal0 (2026-10-09), actual33raw98853
+and separate11birth/root-restoration85aa retained. Wholeauditor source518d READY
+after narrowownership/alias repairs; actual independent certificate pending.
+No scientific solver/performance sample, unchanged sameprefetch/nativeTier0/
+Windows negative48; performance INCONCLUSIVE/no adoption/Tier2/3.
+
 GH64 acquired observer02 terminal1 (2026-10-09): 4scenarios completed/fifth local
 remaining-budget failed BEFORElaunch, last2NOT_RUN. No solver/scientific timing
 or observer PASS; cleanup/restoration independently384b6ee2 audited over18raw.

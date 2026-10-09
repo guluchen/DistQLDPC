@@ -1,5 +1,23 @@
 # Optimization state
 
+GH64 observer independent native certificate PASS (2026-10-09): actual whole
+audit d0fa3a6d confirms all7 scenarios, original33 payloads and separate release.
+No observer rerun needed. Native Tier1 disabled support now incorporates exact
+certified guard/test bytes and actual finite prior-certificate/input bindings;
+staged manifest fa5684fb, original1b851 archived83c7bf50. Worker/launcher/science/
+numeric judge/prerecord unchanged; independent integration review pending.
+Native scientific Tier1 NOT_RUN, Windows negatives retained, no adoption/Tier2/3.
+Earlier pending-audit statements below are historical and superseded.
+
+GH64 repaired observer actualTERMINAL0 (2026-10-09): all7scenarios LOCAL_PASS,
+driver86.926<120/source9ba/freeze b8bd/final9302. Whole33raw98853/proofff92 fetched
+and rootbyteverified; separateactualpost85aa all11birthsabsent/groupgone/root5
+entries restored. Slot15/6077577044 released15/6077652919; no active runner.
+Independent auditor source ownership+alias blockers repaired/archivepreserved,
+peer518d READYdisabled; rootenable/evidence/bootstrap review and actualaudit
+pending. Native scientific Tier1 NOT_RUN/INCONCLUSIVE, Windows negatives and
+nativeTier0 unchanged, no adoption/Tier2/3. See repairedobserver result record.
+
 GH64 acquired observer attempt02 TERMINAL1 (2026-10-09): assignment-only source
 ad244 READY/supporta20af; slot15/6077311720 released15/6077401546. Four scenarios
 completed; fifth remaining-cap local3sec exhausted before child launch, lasttwo
