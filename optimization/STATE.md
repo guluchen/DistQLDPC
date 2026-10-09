@@ -1,5 +1,15 @@
 # Optimization state
 
+GH64 original native Tier1 ACTUAL RUNNING (2026-10-09): integration798a and
+literal-freeze7f793 PASS; support014a41f1, inputb8c03, same72d1/b632 single
+prefetch candidate. Actual live lease/process births observed after run assignment
+15/6078152055 (preparation15/6078098750). Fixed48 serial original-app comparisons,
+no build/relink/warmup. Concurrent external correctness work observed; all
+interference retained, no exclusive-host or performance claim. Original source/
+runtime/prerequisite bytes verified remotely before launch. Await this same named
+attempt's terminal evidence, separate release and whole audit; no restart,
+adoption or Tier2/3. See observations/GH64-NATIVE-TIER1-01-RUNNING.md.
+
 GH64 observer independent native certificate PASS (2026-10-09): actual whole
 audit d0fa3a6d confirms all7 scenarios, original33 payloads and separate release.
 No observer rerun needed. Native Tier1 disabled support now incorporates exact

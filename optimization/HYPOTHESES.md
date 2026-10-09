@@ -1,5 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 same single prefetch native Tier1 actual RUNNING (2026-10-09), final014a
+source with independent integration798a/inverse7f793 PASS, original48 schedule.
+Live process/lease evidence captured, no new solver idea or performance claim.
+Concurrent correctness activity retained as measurement context. Original Windows
+negative48 unchanged; whole terminal/release audit pending, no adoption/Tier2/3.
+
 GH64 native observer independently CERTIFIED PASS (2026-10-09), actual report
 d0fa3a6d covering all7 original scenarios and separate release. Same sole guarded
 prefetch hypothesis; disabled Tier1 integration fa5684fb pending finite peer
