@@ -1,5 +1,15 @@
 # Optimization state
 
+GH83 full application Tier0 ACTUAL RUNNING (2026-10-09), sole tool session67924,
+assignment15/6079176373. Source48d/package4678 reviews and root literal freeze
+complete; supportd7f98940/package64f79f39. Uploaded bytes, six baseline-only
+artifacts/focused223797/current runtime verified before acquired lease and live
+process probe. Planned90 apps/41 Main/40 dumps/12 timeouts/2 smokes with explicit
+81 baseline historical PMS reuse, unchanged candidateaea3ee0. No full PASS or
+timing/adoption claim yet; await this same attempt's terminal/release and audit.
+See experiments/GH-83/CORE-INTEGRATION-RUNNING01.md. Older NOT_RUN entries
+below are chronology, not current runner state.
+
 GH83 focused native tests completed (2026-10-09). Independent audit22379706
 verified 41 raw payloads, nine commands, exact helper extraction and compiled
 pins, and independently brute-forced 72 rows/9086 assignments per version:
