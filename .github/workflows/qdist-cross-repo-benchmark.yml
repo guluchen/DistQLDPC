@@ -63,7 +63,8 @@ jobs:
         run: |
           set -euo pipefail
           make -C baseline --jobs="$(nproc)"
-          make -C candidate --jobs="$(nproc)"
+          # H010: compare the actual profile-use candidate, not its default off build.
+          bash candidate/scripts/pgo_train_build.sh "$GITHUB_WORKSPACE/benchmark-results/pgo-training"
 
       - name: Compare on selected QDistSAT instances
         id: bench
@@ -77,6 +78,7 @@ jobs:
           exit 0
 
       - name: Upload benchmark report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: qdistsat-cross-repo-benchmark
