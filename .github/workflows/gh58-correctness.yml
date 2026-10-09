@@ -1,6 +1,12 @@
 name: GH58 finite correctness validation
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/gh58-correctness.yml'
+      - 'optimization/investigations/GH58/full-ci-02/**'
+      - 'optimization/investigations/GH58/FULL_CI_PREREQUISITE.json'
+      - 'optimization/investigations/GH58/raw/source-package-01.tar'
   push:
     branches: [repair/gh58-original-baseline-crash]
     paths:
@@ -15,7 +21,7 @@ permissions:
 
 jobs:
   finite-correctness:
-    if: github.ref == 'refs/heads/repair/gh58-original-baseline-crash'
+    if: github.ref == 'refs/heads/repair/gh58-original-baseline-crash' || github.head_ref == 'repair/gh58-original-baseline-crash'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
