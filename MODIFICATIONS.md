@@ -65,6 +65,15 @@ in each file are unchanged.
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
 
+#### Conflict-independent lookahead prefix (performance experiment GH-60, not adopted unless reviewed)
+
+- `lookbackResetTrail(..., partial)` stops unassigning the lookahead trail where its conflict
+  analysis completes, keeping literals that are independent of the conflict
+- Used only by the main `lookahead()` on non-final iset conflicts; unlock decrements of kept
+  literals are re-applied after `setConflict` (`lkCollectKeptUnlocked`/`lkReapplyKeptUnlocks`),
+  with a full-reset fallback (`lkUndoPrefix`); final/UIP/restart/simple paths unchanged
+- Search behaviour changes; optional test-only `-DLKPREFIX_CHECK` validates kept-prefix invariants
+
 ---
 
 ## Files not modified for DistQLDPC integration
