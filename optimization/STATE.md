@@ -1,5 +1,25 @@
 # Optimization state
 
+GH58 correctness repair ACTIVE (2026-10-09), superseding pending-user entries:
+User explicitly authorized attempting original-program repair. Separate issue58 /
+draftPR59 / branch repair/gh58-original-baseline-crash from immutable24572d6.
+Original source diagnosis and bounded debugger evidence support retiring inactive
+auxiliary soft literals after preprocessing partition. Minimal candidate changes
+only the final partition-list maintenance and heap rebuild condition; aggregate
+representatives, clauses, derivedCost and survivor order remain unchanged.
+Repair prerecord4a9f274 preceded productiona1a0f00/exact-original-byte fixf06ac3d;
+Solver SHA c1360169ca4066e69e2c5ea64f86fd36deb41e5a1db76697b7874f007c873afc.
+Independent static/source review READY, not scientific PASS. Candidate cleanbuild,
+mandatory original regression and full science/status/bound/timeout gates pending.
+No new baseline designation, accepted optimization or performance promotion.
+Existing original baseline anomaly/evidence retained; fixture remains mandatory.
+Earlier backtrace raw independently authenticated and publishede375fc4;
+subsequent detailed state metadata retained locally pending scoped safety review.
+Safe Linux resource release6072029417 posted, no active host worker; support
+preparation source-only. Latest hub15 assignments govern ownership. Optimization
+loop remains ACTIVE with this necessary correctness repair as current work.
+
+
 Native GH46 correctness update (2026-10-09): one existing unchanged original245
 Linux Main with exact valid300B WCNF also SIGSEGV(-11), no final optimum/status.
 Independent1024-model oracle optimum5/witness472/216hard-feasible. No candidate,
