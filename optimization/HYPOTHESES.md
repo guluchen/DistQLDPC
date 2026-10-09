@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 native original48 ACTUAL TERMINAL0 (2026-10-09), all192scientificfields
+correct in finite rootcheck; raw151716111 intact, actual separate52birth cleanup.
+OFFGM+1.4228%/MTOGM+0.4567%,6/8medians slower; numericREJECT/formalINCONCLUSIVE
+NOT_ADOPTED pending independent broader evidence audit. Windowsnegative48 kept.
+No Tier2/3, rerun or adoption; candidate isolated. Fresh Brain source preparation
+uses this negative direction without claiming all prefetch methods disproved.
+
 GH64 same single prefetch native Tier1 actual RUNNING (2026-10-09), final014a
 source with independent integration798a/inverse7f793 PASS, original48 schedule.
 Live process/lease evidence captured, no new solver idea or performance claim.

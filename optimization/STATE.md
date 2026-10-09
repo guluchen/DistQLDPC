@@ -1,5 +1,17 @@
 # Optimization state
 
+GH64 native Tier1-01 ACTUAL TERMINAL0 (2026-10-09), released15/6078312700.
+Complete48 natural scientifically correct samples/192fields, original151raw
+catalog716111eb fetched unchanged and rootbyteverified. Separate actualpost
+confirms inactive/groupgone/all52recordedbirthsabsent/root5entriesrestored.
+Six of8 candidate medians slower, OFFGM+1.4228%/MTOGM+0.4567%; originalnumeric
+REJECT, stronger positive corroboration false. Formal INCONCLUSIVE/NOT_ADOPTED,
+pending independent retained-terminal and broadercurrent-native audit. No
+Tier2/3 or favorable retry; no active root runner. Prior Windowsnegative48
+retained. Exactconfiguration reasonably shelved; fresh three-proposal Brain
+source preparation requested. See observations/GH64-NATIVE-TIER1-01-RESULT.md.
+RUNNING statements below are historical and superseded.
+
 GH64 original native Tier1 ACTUAL RUNNING (2026-10-09): integration798a and
 literal-freeze7f793 PASS; support014a41f1, inputb8c03, same72d1/b632 single
 prefetch candidate. Actual live lease/process births observed after run assignment

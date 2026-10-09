@@ -1,5 +1,8 @@
 # GH64 native Tier1: original comparison started
 
+Superseded after actual terminal0 by the [result record](GH64-NATIVE-TIER1-01-RESULT.md).
+The original launch description below is retained as history.
+
 2026-10-09. Status RUNNING; no performance conclusion yet.
 
 Same single guarded-prefetch change: baseline `72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7`,
