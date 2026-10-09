@@ -1,5 +1,17 @@
 # Optimization state
 
+GH64 native Tier1 prerecord PUBLISHED before adapter (2026-10-09): c316674,
+source21be9120, issue64/6076750252. Same sole guarded-prefetch72d1/b632, original
+48case/mode/role/repeat order and walljudge,6600/6660+3/5 bounded plan; no new
+solver change/build/relink. Fresh16matrix packageb8c03 independently6123 verified
+against32original Git blobs. Actual native installed hint independently56c1f720
+verified directly against all retained ELF function bytes: baseline0/candidate1;
+emission only, not benefit. New disabled wait4 observer/testsource and separate
+worker/launcher are being constructed; source review and actual short owned-
+process observer validation required before scientific timing. Native48 samples
+NOT_RUN, no active scientific runner or Tier2/3/adoption. Prior Windows negative
+INCONCLUSIVE unchanged; current resource snapshot is not a lease or guarantee.
+
 GH64 native targeted+full Tier0 independently CERTIFIED PASS (2026-10-09),
 whole native auditor2d2be5098fb5fdede9187de50c043a9b9c1cc59acab4f31ff14c8d4e9fa06ebf
 executed against actual native runtime, binaries, Git objects and original

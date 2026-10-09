@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 same-concept native Tier1 prerecordc316674/source21be9120 published64/6076750252
+before new adapter construction (2026-10-09). Fresh16matricesb8c03 independently
+6123 authenticates32Git blobs; native ELF hint56c1f720 baseline0/candidate1,
+no causal/speed proof. Disabled wait4 measurement support/source preparation,
+short observer validation pending; scientific timing NOT_RUN. Windows negatives
+unchanged, formal performance INCONCLUSIVE, no adoption/Tier2/3.
+
 GH64 native targeted+full Tier0 CERTIFIED PASS (2026-10-09), independent native
 audit2d2be509 firstexecution0:54apps/204fields/162PMS/40oracles/40dumps/12timeouts/
 2smokes plus22targeted/81partitionperrole/316orderedprefetchperrole. Actual runtime,
