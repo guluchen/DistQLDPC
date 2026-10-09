@@ -1,0 +1,72 @@
+{
+  "status": "SOURCE_READY_ONLY_NOT_EXECUTED",
+  "reviewed_commit_prefix": "3e4a6df",
+  "reuse_engineering_review": "4058d97: watchdog90s+cleanup3/5, originalbaseline pins/oracle, immutable helper resource guards, ownedPG withinouterSID, retained cleanup/restoration/raw, strictUTF8; launcher bytes unchanged",
+  "hashes": {
+    "run.py": "8dc4f1788d4f68b0f16c4e84416e80d63ea26819d506dab3535be6a19bfb8c03",
+    "launcher.py": "97e451c12c70d883b9cffcfb2bd541d1230c7736d5d59f2922aa70c7bb34fc07"
+  },
+  "AST_parse": "PASS",
+  "disabled_assignment": "PASS",
+  "parser_cases": [
+    {
+      "label": "valid_unsat",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "label": "valid_sat",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "label": "blank_final",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "contradictory_same_line",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "same_line_duplicates",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "wrong_cost",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "wrong_status",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "missing_status",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "missing_optimum",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "invalid_UTF8",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "label": "crash",
+      "expected": false,
+      "actual": false
+    }
+  ],
+  "candidate_module_imported": false,
+  "solver_or_compiler_executed": false,
+  "scope": "exactly one unchanged native originalMain baseline with retained originalfixture; no repair/benchmark/candidate",
+  "scientific_conclusion": "NOT_RUN; native success would not waive Windows anomaly"
+}

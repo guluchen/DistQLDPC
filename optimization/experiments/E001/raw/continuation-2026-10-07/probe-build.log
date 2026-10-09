@@ -1,0 +1,34 @@
+In file included from src/solver/Solver.h:53,
+                 from src/solver/SimpSolver.h:37,
+                 from optimization/tests/../../src/core/distqldpc.cc:40,
+                 from optimization/tests/logical_probe.cc:3:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+optimization/tests/../../src/core/distqldpc.cc: In function 'int min_distance_stabilizer_roundingsat(const Matrix&, const Matrix&, const Matrix&, const Matrix&, int, int, const char*, const char*)':
+optimization/tests/../../src/core/distqldpc.cc:611:18: error: 'mkstemp' was not declared in this scope; did you mean 'mkdtemp'?
+  611 |         int fd = mkstemp(tmpl);
+      |                  ^~~~~~~
+      |                  mkdtemp
+optimization/tests/../../src/core/distqldpc.cc:619:16: error: 'popen' was not declared in this scope; did you mean 'open'?
+  619 |     FILE* fp = popen(cmd.c_str(), "r");
+      |                ^~~~~
+      |                open
+optimization/tests/../../src/core/distqldpc.cc:629:21: error: 'pclose' was not declared in this scope; did you mean 'fclose'?
+  629 |     int pclose_rc = pclose(fp);
+      |                     ^~~~~~
+      |                     fclose
+optimization/tests/../../src/core/distqldpc.cc: In function 'int solve_in_child_fork(const Matrix&, const Matrix&, const Matrix&, const Matrix&, int, int, int, SolverBackend, const char*, const char*, BoundsBook&, bool&, ProgressState&)':
+optimization/tests/../../src/core/distqldpc.cc:826:13: error: 'kill' was not declared in this scope
+  826 |             kill(pid, SIGKILL);
+      |             ^~~~
+optimization/tests/../../src/core/distqldpc.cc:834:9: error: 'usleep' was not declared in this scope; did you mean 'sleep'?
+  834 |         usleep(10000);
+      |         ^~~~~~
+      |         sleep

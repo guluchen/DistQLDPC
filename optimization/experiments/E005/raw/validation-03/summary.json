@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "reason": "build, exhaustive SLS/CSS/cap checks, identical CNF, smoke, QDistSAT and timeout checks",
+  "performance": "not measured",
+  "checks": [
+    {
+      "fixture": "css1",
+      "oracle_distance": 1,
+      "cnf_identical": true
+    },
+    {
+      "fixture": "css4",
+      "oracle_distance": 2,
+      "cnf_identical": true
+    },
+    {
+      "fixture": "css5",
+      "oracle_distance": 1,
+      "cnf_identical": true
+    }
+  ],
+  "hosted_cross_repo": "pending PR check"
+}

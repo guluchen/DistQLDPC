@@ -4,6 +4,22 @@ This policy governs optimization experiments on DistQLDPC. QDistSAT supplies the
 
 ## Scope and semantic invariants
 
+The research lifecycle is **BRAIN -> EXECUTE -> EVALUATE -> LEARN -> BRAIN AGAIN**.
+HYPOTHESES.md is a registry, not a FIFO queue. After resolving an experiment,
+record its mechanism, prediction, actual outcome, help/hurt cases, likely
+explanation and confidence, and implications for the working performance model.
+Then perform a fresh Brain round using all retained evidence: rank up to three
+serious candidates by expected impact, success probability and information gain
+relative to implementation/semantic risk and experiment cost; select one and
+record the reasoning before implementation. Old unselected alternatives compete
+equally with newly generated candidates. Preserve negative results.
+
+For the current restart, E001 is the active experiment. Do not start another
+optimization while E001 lacks the required controlled evidence. If dedicated
+execution/access is unavailable, verify the reproducible package and stop at
+that external dependency. An INCONCLUSIVE result does not authorize advancing
+gates or automatically executing another old Brain candidate.
+
 **Search space unrestricted, but experiment scope restricted.** Heuristics, branching, restarts, clause management, bound strategy, cardinality encoding, preprocessing, matrix representation, constraint generation, incremental solving, data structures, solver internals, and higher-level formulations are all eligible, provided they preserve scientific semantics.
 
 Each round tests one main hypothesis. Before implementation, read prior accepted and failed experiment records, then write a short proposal: hypothesis, intended change, expected effect, and correctness risk. Supporting changes must serve that hypothesis; do not bundle unrelated optimizations. Revisit a failed idea only with new evidence or a documented change in assumptions.
@@ -11,6 +27,53 @@ Each round tests one main hypothesis. Before implementation, read prior accepted
 Never obtain a performance improvement by changing benchmark ground truth, timeout semantics, logging/result semantics, or scientific semantics. Distance, Pauli weight, encoding meaning, lower/upper-bound certification and interpretation, and timeout result behavior must remain correct. If a proposal requires a semantic change, stop and escalate before implementation. Any observed semantic mismatch immediately rejects the candidate and must be escalated to the PI with the evidence; do not proceed to a higher tier.
 
 ## Progressive filtering
+
+### User-directed diagnostic screening and server verification (2026-10-08)
+
+The user accepts a two-stage approach to avoid repeatedly aborting inexpensive
+screens on brief sibling-core activity. In a preregistered diagnostic screen,
+interleave serial baseline/candidate runs on the same CPU and retain interference
+telemetry; sibling idle below95% is recorded instead of ending the screen.
+Global spare>50%, allocation<=half spare, correctness and timeout guards still
+apply. Diagnostic timings do not establish controlled PASS, acceptance, merge
+or research-grade speedups. Promising candidates receive a separate complete
+controlled repetition on the dedicated server when resources and validated
+isolation are available. Do not pool different protocols or retrospectively
+relabel earlier aborted runs. Strict isolation/helper guards remain unchanged.
+Additional user instruction permits acceptance with minor interference if
+repeated evidence establishes that it does not change the performance decision.
+Zero interference is not an absolute requirement. Preregister the assessment,
+retain all samples and telemetry, verify reproducible gains beyond variability
+and no material per-case regression. Equal scientific answers alone do not
+establish timing robustness. If interference can change the decision, remain
+INCONCLUSIVE; capacity, correctness and tier guards remain mandatory.
+The [E006 follow-up record](../optimization/experiments/E006/FOLLOWUP-2026-10-08.md)
+records the authorized pending BDD verification and acceptance conditions;
+no background monitor is implied. Existing strict executables remain unchanged
+until a separately preregistered measurement protocol is implemented.
+
+### User-directed exploratory continuation (2026-10-08)
+
+Subsequent explicit override for E006: after its complete local Tier1 filter
+rejected BB108/LP238 regressions, the user requested "跑tier2看看". The
+[E006 Tier2 preregistration](../optimization/experiments/E006/TIER2-PROPOSAL.md)
+authorizes one LP340 exploratory round despite that rejection, not automatic
+advancement for other rejected methods, Tier1 PASS, acceptance, or Tier3.
+Retain the failed gate and all scientific/capacity limits.
+
+The user's latest instruction is: if the evidence does not clearly justify
+rejection, advance one tier rather than leave available CPU unused. This
+supersedes the execution stop on an INCONCLUSIVE gate for explicitly bounded
+exploratory follow-ups. It does not turn an inconclusive gate into PASS or
+authorize acceptance, merge, or a controlled performance claim. Record the
+budget, cases, repeat count and provenance before running; keep correctness,
+timeout interpretation and the user's spare-capacity restrictions unchanged.
+Confirmed regressions and semantic mismatches still stop advancement.
+
+For H-007, completed Tier 1 and Windows Tier 2 diagnostics justify the requested
+next exploratory step: the preregistered single-case BB_144_12_12 Tier 3 pilot.
+This is not authorization to launch the complete expensive seven-case suite.
+The scientific promotion criteria below remain unchanged.
 
 Run **Tier 0 → Tier 1 → Tier 2 → Tier 3** in order for each candidate. Do not skip a gate because an idea is promising or a previous candidate passed. A changed candidate must re-enter the applicable validation sequence from Tier 0.
 
@@ -26,6 +89,13 @@ Keep baseline and candidate inputs, resource limits, execution environment, and 
 These tiers are experiment policy, not new script modes or a replacement for existing CI. The batch script's default 18-case, advanced four-case, and full 22-case groups do not implement these gates. Select tier cases explicitly. Short representative checks may use the environments permitted by AGENTS.md; any medium run that becomes long or compute-heavy belongs on the dedicated server. Tier 3, full suites, and broad sweeps must not run in Codex Cloud or routine GitHub Actions. If server access is unavailable, prepare the reproducible run package and report the access requirement; do not bypass gates or substitute paid cloud compute without PI approval.
 
 ## Experiment memory and acceptance
+
+User literature-provenance requirement (2026-10-08): for any paper-derived
+method, record the source paper and retain a BibTeX entry. Use
+optimization/references.bib and REFERENCES.md, linking citation keys from the
+proposal/record. Include exact version, primary DOI/URL, relevant section or
+algorithm, reading depth and the actual adaptation; distinguish paper findings
+from our hypotheses/results and do not invent sources for general optimization.
 
 Keep a durable, discoverable experiment record for every round, including abandoned, failed, rejected, and accepted experiments. Store a versioned record in the repo or link it from a versioned experiment index to durable storage. Do not rely solely on expiring CI artifacts. Each record must contain:
 

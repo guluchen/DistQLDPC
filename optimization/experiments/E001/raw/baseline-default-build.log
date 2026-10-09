@@ -1,0 +1,180 @@
+c++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/SimpSolver.o src/solver/SimpSolver.cc
+c++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Solver.o src/solver/Solver.cc
+In file included from src/solver/Solver.cc:107:
+In file included from src/solver/Solver.h:53:
+src/solver/utils/Options.h:285:33: error: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wreserved-user-defined-literal]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                                 ^
+      |                                  
+src/solver/utils/Options.h:291:33: error: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wreserved-user-defined-literal]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                                 ^
+      |                                  
+src/solver/utils/Options.h:293:40: error: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wreserved-user-defined-literal]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                                        ^
+      |                                         
+In file included from src/solver/SimpSolver.cc:34:
+In file included from src/solver/SimpSolver.h:37:
+In file included from src/solver/Solver.h:53:
+src/solver/utils/Options.h:285:33: error: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wreserved-user-defined-literal]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                                 ^
+      |                                  
+src/solver/utils/Options.h:291:33: error: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wreserved-user-defined-literal]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                                 ^
+      |                                  
+src/solver/utils/Options.h:293:40: error: invalid suffix on literal; C++11 requires a space between literal and identifier [-Wreserved-user-defined-literal]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                                        ^
+      |                                         
+src/solver/Solver.cc:216:5: warning: initializer order does not match the declaration order [-Wreorder-ctor]
+  190 |   , conflict_budget    (-1)
+      |     ~~~~~~~~~~~~~~~~~~~~~~~
+      |     counter            (0)
+  191 |   , propagation_budget (-1)
+      |     ~~~~~~~~~~~~~~~~~~~~~~~
+      |     conflict_budget    (-1)
+  192 |   , asynch_interrupt   (false)
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |     propagation_budget (-1)
+  193 | 
+  194 |   // simplfiy
+  195 |   , nbSimplifyAll(0)
+      |     ~~~~~~~~~~~~~~~~
+      |     asynch_interrupt   (false)
+  196 |   , s_propagations(0)
+      |     ~~~~~~~~~~~~~~~~~
+      |     nbSimplifyAll(0)
+  197 | 
+  198 |   // simplifyAll adjust occasion
+  199 |   , curSimplify(1)
+      |     ~~~~~~~~~~~~~~
+      |     s_propagations(0)
+  200 |   , nbconfbeforesimplify(1000)
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |     curSimplify(1)
+  201 |   , incSimplify(1000)
+      |     ~~~~~~~~~~~~~~~~~
+      |     nbconfbeforesimplify(1000)
+  202 | 
+  203 |   , my_var_decay       (0.6)
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+      |     incSimplify(1000)
+  204 |   , order_heap_distance(VarOrderLt(activity_distance))
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |     var_iLevel_inc     (1)
+  205 |   , var_iLevel_inc     (1)
+      |     ~~~~~~~~~~~~~~~~~~~~~~
+      |     my_var_decay       (0.6)
+src/solver/Solver.cc:216:5: note: field 'my_var_decay' will be initialized after field 'order_heap_distance'
+  216 |   , my_var_decay       (0.6)
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:225:7: note: field 'lastOptimalCost' will be initialized after field 'totalWeight'
+  225 |     , lastOptimalCost (UINT64_MAX)
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:229:7: note: field 'orderHeapAuxi' will be initialized after field 'tier2_lbd_cut'
+  229 |     , orderHeapAuxi(VarOrderGt(activityLB))
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:238:7: note: field 'cardinalityEncMode' will be initialized after field 'quasiSoftConflicts'
+  238 |     , cardinalityEncMode (CARD_ENC_BOTH)
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:244:7: note: field 'nbFixedByLH' will be initialized after field 'bestSolutionFound'
+  244 |     , nbFixedByLH  (0)
+      |       ^~~~~~~~~~~~~~~~
+src/solver/Solver.cc:247:7: note: field 'nbSatLitsAtStart' will be initialized after field 'bounds_pipe_w'
+  247 |     , nbSatLitsAtStart(0)
+      |       ^~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:522:16: warning: variable 'nbNotSeen' set but not used [-Wunused-but-set-variable]
+  522 |         int nbSeen=0, nbNotSeen = 0;
+      |                       ^
+src/solver/Solver.cc:721:9: warning: unused variable 'learnts_core_size_before' [-Wunused-variable]
+  721 |     int learnts_core_size_before = learnts_core.size();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:725:9: warning: variable 'nbSimplified' set but not used [-Wunused-but-set-variable]
+  725 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |         ^
+src/solver/Solver.cc:725:27: warning: variable 'nbSimplifing' set but not used [-Wunused-but-set-variable]
+  725 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |                           ^
+src/solver/Solver.cc:725:45: warning: variable 'nbShortened' set but not used [-Wunused-but-set-variable]
+  725 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |                                             ^
+src/solver/Solver.cc:823:9: warning: unused variable 'learnts_tier2_size_before' [-Wunused-variable]
+  823 |     int learnts_tier2_size_before = learnts_tier2.size();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:827:9: warning: variable 'nbSimplified' set but not used [-Wunused-but-set-variable]
+  827 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |         ^
+src/solver/Solver.cc:827:27: warning: variable 'nbSimplifing' set but not used [-Wunused-but-set-variable]
+  827 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |                           ^
+src/solver/Solver.cc:827:45: warning: variable 'nbShortened' set but not used [-Wunused-but-set-variable]
+  827 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |                                             ^
+src/solver/Solver.cc:828:9: warning: variable 'limit' set but not used [-Wunused-but-set-variable]
+  828 |     int limit;
+      |         ^
+src/solver/Solver.cc:1173:25: warning: unused variable 'nbOriginalClauses_before' [-Wunused-variable]
+ 1173 |     int last_shorten=0, nbOriginalClauses_before = clauses.size();
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:1176:45: warning: variable 'nbShortening' set but not used [-Wunused-but-set-variable]
+ 1176 |     int nbShortened=0, ci, cj, nbRemoved=0, nbShortening=0;
+      |                                             ^
+src/solver/Solver.cc:1185:17: warning: unused variable 'begin_simp_time' [-Wunused-variable]
+ 1185 |     double      begin_simp_time = cpuTime();
+      |                 ^~~~~~~~~~~~~~~
+src/solver/Solver.cc:1250:12: warning: variable 'avg' set but not used [-Wunused-but-set-variable]
+ 1250 |     double avg;
+      |            ^
+src/solver/Solver.cc:1730:21: warning: variable 'nbNotSeen' set but not used [-Wunused-but-set-variable]
+ 1730 |       int nbSeen=0, nbNotSeen = 0;
+      |                     ^
+3 errors generated.
+src/solver/Solver.cc:2072:1: warning: unused label 'ExitProp' [-Wunused-label]
+ 2072 | ExitProp:;
+      | ^~~~~~~~~
+src/solver/Solver.cc:2177:9: warning: variable 'myLevel' set but not used [-Wunused-but-set-variable]
+ 2177 |     int myLevel = decisionLevel() +1;
+      |         ^
+make: *** [build/SimpSolver.o] Error 1
+make: *** Waiting for unfinished jobs....
+src/solver/Solver.cc:2368:17: warning: variable 'nbNotSeen' set but not used [-Wunused-but-set-variable]
+ 2368 |         int nbSeen=0, nbNotSeen = 0;
+      |                       ^
+src/solver/Solver.cc:2559:7: warning: unused variable 'learnts_local_size_before' [-Wunused-variable]
+ 2559 |   int learnts_local_size_before = learnts_local.size();
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~
+src/solver/Solver.cc:2560:7: warning: unused variable 'savedTrail' [-Wunused-variable]
+ 2560 |   int savedTrail = trail.size();
+      |       ^~~~~~~~~~
+src/solver/Solver.cc:2564:9: warning: variable 'nbSimplified' set but not used [-Wunused-but-set-variable]
+ 2564 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |         ^
+src/solver/Solver.cc:2564:27: warning: variable 'nbSimplifing' set but not used [-Wunused-but-set-variable]
+ 2564 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |                           ^
+src/solver/Solver.cc:2564:45: warning: variable 'nbShortened' set but not used [-Wunused-but-set-variable]
+ 2564 |     int nbSimplified = 0, nbSimplifing = 0, nbShortened=0, ci, cj;
+      |                                             ^
+src/solver/Solver.cc:2679:9: warning: variable 'totalLocalSize' set but not used [-Wunused-but-set-variable]
+ 2679 |     int totalLocalSize=0, removedSize=0;
+      |         ^
+src/solver/Solver.cc:2679:27: warning: variable 'removedSize' set but not used [-Wunused-but-set-variable]
+ 2679 |     int totalLocalSize=0, removedSize=0;
+      |                           ^
+src/solver/Solver.cc:2772:9: warning: unused variable 'totalLocalSize' [-Wunused-variable]
+ 2772 |     int totalLocalSize=0, removedSize=0;
+      |         ^~~~~~~~~~~~~~
+src/solver/Solver.cc:2772:27: warning: unused variable 'removedSize' [-Wunused-variable]
+ 2772 |     int totalLocalSize=0, removedSize=0;
+      |                           ^~~~~~~~~~~
+src/solver/Solver.cc:4343:7: warning: variable 'nbfixed' set but not used [-Wunused-but-set-variable]
+ 4343 |   int nbfixed=0;
+      |       ^
+src/solver/Solver.cc:5888:7: warning: variable 'nbfixed' set but not used [-Wunused-but-set-variable]
+ 5888 |   int nbfixed=0;
+      |       ^
+30 warnings and 3 errors generated.
+make: *** [build/Solver.o] Error 1

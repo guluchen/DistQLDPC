@@ -1,0 +1,122 @@
+[
+  {
+    "tier": 3,
+    "case": "BB_144_12_12",
+    "mode": "no-card",
+    "repeat": 1,
+    "version": "baseline",
+    "command": [
+      "/home/yfc/codex-e004-lto-20261007/E004-server-package/baseline/bin/distqldpc",
+      "-v",
+      "-cpu-lim=600",
+      "-no-card",
+      "/home/yfc/codex-e004-lto-20261007/E004-tier3-bb144-inputs/BB_144_12_12"
+    ],
+    "elapsed_sec": 50.39377679792233,
+    "returncode": 0,
+    "watchdog": false,
+    "semantic": {
+      "d": 12,
+      "objective": 12,
+      "lb": 12,
+      "ub": 12,
+      "timeout": false,
+      "unknown": false
+    },
+    "load_after": [
+      62.5263671875,
+      63.7236328125,
+      63.787109375
+    ]
+  },
+  {
+    "tier": 3,
+    "case": "BB_144_12_12",
+    "mode": "no-card",
+    "repeat": 1,
+    "version": "candidate",
+    "command": [
+      "/home/yfc/codex-e004-lto-20261007/E004-server-package/candidate/bin/distqldpc",
+      "-v",
+      "-cpu-lim=600",
+      "-no-card",
+      "/home/yfc/codex-e004-lto-20261007/E004-tier3-bb144-inputs/BB_144_12_12"
+    ],
+    "elapsed_sec": 49.3852917838376,
+    "returncode": 0,
+    "watchdog": false,
+    "semantic": {
+      "d": 12,
+      "objective": 12,
+      "lb": 12,
+      "ub": 12,
+      "timeout": false,
+      "unknown": false
+    },
+    "load_after": [
+      62.40673828125,
+      63.46875,
+      63.6943359375
+    ]
+  },
+  {
+    "tier": 3,
+    "case": "BB_144_12_12",
+    "mode": "card-mto",
+    "repeat": 1,
+    "version": "baseline",
+    "command": [
+      "/home/yfc/codex-e004-lto-20261007/E004-server-package/baseline/bin/distqldpc",
+      "-v",
+      "-cpu-lim=600",
+      "-card-mto",
+      "/home/yfc/codex-e004-lto-20261007/E004-tier3-bb144-inputs/BB_144_12_12"
+    ],
+    "elapsed_sec": 54.13965743780136,
+    "returncode": 0,
+    "watchdog": false,
+    "semantic": {
+      "d": 12,
+      "objective": 12,
+      "lb": 12,
+      "ub": 12,
+      "timeout": false,
+      "unknown": false
+    },
+    "load_after": [
+      62.8642578125,
+      63.3564453125,
+      63.638671875
+    ]
+  },
+  {
+    "tier": 3,
+    "case": "BB_144_12_12",
+    "mode": "card-mto",
+    "repeat": 1,
+    "version": "candidate",
+    "command": [
+      "/home/yfc/codex-e004-lto-20261007/E004-server-package/candidate/bin/distqldpc",
+      "-v",
+      "-cpu-lim=600",
+      "-card-mto",
+      "/home/yfc/codex-e004-lto-20261007/E004-tier3-bb144-inputs/BB_144_12_12"
+    ],
+    "elapsed_sec": 43.57445110799745,
+    "returncode": 0,
+    "watchdog": false,
+    "semantic": {
+      "d": 12,
+      "objective": 12,
+      "lb": 12,
+      "ub": 12,
+      "timeout": false,
+      "unknown": false
+    },
+    "load_after": [
+      62.7041015625,
+      63.244140625,
+      63.58740234375
+    ]
+  }
+]

@@ -93,6 +93,32 @@ static uint8_t getm(const Matrix& m, int r, int c) {
     return m.data[(size_t)r * m.cols + c];
 }
 
+// One sequential pass of invertible row operations. Strict improvement and
+// ascending j make ties deterministic; never replace several rows from an old copy.
+static Matrix shorten_logical_basis(const Matrix& input) {
+    Matrix result = input;
+    for (int i = 0; i < result.rows; ++i) {
+        int best_weight = 0;
+        for (int c = 0; c < result.cols; ++c)
+            best_weight += getm(result, i, c);
+        int best_row = -1;
+        for (int j = 0; j < result.rows; ++j) {
+            if (j == i) continue;
+            int weight = 0;
+            for (int c = 0; c < result.cols; ++c)
+                weight += getm(result, i, c) ^ getm(result, j, c);
+            if (weight < best_weight) {
+                best_weight = weight;
+                best_row = j;
+            }
+        }
+        if (best_row >= 0)
+            for (int c = 0; c < result.cols; ++c)
+                result.data[(size_t)i * result.cols + c] ^= getm(result, best_row, c);
+    }
+    return result;
+}
+
 static void add_hard_clause(SimpSolver& S, const std::vector<Lit>& lits) {
     vec<Lit> ps;
     for (size_t i = 0; i < lits.size(); i++) ps.push(lits[i]);
@@ -500,10 +526,12 @@ static int min_distance_stabilizer_maxsat(
     const char* dump_wcnf_path)
 {
     (void)cpu_lim;
+    const Matrix short_Gx = shorten_logical_basis(Gx);
+    const Matrix short_Gz = shorten_logical_basis(Gz);
     SimpSolver S;
     std::vector<Var> aux;
     StabilizerInstance meta;
-    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
+    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, short_Gx, short_Gz, verb, card_mode, bounds_pipe_w))
         return INT_MAX;
 
     if (dump_wcnf_path && dump_wcnf_path[0])

@@ -1,0 +1,495 @@
+{
+  "audit": "PASS",
+  "correct_solves": 48,
+  "binary_sha256": {
+    "baseline": "22e398cc7558c2a04d5f24bd6db3030ce552c752622027fc2657eff7c1bd1815",
+    "candidate": "b483fe59a90201f53c7ea4a87b95aa39740f738f1f418feec3a7b4b036f5e547"
+  },
+  "medians": [
+    {
+      "case": "BB_90_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.4852831000025617,
+          2.4836856000038097,
+          2.4569489999994403
+        ],
+        "candidate": [
+          2.4571195999888005,
+          2.4750902999949176,
+          2.442824500001734
+        ]
+      },
+      "baseline_median": 2.4836856000038097,
+      "candidate_median": 2.4571195999888005,
+      "median_ratio": 0.9893037991543823,
+      "range_envelope": 1.0073836697446636,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          1.0684790999948746,
+          1.0507058999937726,
+          1.0504531000042334
+        ],
+        "candidate": [
+          1.0746114999928977,
+          1.0569906000018818,
+          1.0464495000051102
+        ]
+      },
+      "baseline_median": 1.0507058999937726,
+      "candidate_median": 1.0569906000018818,
+      "median_ratio": 1.0059814073644646,
+      "range_envelope": 1.0229980757718427,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          3.0628900999872712,
+          3.0218135999894002,
+          3.0548423000000184
+        ],
+        "candidate": [
+          2.9995412999996915,
+          3.032020200000261,
+          3.035342799994396
+        ]
+      },
+      "baseline_median": 3.0548423000000184,
+      "candidate_median": 3.032020200000261,
+      "median_ratio": 0.9925292051901476,
+      "range_envelope": 1.0044771788720004,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          2.1086992000055034,
+          2.07951779999712,
+          2.1236190000054194
+        ],
+        "candidate": [
+          2.088436299993191,
+          2.0601008999947226,
+          2.0867029999935767
+        ]
+      },
+      "baseline_median": 2.1086992000055034,
+      "candidate_median": 2.0867029999935767,
+      "median_ratio": 0.9895688299156801,
+      "range_envelope": 1.0042887346268847,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_90_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.015045899999677,
+          3.005033599998569,
+          3.0028196000057505
+        ],
+        "candidate": [
+          3.122056200008956,
+          2.9877075999975204,
+          2.9786808000062592
+        ]
+      },
+      "baseline_median": 3.005033599998569,
+      "candidate_median": 2.9877075999975204,
+      "median_ratio": 0.9942343406739089,
+      "range_envelope": 1.03970821290862,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "GB_144_12_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          1.324286500006565,
+          1.3395929999969667,
+          1.3148618999985047
+        ],
+        "candidate": [
+          1.31335019999824,
+          1.3765654000017093,
+          1.315836699999636
+        ]
+      },
+      "baseline_median": 1.324286500006565,
+      "candidate_median": 1.315836699999636,
+      "median_ratio": 0.9936193565313194,
+      "range_envelope": 1.0469277419957752,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "BB_108_8_10",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          3.8889002000069013,
+          3.8728609000099823,
+          3.8524573000031523
+        ],
+        "candidate": [
+          3.8211432000098284,
+          3.8169139999954496,
+          3.86657600000035
+        ]
+      },
+      "baseline_median": 3.8728609000099823,
+      "candidate_median": 3.8211432000098284,
+      "median_ratio": 0.9866461250906221,
+      "range_envelope": 1.003664855674633,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_238_44_6",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          2.4896612000011373,
+          2.457162699996843,
+          2.458059199998388
+        ],
+        "candidate": [
+          2.4624397000006866,
+          2.4415424000035273,
+          2.464054300013231
+        ]
+      },
+      "baseline_median": 2.458059199998388,
+      "candidate_median": 2.4624397000006866,
+      "median_ratio": 1.0017820970309834,
+      "range_envelope": 1.0028046982873364,
+      "nonoverlapping_regression": false
+    }
+  ],
+  "aggregates": {
+    "no-card": {
+      "median_geomean": 0.9943224227870611,
+      "range_envelope_geomean": 1.0097575222595392,
+      "no_worse_medians": false
+    },
+    "card-mto": {
+      "median_geomean": 0.9940560455068185,
+      "range_envelope_geomean": 1.0230769850503074,
+      "no_worse_medians": false
+    }
+  },
+  "numeric_filter": "inconclusive",
+  "min_observed_idle": 87.3369793857804,
+  "resource_checks": 80,
+  "decision": "INCONCLUSIVE",
+  "reason": "Strict low-interference checks passed; no exclusive Windows reservation",
+  "tier2": "prior diagnostic retained; not rerun",
+  "tier3": "not run",
+  "affinity_audit": "PASS",
+  "selected_cpu": 14,
+  "sibling": 15,
+  "contention_observations": 2,
+  "preflight_wait_observations": 2,
+  "active_contention_observations": 0,
+  "per_run_resources": [
+    {
+      "label": "BB_90_8_10-no-card-1-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "BB_90_8_10-no-card-1-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 97.65625
+    },
+    {
+      "label": "BB_90_8_10-no-card-2-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "BB_90_8_10-no-card-2-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.30555555555556
+    },
+    {
+      "label": "BB_90_8_10-no-card-3-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "BB_90_8_10-no-card-3-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "BB_90_8_10-card-mto-1-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "BB_90_8_10-card-mto-1-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.7012987012987
+    },
+    {
+      "label": "BB_90_8_10-card-mto-2-candidate",
+      "observations": 4,
+      "contention_observations": 2,
+      "min_sibling_idle": 93.75
+    },
+    {
+      "label": "BB_90_8_10-card-mto-2-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "BB_90_8_10-card-mto-3-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "BB_90_8_10-card-mto-3-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "GB_144_12_8-no-card-1-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "GB_144_12_8-no-card-1-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.4375
+    },
+    {
+      "label": "GB_144_12_8-no-card-2-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.4375
+    },
+    {
+      "label": "GB_144_12_8-no-card-2-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 96.09375
+    },
+    {
+      "label": "GB_144_12_8-no-card-3-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "GB_144_12_8-no-card-3-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "GB_144_12_8-card-mto-1-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 96.875
+    },
+    {
+      "label": "GB_144_12_8-card-mto-1-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "GB_144_12_8-card-mto-2-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.4375
+    },
+    {
+      "label": "GB_144_12_8-card-mto-2-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.2248062015504
+    },
+    {
+      "label": "GB_144_12_8-card-mto-3-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "GB_144_12_8-card-mto-3-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21259842519684
+    },
+    {
+      "label": "BB_108_8_10-no-card-1-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "BB_108_8_10-no-card-1-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.44961240310077
+    },
+    {
+      "label": "BB_108_8_10-no-card-2-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "BB_108_8_10-no-card-2-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 97.88732394366197
+    },
+    {
+      "label": "BB_108_8_10-no-card-3-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "BB_108_8_10-no-card-3-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "BB_108_8_10-card-mto-1-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.29577464788733
+    },
+    {
+      "label": "BB_108_8_10-card-mto-1-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "BB_108_8_10-card-mto-2-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.4375
+    },
+    {
+      "label": "BB_108_8_10-card-mto-2-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.0
+    },
+    {
+      "label": "BB_108_8_10-card-mto-3-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.4375
+    },
+    {
+      "label": "BB_108_8_10-card-mto-3-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "LP_238_44_6-no-card-1-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 96.06299212598425
+    },
+    {
+      "label": "LP_238_44_6-no-card-1-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "LP_238_44_6-no-card-2-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "LP_238_44_6-no-card-2-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "LP_238_44_6-no-card-3-baseline",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "LP_238_44_6-no-card-3-candidate",
+      "observations": 1,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.2248062015504
+    },
+    {
+      "label": "LP_238_44_6-card-mto-1-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "LP_238_44_6-card-mto-1-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.4375
+    },
+    {
+      "label": "LP_238_44_6-card-mto-2-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 98.4375
+    },
+    {
+      "label": "LP_238_44_6-card-mto-2-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21875
+    },
+    {
+      "label": "LP_238_44_6-card-mto-3-baseline",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 100.0
+    },
+    {
+      "label": "LP_238_44_6-card-mto-3-candidate",
+      "observations": 2,
+      "contention_observations": 0,
+      "min_sibling_idle": 99.21259842519684
+    }
+  ],
+  "restoration": "PASS",
+  "strict_window_checks": "PASS"
+}

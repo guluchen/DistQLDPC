@@ -1,0 +1,33 @@
+{
+  "read_only": true,
+  "utc": 1791505850.345289,
+  "historical_window": [
+    "2026-10-09 00:20:20 UTC",
+    "2026-10-09 00:20:50 UTC"
+  ],
+  "kernel_query": [
+    "journalctl",
+    "--no-pager",
+    "-k",
+    "--since",
+    "2026-10-09 00:20:20 UTC",
+    "--until",
+    "2026-10-09 00:20:50 UTC",
+    "-o",
+    "short-iso",
+    "--grep",
+    "maxcdcl|Out of memory|oom-kill|Killed process|segfault"
+  ],
+  "kernel_returncode": 1,
+  "kernel_stdout": "-- No entries --\n",
+  "kernel_stderr": "Hint: You are currently not seeing messages from other users and the system.\n      Users in groups 'adm', 'systemd-journal' can see all messages.\n      Pass -q to turn off this notice.\n",
+  "current_meminfo_kB": {
+    "MemTotal": "2101177144 kB",
+    "MemFree": "48818276 kB",
+    "MemAvailable": "470215076 kB",
+    "SwapTotal": "29360120 kB",
+    "SwapFree": "28529400 kB"
+  },
+  "current_root_memory_events": null,
+  "limitations": "Current free memory and cumulative root counters do not establish memory state at crash. No solver run or privileged-log access."
+}

@@ -1,0 +1,75 @@
+{
+  "experiment": "E001",
+  "hypothesis": "H-001",
+  "baseline_commit": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "candidate_code_commit": "50623f9710969288d3a9d1c6325f3a72c35ff6d5",
+  "qdistsat_commit": "7c4774fffc49856f48a22ae5f9063d00b2661aaa",
+  "decision": "inconclusive",
+  "reason": "pending controlled run",
+  "tier0_local": "PASS",
+  "hosted_PR_check": {
+    "status": "PASS",
+    "tested_head": "18f1603d05dc43f0ef57dd1d8777ebe27aa9f061",
+    "run_url": "https://github.com/guluchen/DistQLDPC/actions/runs/37490553731",
+    "artifact": "raw/hosted-cross-repo.zip",
+    "job_log": "raw/hosted-cross-repo-job.log",
+    "timing": "diagnostic only"
+  },
+  "tier1": {
+    "status": "not run",
+    "raw_runs": [],
+    "medians": null
+  },
+  "tier2": "not run: Tier 1 has not passed",
+  "tier3": "not requested; not run",
+  "scientific_semantics_changed": false,
+  "binary_sha256": {
+    "baseline": "2e3cc0ed85a1e9fde7f385b2e3ecb4f551ed7d73890e3037d75e3c64397f2efc",
+    "candidate": "cf78e957001064d7cc503702c11f4b2a079f07cc1dad508ae7dd3c0e7220f353"
+  },
+  "patch_sha256": "b5636355bd7a5a24a92ac9953a6aed4f447a7337b289b8d4935467a6ba7a71b1",
+  "environment": {
+    "system": "Darwin",
+    "node": "yufangchendeMBP.home",
+    "release": "27.0.0",
+    "version": "Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:42 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T6031",
+    "machine": "arm64",
+    "processor": "arm"
+  },
+  "build": "make -j2 CXX=clang++\\ -Wno-reserved-user-defined-literal",
+  "performance_environment": "interactive macOS arm64 laptop; no dedicated-host reservation/access supplied; unsuitable for controlled timing",
+  "execution_continuation": "raw/execution-review.json",
+  "windows_continuation": {
+    "tier0": "PASS",
+    "diagnostic_samples": 48,
+    "numeric_tier1_filter": "REJECT: GB_144_12_8 regression in both modes",
+    "medians": "raw/windows-validation/all-medians.json",
+    "raw_samples": "raw/windows-validation/samples.json",
+    "report": "WINDOWS_RESULT.md",
+    "tier2": "not reached",
+    "tier3": "not run",
+    "scientific_semantics_match": true,
+    "controlled_environment": false
+  },
+  "windows_repeat_02": {
+    "tier0": "PASS",
+    "raw_samples": 48,
+    "combined_local_samples": 96,
+    "same_binaries": true,
+    "numeric_filter": "REJECT: GB regression reproduced",
+    "report": "WINDOWS_REPEAT_02_RESULT.md",
+    "controlled_environment": false
+  },
+  "resolution_audit": "raw/resolution-audit-20261007.json",
+  "active_program_status": "E001 active; external controlled execution required; no fresh Brain or next hypothesis",
+  "windows_repeat_03": {
+    "platform": "Windows/Cygwin",
+    "tier0": "PASS",
+    "raw_samples": 48,
+    "combined_local_samples": 144,
+    "same_binaries": true,
+    "numeric_filter": "REJECT",
+    "report": "WINDOWS_REPEAT_03_RESULT.md",
+    "controlled_environment": false
+  }
+}

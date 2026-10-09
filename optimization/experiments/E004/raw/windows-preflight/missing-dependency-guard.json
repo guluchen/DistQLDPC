@@ -1,0 +1,19 @@
+{
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "DistQLDPC\\optimization\\experiments\\E004\\run_windows_tier2.py",
+    "--archive",
+    "E004-server-package.tar.gz",
+    "--cygwin-root",
+    "E004-windows-runtime/cygwin",
+    "--output",
+    "E004-windows-tier2-guard-test"
+  ],
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "Missing Cygwin dependency: bash.exe\n",
+  "guard": "PASS: no output directory or solver execution",
+  "help_cli": "PASS"
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "GH52_INDEPENDENT_GH46_NATIVE_ANOMALY_AUDIT",
+  "audit_status": "PASS_EVIDENCE_AUTHENTICATED_SCIENTIFIC_FAILURE",
+  "science_status": "REJECT_BASELINE_ANOMALY_UNRESOLVED",
+  "science_pass": false,
+  "source_sha256": "19e8fa02a1d70915a1510604031467145702461dcab735803c6621c8f3eee0a5",
+  "archive_sha256": "aacdebe4c2b4b89349bc37c675513f2e8b3b1afebc749f72a29bf8d98606714d",
+  "archive_files": 16,
+  "original_raw_manifest_sha256": "dc1d8bf937cf8f87dd7c7ed007df0e578cb37d09a1ae68b6cecb4238c51c7603",
+  "complete_original_raw_manifest_verified": true,
+  "source_freeze_verified": true,
+  "full_retained_T0_tree_verified_files": 1535,
+  "recorded_full_runtime_and_T0_pin_map_matches": true,
+  "pin_count": 25934,
+  "baseline_binary_sha256": "86db7efcf42388e76a8fe9e2afc2bfff417ad55d296ce5dc59c2ff84bde32d09",
+  "fixture_sha256": "ae851ec8bb80b3a638c40184d5203259ecade373e5598df2c79dbd7d12eb52d4",
+  "independent_oracle": {
+    "assignments": 1024,
+    "hard_feasible": 216,
+    "optimum": 5,
+    "witness": 472,
+    "variables": 10,
+    "hard_clauses": 15,
+    "unit_soft_clauses": 13
+  },
+  "actual_solver_returncode": -11,
+  "POSIX_signal": "SIGSEGV",
+  "solver_stdout_bytes": 0,
+  "solver_stderr_bytes": 0,
+  "outer_transport_returncode": 0,
+  "outer_transport_is_not_scientific_pass": true,
+  "owned_group_session_absence_and_restore_authenticated": true,
+  "full_identity_post_record": true,
+  "public_secret_pattern_scan_no_hits": true,
+  "external_stream_sha256": {
+    "GH46-native-lease01.stdout": "921e046353511838bed098ed18e7b99a7015166db2a753410dde898d6d33e95a",
+    "GH46-native-lease01.stderr": "8e0daeee2b97a7b1686613e5f3b2c7f9278fb1fbe5d3d0ef9ce689184bde111d",
+    "GH46-native-lease01.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "GH46-native-lease01.command.json": "1cbb3c317d5d2ae4fcc5d95b40a83085ea1607f13d1529fa6d60d9f4e84a43b4",
+    "GH46-native-postprobe01.py": "f771183a6dbeb3f81aebf9bdd8b14bdf6aef7544b58c35bdd1e57a5881981142",
+    "GH46-native-postprobe01.stdout": "d3b8c857c16ceae8132a51259711f627f54087bf7bb994ae0ba17e4536f6bca2",
+    "GH46-native-postprobe01.stderr": "004a1b7232911675b8b5c95c75121983cbad4ba74b9343a4324682abd8b18b6e"
+  },
+  "limits": [
+    "Read-only archive/source/oracle audit; no solver, compiler, runner import or reproduction.",
+    "Remote runtime contents were not independently read at audit time: exact retained inventory/pins, authenticated driver full pre/post assertion and valid cleanup records establish recorded identity evidence.",
+    "No causation attributed to upstream MaxCDCL; immutable original baseline and known scientific anomaly remain unwaived; no new baseline, optimization/performance/adoption claim."
+  ]
+}

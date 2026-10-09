@@ -1,0 +1,65 @@
+{
+  "decision": "INCONCLUSIVE",
+  "tier0": "PASS (E006 local and hosted checks, identities verified)",
+  "tier1": "local filter REJECT; explicit user exploratory override",
+  "tier2": "12 correct exploratory diagnostic solves",
+  "tier3": "not run",
+  "reason": "Pinned desktop diagnostic; resource telemetry cannot establish exclusive reservation",
+  "medians": [
+    {
+      "case": "LP_340_56_8",
+      "mode": "no-card",
+      "raw": {
+        "baseline": [
+          68.46496370001114,
+          69.11627850000514,
+          67.62332220000098
+        ],
+        "candidate": [
+          67.2112189999898,
+          67.43314339997596,
+          67.38336830001208
+        ]
+      },
+      "baseline_median": 68.46496370001114,
+      "candidate_median": 67.38336830001208,
+      "median_ratio": 0.9842022058941239,
+      "range_envelope": 0.9971876744022934,
+      "nonoverlapping_regression": false
+    },
+    {
+      "case": "LP_340_56_8",
+      "mode": "card-mto",
+      "raw": {
+        "baseline": [
+          75.09366420001606,
+          75.42521320001106,
+          75.25936970001203
+        ],
+        "candidate": [
+          79.81100079999305,
+          80.33863640000345,
+          80.92524939999566
+        ]
+      },
+      "baseline_median": 75.25936970001203,
+      "candidate_median": 80.33863640000345,
+      "median_ratio": 1.0674901573084874,
+      "range_envelope": 1.077657486315315,
+      "nonoverlapping_regression": true
+    }
+  ],
+  "aggregates": {
+    "no-card": {
+      "median_geomean": 0.9842022058941239,
+      "range_envelope_geomean": 0.9971876744022934
+    },
+    "card-mto": {
+      "median_geomean": 1.0674901573084874,
+      "range_envelope_geomean": 1.077657486315315
+    }
+  },
+  "numeric_filter": "reject",
+  "numeric_reason": "confirmed per-case regression",
+  "correctness": "All expected distances/objectives/bounds identical"
+}

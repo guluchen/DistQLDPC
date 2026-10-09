@@ -1,0 +1,41 @@
+{
+  "audit": "PASS setup/probes/partial resource-abort evidence",
+  "priority_probes": 2,
+  "completed_tier2_solves": 0,
+  "elapsed_sec": 29.096768000003067,
+  "last_check": {
+    "label": "LP_340_56_8-no-card-1-baseline",
+    "time": 1791454251.9541347,
+    "idle_percent": 68.28633405639913,
+    "half_spare_logical_cpus": 5.46290672451193,
+    "selected_cpu_idle": 0.0,
+    "sibling_idle": 90.0709219858156,
+    "affinity": 16384,
+    "idle_by_cpu": [
+      73.15436241610739,
+      70.46979865771812,
+      69.79865771812081,
+      82.31292517006803,
+      77.55102040816327,
+      67.58620689655173,
+      80.6896551724138,
+      69.65517241379311,
+      73.04964539007092,
+      63.829787234042556,
+      70.62937062937063,
+      52.11267605633803,
+      75.71428571428571,
+      73.75886524822695,
+      0.0,
+      90.0709219858156
+    ],
+    "core_contention_detected": true,
+    "eligible": false
+  },
+  "resource_checks": 14,
+  "decision": "INCONCLUSIVE",
+  "reason": "Owned resource-guard termination due active SMT-window loss, not a solver crash",
+  "medians": null,
+  "speedup": null,
+  "restoration": "PASS"
+}

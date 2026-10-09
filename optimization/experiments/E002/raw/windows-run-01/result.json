@@ -1,0 +1,58 @@
+{
+  "decision": "INCONCLUSIVE",
+  "tier0": "PASS",
+  "tier1": {
+    "numeric_filter": "reject",
+    "reason": "confirmed per-case regression",
+    "medians": [
+      {
+        "case": "BB_90_8_10",
+        "mode": "no-card",
+        "baseline_raw": [
+          2.411777000001166,
+          2.364917900005821,
+          2.4327256999677047
+        ],
+        "candidate_raw": [
+          2.16546049999306,
+          2.1663610999821685,
+          2.1324436999857426
+        ],
+        "baseline_median": 2.411777000001166,
+        "candidate_median": 2.16546049999306,
+        "median_ratio": 0.8978692889068984,
+        "baseline_range_over_median": 0.028115285933090328,
+        "baseline_min": 2.364917900005821,
+        "baseline_max": 2.4327256999677047,
+        "candidate_min": 2.1324436999857426,
+        "candidate_max": 2.1663610999821685
+      },
+      {
+        "case": "GB_144_12_8",
+        "mode": "no-card",
+        "baseline_raw": [
+          0.9990631999680772,
+          0.9811795999994501,
+          0.9829605999984778
+        ],
+        "candidate_raw": [
+          1.1813728000270203,
+          1.1839076000032946,
+          1.2141622999915853
+        ],
+        "baseline_median": 0.9829605999984778,
+        "candidate_median": 1.1839076000032946,
+        "median_ratio": 1.20443037086647,
+        "baseline_range_over_median": 0.01819360813511222,
+        "baseline_min": 0.9811795999994501,
+        "baseline_max": 0.9990631999680772,
+        "candidate_min": 1.1813728000270203,
+        "candidate_max": 1.2141622999915853
+      }
+    ]
+  },
+  "tier2": "not reached",
+  "tier3": "not run",
+  "reason": "Interactive Windows host; original controlled-host gate not satisfied",
+  "correctness": "identical certified distances and bounds for every completed run"
+}

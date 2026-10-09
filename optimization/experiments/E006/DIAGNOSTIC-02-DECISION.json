@@ -1,0 +1,14 @@
+{
+  "experiment": "E006/H009",
+  "decision": "REJECT",
+  "scope": "Current BDD replacement as a general-purpose optimization, local Tier1 screen",
+  "baseline": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "candidate": "c91b19bbf29a28a6e808c8ef2c328cb9cef784e8",
+  "tier0": "PASS",
+  "tier1": "48 correct solves; local numeric REJECT on BB108 and LP238 disjoint repeated regressions",
+  "tier2": "not run",
+  "tier3": "not run",
+  "dedicated_server_performance": "INCONCLUSIVE / not executed",
+  "reason": "Affected-mode median regressions5.61%/23.32%; aggregate gains do not hide per-case failures; candidate isolated/unmerged",
+  "next_action": "Repeat unchanged Tier1 on server when eligible to corroborate; no acceptance or higher-tier promotion"
+}

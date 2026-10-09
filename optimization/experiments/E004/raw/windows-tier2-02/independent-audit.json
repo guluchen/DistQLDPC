@@ -1,0 +1,51 @@
+{
+  "audit": "PASS",
+  "tier0": "PASS",
+  "correct_solves": 12,
+  "medians": {
+    "no-card": {
+      "raw": {
+        "baseline": [
+          67.20239990000846,
+          66.32362049999938,
+          66.136288099995
+        ],
+        "candidate": [
+          66.61142970000219,
+          65.47880339999392,
+          65.51369350000459
+        ]
+      },
+      "baseline_sec": 66.32362049999938,
+      "candidate_sec": 65.51369350000459,
+      "ratio": 0.9877882571263613,
+      "range_envelope": 1.0071842798206152,
+      "nonoverlapping_regression": false
+    },
+    "card-mto": {
+      "raw": {
+        "baseline": [
+          73.66598380000505,
+          73.4061628000054,
+          73.61005160000059
+        ],
+        "candidate": [
+          73.14997790000052,
+          73.15656350000063,
+          73.06882919999771
+        ]
+      },
+      "baseline_sec": 73.61005160000059,
+      "candidate_sec": 73.14997790000052,
+      "ratio": 0.9937498522280609,
+      "range_envelope": 0.9965997500688762,
+      "nonoverlapping_regression": false
+    }
+  },
+  "min_observed_idle": 71.17733268197362,
+  "resource_checks": 424,
+  "decision": "INCONCLUSIVE",
+  "reason": "Interactive desktop; controlled Tier 1 gates remain unmet",
+  "tier3": "not run",
+  "scientific_semantics_changed": false
+}

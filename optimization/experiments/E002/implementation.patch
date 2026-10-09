@@ -1,0 +1,121 @@
+diff --git a/src/core/distqldpc.cc b/src/core/distqldpc.cc
+index c7e7942..f217d5e 100644
+--- a/src/core/distqldpc.cc
++++ b/src/core/distqldpc.cc
+@@ -29,6 +29,7 @@
+ #include <stdint.h>
+ #include <vector>
+ #include <string>
++#include <map>
+ #include <sys/wait.h>
+ #include <sys/time.h>
+ #include <fcntl.h>
+@@ -112,7 +113,15 @@ static Var ensure_var(SimpSolver& S, Var v) {
+     return v;
+ }
+ 
+-static Lit xor2(SimpSolver& S, Lit a, Lit b, std::vector<Var>& aux) {
++typedef std::map<std::pair<int, int>, Lit> XorPrefixCache;
++
++static Lit xor2(SimpSolver& S, Lit a, Lit b, std::vector<Var>& aux,
++                XorPrefixCache* cache = NULL) {
++    const std::pair<int, int> key(toInt(a), toInt(b));
++    if (cache) {
++        XorPrefixCache::const_iterator found = cache->find(key);
++        if (found != cache->end()) return found->second;
++    }
+     Var t = ensure_var(S, S.nVars());
+     aux.push_back(t);
+     Lit tl = mkLit(t);
+@@ -121,20 +130,23 @@ static Lit xor2(SimpSolver& S, Lit a, Lit b, std::vector<Var>& aux) {
+     c2.push_back(a);  c2.push_back(b);  c2.push_back(~tl); add_hard_clause(S, c2);
+     c3.push_back(a);  c3.push_back(~b); c3.push_back(tl);  add_hard_clause(S, c3);
+     c4.push_back(~a); c4.push_back(b);  c4.push_back(tl);  add_hard_clause(S, c4);
++    if (cache) (*cache)[key] = tl;
+     return tl;
+ }
+ 
+-static Lit parity(SimpSolver& S, const std::vector<Lit>& inputs, std::vector<Var>& aux) {
++static Lit parity(SimpSolver& S, const std::vector<Lit>& inputs, std::vector<Var>& aux,
++                  XorPrefixCache* cache = NULL) {
+     if (inputs.empty()) die("empty parity");
+     Lit acc = inputs[0];
+     for (size_t i = 1; i < inputs.size(); i++)
+-        acc = xor2(S, acc, inputs[i], aux);
++        acc = xor2(S, acc, inputs[i], aux, cache);
+     return acc;
+ }
+ 
+ /* Force XOR(inputs) = value (0 or 1) via Tseitin chain. */
+ static void add_xor_equals(
+-    SimpSolver& S, const std::vector<Lit>& inputs, bool value, std::vector<Var>& aux)
++    SimpSolver& S, const std::vector<Lit>& inputs, bool value, std::vector<Var>& aux,
++    XorPrefixCache* cache = NULL)
+ {
+     if (inputs.empty()) return;
+     if (inputs.size() == 1) {
+@@ -144,7 +156,7 @@ static void add_xor_equals(
+         add_hard_clause(S, c);
+         return;
+     }
+-    Lit p = parity(S, inputs, aux);
++    Lit p = parity(S, inputs, aux, cache);
+     std::vector<Lit> c;
+     if (value) c.push_back(p);
+     else c.push_back(~p);
+@@ -394,8 +406,11 @@ static bool build_stabilizer_instance(
+     std::vector<Var>& aux,
+     StabilizerInstance& meta,
+     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+-    int verb, int card_mode, int bounds_pipe_w)
++    int verb, int card_mode, int bounds_pipe_w, bool share_xor_prefixes = false)
+ {
++    // Cache lifetime is one encoding in one solver; signed operand order matters.
++    XorPrefixCache prefixes;
++    XorPrefixCache* cache = share_xor_prefixes ? &prefixes : NULL;
+     meta.n = Hx.cols;
+     if (Hz.cols != meta.n || Gx.cols != meta.n || Gz.cols != meta.n) die("matrix column mismatch");
+     const int k_log = Gx.rows + Gz.rows;
+@@ -424,13 +439,13 @@ static bool build_stabilizer_instance(
+         std::vector<Lit> lits;
+         for (int i = 0; i < meta.n; i++)
+             if (getm(Hx, r, i)) lits.push_back(mkLit(off_z + i));
+-        add_xor_equals(S, lits, false, aux);
++        add_xor_equals(S, lits, false, aux, cache);
+     }
+     for (int r = 0; r < Hz.rows; r++) {
+         std::vector<Lit> lits;
+         for (int i = 0; i < meta.n; i++)
+             if (getm(Hz, r, i)) lits.push_back(mkLit(off_x + i));
+-        add_xor_equals(S, lits, false, aux);
++        add_xor_equals(S, lits, false, aux, cache);
+     }
+     {
+         std::vector<Lit> nz;
+@@ -452,7 +467,7 @@ static bool build_stabilizer_instance(
+             add_hard_clause(S, c);
+         } else {
+             lits.push_back(a_lit);
+-            add_xor_equals(S, lits, false, aux);
++            add_xor_equals(S, lits, false, aux, cache);
+         }
+     }
+     for (int j = 0; j < Gz.rows; j++, aj++) {
+@@ -466,7 +481,7 @@ static bool build_stabilizer_instance(
+             add_hard_clause(S, c);
+         } else {
+             lits.push_back(a_lit);
+-            add_xor_equals(S, lits, false, aux);
++            add_xor_equals(S, lits, false, aux, cache);
+         }
+     }
+     {
+@@ -503,7 +518,7 @@ static int min_distance_stabilizer_maxsat(
+     SimpSolver S;
+     std::vector<Var> aux;
+     StabilizerInstance meta;
+-    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
++    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w, true))
+         return INT_MAX;
+ 
+     if (dump_wcnf_path && dump_wcnf_path[0])

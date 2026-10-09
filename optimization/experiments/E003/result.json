@@ -1,0 +1,35 @@
+{
+  "experiment": "E003",
+  "hypothesis": "H-004 reuse XOR gate clause buffer",
+  "baseline_commit": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "candidate_code_commit": "02fc219e8c2816b510d785104e64ac05caeda5f3",
+  "candidate_snapshot": "02fc219e8c2816b510d785104e64ac05caeda5f3",
+  "decision": "INCONCLUSIVE",
+  "reason": "Controlled performance pending; local numeric filter INCONCLUSIVE",
+  "tier0_windows": "PASS",
+  "hosted_PR_check": "pending; no merge",
+  "tier1_controlled": "not run",
+  "tier1_windows": {
+    "raw_samples": 48,
+    "numeric_filter": "INCONCLUSIVE",
+    "medians": "raw/windows-run-01/all-medians.json",
+    "mode_geomeans": {
+      "no-card": 1.0034646541207763,
+      "card-mto": 0.9928333570544946
+    }
+  },
+  "tier2": "not reached",
+  "tier3": "not run",
+  "scientific_semantics_changed": false,
+  "patch_sha256": "19ef4429fb456557f866ff9014da57b0ecfdbc71d977532e9b1db8ce3a69bb2c",
+  "binary_sha256": {
+    "baseline": "fea3c1c32f79361b3d076ba552a378debcd2bcb599521b74804f30f267926a73",
+    "candidate": "d3fb71a7dba11bbde3a97647a285de27f6ffc66e380f9fd68af11e9465c50558"
+  },
+  "package": {
+    "file": "E003-run-package.tar.gz",
+    "sha256": "7d7a229c0c93c74f638e2a8c17f91a0a24728204a9a48d5aa37547dd02828a8d",
+    "files_verified": 1585,
+    "runner_commit": "02fc219e8c2816b510d785104e64ac05caeda5f3"
+  }
+}

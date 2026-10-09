@@ -1,0 +1,57 @@
+{
+  "audit": "PASS",
+  "complete_solves": 4,
+  "internal_timeouts": 0,
+  "pairs": [
+    {
+      "mode": "no-card",
+      "baseline_sec": 50.39377679792233,
+      "candidate_sec": 49.3852917838376,
+      "ratio": 0.9799879056866739,
+      "stdout_byte_identical": true
+    },
+    {
+      "mode": "card-mto",
+      "baseline_sec": 54.13965743780136,
+      "candidate_sec": 43.57445110799745,
+      "ratio": 0.8048527303309628,
+      "stdout_byte_identical": true
+    }
+  ],
+  "min_observed_idle": 63.14499228974734,
+  "resource_checks": 101,
+  "contention_checks": 76,
+  "per_run_resources": [
+    {
+      "label": "tier3-BB_144_12_12-no-card-1-baseline",
+      "checks": 26,
+      "contention_checks": 26,
+      "min_global_idle": 64.22498622372667,
+      "min_sibling_idle": 0.0
+    },
+    {
+      "label": "tier3-BB_144_12_12-no-card-1-candidate",
+      "checks": 25,
+      "contention_checks": 25,
+      "min_global_idle": 73.96931549960661,
+      "min_sibling_idle": 0.0
+    },
+    {
+      "label": "tier3-BB_144_12_12-card-mto-1-baseline",
+      "checks": 28,
+      "contention_checks": 20,
+      "min_global_idle": 64.33237574278856,
+      "min_sibling_idle": 0.0
+    },
+    {
+      "label": "tier3-BB_144_12_12-card-mto-1-candidate",
+      "checks": 22,
+      "contention_checks": 5,
+      "min_global_idle": 63.14499228974734,
+      "min_sibling_idle": 85.27918781725889
+    }
+  ],
+  "decision": "INCONCLUSIVE",
+  "reason": "Singleton occupied-host pilot; no controlled promotion",
+  "medians": null
+}

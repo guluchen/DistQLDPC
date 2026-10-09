@@ -1,0 +1,36 @@
+{
+  "experiment": "E002",
+  "hypothesis": "H-002 exact XOR-prefix sharing",
+  "baseline_commit": "24572d6d09cce9a4a5faa58300a89e0feba9da6a",
+  "candidate_code_commit": "80a6eba17fc169e3ab99dfd2266df1e78120752a",
+  "candidate_snapshot": "014d8264e43f3ebfc7171748e909eead1d09dd1a",
+  "decision": "INCONCLUSIVE",
+  "reason": "Controlled run pending; local Windows numerical filter REJECT",
+  "tier0_windows": "PASS",
+  "hosted_PR_check": "pending; no merge",
+  "tier1_controlled": "not run",
+  "tier1_windows": {
+    "raw_samples": 48,
+    "numeric_filter": "REJECT",
+    "medians": "raw/windows-run-01/all-medians.json",
+    "reason": "Disjoint regressions: GB in OFF/MTO and BB_108 OFF",
+    "mode_geomeans": {
+      "no-card": 1.0093791832861705,
+      "card-mto": 0.9794869800992724
+    }
+  },
+  "tier2": "not reached",
+  "tier3": "not run",
+  "scientific_semantics_changed": false,
+  "patch_sha256": "e74d9840550998501c7ef4dd11852a6fd045703cd225dd072d15a6cec1713ff6",
+  "binary_sha256": {
+    "baseline": "fea3c1c32f79361b3d076ba552a378debcd2bcb599521b74804f30f267926a73",
+    "candidate": "f4b037af202bfb7dae63d97fdfbb7103f3a3b8e5ef9157b4c6b3772045cc04a3"
+  },
+  "package": {
+    "file": "E002-run-package.tar.gz",
+    "sha256": "bb80b66f41d5443fca8529f109f06832ae14d6fa547ddc3f908606cb222cbe78",
+    "files_verified": 1359,
+    "runner_commit": "2940359eacb3626628bb2847d6940043f696d6dc"
+  }
+}
