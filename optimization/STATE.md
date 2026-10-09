@@ -1,5 +1,16 @@
 # Optimization state
 
+GH63 Tier1 adapter constructed DISABLED / source review (2026-10-09):
+Preregistered48 sample plan97556c20 independently reviewedfb56bec0; fresh16Git
+input packagebe06b15a and original12full01production pins checked. Stable030e77e1
+source identified unexecuted harness verdict-priority issues (stale process
+handle on launch failure, record-save masking ScienceError); narrow repair and
+independent re-review required. See observations/GH63-TIER1-SOURCE-PREPARATION.md.
+No timing/host worker, Tier1/2/3 NOT_RUN, optimization INCONCLUSIVE; goal ACTIVE.
+GH64 separate selected guarded-prefetch Windows targeted source plan90f568d0
+published64/6074139814 BEFORE adapter code; source preparation authorized only,
+11+80/1+316 each, worker3000/outer3060+10 budget. No combined candidate/build/run.
+
 GH63 baseline census actual DONE / independently audited (2026-10-09):
 Supersedes historical census RUNNING entries below. All eight expected science
 results/32 fields and complete FINAL protocols pass; size-two calls27.95–31.04%

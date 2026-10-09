@@ -1,5 +1,13 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 Tier1 source preparation (2026-10-09), not measured:
+Plan97556c20 reviewedfb56bec0; disabled030e77e1 adapter requires narrow harness
+verdict-priority repairs and independent re-review before execution. Candidate
+38782bb production unchanged, full Tier0/census remain valid, no optimization
+rejection/acceptance inferred. See observations/GH63-TIER1-SOURCE-PREPARATION.md.
+GH64 separate guarded-prefetch targeted plan90f568d0 published64/6074139814
+beforecode; finite source-only preparation, no GH63 mixing or host authorization.
+
 GH63 census prerequisite DONE (2026-10-09), superseding RUNNING below:
 Independent1db088ea confirms eight complete baseline diagnostic counts and
 32 scientific fields. Size-two call fraction27.95–31.04% establishes opportunity
