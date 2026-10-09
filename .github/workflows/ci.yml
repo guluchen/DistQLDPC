@@ -25,3 +25,6 @@ jobs:
 
       - name: Run smoke validation
         run: bash scripts/smoke_test.sh
+
+      - name: Validate partition soft-literal regression
+        run: python3 -B scripts/test_partition_soft_literals.py
