@@ -28,3 +28,8 @@ jobs:
 
       - name: Validate partition soft-literal regression
         run: python3 -B scripts/test_partition_soft_literals.py
+
+      - name: Validate partition list and objective invariants
+        run: |
+          g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -DNDEBUG tests/test_partition_soft_literals.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz -o build/test_partition_soft_literals
+          timeout 20s build/test_partition_soft_literals
