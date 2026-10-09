@@ -1,5 +1,17 @@
 # Optimization state
 
+GH63 Tier1 actual48 Windows diagnostic TERMINAL (2026-10-09):
+Supersedes RUNNING below. All48 retained eligible scientifically correct,
+natural zero exit, cleanup/all4restore/postidentities pass; assignment6074204309
+released6074272183. Raw catalogue6228e149; independent whole-raw audit pending.
+All8 candidate medians slightly slower; unchanged numericjudge REJECT at BB90
+MTO point-ranges. Quietfalse/strongcorroborationfalse; runner formal decision
+INCONCLUSIVE, no controlled regression/speedclaim. See observations/
+GH63-TIER1-WINDOWS01-RESULT.md for raw timing table, medians and limitations.
+No active root solver worker/no Tier2/3/ACCEPT. GH64 separate source adapter
+repairs2329b76a under review; exactlatestb632CI final-fields independently
+retained/audited076eae71, no fulllocal science/performance implication. Goal ACTIVE.
+
 GH63 Tier1 actual Windows diagnostic RUNNING (2026-10-09):
 Supersedes pre-execution repair/review status below. Independent narrow review
 7b892d63 READY_DISABLED_LIMITED after archived030e/ae17 findings; exact support

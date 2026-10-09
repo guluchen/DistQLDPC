@@ -1,5 +1,13 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 Tier1 actual diagnostic complete (2026-10-09), superseding RUNNING:
+48sciencecorrect; all8 candidate medians slower0.0134–1.4254%, original numeric
+point-range REJECT at BB90MTO. Quietfalse, conservative corroborationfalse;
+formalINCONCLUSIVE pending rawaudit, no speedup or controlled rejection proved.
+See observations/GH63-TIER1-WINDOWS01-RESULT.md. No Tier2/3/ACCEPT/active worker.
+GH64 separate targeted-source2329 repair review pending; exactlatestb632CI
+finalfields audited076eae71, no localfullT0/performance. Continuous goal ACTIVE.
+
 GH63 Tier1 actual48 Windows diagnostic RUNNING (2026-10-09):
 Assignment6074204309, source review7b892d63/final literalfreeze10b900ff;
 first two original-app science observations retained. Not complete/performance
