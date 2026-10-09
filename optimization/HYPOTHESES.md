@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 actualtargeted01 audita017e811 and actualprefetch mechanismd4f8e983 pass
+(2026-10-09). Focused science only, fullapplication gate stillrequired before
+performance; nohotness/speedbenefit or adoption. See observations/
+GH64-WINDOWS-TARGETED01.md. GH63 Tier1 formalINCON confirmedbe7b; standing-user
+LP340 exploratory plan2def34c4 published63/6074421151 beforeadaptercode/source
+construction only, noTier1rehabilitation/automaticTier3. GoalACTIVE.
+
 GH63 actualTier1 evidence independently auditedbe7b3c0c (2026-10-09):
 FormalINCONCLUSIVE, originalpointREJECT retained; all24conservativepairedratio
 intervals contain1, all8mediansslower/no robust separated regression. Bounded

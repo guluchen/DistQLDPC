@@ -1,5 +1,16 @@
 # Optimization state
 
+GH64 actual targeted01 independently certified (2026-10-09):
+Audita017e811 PASS_TARGETED_STANDALONE_ONLY verifies225raw/266protected,
+bothfresh engines/22PMS/80+1each/316orderedIDs each/complete transcripts/43cmds,
+source/runtime/interpreter actual pins/cleanup/all4restore. Staticd4f8e983
+confirms actual guarded next-clause prefetcht2; no speed/cache/hotnessclaim.
+Full finite application gate remains before Tier1; observations/
+GH64-WINDOWS-TARGETED01.md. GH63 actualTier1 remains independentlyINCON,
+boundedLP340 exploratory plan2def34c4 published63/6074421151 beforeadaptercode,
+source construction active only. No active solverworker/acceptedoptimization/
+Tier3; goal ACTIVE. Historical pending entries below are superseded.
+
 GH63 Tier1 whole-raw audit DONE / formal INCONCLUSIVE (2026-10-09):
 Independentbe7b3c0c authenticates159raw/1346protected,48science/192finalfields,
 all8medians/24pairedexit intervals/runtime/currentidentities/cleanup/all4restore.

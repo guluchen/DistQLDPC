@@ -1,5 +1,20 @@
 # GH64 actual Windows targeted01: terminal, independent raw audit pending
 
+Independent targeted audit now PASS_TARGETED_STANDALONE_ONLY, superseding
+pending text below; a017e81140a87cc61fecfa0dc9972d5e64e4f7dd90494aafddae456f984b45b9.
+All225 raw payloads/266 protected actual bytes, both fresh engine sources/
+objects/executables,22 independently enumerated PMS optimum5 results,80+1
+partition each,316 actual ordered IDs each/full equal transcripts,43 commands,
+runtime/interpreter current identities and cleanup/all4restores verified.
+Static actual mechanism independently certifiedd4f8e9835fa843405810d2e27c3ce2d5963e4a23511b714361b2059712818559:
+candidate propagateForLK emits one guarded next-clause prefetcht2; baseline
+has none. Current true blocker, no valid next watcher and next true blocker
+branches skip it. Read/locality1 address matches the selected source change.
+Complete CODE/relocations checked; newAuxiVar COMDAT differs only call-addend
+layout, main.text64bytes smaller with compiler register/layout changes.
+No hotness/cache-miss/speed claim. Actual targeted scientific/instruction gates
+pass; full finite application correctness remains mandatory before performance.
+
 Candidateb632a1c016c2289ab1625ccb768626a187c5aa62 versus corrected baseline
 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7. Exactly one selected conceptual
 change: guarded next-long-clause prefetch in propagateForLK, five production
