@@ -83,7 +83,7 @@ def main():
   except UnicodeDecodeError:text=rawtext.decode('utf8',errors='replace');utf8_valid=False
   tails=re.findall(r'optimal:([^\r\n]*)',text);vals=[x.strip().split()[0].split(',')[0] if x.strip() else '' for x in tails]
   statuses=re.findall(r'^s\s+(.*?)\s*$',text,re.M)
-  correct=utf8_valid and rc in (10,20) and bool(vals) and all(re.fullmatch(r'\d+',v) and int(v)==5 for v in vals) and statuses==(['SATISFIABLE'] if rc==10 else ['UNSATISFIABLE'])
+  correct=utf8_valid and text.count('optimal:')==len(vals) and rc in (10,20) and bool(vals) and all(re.fullmatch(r'\d+',v) and int(v)==5 for v in vals) and statuses==(['SATISFIABLE'] if rc==10 else ['UNSATISFIABLE'])
   result.update(status='NATIVE_ONE_CASE_CORRECT_WINDOWS_ANOMALY_UNRESOLVED' if correct else 'NATIVE_SCIENTIFIC_ANOMALY_REPRODUCED',returncode=rc,science_pass=correct,reported_optima=vals,statuses=statuses,utf8_valid=utf8_valid,oracle=truth)
  except BaseException as e:result['error']=repr(e)
  finally:
