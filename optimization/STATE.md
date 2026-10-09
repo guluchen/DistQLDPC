@@ -1,5 +1,16 @@
 # Optimization state
 
+GH83 complete retained core Tier0 independent PASS (2026-10-09), actual audit02
+4f33584b:192cmds/90apps/348sciencefields/41Main/40dumps/12TO/2smoke/2304Pauli.
+All774 original raw files verified; exact cataloguecfd63f92 has773 entries.
+Original unused-declared-variable warnings independently diagnosed and narrowly
+audited30times under reviewed405709/d2ce959 source; firstfailedaudit retained,
+no production/parser/raw change or solver rerun. Original81 baseline PMS reused,
+not162 fresh runs. Separate195birth/root5/helperrelease proved. Tier1 conditional
+prerecord83/6079474249/sourcee343 READY/input9e2c PASS, preparation15/6079697113;
+root literal freeze next, no timing runner/adoption/Tier2/3. Prior pending warning
+and RUNNING entries below are historical and superseded.
+
 GH83 full core integration actual TERMINAL0 (2026-10-09). Same67924 completed;
 all774 raw payloads downloaded and rootbyteverified. Separate post43d1563f
 confirms helper inactive/groupgone/all195 observed births absent/root5 restored;

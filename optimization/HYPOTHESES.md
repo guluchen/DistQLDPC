@@ -1,5 +1,14 @@
 # Hypothesis registry (not an execution queue)
 
+GH83 balanced original Hx/Hz association candidateaea3: full retained native
+application core Tier0 PASS actualaudit4f33584b,192commands/90apps/348fields/
+41Main/40dumps/12TO/2smoke/2304Pauli, focused CNF and hosted checks also PASS.
+Original parser warning diagnosis complete without raw/parser/solver changes.
+Actual fresh baseline/candidate apps73a6232e/4a2a24d7 use shared original72engine.
+Tier1 sourcee343 READY/freshinputs9e2c PASS/preparation15/6079697113, freeze next;
+scientific timing NOT_RUN, performance INCONCLUSIVE/no adoption/Tier2/3.
+Earlier full-core NOT_RUN/pending states below are historical and superseded.
+
 2026-10-09 GH83 balanced original check XOR candidateaea3ee0/draftPR84:
 native focused tests PASS_GATE_CNF_ONLY, 72 rows/9086 assignments per version;
 independent retained audit22379706 complete. Hosted CI/cross-repo PASS.

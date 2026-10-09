@@ -54,3 +54,24 @@ checks; all targeted/reused stderr checks and science gates remain strict.
 Peer source review and rerunning this metadata-only audit are pending; no
 solver rerun or raw modification. Native Tier1 source reviewe3436ba7 is READY,
 but operational pins remain disabled until whole core certification.
+
+## Independent retained whole core gate passed
+
+Actual metadata-only audit02 completed PASS_RETAINED_CORE_INTEGRATION_ONLY,
+report4f33584b8d4f5249e4fd781659c40ea8be1421005dae7b4cef806408d81ad5c5.
+Exact reviewed warning repaird2ce959/source review405709 was enabled by only
+the root terminal literal; all original first-failure evidence remains retained.
+No solver was rerun. Original raw cataloguecfd63f92af0c8aeae186e0827407a9fc391f7d304ce0211c8da7f21c942a85cb
+has773 payload entries; adding SHA256.json gives774 downloaded files.
+Independent checks cover192 commands,90 apps,348 scientific fields,41 Main,
+40 dumps,12 genuine timeouts,2 smoke,2304 Pauli assignments,81 baseline PMS
+reuse, all195 observed process births and the exact original root restoration.
+All30 diagnosed original parser warnings passed the narrow explicit check.
+See CORE-INTEGRATION-INDEPENDENT-AUDIT02.json and source review record.
+
+Scientific core Tier0 PASS; performance remains NOT_MEASURED/INCONCLUSIVE.
+Captured executed-worker runtime checks are retained, not relabeled as a fresh
+independent whole-current runtime certificate. Actual fresh production apps
+73a6232e (baseline) and4a2a24d7 (candidate) share only original baseline engine.
+Conditional Tier1 preparation assignment15/6079697113 now published, not RUN;
+freeze/current-byte/resource verification precedes any timing acquisition.
