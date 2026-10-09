@@ -1,0 +1,7 @@
+# GH-79 frozen binaries (read-only, outside build trees). Candidate source bf8110f2a8e10ca4f331abe7acd4c7be83e06905 (src tree identical in ci/xrepo-gh79 981e847).
+# Mac (Apple clang 21.0.0, make -j2 CXX="c++ -Wno-reserved-user-defined-literal"), for coordinator timing:
+b8f31b366deeb8baa3d265a131776b9210b04e11d1a582b54e3bee3a6bc06fad  <scratch-2026-10-08-ce0ddb>/frozen79/cand/distqldpc
+3f2fbc4215e17c4a5b5e62d1f10f99619bdf6efaea7881acb46157effe78c9dc  <scratch-2026-10-08-ce0ddb>/frozen73n/base/distqldpc   (baseline 72d1fe1, coordinator-frozen)
+# yfclab2 (Linux 6.8, GCC 13.3, make -j8), Tier0 science sweep only:
+c69ad254d60c65be29dba5309e37df102612ec0cc8af61d5b247939fe86888f8  ~/mac-agent-20261009/frozen/gh79/cand/distqldpc
+b943c2c94d67574505112a06e1bb806aec378fbbc79e9edca4a1c5236283e00e  ~/mac-agent-20261009/frozen/gh73n/base/distqldpc   (baseline 72d1fe1)
