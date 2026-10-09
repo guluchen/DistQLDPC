@@ -31,7 +31,7 @@ Soundness: see PROPOSAL.md. The clauses preserve, at every w, whether a half sol
 ## Tier0 evidence
 | Check | Host | Result |
 |---|---|---|
-| Build: Mac clang (`make -j2 CXX="c++ -Wno-reserved-user-defined-literal"`); yfclab2 GCC 13.3.0 (`taskset -c 0-63,128-191 make -j8`) | both | PASS. Mac warnings 34 (= GH-76), none in `distqldpc.cc`. Linux 163 vs GH-85 159; the extra 4 are GH-76's engine `%llu`/`write` warnings |
+| Build: Mac clang (`make -j2 CXX="c++ -Wno-reserved-user-defined-literal"`); yfclab2 GCC 13.3.0 (`taskset -c 0-63,128-191 make -j8`) | both | PASS. Mac warnings 34 (= GH-76), none in `distqldpc.cc`. Linux 163 vs GH-85 159; the extra 4 are `%llu` format warnings in GH-76's `incProbe` prints (`Solver.cc` = b3d6b5d), verified by diffing the build logs |
 | `scripts/smoke_test.sh` | both | PASS |
 | `python3 -B scripts/test_partition_soft_literals.py` (fixture + 11 adjacent oracles) | both | PASS |
 | `tests/test_partition_soft_literals.cc` oracle (compile line from `ci.yml`) | both | PASS, `GH58_PARTITION_ORACLE_PASS cases=80` |
