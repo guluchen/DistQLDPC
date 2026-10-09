@@ -1,0 +1,1 @@
+# GH-87 Tier2 plan (before timing): LP_340_56_8 no-card/card-mto, 3+3 AB/BA/AB, 600/615 s, Mac, timing lock. LP340 has no dual map (expected GH-73 behaviour). Direction consistent, no regression => Tier2 PASS (local).
