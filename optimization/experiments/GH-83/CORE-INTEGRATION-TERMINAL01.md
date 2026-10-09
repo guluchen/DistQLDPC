@@ -33,3 +33,24 @@ rerun. Original failed audit source/evidence/raw remain retained.
 Full scientific Tier0 certificate remains pending. Tier1 adapter and prerecord
 exist but remain disabled; no Tier1/2/3 execution, promotion, acceptance or speed
 claim. Any genuine semantic/output regression requires STOP/REJECT.
+
+## Actual warning diagnosis
+
+Independent bounded raw/source diagnosis ede2260b confirms all30 live Main
+stderr files are exactly60 bytes with one newline, same SHA256f4e77574 and
+identical in paired baseline/candidate observations. All WCNF clause counts,
+positive weights and literal ranges are valid. The original exporter declares
+nVars but omits satisfied clauses/false literals, leaving unused trailing
+declared variables. The original parser allocates through the largest referenced
+literal and compares this to the declaration; all30 original Main statistics
+equal the actual literal maximum, below the declaration. All original Main
+returncodes20 and optima agree with independent Pauli truth. No scientific or
+candidate output regression was observed. See LIVE-MAIN-WARNING-DIAGNOSIS01.json.
+
+This classifies the first audit failure as an overly strict blanket stderr
+check. A narrow disabled auditor repair permits only this exact warning for
+the fixed30 live Main observations after independent WCNF/range/max-variable
+checks; all targeted/reused stderr checks and science gates remain strict.
+Peer source review and rerunning this metadata-only audit are pending; no
+solver rerun or raw modification. Native Tier1 source reviewe3436ba7 is READY,
+but operational pins remain disabled until whole core certification.
