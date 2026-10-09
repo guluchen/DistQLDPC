@@ -29,6 +29,9 @@ files exported. Both original streams and outer/helper/postprobe bytes retained.
 Preregisterd9bb9fe before source; engineering repairs4058d97/3e4a6df before
 execution, independent SOURCE_READY; URL-only freeze3c3f0c3 before timing.
 Assignment6071652509, released6071677051. Raw catalog records exact bytes,
-including original archive and all extracted payloads. Independent raw audit
-will be retained separately. No performance conclusion follows from elapsed
+including original archive and all extracted payloads. Independent raw audit PASS_EVIDENCE_AUTHENTICATED_SCIENTIFIC_FAILURE
+retained in INDEPENDENT_RAW_AUDIT.json. Exact25 raw Git blobs independently
+verified. Initial automatic public push rejection was resolved by scoped
+content checks and independent per-payload publication audit; the same original
+push then approved/succeeded at0a65005. No alternate export/bypass. No performance conclusion follows from elapsed
 time. Preserve downstream DistQLDPC/QDistSAT distinction and attribution.

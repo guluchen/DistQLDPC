@@ -9,9 +9,10 @@ CPU0-255 restored. Slot6071652509 released6071677051. Tier0gate REJECT/STOP;
 cause unestablished, not Windows-only, no attribution to upstream MaxCDCL.
 Known fixture remains mandatory. Scientific anomaly direction pending user;
 no new baseline designation or candidate certification/promotion through failure.
-25 original Git raw blobs preserved fd85ce5; initial public push rejected by
-automatic review, scoped25-payload content/known-credential check subsequently
-PASS; independent public-safety check and publication remain pending.
+25 original Git raw blobs preserved fd85ce5, independently audited; initial
+public push rejected by automatic review. After exact per-payload safety checks
+and independent publication audit, same original push approved/succeeded at
+0a65005. No credentials/runtime file contents/compiled objects/core exported.
 
 
 Latest completed evidence (2026-10-09), superseding pending entries below:
