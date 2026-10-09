@@ -1,5 +1,15 @@
 # Optimization state
 
+GH64 Windows Tier1 diagnostic RUNNING (2026-10-09):actualfull9d6 prerequisites
+complete; narrow source06735c93 READY, reviewed833da rootliteralfinalbb50d909,
+input16f574, sole slot15/6075006395. Exactly48 original-app observations,
+fourcases OFF/MTO ABBAAB3B3C,180/195 minremaining3600/3660+10, eventintervals.
+No build/relink/secondoptimization/favorable retry; originaljudge unchanged,
+formal WindowsINCON and point-signal separated. Actualraw audit afterterminal.
+Native controlled-certification prerecord2fc57/public64/6074993032 beforeadapter,
+targeted+full6600 bounded aggregate only; local source preparation, nolease/build.
+No ACCEPT/Tier3; historical pending/idle below superseded.
+
 GH64 full Windows Tier0 independently certified (2026-10-09):9d6ac056 PASS_FULL_
 WINDOWS_LOCAL_CORRECTNESS_ONLY validates963raw043e/524protected/12productionpins,
 54app204fields/162PMS40independenttruth/40equaldumps/12trueTO/2smoke/269commands,

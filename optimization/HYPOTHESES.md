@@ -1,5 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 Windows Tier1 actual launched (2026-10-09), source067/sourcefreeze bb50d909,
+full correctness9d6 verified before timing; original48scope/judge, formalWindows
+diagnosticINCON/pointsignal separate. Slot15/6075006395 soleWindowsworker.
+Native controlled-certification prerecordpublic64/6074993032 preparedbefore
+adapter, no nativelease/compiledPASS/timing; no acceptance or automaticTier3.
+
 GH64 full Windows actual9d6ac056 independentlyPASS (2026-10-09),54/162/40/12/2
 plus raw/source/runtime/cleanup authentic; no performance/native equivalence.
 Tier1 source review pending point-signal vs formal uncertainty clarification;
