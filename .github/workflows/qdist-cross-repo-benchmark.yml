@@ -65,6 +65,23 @@ jobs:
           make -C baseline --jobs="$(nproc)"
           make -C candidate --jobs="$(nproc)"
 
+      - name: Compare production lookahead watch state (GH-20)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p benchmark-results/watch-tail
+          for version in baseline candidate; do
+            g++ -I"$version/src/solver" -O2 -std=gnu++11 \
+              candidate/optimization/experiments/GH-20/test_watch_tail.cc \
+              "$version/build/SimpSolver.o" "$version/build/Solver.o" \
+              "$version/build/Options.o" "$version/build/System.o" \
+              -lz -o "benchmark-results/watch-tail/$version-probe"
+            "benchmark-results/watch-tail/$version-probe" \
+              > "benchmark-results/watch-tail/$version.stdout" \
+              2> "benchmark-results/watch-tail/$version.stderr"
+          done
+          cmp benchmark-results/watch-tail/baseline.stdout benchmark-results/watch-tail/candidate.stdout
+
       - name: Compare on selected QDistSAT instances
         id: bench
         shell: bash

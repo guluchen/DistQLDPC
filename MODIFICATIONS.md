@@ -76,6 +76,15 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
 
+#### GH-20 isolated experiment: lookahead watch-tail self copies
+
+- In the two conflict-tail paths of `propagateForLK`, skip suffix copies only
+  when source and destination pointers are identical. Preserve original copying
+  for compacted lists, all watch order, pointer results and conflict behavior.
+- This one performance concept is untested/unadopted; no solver heuristic,
+  encoding, bound, timeout or scientific-semantic change is intended.
+  Prerecord: `optimization/experiments/GH-20/PROPOSAL.md`.
+
 ---
 
 ## Files not modified for DistQLDPC integration
