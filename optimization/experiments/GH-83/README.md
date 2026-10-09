@@ -13,19 +13,24 @@ check-pair equations; unselected C uses demand dirty-watch cleanup. Neither is
 combined with A. Corrected baseline72d1fe18; isolated candidate branch
 `experiment/gh-83-balanced-stabilizer-xor`, with no GH64 prefetch patch.
 
-Status IMPLEMENTED_PENDING_FULL_TIER0, benefit unproved. Candidate commit
-aea3ee070392c4f610f17dec4646a977d03b9509 is preserved in draft PR84.
-Hosted CI37914800935 and QDistSAT cross-repo37914800707 completed successfully:
-LP136 and BB108 distances match in OFF/MTO against corrected baseline72d1.
-The tested PR merge is5be5c0449baafa3758adcebb3258f1497e4c7a93. Shared CI
-timings are informational only; this pilot is not full scientific Tier0.
-Native focused tests completed PASS_GATE_CNF_ONLY (72rows/9086assignments per
-version, actual helper/outer0,41rawpayloads; independent audit22379706 PASS).
-The three engineering runner blockers were repaired and independently reviewed
-before execution. Acquisition01 declined before reservation;02 succeeded after
-a new eligible snapshot. Cleanup independently captured, all13births absent.
-See FOCUSED-ATTEMPT01.md and FOCUSED-RESULT01.md. Full scientific Tier0 and
-Tier1/Tier2/Tier3 NOT_RUN; no actual scientific mismatch or candidate alteration.
+Latest disposition: **REJECT / NOT ADOPTED for the general OFF/MTO variant**.
+Candidateaea3ee070392c4f610f17dec4646a977d03b9509 remains isolated in draftPR84.
+Full retained native core Tier0 audit4f33584b PASS:90 apps/41Main/40dumps/
+12 genuine timeouts/2 smoke, original baseline81 PMS explicitly reused.
+Focused projection audit22379706 and both hosted checks also passed. Original
+parser unused-declared-variable warnings independently diagnosed without
+modifying any input, output, parser or scientific meaning.
+
+Native Tier1 completed48 natural scientifically correct samples/192fields,
+independent retained audit203544c7 PASS. Original numeric filter REJECT;
+OFF geometric-mean slowdown8.6653%, MTO improvement14.7971%. OFF GB/BB108
+regress approximately20%, so this general variant does not proceed to Tier2/3.
+All four MTO cells/12 paired conservative wall intervals and CPU direction
+are positive: useful specialized diagnostic evidence, not acceptance or proof
+of a future mode-scoped implementation. Formal retained performance scope
+INCONCLUSIVE; candidate unmerged, no favorable rerun. See NATIVE-TIER1-RESULT01.md.
+Complete152raw files verified; all52 observed births absent/helperinactive/
+root5 restored. Shared CI timing remains informational only.
 The only production change is XOR association; logical rows/Pauli OR/objective/
 nontriviality/engine/bounds/timeouts/output meanings stay unchanged. Projection
 proof and focused actual-helper checks precede full science and performance.

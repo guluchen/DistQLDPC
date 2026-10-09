@@ -1,5 +1,16 @@
 # Optimization state
 
+GH83 nativeTier1 TERMINAL0 and independently audited203544c7 (2026-10-09):
+48science/192fields/8medians24pairs/all152raw verified, actualpostbb56f2f7
+all52birthabsent/root5restored/helperinactive. Slot released15/6079947944.
+Generalvariant NUMERIC_REJECT/NOT_ADOPTED, formal retained acceptance scope
+INCONCLUSIVE: OFFGM+8.6653% with GB/BB108about20% regressions, MTOGM−14.7971%
+all4cells/all12conservativepairs andCPUdirectionpositive. No Tier2/3 or favorable
+retry. Sourcecandidateaea3 remains isolated, originalfullTier0PASS retained.
+Fresh independent three-proposal Brain source preparation active; no root
+scientific runner. See GH83 NATIVE-TIER1-RESULT01.md. Prior RUNNING/preparation
+entries below are historical and superseded.
+
 GH83 native Tier1 ACTUAL RUNNING (2026-10-09), sole scientific tool28403,
 assignment15/6079697113 RUN confirmed6079776381. Full retained core Tier0 PASS,
 sourcee343/input9e2c/freezefc043 independent PASS. Actualremote13support/16input/

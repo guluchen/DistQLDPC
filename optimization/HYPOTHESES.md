@@ -1,5 +1,14 @@
 # Hypothesis registry (not an execution queue)
 
+GH83 balanced originalchecks generalOFF/MTO variant numericREJECT/unadopted,
+actual48 native samples independently203544c7 auditedcorrect. OFFGM+8.6653%,
+GB/BB108about20%slower; MTOGM−14.7971% all4cells/12conservativepairs/CPUpositive.
+Formal retained acceptance scope INCONCLUSIVE; noTier2/3/retry/merge. Candidate
+preservedisolated, fullcoreTier0PASS unchanged. A fresh MTO-scoped follow-up may
+compete in new three-proposal Brain; oldMTO observations cannot certify it.
+No root scientific runner, new independent Brain source preparation active.
+Earlier RUNNING/NOT_RUN statements below are historical and superseded.
+
 GH83 balanced originalHx/Hz candidateaea3 nativeTier1 ACTUALRUN tool28403,
 assignment6079697113 after fullcore4f335/sourcee343/input9e2/freezefc043 PASS;
 current original48serial measurement schedule, no summary/verdict/adoption.
