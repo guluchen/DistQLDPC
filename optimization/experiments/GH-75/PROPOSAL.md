@@ -1,8 +1,9 @@
 # GH-75 — code-automorphism orbit symmetry breaking (mac-symbreak-20261009)
 
 Issue: https://github.com/guluchen/DistQLDPC/issues/75 · Hub: #15 ·
-Baseline `24572d6d09cce9a4a5faa58300a89e0feba9da6a` · Branch `experiment/gh-75-mac-symbreak`.
-Written before implementation.
+Baseline (amended, see end) `72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7` (corrected source, #62);
+originally `24572d6d09cce9a4a5faa58300a89e0feba9da6a` · Branch `experiment/gh-75-mac-symbreak`.
+Written before implementation (original preregistration commit 83f7dae on 24572d6).
 
 ## PI approval
 On 2026-10-09 the PI answered "可以改" ("may change") to the escalation listing the CSS X/Z
@@ -106,6 +107,30 @@ Tier1/Tier2 timing is run only by the coordinating agent with the unchanged GH16
 Expected cases: large gains possible on BB/GB/LP (transitive or 2-orbit groups),
 neutral on codes without detected symmetry; heuristic perturbation may also slow cases
 (#60/#69 learning). No Tier3.
+
+## Amendments recorded before any Tier0 run
+
+1. **Baseline port (coordinator instruction, 2026-10-09).** The candidate delta is
+   rebased onto the corrected source baseline 72d1fe1 (#62, PR #59 GH58 crash fix,
+   10 lines in `Solver.cc`). The comparison baseline binary is built from 72d1fe1 (the
+   old 24572d6 binary is not used for the final Tier0 comparison); the mandatory
+   regression fixture `tests/fixtures/partition-retired-soft.wcnf` (optimum 5, via
+   `scripts/test_partition_soft_literals.py`) is added to Tier0; `ci/xrepo-gh75` is
+   parented on 72d1fe1.
+2. **Orbit-chain strengthening (same concept, still one clause family).** After the
+   detection prototype showed many codes with k = 34 or 36 orbits (LP/TN/xu/PK), where a
+   single k-literal OR is weak, the selected clause is strengthened soundly by fixing an
+   orbit order O_1..O_k (by minima r_j). For an optimum P let j* be the first orbit met
+   by supp(P). Every group element maps each orbit onto itself, so moving a qubit of
+   supp(P) n O_j* to r_j* keeps j* the first orbit met. Hence we may require "r_j* in
+   supp and supp misses O_1..O_{j*-1}". Encoding with k-1 auxiliaries
+   p_j <-> (supp meets O_1 u ... u O_j):
+   p_j -> p_{j-1} v OR_{q in O_j} w_q; p_{j-1} -> p_j; w_q -> p_j (q in O_j);
+   for q in O_j \ {r_j}: (-w_q v w_{r_j} v p_{j-1}) with p_0 = false; plus the original
+   (w_{r_1} v ... v w_{r_k}). The canonical P' (and exact p values) satisfies all of
+   them, so the optimum and all bound semantics are preserved exactly as argued above.
+   Transitive groups (k = 1) still give only the unit clause w_{r_1}; k = n adds nothing.
+   Size: about 2n binary/ternary clauses plus k-1 clauses of length |O_j|+2.
 
 ## References
 
