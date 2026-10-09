@@ -48,3 +48,16 @@ Reporta28201cb records no actual scientific mismatch. Narrow auditor repairs
 are in progress; the scientific worker, candidate and live attempt are unchanged.
 Root prepared read-only post-release and download-byte checks, neither executed
 before actual terminal/release evidence. No timing or promotion claim follows.
+
+Finite auditor rereviewe4ba5770 is SOURCE_READY_DISABLED after CA1-CA4 fixes;
+exact audited source1d4baf91 and original failed-source archive remain retained.
+See CORE-AUDITOR-SOURCE-REVIEW02.json. This is source readiness, not actual data
+adjudication. Phase probe05 records all54 original application checks/all12
+genuine phase timeouts,13 new live apps and13 associated Main observations,
+plus2 actual balanced-helper-entry checks. Full result remains pending.
+
+Conditional unchanged48-sample native Tier1 prerecord published before adapter
+construction at issue83/6079474249. Exact docs NATIVE-TIER1-PRERECORD.md and
+NATIVE-TIER1-ADAPTER-SPEC.md retain old guard/science/judge/order and bind future
+timing to actual GH83 production apps only. Full-core certificate and fresh app
+hashes remain missing; no timing authorization or Tier1 execution yet.
