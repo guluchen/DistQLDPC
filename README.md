@@ -125,6 +125,24 @@ For a CSS code with stabilizer matrix `S = [Hx | 0]` stacked with `[0 | Hz]` (sy
 
 This matches the standard symplectic MaxSAT encoding: commutation with all stabilizers, nontrivial Pauli, and independence from the logical basis encoded via `Gx` / `Gz`.
 
+### How the distance is solved (default)
+
+For CSS codes every nontrivial logical `(x, z)` has `x` a nontrivial X-type logical or `z` a nontrivial
+Z-type logical, with `|x|, |z| <= |(x, z)|`, so `d = min(d_X, d_Z)`. By default DistQLDPC therefore solves
+two smaller MaxSAT instances, the X half (`Hz x = 0`, nontrivial w.r.t. `Gx`) and the Z half
+(`Hx z = 0`, nontrivial w.r.t. `Gz`), with an interleaved global bound search that keeps reporting valid
+`d_lb` / `d_ub` while it runs (also on timeout). Inside each half, qubit permutations that are verified
+automorphisms of that half (exact GF(2) rank checks) are used for optimum-preserving symmetry breaking.
+The distance definition, Pauli weight and output format are unchanged.
+
+| Flag | Effect |
+|------|--------|
+| `-joint` | Original single symplectic encoding over `(x, z)` (previous default) |
+| `-no-symbreak` | CSS split without the per-half symmetry breaking |
+| `-symbreak-report` | Print the detected per-half automorphism generators and orbits, then exit |
+
+`-dump-wcnf` / `-dump-opb` and the RoundingSat backend still use the joint encoding.
+
 ---
 
 ## Output
