@@ -1,0 +1,24 @@
++ T=taskset -c 0-63,128-191
++ O=../gh89-results/regress
++ taskset -c 0-63,128-191 bash scripts/smoke_test.sh
++ echo smoke rc=0
+smoke rc=0
++ taskset -c 0-63,128-191 python3 -B scripts/test_partition_soft_literals.py
++ echo partition_py rc=0
+partition_py rc=0
++ F=-Isrc/solver -Wall -Wno-parentheses -O3 -g -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -DNDEBUG
++ L=build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz
++ taskset -c 0-63,128-191 g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -DNDEBUG tests/test_partition_soft_literals.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz -o build/test_partition_soft_literals
++ taskset -c 0-63,128-191 timeout 20s build/test_partition_soft_literals
++ echo partition_oracle rc=0
+partition_oracle rc=0
++ taskset -c 0-63,128-191 g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -DNDEBUG tests/test_incremental_probes.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz -o build/test_incremental_probes
++ taskset -c 0-63,128-191 build/test_incremental_probes 100000
++ echo inc_probes rc=0
+inc_probes rc=0
++ taskset -c 0-63,128-191 g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -DNDEBUG tests/test_incremental_symbreak.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o -lz -o build/test_incremental_symbreak
++ taskset -c 0-63,128-191 build/test_incremental_symbreak 100000
++ echo symbreak_inc rc=0
+symbreak_inc rc=0
++ echo DONE
+DONE

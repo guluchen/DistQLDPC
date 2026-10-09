@@ -1,0 +1,93 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/BB_72_12_6_Hx.txt
+c Hz: data/matrices/BB_72_12_6_Hz.txt
+c Gx: data/matrices/BB_72_12_6_Gx.txt
+c Gz: data/matrices/BB_72_12_6_Gz.txt
+c Hx: 36 x 72, Hz: 36 x 72, Gx: 12 x 72, Gz: 12 x 72, logicals: 24
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.01 Mb                                      |
+c Reduced to 208 vars, 1010 cls (c/v ratio==4.9, grow=0)
+c No iterative elimination performed. (vars=208, c/v ratio=4.9)
+c nb soft clauses: 72, of which 72 unit, 0 nonUnit and 0 empty
+c total nb of literals: 3748
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 48
+c 1 conflict sets found with length 42
+c fixedCost 0, nbSatLits 0, totalFixedVars 48, objForSearch: 72
+
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c GH-76 probe: UB=2 fails (inf 2, sup 73, feasible 0), core 51, tier2 3, local 4
+c CSS incremental: X half cap 1 lb 1 feasibility -> NONE 0
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.01 Mb                                      |
+c Reduced to 200 vars, 930 cls (c/v ratio==4.7, grow=0)
+c No iterative elimination performed. (vars=200, c/v ratio=4.7)
+c nb soft clauses: 72, of which 72 unit, 0 nonUnit and 0 empty
+c total nb of literals: 3412
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 48
+c 1 conflict sets found with length 39
+c fixedCost 0, nbSatLits 0, totalFixedVars 48, objForSearch: 72
+
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c GH-76 probe: UB=2 fails (inf 2, sup 73, feasible 0), core 46, tier2 3, local 8
+c CSS incremental: Z half cap 1 lb 1 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 3
+c GH-76 probe: UB=3 fails (inf 3, sup 73, feasible 0), core 82, tier2 14, local 58
+c CSS incremental: X half cap 2 lb 2 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 3
+c GH-76 probe: UB=3 fails (inf 3, sup 73, feasible 0), core 228, tier2 15, local 37
+c CSS incremental: Z half cap 2 lb 2 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 5
+c GH-76 probe: UB=5 fails (inf 5, sup 73, feasible 0), core 226, tier2 15, local 83
+c CSS incremental: X half cap 4 lb 3 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 5
+c GH-76 probe: UB=5 fails (inf 5, sup 73, feasible 0), core 169, tier2 36, local 70
+c CSS incremental: Z half cap 4 lb 3 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 9
+c UB=9 succs, confls=477, hconfls=204, core 3, tier2 4, local 73,  6 soft cls unsat (0 at L0), 48 fixed vars at L0, softCnfl 88, nbFlyRd 67, nbFixedLH 0
+c nbHardens 175 (fixed 8296), shorten: 0, prunedLB 4.66, dev 0.70, succRate 0.92, nbSucc 77, lk: 84, shorten: 0, quasiC: 12 (fixed: 243)
+
+c GH-76 probe: cost 6 found under cap 8
+c CSS incremental: X half cap 8 lb 5 feasibility -> FOUND 6
+
+c Cardinality: off (soft-conflict only), UB 9
+c UB=9 succs, confls=873, hconfls=188, core 2, tier2 38, local 99,  8 soft cls unsat (0 at L0), 48 fixed vars at L0, softCnfl 88, nbFlyRd 64, nbFixedLH 3
+c nbHardens 167 (fixed 7550), shorten: 0, prunedLB 2.88, dev 0.34, succRate 0.99, nbSucc 130, lk: 131, shorten: 0, quasiC: 3 (fixed: 78)
+
+c GH-76 probe: cost 8 found under cap 8
+c CSS incremental: Z half cap 8 lb 5 feasibility -> FOUND 8
+
+c Cardinality: off (soft-conflict only), UB 6
+c ***** top quasi confl at level 0*****
+c GH-76 probe: UB=6 fails (inf 6, sup 6, feasible 1), core 162, tier2 37, local 123
+c CSS incremental: X half cap 6 lb 5 optimize -> OPT 6
+
+c Cardinality: off (soft-conflict only), UB 7
+c UB=7 succs, confls=1125, hconfls=199, core 177, tier2 88, local 231,  6 soft cls unsat (0 at L0), 48 fixed vars at L0, softCnfl 94, nbFlyRd 72, nbFixedLH 4
+c nbHardens 176 (fixed 7947), shorten: 0, prunedLB 3.10, dev 0.64, succRate 0.98, nbSucc 235, lk: 240, shorten: 0, quasiC: 8 (fixed: 199)
+
+
+c Cardinality: off (soft-conflict only), UB 6
+c GH-76 probe: UB=6 fails (inf 6, sup 6, feasible 1), core 167, tier2 114, local 271
+c CSS incremental: Z half cap 6 lb 5 optimize -> OPT 6
+c CSS incremental: d = 6 (solver builds X 1, Z 1)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/BB_72_12_6_Hx.txt
+c Hz: data/matrices/BB_72_12_6_Hz.txt
+c Gx: data/matrices/BB_72_12_6_Gx.txt
+c Gz: data/matrices/BB_72_12_6_Gz.txt
+c Hx: 36 x 72, Hz: 36 x 72, Gx: 12 x 72, Gz: 12 x 72, logicals: 24
+c d_lb: 6
+c d_ub: 6
+c d  : 6
+o 6
