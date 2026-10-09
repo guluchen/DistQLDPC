@@ -1,5 +1,14 @@
 # Hypothesis registry (not an execution queue)
 
+2026-10-09 completed independent proposal batch, execution PAUSED by human:
+academic selects explicit-MTO-only original stabilizer balancing; independent
+selects removal of implied physical nonzero clause; review selects final XOR
+parity-zero equality fusion. Each receipt contains exactly three alternatives
+and one independent selection. See brain/2026-10-09-agent-batch/README.md for
+original-byte hashes and public hub15 registrations. All are PROPOSED only,
+NOT_IMPLEMENTED/NOT_RUN; no performance verdict, combined change, queue order,
+or automatic future execution is implied. GH83 remains rejected and unadopted.
+
 GH83 balanced originalchecks generalOFF/MTO variant numericREJECT/unadopted,
 actual48 native samples independently203544c7 auditedcorrect. OFFGM+8.6653%,
 GB/BB108about20%slower; MTOGM−14.7971% all4cells/12conservativepairs/CPUpositive.

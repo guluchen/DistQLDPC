@@ -1,5 +1,14 @@
 # Optimization state
 
+2026-10-09 USER PAUSE AFTER BATCH: current three-agent proposal batch is complete
+and publicly registered in hub15 (6080162109/6080163044/6080163895). Each author
+proposed three methods and selected one; nine proposals and three independent
+selections are retained byte-for-byte in brain/2026-10-09-agent-batch/.
+No new candidate implementation/build/test/benchmark was started. Execution is
+paused pending explicit human resume; no root scientific runner/resources held.
+GH83 rejection and formal evidence limitations remain unchanged. Source proposal
+preparation entries below are historical and superseded by this completed batch.
+
 GH83 nativeTier1 TERMINAL0 and independently audited203544c7 (2026-10-09):
 48science/192fields/8medians24pairs/all152raw verified, actualpostbb56f2f7
 all52birthabsent/root5restored/helperinactive. Slot released15/6079947944.
