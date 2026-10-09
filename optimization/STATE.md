@@ -1,5 +1,14 @@
 # Optimization state
 
+GH83 new Brain registered before edits (2026-10-09), issue83/hub15/6078486042.
+Exactlythree/selectA originalstabilizer XOR balanced association, baseline72d1
+fresh isolatedbranch experiment/gh-83-balanced-stabilizer-xor; no GH64 stacking.
+App-only implementation delegated, no engine change; all tiers NOT_RUN.
+Canonical Git metadata confirms affected originalrow weights6/7/8 and same
+gatecount with shorter proposeddepth, not speed evidence. Source proof/focused
+correctness next; no scientific runner or accepted optimization.
+See experiments/GH-83/README.md and PROPOSAL.md.
+
 GH64 independent retained-terminal audit COMPLETE (2026-10-09), report11f2b04a:
 full151payloads/48science192fields/order/wait4/medians/originaljudge and actual
 terminal/release52births authenticated. Numericnegative/formalINCONCLUSIVE,

@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH-83-A SELECTED after fresh three-proposal Brain (2026-10-09): original Hx/Hz
+stabilizer XOR association becomes balanced in live application only. B redundant
+check-pair equations/C demandwatchcleanup remainUNSELECTED. Publicprerecordissue83
+beforeimplementation, baseline72d1 isolatedcandidate; semantics proof/gates
+pending, no performance/correctness/adoption claim. Distinct from E001logical
+row shortening/E002prefixsharing/GH64prefetch; no stacked mechanisms.
+
 GH64 retained-terminal independent audit11f2b04a complete:151whole raw/48science/
 192fields/timing/medians/originalnumericjudge/terminal and release authenticated.
 FormalINCONCLUSIVE/NOT_ADOPTED, exactprefetchconfiguration SHELVED, noTier2/3.
