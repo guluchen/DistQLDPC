@@ -1,0 +1,79 @@
+name: GH58 finite correctness validation
+
+on:
+  push:
+    branches: [repair/gh58-original-baseline-crash]
+    paths:
+      - '.github/workflows/gh58-correctness.yml'
+      - 'optimization/investigations/GH58/full-ci-02/**'
+      - 'optimization/investigations/GH58/FULL_CI_PREREQUISITE.json'
+      - 'optimization/investigations/GH58/raw/source-package-01.tar'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  finite-correctness:
+    if: github.ref == 'refs/heads/repair/gh58-original-baseline-crash'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install build dependencies
+        run: sudo apt-get update && sudo apt-get install --yes build-essential zlib1g-dev
+      - name: Authenticate and unpack the frozen source package
+        run: |
+          python3 -B - <<'PY'
+          from pathlib import Path
+          import hashlib, os, tarfile
+          archive=Path('optimization/investigations/GH58/raw/source-package-01.tar')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='ebd0b42714bc8504c1685346f2875468dc374a29aca448ba5094223fbf716a6a'
+          target=Path(os.environ['RUNNER_TEMP'])/'gh58-source-package'
+          assert not target.exists();target.mkdir()
+          with tarfile.open(archive) as t:
+              for member in t.getmembers():
+                  assert member.isfile() and not Path(member.name).is_absolute() and '..' not in Path(member.name).parts
+              t.extractall(target,filter='data')
+          current=Path('src');frozen=target/'candidate/src'
+          names={str(p.relative_to(current)) for p in current.rglob('*') if p.is_file()}
+          assert names=={str(p.relative_to(frozen)) for p in frozen.rglob('*') if p.is_file()}
+          assert all((current/name).read_bytes()==(frozen/name).read_bytes() for name in names)
+          assert Path('Makefile').read_bytes()==(target/'candidate/Makefile').read_bytes()
+          print('Current production sources match the frozen minimal repair exactly.')
+          PY
+      - name: Full finite correctness corpus
+        run: |
+          python3 -B optimization/investigations/GH58/full-ci-02/ci.py \
+            --package "$RUNNER_TEMP/gh58-source-package" \
+            --manifest-sha 95628959a0beb71c1f4c5898696d7fbaea2da895c48243407a15fc7a0fe38310 \
+            --support optimization/investigations/GH58/full-ci-02 \
+            --support-manifest-sha 8f766a8c39cbe820866736031007a022bb70aa622af0427f2ced26b3ce51f903 \
+            --prerequisite optimization/investigations/GH58/FULL_CI_PREREQUISITE.json \
+            --prerequisite-sha 14707f80ed5693415f0879d7c334d635c4c26ab12cb0887466d2cf80aaa4e359 \
+            --out "$RUNNER_TEMP/gh58-full-correctness"
+      - name: Retain text evidence without generated binary objects
+        if: always()
+        run: |
+          python3 -B - <<'PY'
+          from pathlib import Path
+          import os, shutil
+          source=Path(os.environ['RUNNER_TEMP'])/'gh58-full-correctness'
+          target=Path(os.environ['RUNNER_TEMP'])/'gh58-text-evidence'
+          target.mkdir(exist_ok=True)
+          suffixes={'.json','.stdout','.stderr','.wcnf','.txt','.cc','.py','.md'}
+          if source.exists():
+              for p in source.rglob('*'):
+                  if p.is_file() and p.suffix in suffixes:
+                      dest=target/p.relative_to(source);dest.parent.mkdir(parents=True,exist_ok=True)
+                      shutil.copyfile(p,dest)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh58-full-correctness-text
+          path: ${{ runner.temp }}/gh58-text-evidence/
+          if-no-files-found: warn
+          retention-days: 14
