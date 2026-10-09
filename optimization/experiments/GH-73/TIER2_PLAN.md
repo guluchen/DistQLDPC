@@ -1,0 +1,2 @@
+# GH-73 Tier2 plan (before LP340 timing): LP_340_56_8, no-card and card-mto, 3+3 AB/BA/AB, 600/615 s, same
+frozen binaries, bound-soundness runner, Mac with timing lock. Direction consistent and no regression => Tier2 PASS (local).
