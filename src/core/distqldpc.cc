@@ -544,6 +544,149 @@ static int min_distance_stabilizer_maxsat(
     return weight;
 }
 
+/* ---- GH-71: CSS X/Z split (PI-approved formulation change, 2026-10-09) ----
+ * For a CSS code every nontrivial logical (x,z) has x a nontrivial X-type logical or z a
+ * nontrivial Z-type logical, with |x|,|z| <= |(x,z)|, and pure X/Z logicals are Pauli logicals.
+ * Hence d = min(dX, dZ). Half instance for one Pauli type (vars v, n of them):
+ *   Hpar . v = 0 (commutation),  a_j = Glog_j . v,  OR_j a_j (nontrivial),  soft -v_i (weight 1).
+ * X half: Hpar = Hz, Glog = Gx.   Z half: Hpar = Hx, Glog = Gz.  (Same a_j test as the joint
+ * encoding, restricted to one Pauli type.) */
+static bool build_css_half_instance(
+    SimpSolver& S, std::vector<Var>& aux, int& n_out,
+    const Matrix& Hpar, const Matrix& Glog,
+    int verb, int card_mode, int bounds_pipe_w)
+{
+    const int n = Hpar.cols;
+    n_out = n;
+    if (Glog.cols != n) die("matrix column mismatch");
+    const int k_log = Glog.rows;
+    if (k_log == 0)
+        return false;
+
+    aux.clear();
+    S.setBoundsPipe(bounds_pipe_w);
+    S.cardinalityEncMode = card_mode;
+    S.parsing = true;
+    S.verbosity = verb;
+    S.instanceType = 1;
+    S.hardWeight = (unsigned)(n + k_log + 64);
+    S.UB = S.hardWeight;
+    S.initUB = INT32_MAX;
+    S.nbOriVars = n;
+
+    const Var off_v = 0;
+    const Var off_a = n;
+    while (S.nVars() < n + k_log) S.newVar();
+
+    for (int r = 0; r < Hpar.rows; r++) {
+        std::vector<Lit> lits;
+        for (int i = 0; i < n; i++)
+            if (getm(Hpar, r, i)) lits.push_back(mkLit(off_v + i));
+        add_xor_equals(S, lits, false, aux);
+    }
+    {
+        std::vector<Lit> nz;
+        for (int i = 0; i < n; i++) nz.push_back(mkLit(off_v + i));
+        add_hard_clause(S, nz);
+    }
+    for (int j = 0; j < k_log; j++) {
+        std::vector<Lit> lits;
+        for (int i = 0; i < n; i++)
+            if (getm(Glog, j, i)) lits.push_back(mkLit(off_v + i));
+        Lit a_lit = mkLit(off_a + j);
+        if (lits.empty()) {
+            std::vector<Lit> c;
+            c.push_back(~a_lit);
+            add_hard_clause(S, c);
+        } else {
+            lits.push_back(a_lit);
+            add_xor_equals(S, lits, false, aux);
+        }
+    }
+    {
+        std::vector<Lit> ors;
+        for (int j = 0; j < k_log; j++) ors.push_back(mkLit(off_a + j));
+        add_hard_clause(S, ors);
+    }
+    for (int i = 0; i < n; i++) {
+        std::vector<Lit> sc;
+        sc.push_back(~mkLit(off_v + i));
+        add_soft_clause(S, sc, 1);
+    }
+
+    S.parsing = false;
+    S.setFrozenVars();
+    S.eliminate(true);
+    if (!S.okay()) die("hard constraints UNSAT");
+    return true;
+}
+
+/* Solve one half; returns weight (>=0) and sets optimal, or -1 when unknown. */
+static int solve_css_half(const char* tag, const Matrix& Hpar, const Matrix& Glog,
+                          int verb, int card_mode, int bounds_pipe_w,
+                          uint64_t cap, bool hide_lb, bool& optimal)
+{
+    optimal = false;
+    SimpSolver S;
+    std::vector<Var> aux;
+    int n = 0;
+    if (!build_css_half_instance(S, aux, n, Hpar, Glog, verb, card_mode, bounds_pipe_w))
+        return INT_MAX;   /* no logicals of this type: half contributes nothing */
+    S.boundsCap = cap;
+    S.boundsHideLB = hide_lb;
+    vec<Lit> dummy;
+    lbool ret = S.solveLimited(dummy);
+    int weight = -1;
+    uint64_t opt = S.getLastOptimalCost();
+    if (opt != UINT64_MAX && opt <= (uint64_t)n)
+        weight = (int)opt;
+    if (weight < 0 && (ret == l_False || ret == l_True)) {
+        weight = 0;
+        for (int i = 0; i < n; i++)
+            if (S.value(i) == l_True) weight++;
+        if (weight == 0) weight = -1;
+    }
+    optimal = (ret == l_False) || (weight >= 0 && opt != UINT64_MAX);
+    if (verb > 0)
+        printf("c CSS split: %s half %s, weight %d (reported cost %llu), vars %d (base %d + aux %zu)\n",
+               tag, ret == l_True ? "SAT" : ret == l_False ? "OPTIMAL" : "UNKNOWN",
+               weight, (unsigned long long)opt, S.nVars(), n, aux.size());
+    return weight;
+}
+
+static int min_distance_css_split(
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+    int verb, int bounds_pipe_w, int card_mode)
+{
+    if (Hx.cols != Hz.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols) die("matrix column mismatch");
+    const bool haveX = Gx.rows > 0, haveZ = Gz.rows > 0;
+    if (!haveX && !haveZ) return INT_MAX;
+    bool optX = true, optZ = true;
+    int dX = INT_MAX, dZ = INT_MAX;
+    /* First half: its UB is a global UB; its LB is not a global LB if a second half follows. */
+    if (haveX)
+        dX = solve_css_half("X", Hz, Gx, verb, card_mode, bounds_pipe_w, UINT64_MAX, haveZ, optX);
+    if (haveX && (dX < 0 || !optX)) { pipe_write_result(bounds_pipe_w, -1, false); return -1; }
+    if (haveZ) {
+        uint64_t cap = (haveX ? (uint64_t)dX : UINT64_MAX);
+        if (haveX && bounds_pipe_w >= 0) {           /* d <= dX is known now */
+            char buf[64];
+            int len = snprintf(buf, sizeof(buf), "UB %d\n", dX);
+            if (len > 0) (void)write(bounds_pipe_w, buf, (size_t)len);
+        }
+        /* Second half: global LB = min(dX, LB_Z), global UB = min(dX, UB_Z). */
+        dZ = solve_css_half("Z", Hx, Gz, verb, card_mode, bounds_pipe_w, cap, false, optZ);
+        if (dZ < 0 || !optZ) { pipe_write_result(bounds_pipe_w, -1, false); return -1; }
+    }
+    int d = dX < dZ ? dX : dZ;
+    if (verb > 0)
+        printf("c CSS split: dX=%d dZ=%d d=min=%d\n", dX == INT_MAX ? -1 : dX, dZ == INT_MAX ? -1 : dZ, d);
+    pipe_write_result(bounds_pipe_w, d, true);
+    return d;
+}
+
+static bool g_css_joint = false;   /* -joint: original symplectic joint encoding */
+
 static int parse_roundingsat_cost(const std::string& out)
 {
     bool optimum = false;
@@ -757,6 +900,8 @@ static int solve_in_child_fork(
         if (backend == SOLVER_ROUNDINGSAT) {
             d = min_distance_stabilizer_roundingsat(
                 Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
+        } else if (!g_css_joint) {
+            d = min_distance_css_split(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode);
         } else {
             d = min_distance_stabilizer_maxsat(
                 Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
@@ -897,6 +1042,8 @@ int main(int argc, char** argv) {
             card_mode = 1;
         else if (!strcmp(argv[i], "-card-both-force"))
             card_mode = 4;
+        else if (!strcmp(argv[i], "-joint"))
+            g_css_joint = true;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
@@ -906,6 +1053,7 @@ int main(int argc, char** argv) {
             printf("  Solver: default MaxCDCL; -roundingsat[=BIN] uses external RoundingSat on WCNF\n");
             printf("  Cardinality: default Sinz+MTO (Sinz if n<=100); -no-card | -card-sinz | -card-mto\n");
             printf("               -card-both-force  always Sinz+MTO regardless of n\n");
+            printf("  Formulation: default CSS split d=min(dX,dZ) (two MaxSAT solves); -joint = original symplectic joint encoding\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

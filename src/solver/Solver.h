@@ -558,6 +558,9 @@ public:
     void emitBoundsUpdate();
     void emitTryUpdate(uint64_t try_val);
     int bounds_pipe_w;
+    // DistQLDPC GH-71 (CSS split): bound forwarding controls for multi-instance solves.
+    uint64_t boundsCap = UINT64_MAX;  // emitted LB/UB are capped at this value
+    bool boundsHideLB = false;        // do not emit LB (not a global bound)
     bool feasible;
     bool bestSolutionFound;
     uint64_t bestSup;

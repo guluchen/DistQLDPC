@@ -23,6 +23,7 @@ New code, not derived from MaxCDCL.
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
 | Quiet / debug | Default `verb=0`; child stdout to `/dev/null`; `-v` / `-debug` for solver log |
 | CLI flags | `-no-card`, `-card-sinz`, `-card-mto`, `-card-both-force`, `-cpu-lim`, `-q` |
+| CSS split (GH-71, PI-approved 2026-10-09, experimental) | Default MaxCDCL path solves the X-type and Z-type halves separately, d = min(dX, dZ); sound bound forwarding; `-joint` keeps the original symplectic joint encoding |
 
 ---
 
@@ -64,6 +65,11 @@ in each file are unchanged.
 - Call `emitTryUpdate(UB)` when testing a new upper-bound candidate
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
+
+#### Bound forwarding controls (GH-71)
+
+- Members `boundsCap` and `boundsHideLB`: `emitBoundsUpdate()` caps emitted LB/UB at `boundsCap` and
+  can suppress LB, so a multi-instance solve (CSS X/Z split) only forwards globally valid bounds
 
 ---
 
