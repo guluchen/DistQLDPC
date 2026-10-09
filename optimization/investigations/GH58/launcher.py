@@ -1,7 +1,7 @@
 """Disabled 90-second outer watchdog; owns only its new child session."""
 from pathlib import Path
 import argparse,hashlib,json,os,signal,subprocess,sys,time
-ASSIGNMENT='HOST_SLOT_NOT_ASSIGNED'
+ASSIGNMENT='https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6071855500'
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def proc(pid):
  try:
