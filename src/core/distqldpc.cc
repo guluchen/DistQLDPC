@@ -151,6 +151,29 @@ static void add_xor_equals(
     add_hard_clause(S, c);
 }
 
+/* Associate original stabilizer checks as adjacent-pair XOR trees. */
+static void add_balanced_xor_equals(
+    SimpSolver& S, const std::vector<Lit>& inputs, bool value, std::vector<Var>& aux)
+{
+    if (inputs.size() <= 3) {
+        add_xor_equals(S, inputs, value, aux);
+        return;
+    }
+    std::vector<Lit> frontier = inputs;
+    while (frontier.size() > 1) {
+        std::vector<Lit> next;
+        for (size_t i = 0; i < frontier.size();) {
+            Lit p = frontier[i++];
+            if (i < frontier.size()) p = xor2(S, p, frontier[i++], aux);
+            next.push_back(p);
+        }
+        frontier.swap(next);
+    }
+    std::vector<Lit> c;
+    c.push_back(value ? frontier[0] : ~frontier[0]);
+    add_hard_clause(S, c);
+}
+
 static void pipe_write_result(int pipe_w, int distance, bool optimal) {
     if (pipe_w < 0)
         return;
@@ -394,7 +417,7 @@ static bool build_stabilizer_instance(
     std::vector<Var>& aux,
     StabilizerInstance& meta,
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int verb, int card_mode, int bounds_pipe_w)
+    int verb, int card_mode, int bounds_pipe_w, bool balanced_checks = false)
 {
     meta.n = Hx.cols;
     if (Hz.cols != meta.n || Gx.cols != meta.n || Gz.cols != meta.n) die("matrix column mismatch");
@@ -424,13 +447,15 @@ static bool build_stabilizer_instance(
         std::vector<Lit> lits;
         for (int i = 0; i < meta.n; i++)
             if (getm(Hx, r, i)) lits.push_back(mkLit(off_z + i));
-        add_xor_equals(S, lits, false, aux);
+        if (balanced_checks) add_balanced_xor_equals(S, lits, false, aux);
+        else add_xor_equals(S, lits, false, aux);
     }
     for (int r = 0; r < Hz.rows; r++) {
         std::vector<Lit> lits;
         for (int i = 0; i < meta.n; i++)
             if (getm(Hz, r, i)) lits.push_back(mkLit(off_x + i));
-        add_xor_equals(S, lits, false, aux);
+        if (balanced_checks) add_balanced_xor_equals(S, lits, false, aux);
+        else add_xor_equals(S, lits, false, aux);
     }
     {
         std::vector<Lit> nz;
@@ -503,7 +528,7 @@ static int min_distance_stabilizer_maxsat(
     SimpSolver S;
     std::vector<Var> aux;
     StabilizerInstance meta;
-    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
+    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w, true))
         return INT_MAX;
 
     if (dump_wcnf_path && dump_wcnf_path[0])

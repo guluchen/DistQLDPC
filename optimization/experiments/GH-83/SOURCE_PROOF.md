@@ -1,0 +1,17 @@
+# GH83 association proof recorded before the helper edit
+
+Preregistration: https://github.com/guluchen/DistQLDPC/issues/83 . Selected GH-83-A only; corrected baseline72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7. This source proof precedes the production edit. Compilation, fixture tests, science and performance are NOT_RUN.
+
+The existing xor2 four hard clauses are equivalent to t = a XOR b, including signed input literals. A fresh t has exactly one value for each pair of input truth values. The original chain and a deterministic adjacent-pair tree therefore encode the same parity of their leaves.
+
+Induction invariant: every current frontier literal is the XOR of its contiguous, nonempty subset of the original leaf sequence; frontier subsets partition that sequence in original order. Combining adjacent frontier literals with the unchanged xor2 replaces their two subsets by their concatenation. An unpaired final literal carries unchanged. The invariant starts with singleton subsets and ends with a root equal to XOR of all original inputs. Each auxiliary is fresh and uniquely determined by the leaves. Enforcing the original root parity preserves the exact projected satisfying assignments.
+
+For lengths0..3, delegate to the original add_xor_equals without allocating or emitting anything differently. In particular preserve its empty-input no-op even for value=true (selected H callers use only false), original signed singleton unit, and original two/three-input association. No unrelated existing behavior is repaired.
+
+For m>3, each xor2 reduces the number of live frontier nodes by one. Reduction terminates at one node, hence creates exactly m-1 gates/auxiliary variables, the same as the original chain. A level uses floor(m/2) gates and carries at most one leaf; maximum gate depth is ceil(log2 m). Depth is a structural property, not a measured UP/runtime saving. Nominal gate-clause/root counts are unchanged, but preprocessing/search may produce different clauses or costs.
+
+Pairs are consumed with a size_t cursor incremented only when cursor < frontier.size(). No addition of two arbitrary size values, shifts, doubling, signed size conversion or new variable-index arithmetic is needed. Number of leaves is bounded by the original matrix-column representation; the existing allocator/newVar contract remains the prerequisite. The total gate count and suffix allocation start indices match the old builder. This does not certify or repair pre-existing global variable-count overflow outside supported original contracts.
+
+Only the first two builder row loops (original Hx over z and Hz over x, parity0) opt into the new association, and only the live MaxCDCL caller enables the default-false option. Original row order and ascending leaf order remain. All Gx/Gz/a chains, nontriviality predicates, Pauli w iff x OR z and soft unit weights remain byte-unchanged. Thus feasible original x/z/w/a projections and minimum PauliOR weight are unchanged; bound meanings remain original. Engine/cardinality/preprocessing/output/timeouts are untouched.
+
+Dump-only, RoundingSat, and native-parity OPB keep the original builder. Live MaxCDCL WCNF dumps may contain the candidate association; they must preserve projected models/objective, not be claimed byte-identical. Solver traces, auxiliary definitions and preprocessing outcomes can differ. Actual compiled/helper/projection/full-science and cross-repo gates are still required before performance. Any mismatch stops; no correctness or performance PASS is asserted by this proof.

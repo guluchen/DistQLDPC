@@ -15,6 +15,12 @@ New code, not derived from MaxCDCL.
 
 ### `src/core/distqldpc.cc`
 
+GH83 experimental candidate: live MaxCDCL construction associates only original
+Hx/Hz stabilizer check XORs as adjacent-pair trees. Row/leaf order and gate count
+are preserved; logical XOR chains, Pauli objective and embedded engine are
+unchanged. Small rows and other builders retain their original encoding. This
+is an unvalidated optimization experiment, not an accepted performance change.
+
 | Area | Description |
 |------|-------------|
 | QLDPC encoding | MaxSAT formulation for stabilizer distance (Hx/Hz/Gx/Gz matrices) |
