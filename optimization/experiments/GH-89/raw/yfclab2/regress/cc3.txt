@@ -1,0 +1,21 @@
+In file included from src/solver/Solver.h:53,
+                 from src/solver/SimpSolver.h:37,
+                 from tests/../src/core/distqldpc.cc:40,
+                 from tests/test_incremental_symbreak.cc:17:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+tests/../src/core/distqldpc.cc: In function ‘void pipe_bound(int, const char*, uint64_t)’:
+tests/../src/core/distqldpc.cc:1013:29: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+ 1013 |     if (len > 0) (void)write(pipe_w, buf, (size_t)len);
+      |                        ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+tests/../src/core/distqldpc.cc: In function ‘void pipe_write_result(int, int, bool)’:
+tests/../src/core/distqldpc.cc:162:20: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  162 |         (void)write(pipe_w, buf, (size_t)n);
+      |               ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
