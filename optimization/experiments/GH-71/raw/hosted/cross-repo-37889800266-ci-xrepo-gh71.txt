@@ -1,0 +1,8 @@
+^[[36;1mecho "candidate=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"^[[0m
+Scientific results match: **YES**
+| Stem | Config | Baseline | Candidate | Cand/Base time | Semantic match |
+|---|---|---:|---:|---:|---|
+| LP_136_32_4 | no-card | d=4 (0.18s) | d=4 (0.12s) | 0.67x | YES |
+| LP_136_32_4 | card-mto | d=4 (0.28s) | d=4 (0.12s) | 0.43x | YES |
+| BB_108_8_10 | no-card | d=10 (4.23s) | d=10 (1.89s) | 0.45x | YES |
+| BB_108_8_10 | card-mto | d=10 (5.43s) | d=10 (1.97s) | 0.36x | YES |
