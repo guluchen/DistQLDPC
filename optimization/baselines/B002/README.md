@@ -1,5 +1,17 @@
 # B002 corrected source baseline
 
+Current status (2026-10-09): FULL_WINDOWS_LOCAL_CORRECTNESS_CERTIFIED;
+see [the actual full certificate](WINDOWS_FULL01_CERTIFICATE.md). The original
+crash was invalid-sentinel watcher indexing, not demonstrated out-of-memory.
+Merged [PR59](https://github.com/guluchen/DistQLDPC/pull/59) removes retired
+auxiliary soft literals before lookahead and rebuilds the affected heaps while
+preserving objective accounting. The original300B failure now returns optimum5;
+full finite Windows validation covers54 application outcomes,162 PMS outcomes,
+40 WCNF comparisons,12 genuine timeout paths and2 smokes. This does not certify
+all possible inputs, exclude every memory bug, or establish a performance gain.
+Fresh native Linux certification is pending; the historical source-registration
+status below is retained rather than relabeled as native binary certification.
+
 Registered in [issue62](https://github.com/guluchen/DistQLDPC/issues/62).
 Source commit 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7 is the merged GH58
 correctness repair. SOURCE.json pins all32 tracked production src/Make inputs;
