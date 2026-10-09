@@ -534,7 +534,12 @@ public:
     Var falseVar;
     vec<CRef> hardSoftClauses;
     bool lookahead();
-    void lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>& out_learnt, bool last=false);
+    void lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>& out_learnt, bool last=false, bool partial=false);
+    // DistQLDPC GH-60: keep the conflict-independent lookahead prefix on non-final conflicts
+    void lkCollectKeptUnlocked(vec<Var>& kept);
+    bool lkReapplyKeptUnlocks(const vec<Var>& kept);
+    void lkUndoPrefix();
+    void lkCheckPrefix();
     CRef propagateForLK();
     bool uncheckedEnqueueForLK(Lit p, CRef from=CRef_Undef);
     //   vec<uint64_t> lookaheadCNT;

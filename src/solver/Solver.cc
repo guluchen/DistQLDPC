@@ -4065,7 +4065,7 @@ int Solver::seeUnlockLits(int iset, int falseVar) {
   return nbfalse;
 }
 
-void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>& out_learnt, bool last) {
+void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>& out_learnt, bool last, bool partial) {
   int pathC=0;
   out_learnt.clear();
   out_learnt.push();
@@ -4117,6 +4117,8 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
     }
   }
   int index = trail.size() - 1;
+  int keep = trailRecord;
+  if (pathC == 0) partial = false; // GH-60: nothing to analyse, keep original full reset
   while (index >= trailRecord) {
     Lit p = trail[index--];
     Var v = var(p);
@@ -4193,9 +4195,12 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
     else if (auxiVar(v))
       insertAuxiVarOrder(v);
     assigns[v] = l_Undef;
+    // GH-60: once the analysis is complete (outside the UIP shortcut, which breaks above),
+    // every literal below is independent of the conflict: keep it assigned and propagated.
+    if (partial && pathC == 0) { keep = index + 1; break; }
   }
-  qhead = trailRecord;
-  trail.shrink(trail.size() - trailRecord);
+  qhead = keep;
+  trail.shrink(trail.size() - keep);
   //  if (isetsLits[nbIsets].size() > 0)
     for(int i=0; i<out_learnt.size(); i++)
       seen[var(out_learnt[i])] = 0;
@@ -4235,6 +4240,92 @@ Var Solver::pickAuxiVar() {
     }
   }
   return v;
+}
+
+// DistQLDPC GH-60 helpers: conflict-independent lookahead prefix retention.
+// Unlock decrements made while enqueuing kept literals (uncheckedEnqueueForLK) are restored by
+// setConflict together with all others; collect them first, then re-apply them in the original
+// order after the new iset is registered, exactly as re-deriving those literals would.
+void Solver::lkCollectKeptUnlocked(vec<Var>& kept) {
+  kept.clear();
+  for (int c = 0; c < unLockedVars.size(); c++)
+    if (value(unLockedVars[c]) != l_Undef)
+      kept.push(unLockedVars[c]);
+}
+
+bool Solver::lkReapplyKeptUnlocks(const vec<Var>& kept) {
+  for (int c = 0; c < kept.size(); c++) {
+    Var v = kept[c];
+    if (unLockedSoftVarForLK(v)) {
+#ifdef LKPREFIX_CHECK
+      fprintf(stderr, "LKPREFIX_CHECK: kept falsified soft var %d became unlocked\n", v); abort();
+#endif
+      return false; // would be a soft conflict on re-derivation: fall back to a full reset
+    }
+    int iset = getLockedVarIsetForLK(v);
+    decrmentIsetLock(iset);
+    unLockedVars.push(v);
+    if (getIsetLock(iset)==0) {
+      vec<int>& confls = isets[iset];
+      for(int j=0; j<confls.size(); j++) {
+        vec<Lit>& lits = isetsLits[confls[j]];
+        for(int i=0; i<lits.size(); i++)
+          if (value(lits[i]) == l_Undef)
+            insertAuxiVarOrder(var(lits[i]));
+      }
+    }
+  }
+#ifdef LKPREFIX_CHECK
+  lkCheckPrefix();
+#endif
+  return true;
+}
+
+// Full undo of whatever lookahead trail remains (original full-reset semantics).
+void Solver::lkUndoPrefix() {
+  int j = 0;
+  for (int c = 0; c < unLockedVars.size(); c++) {
+    Var x = unLockedVars[c];
+    if (value(x) != l_Undef)             // decrement belongs to a literal being undone now
+      incrementIsetLock(inConflicts[x]);
+    else
+      unLockedVars[j++] = x;
+  }
+  unLockedVars.shrink(unLockedVars.size() - j);
+  for (int index = trail.size() - 1; index >= trailRecord; index--) {
+    Var v = var(trail[index]);
+    if (auxiVar(v))
+      insertAuxiVarOrder(v);
+    assigns[v] = l_Undef;
+  }
+  qhead = trailRecord;
+  trail.shrink(trail.size() - trailRecord);
+}
+
+void Solver::lkCheckPrefix() {
+#ifdef LKPREFIX_CHECK
+  if (qhead != trail.size()) { fprintf(stderr, "LKPREFIX_CHECK: qhead %d != trail %d\n", qhead, trail.size()); abort(); }
+  for (int i = trailRecord; i < trail.size(); i++) {
+    Lit p = trail[i]; Var v = var(p);
+    if (seen[v]) { fprintf(stderr, "LKPREFIX_CHECK: seen kept var %d\n", v); abort(); }
+    if (value(p) != l_True || level(v) != decisionLevel() + 1) { fprintf(stderr, "LKPREFIX_CHECK: bad kept lit %d\n", toInt(p)); abort(); }
+    CRef r = reason(v);
+    if (r != CRef_Undef) {
+      Clause& c = ca[r]; bool has = false;
+      for (int k = 0; k < c.size(); k++) {
+        if (c[k] == p) has = true;
+        else if (value(c[k]) != l_False) { fprintf(stderr, "LKPREFIX_CHECK: reason of %d not unit\n", toInt(p)); abort(); }
+      }
+      if (!has) { fprintf(stderr, "LKPREFIX_CHECK: reason of %d lacks it\n", toInt(p)); abort(); }
+    }
+    bool shouldUnlock = auxiVar(v) && value(softLits[v]) == l_False && inConflicts[v] != NON;
+    bool inList = false;
+    for (int c = 0; c < unLockedVars.size(); c++) if (unLockedVars[c] == v) inList = true;
+    if (shouldUnlock != inList) { fprintf(stderr, "LKPREFIX_CHECK: unlock list mismatch var %d (%d/%d)\n", v, shouldUnlock, inList); abort(); }
+  }
+  for (int c = 0; c < unLockedVars.size(); c++)
+    if (value(unLockedVars[c]) == l_Undef) { fprintf(stderr, "LKPREFIX_CHECK: unassigned var in unlock list\n"); abort(); }
+#endif
 }
 
 void Solver::setConflict(int& nbIsets) {
@@ -4898,9 +4989,10 @@ bool Solver::lookahead() {
     if (confl != CRef_Undef) {  // printf("\n");
       isetsLits.init(nbIsets); isetsLits[nbIsets].clear();
       nbConfl++;
-      lookbackResetTrail(confl, var_Undef, nbIsets, out_learnt, nbConfl==lb); 
+      lookbackResetTrail(confl, var_Undef, nbIsets, out_learnt, nbConfl==lb, lb > nbConfl); 
       if (lb > nbConfl) {
 	if (isetsLits[nbIsets].size() == 0) {
+	  if (trail.size() > trailRecord) lkUndoPrefix(); // defensive: unit path needs the full reset
 	  resetConflicts_(nbIsets);
 	  for(int i=0; i<involvedLits.size(); i++) {
 	    involved[var(involvedLits[i])] = 0;
@@ -4928,7 +5020,9 @@ bool Solver::lookahead() {
 	  }
 	  continue;
 	}
-	setConflict(nbIsets);
+	{ vec<Var> keptUnl; lkCollectKeptUnlocked(keptUnl);
+	  setConflict(nbIsets);
+	  if (!lkReapplyKeptUnlocks(keptUnl)) lkUndoPrefix(); }
       }
 #ifdef printTestedVar
       printf("£ %d\n", nbConfl);
@@ -4937,7 +5031,7 @@ bool Solver::lookahead() {
     }
     else if (falseVar != var_Undef) {   //printf("\n");
       isetsLits.init(nbIsets); isetsLits[nbIsets].clear();
-      lookbackResetTrail(reason(falseVar), falseVar, nbIsets, out_learnt); nbConfl++;
+      lookbackResetTrail(reason(falseVar), falseVar, nbIsets, out_learnt, false, lb > nbConfl + 1); nbConfl++;
 #ifdef printTestedVar
       printf("$ %d %d\n", falseVar, nbConfl);
 #endif
@@ -4946,8 +5040,11 @@ bool Solver::lookahead() {
       // testedVars.push(falseVar);
       if (lb > nbConfl) {
 	isetsLits[nbIsets].push(softLits[falseVar]);
+	vec<Var> keptUnl; lkCollectKeptUnlocked(keptUnl);
 	setConflict(nbIsets);
+	if (!lkReapplyKeptUnlocks(keptUnl)) lkUndoPrefix();
       }
+      else if (trail.size() > trailRecord) lkUndoPrefix(); // defensive: final conflict keeps nothing
       falseVar = var_Undef;
     }
     if (lb==nbConfl) {
