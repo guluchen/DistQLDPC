@@ -1,5 +1,15 @@
 # Optimization state
 
+GH64 native targeted+full Tier0 ACTUAL RUNNING (2026-10-09), sole Linuxslot
+15/6075764821; launch64/6075931060. Independently audited actualfreeze d1c611,
+finalsupporta799/package61ad/runtimea1f currentuploadedallbytes rehashed before
+installedhelper acquisition. Actual helper active and original unprivileged
+owned groups observed; commands completing under6600/6660 bounded plan.
+Root session67136 remains live: poll same handle, never restart on observation
+timeout. Whole terminal raw/native science/owned cleanup/separatehelper release
+and rootcpuset restore must be independently audited before native certificate.
+No nativePASS/performance/adoption/Tier2/Tier3; earlier pending states superseded.
+
 GH64 fresh native metadata03 retained and independently audited (2026-10-09):
 runtimea1f24ffc/24373files, whole audit8735639d PASS_RETAINED_NATIVE_METADATA_ONLY.
 Sourcepeerb6a90 READY377e; failed metadata01/02 preserved. Fresh145Git package61ad

@@ -72,3 +72,21 @@ Next is root literal freeze, guarded fresh upload and one named native Tier0
 attempt under the already published6600/6660 bounded plan. A native whole-raw
 auditor scaffold has been prepared but remains disabled until actual terminal
 results and independently captured helper release/root-cpuset recovery exist.
+
+Root literal freeze completed under sole Linux assignment15/6075764821:
+finalsupporta799ef05070119d18d84ecdb4d02e65d4f7dad605e7b81b716678203e869ab79.
+Independent actual freeze auditd1c61123858056e19efbeac9a54f656a8521ab65ce91483ade9218273b30f07e
+authenticates the read-only original archive, all13 final payloads, nine exact
+literal inverses, unchanged scientific code and complete package/runtime/review
+bindings. The nested canonical independent report remains unchanged.
+
+Both fresh directories were uploaded and every source/support/runtime file
+rehashed on the native host before lease acquisition. A first pre-lease snapshot
+refused root cgroup control fields absent on this kernel; its source/stderr are
+preserved. The narrow capture correction records absent fields explicitly and
+retains values for existing fields, with no invented empty values or OS change.
+Second verification authenticated145 source files,13 support files and24,373
+runtime files plus aliases; helper inactive status and pre-lease root cpusets
+were captured. Actual helper acquisition and owned worker/launcher were then
+observed live. Native Tier0 is RUNNING, launch64/6075931060; no correctness or
+performance certificate until terminal whole-raw and separate release audit.

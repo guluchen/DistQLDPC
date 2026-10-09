@@ -1,5 +1,10 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 native Tier0 actually running under sole Linuxslot15/6075764821 (2026-10-09),
+finala799 independentlyliteralfreeze d1c611, remoteallsource/runtime checked.
+Original targeted+full6600/6660 science scope, no benchmark or nativePASS yet.
+Guarded prefetch remains sole concept; Windows negativeINCON history retained.
+
 GH64 native metadata03 actual retained/independentlyaudited8735639d (2026-10-09),
 sourceb6a90 READY377e, runtimea1f24/24373files, package61ad audited4808. No native
 compile/lease/scientific PASS or controlled performance evidence. Root literal
