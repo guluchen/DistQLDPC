@@ -1,5 +1,18 @@
 # Optimization state
 
+GH64 native targeted+full Tier0 independently CERTIFIED PASS (2026-10-09),
+whole native auditor2d2be5098fb5fdede9187de50c043a9b9c1cc59acab4f31ff14c8d4e9fa06ebf
+executed against actual native runtime, binaries, Git objects and original
+terminal/cleanup evidence, first execution exit0. Scope54applications/204fields/
+162PMS/40independentoracles/40dumps/12timeouts/2smokes, 22targeted/81partitionperrole/
+316ordered prefetchperrole,315commands/1126rawpayloads/12freshproductionpins.
+CorrectedB00272d1 and sole-prefetchb632 both retain scientific results; original
+300-byte crashing fixture optimum5 passes. No memory-use improvement/general
+memory-safety proof. Formal GH64 performance decision INCONCLUSIVE, prior
+Windows negative48sample evidence unchanged; no native timing/adoption/Tier2/3.
+Next controlled native Tier1 confirmation of the same single concept; source-
+only plan4cce6af6 prepared, no performance runner or samples executed yet.
+
 GH64 native targeted+full Tier0 ACTUAL TERMINAL (2026-10-09), original sole
 Linuxslot15/6075764821 released15/6076424483; actual SSH/helper exit0. Worker
 NATIVE_FULL_TIER0_LOCAL_PASS: 54applications/162PMS/40dumps/12timeouts/2smokes,

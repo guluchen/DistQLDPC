@@ -1,5 +1,12 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 native targeted+full Tier0 CERTIFIED PASS (2026-10-09), independent native
+audit2d2be509 firstexecution0:54apps/204fields/162PMS/40oracles/40dumps/12timeouts/
+2smokes plus22targeted/81partitionperrole/316orderedprefetchperrole. Actual runtime,
+Git sources, compiled bytes, complete raw6bed and separatehelper/rootcleanup
+bound. Formal performance INCONCLUSIVE; Windows48negative samples retained.
+No native performance/adoption/Tier2/3; next same-concept native Tier1 confirmation.
+
 GH64 native Tier0 actual terminal0 (2026-10-09), released15/6076424483; worker
 localPASS54/162/40/12/2 plus original directed gates. Raw6bedb46c1126payloads/
 315commands retained; actual separatecleanup318births/rootcpuset unchanged,

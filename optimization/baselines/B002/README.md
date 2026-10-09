@@ -1,6 +1,6 @@
 # B002 corrected source baseline
 
-Current status (2026-10-09): FULL_WINDOWS_LOCAL_CORRECTNESS_CERTIFIED;
+Current status (2026-10-09): finite Windows and native correctness certified;
 see [the actual full certificate](WINDOWS_FULL01_CERTIFICATE.md). The original
 crash was invalid-sentinel watcher indexing, not demonstrated out-of-memory.
 Merged [PR59](https://github.com/guluchen/DistQLDPC/pull/59) removes retired
@@ -9,8 +9,16 @@ preserving objective accounting. The original300B failure now returns optimum5;
 full finite Windows validation covers54 application outcomes,162 PMS outcomes,
 40 WCNF comparisons,12 genuine timeout paths and2 smokes. This does not certify
 all possible inputs, exclude every memory bug, or establish a performance gain.
-Fresh native Linux certification is pending; the historical source-registration
-status below is retained rather than relabeled as native binary certification.
+Fresh native Linux validation is now independently certified in
+[the GH64 native result](../../observations/GH64-NATIVE01-RESULT.md), audit
+`2d2be5098fb5fdede9187de50c043a9b9c1cc59acab4f31ff14c8d4e9fa06ebf`.
+It compares exact correctedB00272d1 with sole-prefetchb632 using fresh binaries:
+54 applications/204 fields,162PMS,40 independent oracles,40 dumps,12 genuine
+timeouts andtwo smokes across both roles, plus mandatory directed gates. Both
+roles return optimum5 on the original300B crash fixture. Actual native runtime,
+Git sources, consumed bytes and separate helper release/root recovery are bound;
+this remains finite evidence, not a general memory-safety or speed claim.
+Historical source-registration status below is retained rather than rewritten.
 
 Registered in [issue62](https://github.com/guluchen/DistQLDPC/issues/62).
 Source commit 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7 is the merged GH58
