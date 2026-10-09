@@ -1,5 +1,14 @@
 # Hypothesis registry (not an execution queue)
 
+GH63 full application Windows gate RUNNING, assignment6073586232 (2026-10-09):
+exact72/387 packagec2abd571+support8337de90 independently source-reviewedfadd9f3e,
+actual interpreter check/app links and first tinyCSS results pass. Full scope
+54app/162PMS/40dumps/12timeouts/2smokes remains incomplete until terminal+audit.
+See observations/GH63-FULL01-PRERECORD.md; preserve/poll current runner, no restart
+on observation timeout. Hosted final fields independently audited55935c90 PASS,
+no shared-CI speedclaim. Separate baseline census source/guard remains disabled
+pending full gate; no Tier1/2/3 or accepted optimization.
+
 GH63 actual Windows targeted01 PASS (2026-10-09), superseding uncompiled below:
 Fresh38782bb from corrected72d1, all11 WCNF including original300Bopt5,
 partition80+1 and actual-method LBD41,472 state comparisons pass. Actual
