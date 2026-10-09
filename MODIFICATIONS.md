@@ -23,6 +23,7 @@ New code, not derived from MaxCDCL.
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
 | Quiet / debug | Default `verb=0`; child stdout to `/dev/null`; `-v` / `-debug` for solver log |
 | CLI flags | `-no-card`, `-card-sinz`, `-card-mto`, `-card-both-force`, `-cpu-lim`, `-q` |
+| Implied conjugate-coset clauses (GH-79) | MaxCDCL solve path adds hard clauses `(-a_j v OR_{i in supp u} x_i)` / `(.. z_i)` for verified low-weight `u` in `Gx_j + rowspan(Hz)` / `Gz_j + rowspan(Hx)` (deterministic bounded GF(2) search, <= 4 per logical row); implied by the hard constraints, optimum unchanged; `-no-conj` omits them; dumps (`-dump-only`) and RoundingSat path unchanged. Application-layer only, no `src/solver/` change. |
 
 ---
 
