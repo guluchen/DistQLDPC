@@ -1,5 +1,14 @@
 # Optimization state
 
+GH64 independent retained-terminal audit COMPLETE (2026-10-09), report11f2b04a:
+full151payloads/48science192fields/order/wait4/medians/originaljudge and actual
+terminal/release52births authenticated. Numericnegative/formalINCONCLUSIVE,
+NOT_ADOPTED; exact configuration SHELVED, no Tier2/3/rerun. Broader fresh-native
+provenance audit UNCLAIMED, disabled source snapshot only; no adoption depends
+on it. Next fresh Brain preparation active, no scientific runner or accepted
+optimization. See complete native result record; prior pending-retained-audit
+statements below superseded.
+
 GH64 native Tier1-01 ACTUAL TERMINAL0 (2026-10-09), released15/6078312700.
 Complete48 natural scientifically correct samples/192fields, original151raw
 catalog716111eb fetched unchanged and rootbyteverified. Separate actualpost

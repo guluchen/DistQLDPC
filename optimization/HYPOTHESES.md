@@ -1,5 +1,11 @@
 # Hypothesis registry (not an execution queue)
 
+GH64 retained-terminal independent audit11f2b04a complete:151whole raw/48science/
+192fields/timing/medians/originalnumericjudge/terminal and release authenticated.
+FormalINCONCLUSIVE/NOT_ADOPTED, exactprefetchconfiguration SHELVED, noTier2/3.
+Broader current-native audit unclaimed; fresh three-proposal Brain preparation
+active. No universal cache/prefetch/interference conclusion follows.
+
 GH64 native original48 ACTUAL TERMINAL0 (2026-10-09), all192scientificfields
 correct in finite rootcheck; raw151716111 intact, actual separate52birth cleanup.
 OFFGM+1.4228%/MTOGM+0.4567%,6/8medians slower; numericREJECT/formalINCONCLUSIVE

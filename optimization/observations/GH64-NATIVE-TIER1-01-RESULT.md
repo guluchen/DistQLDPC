@@ -1,9 +1,9 @@
 # GH64 native Tier1-01 diagnostic result
 
 2026-10-09. Actual fixed48 observations completed, all scientific results correct
-in the finite root retained-data check. Decision **INCONCLUSIVE / NOT ADOPTED**;
-original numeric filter **REJECT**. Broader independent current-native provenance
-audit remains pending. No Tier2/3 and no favorable retry of this timing set.
+in the independent retained-terminal audit. Decision **INCONCLUSIVE / NOT ADOPTED**;
+original numeric filter **REJECT**. Broader fresh current-native provenance
+audit is unclaimed. No Tier2/3 and no favorable retry of this timing set.
 
 Same baseline72d1fe18 and sole guarded-prefetch candidateb632a1c0. The
 [prerecord](GH64-NATIVE-TIER1-PRERECORD.md) and
@@ -13,7 +13,8 @@ No new build, relinking, warmup or performance concept.
 Complete original151-payload catalogue SHA256:
 `716111eb38bb90a1bba53eb28890a5d5e38fcd488d5658528895c0abd35534d8`. All48 raw command streams, command records,
 samples, analysis, resource telemetry and source identities are retained.
-Root checked exact file set/hashes and all192 final scientific fields.
+Root and the independent retained-terminal audit checked exact file set/hashes,
+all48 scientific outputs/interim bounds and all192 final scientific fields.
 The initial Windows metadata reader used its default cp950 codec and failed;
 a separate fresh UTF-8 checker succeeded without changing any raw data.
 
@@ -37,7 +38,13 @@ negative48 remain separate evidence. Results do not support Tier1 promotion.
 
 Actual worker/launcher/helper terminal0; separate post-check confirms restoration
 and absence of all52 recorded process identities. Independent retained-terminal
-review is being performed; root observations alone are not its certificate.
+review completed, report SHA256
+`11f2b04aec3c41b93ce9f60b3594a31f0650a09508cc7019b81e8edee981e5c4`, status
+`PASS_RETAINED_TERMINAL_EVIDENCE_SCIENTIFICALLY_CORRECT_NUMERIC_NEGATIVE_FORMAL_INCONCLUSIVE`.
+It recomputed the original numeric judge, all medians/paired intervals and
+verified original terminal/release evidence. It does not claim fresh remote
+runtime/protected-byte verification or a broader native audit. This finite
+certificate supports non-adoption and shelving, not controlled promotion.
 [Run release](https://github.com/guluchen/DistQLDPC/issues/15#issuecomment-6078312700).
 
 ## Original timing samples
