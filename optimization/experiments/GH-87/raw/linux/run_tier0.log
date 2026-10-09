@@ -1,0 +1,42 @@
+== host yfclab2.iis.sinica.edu.tw Fri Oct  9 07:23:51 PM CST 2026
+5a4acda0b8c1bb6fdd26e37eba5c7ab21e0249053722de160a97ac709709856f  /home/yfc/mac-agent-20261009/frozen/gh87/cand/distqldpc
+b943c2c94d67574505112a06e1bb806aec378fbbc79e9edca4a1c5236283e00e  /home/yfc/mac-agent-20261009/frozen/gh73n/base/distqldpc
+90131e5e5c69d52fa0d2f7b6a88ebf357312f341a93925c8c051bb894e038d3a  /home/yfc/mac-agent-20261009/gh87-gh73ref/bin/distqldpc
+41ee9dfc5415b0483871398544738f02aa78e6e68ebc562a45763286bba0bd9d  /home/yfc/mac-agent-20261009/tier0_science.py
+smoke=0
+partition_py=0
+In file included from src/solver/Solver.h:53,
+                 from tests/test_partition_soft_literals.cc:3:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+tests/test_partition_soft_literals.cc: In member function ‘void Probe::test(int, int, int)’:
+tests/test_partition_soft_literals.cc:37:4: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   37 |    if(!hard)continue;++checked;
+      |    ^~
+tests/test_partition_soft_literals.cc:37:22: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   37 |    if(!hard)continue;++checked;
+      |                      ^~
+partition_oracle=0
+LP_34_20_2 default joint-vs-base=IDENTICAL nodualskip-vs-gh73=IDENTICAL default-vs-gh73=IDENTICAL_MOD_DUALSKIP_LINE c dualskip: no dual map (ranks Hz 7 Hx 7 [Hz;Gx] 27 [Hx;Gz]  base_o=o 2 cand_o=o 2
+LP_34_20_2 no-card joint-vs-base=IDENTICAL nodualskip-vs-gh73=IDENTICAL default-vs-gh73=IDENTICAL_MOD_DUALSKIP_LINE c dualskip: no dual map (ranks Hz 7 Hx 7 [Hz;Gx] 27 [Hx;Gz]  base_o=o 2 cand_o=o 2
+BB_72_12_6 default joint-vs-base=IDENTICAL nodualskip-vs-gh73=IDENTICAL default-vs-gh73=DIFFER c dualskip: dual map 'halfswap-inverse Z_6 x Z_6' verified ( base_o=o 6 cand_o=o 6
+BB_72_12_6 no-card joint-vs-base=IDENTICAL nodualskip-vs-gh73=IDENTICAL default-vs-gh73=DIFFER c dualskip: dual map 'halfswap-inverse Z_6 x Z_6' verified ( base_o=o 6 cand_o=o 6
+TN_36_8_4 default joint-vs-base=IDENTICAL nodualskip-vs-gh73=IDENTICAL default-vs-gh73=DIFFER c dualskip: dual map 'blockshift L=2' verified (rank Hz=Hx=1 base_o=o 4 cand_o=o 4
+TN_36_8_4 no-card joint-vs-base=IDENTICAL nodualskip-vs-gh73=IDENTICAL default-vs-gh73=DIFFER c dualskip: dual map 'blockshift L=2' verified (rank Hz=Hx=1 base_o=o 4 cand_o=o 4
+== science start Fri Oct  9 07:23:55 PM CST 2026
+science=0
+{"both_done": 52, "only_cand_done": 11, "only_base_done": 1, "problems": 0} ALL_OK
+posthoc=0
+BB_90_8_10 c CSS interleave: X half cap 9 lb 9 optimize -> NONE 0 o 10
+BB_108_8_10 c CSS interleave: X half cap 15 lb 9 optimize -> OPT 10 o 10
+GB_144_12_8 c CSS interleave: X half cap 7 lb 5 optimize -> NONE 0 o 8
+BB_144_12_12 c CSS interleave: X half cap 15 lb 9 optimize -> OPT 12 o 12
+GB_144_12_12  
+== done Fri Oct  9 08:39:51 PM CST 2026

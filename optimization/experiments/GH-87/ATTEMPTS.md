@@ -11,3 +11,8 @@
    baseline children were then killed by PID (all owned by this agent).
 2. Amended candidate (A1): phase-2b cap U-1 when the Z half is eliminated and the X half
    holds the incumbent. All Tier0 checks rerun from scratch on this source.
+3. During the A1 science sweep (about 72/200 jobs done) the coordinator required all agent
+   work on yfclab2 to be pinned to NUMA node 0 (Tier3 timing on node 1). The running
+   driver shell, harness and solver processes were re-pinned in place with
+   `taskset -a -c -p 0-63,128-191 <pid>` (children inherit); <= 4 concurrent jobs
+   throughout. Correctness-only run, so the mid-run affinity change does not affect validity.
