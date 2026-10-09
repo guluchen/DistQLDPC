@@ -20,6 +20,8 @@
  *   - Hard: commutation with each row of S; P != 0; for each precomputed logical L_j,
  *           XOR(P|_Lj, a_j)=0 and (a_1 v ... v a_k).
  *   - Soft: unit (-w_i) weight 1 with w_i <-> x_i v z_i.
+ *   - Implied (MaxCDCL solve path, GH-79): (-a_j v OR_{i in supp u} x_i) for verified
+ *     low-weight u in Gx_j + rowspan(Hz), likewise z for Gz_j + rowspan(Hx); -no-conj omits.
  */
 
 #include <stdio.h>
@@ -28,6 +30,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <sys/wait.h>
 #include <sys/time.h>
@@ -389,12 +392,248 @@ static void write_opb_native_parity(
     (void)written;
 }
 
+/*
+ * GH-79: implied conjugate-coset clauses.
+ *
+ * X side: the encoding has Hz x = 0 (hard) and a_j <-> Gx_j . x. For every h in
+ * rowspace(Hz), h . x = 0, so every u in Gx_j + rowspace(Hz) satisfies u . x = a_j.
+ * Hence (-a_j v OR_{i in supp(u)} x_i) is implied by the hard constraints; the
+ * same holds on the Z side for Gz_j + rowspace(Hx) and the z variables. Adding
+ * implied clauses leaves the feasible set and the optimum unchanged.
+ *
+ * Low-weight representatives are searched with a deterministic, bounded GF(2)
+ * information-set procedure (seeded splitmix64 permutations; pivot-reduced coset
+ * representative; greedy descent by single stabilizer rows). Every candidate is
+ * re-verified by exact reduction of (u xor g) against an echelon basis of the
+ * stabilizer row space; failures are dropped. Per row: candidates of weight
+ * <= 2*wmin, greedy pairwise-disjoint packing first, then the lightest rest,
+ * original row excluded (its XOR chain already enforces it), at most
+ * CONJ_MAX_PER_ROW clauses.
+ */
+typedef std::vector<uint64_t> ConjBits;
+
+static const int CONJ_MAX_PER_ROW = 4;
+static const int CONJ_MAX_TRIALS = 32;
+static const int CONJ_MIN_TRIALS = 4;
+static const double CONJ_TRIAL_BUDGET = 1.5e8; /* estimated word operations per side */
+
+static bool g_conj_clauses = true; /* -no-conj disables (baseline instance) */
+
+static inline int conj_wt(const ConjBits& v) {
+    int s = 0;
+    for (size_t k = 0; k < v.size(); k++) s += __builtin_popcountll(v[k]);
+    return s;
+}
+static inline bool conj_get(const ConjBits& v, int i) {
+    return (v[(size_t)i >> 6] >> (i & 63)) & 1;
+}
+static inline void conj_xor(ConjBits& a, const ConjBits& b) {
+    for (size_t k = 0; k < a.size(); k++) a[k] ^= b[k];
+}
+static inline bool conj_is_zero(const ConjBits& v) {
+    for (size_t k = 0; k < v.size(); k++) if (v[k]) return false;
+    return true;
+}
+static inline bool conj_disjoint(const ConjBits& a, const ConjBits& b) {
+    for (size_t k = 0; k < a.size(); k++) if (a[k] & b[k]) return false;
+    return true;
+}
+
+static ConjBits conj_row(const Matrix& M, int r, size_t words) {
+    ConjBits v(words, 0);
+    for (int i = 0; i < M.cols; i++)
+        if (getm(M, r, i)) v[(size_t)i >> 6] |= (uint64_t)1 << (i & 63);
+    return v;
+}
+
+struct ConjPivotRow {
+    int pivot;
+    ConjBits row;
+};
+
+/* Fully reduced echelon basis of span(rows); pivots taken in column `order`.
+ * Stops once `max_rank` pivots are found (pass rows.size() if unknown). */
+static std::vector<ConjPivotRow> conj_echelon(
+    std::vector<ConjBits> rows, const std::vector<int>& order, size_t max_rank)
+{
+    std::vector<ConjPivotRow> basis;
+    size_t used = 0;
+    for (size_t oi = 0; oi < order.size() && used < rows.size() && basis.size() < max_rank; oi++) {
+        const int c = order[oi];
+        size_t sel = rows.size();
+        for (size_t r = used; r < rows.size(); r++)
+            if (conj_get(rows[r], c)) { sel = r; break; }
+        if (sel == rows.size())
+            continue;
+        std::swap(rows[used], rows[sel]);
+        const ConjBits& p = rows[used];
+        for (size_t r = used + 1; r < rows.size(); r++)
+            if (conj_get(rows[r], c)) conj_xor(rows[r], p);
+        for (size_t b = 0; b < basis.size(); b++)
+            if (conj_get(basis[b].row, c)) conj_xor(basis[b].row, p);
+        ConjPivotRow pr;
+        pr.pivot = c;
+        pr.row = p;
+        basis.push_back(pr);
+        used++;
+    }
+    return basis;
+}
+
+static void conj_reduce(ConjBits& v, const std::vector<ConjPivotRow>& basis) {
+    for (size_t b = 0; b < basis.size(); b++)
+        if (conj_get(v, basis[b].pivot)) conj_xor(v, basis[b].row);
+}
+
+static void conj_descend(ConjBits& u, const std::vector<ConjBits>& H) {
+    int w = conj_wt(u);
+    ConjBits t(u.size());
+    bool improved = true;
+    while (improved) {
+        improved = false;
+        for (size_t r = 0; r < H.size(); r++) {
+            for (size_t k = 0; k < u.size(); k++) t[k] = u[k] ^ H[r][k];
+            int wt = conj_wt(t);
+            if (wt < w) { u.swap(t); w = wt; improved = true; }
+        }
+    }
+}
+
+static uint64_t conj_splitmix(uint64_t& s) {
+    uint64_t z = (s += 0x9E3779B97F4A7C15ULL);
+    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+    z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+    return z ^ (z >> 31);
+}
+
+static bool conj_less(const ConjBits& a, const ConjBits& b) {
+    int wa = conj_wt(a), wb = conj_wt(b);
+    if (wa != wb) return wa < wb;
+    return a < b;
+}
+
+struct ConjStats {
+    int trials;
+    int rows;
+    int clauses;
+    long literals;
+    int min_wt;
+    int max_wt;
+    int lighter_rows;
+    int verify_fail;
+};
+
+/* Adds implied clauses (-a_{a_first+j} v OR_{i in supp(u)} v_{off_v+i}) for
+ * representatives u of G_j + rowspace(H). */
+static void add_conjugate_coset_clauses(
+    SimpSolver& S, const Matrix& G, const Matrix& H, Var off_v, Var a_first, ConjStats& st)
+{
+    st.trials = 0; st.rows = 0; st.clauses = 0; st.literals = 0;
+    st.min_wt = INT_MAX; st.max_wt = 0; st.lighter_rows = 0; st.verify_fail = 0;
+    if (G.rows == 0)
+        return;
+    const int n = G.cols;
+    const size_t words = ((size_t)n + 63) / 64;
+
+    std::vector<ConjBits> Hrows;
+    for (int r = 0; r < H.rows; r++) {
+        ConjBits h = conj_row(H, r, words);
+        if (!conj_is_zero(h)) Hrows.push_back(h);
+    }
+    std::vector<int> order(n);
+    for (int i = 0; i < n; i++) order[i] = i;
+    const std::vector<ConjPivotRow> exact = conj_echelon(Hrows, order, Hrows.size());
+    const size_t rank = exact.size();
+
+    double est = (double)(rank + 1) * (double)(Hrows.size() + rank + 1) * (double)words
+               + (double)G.rows * (double)Hrows.size() * (double)words * 8.0;
+    int T = (int)(CONJ_TRIAL_BUDGET / est);
+    if (T > CONJ_MAX_TRIALS) T = CONJ_MAX_TRIALS;
+    if (T < CONJ_MIN_TRIALS) T = CONJ_MIN_TRIALS;
+    st.trials = T;
+
+    std::vector<ConjBits> Grows;
+    std::vector< std::vector<ConjBits> > cands(G.rows);
+    for (int j = 0; j < G.rows; j++) {
+        Grows.push_back(conj_row(G, j, words));
+        if (conj_is_zero(Grows[j])) continue;
+        cands[j].push_back(Grows[j]);
+        ConjBits u = Grows[j];
+        conj_descend(u, Hrows);
+        cands[j].push_back(u);
+    }
+    uint64_t seed = 0x6A09E667F3BCC909ULL ^ ((uint64_t)n << 32) ^ (uint64_t)(G.rows * 131 + H.rows);
+    for (int t = 0; t < T && rank > 0; t++) {
+        for (int i = n - 1; i > 0; i--) {
+            int k = (int)(conj_splitmix(seed) % (uint64_t)(i + 1));
+            int tmp = order[i]; order[i] = order[k]; order[k] = tmp;
+        }
+        const std::vector<ConjPivotRow> basis = conj_echelon(Hrows, order, rank);
+        for (int j = 0; j < G.rows; j++) {
+            if (conj_is_zero(Grows[j])) continue;
+            ConjBits u = Grows[j];
+            conj_reduce(u, basis);
+            conj_descend(u, Hrows);
+            cands[j].push_back(u);
+        }
+    }
+
+    for (int j = 0; j < G.rows; j++) {
+        const ConjBits& g = Grows[j];
+        if (conj_is_zero(g)) continue; /* a_j already forced false */
+        std::vector<ConjBits>& c = cands[j];
+        std::sort(c.begin(), c.end(), conj_less);
+        c.erase(std::unique(c.begin(), c.end()), c.end());
+        std::vector<ConjBits> ok;
+        for (size_t q = 0; q < c.size(); q++) {
+            ConjBits d = c[q];
+            conj_xor(d, g);
+            conj_reduce(d, exact);
+            if (conj_is_zero(d)) ok.push_back(c[q]);
+            else st.verify_fail++;
+        }
+        if (ok.empty()) continue;
+        st.rows++;
+        const int wmin = conj_wt(ok[0]);
+        if (wmin < conj_wt(g)) st.lighter_rows++;
+        const Lit a_lit = mkLit(a_first + j);
+        std::vector<char> take(ok.size(), 0);
+        int ntake = 0;
+        ConjBits used(words, 0);
+        for (size_t q = 0; q < ok.size() && ntake < CONJ_MAX_PER_ROW; q++) {
+            if (conj_wt(ok[q]) > 2 * wmin) break;
+            if (!conj_disjoint(ok[q], used)) continue;
+            for (size_t k = 0; k < words; k++) used[k] |= ok[q][k];
+            if (ok[q] == g) continue;
+            take[q] = 1; ntake++;
+        }
+        for (size_t q = 0; q < ok.size() && ntake < CONJ_MAX_PER_ROW; q++) {
+            if (conj_wt(ok[q]) > 2 * wmin) break;
+            if (take[q] || ok[q] == g) continue;
+            take[q] = 1; ntake++;
+        }
+        for (size_t q = 0; q < ok.size(); q++) {
+            if (!take[q]) continue;
+            std::vector<Lit> cl;
+            cl.push_back(~a_lit);
+            for (int i = 0; i < n; i++)
+                if (conj_get(ok[q], i)) cl.push_back(mkLit(off_v + i));
+            add_hard_clause(S, cl);
+            const int w = (int)cl.size() - 1;
+            st.clauses++;
+            st.literals += (long)cl.size();
+            if (w < st.min_wt) st.min_wt = w;
+            if (w > st.max_wt) st.max_wt = w;
+        }
+    }
+}
+
 static bool build_stabilizer_instance(
     SimpSolver& S,
     std::vector<Var>& aux,
     StabilizerInstance& meta,
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int verb, int card_mode, int bounds_pipe_w)
+    int verb, int card_mode, int bounds_pipe_w, bool conj_clauses = false)
 {
     meta.n = Hx.cols;
     if (Hz.cols != meta.n || Gx.cols != meta.n || Gz.cols != meta.n) die("matrix column mismatch");
@@ -474,6 +713,21 @@ static bool build_stabilizer_instance(
         for (int j = 0; j < k_log; j++) ors.push_back(mkLit(off_a + j));
         add_hard_clause(S, ors);
     }
+    if (conj_clauses) {
+        ConjStats sx, sz;
+        add_conjugate_coset_clauses(S, Gx, Hz, off_x, off_a, sx);
+        add_conjugate_coset_clauses(S, Gz, Hx, off_z, off_a + Gx.rows, sz);
+        if (verb > 0) {
+            const ConjStats* st[2] = {&sx, &sz};
+            const char* side[2] = {"X(Gx+rs(Hz))", "Z(Gz+rs(Hx))"};
+            for (int s = 0; s < 2; s++)
+                printf("c conj-clauses %s: trials %d, rows %d, lighter-than-row %d, clauses %d, "
+                       "literals %ld, rep weight %d..%d, verify failures %d\n",
+                       side[s], st[s]->trials, st[s]->rows, st[s]->lighter_rows, st[s]->clauses,
+                       st[s]->literals, st[s]->clauses ? st[s]->min_wt : 0, st[s]->max_wt,
+                       st[s]->verify_fail);
+        }
+    }
     for (int i = 0; i < meta.n; i++) {
         Lit xi = mkLit(off_x + i);
         Lit zi = mkLit(off_z + i);
@@ -503,7 +757,8 @@ static int min_distance_stabilizer_maxsat(
     SimpSolver S;
     std::vector<Var> aux;
     StabilizerInstance meta;
-    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
+    if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w,
+                                   g_conj_clauses))
         return INT_MAX;
 
     if (dump_wcnf_path && dump_wcnf_path[0])
@@ -897,6 +1152,8 @@ int main(int argc, char** argv) {
             card_mode = 1;
         else if (!strcmp(argv[i], "-card-both-force"))
             card_mode = 4;
+        else if (!strcmp(argv[i], "-no-conj"))
+            g_conj_clauses = false;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
@@ -906,6 +1163,7 @@ int main(int argc, char** argv) {
             printf("  Solver: default MaxCDCL; -roundingsat[=BIN] uses external RoundingSat on WCNF\n");
             printf("  Cardinality: default Sinz+MTO (Sinz if n<=100); -no-card | -card-sinz | -card-mto\n");
             printf("               -card-both-force  always Sinz+MTO regardless of n\n");
+            printf("  -no-conj  omit implied conjugate-coset clauses (MaxCDCL solve path)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
