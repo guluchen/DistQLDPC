@@ -10,7 +10,10 @@ generic cases. No artificial wrapper codegen is treated as production evidence.
 
 Use six counter seeds (0,1,17,UINT64_MAX-2,-1,max), four complete stamp patterns,
 all36 level pairs0..5, four literal sign patterns, two actual containers and a
-six-call size sequence0,1,2,4,2,1: 41,472 actual calls. Compare return, counter,
+six-call size sequence2,0,1,4,2,1: 41,472 actual calls. Start with size2 so the
+max-counter seed reaches wrap in the selected branch itself, and initial
+next-counter stamp patterns directly exercise its suppressed writes.
+Compare return, counter,
 every seen2 entry, level data and input literals after every call. Interleave a
 test-only marker write sequence on both states, then compare again; this checks
 shared marker state persistence, not actual binRes clause entailment coverage.
