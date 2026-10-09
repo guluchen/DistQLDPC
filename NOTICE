@@ -53,10 +53,16 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
   - Best-solution tracking and printing on timeout / interrupt
   - Configurable cardinality encoding modes (Sinz / MTO / off)
+  - Persistent multi-probe instances and per-instance heuristic state (CSS split, experimental)
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
 
 Modified files (partial list): Solver.h, Solver.cc
+
+  src/core/distqldpc.cc also contains GH-85 per-half symmetry breaking
+  (GH-73 x GH-75 interaction): an original, domain-specific adaptation of
+  static symmetry breaking (Crawford et al., KR 1996; Anders, Brenner, Rattan,
+  "Satsuma", SAT 2024, DOI 10.4230/LIPIcs.SAT.2024.4). No third-party code.
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
