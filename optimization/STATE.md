@@ -1,5 +1,16 @@
 # Optimization state
 
+GH83 full core integration actual TERMINAL0 (2026-10-09). Same67924 completed;
+all774 raw payloads downloaded and rootbyteverified. Separate post43d1563f
+confirms helper inactive/groupgone/all195 observed births absent/root5 restored;
+slot released15/6079581066. Worker LOCAL_PASS90apps/41Main/40dumps/12TO/2smoke.
+Full independent audit is pending: first actual retained audit stopped on its
+blanket empty-Main-stderr requirement; original Main prints a variable-header
+warning on new live dumps. Source/raw diagnosis active; no warning waiver or
+scientific mismatch classification yet. Tier1 disabled, no timing/adoption.
+See experiments/GH-83/CORE-INTEGRATION-TERMINAL01.md. RUNNING entries below
+are historical and superseded; no scientific root runner currently active.
+
 GH83 full application Tier0 ACTUAL RUNNING (2026-10-09), sole tool session67924,
 assignment15/6079176373. Source48d/package4678 reviews and root literal freeze
 complete; supportd7f98940/package64f79f39. Uploaded bytes, six baseline-only
