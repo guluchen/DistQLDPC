@@ -31,7 +31,7 @@ yfclab2 (Linux 6.8, GCC 13.3; correctness only, per coordinator SERVER.md).
    (TN_200_10_10 no-card, d=10); no emitted d_lb above / d_ub below the distance anywhere;
    no abnormal exits. Completion near the 60 s limit on a loaded 8-process host is not
    timing evidence. `raw/server-tier0-science/gh79-tier0/science.json` + 400 logs.
-6. Timeout semantics: covered by the 143 timed-out sweep runs (TIMEOUT, `s UNKNOWN`, sound
+6. Timeout semantics: covered by the 143 sweep jobs where neither binary completed (plus 5 one-sided timeouts) (TIMEOUT, `s UNKNOWN`, sound
    bounds); output format unchanged.
 7. QDistSAT cross-repo: one-commit branch `ci/xrepo-gh79` = `981e847` (tree 019e71ce = candidate
    tree, parent 72d1fe1), run 37907655988: SUCCESS, **scientific results match YES**
