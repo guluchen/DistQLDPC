@@ -1,0 +1,37 @@
+{
+ "argv": [
+  "optimization/experiments/GH-92/tier1_mac_dist.py",
+  "--base",
+  "../frozen73n/base/distqldpc",
+  "--cand",
+  "../frozen92/cand/distqldpc",
+  "--cases",
+  "LP_340_56_8",
+  "--limit",
+  "600",
+  "--watchdog",
+  "615",
+  "--out",
+  "optimization/experiments/GH-92/raw/tier2-01"
+ ],
+ "binaries": {
+  "baseline": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/frozen73n/base/distqldpc",
+  "candidate": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/frozen92/cand/distqldpc"
+ },
+ "binary_sha256": {
+  "baseline": "3f2fbc4215e17c4a5b5e62d1f10f99619bdf6efaea7881acb46157effe78c9dc",
+  "candidate": "49e37dee170eb6685344aefd25b37bdb1dccc129d640d6802ded25562b51d28f"
+ },
+ "input_sha256": {
+  "data/matrices/LP_340_56_8_Gx.txt": "e05585ec252b84fc94a0de7f9f95732c8c6e4bf11b3a295bbd2fa0277f44589b",
+  "data/matrices/LP_340_56_8_Gz.txt": "383b79ac33a8b2e2842fe2908763ec1e8e82de5a30c8cea52a19d40ee21d5c66",
+  "data/matrices/LP_340_56_8_Hx.txt": "097a76f0030e82b3077259ffda5c74e5009b42efba58a7dabad252c13b348d8a",
+  "data/matrices/LP_340_56_8_Hz.txt": "d5fd553dfa914dad412abf357ed42b0ff79c35b1ee3bad4ef5c83d7b8f33e9e6"
+ },
+ "host": "macOS-27.0.1-arm64-arm-64bit",
+ "machine": "arm64",
+ "cpu": "Apple M6",
+ "ncpu": 12,
+ "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+ "started": "2026-10-09T22:30:14+0800"
+}
