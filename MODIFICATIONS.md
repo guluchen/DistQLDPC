@@ -23,6 +23,7 @@ New code, not derived from MaxCDCL.
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
 | Quiet / debug | Default `verb=0`; child stdout to `/dev/null`; `-v` / `-debug` for solver log |
 | CLI flags | `-no-card`, `-card-sinz`, `-card-mto`, `-card-both-force`, `-cpu-lim`, `-q` |
+| Interleaved CSS split (GH-73, PI-approved 2026-10-09, experimental) | Default MaxCDCL path computes d = min(dX, dZ) by a global bound search over the X-type and Z-type halves (doubling feasibility probes, tie-break probes, ordered capped optimisation); only global bounds are forwarded; `-joint` keeps the original encoding |
 
 ---
 
@@ -75,6 +76,14 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
 - Call `emitTryUpdate(UB)` when testing a new upper-bound candidate
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
+
+#### Multi-instance search controls (GH-73)
+
+- `initLB`, `strictUB`, `startAtCap`, `stopAtFirstSolution`: a known lower bound, a hard cap, starting
+  at the cap, and feasibility-only runs, used by the interleaved CSS split
+- `boundsLbCap`, `boundsUbCap`, `boundsHideLB`: emitted bounds are capped/suppressed to stay global
+- Former function-local `static` heuristic state in `search()`, `lookahead()` and
+  `addCardinalityConstraints()` is now per-instance (identical behaviour for a single instance)
 
 ---
 

@@ -3515,7 +3515,7 @@ lbool Solver::search(int& nof_conflicts)
     vec<Lit>    learnt_clause;
     bool        cached = false;
     
-    static uint64_t prevUB=0;
+    uint64_t& prevUB = srch_prevUB;  // GH-73: was function-local static
     starts++;
 
     // if (starts > 440)
@@ -3833,6 +3833,8 @@ lbool Solver::search(int& nof_conflicts)
 		//     UB, conflicts, conflicts-softConflicts);
 	      model.growTo(nVars());
 	      for (int i = 0; i < nVars(); i++) model[i] = value(i);
+	      if (stopAtFirstSolution)  // GH-73: feasibility test only; outer loop records it and stops
+		return l_True;
 	      //  softConflictFlag=true;
 	      if (UB==0)
 		return l_True;
@@ -4800,16 +4802,17 @@ void Solver::fixByLookahead(vec<Lit>& out_learnt) {
 // when analyzing the soft conflict
 // Otherwise, it is cleared here before returning true.
 bool Solver::lookahead() {
-  static int thres=2;
-  static int prevConflicts=0;
-  static int maxSuccLB=0;
-  static uint64_t prevUB=0;
-  static int nbSample=0;
-  static double sumLB=0;
-  static double sumSQLB=0;
-  static double coef = 2;
-  static int myLH=0;
-  static int mySucc=0;
+  // GH-73: former function-local statics, now per-instance members
+  int& thres = lk_thres;
+  int& prevConflicts = lk_prevConflicts;
+  int& maxSuccLB = lk_maxSuccLB;
+  uint64_t& prevUB = lk_prevUB;
+  int& nbSample = lk_nbSample;
+  double& sumLB = lk_sumLB;
+  double& sumSQLB = lk_sumSQLB;
+  double& coef = lk_coef;
+  int& myLH = lk_myLH;
+  int& mySucc = lk_mySucc;
 
   hardenEnable = false; LHconfl = CRef_Undef;
   // return true;
@@ -5197,15 +5200,17 @@ void Solver::emitBoundsUpdate() {
         return;
     char buf[64];
     int n;
-    if (infeasibleUB > 0) {
+    if (infeasibleUB > 0 && !boundsHideLB) {
+        uint64_t lbv = getCostLB(); if (lbv > boundsLbCap) lbv = boundsLbCap;
         n = snprintf(buf, sizeof(buf), "LB %llu\n",
-                     (unsigned long long)getCostLB());
+                     (unsigned long long)lbv);
         if (n > 0)
             (void)write(bounds_pipe_w, buf, (size_t)n);
     }
     if (bestSolutionFound) {
+        uint64_t ubv = getCostUB(); if (ubv > boundsUbCap) ubv = boundsUbCap;
         n = snprintf(buf, sizeof(buf), "UB %llu\n",
-                     (unsigned long long)getCostUB());
+                     (unsigned long long)ubv);
         if (n > 0)
             (void)write(bounds_pipe_w, buf, (size_t)n);
     }
@@ -6201,7 +6206,7 @@ inline Var Solver::newAuxiVarForCardinality() {
 // Precondition: n>k>0
 // Should be called only at the root of the search tree
 void Solver::addCardinalityConstraints() {
-  static uint64_t prevUB=0;
+  uint64_t& prevUB = card_prevUB;  // GH-73: was function-local static
 
   if (UB==1 || UB == prevUB)
     return;
@@ -6640,12 +6645,33 @@ lbool Solver::solve_()
       }
       else {
 	printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+	if (strictUB) {  // GH-73: forced cost already exceeds the hard cap: no solution under it
+	  lastOptimalCost = UINT64_MAX;
+	  printf("c strict UB below forced cost: no solution under the cap\n");
+	  cancelUntil(0);
+	  return l_False;
+	}
 	printf("c search from scratch...\n");
       }
     }
     else
       printf("c no UB provided, search from scratch...\n");
+    if (initLB > 0) {  // GH-73: start from a lower bound proven by an earlier run on this instance
+      uint64_t offs = solutionCost+fixedCostBySearch+derivedCost + relaxedCost;
+      if (initLB > offs) {
+	inf = initLB - offs;
+	infeasibleUB = inf;
+	printf("c provided LB: %llu (search units %llu)\n", initLB, inf);
+      }
+    }
+    if (strictUB && initUB < INT32_MAX && inf + 1 > providedUB) {  // GH-73: known LB above the cap
+      lastOptimalCost = UINT64_MAX;
+      printf("c provided LB above strict UB: no solution under the cap\n");
+      cancelUntil(0);
+      return l_False;
+    }
     UB=inf+1;
+    if (strictUB && (UB > providedUB || startAtCap)) UB = providedUB;
     int nbVSIDSphase=0, nbLRBphase=0;
     do {
       status            = l_Undef;
@@ -6790,6 +6816,7 @@ lbool Solver::solve_()
 	savedLOOKAHEAD = LOOKAHEAD; savednbLKsuccess=nbLKsuccess;
 	sup = falseLits.size();
 	noteBestSolution(sup);
+	if (stopAtFirstSolution) break;  // GH-73: feasibility test only
 	cancelUntil(0);
 	fixedCostBySearch += falseLits.size(); beginning = trail.size();
 	for (int i=0; i < learnts_local.size(); i++)
