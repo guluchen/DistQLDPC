@@ -558,6 +558,28 @@ public:
     void emitBoundsUpdate();
     void emitTryUpdate(uint64_t try_val);
     int bounds_pipe_w;
+    // DistQLDPC GH-76 (CSS split, persistent per-half solver; controls adapted from GH-73).
+    bool     stopAtFirstSolution = false;  // search() returns l_True at the first solution under UB
+    uint64_t boundsLbCap = UINT64_MAX, boundsUbCap = UINT64_MAX;  // caps on emitted LB/UB
+    bool     boundsHideLB = false;    // do not emit LB (not a global bound)
+    // Former function-local statics, now per instance (identical for single-instance runs).
+    uint64_t srch_prevUB = 0, card_prevUB = 0, lk_prevUB = 0;
+    int      lk_thres = 2, lk_prevConflicts = 0, lk_maxSuccLB = 0, lk_nbSample = 0, lk_myLH = 0, lk_mySucc = 0;
+    double   lk_sumLB = 0, lk_sumSQLB = 0, lk_coef = 2;
+    // GH-76: one instance answers a sequence of bounded probes instead of a single solve_().
+    // Bound transitions are restricted to the ones solve_()/search() themselves perform:
+    //  - UB rises only while !feasible, after the fail-path reset (cancelUntilBeginning + removeLearntClauses);
+    //  - UB falls at level 0 keeping all state (as after a solution found inside search());
+    //  - once feasible, UB never rises above the UB in force at the end of the previous probe
+    //    (on-the-fly strengthening then also shortens original clauses), otherwise INC_REBUILD.
+    enum IncResult { INC_FOUND, INC_OPT, INC_NONE, INC_REBUILD, INC_INTERRUPTED };
+    bool      incPrepare();   // solve_() prologue, once; false: no solution at all
+    IncResult incProbe(uint64_t capTotal, bool firstOnly, uint64_t knownLB, uint64_t& valueTotal);
+    uint64_t  incOffset() const { return solutionCost + fixedCostBySearch + derivedCost + relaxedCost; }
+    uint64_t  inc_inf = 0, inc_sup = 0, inc_ceil = UINT64_MAX;   // search units: no sol. < inf; best found; UB ceiling
+    int       inc_beginning = 0;
+    uint64_t  inc_phaseAllot = 0, inc_phaseUP = 0;
+    int       inc_currRestarts = 0;
     bool feasible;
     bool bestSolutionFound;
     uint64_t bestSup;
