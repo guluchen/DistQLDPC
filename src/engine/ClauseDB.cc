@@ -235,6 +235,7 @@ void Solver::detachClause(CRef cr, bool strict) {
     const Clause& c = ca[cr];
     assert(c.size() > 1);
     OccLists<Lit, vec<Watcher>, WatcherDeleted>& ws = c.size() == 2 ? watches_bin : watches;
+    if (c.size() > 2) { lkSkipInvalidate(~c[0]); lkSkipInvalidate(~c[1]); }   // GH-99: list will shrink
     
     if (strict){
         remove(ws[~c[0]], Watcher(cr, c[1]));
@@ -292,6 +293,7 @@ bool Solver::satisfied(const Clause& c) const {
 
 void Solver::relocAll(ClauseAllocator& to)
 {
+    lkSkipBumpGlobal();   // GH-99
     // All watchers:
     //
     // for (int i = 0; i < watches.size(); i++)

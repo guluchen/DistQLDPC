@@ -444,6 +444,7 @@ void Solver::simpleuncheckedEnqueueForLK(Lit p, CRef from){
 }
 
 CRef Solver::simplepropagateForLK() {
+  lkSkipBumpGlobal();   // GH-99: this scanner compacts watch lists
   falseVar = var_Undef;
   CRef    confl = CRef_Undef;
   int     num_props = 0;

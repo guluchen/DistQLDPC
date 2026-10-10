@@ -56,6 +56,9 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 //
 void Solver::cancelUntil(int level) {
     if (decisionLevel() > level){
+        // GH-99: every undone level gets a fresh stamp (lookahead skip metadata depending on it becomes invalid)
+        for (int L = level + 1, top = decisionLevel() < lkLevelStamp.size() ? decisionLevel() : lkLevelStamp.size() - 1; L <= top; L++)
+            lkLevelStamp[L] = ++lkStampCounter;
         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
             Var      x  = var(trail[c]);
             
@@ -137,6 +140,7 @@ CRef Solver::propagate()
   //   softConflictFlag=true;
   //   return CRef_Undef;
   // }
+  if (lkSkipMode == 1) return propagate_exact();   // GH-99 exact mode keeps lookahead skip runs in place
   softConflictFlag=false;
     CRef    confl     = CRef_Undef;
     int     num_props = 0;
@@ -297,6 +301,7 @@ CRef Solver::lPropagate() {
 }
 
 void Solver::cancelUntilBeginning(int begnning) {
+  lkSkipBumpGlobal();   // GH-99: part of level 0 is undone
   for (int c = trail.size()-1; c >= begnning; c--){
     Var      x  = var(trail[c]);
     if (!VSIDS){

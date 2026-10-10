@@ -126,6 +126,7 @@ Var Solver::newAuxiVar(bool sign)
   if (dynVars.size() > 0) {
     int v=dynVars.last();
     dynVars.pop();
+    lkSkipBumpGlobal();   // GH-99: watch lists of v are cleared
     Lit p = mkLit(v);
     watches_bin[p].clear();
     watches_bin[~p].clear();

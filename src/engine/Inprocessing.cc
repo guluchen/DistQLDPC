@@ -61,6 +61,7 @@ CRef Solver::simplePropagate() {
     CRef    confl = CRef_Undef;
     int     num_props = 0;
     softConflictFlag = false;
+    lkSkipBumpGlobal();   // GH-99: this scanner compacts watch lists
     watches.cleanAll();
     watches_bin.cleanAll();
     while (qhead < trail.size()) {
@@ -222,6 +223,7 @@ void Solver::simpleUncheckEnqueue(Lit p, CRef from){
 
 void Solver::cancelUntilTrailRecord()
 {
+  lkSkipBumpGlobal();   // GH-99
     for (int c = trail.size() - 1; c >= trailRecord; c--)
     {
         Var x = var(trail[c]);
@@ -700,6 +702,7 @@ bool Solver::simplifyLearnt_tier2() {
 
 void Solver::cancelUntilTrailRecord1()
 {
+  lkSkipBumpGlobal();   // GH-99
   counter++;
     for (int c = trail.size() - 1; c >= trailRecord; c--)
     {
@@ -721,6 +724,7 @@ void Solver::cancelUntilTrailRecord1()
 
 void Solver::cancelUntilTrailRecord2()
 {
+  lkSkipBumpGlobal();   // GH-99
   add_tmp.clear();
     for (int c = trail.size() - 1; c >= trailRecord; c--)
     {

@@ -747,7 +747,40 @@ public:
 
     void cancelUntilTrailRecord1();
     void cancelUntilTrailRecord2();
+
+    // DistQLDPC GH-99 (S0): skip base-satisfied watchers in lookahead propagation (src/engine/Lookahead.cc).
+    // A watcher of watches[p] is base-satisfied when its blocker is true at a level <= decisionLevel() during
+    // lookahead. Such watchers are remembered per literal and skipped by propagateForLK until a level they depend
+    // on is undone (lkLevelStamp) or the list is changed by something other than propagateForLK (lkGlobalEpoch,
+    // lkSkipInvalidate). Mode 0 = off (original loop), 1 = exact (in-place runs, search identical),
+    // 2 = fast (base-satisfied prefix; reorders watches, search changes). See optimization/experiments/GH-99.
+    struct LKSkipMeta { uint64_t g; uint64_t stamp; int lmax; int plen;     // validity, recorded set
+                        uint64_t bstamp; int bD; int btrail; };             // base seen by the last scan
+    int                 lkSkipMode = 0;
+    uint64_t            lkGlobalEpoch = 1;
+    uint64_t            lkStampCounter = 0;
+    vec<uint64_t>       lkLevelStamp;          // per decision level; renewed when the level is undone
+    vec<LKSkipMeta>     lkMeta;                // per literal (toInt)
+    vec<vec<int> >      lkRuns;                // exact mode: per literal, flat (start, len) pairs
+    vec<int>            lkRunBuf;              // exact mode: output runs of the current scan
+#ifdef LKSKIP_SELFCHECK
+    vec<vec<Watcher> >  lkShadow;              // copy of the recorded watchers, checked before skipping
+    void lkSkipCheckFail(const char* what, Lit p, int pos);
+#endif
+    CRef propagateForLK_orig();
+    CRef propagateForLK_exact();
+    CRef propagateForLK_fast();
+    CRef propagate_exact();                        // main propagate, exact mode: keeps runs in place
+    void lkExactPrepare(Lit p, vec<Watcher>& ws, LKSkipMeta& m, vec<int>& R);
+    void lkSkipGrow();
+    void lkSkipInvalidate(Lit p) { int k = toInt(p); if (k < lkMeta.size()) lkMeta[k].g = 0; }
+    void lkSkipBumpGlobal()      { lkGlobalEpoch++; }
+    bool lkSkipValid(const LKSkipMeta& m) const {
+        return m.g == lkGlobalEpoch && m.lmax <= decisionLevel() && lkLevelStamp[m.lmax] == m.stamp; }
 };
+
+// GH-99: lookahead watcher-skip mode requested by the distqldpc front end (-1 = use the MiniSat option -lkskip).
+extern int distqldpc_lkskip_mode;
 
 
 

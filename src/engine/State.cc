@@ -69,6 +69,14 @@ static IntOption     opt_restart_first     (_cat, "rfirst",      "The base resta
 static DoubleOption  opt_restart_inc       (_cat, "rinc",        "Restart interval increase factor", 2, DoubleRange(1, false, HUGE_VAL, false));
 static DoubleOption  opt_garbage_frac      (_cat, "gc-frac",     "The fraction of wasted memory allowed before a garbage collection is triggered",  0.20, DoubleRange(0, false, HUGE_VAL, false));
 
+// DistQLDPC GH-99 (S0): lookahead skip of base-satisfied watchers. 0 = off (original propagateForLK),
+// 1 = exact (search identical), 2 = fast (reorders watch lists). The build default is DISTQLDPC_LKSKIP_DEFAULT.
+#ifndef DISTQLDPC_LKSKIP_DEFAULT
+#define DISTQLDPC_LKSKIP_DEFAULT 1
+#endif
+static IntOption     opt_lkskip            (_cat, "lkskip",      "GH-99 lookahead skip of base-satisfied watchers (0=off, 1=exact, 2=fast)", DISTQLDPC_LKSKIP_DEFAULT, IntRange(0, 2));
+int Minisat::distqldpc_lkskip_mode = -1;   // set by the distqldpc front end; -1 = use opt_lkskip
+
 
 //=================================================================================================
 // Constructor/Destructor:
@@ -181,7 +189,9 @@ Solver::Solver() :
     , nbSatLitsAtStart(0)
     , bounds_pipe_w(-1)
 
-{}
+{
+  lkSkipMode = distqldpc_lkskip_mode >= 0 ? distqldpc_lkskip_mode : (int)opt_lkskip;   // GH-99
+}
 
 
 Solver::~Solver()

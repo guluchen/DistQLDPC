@@ -495,6 +495,7 @@ lbool Solver::solve_()
     
     model.clear(); usedClauses.clear();
     conflict.clear();
+    lkSkipBumpGlobal();   // GH-99: watch lists may have been rebuilt (elimination, new clauses) since the last call
     if (!ok) return l_False;
     
     solves++;
@@ -829,6 +830,9 @@ solve_exit_stats:
 	     lastOptimalCost, 
 	     objForSearch-sup + nbSatLits, conflicts - softConflicts);
     }
+#ifdef LKSKIP_STATS
+    lkSkipPrintStats(lkSkipMode);   // GH-99 counter build only
+#endif
     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n", 
 	   LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations, 
 	   100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
