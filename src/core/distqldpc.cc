@@ -970,12 +970,44 @@ static bool css_half_build(CssHalf& h, int verb, int card_mode) {
     return true;
 }
 
+/* GH-106: incremental half-solver policy (-inc-policy=..., see optimization/experiments/GH-106).
+ * A policy only decides, before a probe, whether the half's persistent solver is kept or replaced by a freshly
+ * built instance of the same formula (css_half_build, the construction path GH-76 already uses for the first
+ * probe and for INC_REBUILD); every probe is still answered by Solver::incProbe. Engine unchanged.
+ *   gh89      never (GH-89 exactly);
+ *   postsol   while the half's solver has not found a solution (default): before the first solution GH-76's
+ *             fail-path reset drops all learnt clauses on every raise, so persistence carries only decision-
+ *             heuristic state (activities, saved phases), which made e.g. TN_144_2_13's first FOUND probe cost
+ *             ~635k conflicts instead of ~35; after the first solution learnt clauses pay off;
+ *   feasfresh as postsol, and also before every feasibility (stop-at-first) probe;
+ *   fresh     before every probe (main 7eadd54's per-probe search). */
+enum IncPolicy { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH };
+static IncPolicy g_inc_policy = INC_POLICY_POSTSOL;
+static const char* inc_policy_name(IncPolicy p) {
+    return p == INC_POLICY_GH89 ? "gh89" : p == INC_POLICY_POSTSOL ? "postsol" : p == INC_POLICY_FEASFRESH ? "feasfresh" : "fresh";
+}
+static bool parse_inc_policy(const char* s, IncPolicy& out) {
+    const IncPolicy all[4] = { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH };
+    for (int i = 0; i < 4; i++) if (!strcmp(s, inc_policy_name(all[i]))) { out = all[i]; return true; }
+    return false;
+}
+static bool inc_policy_wants_fresh(const Solver& S, bool first_only) {
+    switch (g_inc_policy) {
+    case INC_POLICY_GH89:      return false;
+    case INC_POLICY_POSTSOL:   return !S.feasible;
+    case INC_POLICY_FEASFRESH: return !S.feasible || first_only;
+    default:                   return true;
+    }
+}
+
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
  * first_only: stop at the first solution. Emitted bounds are capped/hidden as requested. */
 static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int verb, int card_mode,
                                int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value)
 {
     if (!h.exists) return HALF_INFEASIBLE;
+    if (h.S != NULL && inc_policy_wants_fresh(*h.S, first_only)    /* GH-106: fresh instance of the same formula */
+        && !css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
     if (h.S == NULL && !css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
     Solver::IncResult r;
     for (int attempt = 0; ; attempt++) {
@@ -1032,6 +1064,8 @@ static int min_distance_css_interleaved(
         }
         if ((int)info.reps.size() < info.n) hs[k].sb_orbit = info.orbit_of;
     }
+    if (verb > 0 && g_inc_policy != INC_POLICY_GH89)   /* GH-106 (silent for gh89: GH-89 output unchanged) */
+        printf("c CSS incremental: half-solver policy %s\n", inc_policy_name(g_inc_policy));
     uint64_t U = INF, v = 0, lastLB = 0;
     /* Phase 1: doubling feasibility tests on both halves; anytime global LB. */
     for (uint64_t m = 1; ; m = (m >= n ? n : 2 * m)) {
@@ -1459,6 +1493,10 @@ int main(int argc, char** argv) {
             g_css_joint = true;
         else if (!strcmp(argv[i], "-no-symbreak"))
             g_half_symbreak = false;
+        else if (!strncmp(argv[i], "-inc-policy=", 12)) {   /* GH-106 */
+            if (!parse_inc_policy(argv[i] + 12, g_inc_policy))
+                die("-inc-policy= expects gh89, postsol, feasfresh or fresh");
+        }
         else if (!strcmp(argv[i], "-symbreak-report"))
             symbreak_report = true;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -1474,6 +1512,8 @@ int main(int argc, char** argv) {
             printf("  Symmetry (split only): default adds optimum-preserving orbit clauses per CSS half from\n");
             printf("            verified half automorphisms; -no-symbreak disables them;\n");
             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
+            printf("  Incremental (split only): -inc-policy=postsol (default) | gh89 | feasfresh | fresh: when a CSS half\n");
+            printf("            gets a fresh solver instead of its persistent one (see optimization/experiments/GH-106)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

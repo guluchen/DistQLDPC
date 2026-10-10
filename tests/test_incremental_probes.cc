@@ -4,8 +4,12 @@
 // probes after it) and also request forbidden raises after a solution to exercise INC_REBUILD.
 // Every answer is checked: NONE => optimum > cap; FOUND/OPT => witness satisfies all hard clauses, its
 // violated-soft count equals the reported value, value <= cap; OPT => value == optimum.
+// GH-106: optional argv[2] = half-solver policy emulated by the probe driver exactly as in
+// src/core/distqldpc.cc run_css_half (gh89: never rebuild; postsol: fresh instance while !feasible;
+// feasfresh: also before every first-only probe; fresh: before every probe). Default gh89 = GH-76 counts.
 // Engine output goes to stdout; the verdict goes to stderr.
 #include "SimpSolver.h"
+#include <cstring>
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
@@ -65,6 +69,10 @@ static void checkWitness(const Inst& I, const SimpSolver& S, uint64_t v, int ins
 
 int main(int argc, char** argv) {
     int N = argc > 1 ? atoi(argv[1]) : 3000;
+    const char* policy = argc > 2 ? argv[2] : "gh89";
+    const int pol = !strcmp(policy, "gh89") ? 0 : !strcmp(policy, "postsol") ? 1 : !strcmp(policy, "feasfresh") ? 2 : !strcmp(policy, "fresh") ? 3 : -1;
+    if (pol < 0) { std::fprintf(stderr, "unknown policy %s\n", policy); return 2; }
+    long policy_builds = 0;
     long probes = 0, rebuilds = 0, found = 0, opts = 0, nones = 0, unsat = 0;
     for (int inst = 0; inst < N; inst++) {
         Inst I; I.n = 3 + rnd(14);
@@ -88,6 +96,10 @@ int main(int argc, char** argv) {
         if (!prep) { need(opt < 0, "prepare failed on a satisfiable instance", inst); unsat++; delete S; continue; }
         uint64_t lb = 0, ub = UINT64_MAX, v = 0;   // proven bounds known to the "driver"
         auto probe = [&](uint64_t cap, bool first) -> Solver::IncResult {
+            if (pol == 3 || (pol >= 1 && !S->feasible) || (pol == 2 && first)) {   // GH-106 policy rebuild
+                delete S; S = build(I, prep); policy_builds++;
+                need(prep, "policy rebuild prepare failed", inst);
+            }
             Solver::IncResult r = S->incProbe(cap, first, lb, v); probes++;
             if (r == Solver::INC_REBUILD) {
                 rebuilds++; delete S; S = build(I, prep);
@@ -130,5 +142,6 @@ int main(int argc, char** argv) {
     }
     std::fprintf(stderr, "GH76_INCREMENTAL_%s instances=%d unsat=%ld probes=%ld found=%ld opt=%ld none=%ld rebuilds=%ld failures=%d\n",
                  fails ? "FAIL" : "PASS", N, unsat, probes, found, opts, nones, rebuilds, fails);
+    if (pol != 0) std::fprintf(stderr, "GH106_POLICY %s policy_builds=%ld\n", policy, policy_builds);
     return fails ? 1 : 0;
 }

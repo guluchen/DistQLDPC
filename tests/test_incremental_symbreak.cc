@@ -12,6 +12,8 @@
 // OPT => value == optimum. Also checked: the optimum restricted to the orbit predicate equals the optimum
 // (GH-85's every-w claim, by enumeration) and the verified group contains the planted generators.
 // Each instance runs with symmetry clauses (candidate) and without (GH-76 control).
+// GH-106: optional argv[2] = half-solver policy (gh89 | postsol | feasfresh | fresh; default gh89, which keeps
+// GH-89's counts); the policy decides inside the production run_css_half when a half gets a fresh solver.
 // Engine output goes to stdout; the verdict goes to stderr.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
@@ -76,6 +78,8 @@ static std::vector<Mask> closure(std::vector<Mask> seeds, const std::vector<std:
 
 int main(int argc, char** argv) {
     const int N = argc > 1 ? atoi(argv[1]) : 2000;
+    g_inc_policy = INC_POLICY_GH89;   // GH-106: the GH-89 control unless a policy is given
+    if (argc > 2 && !parse_inc_policy(argv[2], g_inc_policy)) { fprintf(stderr, "unknown policy %s\n", argv[2]); return 2; }
     long probes = 0, found = 0, opts = 0, nones = 0, infeasible = 0, rebuilds = 0, unsat = 0;
     long sym_none = 0, sym_unit = 0, sym_chain = 0;
     for (int inst = 0; inst < N; inst++) {
@@ -168,5 +172,6 @@ int main(int argc, char** argv) {
     }
     fprintf(stderr, "GH89_SYMBREAK_INC_%s instances=%d unsat=%ld sym(none/unit/chain)=%ld/%ld/%ld probes=%ld found=%ld opt=%ld none=%ld infeasible=%ld rebuilds=%ld failures=%d\n",
             fails ? "FAIL" : "PASS", N, unsat, sym_none, sym_unit, sym_chain, probes, found, opts, nones, infeasible, rebuilds, fails);
+    if (g_inc_policy != INC_POLICY_GH89) fprintf(stderr, "GH106_POLICY %s (rebuilds include policy rebuilds)\n", inc_policy_name(g_inc_policy));
     return fails ? 1 : 0;
 }
