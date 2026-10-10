@@ -53,6 +53,8 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
   - Best-solution tracking and printing on timeout / interrupt
   - Configurable cardinality encoding modes (Sinz / MTO / off)
+  - Experimental two-literal LBD loop expansion preserving original stamp
+    operations and counter sequencing (GH63; not an adopted optimization)
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
   - Multi-instance search controls and per-instance heuristic state (interleaved CSS split, experimental)

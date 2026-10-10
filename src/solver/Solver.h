@@ -376,6 +376,23 @@ protected:
         int lbd = 0;
 
         counter++;
+        if (c.size() == 2) {
+            {
+                int l = level(var(c[0]));
+                if (l != 0 && seen2[l] != counter) {
+                    seen2[l] = counter;
+                    lbd++;
+                }
+            }
+            {
+                int l = level(var(c[1]));
+                if (l != 0 && seen2[l] != counter) {
+                    seen2[l] = counter;
+                    lbd++;
+                }
+            }
+            return lbd;
+        }
         for (int i = 0; i < c.size(); i++){
             int l = level(var(c[i]));
             if (l != 0 && seen2[l] != counter){
