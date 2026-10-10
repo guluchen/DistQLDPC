@@ -138,7 +138,8 @@ unsigned char* Solver::buf_ptr = drup_buf;
 //=================================================================================================
 // Engine modules (unity order = order of first appearance in the original MaxCDCL Solver.cc):
 
-#include "Export.cc"  // DIMACS / WCNF / OPB writers
+#include "Objective.cc"  // bounds pipe, incumbent, solution check
+#include "Export.cc"     // DIMACS / WCNF / OPB writers
 
 //=================================================================================================
 // Options:
@@ -5169,97 +5170,6 @@ void Solver::cancelUntilBeginning(int begnning) {
   falseLits_lim.shrink(falseLits_lim.size());
 
   // unLockedVars_lim.shrink(unLockedVars_lim.size());
-}
-
-void Solver::setBoundsPipe(int write_fd) {
-    bounds_pipe_w = write_fd;
-}
-
-uint64_t Solver::getCostLB() const {
-    return solutionCost + infeasibleUB + fixedCostBySearch + derivedCost + relaxedCost;
-}
-
-uint64_t Solver::getCostUB() const {
-    return solutionCost + bestSup + fixedCostBySearch + derivedCost + relaxedCost;
-}
-
-void Solver::emitBoundsUpdate() {
-    if (bounds_pipe_w < 0)
-        return;
-    char buf[64];
-    int n;
-    if (infeasibleUB > 0 && !boundsHideLB) {
-        uint64_t lbv = getCostLB(); if (lbv > boundsLbCap) lbv = boundsLbCap;
-        n = snprintf(buf, sizeof(buf), "LB %llu\n",
-                     (unsigned long long)lbv);
-        if (n > 0)
-            (void)write(bounds_pipe_w, buf, (size_t)n);
-    }
-    if (bestSolutionFound) {
-        uint64_t ubv = getCostUB(); if (ubv > boundsUbCap) ubv = boundsUbCap;
-        n = snprintf(buf, sizeof(buf), "UB %llu\n",
-                     (unsigned long long)ubv);
-        if (n > 0)
-            (void)write(bounds_pipe_w, buf, (size_t)n);
-    }
-}
-
-void Solver::emitTryUpdate(uint64_t try_val) {
-    if (bounds_pipe_w < 0)
-        return;
-    char buf[64];
-    int n = snprintf(buf, sizeof(buf), "TRY %llu\n", (unsigned long long)try_val);
-    if (n > 0)
-        (void)write(bounds_pipe_w, buf, (size_t)n);
-}
-
-void Solver::noteBestSolution(uint64_t unsatSoft) {
-    if (!bestSolutionFound || unsatSoft < bestSup) {
-        bestSolutionFound = true;
-        bestSup = unsatSoft;
-        emitBoundsUpdate();
-    }
-}
-
-void Solver::printBestSolution() const {
-    if (!bestSolutionFound) {
-        printf("c TIMEOUT/INTERRUPT: no feasible solution found yet.\n");
-        return;
-    }
-    uint64_t maxsat = objForSearch - bestSup + (uint64_t)nbSatLitsAtStart;
-    uint64_t optimal = solutionCost + bestSup + fixedCostBySearch + derivedCost + relaxedCost;
-    printf("c TIMEOUT/INTERRUPT: best solution so far:\n");
-    printf("c   unsat soft clauses (search): %llu\n", bestSup);
-    printf("c   satisfied soft clauses (maxsat): %llu\n", maxsat);
-    printf("c   total weight cost: %llu\n", optimal);
-    if (model.size() > 0) {
-        printf("v ");
-        int lim = nbOriVars > 0 ? nbOriVars : nVars();
-        for (int i = 0; i < lim && i < model.size(); i++)
-            if (model[i] != l_Undef)
-                printf("%s%d ", (model[i] == l_True) ? "" : "-", i + 1);
-        printf("0\n");
-    }
-}
-
-void Solver::checkSolution() {
-  int nbFalse=0;
-  for(Var v=0; v<nVars(); v++)
-    if (auxiVar(v) && value(softLits[v]) == l_False)
-      nbFalse++;
-  if (nbFalse != falseLits.size()+fixedCostBySearch + relaxedCost)
-    printf("c **** error nb of false soft clauses real nbfalse: %d, recorded falseLits: %llu****\n",
-	   nbFalse, falseLits.size()+fixedCostBySearch+relaxedCost);
-
-  // printf("c there are %d hard clauses\n", clauses.size());
-  for(int i=0; i<clauses.size(); i++)
-    if (!satisfied(ca[clauses[i]])) {
-      printf("c clause %d non-satisfied: ", i);
-      Clause& c=ca[clauses[i]];
-      for(int j=0; j<c.size(); j++)
-	printf(" %d ", toInt(c[j]));
-      printf("\n");
-    }
 }
 
 //For a set of literals 1 2 3, create a new soft lit x and create
