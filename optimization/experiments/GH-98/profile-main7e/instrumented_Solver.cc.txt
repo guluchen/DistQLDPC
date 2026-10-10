@@ -3931,6 +3931,7 @@ bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
     return true;
 }
 
+static unsigned long long IC_base=0,IC_bL=0,IC_b3=0,IC_bO=0,IC_bOsz=0,IC_bin=0,IC_long=0,IC_blk=0,IC_learnt=0,IC_orig3=0,IC_origo=0;
 CRef Solver::propagateForLK() {
   falseVar = var_Undef;
   CRef    confl = CRef_Undef;
@@ -3946,7 +3947,7 @@ CRef Solver::propagateForLK() {
     vec<Watcher>&  wbin = watches_bin[p];
     
     for (int k = 0; k<wbin.size(); k++) {
-      Lit imp = wbin[k].blocker;
+      Lit imp = wbin[k].blocker; IC_bin++;
       if (value(imp) == l_False) {
 	binConfl[0] = ~p; binConfl[1]=imp;
 	return CRef_Bin;
@@ -3960,13 +3961,14 @@ CRef Solver::propagateForLK() {
     }
     for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {
 	// Try to avoid inspecting the clause:
-	Lit blocker = i->blocker;
+	Lit blocker = i->blocker; IC_long++;
 	if (value(blocker) == l_True) {
-	  *j++ = *i++; continue;
+	  IC_blk++; if (level(var(blocker)) <= decisionLevel()) IC_base++; { Clause& cb = ca[i->cref]; if (cb.learnt()) IC_bL++; else if (cb.size()==3) IC_b3++; else { IC_bO++; IC_bOsz += cb.size(); } } *j++ = *i++; continue;
 	}
 	// Make sure the false literal is data[1]:
 	CRef     cr = i->cref;
 	Clause&  c = ca[cr];
+	if (c.learnt()) IC_learnt++; else if (c.size()==3) IC_orig3++; else IC_origo++;
 	Lit      false_lit = ~p;
 	if (c[0] == false_lit)
 	  c[0] = c[1], c[1] = false_lit;
@@ -6871,6 +6873,7 @@ solve_exit_stats:
     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n", 
 	   LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations, 
 	   100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
+    fprintf(stderr,"c INSTR bin %llu long %llu blockerTrue %llu inspected learnt %llu orig3 %llu origOther %llu | blkTrue by type: learnt %llu orig3 %llu origOther %llu (avg size %.1f) baseTrue %llu\n",IC_bin,IC_long,IC_blk,IC_learnt,IC_orig3,IC_origo,IC_bL,IC_b3,IC_bO,IC_bO?(double)IC_bOsz/IC_bO:0.0,IC_base);
     
     // printf("v ");
     // for (int i = 0; i < nVars(); i++)
