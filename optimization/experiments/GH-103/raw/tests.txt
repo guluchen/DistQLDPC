@@ -1,0 +1,10 @@
+$ bash scripts/smoke_test.sh <frozen103 distqldpc>
+scripts/smoke_test.sh: line 14: /Users/yfc/Library/Application: No such file or directory
+exit=0
+$ python3 -B scripts/test_partition_soft_literals.py --binary <frozen103 maxcdcl>
+s UNSATISFIABLE
+Partition adjacent oracles passed: 11 total inputs, 1024 assignments each.
+$ build + run tests/test_partition_soft_literals.cc
+c isets 0, derivedCost 0
+GH58_PARTITION_ORACLE_PASS cases=80 no_conflict=1
+exit=0
