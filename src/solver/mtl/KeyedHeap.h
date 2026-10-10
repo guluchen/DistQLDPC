@@ -98,19 +98,6 @@ class KeyedActivityHeap {
             percolateDown(indices[n]); }
     }
 
-    // GH-103 C3: the engine sizes `indices` to nVars() when a variable is created (growIndex), so
-    // absent()/insertAbsent() skip the bound check and the growTo of inHeap()/insert().
-    void growIndex(int n) { indices.growTo(n, -1); }
-    bool absent(int n) const { assert(n < indices.size()); return indices[n] < 0; }
-    void insertAbsent(int n)
-    {
-        assert(n < indices.size() && indices[n] < 0);
-        indices[n] = heap.size();
-        Slot s; s.key = act[n]; s.x = n;
-        heap.push(s);
-        percolateUp(indices[n]);
-    }
-
     void insert(int n)
     {
         indices.growTo(n+1, -1);

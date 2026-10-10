@@ -518,13 +518,15 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	out_learnt[0] = ~p; assigns[v] = l_Undef;
 	if (last && auxiVar(v) && inConflicts[v] == NON && p == softLits[v])
 	  isetsLits[nbIsets].push(p);
-	insertAuxiVarOrder(v);
+	if (auxiVar(v))
+	  insertAuxiVarOrder(v);
 	for(; index >= trailRecord; index--) {
 	  Lit q = trail[index];
 	  Var vv = var(q);
 	  assert(!seen[vv]);
 	  assigns[vv] = l_Undef;
-	  insertAuxiVarOrder(vv);
+	  if (auxiVar(vv))
+	    insertAuxiVarOrder(vv);
 	}
 	break;
       }
@@ -534,7 +536,8 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	  pathC += seeUnlockLits(getLockedVarIsetForLK(v), falseVar);
       }
       else {
-	insertAuxiVarOrder(v);
+	if (auxiVar(v))
+	  insertAuxiVarOrder(v);
 	Clause& rc = ca[confl];
 	// if (!rc.involved()) {
 	//   involvedClauses.push(confl);
@@ -576,8 +579,8 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	}
       }
     }
-    else
-      insertAuxiVarOrder(v); // GH-103 C3: insertAuxiVarOrder tests auxiVar(v) itself
+    else if (auxiVar(v))
+      insertAuxiVarOrder(v);
     assigns[v] = l_Undef;
   }
   qhead = trailRecord;
@@ -1015,6 +1018,5 @@ bool Solver::lookahead() {
 }
 
 void Solver::insertAuxiVarOrder(Var x) {
-  // GH-103 C3: same test as "!inHeap(x) && auxiVar(x)", one branch, no bound check (indices sized per var)
-  if (orderHeapAuxi.absent(x) & auxiVar(x)) orderHeapAuxi.insertAbsent(x);
+  if (!orderHeapAuxi.inHeap(x) && (auxiVar(x))) orderHeapAuxi.insert(x);
 }
