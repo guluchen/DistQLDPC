@@ -3,6 +3,7 @@
 SRC     = src
 CORE    = $(SRC)/core
 SOLVER  = $(SRC)/solver
+ENGINE  = $(SRC)/engine
 BUILD   = build
 BIN     = bin/distqldpc
 MAXCDCL = bin/maxcdcl
@@ -34,7 +35,12 @@ dirs:
 $(BUILD)/SimpSolver.o: $(SOLVER)/SimpSolver.cc | dirs
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(BUILD)/Solver.o: $(SOLVER)/Solver.cc | dirs
+# DistQLDPC engine (restructured from MaxCDCL Solver.cc, GH-95): ONE translation unit.
+# Engine.cc #includes the module files of src/engine/ in a fixed order; never compile them alone.
+# The object keeps the name build/Solver.o (same link position; CI links tests against it).
+ENGINE_SRCS = $(wildcard $(ENGINE)/*.cc) $(wildcard $(ENGINE)/*.h)
+
+$(BUILD)/Solver.o: $(ENGINE)/Engine.cc $(ENGINE_SRCS) | dirs
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(BUILD)/Options.o: $(SOLVER)/utils/Options.cc | dirs
