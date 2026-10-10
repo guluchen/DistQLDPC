@@ -1,0 +1,13 @@
+de88d7ffd7bba6900eecd2e75861c3c0aedd92532024317c08db8e397543f9a9  bin/distqldpc
+ea06b46bcdbac38cb0c23432ea2097834726e58798cc0fc033d8bf7edc4ad484  bin/maxcdcl
+$ bash scripts/smoke_test.sh
+DistQLDPC smoke validation passed
+exit=0
+$ python3 -B scripts/test_partition_soft_literals.py
+s UNSATISFIABLE
+Partition adjacent oracles passed: 11 total inputs, 1024 assignments each.
+exit=0
+$ build/test_partition_soft_literals
+c isets 0, derivedCost 0
+GH58_PARTITION_ORACLE_PASS cases=80 no_conflict=1
+exit=0
