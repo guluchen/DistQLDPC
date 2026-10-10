@@ -47,7 +47,7 @@ code unchanged, only placement inside `__text` differs). See
 
 | File | Contents |
 |------|----------|
-| `Engine.cc` | unity translation unit: upstream header and MaxCDCL version lineage, former `Solver.cc` prologue, `#include` of the modules below in a fixed order (the engine is still ONE translation unit, built as `build/Engine.o`) |
+| `Engine.cc` | unity translation unit: upstream header and MaxCDCL version lineage, former `Solver.cc` prologue, `#include` of the modules below in a fixed order (the engine is still ONE translation unit, built into the object `build/Solver.o`) |
 | `EngineInternal.h` | file-scope helpers shared by several modules (`reduceTIER2_lt`, `reduceDB_lt`, `lbdLimitForOriCls`, `splitClauseSize`, `limitOfNbClausesToSplit`) |
 | `State.cc` | option table, `Solver` constructor/destructor |
 | `Inprocessing.cc` | learnt-clause vivification (Maple_LCM / Maple_CM), failed literals, original-clause minimisation |
