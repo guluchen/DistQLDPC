@@ -1,0 +1,14 @@
+$ bash scripts/smoke_test.sh
+DistQLDPC smoke validation passed
+(exit=0)
+$ python3 -B scripts/test_partition_soft_literals.py
+s UNSATISFIABLE
+Partition adjacent oracles passed: 11 total inputs, 1024 assignments each.
+(exit=0)
+$ build/test_partition_soft_literals
+c isets 0, derivedCost 0
+GH58_PARTITION_ORACLE_PASS cases=80 no_conflict=1
+(exit=0)
+$ bin/distqldpc -h | grep -A1 "native XOR"
+  Engine: native XOR constraints detected among the parity clauses (default); -no-xor = clause-only;
+          -xor-maxk=N  largest XOR arity detected (3..6, default 6)
