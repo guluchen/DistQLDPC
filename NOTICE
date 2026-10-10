@@ -55,8 +55,21 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Configurable cardinality encoding modes (Sinz / MTO / off)
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
+  - Multi-instance search controls and per-instance heuristic state (interleaved CSS split, experimental)
 
 Modified files (partial list): Solver.h, Solver.cc
+
+  src/core/distqldpc.cc also contains GH-85 per-half symmetry breaking
+  (GH-73 x GH-75 interaction): an original, domain-specific adaptation of
+  static symmetry breaking (Crawford et al., KR 1996; Anders, Brenner, Rattan,
+  "Satsuma", SAT 2024, DOI 10.4230/LIPIcs.SAT.2024.4). No third-party code.
+  src/core/distqldpc.cc also contains GH-87 dual-half elimination (an
+  original use of verified XZ-dual qubit permutations to prove dX = dZ in
+  the GH-73 split; GF(2) checks reused from GH-75). No third-party code.
+  src/core/distqldpc.cc also contains GH-107 dual-map bound sharing (an
+  original use of the verified XZ-dual maps of GH-87 to share proven lower
+  bounds between the two GH-73 split halves; ported from GH-102). No
+  third-party code.
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
