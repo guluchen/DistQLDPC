@@ -26,7 +26,7 @@ Every substantive change must include validation appropriate to its risk. Prefer
 
 For changes that can affect solver behavior or performance, require the `QDistSAT cross-repo benchmark` PR check. Treat semantic-result mismatches as scientific escalations; treat timing changes on shared CI as diagnostic signals only unless reproduced in a controlled benchmark environment.
 
-When modifying the embedded MaxCDCL engine under `src/solver/`, preserve upstream notices and update `MODIFICATIONS.md` and `NOTICE` when attribution or the documented patch set changes.
+When modifying the embedded MaxCDCL engine under `src/solver/` or `src/engine/` (the engine implementation, restructured from MaxCDCL `Solver.cc`; compiled as one unity translation unit `src/engine/Engine.cc`), preserve upstream notices and update `MODIFICATIONS.md` and `NOTICE` when attribution or the documented patch set changes.
 
 ## Optimization loop
 

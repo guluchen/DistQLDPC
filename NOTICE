@@ -25,7 +25,8 @@ Licensed under GNU General Public License v3.0 or later. See LICENSE.
 2. MaxCDCL / MaxSAT engine (MIT, with DistQLDPC modifications)
 --------------------------------------------------------------
 
-Location: src/solver/
+Location: src/engine/ (engine implementation, restructured from MaxCDCL
+src/solver/Solver.cc) and src/solver/ (upstream headers, SimpSolver, utilities)
 
 Upstream: MaxCDCL — a MaxSAT solver combining clause learning and
 branch-and-bound (Chu-Min Li et al., CP 2021).
@@ -35,15 +36,17 @@ branch-and-bound (Chu-Min Li et al., CP 2021).
 
 Full MIT license text: src/solver/LICENSE
 Copyright headers in individual source files list earlier authors
-(MiniSat, Maple_CM, etc.).
+(MiniSat, Maple_CM, etc.). Every file under src/engine/ contains code moved
+from MaxCDCL Solver.cc and carries that file's full upstream copyright header
+and MIT permission notice, followed by the DistQLDPC modification notice.
 
 Reference:
   Chu-Min Li, Zhenxing Xu, Jordi Coll, Felip Manyà, Djamal Habet, Kun He,
   Combining Clause Learning and Branch and Bound for MaxSAT, CP 2021.
 
 
-3. Modifications to src/solver/ (DistQLDPC patches)
------------------------------------------------------
+3. Modifications to src/solver/ and src/engine/ (DistQLDPC patches)
+--------------------------------------------------------------------
 
 Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
 Part of DistQLDPC (GPL-3.0-or-later when distributed as this project).
@@ -56,8 +59,15 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
   - Multi-instance search controls and per-instance heuristic state (interleaved CSS split, experimental)
+  - Engine restructuring (GH-95, stage 1): the MaxCDCL implementation file
+    Solver.cc was restructured into DistQLDPC engine modules under
+    src/engine/ (Engine.cc unity translation unit, EngineInternal.h, State,
+    Inprocessing, ClauseDB, Propagation, Heuristics, Analysis, SoftConflict,
+    ClauseReduction, Hardening, Lookahead, Search, Objective, Preprocessing,
+    Cardinality, Export). Code was moved verbatim; the search is unchanged.
 
-Modified files (partial list): Solver.h, Solver.cc
+Modified files (partial list): src/solver/Solver.h, src/engine/* (formerly
+src/solver/Solver.cc)
 
   src/core/distqldpc.cc also contains GH-85 per-half symmetry breaking
   (GH-73 x GH-75 interaction): an original, domain-specific adaptation of
@@ -65,8 +75,8 @@ Modified files (partial list): Solver.h, Solver.cc
   "Satsuma", SAT 2024, DOI 10.4230/LIPIcs.SAT.2024.4). No third-party code.
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
-and permission notices in src/solver/ must be preserved in copies and
-substantial portions, per the MIT license.
+and permission notices in src/solver/ and src/engine/ must be preserved in
+copies and substantial portions, per the MIT license.
 
 
 4. MiniSat / Maple_CM / related utilities (MIT)
@@ -151,7 +161,9 @@ When you receive DistQLDPC as a whole (source or binary):
     MIT-derived benchmark data.
   - If you extract src/solver/ alone from upstream MaxCDCL sources
     (without DistQLDPC patches), those files are governed by MIT as
-    stated in src/solver/LICENSE.
+    stated in src/solver/LICENSE. The upstream code contained in
+    src/engine/ (restructured from MaxCDCL Solver.cc) likewise remains
+    available under MIT.
 
 For questions about upstream MaxCDCL, contact the original authors
-(see src/solver/ file headers).
+(see src/solver/ and src/engine/ file headers).

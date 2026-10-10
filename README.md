@@ -205,7 +205,8 @@ Requires **g++** and **zlib**. Binary: `bin/distqldpc`.
 
 ```
 src/core/distqldpc.cc   # CLI, QLDPC encoding, fork/pipe
-src/solver/             # MaxCDCL MaxSAT engine
+src/engine/             # DistQLDPC MaxSAT engine (restructured from MaxCDCL Solver.cc; unity build Engine.cc)
+src/solver/             # MaxCDCL headers, SimpSolver, mtl/utils (upstream, MIT)
 data/matrices/          # example codes (Hx, Hz, Gx, Gz)
 ```
 
@@ -215,7 +216,8 @@ data/matrices/          # example codes (Hx, Hz, Gx, Gz)
 
 DistQLDPC is licensed under **GPL-3.0-or-later** — see [LICENSE](LICENSE).
 
-The MaxSAT engine in `src/solver/` is derived from **MaxCDCL** (MIT).
+The MaxSAT engine in `src/engine/` and `src/solver/` is derived from **MaxCDCL** (MIT);
+`src/engine/` holds the engine implementation restructured into DistQLDPC modules.
 Upstream copyright and license: [src/solver/LICENSE](src/solver/LICENSE).
 
 Third-party attribution (MaxCDCL engine, benchmark matrices from
