@@ -33,6 +33,24 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **************************************************************************************************/
 
+/*
+ * DistQLDPC engine -- Engine.cc: unity translation unit of the DistQLDPC MaxSAT engine.
+ *
+ * Holds the former Solver.cc prologue and #includes the engine modules in a fixed order, so the
+ * engine is still compiled as ONE translation unit (inlining and layout as in the original file).
+ * The modules are never compiled on their own. The MaxCDCL version lineage below is kept verbatim.
+ *
+ * Restructured from MaxCDCL src/solver/Solver.cc by DistQLDPC (GH-95, stage 1): code moved
+ * verbatim, search unchanged. The copyright and MIT permission notice above apply to the
+ * MaxCDCL / Maple_CM / Maple_LCM / MiniSat code contained in this file (see src/solver/LICENSE).
+ *
+ * Modifications Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>, part of DistQLDPC
+ * (GPL-3.0-or-later when distributed as this project; see LICENSE, NOTICE, MODIFICATIONS.md).
+ */
+
+#define DISTQLDPC_ENGINE_UNITY
+
+
 // Based on newMaxMaple_CM+distACT1W5lastPointAllLRB+
 
 // Based on MaxCDCL3+coreRedctnBis+lookhead+clsRedtn+
@@ -114,6 +132,8 @@ int Solver::buf_len = 0;
 unsigned char Solver::drup_buf[2 * 1024 * 1024];
 unsigned char* Solver::buf_ptr = drup_buf;
 #endif
+
+#include "EngineInternal.h"
 
 //=================================================================================================
 // Options:
@@ -802,22 +822,6 @@ bool Solver::simplifyLearnt_core() {
     return true;
 }
 
-struct reduceTIER2_lt {
-    ClauseAllocator& ca;
-    reduceTIER2_lt(ClauseAllocator& ca_) : ca(ca_) {}
-  bool operator () (CRef x, CRef y) {
-    
-    if (ca[x].touched() < ca[y].touched()) return true;
-    if (ca[x].touched() > ca[y].touched()) return false;
-
-    if(ca[x].lbd() > ca[y].lbd()) return true;
-    if(ca[x].lbd() < ca[y].lbd()) return false;    
-    
-    // Finally we can use old activity or size, we choose the last one
-    
-     return ca[x].size() > ca[y].size();
-    }
-};
 
 bool Solver::simplifyLearnt_tier2() {
     int learnts_tier2_size_before = learnts_tier2.size();
@@ -1076,7 +1080,6 @@ bool Solver::simplifyAll()
     return true;
 }
 
-#define lbdLimitForOriCls 20
 
 // bool Solver::simplifyUsedOriginalClauses() {
     
@@ -2536,24 +2539,6 @@ void Solver::simplifyConflictClause(vec<Lit>& out_learnt, int& out_btlevel, int&
  |    Remove half of the learnt clauses, minus the clauses locked by the current assignment. Locked
  |    clauses are clauses that are reason to some assignment. Binary clauses are never removed.
  |________________________________________________________________________________________________@*/
-struct reduceDB_lt {
-    ClauseAllocator& ca;
-    reduceDB_lt(ClauseAllocator& ca_) : ca(ca_) {}
-  bool operator () (CRef x, CRef y) {
-    // if (ca[x].touched() > ca[y].touched()) return true;
-    // if (ca[x].touched() < ca[y].touched()) return false;
-    
-    if (ca[x].activity() < ca[y].activity()) return true;
-    if (ca[x].activity() > ca[y].activity()) return false;
-
-    if(ca[x].lbd() > ca[y].lbd()) return true;
-    if(ca[x].lbd() < ca[y].lbd()) return false;    
-    
-    // Finally we can use old activity or size, we choose the last one
-    
-     return ca[x].size() > ca[y].size();
-    }
-};
 
 bool Solver::simplifyLearnt_local() {
   int learnts_local_size_before = learnts_local.size();
@@ -3149,8 +3134,6 @@ void Solver::splitClauses(vec<CRef>& cs) {
   // printf("communLits: %d, nbCls: %d\n", communLits.size()-1, cs.size());
 }
 
-#define splitClauseSize 20
-#define limitOfNbClausesToSplit 4
 
 void Solver::identifyClausesToSplit(vec<CRef>& cs) {
   int i=0, j;
