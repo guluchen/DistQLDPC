@@ -98,6 +98,7 @@ Var Solver::newVar(bool sign, bool dvar)
     imply.push(lit_Undef);
 
     activityLB.push(0);
+    orderHeapAuxi.growIndex(activityLB.size()); // GH-103 C3
     //  lastTested.push(0);
     softLits.push(lit_Undef);
 
