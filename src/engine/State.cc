@@ -160,7 +160,7 @@ Solver::Solver() :
     , totalWeight (0)
     , nbClauseReduce (0)
 
-    , orderHeapAuxi(VarOrderGt(activityLB))
+    , orderHeapAuxi(activityLB)
 
     , tier2_lbd_cut (7)
     , coreLimit (50000)

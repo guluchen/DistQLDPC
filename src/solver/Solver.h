@@ -49,6 +49,7 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 
 #include "mtl/Vec.h"
 #include "mtl/Heap.h"
+#include "mtl/KeyedHeap.h"
 #include "mtl/Alg.h"
 #include "utils/Options.h"
 #include "SolverTypes.h"
@@ -734,7 +735,7 @@ public:
     VarOrderGt(const vec<double>&  act) : activity(act) { }
     };
 
-    Heap<VarOrderGt>    orderHeapAuxi;
+    KeyedActivityHeap   orderHeapAuxi;   // GH-103: Heap<VarOrderGt> with cached activityLB keys
 
     Lit binConfl[2];
 
