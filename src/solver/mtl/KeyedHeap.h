@@ -109,37 +109,14 @@ class KeyedActivityHeap {
         percolateUp(indices[n]);
     }
 
-    // Bottom-up removeMin (GH-103 C2). Heap<Comp>::removeMin moves the last element s to the root
-    // and percolates it down. Here the hole left by the root first walks down the same min-child
-    // path to a leaf (same child rule), then s sifts up while the parent's key is >= s.key. Keys
-    // never violate the heap property (every key change is fixed up at once in the right direction),
-    // so the keys along the path are non-decreasing and s stops exactly where percolateDown would
-    // have stopped it: the first path slot whose old occupant's key is not smaller than s.key, ties
-    // included. Same final slots and indices, one comparison less per level on the way down.
     int  removeMin()
     {
-        int  x = heap[0].x;
-        Slot s = heap.last();
+        int x               = heap[0].x;
+        heap[0]             = heap.last();
+        indices[heap[0].x]  = 0;
+        indices[x]          = -1;
         heap.pop();
-        indices[x] = -1;
-        int n = heap.size();
-        if (n == 0) return x;
-        int i = 0;
-        while (left(i) < n){
-            int child = right(i) < n && heap[right(i)].key < heap[left(i)].key ? right(i) : left(i);
-            heap[i]            = heap[child];
-            indices[heap[i].x] = i;
-            i                  = child;
-        }
-        while (i != 0){
-            int p = parent(i);
-            if (heap[p].key < s.key) break;
-            heap[i]            = heap[p];
-            indices[heap[i].x] = i;
-            i                  = p;
-        }
-        heap   [i]   = s;
-        indices[s.x] = i;
+        if (heap.size() > 1) percolateDown(0);
         return x;
     }
 
