@@ -1,0 +1,40 @@
+{
+ "stopped": null,
+ "n_samples": 6,
+ "finished": "2026-10-10T22:40:07+0800",
+ "binary_sha256_after": {
+  "baseline": "6bdcaa2523cdcbeae5164cedbf54c9ac0f9e64f9a91c3da7ef4b804df393db9d",
+  "candidate": "2cf4d512b106d505fec9712e7007e660a6b212c2acefb26bdb00ad24f0c9615e"
+ },
+ "input_sha256_after_ok": true,
+ "gate": {
+  "no-card": {
+   "rows": [
+    {
+     "case": "TN_144_2_13",
+     "baseline": [
+      71.747952,
+      72.24680170800002,
+      71.69641920900003
+     ],
+     "candidate": [
+      52.08781074999999,
+      52.09778349999999,
+      51.805752125000026
+     ],
+     "median_b": 71.747952,
+     "median_c": 52.08781074999999,
+     "ratio": 0.7259832413056193,
+     "range_envelope": 0.7266441486865801,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": true
+    }
+   ],
+   "median_ratio_geomean": 0.7259832413056193,
+   "envelope_geomean": 0.7266441486865801,
+   "all_medians_nonworse": true,
+   "numeric_positive": true,
+   "regression_flags": []
+  }
+ }
+}
