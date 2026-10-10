@@ -557,6 +557,7 @@ public:
     void lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>& out_learnt, bool last=false);
     CRef propagateForLK();
     bool uncheckedEnqueueForLK(Lit p, CRef from=CRef_Undef);
+    bool falsifiedSoftVarForLK(Var v);   // GH-103 C4: out-of-line soft branch of uncheckedEnqueueForLK
     //   vec<uint64_t> lookaheadCNT;
     vec<Lit> imply;
     bool redundantLit(Lit p);

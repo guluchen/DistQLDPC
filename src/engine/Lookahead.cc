@@ -285,7 +285,16 @@ bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
     vardata[v].level = decisionLevel() + 1;
     trail.push_(p);
 
-    if (auxiVar(v) && value(softLits[v]) == l_False) {// a soft clause is falsified
+    // GH-103 C4: softLits[v] is lit_Undef or a literal of v (softLits[var(l)] = l), and p is now
+    // true, so "auxiVar(v) && value(softLits[v]) == l_False" is exactly "softLits[v] == ~p".
+    if (softLits[v] == ~p) // a soft clause is falsified
+      return falsifiedSoftVarForLK(v);
+    return true;
+}
+
+__attribute__((noinline)) bool Solver::falsifiedSoftVarForLK(Var v){
+    assert(auxiVar(v) && value(softLits[v]) == l_False);
+    {
       if (unLockedSoftVarForLK(v))
 	return false;
       else {
