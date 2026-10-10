@@ -138,6 +138,7 @@ unsigned char* Solver::buf_ptr = drup_buf;
 //=================================================================================================
 // Engine modules (unity order = order of first appearance in the original MaxCDCL Solver.cc):
 
+#include "Heuristics.cc"     // branching, order heaps, Luby restarts
 #include "Analysis.cc"       // hard-conflict analysis and learning
 #include "SoftConflict.cc"   // soft / quasi-soft conflict analysis
 #include "Hardening.cc"      // bound-driven hardening
@@ -1549,52 +1550,6 @@ void Solver::cancelUntil(int level) {
     } }
 
 
-//=================================================================================================
-// Major methods:
-
-
-Lit Solver::pickBranchLit()
-{
-    Var next = var_Undef;
-    //Heap<VarOrderLt>& order_heap = VSIDS ? order_heap_VSIDS : order_heap_CHB;
-    Heap<VarOrderLt>& order_heap = DISTANCE ? order_heap_distance : (VSIDS ? order_heap_VSIDS : order_heap_CHB);
-    
-    // Random decision:
-    /*if (drand(random_seed) < random_var_freq && !order_heap.empty()){
-     next = order_heap[irand(random_seed,order_heap.size())];
-     if (value(next) == l_Undef && decision[next])
-     rnd_decisions++; }*/
-    
-    // Activity based decision:
-    while (next == var_Undef || value(next) != l_Undef || !decision[next])
-        if (order_heap.empty())
-            return lit_Undef;
-        else{
-#ifdef ANTI_EXPLORATION
-            if (!VSIDS){
-                Var v = order_heap_CHB[0];
-                uint32_t age = conflicts - canceled[v];
-                while (age > 0){
-                    double decay = pow(0.95, age);
-                    activity_CHB[v] *= decay;
-                    if (order_heap_CHB.inHeap(v))
-                        order_heap_CHB.increase(v);
-                    canceled[v] = conflicts;
-                    v = order_heap_CHB[0];
-                    age = conflicts - canceled[v];
-                }
-            }
-#endif
-            next = order_heap.removeMin();
-        }
-
-    // if (dynVar(next))
-    //   printf("a");
-    
-    return mkLit(next, polarity[next]);
-}
-
-
 void Solver::uncheckedEnqueue(Lit p, CRef from)
 {
     assert(value(p) == l_Undef);
@@ -2078,24 +2033,6 @@ void Solver::safeRemoveSatisfied(vec<CRef>& cs, unsigned valid_mark)
     cs.shrink(i - j);
 }
 
-void Solver::rebuildOrderHeap()
-{
-    vec<Var> vs;
-    for (Var v = 0; v < nVars(); v++)
-        if (decision[v] && value(v) == l_Undef)
-            vs.push(v);
-    
-    order_heap_CHB  .build(vs);
-    order_heap_VSIDS.build(vs);
-    order_heap_distance.build(vs);
-
-    vs.clear();
-    for (Var v = 0; v < nVars(); v++)
-      if (value(v) == l_Undef && auxiVar(v))
-	vs.push(v);
-    orderHeapAuxi.build(vs);
-}
-
 
 /*_________________________________________________________________________________________________
  |
@@ -2323,19 +2260,6 @@ void Solver::identifyClausesToSplit(vec<CRef>& cs) {
     //	   nbCommunLits, toSplit.size(), minSize, cs.size());
   }
   // printf(" ----------------- starts: %llu, UB: %llu\n", starts, UB);
-}
-
-double Solver::avgAct(vec<CRef>& cs, int& nb0) {
-  double act=0;
-  nb0=0;
-  for(int i=0; i<cs.size(); i++) {
-    if (ca[cs[i]].activity() == 0)
-      nb0++;
-    else act += ca[cs[i]].activity();
-  }
-  if (act>0)
-    return act/cs.size();
-  else return 0;
 }
 
 /*_________________________________________________________________________________________________
@@ -2696,49 +2620,6 @@ lbool Solver::search(int& nof_conflicts)
 	    }
 	}
     }
-}
-
-
-double Solver::progressEstimate() const
-{
-    double  progress = 0;
-    double  F = 1.0 / nVars();
-    
-    for (int i = 0; i <= decisionLevel(); i++){
-        int beg = i == 0 ? 0 : trail_lim[i - 1];
-        int end = i == decisionLevel() ? trail.size() : trail_lim[i];
-        progress += pow(F, i) * (end - beg);
-    }
-    
-    return progress / nVars();
-}
-
-/*
- Finite subsequences of the Luby-sequence:
- 
- 0: 1
- 1: 1 1 2
- 2: 1 1 2 1 1 2 4
- 3: 1 1 2 1 1 2 4 1 1 2 1 1 2 4 8
- ...
- 
- 
- */
-
-static double luby(double y, int x){
-    
-    // Find the finite subsequence that contains index 'x', and the
-    // size of that subsequence:
-    int size, seq;
-    for (size = 1, seq = 0; size < x+1; seq++, size = 2*size+1);
-    
-    while (size-1 != x){
-        size = (size-1)>>1;
-        seq--;
-        x = x % size;
-    }
-    
-    return pow(y, seq);
 }
 
 void Solver::removeLearntClauses() {
