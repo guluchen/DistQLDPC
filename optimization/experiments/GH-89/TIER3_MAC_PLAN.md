@@ -10,3 +10,5 @@ policy's dedicated-server Tier3.
   baseline time out at 1800 s on yfclab2; 6 h of censored runs) — to be run on yfclab2 later.
 - PASS rule = GH-85 TIER3_PLAN rule: no science problem; every case/mode candidate median <= baseline median with no
   non-overlapping regression; no candidate timeout where the baseline completes all 3; per-mode geomean < 1; timeouts censored.
+
+PI approval (2026-10-10): "第四項在mac跑沒關係，這是特殊情況" — Mac Tier3-equivalent explicitly approved as a special case.
