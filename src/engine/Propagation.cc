@@ -179,6 +179,10 @@ CRef Solver::propagate()
 		//	}
 	    }
 	}
+        if (xorCount > 0 && xorPropagate<0>(var(p), confl) != 0) {   // GH-98: XOR watches of var(p)
+            qhead = trail.size();
+            continue;
+        }
         for (i = j = (Watcher*)ws, end = i + ws.size();  i != end;){
             // Try to avoid inspecting the clause:
             Lit blocker = i->blocker;
@@ -275,6 +279,9 @@ NextClause:;
 ExitProp:;
     propagations += num_props;
     simpDB_props -= num_props;
+#ifdef XOR_SELFCHECK
+    if (confl == CRef_Undef && xorCount > 0) xorCheckFixpoint("propagate");
+#endif
 
     if (confl == CRef_Undef && falseLits.size() >= UB)
       softConflictFlag = true;

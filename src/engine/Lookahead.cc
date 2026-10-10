@@ -336,7 +336,14 @@ CRef Solver::propagateForLK() {
 	}
       }
     }
+    if (xorCount > 0 && xorPropagate<1>(var(p), confl) != 0) {   // GH-98: XOR watches of var(p)
+      qhead = trail.size();
+      continue;
+    }
     for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {
+#ifdef XOR_STATS
+	xst_visits++;
+#endif
 	// Try to avoid inspecting the clause:
 	Lit blocker = i->blocker;
 	if (value(blocker) == l_True) {
@@ -345,6 +352,9 @@ CRef Solver::propagateForLK() {
 	// Make sure the false literal is data[1]:
 	CRef     cr = i->cref;
 	Clause&  c = ca[cr];
+#ifdef XOR_STATS
+	xst_insp++;
+#endif
 	Lit      false_lit = ~p;
 	if (c[0] == false_lit)
 	  c[0] = c[1], c[1] = false_lit;
@@ -424,6 +434,12 @@ CRef Solver::propagateForLK() {
     // 	  break;
   }
   lk_propagations += num_props;
+#ifdef XOR_STATS
+  xst_lkprop++;
+#endif
+#ifdef XOR_SELFCHECK
+  if (confl == CRef_Undef && falseVar == var_Undef && xorCount > 0) xorCheckFixpoint("propagateForLK");
+#endif
   return confl;
 }
 
@@ -819,6 +835,9 @@ bool Solver::lookahead() {
   trailRecord = trail.size(); 
   UBconflictFlag=false; softConflictFlag=false; falseVar = var_Undef;
   LOOKAHEAD++; //newDecisionLevel();
+#ifdef XOR_STATS
+  xst_lk++; xorStatsTick();
+#endif
   lastConflLits.clear();
   for(int i=conflLits.size()-1; i>=0; i--)
     if  (conflLits[i] != lit_Undef)

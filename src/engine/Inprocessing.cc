@@ -85,6 +85,10 @@ CRef Solver::simplePropagate() {
 	  // }
 	}
       }
+      if (xorCount > 0 && xorPropagate<2>(var(p), confl) != 0) {   // GH-98: XOR watches of var(p)
+	qhead = trail.size();
+	continue;
+      }
       for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {
 	// Try to avoid inspecting the clause:
 	Lit blocker = i->blocker;
@@ -174,6 +178,9 @@ NextClause:;
       // 	  break;
     }
     s_propagations += num_props;
+#ifdef XOR_SELFCHECK
+    if (confl == CRef_Undef && xorCount > 0) xorCheckFixpoint("simplePropagate");
+#endif
 
     if (confl == CRef_Undef && falseLits.size() + rootNbIsets >= UB)
       softConflictFlag = true;
@@ -253,6 +260,7 @@ bool Solver::removed(CRef cr) {
 }
 
 void Solver::simplereduceClause(CRef cr, int pathC) {
+  if (ca[cr].xorc()) return;   // GH-98: XOR clauses are not strengthened
   nbFlyReduced++;
   Clause& c=ca[cr];
   assert(value(c[0]) == l_True);

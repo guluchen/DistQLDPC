@@ -52,6 +52,7 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #endif
 
 void Solver::reduceClause(CRef cr, int pathC) {
+  if (ca[cr].xorc()) return;   // GH-98: XOR clauses are not strengthened
   nbFlyReduced++;
   Clause& c=ca[cr];
   assert(value(c[0]) == l_True);

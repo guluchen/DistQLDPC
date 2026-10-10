@@ -220,7 +220,7 @@ void Solver::removeSatisfied(vec<CRef>& cs)
     for (i = j = 0; i < cs.size(); i++){
         Clause& c = ca[cs[i]];
         if(c.mark()!=1){
-            if (satisfied(c))
+            if (satisfied(c) && !c.xorc())   // GH-98: XOR clauses are kept (unwatched)
                 removeClause(cs[i]);
             else
                 cs[j++] = cs[i];

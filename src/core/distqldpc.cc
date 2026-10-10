@@ -1403,6 +1403,12 @@ int main(int argc, char** argv) {
             g_half_symbreak = false;
         else if (!strcmp(argv[i], "-symbreak-report"))
             symbreak_report = true;
+        else if (!strcmp(argv[i], "-no-xor"))                 /* GH-98 */
+            Minisat::distqldpc_xor_mode = 0;
+        else if (!strcmp(argv[i], "-xor"))
+            Minisat::distqldpc_xor_mode = 1;
+        else if (!strncmp(argv[i], "-xor-maxk=", 10))
+            Minisat::distqldpc_xor_maxk = atoi(argv[i] + 10);
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
@@ -1416,6 +1422,8 @@ int main(int argc, char** argv) {
             printf("  Symmetry (split only): default adds optimum-preserving orbit clauses per CSS half from\n");
             printf("            verified half automorphisms; -no-symbreak disables them;\n");
             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
+            printf("  Engine: native XOR constraints detected among the parity clauses (default); -no-xor = clause-only;\n");
+            printf("          -xor-maxk=N  largest XOR arity detected (3..6, default 6)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

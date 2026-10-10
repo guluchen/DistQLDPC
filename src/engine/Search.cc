@@ -483,7 +483,7 @@ lbool Solver::search(int& nof_conflicts)
 // #endif
 
 // NOTE: assumptions passed in member-variable 'assumptions'.
-lbool Solver::solve_()
+lbool Solver::solveMain_()   // GH-98: wrapped by solve_() in Xor.cc
 {
 // #ifdef _MSC_VER_Sleep
 //     std::thread t(sleep, switch_time);
@@ -531,6 +531,8 @@ lbool Solver::solve_()
 #endif
         return l_False;
     }
+
+    if (xorEnabled) xorDetect();   // GH-98
 
     if (!findConflictSoftLits()) {
       printf("c problem solved by preprocessing\n");

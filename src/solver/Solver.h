@@ -358,6 +358,7 @@ protected:
     bool     litRedundant     (Lit p, uint32_t abstract_levels);                       // (helper method for 'analyze()')
     lbool    search           (int& nof_conflicts);                                    // Search for a given number of conflicts.
     lbool    solve_           ();                                                      // Main solve method (assumptions given in 'assumptions').
+    lbool    solveMain_       ();                                                      // GH-98: body of solve_ (solve_ adds the XOR restore)
     void     reduceDB         ();                                                      // Reduce the set of learnt clauses.
     void     reduceDB_Tier2   ();
     void     removeSatisfied  (vec<CRef>& cs);                                         // Shrink 'cs' to contain only non-satisfied clauses.
@@ -747,9 +748,32 @@ public:
 
     void cancelUntilTrailRecord1();
     void cancelUntilTrailRecord2();
+
+    // GH-98: native XOR constraints (src/engine/Xor.cc; optimization/experiments/GH-98/PROPOSAL.md).
+    // Detected at solve start among the original clauses; the clauses stay in `clauses` (flag xorc, unwatched)
+    // and are the reasons/conflicts of the XOR propagator. xorCount == 0 means the clause-only path.
+    bool                xorEnabled = true;     // -no-xor clears it
+    int                 xorMaxK = 6;           // largest XOR arity detected (3..6)
+    int                 xorCount = 0;          // number of XOR records
+    vec<uint32_t>       xorMem;                // record arena (layout in Xor.cc)
+    vec<uint32_t>       xorOffsets;            // offset of every record
+    vec<vec<uint32_t> > xorWatches;            // per variable: offsets of the records watching it
+    uint64_t            xorCheckCalls = 0;
+    void     xorDetect();
+    void     xorRestoreClauses();
+    void     xorRelocAll(ClauseAllocator& to);
+    void     xorFree();
+    inline uint32_t xorPattern(const uint32_t* r, int k, Var impliedVar, unsigned exclImplied) const;
+    template<int MODE> inline int xorPropagate(Var x, CRef& confl);
+    void     xorCheckFixpoint(const char* where);
+    void     xorCheckTables(const char* where);
 };
 
 
+
+// GH-98: XOR mode requested by the distqldpc front end (-1 = use the MiniSat options -xor / -xor-maxk).
+extern int distqldpc_xor_mode;
+extern int distqldpc_xor_maxk;
 
 //=================================================================================================
 // Implementation of inline methods:

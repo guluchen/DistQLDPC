@@ -131,6 +131,9 @@ Var Solver::newAuxiVar(bool sign)
     watches_bin[~p].clear();
     watches[p].clear();
     watches[~p].clear();
+#ifdef XOR_SELFCHECK
+    if (v < xorWatches.size() && xorWatches[v].size() > 0) { printf("c XOR_SELFCHECK_FAIL newAuxiVar: recycled variable in an XOR\n"); fflush(stdout); abort(); }
+#endif
     imply[toInt(p)] = lit_Undef;
     imply[toInt(~p)] = lit_Undef;
     decision[v] = false;
@@ -142,6 +145,7 @@ Var Solver::newAuxiVar(bool sign)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
+    xorWatches.push();   // GH-98
     assigns  .push(l_Undef);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);

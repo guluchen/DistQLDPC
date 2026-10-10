@@ -472,6 +472,10 @@ CRef Solver::simplepropagateForLK() {
 	}
       }
     }
+    if (xorCount > 0 && xorPropagate<3>(var(p), confl) != 0) {   // GH-98: XOR watches of var(p)
+      qhead = trail.size();
+      continue;
+    }
     for (i = j = (Watcher*)ws, end = i + ws.size(); i != end;) {
 	// Try to avoid inspecting the clause:
 	Lit blocker = i->blocker;
@@ -550,6 +554,9 @@ CRef Solver::simplepropagateForLK() {
     // 	  break;
   }
   lk_propagations += num_props;
+#ifdef XOR_SELFCHECK
+  if (confl == CRef_Undef && falseVar == var_Undef && xorCount > 0) xorCheckFixpoint("simplepropagateForLK");
+#endif
   return confl;
 }
 

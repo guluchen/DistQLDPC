@@ -68,6 +68,10 @@ static BoolOption    opt_rnd_init_act      (_cat, "rnd-init",    "Randomize the 
 static IntOption     opt_restart_first     (_cat, "rfirst",      "The base restart interval", 100, IntRange(1, INT32_MAX));
 static DoubleOption  opt_restart_inc       (_cat, "rinc",        "Restart interval increase factor", 2, DoubleRange(1, false, HUGE_VAL, false));
 static DoubleOption  opt_garbage_frac      (_cat, "gc-frac",     "The fraction of wasted memory allowed before a garbage collection is triggered",  0.20, DoubleRange(0, false, HUGE_VAL, false));
+static BoolOption    opt_xor               (_cat, "xor",         "GH-98: native XOR constraints (detected among the original clauses)", true);
+static IntOption     opt_xor_maxk          (_cat, "xor-maxk",    "GH-98: largest XOR arity detected", 6, IntRange(3, 6));
+int Minisat::distqldpc_xor_mode = -1;   // set by the distqldpc front end; -1 = use opt_xor
+int Minisat::distqldpc_xor_maxk = -1;   // set by the distqldpc front end; -1 = use opt_xor_maxk
 
 
 //=================================================================================================
@@ -181,7 +185,10 @@ Solver::Solver() :
     , nbSatLitsAtStart(0)
     , bounds_pipe_w(-1)
 
-{}
+{
+  xorEnabled = distqldpc_xor_mode >= 0 ? distqldpc_xor_mode != 0 : (bool)opt_xor;   // GH-98
+  xorMaxK    = distqldpc_xor_maxk >= 0 ? distqldpc_xor_maxk : (int)opt_xor_maxk;
+}
 
 
 Solver::~Solver()

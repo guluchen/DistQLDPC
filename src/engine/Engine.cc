@@ -141,6 +141,7 @@ unsigned char* Solver::buf_ptr = drup_buf;
 #include "State.cc"            // options, constructor/destructor
 #include "Inprocessing.cc"     // vivification, failed literals, clause minimisation
 #include "ClauseDB.cc"         // variables, clauses, watchers, garbage collection
+#include "Xor.cc"              // GH-98: native XOR constraints (detection, propagator, restore)
 #include "Propagation.cc"      // trail, backtracking, unit propagation
 #include "Heuristics.cc"       // branching, order heaps, Luby restarts
 #include "Analysis.cc"         // hard-conflict analysis and learning

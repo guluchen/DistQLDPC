@@ -65,6 +65,7 @@ Var Solver::newVar(bool sign, bool dvar)
     watches_bin.init(mkLit(v, true ));
     watches  .init(mkLit(v, false));
     watches  .init(mkLit(v, true ));
+    xorWatches.push();   // GH-98
     assigns  .push(l_Undef);
     vardata  .push(mkVarData(CRef_Undef, 0));
     activity_CHB  .push(0);
@@ -335,6 +336,7 @@ void Solver::relocAll(ClauseAllocator& to)
             ca.reloc(clauses[i], to);
             clauses[j++] = clauses[i]; }
     clauses.shrink(i - j);
+    if (xorCount > 0) xorRelocAll(to);   // GH-98: XOR clauses are in `clauses`, already relocated
     
     // // All original used clauses
     // for (i = j = 0; i < usedClauses.size(); i++)
