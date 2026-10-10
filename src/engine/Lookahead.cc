@@ -456,13 +456,16 @@ int Solver::seeUnlockLits(int iset, int falseVar) {
 
 void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>& out_learnt, bool last) {
   int pathC=0;
+  // GH-103 C6: loop invariants kept in locals (stores to char-typed seen/assigns would force reloads)
+  const int dl = decisionLevel(); const bool vsids = VSIDS; const int tr = trailRecord;
+  Lit* const trl = trail;
   out_learnt.clear();
   out_learnt.push();
   if (confl == CRef_Bin) {
     assert(level(var(binConfl[0])) > decisionLevel());
     assert(level(var(binConfl[1])) > decisionLevel());
     seen[var(binConfl[0])] = 1; seen[var(binConfl[1])] = 1;  pathC = 2;
-    if (VSIDS) {
+    if (vsids) {
       varBumpActivity(var(binConfl[0]), .1);
       varBumpActivity(var(binConfl[0]), .1);
     }
@@ -490,7 +493,7 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
       if (level(v) > 0) {
 	if (!seen[v]) {
 	  seen[v]=1;
-	  if (level(v) > decisionLevel())
+	  if (level(v) > dl)
 	    pathC++;
 	  else {
 	    out_learnt.push(q);
@@ -499,15 +502,15 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	      involvedLits.push(q);
 	    }
 	  }
-	  if (VSIDS)
+	  if (vsids)
 	    varBumpActivity(v, .1);
 	}
       } 
     }
   }
   int index = trail.size() - 1;
-  while (index >= trailRecord) {
-    Lit p = trail[index--];
+  while (index >= tr) {
+    Lit p = trl[index--];
     Var v = var(p);
     if (seen[v]) {
       seen[v] = 0; pathC--;
@@ -519,8 +522,8 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	if (last && auxiVar(v) && inConflicts[v] == NON && p == softLits[v])
 	  isetsLits[nbIsets].push(p);
 	insertAuxiVarOrder(v);
-	for(; index >= trailRecord; index--) {
-	  Lit q = trail[index];
+	for(; index >= tr; index--) {
+	  Lit q = trl[index];
 	  Var vv = var(q);
 	  assert(!seen[vv]);
 	  assigns[vv] = l_Undef;
@@ -555,7 +558,7 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 	      nbSeen++;
 	    else {
 	      seen[vv] = 1;
-	      if (level(vv) > decisionLevel())
+	      if (level(vv) > dl)
 		pathC++;
 	      else {
 		out_learnt.push(q);
@@ -564,7 +567,7 @@ void Solver::lookbackResetTrail(CRef confl, Var falseVar, int nbIsets, vec<Lit>&
 		  involvedLits.push(q);
 		}
 	      }
-	      if (VSIDS)
+	      if (vsids)
 		varBumpActivity(vv, .1);
 	    }
 	  }
