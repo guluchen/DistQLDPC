@@ -75,7 +75,9 @@ static DoubleOption  opt_garbage_frac      (_cat, "gc-frac",     "The fraction o
 #define DISTQLDPC_LKSKIP_DEFAULT 1
 #endif
 static IntOption     opt_lkskip            (_cat, "lkskip",      "GH-99 lookahead skip of base-satisfied watchers (0=off, 1=exact, 2=fast)", DISTQLDPC_LKSKIP_DEFAULT, IntRange(0, 2));
+static IntOption     opt_lkskip_min        (_cat, "lkskip-min",  "GH-99: watch lists shorter than this are scanned without skip metadata", 16, IntRange(0, INT32_MAX));
 int Minisat::distqldpc_lkskip_mode = -1;   // set by the distqldpc front end; -1 = use opt_lkskip
+int Minisat::distqldpc_lkskip_min  = -1;   // set by the distqldpc front end; -1 = use opt_lkskip_min
 
 
 //=================================================================================================
@@ -191,9 +193,11 @@ Solver::Solver() :
 
 {
   lkSkipMode = distqldpc_lkskip_mode >= 0 ? distqldpc_lkskip_mode : (int)opt_lkskip;   // GH-99
+  lkSkipMin  = distqldpc_lkskip_min  >= 0 ? distqldpc_lkskip_min  : (int)opt_lkskip_min;
 }
 
 
 Solver::~Solver()
 {
+  lkSkipFree();   // GH-99
 }

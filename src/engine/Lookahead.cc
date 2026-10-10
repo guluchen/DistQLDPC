@@ -315,31 +315,33 @@ bool Solver::uncheckedEnqueueForLK(Lit p, CRef from){
 // During lookahead every assignment is made at decisionLevel()+1. A long watcher of watches[p] whose blocker is
 // true at a level <= decisionLevel() ("base-satisfied") is only ever copied by the loop below (*j++ = *i++): it
 // cannot propagate, conflict, move or change while that level stays on the trail. Such watchers are recorded per
-// literal (lkMeta) and skipped. The record of p is valid while (a) the global epoch is unchanged (bumped by
-// watch-list rewrites other than the GH-99-aware scanners: relocAll, simplePropagate, simplepropagateForLK,
-// trail-record resets, cancelUntilBeginning, dynamic-variable recycling, solve_ entry), (b) the literal was not
-// invalidated (detachClause of a clause watched in it), and (c) the blocker levels are still on the trail and were
-// not undone since they were recorded (cancelUntil renews the stamp of every undone level with a larger counter).
+// literal (lkMeta) and skipped. A record is valid while (a) the global epoch is unchanged (bumped by watch-list
+// rewrites other than the GH-99-aware scanners: relocAll, simplePropagate, simplepropagateForLK, trail-record
+// resets, cancelUntilBeginning, dynamic-variable recycling, solve_ entry), (b) the literal was not invalidated
+// (detachClause of a clause watched in it), and (c) the blocker levels were not undone since they were recorded
+// (cancelUntil renews the stamp of every undone level with a larger counter value).
+// Lists shorter than lkSkipMin watchers are scanned without touching any metadata (the per-scan metadata cost is
+// not worth it there); a list keeps no exact-mode runs while it is shorter than lkSkipMin.
 // Proof sketch and invalidation table: optimization/experiments/GH-99/PROPOSAL.md and TIER0_RESULT.md.
 //
 //  - propagateForLK_orig : the MaxCDCL loop, verbatim (mode 0, -no-lkskip).
 //  - propagateForLK_exact: recorded watchers stay in place as runs (start, len, level); a run is valid while its
-//    level was not undone since the last scan of p (checked per run). Runs are skipped, or moved with one memmove
-//    once compaction has started. Main propagate uses the same run handling (propagate_exact), so it neither
-//    invalidates nor reorders. The watch lists stay byte-identical to mode 0, so the search is too.
+//    level was not undone since the last scan of p. Runs are skipped, or moved with one block copy once compaction
+//    has started. Main propagate uses the same run handling (propagate_exact), so it neither invalidates nor
+//    reorders. The watch lists stay byte-identical to mode 0, so the search is too.
 //  - propagateForLK_fast : recorded watchers are kept as a prefix of the list and never scanned (one validity level
 //    lmax per literal); newly found ones are swapped into the prefix (reorders active watchers, search changes).
 // ---------------------------------------------------------------------------------------------------------------
 
 #ifdef LKSKIP_STATS
 static unsigned long long lkst_scans = 0, lkst_visits = 0, lkst_skipped = 0, lkst_levelchecks = 0, lkst_moved = 0,
-                          lkst_resets = 0, lkst_absorbed = 0, lkst_freshscans = 0,
+                          lkst_resets = 0, lkst_absorbed = 0, lkst_freshscans = 0, lkst_tracked = 0,
                           lkst_resetLit = 0, lkst_resetGlobal = 0, lkst_resetLevel = 0, lkst_mainskipped = 0, lkst_runs = 0;
 static void lkSkipPrintStats(int mode) {
   fprintf(stderr, "c LKSKIP_STATS mode %d scans %llu visits %llu skipped %llu levelchecks %llu moved %llu resets %llu absorbed %llu"
-          " freshscans %llu resetLit %llu resetGlobal %llu resetLevel %llu mainskipped %llu runs %llu\n",
+          " freshscans %llu resetLit %llu resetGlobal %llu resetLevel %llu mainskipped %llu runs %llu tracked %llu\n",
           mode, lkst_scans, lkst_visits, lkst_skipped, lkst_levelchecks, lkst_moved, lkst_resets, lkst_absorbed,
-          lkst_freshscans, lkst_resetLit, lkst_resetGlobal, lkst_resetLevel, lkst_mainskipped, lkst_runs);
+          lkst_freshscans, lkst_resetLit, lkst_resetGlobal, lkst_resetLevel, lkst_mainskipped, lkst_runs, lkst_tracked);
 }
 static void lkSkipCountReset(const Solver::LKSkipMeta& m, uint64_t epoch, bool nonempty) {
   if (!nonempty) return;
@@ -369,12 +371,15 @@ void Solver::lkSkipGrow() {
   int nl = 2 * nVars();
   if (lkMeta.size() < nl) {
     lkMeta.growTo(nl);
-    if (lkSkipMode == 1) lkRuns.growTo(nl);
 #ifdef LKSKIP_SELFCHECK
     lkShadow.growTo(nl);
 #endif
   }
   if (lkLevelStamp.size() <= decisionLevel()) lkLevelStamp.growTo(decisionLevel() + 1, 0);
+}
+
+void Solver::lkSkipFree() {
+  for (int k = 0; k < lkMeta.size(); k++) { free(lkMeta[k].runs); lkMeta[k].runs = NULL; lkMeta[k].nr = lkMeta[k].cap = 0; }
 }
 
 CRef Solver::propagateForLK() {
@@ -388,14 +393,13 @@ CRef Solver::propagateForLK() {
 // size) a true blocker of an unrecorded watcher is a lookahead-level literal. Watchers whose blocker is rewritten to
 // a true literal while scanning are always checked. LKSKIP_ABSORB_ALWAYS checks on every scan.
 #ifdef LKSKIP_ABSORB_ALWAYS
-#define LK_FRESH(m, fresh) const bool fresh = true
+#define LK_FRESH(m) true
 #else
-#define LK_FRESH(m, fresh)                                                                              \
-    const bool fresh = !((m).btrail == trailRecord && (m).bD == D && (m).bstamp == lkLevelStamp[D]);    \
-    (m).btrail = trailRecord; (m).bD = D; (m).bstamp = lkLevelStamp[D];                                \
-    LKST(lkst_freshscans += fresh)
+#define LK_FRESH(m) (!((m).btrail == trailRecord && (m).bD == D && (m).bstamp == lkLevelStamp[D]))
 #endif
-// Record a base-satisfied blocker: raise lmax (and its stamp) if needed.
+#define LK_SET_BASE(m) do { (m).btrail = trailRecord; (m).bD = D; (m).bstamp = lkLevelStamp[D]; } while (0)
+
+// fast mode: record a base-satisfied blocker level
 #define LK_RAISE(m, lv)                                                       \
   do { if ((lv) > (m).lmax) { (m).lmax = (lv); (m).stamp = lkLevelStamp[(lv)]; } } while (0)
 
@@ -407,45 +411,74 @@ CRef Solver::propagateForLK() {
          (out)[n_ - 2] += (len); if ((lvl) > (out)[n_ - 1]) (out)[n_ - 1] = (lvl); }               \
        else { (out).push(pos); (out).push(len); (out).push(lvl); } } while (0)
 
+// exact mode: move a run of n watchers from i down to j (j <= i, may overlap)
+#define LK_MOVE_RUN(j, i, n)                                                                       \
+  do { if ((n) <= 8) { for (int q_ = 0; q_ < (n); q_++) (j)[q_] = (i)[q_]; }                      \
+       else memmove((j), (i), sizeof(Watcher) * (n)); } while (0)
+
 // Exact mode keeps one level per run: a run stays valid while its level is on the trail and was not undone since
 // the last scan of p (m.stamp = lkStampCounter at the end of that scan; undoing a level renews its stamp with a
-// larger counter value). The global epoch / literal invalidation (m.g) drops all runs. Invalid runs are removed
-// from R; their watchers are scanned normally (and re-recorded if still base-satisfied).
-void Solver::lkExactPrepare(Lit p, vec<Watcher>& ws, LKSkipMeta& m, vec<int>& R) {
+// larger counter value). The global epoch / literal invalidation (m.g) drops all runs. Invalid runs are removed;
+// their watchers are scanned normally (and re-recorded if still base-satisfied).
+void Solver::lkExactPrepare(Lit p, vec<Watcher>& ws, LKSkipMeta& m) {
   const int D = decisionLevel();
 #ifndef LKSKIP_SELFCHECK
   // Safety net (never expected to fire, see the invalidation table): runs must lie inside the list.
-  if (R.size() > 0 && R[R.size() - 3] + R[R.size() - 2] > ws.size()) m.g = 0;
+  if (m.nr > 0 && m.runs[m.nr - 3] + m.runs[m.nr - 2] > ws.size()) m.g = 0;
 #endif
   if (m.g != lkGlobalEpoch) {
-    LKST(lkSkipCountReset(m, lkGlobalEpoch, R.size() > 0));
-    R.clear(); m.g = lkGlobalEpoch; m.btrail = -1;
+    LKST(lkSkipCountReset(m, lkGlobalEpoch, m.nr > 0));
+    m.nr = 0; m.g = lkGlobalEpoch; m.btrail = -1;
+    return;
   }
-  else if (R.size() > 0) {
-    int w = 0;
+  int* R = m.runs;
+  int w = 0;
 #ifdef LKSKIP_SELFCHECK
-    int so = 0; vec<Watcher>& sh = lkShadow[toInt(p)];
+  int so = 0; vec<Watcher>& sh = lkShadow[toInt(p)];
 #endif
-    for (int q = 0; q < R.size(); q += 3) {
-	int lvl = R[q + 2];
-	if (lvl <= D && lkLevelStamp[lvl] <= m.stamp) {
+  for (int q = 0; q < m.nr; q += 3) {
+    int lvl = R[q + 2];
+    if (lvl <= D && lkLevelStamp[lvl] <= m.stamp) {
 #ifdef LKSKIP_SELFCHECK
-	  if (R[q] + R[q + 1] > ws.size()) lkSkipCheckFail("run-past-end", p, R[q]);
-	  for (int k = 0; k < R[q + 1]; k++) {
-	    if (so + k >= sh.size()) lkSkipCheckFail("shadow-short", p, R[q] + k);
-	    LKSKIP_CHECK_ENTRY(p, R[q] + k, ws[R[q] + k], sh[so + k]);
-	  }
+      if (R[q] + R[q + 1] > ws.size()) lkSkipCheckFail("run-past-end", p, R[q]);
+      for (int k = 0; k < R[q + 1]; k++) {
+        if (so + k >= sh.size()) lkSkipCheckFail("shadow-short", p, R[q] + k);
+        LKSKIP_CHECK_ENTRY(p, R[q] + k, ws[R[q] + k], sh[so + k]);
+      }
 #endif
-	  R[w] = R[q]; R[w + 1] = R[q + 1]; R[w + 2] = lvl; w += 3;
-	}
-	else { LKST(lkst_resetLevel += R[q + 1]); }
-#ifdef LKSKIP_SELFCHECK
-	so += R[q + 1];
-#endif
+      R[w] = R[q]; R[w + 1] = R[q + 1]; R[w + 2] = lvl; w += 3;
     }
-    R.shrink(R.size() - w);
+    else { LKST(lkst_resetLevel += R[q + 1]); }
+#ifdef LKSKIP_SELFCHECK
+    so += R[q + 1];
+#endif
   }
+  m.nr = w;
 }
+
+// exact mode: store the output runs of the scan just finished (none while the list is shorter than lkSkipMin)
+void Solver::lkExactStore(Lit p, vec<Watcher>& ws, LKSkipMeta& m) {
+  int n = ws.size() < lkSkipMin ? 0 : lkRunBuf.size();
+  if (n > m.cap) {
+    int c = n > 2 * m.cap ? n : 2 * m.cap; if (c < 24) c = 24;
+    int* r = (int*)realloc(m.runs, sizeof(int) * c);
+    if (r == NULL) throw OutOfMemoryException();
+    m.runs = r; m.cap = c;
+  }
+  if (n > 0) memcpy(m.runs, (int*)lkRunBuf, sizeof(int) * n);
+  m.nr = n;
+  m.stamp = lkStampCounter;
+#ifdef LKSKIP_SELFCHECK
+  { vec<Watcher>& sh = lkShadow[toInt(p)]; sh.clear();
+    for (int k = 0; k < m.nr; k += 3)
+      for (int q = 0; q < m.runs[k + 1]; q++) sh.push(ws[m.runs[k] + q]); }
+#else
+  (void)p;
+#endif
+}
+
+#define LK_ABSORB_EXACT(lv)                                                                        \
+  do { LK_ADD_RUN(out, (int)(j - base), 1, (lv)); LKST(lkst_absorbed++); } while (0)
 
 CRef Solver::propagateForLK_exact() {
   falseVar = var_Undef;
@@ -455,6 +488,7 @@ CRef Solver::propagateForLK_exact() {
   watches_bin.cleanAll();
   lkSkipGrow();
   const int D = decisionLevel();
+  const int T = lkSkipMin;
   vec<int>& out = lkRunBuf;
   while (qhead < trail.size()) {
     Lit            p = trail[qhead++];     // 'p' is enqueued fact to propagate.
@@ -477,14 +511,21 @@ CRef Solver::propagateForLK_exact() {
 	}
       }
     }
-    LKSkipMeta& m = lkMeta[toInt(p)];
-    vec<int>&   R = lkRuns[toInt(p)];
-    lkExactPrepare(p, ws, m, R);
-    LK_FRESH(m, fresh);
+    const bool track = ws.size() >= T;
+    LKSkipMeta* mp = NULL;
+    const int* R = NULL;
+    int nr = 0, ri = 0;
+    bool fresh = false;
     LKST(lkst_scans++);
-    out.clear();
-    const int nr = R.size();
-    int ri = 0;
+    if (track) {
+      mp = &lkMeta[toInt(p)];
+      lkExactPrepare(p, ws, *mp);
+      fresh = LK_FRESH(*mp);
+      LK_SET_BASE(*mp);
+      R = mp->runs; nr = mp->nr;
+      out.clear();
+      LKST(lkst_tracked++); LKST(lkst_freshscans += fresh);
+    }
     Watcher* const base = (Watcher*)ws;
     i = j = base; end = base + ws.size();
     Watcher* segEnd = nr > 0 ? base + R[0] : end;
@@ -497,7 +538,7 @@ CRef Solver::propagateForLK_exact() {
 	  if (fresh) {
 	    LKST(lkst_levelchecks++);
 	    int lv = level(var(blocker));
-	    if (lv <= D) { LK_ADD_RUN(out, (int)(j - base), 1, lv); LKST(lkst_absorbed++); }
+	    if (lv <= D) LK_ABSORB_EXACT(lv);
 	  }
 	  *j++ = *i++; continue;
 	}
@@ -512,9 +553,11 @@ CRef Solver::propagateForLK_exact() {
 	if (first != blocker) {
 	  i->blocker = first;
 	  if (value(first) == l_True){
-	    LKST(lkst_levelchecks++);
-	    int lv = level(var(first));
-	    if (lv <= D) { LK_ADD_RUN(out, (int)(j - base), 1, lv); LKST(lkst_absorbed++); }
+	    if (track) {
+	      LKST(lkst_levelchecks++);
+	      int lv = level(var(first));
+	      if (lv <= D) LK_ABSORB_EXACT(lv);
+	    }
 	    *j++ = *i++; continue;
 	  }
 	}
@@ -530,9 +573,11 @@ CRef Solver::propagateForLK_exact() {
 	  }
 	  else if (value(c[k]) == l_True) {
 	    i->blocker = c[k];
-	    LKST(lkst_levelchecks++);
-	    { int lv = level(var(c[k]));
-	      if (lv <= D) { LK_ADD_RUN(out, (int)(j - base), 1, lv); LKST(lkst_absorbed++); } }
+	    if (track) {
+	      LKST(lkst_levelchecks++);
+	      int lv = level(var(c[k]));
+	      if (lv <= D) LK_ABSORB_EXACT(lv);
+	    }
 	    *j++ = *i++;
 	    c.setLastPoint(k);
 	    goto NextClause;
@@ -547,9 +592,11 @@ CRef Solver::propagateForLK_exact() {
 	  }
 	  else if (value(c[k]) == l_True) {
 	    i->blocker = c[k];
-	    LKST(lkst_levelchecks++);
-	    { int lv = level(var(c[k]));
-	      if (lv <= D) { LK_ADD_RUN(out, (int)(j - base), 1, lv); LKST(lkst_absorbed++); } }
+	    if (track) {
+	      LKST(lkst_levelchecks++);
+	      int lv = level(var(c[k]));
+	      if (lv <= D) LK_ABSORB_EXACT(lv);
+	    }
 	    *j++ = *i++;
 	    c.setLastPoint(k);
 	    goto NextClause;
@@ -575,7 +622,7 @@ CRef Solver::propagateForLK_exact() {
       // A recorded run: its watchers are unchanged and their blockers still true at a level <= D.
       {
 	int len = R[ri + 1];
-	if (j != i) { memmove(j, i, sizeof(Watcher) * len); LKST(lkst_moved += len); }
+	if (j != i) { LK_MOVE_RUN(j, i, len); LKST(lkst_moved += len); }
 	LK_ADD_RUN(out, (int)(j - base), len, R[ri + 2]);
 	LKST(lkst_skipped += len); LKST(lkst_runs++);
 	i += len; j += len; ri += 3;
@@ -594,14 +641,7 @@ CRef Solver::propagateForLK_exact() {
     }
   Done:
     ws.shrink(i - j);
-    R.clear();
-    for (int k = 0; k < out.size(); k++) R.push(out[k]);
-    m.stamp = lkStampCounter;
-#ifdef LKSKIP_SELFCHECK
-    { vec<Watcher>& sh = lkShadow[toInt(p)]; sh.clear();
-      for (int k = 0; k < R.size(); k += 3)
-	for (int q = 0; q < R[k + 1]; q++) sh.push(ws[R[k] + q]); }
-#endif
+    if (track) lkExactStore(p, ws, *mp);
   }
   lk_propagations += num_props;
   return confl;
@@ -618,6 +658,7 @@ CRef Solver::propagate_exact()
     watches.cleanAll();
     watches_bin.cleanAll();
     lkSkipGrow();
+    const int T = lkSkipMin;
     vec<int>& out = lkRunBuf;
     
     while (qhead < trail.size()){
@@ -642,12 +683,16 @@ CRef Solver::propagate_exact()
 	    }
 	}
         {
-        LKSkipMeta& m = lkMeta[toInt(p)];
-        vec<int>&   R = lkRuns[toInt(p)];
-        lkExactPrepare(p, ws, m, R);
-        out.clear();
-        const int nr = R.size();
-        int ri = 0;
+        const bool track = ws.size() >= T;
+        LKSkipMeta* mp = NULL;
+        const int* R = NULL;
+        int nr = 0, ri = 0;
+        if (track) {
+          mp = &lkMeta[toInt(p)];
+          lkExactPrepare(p, ws, *mp);
+          R = mp->runs; nr = mp->nr;
+          out.clear();
+        }
         Watcher* const base = (Watcher*)ws;
         i = j = base; end = base + ws.size();
         Watcher* segEnd = nr > 0 ? base + R[0] : end;
@@ -720,7 +765,7 @@ NextClause:;
           if (ri >= nr) break;   // segEnd == end
           {
             int len = R[ri + 1];
-            if (j != i) { memmove(j, i, sizeof(Watcher) * len); LKST(lkst_moved += len); }
+            if (j != i) { LK_MOVE_RUN(j, i, len); LKST(lkst_moved += len); }
             LK_ADD_RUN(out, (int)(j - base), len, R[ri + 2]);
             LKST(lkst_mainskipped += len);
             i += len; j += len; ri += 3;
@@ -738,14 +783,7 @@ NextClause:;
         }
       Done:
         ws.shrink(i - j);
-        R.clear();
-        for (int k = 0; k < out.size(); k++) R.push(out[k]);
-        m.stamp = lkStampCounter;
-#ifdef LKSKIP_SELFCHECK
-        { vec<Watcher>& sh = lkShadow[toInt(p)]; sh.clear();
-          for (int k = 0; k < R.size(); k += 3)
-            for (int q = 0; q < R[k + 1]; q++) sh.push(ws[R[k] + q]); }
-#endif
+        if (track) lkExactStore(p, ws, *mp);
         }
     }
     
@@ -775,6 +813,7 @@ CRef Solver::propagateForLK_fast() {
   watches_bin.cleanAll();
   lkSkipGrow();
   const int D = decisionLevel();
+  const int T = lkSkipMin;
   while (qhead < trail.size()) {
     Lit            p = trail[qhead++];     // 'p' is enqueued fact to propagate.
     vec<Watcher>&  ws = watches[p];
@@ -796,25 +835,34 @@ CRef Solver::propagateForLK_fast() {
 	}
       }
     }
-    LKSkipMeta& m = lkMeta[toInt(p)];
-#ifndef LKSKIP_SELFCHECK
-    if (m.plen > ws.size()) m.g = 0;   // safety net (never expected to fire)
-#endif
-    if (!lkSkipValid(m)) {
-      LKST(lkSkipCountReset(m, lkGlobalEpoch, m.plen > 0));
-      m.g = lkGlobalEpoch; m.lmax = 0; m.stamp = lkLevelStamp[0]; m.plen = 0; m.btrail = -1;
-    }
-    LK_FRESH(m, fresh);
-    LKST(lkst_scans++);
-    LKST(lkst_skipped += m.plen);
+    // An untracked (short) list is scanned from 0: a valid prefix is copied onto itself (blockers true).
+    const bool track = ws.size() >= T;
+    LKSkipMeta* mp = NULL;
+    bool fresh = false;
     Watcher* const base = (Watcher*)ws;
-#ifdef LKSKIP_SELFCHECK
-    { vec<Watcher>& sh = lkShadow[toInt(p)];
-      if (m.plen > ws.size()) lkSkipCheckFail("prefix-past-end", p, m.plen);
-      if (m.plen > sh.size()) lkSkipCheckFail("shadow-short", p, m.plen);
-      for (int k = 0; k < m.plen; k++) LKSKIP_CHECK_ENTRY(p, k, base[k], sh[k]); }
+    Watcher* pre = base;
+    LKST(lkst_scans++);
+    if (track) {
+      mp = &lkMeta[toInt(p)];
+      LKSkipMeta& m = *mp;
+#ifndef LKSKIP_SELFCHECK
+      if (m.plen > ws.size()) m.g = 0;   // safety net (never expected to fire)
 #endif
-    Watcher* pre = base + m.plen;
+      if (!lkSkipValid(m)) {
+	LKST(lkSkipCountReset(m, lkGlobalEpoch, m.plen > 0));
+	m.g = lkGlobalEpoch; m.lmax = 0; m.stamp = lkLevelStamp[0]; m.plen = 0; m.btrail = -1;
+      }
+      fresh = LK_FRESH(m);
+      LK_SET_BASE(m);
+      LKST(lkst_tracked++); LKST(lkst_freshscans += fresh); LKST(lkst_skipped += m.plen);
+#ifdef LKSKIP_SELFCHECK
+      { vec<Watcher>& sh = lkShadow[toInt(p)];
+	if (m.plen > ws.size()) lkSkipCheckFail("prefix-past-end", p, m.plen);
+	if (m.plen > sh.size()) lkSkipCheckFail("shadow-short", p, m.plen);
+	for (int k = 0; k < m.plen; k++) LKSKIP_CHECK_ENTRY(p, k, base[k], sh[k]); }
+#endif
+      pre = base + m.plen;
+    }
     for (i = j = pre, end = base + ws.size(); i != end;) {
 	LKST(lkst_visits++);
 	// Try to avoid inspecting the clause:
@@ -823,7 +871,7 @@ CRef Solver::propagateForLK_fast() {
 	  if (fresh) {
 	    LKST(lkst_levelchecks++);
 	    int lv = level(var(blocker));
-	    if (lv <= D) { LK_RAISE(m, lv); LK_ABSORB_FAST(); continue; }
+	    if (lv <= D) { LK_RAISE(*mp, lv); LK_ABSORB_FAST(); continue; }
 	  }
 	  *j++ = *i++; continue;
 	}
@@ -838,9 +886,11 @@ CRef Solver::propagateForLK_fast() {
 	if (first != blocker) {
 	  i->blocker = first;
 	  if (value(first) == l_True){
-	    LKST(lkst_levelchecks++);
-	    int lv = level(var(first));
-	    if (lv <= D) { LK_RAISE(m, lv); LK_ABSORB_FAST(); continue; }
+	    if (track) {
+	      LKST(lkst_levelchecks++);
+	      int lv = level(var(first));
+	      if (lv <= D) { LK_RAISE(*mp, lv); LK_ABSORB_FAST(); continue; }
+	    }
 	    *j++ = *i++; continue;
 	  }
 	}
@@ -857,9 +907,11 @@ CRef Solver::propagateForLK_fast() {
 	  else if (value(c[k]) == l_True) {
 	    i->blocker = c[k];
 	    c.setLastPoint(k);
-	    LKST(lkst_levelchecks++);
-	    { int lv = level(var(c[k]));
-	      if (lv <= D) { LK_RAISE(m, lv); LK_ABSORB_FAST(); goto NextClause; } }
+	    if (track) {
+	      LKST(lkst_levelchecks++);
+	      int lv = level(var(c[k]));
+	      if (lv <= D) { LK_RAISE(*mp, lv); LK_ABSORB_FAST(); goto NextClause; }
+	    }
 	    *j++ = *i++;
 	    goto NextClause;
 	  }
@@ -874,9 +926,11 @@ CRef Solver::propagateForLK_fast() {
 	  else if (value(c[k]) == l_True) {
 	    i->blocker = c[k];
 	    c.setLastPoint(k);
-	    LKST(lkst_levelchecks++);
-	    { int lv = level(var(c[k]));
-	      if (lv <= D) { LK_RAISE(m, lv); LK_ABSORB_FAST(); goto NextClause; } }
+	    if (track) {
+	      LKST(lkst_levelchecks++);
+	      int lv = level(var(c[k]));
+	      if (lv <= D) { LK_RAISE(*mp, lv); LK_ABSORB_FAST(); goto NextClause; }
+	    }
 	    *j++ = *i++;
 	    goto NextClause;
 	  }
@@ -902,19 +956,24 @@ CRef Solver::propagateForLK_fast() {
     NextClause:;
     }
     ws.shrink(i - j);
-    m.plen = (int)(pre - base);
+    if (track) {
+      mp->plen = (int)(pre - base);
 #ifdef LKSKIP_SELFCHECK
-    { vec<Watcher>& sh = lkShadow[toInt(p)]; sh.clear();
-      for (int k = 0; k < m.plen; k++) sh.push(ws[k]); }
+      { vec<Watcher>& sh = lkShadow[toInt(p)]; sh.clear();
+	for (int k = 0; k < mp->plen; k++) sh.push(ws[k]); }
 #endif
+    }
   }
   lk_propagations += num_props;
   return confl;
 }
 
 #undef LK_FRESH
+#undef LK_SET_BASE
 #undef LK_RAISE
 #undef LK_ADD_RUN
+#undef LK_MOVE_RUN
+#undef LK_ABSORB_EXACT
 #undef LK_ABSORB_FAST
 
 CRef Solver::propagateForLK_orig() {

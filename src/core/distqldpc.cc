@@ -1409,6 +1409,8 @@ int main(int argc, char** argv) {
             Minisat::distqldpc_lkskip_mode = 1;
         else if (!strcmp(argv[i], "-lkskip=fast"))
             Minisat::distqldpc_lkskip_mode = 2;
+        else if (!strncmp(argv[i], "-lkskip-min=", 12))
+            Minisat::distqldpc_lkskip_min = atoi(argv[i] + 12);
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
@@ -1423,7 +1425,8 @@ int main(int argc, char** argv) {
             printf("            verified half automorphisms; -no-symbreak disables them;\n");
             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
             printf("  Lookahead (GH-99): skip watchers satisfied below the lookahead level; build default\n");
-            printf("            -lkskip=exact (search unchanged) | -lkskip=fast (reorders watches) | -no-lkskip\n");
+            printf("            -lkskip=exact (search unchanged) | -lkskip=fast (reorders watches) | -no-lkskip;\n");
+            printf("            -lkskip-min=N  lists shorter than N watchers are scanned without skip metadata (16)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

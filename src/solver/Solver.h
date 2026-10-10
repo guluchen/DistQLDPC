@@ -751,17 +751,25 @@ public:
     // DistQLDPC GH-99 (S0): skip base-satisfied watchers in lookahead propagation (src/engine/Lookahead.cc).
     // A watcher of watches[p] is base-satisfied when its blocker is true at a level <= decisionLevel() during
     // lookahead. Such watchers are remembered per literal and skipped by propagateForLK until a level they depend
-    // on is undone (lkLevelStamp) or the list is changed by something other than propagateForLK (lkGlobalEpoch,
-    // lkSkipInvalidate). Mode 0 = off (original loop), 1 = exact (in-place runs, search identical),
-    // 2 = fast (base-satisfied prefix; reorders watches, search changes). See optimization/experiments/GH-99.
-    struct LKSkipMeta { uint64_t g; uint64_t stamp; int lmax; int plen;     // validity, recorded set
-                        uint64_t bstamp; int bD; int btrail; };             // base seen by the last scan
+    // on is undone (lkLevelStamp) or the list is changed by something other than the GH-99-aware scanners
+    // (lkGlobalEpoch, lkSkipInvalidate). Mode 0 = off (original loop), 1 = exact (in-place runs, search identical),
+    // 2 = fast (base-satisfied prefix; reorders watches, search changes). Lists shorter than lkSkipMin watchers are
+    // scanned without touching the metadata. See optimization/experiments/GH-99.
+    struct LKSkipMeta {                 // one cache line per literal
+        uint64_t g;                     // lkGlobalEpoch when started; 0 = invalidated
+        uint64_t stamp;                 // exact: lkStampCounter at the end of the last scan; fast: lkLevelStamp[lmax]
+        uint64_t bstamp;                // lkLevelStamp[bD] at the last scan (base identity, with bD and btrail)
+        int      lmax, plen;            // fast: highest blocker level, prefix length
+        int      bD, btrail;            // decision level and base trail size at the last scan
+        int*     runs;                  // exact: flat (start, len, level) triples, nr ints used, cap allocated
+        int      nr, cap;
+    };
     int                 lkSkipMode = 0;
+    int                 lkSkipMin = 16;
     uint64_t            lkGlobalEpoch = 1;
     uint64_t            lkStampCounter = 0;
     vec<uint64_t>       lkLevelStamp;          // per decision level; renewed when the level is undone
     vec<LKSkipMeta>     lkMeta;                // per literal (toInt)
-    vec<vec<int> >      lkRuns;                // exact mode: per literal, flat (start, len) pairs
     vec<int>            lkRunBuf;              // exact mode: output runs of the current scan
 #ifdef LKSKIP_SELFCHECK
     vec<vec<Watcher> >  lkShadow;              // copy of the recorded watchers, checked before skipping
@@ -771,8 +779,10 @@ public:
     CRef propagateForLK_exact();
     CRef propagateForLK_fast();
     CRef propagate_exact();                        // main propagate, exact mode: keeps runs in place
-    void lkExactPrepare(Lit p, vec<Watcher>& ws, LKSkipMeta& m, vec<int>& R);
+    void lkExactPrepare(Lit p, vec<Watcher>& ws, LKSkipMeta& m);
+    void lkExactStore(Lit p, vec<Watcher>& ws, LKSkipMeta& m);
     void lkSkipGrow();
+    void lkSkipFree();
     void lkSkipInvalidate(Lit p) { int k = toInt(p); if (k < lkMeta.size()) lkMeta[k].g = 0; }
     void lkSkipBumpGlobal()      { lkGlobalEpoch++; }
     bool lkSkipValid(const LKSkipMeta& m) const {
@@ -781,6 +791,7 @@ public:
 
 // GH-99: lookahead watcher-skip mode requested by the distqldpc front end (-1 = use the MiniSat option -lkskip).
 extern int distqldpc_lkskip_mode;
+extern int distqldpc_lkskip_min;     // GH-99: -1 = use the MiniSat option -lkskip-min
 
 
 
