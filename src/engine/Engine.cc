@@ -138,6 +138,7 @@ unsigned char* Solver::buf_ptr = drup_buf;
 //=================================================================================================
 // Engine modules (unity order = order of first appearance in the original MaxCDCL Solver.cc):
 
+#include "Hardening.cc"      // bound-driven hardening
 #include "Objective.cc"      // bounds pipe, incumbent, solution check
 #include "Preprocessing.cc"  // soft-literal partition, initial conflicts
 #include "Cardinality.cc"    // auxiliary variables, Sinz/MTO encodings
@@ -3202,52 +3203,6 @@ void Solver::identifyClausesToSplit(vec<CRef>& cs) {
   // printf(" ----------------- starts: %llu, UB: %llu\n", starts, UB);
 }
 
-void Solver::hardenForRestart(int nbIsets, int trailRecord) {
-  Var vv;
-  printf("c harden from start...\n");
-  hardenEnable = false;
-  if (nbIsets == NON) {
-    vv = simplePickAuxiVar();
-    while (vv != var_Undef) {
-      hardenEnable = true;
-      uncheckedEnqueue(softLits[vv]);
-      fixedByHardens++;
-      vv = simplePickAuxiVar();
-      //  printf("level 0: %d", level(vv));
-    }
-  }
-  else {
-    vec<Lit> toHarden;
-    toHarden.clear();
-    for(int i=trailRecord; i< trail.size(); i++) {
-      Var v=var(trail[i]);
-      assigns[v] = l_Undef;
-      if (auxiVar(v)) {
-	assert(v>=0 && v<activityLB.size());
-	activityLB[v] = (1-stepSizeLB)*activityLB[v];
-	insertAuxiVarOrder(v);
-	orderHeapAuxi.decrease(v);
-	if (inConflicts[v] == NON)
-	  toHarden.push(trail[i]);
-      }
-    }
-    trail.shrink(trail.size() - trailRecord);
-    qhead = trailRecord;
-    //   trail_lim.shrink(1);
-    //   resetConflicts(nbIsets);
-    bumpConflVars(); //the score of confl vars and non-confl vars is updated differently
-    
-    if (toHarden.size() == 0)
-      return;
-    hardenEnable = true;
-    for(int i=0; i<toHarden.size(); i++) {
-      Lit p = toHarden[i];
-      uncheckedEnqueue(p);
-      fixedByHardens++; fixedByQuasiConfl++;
-    }
-  }
-}
-
 void Solver::simplelookback(CRef confl, Var falseVar, vec<Lit>& lits, vec<Lit>& out_learnt) {
   int pathC=0;
   out_learnt.clear(); lits.clear();
@@ -4331,92 +4286,6 @@ Var Solver::simplePickAuxiVar() {
   return v;
 }
 
-void Solver::moreHarden() {
-  // if (UB==2) return;
-  int nbfixed=0;
-  Var vv;
-  nbHardens++;
-  if (decisionLevel() == 0) {
-    vv = simplePickAuxiVar();
-    while (vv != var_Undef) {
-      hardenEnable = true;
-      uncheckedEnqueue(softLits[vv]);
-      fixedByHardens++;
-      vv = simplePickAuxiVar();
-      //  printf("level 0: %d", level(vv));
-    }
-    //  printf("\n");
-  }
-  else {
-    vv = simplePickAuxiVar();
-    if (vv == var_Undef)
-      return;
-    assert(!softVarLocked[vv]);
-    hardenEnable = true;
-    // if (falseLits.size() > 0 && level(var(falseLits.last())) < decisionLevel()) {
-    //   printf("****\n");
-    //   cancelUntil(level(var(falseLits.last())));
-    // }
-    vec<Lit> ps;
-    ps.clear();
-    ps.push();
-    int nbFalseLits=falseLits.size();
-    counter++;
-    for(int i=nbFalseLits-1; i>=0; i--) {
-      Var v=var(falseLits[i]);
-      if (level(v) > 0) {
-  	ps.push(falseLits[i]); seen2[v] = counter;
-      }
-    }
-    for(int i=nbFalseLits-1; i>=0; i--) {
-      Var v=var(falseLits[i]);
-      if (level(v) > 0 && inConflict[v] != NON) {
-    	Var u = unlockReason[v];
-    	assert(u != var_Undef);
-    	if (level(u) > 0 && seen2[u] < counter) {
-    	  seen2[u] = counter;
-    	  assert(value(softLits[u]) == l_False);
-    	  ps.push(softLits[u]);
-    	}
-      }
-    }
-    do {
-      CRef cr = CRef_Undef;
-      ps[0] = softLits[vv];
-      assert(inConflict[vv] != NON);
-      //    if (inConflict[vv] != NON) {
-      Var u = unlockReason[vv];
-      assert(u != var_Undef);
-      assert(value(softLits[u]) == l_False);
-      if (level(u) > 0 && seen2[u] < counter) {
-	if (ps.size() > 1) {
-	  Lit p2=ps[1];
-	  if (level(u) > level(var(p2))) {
-	    ps[1] = softLits[u]; ps.push(p2);
-	    cr =ca.alloc(ps, true);
-	    ps[1] = p2;
-	  }
-	  else {ps.push(softLits[u]);  cr =ca.alloc(ps, true);}
-	}
-	else {ps.push(softLits[u]);  cr =ca.alloc(ps, true);}
-	ps.shrink(1);
-      }
-      else cr =ca.alloc(ps, true);
-      hardens.push(cr);
-      attachClause(cr);
-      uncheckedEnqueue(ps[0], cr);
-      // if (level(var(ps[0])) != level(var(ps[1])))
-      //   printf("%d %d, decLevel: %d, ps: %d, c: %d, c[3]level: %d\n", level(var(ps[0])), level(var(ps[1])), decisionLevel(), ps.size(), ca[cr].size(), level(var(ca[cr][2])));
-      assert( level(var(ca[cr][0])) == level(var(ca[cr][1])));
-      fixedByHardens++; nbfixed++;
-      //    }
-      vv = simplePickAuxiVar();
-    } while (vv != var_Undef);
-    // printf("\n %d %llu\n", decisionLevel(), conflicts);
-  }
-  // printf("harden level %d, fixes %d, UB: %llu, hardens: %d\n", hardenLevel, nbfixed, UB, hardens.size());
-}
-
 void Solver::simplifyQuasiConflictClause(vec<Lit>& out_learnt, int& out_btlevel, int& out_lbd) {
       // Simplify conflict clause:
     int i, j;
@@ -4679,81 +4548,6 @@ void Solver::analyzeQuasiSoftConflict(vec<Lit>& out_learnt, int& out_btlevel, in
     //     usedClauses.shrink(usedClauses.size() - saved);
     // }
     UBconflictFlag=false; softConflictFlag=false; falseVar = var_Undef;
-}
-
-void Solver::hardenFromQuasiSoftConflict(int trailRecord, int nbIsets) {
-  vec<Lit> toHarden;
-  toHarden.clear();
-  for(int i=trailRecord; i< trail.size(); i++) {
-    Var v=var(trail[i]);
-    assigns[v] = l_Undef;
-    if (auxiVar(v)) {
-      assert(v>=0 && v<activityLB.size());
-      activityLB[v] = (1-stepSizeLB)*activityLB[v];
-      insertAuxiVarOrder(v);
-      orderHeapAuxi.decrease(v);
-      if (inConflicts[v] == NON)
-	toHarden.push(trail[i]);
-    }
-  }
-  trail.shrink(trail.size() - trailRecord);
-  qhead = trailRecord;
-  // trail_lim.shrink(1);
-  resetConflicts(nbIsets);
-  bumpConflVars(); //the score of confl vars and non-confl vars is updated differently
-  
-  if (toHarden.size() == 0)
-    return;
-  hardenEnable = true;
-  UBconflictFlag = true; softConflictFlag = true;
-  
-  vec<Lit> learnt_clause;
-  int backtrack_level, lbd;
-  learnt_clause.clear();
-  analyzeQuasiSoftConflict(learnt_clause, backtrack_level, lbd);
-  if (learnt_clause.size() > 0) {
-    Lit p = learnt_clause[0];
-    if (level(var(p)) < decisionLevel()) {
-      cancelUntil(level(var(p)));
-    }
-    assert(level(var(p)) == decisionLevel());
-  }
-  else {
-    cancelUntil(0);
-  }
-  UBconflictFlag = false; softConflictFlag = false;
-  
-  if (learnt_clause.size() == 0) 
-    for(int i=0; i<toHarden.size(); i++) {
-      Lit p = toHarden[i];
-      uncheckedEnqueue(p);
-      fixedByHardens++; fixedByQuasiConfl++;
-    }
-  else {
-    reduceHardens();
-    vec<Lit> ps;
-    ps.clear();
-    ps.push();
-    counter++;
-    for(int i=0; i<learnt_clause.size(); i++) {
-      Lit p = learnt_clause[i];
-      ps.push(p);
-      seen2[var(p)] = counter;
-    }
-    
-    for(int i=0; i<toHarden.size(); i++) {
-      Lit p = toHarden[i];
-      if (!softVarLocked[var(p)]) {
-	ps[0] = p;
-	CRef cr;
-	cr =ca.alloc(ps, true);
-	hardens.push(cr);
-	attachClause(cr);
-	uncheckedEnqueue(p, cr);
-	fixedByHardens++; fixedByQuasiConfl++;
-      }
-    }
-  }
 }
 
 void Solver::fixByLookahead(vec<Lit>& out_learnt) {
@@ -5124,118 +4918,6 @@ void Solver::cancelUntilBeginning(int begnning) {
   falseLits_lim.shrink(falseLits_lim.size());
 
   // unLockedVars_lim.shrink(unLockedVars_lim.size());
-}
-
-void Solver::reduceHardens() {
-  //  sort(hardens, reduceDB_lt(ca));
-
-  // int limit = hardens.size() / 2;
-  int ii, jj;
-
-  // for(ii=0, jj=0; ii<hardens.size(); ii++) {
-  //   Clause& c = ca[hardens[ii]];
-  //   if (!locked(c) &&  (ii < limit || c.activity() == 0))
-  //     removeClause(hardens[ii]);
-  //   else hardens[jj++] = hardens[ii];
-  // }
-  
-  for(ii=0, jj=0; ii<hardens.size(); ii++) {
-    Clause& c = ca[hardens[ii]];
-    if (locked(c))
-      hardens[jj++] = hardens[ii];
-    else removeClause(hardens[ii]); 
-  }
-  hardens.shrink(ii-jj);
-  checkGarbage();
-}
-
-void Solver::harden() {
-  int nbfixed=0;
-  nbHardens++;
-  //  int saved = hardenLevel;
-  hardenLevel = decisionLevel();
-  if (falseLits.size() == 0 || level(var(falseLits.last())) == 0) {
-    // if (decisionLevel() != 0) {
-    //   int nbToHarden=0;
-    //   for(int i=0; i<allSoftLits.size(); i++) {
-    // 	Lit p = allSoftLits[i];
-    // 	if (value(p) == l_Undef)
-    // 	  nbToHarden++;
-    //   }
-    //   printf("falseLits %d, level %d, UB %llu, hardenL %d, confl %llu, starts %llu, toH %d\n",
-    // 	     falseLits.size(), decisionLevel(), UB, saved, conflicts, starts, nbToHarden);
-    // }
-    //   assert(decisionLevel() == 0);
-    // printf("nbSoftLits: %d\n", allSoftLits.size());
-    for(int i=0; i<allSoftLits.size(); i++) {
-      Lit p = allSoftLits[i];
-      if (value(p) == l_Undef && !softVarLocked[var(p)]) {
-	uncheckedEnqueue(p); fixedByHardens++;
-      }
-    }
-  }
-  else {
-    // assert(level(var(falseLits.last())) == decisionLevel());
-    assert(UB == falseLits.size() + 1);
-    if (level(var(falseLits.last())) < decisionLevel())
-      for(int i=0; i<allSoftLits.size(); i++) {
-	Lit p = allSoftLits[i];
-	if (value(p) == l_Undef && !softVarLocked[var(p)]) {
-	  cancelUntil(level(var(falseLits.last())));
-	  break;
-	}
-      }
-    reduceHardens();
-    vec<Lit> ps;
-    ps.clear();
-    ps.push();
-    int nbFalseLits=falseLits.size();
-    counter++;
-    for(int i=nbFalseLits-1; i>=0; i--) {
-      Var v=var(falseLits[i]);
-      if (level(v) > 0) {
-	ps.push(falseLits[i]); seen2[v] = counter;
-      }
-    }
-    // for(int i=nbFalseLits-1; i>=0; i--) {
-    //   Var v=var(falseLits[i]);
-    //   if (level(v) > 0 && inConflict[v] != NON) {
-    // 	Var u = unlockReason[v];
-    // 	assert(u != var_Undef);
-    // 	if (level(u) > 0 && seen2[u] < counter) {
-    // 	  seen2[u] = counter;
-    // 	  assert(value(softLits[u]) == l_False);
-    // 	  ps.push(softLits[u]);
-    // 	}
-    //   }
-    // }
-    assert(ps.size() > 1);
-   for(int i=0; i<allSoftLits.size(); i++) {
-      Lit p = allSoftLits[i];
-      if (value(p) == l_Undef && !softVarLocked[var(p)]) {
-	ps[0] = p;
-	CRef cr;
-	// if (inConflict[var(p)] != NON) {
-	//   Var u = unlockReason[var(p)];
-	//   assert(u != var_Undef);
-	//   if (level(u) > 0 && seen2[u] < counter) {
-	//     assert(value(softLits[u]) == l_False);
-	//     ps.push(softLits[u]);
-	//     cr =ca.alloc(ps, true);
-	//     ps.shrink(1);
-	//   }
-	//   else cr =ca.alloc(ps, true);
-	// }
-	// else
-	  cr =ca.alloc(ps, true);
-	hardens.push(cr);
-	attachClause(cr);
-	uncheckedEnqueue(p, cr);
-	fixedByHardens++; nbfixed++;
-      }
-    }
-  }
-  // printf("harden level %d, fixes %d, UB: %llu, hardens: %d\n", hardenLevel, nbfixed, UB, hardens.size());
 }
 
 // void Solver::cleanClausesForNewVars(vec<CRef>& cs) {
