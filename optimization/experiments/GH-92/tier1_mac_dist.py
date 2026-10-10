@@ -14,6 +14,8 @@ expected value. Any mismatch stops immediately (REJECT).
 """
 import argparse, hashlib, json, math, os, platform, statistics, subprocess, sys, time
 from pathlib import Path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import memlimit  # 2 GB per-process cap (PI 2026-10-10)
 
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def loadavg():
@@ -30,14 +32,10 @@ def guard(max_load, wait, log):
         if time.time() - t0 > wait: return None, round(time.time() - t0, 1)
         log.write(json.dumps({'guard_wait': la}) + '\n'); time.sleep(10)
 
-def solve(binary, case, mode, limit, watchdog):
+def solve(binary, case, mode, limit, watchdog, mem_mb=2048):
     cmd = [binary, f'-cpu-lim={limit}', '-' + mode, case]
     t = time.perf_counter()
-    try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=watchdog)
-        rc, out, err = p.returncode, p.stdout, p.stderr
-    except subprocess.TimeoutExpired as e:
-        rc, out, err = 'WATCHDOG', (e.stdout or b'').decode() if isinstance(e.stdout, bytes) else (e.stdout or ''), ''
+    rc, out, err, _peak = memlimit.run(cmd, watchdog, mem_mb)
     return cmd, time.perf_counter() - t, rc, out, err
 
 def expected(case):
@@ -52,6 +50,7 @@ def main():
     ap.add_argument('--modes', nargs='+', default=['no-card', 'card-mto'])
     ap.add_argument('--limit', type=int, default=180); ap.add_argument('--watchdog', type=int, default=195)
     ap.add_argument('--replicate', type=int, default=0)
+    ap.add_argument('--mem-mb', type=int, default=2048)
     ap.add_argument('--max-load', type=float, default=6.0); ap.add_argument('--guard-wait', type=int, default=600)
     a = ap.parse_args()
     out = Path(a.out); (out / 'stdout').mkdir(parents=True, exist_ok=True)
@@ -76,7 +75,7 @@ def main():
         la, waited = guard(a.max_load, a.guard_wait, tel)
         if la is None: stop = f'resource guard: load >= {a.max_load} for {a.guard_wait}s before run {i}'; break
         oc = other_cpu()
-        cmd, wall, rc, so, se = solve(bins[ver], c, m, a.limit, a.watchdog)
+        cmd, wall, rc, so, se = solve(bins[ver], c, m, a.limit, a.watchdog, a.mem_mb)
         la2 = loadavg()
         name = f'{i:04d}.{phase}.{c}.{m}.{rep}.{ver}'
         (out / 'stdout' / (name + '.out')).write_text(so); (out / 'stdout' / (name + '.err')).write_text(se)
