@@ -1,0 +1,182 @@
+{
+ "stopped": null,
+ "n_samples": 48,
+ "finished": "2026-10-10T11:33:08+0800",
+ "binary_sha256_after": {
+  "baseline": "49e37dee170eb6685344aefd25b37bdb1dccc129d640d6802ded25562b51d28f",
+  "candidate": "4a15a105198094768c45433c516ef9f7b81e22fbbf028abbc5daa4d94050d69a"
+ },
+ "input_sha256_after_ok": true,
+ "gate": {
+  "no-card": {
+   "rows": [
+    {
+     "case": "BB_90_8_10",
+     "baseline": [
+      0.09252483400000001,
+      0.08770720799999998,
+      0.09275699999999998
+     ],
+     "candidate": [
+      0.06249504099999997,
+      0.06251758300000004,
+      0.06252091699999995
+     ],
+     "median_b": 0.09252483400000001,
+     "median_c": 0.06251758300000004,
+     "ratio": 0.6756843573477801,
+     "range_envelope": 0.7128367032274014,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": true
+    },
+    {
+     "case": "GB_144_12_8",
+     "baseline": [
+      0.03251037499999998,
+      0.03273779100000018,
+      0.032407708000000035
+     ],
+     "candidate": [
+      0.03229479200000007,
+      0.029544459000000023,
+      0.032542791000000015
+     ],
+     "median_b": 0.03251037499999998,
+     "median_c": 0.03229479200000007,
+     "ratio": 0.9933687938081333,
+     "range_envelope": 1.0041682367663884,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "BB_108_8_10",
+     "baseline": [
+      0.28486016699999994,
+      0.29694729099999995,
+      0.2828999160000003
+     ],
+     "candidate": [
+      0.24062654199999978,
+      0.24055829200000023,
+      0.2427523749999998
+     ],
+     "median_b": 0.28486016699999994,
+     "median_c": 0.24062654199999978,
+     "ratio": 0.844718110412397,
+     "range_envelope": 0.8580857090109547,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": true
+    },
+    {
+     "case": "LP_238_44_6",
+     "baseline": [
+      0.4078030420000003,
+      0.4079228749999997,
+      0.4114752500000005
+     ],
+     "candidate": [
+      0.3176540000000001,
+      0.3145075420000003,
+      0.3100943340000004
+     ],
+     "median_b": 0.4079228749999997,
+     "median_c": 0.3145075420000003,
+     "ratio": 0.7709975617327186,
+     "range_envelope": 0.7789397510183357,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": true
+    }
+   ],
+   "median_ratio_geomean": 0.8131202873913267,
+   "envelope_geomean": 0.8316828907676557,
+   "all_medians_nonworse": true,
+   "numeric_positive": true,
+   "regression_flags": []
+  },
+  "card-mto": {
+   "rows": [
+    {
+     "case": "BB_90_8_10",
+     "baseline": [
+      0.06230366700000001,
+      0.06259120899999993,
+      0.06227891600000002
+     ],
+     "candidate": [
+      0.062455916,
+      0.062833417,
+      0.06244004099999989
+     ],
+     "median_b": 0.06230366700000001,
+     "median_c": 0.062455916,
+     "ratio": 1.0024436603386442,
+     "range_envelope": 1.0089035107804378,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "GB_144_12_8",
+     "baseline": [
+      0.03240741699999994,
+      0.03245362500000004,
+      0.03243737499999999
+     ],
+     "candidate": [
+      0.03137408400000008,
+      0.03252420899999997,
+      0.03254058300000007
+     ],
+     "median_b": 0.03243737499999999,
+     "median_c": 0.03252420899999997,
+     "ratio": 1.0026769737070271,
+     "range_envelope": 1.0041091210694184,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": false
+    },
+    {
+     "case": "BB_108_8_10",
+     "baseline": [
+      0.39251166599999987,
+      0.38637920800000014,
+      0.38560308300000035
+     ],
+     "candidate": [
+      0.13491566700000002,
+      0.13567787499999984,
+      0.13477558400000067
+     ],
+     "median_b": 0.38637920800000014,
+     "median_c": 0.13491566700000002,
+     "ratio": 0.3491794180601974,
+     "range_envelope": 0.351858895796224,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": true
+    },
+    {
+     "case": "LP_238_44_6",
+     "baseline": [
+      0.3931892499999998,
+      0.38890591700000066,
+      0.38801833299999977
+     ],
+     "candidate": [
+      0.24303341700000036,
+      0.2428219580000004,
+      0.2514243750000009
+     ],
+     "median_b": 0.38890591700000066,
+     "median_c": 0.24303341700000036,
+     "ratio": 0.624915709369369,
+     "range_envelope": 0.6479703498958156,
+     "nonoverlapping_regression": false,
+     "nonoverlapping_improvement": true
+    }
+   ],
+   "median_ratio_geomean": 0.6843413364205463,
+   "envelope_geomean": 0.6932478855719744,
+   "all_medians_nonworse": false,
+   "numeric_positive": false,
+   "regression_flags": []
+  }
+ }
+}
