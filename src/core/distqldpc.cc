@@ -667,11 +667,8 @@ struct HalfSymInfo {
     double seconds;
 };
 
+/* Shared by GH-85 and GH-87 (GH-92 dedup): drops exact duplicates of earlier candidates. */
 static void add_candidate(std::vector<SymCandidate>& out, const std::string& desc, const std::vector<int>& perm) {
-    bool ident = true;
-    for (size_t i = 0; i < perm.size() && ident; i++)
-        if (perm[i] != (int)i) ident = false;
-    if (ident) return;
     for (size_t k = 0; k < out.size(); k++)
         if (out[k].perm == perm) return;
     SymCandidate c;
@@ -680,11 +677,17 @@ static void add_candidate(std::vector<SymCandidate>& out, const std::string& des
     out.push_back(c);
 }
 
-/* GH-75 candidate family (generic index maps; none assumed, all verified). */
-static std::vector<SymCandidate> symmetry_candidates(int n) {
+/* GH-75 candidate family (generic index maps; none assumed, all verified), shared by GH-85 and
+ * GH-87 (GH-92 dedup). The identity is seeded first so that family members equal to it or to an
+ * earlier member are dropped; with_identity=false (GH-85 half automorphisms) then removes it,
+ * which gives exactly GH-85's list (identity and duplicates rejected, same order);
+ * with_identity=true (GH-87 dual maps, rs Hz = rs Hx type codes) keeps it first, as in GH-87. */
+static std::vector<SymCandidate> candidate_family(int n, bool with_identity) {
     std::vector<SymCandidate> out;
     char buf[96];
     std::vector<int> p((size_t)n);
+    for (int i = 0; i < n; i++) p[i] = i;
+    add_candidate(out, "identity", p);
     for (int L = 2; L <= n; L++) {
         if (n % L) continue;
         const int B = n / L;
@@ -733,6 +736,7 @@ static std::vector<SymCandidate> symmetry_candidates(int n) {
             add_candidate(out, buf, p);
         }
     }
+    if (!with_identity) out.erase(out.begin());
     return out;
 }
 
@@ -758,7 +762,7 @@ static HalfSymInfo find_half_symmetry(const Matrix& Hpar, const Matrix& Glog)
     const Gf2Basis bH = basis_of(sH, n), bHG = basis_of(sHG, n);
     std::vector<int> par((size_t)n);
     for (int i = 0; i < n; i++) par[i] = i;
-    const std::vector<SymCandidate> cands = symmetry_candidates(n);
+    const std::vector<SymCandidate> cands = candidate_family(n, false);
     info.candidates = (int)cands.size();
     for (size_t k = 0; k < cands.size(); k++) {
         const std::vector<int>& pi = cands[k].perm;
@@ -923,6 +927,10 @@ struct CssHalf {
     int n;
     int builds;           /* number of solver builds (1 unless the rebuild guard fired) */
     std::vector<int> sb_orbit;  /* GH-85: verified per-half orbits (empty: no clause) */
+    /* GH-102 work counters (informational, printed only with -dualshare-stats; value-initialised to 0) */
+    uint64_t probes;      /* incProbe calls on this half */
+    uint64_t conflicts;   /* engine conflicts spent in those calls */
+    uint64_t own_lb;      /* lb this half would hold without dual-map sharing (skip accounting only) */
 };
 
 /* GH-76: independent check of a reported half weight against the solver's witness model:
@@ -982,7 +990,9 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
         SimpSolver& S = *h.S;
         S.setBoundsPipe(pipe_w);
         S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
+        const uint64_t c0 = S.conflicts;
         r = S.incProbe(cap, first_only, h.lb, value);
+        h.probes++; h.conflicts += S.conflicts - c0;   /* GH-102 work counters */
         S.setBoundsPipe(-1);
         if (r != Solver::INC_REBUILD || attempt > 0) break;
         /* a raise after the half's first solution: never reuse that state (see Solver::incProbe) */
@@ -1013,13 +1023,111 @@ static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
     if (len > 0) (void)write(pipe_w, buf, (size_t)len);
 }
 
+/* ---- GH-87: dual-half elimination (extension of GH-73; idea: unselected proposal GH-78-B).
+ * X half F_X = ker(Hz) \ ker([Hz;Gx]), Z half F_Z = ker(Hx) \ ker([Hx;Gz]). If a qubit permutation
+ * pi satisfies pi(rs Hz) = rs Hx and pi(rs [Hz;Gx]) = rs [Hx;Gz], then (dot products are permutation
+ * invariant) pi(ker Hz) = ker Hx and pi(ker [Hz;Gx]) = ker [Hx;Gz], so v |-> pi v is a weight-
+ * preserving bijection F_X -> F_Z and dX = dZ: the X half alone yields d, and its proven LB/UB are
+ * global. Equalities are verified over GF(2): equal ranks, and every permuted source row reduces to
+ * zero in an RREF basis of the target space (a permutation preserves rank). Candidates: identity,
+ * then the generic GH-75 family (none assumed, all verified). GH-92: the GF(2) basis, row supports
+ * and the candidate family are the single shared copies defined in the GH-85 block above
+ * (Gf2Basis, append_supports, basis_of, permuted_rows_in, candidate_family(n, true)). */
+struct DualMapInfo {
+    int n, rank_hz, rank_hx, rank_hzgx, rank_hxgz, candidates;
+    std::vector<std::string> maps;   /* verified dual maps, in candidate order (first = used) */
+    double seconds;
+};
+
+/* Verified XZ-dual maps of the two CSS half instances. all=false stops at the first one. */
+static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool all)
+{
+    const double t0 = cpuTime();
+    DualMapInfo info;
+    const int n = Hx.cols;
+    info.n = n;
+    RowSupports sHz, sHzGx, sHx, sHxGz;
+    append_supports(sHz, Hz);
+    append_supports(sHzGx, Hz);
+    append_supports(sHzGx, Gx);
+    append_supports(sHx, Hx);
+    append_supports(sHxGz, Hx);
+    append_supports(sHxGz, Gz);
+    const Gf2Basis bHx = basis_of(sHx, n), bHxGz = basis_of(sHxGz, n);
+    info.rank_hx = bHx.rank();
+    info.rank_hxgz = bHxGz.rank();
+    info.rank_hz = basis_of(sHz, n).rank();
+    info.rank_hzgx = basis_of(sHzGx, n).rank();
+    info.candidates = 0;
+    if (info.rank_hz == info.rank_hx && info.rank_hzgx == info.rank_hxgz) {
+        const std::vector<SymCandidate> cands = candidate_family(n, true);
+        info.candidates = (int)cands.size();
+        for (size_t k = 0; k < cands.size(); k++) {
+            const std::vector<int>& pi = cands[k].perm;
+            if (!permuted_rows_in(sHz, pi, bHx) || !permuted_rows_in(sHzGx, pi, bHxGz)) continue;
+            info.maps.push_back(cands[k].desc);
+            if (!all) break;
+        }
+    }
+    info.seconds = cpuTime() - t0;
+    return info;
+}
+
+/* ---- GH-102: dual-map bound sharing (GH-89 + GH-94's verified dual-map detection; issue #102).
+ * A verified XZ-dual map pi (find_dual_maps above, exactly GH-87/GH-94's detection) is a weight-preserving
+ * bijection F_X -> F_Z, so for every w one half has a solution of weight <= w iff the other has; with GH-85's
+ * orbit clauses (plain per-half automorphisms only, existence-at-weight preserving) the same holds for the two
+ * symmetry-broken half instances. Every proven half bound is therefore a bound of both halves: instead of
+ * eliminating the Z half (GH-94), both halves stay in GH-89's interleaved global search and after every probe
+ * the larger proven half LB is written into both halves (global LB = max of the half LBs). GH-89's own skip
+ * tests then drop every probe whose NONE the other half already proved (Phase 1: lb > m; Phase 2: lb >= U);
+ * UBs stay global. No probe kind and no cap is added, so each half's cap sequence is a subsequence of GH-89's
+ * and GH-76's incremental contract (raises only before a half's first solution) is respected; the shared lb
+ * enters the engine only as knownLB (a true lower bound of that instance's optimum). GH-94's A1 is not needed
+ * (no half is solved alone under a map). Variant B (-dualshare-b): only the X half (leader) runs probes that may
+ * end NONE; after Phase 1 the Z half (follower) only runs cap-U first-only probes, which must succeed because
+ * pi maps the incumbent into it (a follower NONE contradicts the map: no answer). A shared lb above U would
+ * contradict the map as well: no answer (RESULT -1), never a value. -no-dualshare = GH-89 exactly. */
+enum { DUALSHARE_OFF = 0, DUALSHARE_A = 1, DUALSHARE_B = 2 };
+
+/* GH-102: writes max(lb_X, lb_Z) into both halves; false if it exceeds the global UB (contradiction). */
+static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
+    if (!hs[0].exists || !hs[1].exists) return true;
+    const uint64_t L = hs[0].lb > hs[1].lb ? hs[0].lb : hs[1].lb;
+    hs[0].lb = hs[1].lb = L;
+    if (L > U) {
+        printf("c dualshare: inconsistent shared bound (lb %llu > UB %llu): no answer\n",
+               (unsigned long long)L, (unsigned long long)U);
+        return false;
+    }
+    return true;
+}
+
 static int min_distance_css_interleaved(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
-    int verb, int pipe_w, int card_mode, bool symbreak)
+    int verb, int pipe_w, int card_mode, bool symbreak, int dualshare = DUALSHARE_OFF, bool stats = false)
 {
     if (Hx.cols != Hz.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols) die("matrix column mismatch");
     const uint64_t n = (uint64_t)Hx.cols, INF = UINT64_MAX;
     CssHalf hs[2] = { {"X", &Hz, &Gx, Gx.rows > 0, 1, INF, NULL, 0, 0}, {"Z", &Hx, &Gz, Gz.rows > 0, 1, INF, NULL, 0, 0} };
+    hs[0].own_lb = hs[1].own_lb = 1;
+    /* GH-102: dual-map detection (GH-94's code path) before the per-half symmetry detection; both halves stay. */
+    bool share = false;
+    if (dualshare != DUALSHARE_OFF && hs[0].exists && hs[1].exists) {
+        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, false);
+        share = !dm.maps.empty();
+        if (verb > 0) {
+            if (share)
+                printf("c dualshare: dual map '%s' verified (rank Hz=Hx=%d, [Hz;Gx]=[Hx;Gz]=%d, cpu %.3fs): dX = dZ, both halves kept, lower bounds shared (variant %s)\n",
+                       dm.maps[0].c_str(), dm.rank_hx, dm.rank_hxgz, dm.seconds, dualshare == DUALSHARE_B ? "B" : "A");
+            else
+                printf("c dualshare: no dual map (ranks Hz %d Hx %d [Hz;Gx] %d [Hx;Gz] %d, %d candidates, cpu %.3fs): both halves, no sharing\n",
+                       dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.seconds);
+            fflush(stdout);
+        }
+    }
+    const bool lead_only = share && dualshare == DUALSHARE_B;
+    uint64_t implied = 0;   /* GH-102: probes GH-89 would issue whose NONE the other half already proved */
     /* GH-85: per-half verified orbits, detected once (before any half solver exists); GH-89: they enter the
      * half's persistent solver at construction (css_half_build). */
     for (int k = 0; symbreak && k < 2; k++) {
@@ -1037,11 +1145,20 @@ static int min_distance_css_interleaved(
     for (uint64_t m = 1; ; m = (m >= n ? n : 2 * m)) {
         for (int k = 0; k < 2; k++) {
             CssHalf& h = hs[k];
-            if (!h.exists || h.ub != INF || h.lb > m) continue;
+            if (!h.exists || h.ub != INF || h.lb > m) {
+                if (share && h.exists && h.ub == INF && h.lb > m && h.own_lb <= m) {   /* GH-102 */
+                    implied++;
+                    h.own_lb = m + 1;   /* the NONE GH-89 would have proven here */
+                    if (verb > 0) printf("c dualshare: %s half cap %llu skipped (NONE implied, shared lb %llu)\n",
+                                         h.tag, (unsigned long long)m, (unsigned long long)h.lb);
+                }
+                continue;
+            }
             HalfStatus st = run_css_half(h, m, true, verb, card_mode, pipe_w, INF, U, true, v);
             if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
-            else if (st == HALF_NONE) h.lb = m + 1;
+            else if (st == HALF_NONE) h.lb = h.own_lb = m + 1;
             else if (st == HALF_UNKNOWN) { pipe_write_result(pipe_w, -1, false); return -1; }
+            if (share && !dualshare_sync(hs, U)) { pipe_write_result(pipe_w, -1, false); return -1; }
         }
         uint64_t glb = INF;
         bool any_ub = false, any = false;
@@ -1050,23 +1167,58 @@ static int min_distance_css_interleaved(
         if (glb != INF && glb > lastLB) { lastLB = glb; pipe_bound(pipe_w, "LB", glb); }
         if (any_ub || m >= n) break;
     }
+    bool done[2] = { !hs[0].exists, !hs[1].exists };
+    if (lead_only) {
+        /* GH-102 variant B: the leader (X) runs every probe that may end NONE (cap U-1, first-only); the follower
+         * (Z) only seeks a solution of weight <= U when its incumbent is worse (pi maps the incumbent into it, so
+         * the probe must succeed and may improve U). Leader NONE at cap U-1: lb = U for both halves (shared). */
+        CssHalf& X = hs[0];
+        CssHalf& Z = hs[1];
+        while (X.lb < U) {
+            HalfStatus st = run_css_half(X, U - 1, true, verb, card_mode, pipe_w, U, U, false, v);
+            if (st == HALF_FOUND) { X.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
+            else if (st == HALF_NONE || st == HALF_INFEASIBLE) { X.lb = X.own_lb = (X.ub < U ? X.ub : U); }
+            else { pipe_write_result(pipe_w, -1, false); return -1; }
+            if (!dualshare_sync(hs, U)) { pipe_write_result(pipe_w, -1, false); return -1; }
+            if (X.lb >= U) break;
+            if (Z.exists && Z.ub > U) {
+                st = run_css_half(Z, U, true, verb, card_mode, pipe_w, U, U, false, v);
+                if (st == HALF_FOUND) { Z.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
+                else {
+                    if (st == HALF_NONE || st == HALF_INFEASIBLE)
+                        printf("c dualshare: follower Z half has no solution of weight <= UB %llu: contradicts the dual map, no answer\n",
+                               (unsigned long long)U);
+                    pipe_write_result(pipe_w, -1, false); return -1;
+                }
+            }
+            if (lastLB < X.lb) { lastLB = X.lb; pipe_bound(pipe_w, "LB", lastLB); }
+        }
+        done[0] = done[1] = true;
+    }
     /* Phase 2a: tie-breaking probes for a logical of weight <= U-1 (stop at first), alternating
      * halves while their incumbents are equal.
      * FOUND improves the global UB; NONE proves the half cannot beat U, which finishes it. */
-    bool done[2] = { !hs[0].exists, !hs[1].exists };
     uint64_t lastU = INF;
     /* Rounds while the two incumbents tie (no basis for ordering); each round probes both halves. */
     while (!done[0] && !done[1] && hs[0].ub == hs[1].ub) {
         for (int k = 0; k < 2; k++) {
             CssHalf& h = hs[k];
             if (done[k]) continue;
-            if (h.lb >= U) { done[k] = true; continue; }
+            if (h.lb >= U) {
+                if (share && h.own_lb < U) {   /* GH-102 */
+                    implied++;
+                    if (verb > 0) printf("c dualshare: %s half cap %llu skipped (NONE implied, shared lb %llu)\n",
+                                         h.tag, (unsigned long long)(U - 1), (unsigned long long)h.lb);
+                }
+                done[k] = true; continue;
+            }
             uint64_t lbc = U;
-            if (!done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
+            if (!share && !done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
             HalfStatus st = run_css_half(h, U - 1, true, verb, card_mode, pipe_w, lbc, U, false, v);
             if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
-            else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = (h.ub < U ? h.ub : U); done[k] = true; }
+            else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = h.own_lb = (h.ub < U ? h.ub : U); done[k] = true; }
             else { pipe_write_result(pipe_w, -1, false); return -1; }
+            if (share && !dualshare_sync(hs, U)) { pipe_write_result(pipe_w, -1, false); return -1; }
         }
     }
     (void)lastU;
@@ -1078,19 +1230,33 @@ static int min_distance_css_interleaved(
             if (!done[j] && (k < 0 || hs[j].ub < hs[k].ub)) k = j;
         if (k < 0) break;
         CssHalf& h = hs[k];
-        if (h.lb >= U) { done[k] = true; continue; }
+        if (h.lb >= U) {
+            if (share && h.own_lb < U) {   /* GH-102 */
+                implied++;
+                if (verb > 0) printf("c dualshare: %s half optimize cap %llu skipped (lb %llu = UB implied, shared)\n",
+                                     h.tag, (unsigned long long)U, (unsigned long long)h.lb);
+            }
+            done[k] = true; continue;
+        }
         uint64_t lbc = U;
-        if (!done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
+        if (!share && !done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
         HalfStatus st = run_css_half(h, U, false, verb, card_mode, pipe_w, lbc, U, false, v);
-        if (st == HALF_OPT) { h.lb = h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
-        else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = U; }
+        if (st == HALF_OPT) { h.lb = h.ub = h.own_lb = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
+        else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = h.own_lb = U; }
         else { pipe_write_result(pipe_w, -1, false); return -1; }
         done[k] = true;
+        if (share && !dualshare_sync(hs, U)) { pipe_write_result(pipe_w, -1, false); return -1; }
         uint64_t glb = U;
         for (int j = 0; j < 2; j++) if (!done[j] && hs[j].lb < glb) glb = hs[j].lb;
         if (glb > lastLB) { lastLB = glb; pipe_bound(pipe_w, "LB", glb); }
     }
     if (verb > 0) printf("c CSS incremental: d = %llu (solver builds X %d, Z %d)\n", (unsigned long long)U, hs[0].builds, hs[1].builds);
+    if (stats)
+        printf("c dualshare stats: mode %s map %d probes X %llu Z %llu conflicts X %llu Z %llu implied_skips %llu d %llu\n",
+               dualshare == DUALSHARE_OFF ? "off" : dualshare == DUALSHARE_B ? "B" : "A", (int)share,
+               (unsigned long long)hs[0].probes, (unsigned long long)hs[1].probes,
+               (unsigned long long)hs[0].conflicts, (unsigned long long)hs[1].conflicts,
+               (unsigned long long)implied, (unsigned long long)U);
     pipe_bound(pipe_w, "LB", U);
     pipe_write_result(pipe_w, (int)U, true);
     return (int)U;
@@ -1098,6 +1264,8 @@ static int min_distance_css_interleaved(
 
 static bool g_css_joint = false;   /* -joint: original symplectic joint encoding */
 static bool g_half_symbreak = true; /* GH-85: per-half orbit clauses in the split path; -no-symbreak disables */
+static int g_dualshare = DUALSHARE_A; /* GH-102: share half bounds under a verified XZ-dual map; -no-dualshare = GH-89, -dualshare-b = variant B */
+static bool g_dualshare_stats = false; /* GH-102: -dualshare-stats prints one work-count line (with -v) */
 
 static int parse_roundingsat_cost(const std::string& out)
 {
@@ -1313,7 +1481,7 @@ static int solve_in_child_fork(
             d = min_distance_stabilizer_roundingsat(
                 Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
         } else if (!g_css_joint) {
-            d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode, g_half_symbreak);
+            d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode, g_half_symbreak, g_dualshare, g_dualshare_stats);
         } else {
             d = min_distance_stabilizer_maxsat(
                 Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
@@ -1424,6 +1592,7 @@ int main(int argc, char** argv) {
     bool dump_only = false;
     bool native_parity_opb = false;
     bool symbreak_report = false;  /* GH-85 */
+    bool dualskip_report = false;  /* GH-87 */
 
     for (int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "-cpu-lim=", 9))
@@ -1461,6 +1630,14 @@ int main(int argc, char** argv) {
             g_half_symbreak = false;
         else if (!strcmp(argv[i], "-symbreak-report"))
             symbreak_report = true;
+        else if (!strcmp(argv[i], "-no-dualshare"))
+            g_dualshare = DUALSHARE_OFF;
+        else if (!strcmp(argv[i], "-dualshare-b"))
+            g_dualshare = DUALSHARE_B;
+        else if (!strcmp(argv[i], "-dualshare-stats"))
+            g_dualshare_stats = true;
+        else if (!strcmp(argv[i], "-dualskip-report"))
+            dualskip_report = true;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
@@ -1474,6 +1651,11 @@ int main(int argc, char** argv) {
             printf("  Symmetry (split only): default adds optimum-preserving orbit clauses per CSS half from\n");
             printf("            verified half automorphisms; -no-symbreak disables them;\n");
             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
+            printf("  Dual halves (split only): when a verified XZ-dual qubit permutation proves dX = dZ, both\n");
+            printf("            halves stay and share proven lower bounds (implied NONE probes skipped);\n");
+            printf("            -no-dualshare disables (GH-89); -dualshare-b: only the X half runs refutation\n");
+            printf("            probes, the Z half only solution-finding ones; -dualshare-stats prints work\n");
+            printf("            counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -1506,6 +1688,22 @@ int main(int argc, char** argv) {
         else printf("c symbreak X: no logical rows (half absent)\n");
         if (Gz.rows > 0) print_half_symmetry(find_half_symmetry(Hx, Gz), "c symbreak Z:", true);
         else printf("c symbreak Z: no logical rows (half absent)\n");
+        if (!dualskip_report) return 0;
+    }
+
+    if (dualskip_report) {   /* GH-87 */
+        if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
+            die("matrix column mismatch");
+        printf("c dualskip report: %s\n", prefix);
+        if (Gx.rows == 0 || Gz.rows == 0) {
+            printf("c dualskip: a half has no logical rows (Gx %d, Gz %d): not applicable\n", Gx.rows, Gz.rows);
+            return 0;
+        }
+        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, true);
+        printf("c dualskip: n=%d rank Hz=%d Hx=%d [Hz;Gx]=%d [Hx;Gz]=%d candidates=%d verified_maps=%zu detect_cpu=%.3fs used=%s\n",
+               dm.n, dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.maps.size(), dm.seconds,
+               dm.maps.empty() ? "none" : dm.maps[0].c_str());
+        for (size_t k = 0; k < dm.maps.size(); k++) printf("c dualskip map: %s\n", dm.maps[k].c_str());
         return 0;
     }
 
