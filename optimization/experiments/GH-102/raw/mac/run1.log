@@ -1,0 +1,67 @@
+start Sat Oct 10 23:03:41 CST 2026
+e1801a58a33db97c638fbdd0ad4235928956c3474a6225caed6cd0fca362d4e1  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh102/bin/cand
+fb6846d0613b187a881e08071729e36629bc10775a4aad34e3d5df34d3d1ff37  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh102/bin/gh89
+4a15a105198094768c45433c516ef9f7b81e22fbbf028abbc5daa4d94050d69a  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh102/bin/gh94
+6bdcaa2523cdcbeae5164cedbf54c9ac0f9e64f9a91c3da7ef4b804df393db9d  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh102/bin/main7e
+3f2fbc4215e17c4a5b5e62d1f10f99619bdf6efaea7881acb46157effe78c9dc  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh102/bin/base72
+e1801a58a33db97c638fbdd0ad4235928956c3474a6225caed6cd0fca362d4e1  bin/distqldpc
+smoke rc=0 peak_rss_kb=0 DistQLDPC smoke validation passed
+partition_py rc=0 peak_rss_kb=0 Partition adjacent oracles passed: 11 total inputs, 1024 assignments each.
+oracle_build=0
+partition_oracle rc=0 peak_rss_kb=0 GH58_PARTITION_ORACLE_PASS cases=80 no_conflict=1
+test_incremental_probes build=0
+test_incremental_probes rc=0 peak_rss_kb=5952 GH76_INCREMENTAL_PASS instances=20000 unsat=467 probes=91872 found=20469 opt=20066 none=51183 rebuilds=154 failures=0
+test_incremental_symbreak build=0
+test_incremental_symbreak rc=0 peak_rss_kb=146672 GH89_SYMBREAK_INC_PASS instances=20000 unsat=5165 sym(none/unit/chain)=4807/12134/3059 probes=106247 found=29617 opt=11935 none=54525 infeasible=10170 rebuilds=308 failures=0
+test_incremental_dualshare build=0
+test_incremental_dualshare rc=0 peak_rss_kb=8048 GH102_DUALSHARE_PASS instances=20000 skipped=3852 runs=64592 planted_family=7668 planted_random=1943 near_miss=4082 independent=2455 detected=8600 near_miss_detected=614 dX!=dZ=2049 detected_with_xhalf_orbits=3158 detected_with_both_half_orbits=2737 d>=3=3131 shared_runs=25800 shared_runs_with_implied_skips=9240 implied_skips=24932 b_follower_probes=8617 shared_descents=128 failures=0
+mutants:
+m1 rc=1 failures=25
+m1s rc=1 failures=24
+m2 rc=1 failures=21
+m3 rc=1 failures=2
+rc=0 peak_rss_kb=53296
+verify_half_autos ALL_PASS
+rc=0 peak_rss_kb=45904
+check_dual_maps ALL_PASS
+reports vs gh94 (cpu masked): identical=100 differ=0
+BB_108_8_10 no-card noshare | mode off map 0 probes X 7 Z 7 conflicts X 4438 Z 3825 implied_skips 0 d 10 | probes: 7X 7Z | o=10
+BB_108_8_10 no-card A | mode A map 1 probes X 5 Z 2 conflicts X 2535 Z 1877 implied_skips 5 d 10 | probes: 5X 2Z | o=10
+BB_108_8_10 no-card B | mode B map 1 probes X 7 Z 2 conflicts X 7656 Z 835 implied_skips 4 d 10 | probes: 7X 2Z | o=10
+BB_108_8_10 card-mto noshare | mode off map 0 probes X 7 Z 7 conflicts X 4456 Z 4630 implied_skips 0 d 10 | probes: 7X 7Z | o=10
+BB_108_8_10 card-mto A | mode A map 1 probes X 5 Z 2 conflicts X 2399 Z 2973 implied_skips 5 d 10 | probes: 5X 2Z | o=10
+BB_108_8_10 card-mto B | mode B map 1 probes X 7 Z 2 conflicts X 8002 Z 1098 implied_skips 4 d 10 | probes: 7X 2Z | o=10
+BB_90_8_10 no-card noshare | mode off map 0 probes X 7 Z 7 conflicts X 2892 Z 3545 implied_skips 0 d 10 | probes: 7X 7Z | o=10
+BB_90_8_10 no-card A | mode A map 1 probes X 5 Z 2 conflicts X 1590 Z 1855 implied_skips 5 d 10 | probes: 5X 2Z | o=10
+BB_90_8_10 no-card B | mode B map 1 probes X 6 Z 1 conflicts X 2806 Z 1 implied_skips 4 d 10 | probes: 6X 1Z | o=10
+BB_90_8_10 card-mto noshare | mode off map 0 probes X 7 Z 7 conflicts X 3133 Z 3781 implied_skips 0 d 10 | probes: 7X 7Z | o=10
+BB_90_8_10 card-mto A | mode A map 1 probes X 5 Z 2 conflicts X 1737 Z 1964 implied_skips 5 d 10 | probes: 5X 2Z | o=10
+BB_90_8_10 card-mto B | mode B map 1 probes X 6 Z 1 conflicts X 2984 Z 20 implied_skips 4 d 10 | probes: 6X 1Z | o=10
+GB_144_12_8 no-card noshare | mode off map 0 probes X 5 Z 5 conflicts X 1248 Z 3178 implied_skips 0 d 8 | probes: 5X 5Z | o=8
+GB_144_12_8 no-card A | mode A map 1 probes X 5 Z 1 conflicts X 1248 Z 2102 implied_skips 4 d 8 | probes: 5X 1Z | o=8
+GB_144_12_8 no-card B | mode B map 1 probes X 5 Z 1 conflicts X 1248 Z 2102 implied_skips 3 d 8 | probes: 5X 1Z | o=8
+GB_144_12_8 card-mto noshare | mode off map 0 probes X 5 Z 5 conflicts X 1285 Z 1850 implied_skips 0 d 8 | probes: 5X 5Z | o=8
+GB_144_12_8 card-mto A | mode A map 1 probes X 5 Z 1 conflicts X 1285 Z 1348 implied_skips 4 d 8 | probes: 5X 1Z | o=8
+GB_144_12_8 card-mto B | mode B map 1 probes X 5 Z 1 conflicts X 1285 Z 1348 implied_skips 3 d 8 | probes: 5X 1Z | o=8
+BB_90_8_10 no-card noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=6 c dualshare: dual map 'halfswap-inverse  skips=5 builds=[solver builds X 1, Z 1)] o: gh89=10 gh94=10 base72=10 joint=10 cand=10 candB=10
+BB_90_8_10 card-mto noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=6 c dualshare: dual map 'halfswap-inverse  skips=5 builds=[solver builds X 1, Z 1)] o: gh89=10 gh94=10 base72=10 joint=10 cand=10 candB=10
+BB_90_8_10 default noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=6 c dualshare: dual map 'halfswap-inverse  skips=5 builds=[solver builds X 1, Z 1)] o: gh89=10 gh94=10 base72=10 joint=10 cand=10 candB=10
+GB_144_12_8 no-card noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=5 c dualshare: dual map 'halfswap-inverse  skips=4 builds=[solver builds X 1, Z 1)] o: gh89=8 gh94=8 base72=8 joint=8 cand=8 candB=8
+GB_144_12_8 card-mto noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=5 c dualshare: dual map 'halfswap-inverse  skips=4 builds=[solver builds X 1, Z 1)] o: gh89=8 gh94=8 base72=8 joint=8 cand=8 candB=8
+GB_144_12_8 default noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=5 c dualshare: dual map 'halfswap-inverse  skips=4 builds=[solver builds X 1, Z 1)] o: gh89=8 gh94=8 base72=8 joint=8 cand=8 candB=8
+BB_108_8_10 no-card noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=6 c dualshare: dual map 'halfswap-inverse  skips=5 builds=[solver builds X 1, Z 1)] o: gh89=10 gh94=10 base72=10 joint=10 cand=10 candB=10
+BB_108_8_10 card-mto noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=6 c dualshare: dual map 'halfswap-inverse  skips=5 builds=[solver builds X 1, Z 1)] o: gh89=10 gh94=10 base72=10 joint=10 cand=10 candB=10
+BB_108_8_10 default noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=6 c dualshare: dual map 'halfswap-inverse  skips=5 builds=[solver builds X 1, Z 1)] o: gh89=10 gh94=10 base72=10 joint=10 cand=10 candB=10
+LP_238_44_6 no-card noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=IDENTICAL_MOD_DUALSHARE_LINE nshare=1 c dualshare: no dual map (ranks Hz 97 Hx skips=0 builds=[solver builds X 1, Z 1)] o: gh89=6 gh94=6 base72=6 joint=6 cand=6 candB=6
+LP_238_44_6 card-mto noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=IDENTICAL_MOD_DUALSHARE_LINE nshare=1 c dualshare: no dual map (ranks Hz 97 Hx skips=0 builds=[solver builds X 1, Z 1)] o: gh89=6 gh94=6 base72=6 joint=6 cand=6 candB=6
+LP_238_44_6 default noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=IDENTICAL_MOD_DUALSHARE_LINE nshare=1 c dualshare: no dual map (ranks Hz 97 Hx skips=0 builds=[solver builds X 1, Z 1)] o: gh89=6 gh94=6 base72=6 joint=6 cand=6 candB=6
+LP_34_20_2 no-card noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=IDENTICAL_MOD_DUALSHARE_LINE nshare=1 c dualshare: no dual map (ranks Hz 7 Hx  skips=0 builds=[solver builds X 1, Z 1)] o: gh89=2 gh94=2 base72=2 joint=2 cand=2 candB=2
+LP_34_20_2 card-mto noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=IDENTICAL_MOD_DUALSHARE_LINE nshare=1 c dualshare: no dual map (ranks Hz 7 Hx  skips=0 builds=[solver builds X 1, Z 1)] o: gh89=2 gh94=2 base72=2 joint=2 cand=2 candB=2
+LP_34_20_2 default noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=IDENTICAL_MOD_DUALSHARE_LINE nshare=1 c dualshare: no dual map (ranks Hz 7 Hx  skips=0 builds=[solver builds X 1, Z 1)] o: gh89=2 gh94=2 base72=2 joint=2 cand=2 candB=2
+BB_72_12_6 no-card noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=5 c dualshare: dual map 'halfswap-inverse  skips=4 builds=[solver builds X 1, Z 1)] o: gh89=6 gh94=6 base72=6 joint=6 cand=6 candB=6
+BB_72_12_6 card-mto noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=5 c dualshare: dual map 'halfswap-inverse  skips=4 builds=[solver builds X 1, Z 1)] o: gh89=6 gh94=6 base72=6 joint=6 cand=6 candB=6
+BB_72_12_6 default noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=5 c dualshare: dual map 'halfswap-inverse  skips=4 builds=[solver builds X 1, Z 1)] o: gh89=6 gh94=6 base72=6 joint=6 cand=6 candB=6
+TN_36_8_4 no-card noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=4 c dualshare: dual map 'blockshift L=2' v skips=3 builds=[solver builds X 1, Z 1)] o: gh89=4 gh94=4 base72=4 joint=4 cand=4 candB=4
+TN_36_8_4 card-mto noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=4 c dualshare: dual map 'blockshift L=2' v skips=3 builds=[solver builds X 1, Z 1)] o: gh89=4 gh94=4 base72=4 joint=4 cand=4 candB=4
+TN_36_8_4 default noshare-vs-gh89=IDENTICAL joint-vs-main7e-joint=IDENTICAL joint-vs-72d1fe1=IDENTICAL default-vs-gh89=DIFFER nshare=4 c dualshare: dual map 'blockshift L=2' v skips=3 builds=[solver builds X 1, Z 1)] o: gh89=4 gh94=4 base72=4 joint=4 cand=4 candB=4
+MAC_DONE Sat Oct 10 23:07:25 CST 2026

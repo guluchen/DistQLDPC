@@ -1,0 +1,12 @@
+m1 (share without verified map) full 2000-instance run, GH102_SEMANTIC_ONLY=1, failure cap lifted (fails > 100000); classification:
+runs failing 360; wrong final value reported as OPTIMAL 35; runs refused by the consistency guard (RESULT -1) 325
+ 201 GH102_DUALSHARE_FAIL cfg=2 emitted LB > d
+ 193 GH102_DUALSHARE_FAIL cfg=1 emitted LB > d
+ 191 GH102_DUALSHARE_FAIL cfg=0 emitted LB > d
+ 122 GH102_DUALSHARE_FAIL cfg=2 d != min(dX, dZ) by enumeration
+ 120 GH102_DUALSHARE_FAIL cfg=1 d != min(dX, dZ) by enumeration
+ 118 GH102_DUALSHARE_FAIL cfg=0 d != min(dX, dZ) by enumeration
+ 111 GH102_DUALSHARE_FAIL cfg=2 no RESULT d OPTIMAL
+ 107 GH102_DUALSHARE_FAIL cfg=1 no RESULT d OPTIMAL
+ 107 GH102_DUALSHARE_FAIL cfg=0 no RESULT d OPTIMAL
+   1 GH102_DUALSHARE_FAIL instances=2000 skipped=392 runs=6432 planted_family=765 planted_random=204 near_miss=391 independent=248 detected=861 near_miss_detected=61 dX!=dZ=205 detected_with_xhalf_orbits=332 detected_with_both_half_orbits=286 d>=3=312 shared_runs=4824 shared_runs_with_implied_skips=1453 implied_skips=3852 b_follower_probes=1674 shared_descents=96 failures=1270

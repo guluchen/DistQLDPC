@@ -1,0 +1,44 @@
+mutation m1: bounds shared without a verified dual map (whenever both halves exist)
+1118c1118
+<         share = !dm.maps.empty();
+---
+>         share = true; if (dm.maps.empty()) dm.maps.push_back("UNVERIFIED");
+rc=1 peak_rss_kb=0
+GH102_DUALSHARE_FAIL inst=0 cfg=0 sharing reported iff a dual map is verified
+GH102_DUALSHARE_FAIL inst=0 cfg=1 sharing reported iff a dual map is verified
+GH102_DUALSHARE_FAIL inst=0 cfg=2 sharing reported iff a dual map is verified
+GH102_DUALSHARE_FAIL instances=2000 skipped=2 runs=38 planted_family=4 planted_random=2 near_miss=3 independent=1 detected=4 near_miss_detected=0 dX!=dZ=2 detected_with_xhalf_orbits=2 detected_with_both_half_orbits=2 d>=3=2 shared_runs=29 shared_runs_with_implied_skips=5 implied_skips=27 b_follower_probes=9 shared_descents=0 failures=25
+rc=1
+mutation m1s: m1, test run with GH102_SEMANTIC_ONLY=1 (caught by d/LB/UB checks alone)
+1118c1118
+<         share = !dm.maps.empty();
+---
+>         share = true; if (dm.maps.empty()) dm.maps.push_back("UNVERIFIED");
+rc=1 peak_rss_kb=0
+GH102_DUALSHARE_FAIL inst=11 cfg=0 no RESULT d OPTIMAL
+GH102_DUALSHARE_FAIL inst=11 cfg=0 d != min(dX, dZ) by enumeration
+GH102_DUALSHARE_FAIL inst=11 cfg=0 emitted LB > d
+GH102_DUALSHARE_FAIL instances=2000 skipped=6 runs=83 planted_family=10 planted_random=2 near_miss=6 independent=3 detected=11 near_miss_detected=1 dX!=dZ=3 detected_with_xhalf_orbits=7 detected_with_both_half_orbits=6 d>=3=2 shared_runs=63 shared_runs_with_implied_skips=12 implied_skips=43 b_follower_probes=20 shared_descents=1 failures=24
+rc=1
+mutation m2: shared lb off by one (L+1)
+1097c1097
+<     hs[0].lb = hs[1].lb = L;
+---
+>     hs[0].lb = hs[1].lb = L + 1;
+rc=1 peak_rss_kb=0
+GH102_DUALSHARE_FAIL inst=1 cfg=0 emitted LB > d
+GH102_DUALSHARE_FAIL inst=1 cfg=1 emitted LB > d
+GH102_DUALSHARE_FAIL inst=1 cfg=2 emitted LB > d
+GH102_DUALSHARE_FAIL instances=2000 skipped=2 runs=42 planted_family=4 planted_random=2 near_miss=4 independent=1 detected=5 near_miss_detected=1 dX!=dZ=2 detected_with_xhalf_orbits=3 detected_with_both_half_orbits=2 d>=3=2 shared_runs=14 shared_runs_with_implied_skips=14 implied_skips=30 b_follower_probes=1 shared_descents=0 failures=21
+rc=1
+mutation m3: variant B follower cap U-1 instead of U
+1185c1185
+<                 st = run_css_half(Z, U, true, verb, card_mode, pipe_w, U, U, false, v);
+---
+>                 st = run_css_half(Z, U - 1, true, verb, card_mode, pipe_w, U, U, false, v);
+rc=1 peak_rss_kb=5904
+GH102_DUALSHARE_FAIL inst=399 cfg=1 no RESULT d OPTIMAL
+GH102_DUALSHARE_FAIL inst=399 cfg=1 d != min(dX, dZ) by enumeration
+GH102_DUALSHARE_FAIL instances=2000 skipped=392 runs=6432 planted_family=765 planted_random=204 near_miss=391 independent=248 detected=861 near_miss_detected=61 dX!=dZ=205 detected_with_xhalf_orbits=332 detected_with_both_half_orbits=286 d>=3=312 shared_runs=2583 shared_runs_with_implied_skips=876 implied_skips=2507 b_follower_probes=862 shared_descents=7 failures=2
+GH102_DUALSHARE_FAIL instances=2000 skipped=392 runs=6432 planted_family=765 planted_random=204 near_miss=391 independent=248 detected=861 near_miss_detected=61 dX!=dZ=205 detected_with_xhalf_orbits=332 detected_with_both_half_orbits=286 d>=3=312 shared_runs=2583 shared_runs_with_implied_skips=876 implied_skips=2507 b_follower_probes=862 shared_descents=7 failures=2
+rc=1

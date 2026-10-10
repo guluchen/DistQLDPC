@@ -1,0 +1,137 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/BB_90_8_10_Hx.txt
+c Hz: data/matrices/BB_90_8_10_Hz.txt
+c Gx: data/matrices/BB_90_8_10_Gx.txt
+c Gz: data/matrices/BB_90_8_10_Gz.txt
+c Hx: 45 x 90, Hz: 45 x 90, Gx: 8 x 90, Gz: 8 x 90, logicals: 16
+c symbreak X: n=90 candidates=47 verified_generators=4 orbits=2 detect_cpu=0.000s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=15
+c symbreak X: generator: plain 2dshift-a L=15 (3x5)
+c symbreak X: generator: plain 2dshift-a L=15 (5x3)
+c symbreak X: generator: plain 2dshift-a L=45 (3x15)
+c symbreak X: orbit reps (size): 0(45) 45(45)
+c symbreak Z: n=90 candidates=47 verified_generators=4 orbits=2 detect_cpu=0.000s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=15
+c symbreak Z: generator: plain 2dshift-a L=15 (3x5)
+c symbreak Z: generator: plain 2dshift-a L=15 (5x3)
+c symbreak Z: generator: plain 2dshift-a L=45 (3x15)
+c symbreak Z: orbit reps (size): 0(45) 45(45)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.01 Mb                                      |
+c Reduced to 238 vars, 1119 cls (c/v ratio==4.7, grow=0)
+c No iterative elimination performed. (vars=238, c/v ratio=4.7)
+c nb soft clauses: 90, of which 90 unit, 0 nonUnit and 0 empty
+c total nb of literals: 3909
+c conflLits 2, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 53
+c init nbIsets: 2
+c nbIsets after pass 1: 1
+c isets 1, derivedCost 1
+c 1 conflict sets found with length 24
+c fixedCost 0, nbSatLits 0, totalFixedVars 53, objForSearch: 89
+
+c GH-76 probe: UB=1 fails (inf 1, sup 90, feasible 0), core 0, tier2 0, local 0
+c CSS incremental: X half cap 1 lb 1 feasibility -> NONE 0
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.01 Mb                                      |
+c Reduced to 238 vars, 1129 cls (c/v ratio==4.7, grow=0)
+c No iterative elimination performed. (vars=238, c/v ratio=4.7)
+c nb soft clauses: 90, of which 90 unit, 0 nonUnit and 0 empty
+c total nb of literals: 3955
+c conflLits 2, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 53
+c init nbIsets: 2
+c nbIsets after pass 1: 1
+c isets 1, derivedCost 1
+c 1 conflict sets found with length 30
+c fixedCost 0, nbSatLits 0, totalFixedVars 53, objForSearch: 89
+
+c GH-76 probe: UB=1 fails (inf 1, sup 90, feasible 0), core 0, tier2 0, local 0
+c CSS incremental: Z half cap 1 lb 1 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 2
+c ***** top quasi confl at level 0*****
+c GH-76 probe: UB=2 fails (inf 2, sup 90, feasible 0), core 0, tier2 0, local 0
+c CSS incremental: X half cap 2 lb 2 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 2
+c GH-76 probe: UB=2 fails (inf 2, sup 90, feasible 0), core 0, tier2 0, local 0
+c CSS incremental: Z half cap 2 lb 2 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 4
+c GH-76 probe: UB=4 fails (inf 4, sup 90, feasible 0), core 538, tier2 15, local 13
+c CSS incremental: X half cap 4 lb 3 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 4
+c GH-76 probe: UB=4 fails (inf 4, sup 90, feasible 0), core 442, tier2 46, local 37
+c CSS incremental: Z half cap 4 lb 3 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 8
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 57, nbTested: 234, counter 11332
+c GH-76 probe: UB=8 fails (inf 8, sup 90, feasible 0), core 689, tier2 48, local 801
+c CSS incremental: X half cap 8 lb 5 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 8
+c GH-76 probe: UB=8 fails (inf 8, sup 90, feasible 0), core 148, tier2 104, local 166
+c CSS incremental: Z half cap 8 lb 5 feasibility -> NONE 0
+
+c Cardinality: off (soft-conflict only), UB 16
+c UB=16 succs, confls=1590, hconfls=236, core 0, tier2 0, local 1,  15 soft cls unsat (0 at L0), 53 fixed vars at L0, softCnfl 55, nbFlyRd 65, nbFixedLH 9
+c nbHardens 182 (fixed 14770), shorten: 0, prunedLB 7.00, dev 0.00, succRate 0.50, nbSucc 1, lk: 2, shorten: 0, quasiC: 101 (fixed: 2081)
+
+c GH-76 probe: cost 15 found under cap 15
+c CSS incremental: X half cap 16 lb 9 feasibility -> FOUND 16
+
+c Cardinality: off (soft-conflict only), UB 16
+c UB=16 succs, confls=1388, hconfls=253, core 0, tier2 0, local 19,  15 soft cls unsat (0 at L0), 53 fixed vars at L0, softCnfl 55, nbFlyRd 79, nbFixedLH 3
+c nbHardens 221 (fixed 16588), shorten: 0, prunedLB 6.83, dev 1.34, succRate 0.72, nbSucc 18, lk: 25, shorten: 0, quasiC: 88 (fixed: 1783)
+
+c GH-76 probe: cost 15 found under cap 15
+c CSS incremental: Z half cap 16 lb 9 feasibility -> FOUND 16
+
+c Cardinality: off (soft-conflict only), UB 15
+c UB=15 succs, confls=1640, hconfls=245, core 14, tier2 1, local 45,  13 soft cls unsat (0 at L0), 53 fixed vars at L0, softCnfl 61, nbFlyRd 71, nbFixedLH 10
+c nbHardens 185 (fixed 14836), shorten: 0, prunedLB 6.31, dev 1.06, succRate 0.95, nbSucc 35, lk: 37, shorten: 0, quasiC: 101 (fixed: 2081)
+
+c GH-76 probe: cost 13 found under cap 14
+c CSS incremental: X half cap 15 lb 9 feasibility -> FOUND 14
+
+c Cardinality: off (soft-conflict only), UB 13
+c UB=13 succs, confls=1618, hconfls=262, core 7, tier2 1, local 247,  11 soft cls unsat (0 at L0), 53 fixed vars at L0, softCnfl 57, nbFlyRd 84, nbFixedLH 7
+c nbHardens 222 (fixed 16905), shorten: 0, prunedLB 7.31, dev 0.93, succRate 0.85, nbSucc 219, lk: 259, shorten: 0, quasiC: 109 (fixed: 2078)
+
+c GH-76 probe: cost 11 found under cap 12
+c CSS incremental: Z half cap 13 lb 9 feasibility -> FOUND 12
+
+c Cardinality: off (soft-conflict only), UB 11
+c UB=11 succs, confls=2183, hconfls=271, core 472, tier2 188, local 671,  9 soft cls unsat (0 at L0), 53 fixed vars at L0, softCnfl 60, nbFlyRd 87, nbFixedLH 11
+c nbHardens 226 (fixed 18816), shorten: 0, prunedLB 6.07, dev 1.12, succRate 0.75, nbSucc 553, lk: 735, shorten: 0, quasiC: 209 (fixed: 3888)
+
+
+c Cardinality: off (soft-conflict only), UB 9
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 54, nbTested: 237, counter 24258
+c ***** top quasi confl at level 0*****
+c GH-76 probe: UB=9 fails (inf 9, sup 9, feasible 1), core 1186, tier2 462, local 1132
+c CSS incremental: Z half cap 12 lb 9 optimize -> OPT 10
+
+c Cardinality: off (soft-conflict only), UB 10
+c UB=10 succs, confls=1801, hconfls=256, core 24, tier2 8, local 199,  9 soft cls unsat (0 at L0), 53 fixed vars at L0, softCnfl 63, nbFlyRd 74, nbFixedLH 13
+c nbHardens 189 (fixed 15028), shorten: 0, prunedLB 6.70, dev 0.83, succRate 0.91, nbSucc 148, lk: 162, shorten: 0, quasiC: 110 (fixed: 2240)
+
+
+c Cardinality: off (soft-conflict only), UB 9
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 53, nbTested: 238, counter 28093
+c GH-76 probe: UB=9 fails (inf 9, sup 9, feasible 1), core 616, tier2 220, local 1019
+c CSS incremental: X half cap 10 lb 9 optimize -> OPT 10
+c CSS incremental: d = 10 (solver builds X 1, Z 1)
+c dualshare stats: mode off map 0 probes X 7 Z 7 conflicts X 2892 Z 3545 implied_skips 0 d 10
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: off (soft-conflict only)
+c Hx: data/matrices/BB_90_8_10_Hx.txt
+c Hz: data/matrices/BB_90_8_10_Hz.txt
+c Gx: data/matrices/BB_90_8_10_Gx.txt
+c Gz: data/matrices/BB_90_8_10_Gz.txt
+c Hx: 45 x 90, Hz: 45 x 90, Gx: 8 x 90, Gz: 8 x 90, logicals: 16
+c d_lb: 10
+c d_ub: 10
+c d  : 10
+o 10

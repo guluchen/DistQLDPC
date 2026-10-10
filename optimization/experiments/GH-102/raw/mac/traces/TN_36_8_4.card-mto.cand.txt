@@ -1,0 +1,72 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: data/matrices/TN_36_8_4_Hx.txt
+c Hz: data/matrices/TN_36_8_4_Hz.txt
+c Gx: data/matrices/TN_36_8_4_Gx.txt
+c Gz: data/matrices/TN_36_8_4_Gz.txt
+c Hx: 18 x 36, Hz: 18 x 36, Gx: 8 x 36, Gz: 8 x 36, logicals: 16
+c dualshare: dual map 'blockshift L=2' verified (rank Hz=Hx=14, [Hz;Gx]=[Hx;Gz]=22, cpu 0.000s): dX = dZ, both halves kept, lower bounds shared (variant A)
+c symbreak X: n=36 candidates=32 verified_generators=0 orbits=36 detect_cpu=0.000s clause=none
+c symbreak Z: n=36 candidates=32 verified_generators=0 orbits=36 detect_cpu=0.000s clause=none
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.00 Mb                                      |
+c Reduced to 115 vars, 602 cls (c/v ratio==5.2, grow=0)
+c No iterative elimination performed. (vars=115, c/v ratio=5.2)
+c nb soft clauses: 36, of which 36 unit, 0 nonUnit and 0 empty
+c total nb of literals: 2268
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 26
+c 1 conflict sets found with length 20
+c fixedCost 0, nbSatLits 0, totalFixedVars 26, objForSearch: 36
+
+
+c Cardinality: 105 (MTO) for UB 2
+c ***** top quasi confl at level 0*****
+c GH-76 probe: UB=2 fails (inf 2, sup 37, feasible 0), core 5, tier2 0, local 0
+c CSS incremental: X half cap 1 lb 1 feasibility -> NONE 0
+c dualshare: Z half cap 1 skipped (NONE implied, shared lb 2)
+
+c Cardinality: 224 (MTO) for UB 3
+c GH-76 probe: UB=3 fails (inf 3, sup 37, feasible 0), core 121, tier2 10, local 9
+c CSS incremental: X half cap 2 lb 2 feasibility -> NONE 0
+c dualshare: Z half cap 2 skipped (NONE implied, shared lb 3)
+
+c Cardinality: 302 (MTO) for UB 5
+c UB=5 succs, confls=230, hconfls=195, core 97, tier2 9, local 16,  4 soft cls unsat (0 at L0), 26 fixed vars at L0, softCnfl 35, nbFlyRd 30, nbFixedLH 0
+c nbHardens 127 (fixed 2633), shorten: 0, prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, lk: 0, shorten: 0, quasiC: 1 (fixed: 11)
+
+c GH-76 probe: cost 4 found under cap 4
+c CSS incremental: X half cap 4 lb 3 feasibility -> FOUND 4
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.00 Mb                                      |
+c Reduced to 116 vars, 602 cls (c/v ratio==5.2, grow=0)
+c No iterative elimination performed. (vars=116, c/v ratio=5.2)
+c nb soft clauses: 36, of which 36 unit, 0 nonUnit and 0 empty
+c total nb of literals: 2260
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 26
+c 1 conflict sets found with length 20
+c fixedCost 0, nbSatLits 0, totalFixedVars 26, objForSearch: 36
+
+
+c Cardinality: 302 (MTO) for UB 5
+c UB=5 succs, confls=303, hconfls=253, core 405, tier2 53, local 142,  4 soft cls unsat (0 at L0), 26 fixed vars at L0, softCnfl 50, nbFlyRd 32, nbFixedLH 0
+c nbHardens 93 (fixed 1361), shorten: 0, prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, lk: 1, shorten: 0, quasiC: 0 (fixed: 0)
+
+c GH-76 probe: cost 4 found under cap 4
+c CSS incremental: Z half cap 4 lb 3 feasibility -> FOUND 4
+
+c Cardinality: 223 (MTO) for UB 4
+c GH-76 probe: UB=4 fails (inf 4, sup 4, feasible 1), core 265, tier2 45, local 51
+c CSS incremental: X half cap 3 lb 3 feasibility -> NONE 0
+c dualshare: Z half cap 3 skipped (NONE implied, shared lb 4)
+c CSS incremental: d = 4 (solver builds X 1, Z 1)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: MTO only
+c Hx: data/matrices/TN_36_8_4_Hx.txt
+c Hz: data/matrices/TN_36_8_4_Hz.txt
+c Gx: data/matrices/TN_36_8_4_Gx.txt
+c Gz: data/matrices/TN_36_8_4_Gz.txt
+c Hx: 18 x 36, Hz: 18 x 36, Gx: 8 x 36, Gz: 8 x 36, logicals: 16
+c d_lb: 4
+c d_ub: 4
+c d  : 4
+o 4
