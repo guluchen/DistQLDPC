@@ -3,7 +3,7 @@
 Issue #106; branch `experiment/gh-106-incremental-regression`. Diagnosis `fa06270`, preregistration `c7c4a29`,
 candidate source `1e69eeb` (evidence commits after it change no source). Mac only (yfclab2 down); every solver/test
 process under the PI 2 GB cap (`memlimit.py`); diagnostic and trace runs serial, one solver process at a time.
-State: **SCIENCE_PENDING** (see below).
+State: **TIER0_PASS** (correctness only; no timing made by this agent).
 
 ## Candidate
 * `-inc-policy=postsol` (default), `gh89`, `feasfresh`, `fresh`; driver-only (`src/core/distqldpc.cc`), engine
@@ -25,9 +25,11 @@ State: **SCIENCE_PENDING** (see below).
 | Default (`postsol`) on the same 21 | all `o` equal to frozen89 and to the names |
 | Default vs counter-build `postsol` (GH106_FRESHPRE=1), 6 large cells | search-identical (`-v` equal modulo dump/build-count lines) |
 | QDistSAT cross-repo, `ci/xrepo-gh106` = `5bfa9c8` (tree of `1e69eeb`, parent 72d1fe1), run 38078968215 | success, **scientific results match YES** |
-| Science sweep (`science.sh`), 50 codes x 4 modes, 60 s, `--jobs 4`, vs main 7eadd54 | SCIENCE_RESULT |
+| Science sweep (`science.sh`), 50 codes x 4 modes, 60 s, `--jobs 4`, vs main 7eadd54 | **ALL_OK / POSTHOC_PASS / VERDICT PASS**: 200 cases, both done 71 (values equal to names and to main), only candidate 5 (BB_144_14_14 card-mto/default, GB_144_12_12 card-mto/default/no-card; all = name), only main 0, problems 0, MEMOUT 0; 124 candidate timeouts all emit a d_lb (final d_lb equal to main's in all 124 common timeouts); TN_648_10_71 (name known wrong) and TN_648_14_50 time out on both with d_lb 9 |
 
-Oracle lines: `raw/tier0/oracles.txt`. Traces: `raw/tier0/traces/` (`SUMMARY.txt`). Candidate `-v` runs on the
+Science: `raw/tier0-science/` (merged `science.json`, per-chunk `science.json`, `posthoc.txt`, `check_sweep.txt`,
+`logs.tar.gz`), runner log `raw/tier0-science.log`. Lock holds per chunk (min): 8.0, 6.0, 2.9, 10.4, 10.5, 8.0,
+10.0, 8.0, 4.0 (chunks waited for GH-107's sweep/timing in between). Oracle lines: `raw/tier0/oracles.txt`. Traces: `raw/tier0/traces/` (`SUMMARY.txt`). Candidate `-v` runs on the
 diagnosis cells: `raw/tier0/cand106-runs/`.
 
 ## Informational counter comparison (not timing)

@@ -1,0 +1,984 @@
+{
+ "meta": {
+  "base": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/frozen-main7e/distqldpc",
+  "cand": "/Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/frozen106/cand/distqldpc",
+  "base_sha256": "6bdcaa2523cdcbeae5164cedbf54c9ac0f9e64f9a91c3da7ef4b804df393db9d",
+  "cand_sha256": "820145fb859c587a70a3377f01d7f1d34f81488c3bc1872e277702e616cddf7f",
+  "limit": 60,
+  "jobs": 4,
+  "started": "2026-10-11T04:24:57+0800",
+  "finished": "2026-10-11T04:35:20+0800",
+  "all_ok": true,
+  "counts": {
+   "both_done": 6,
+   "only_cand_done": 0,
+   "only_base_done": 0,
+   "problems": 0,
+   "memout_base": 0,
+   "memout_cand": 0
+  }
+ },
+ "results": [
+  {
+   "stem": "LP_544_80_12",
+   "mode": "card-mto",
+   "base": {
+    "rc": 0,
+    "wall": 58.42,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     14,
+     12
+    ],
+    "peak_rss_kb": 194544
+   },
+   "cand": {
+    "rc": 0,
+    "wall": 38.304,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     14,
+     12
+    ],
+    "peak_rss_kb": 201376
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "LP_544_80_12",
+   "mode": "card-sinz",
+   "base": {
+    "rc": 1,
+    "wall": 60.012,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 252992
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 159776
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "LP_544_80_12",
+   "mode": "default",
+   "base": {
+    "rc": 0,
+    "wall": 58.375,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     14,
+     12
+    ],
+    "peak_rss_kb": 194368
+   },
+   "cand": {
+    "rc": 0,
+    "wall": 38.274,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     14,
+     12
+    ],
+    "peak_rss_kb": 195200
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "LP_544_80_12",
+   "mode": "no-card",
+   "base": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 293840
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.016,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 315536
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "LP_714_100_unknown",
+   "mode": "card-mto",
+   "base": {
+    "rc": 1,
+    "wall": 60.009,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 218640
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.017,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 231280
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "LP_714_100_unknown",
+   "mode": "card-sinz",
+   "base": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 266672
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.009,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 260352
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "LP_714_100_unknown",
+   "mode": "default",
+   "base": {
+    "rc": 1,
+    "wall": 60.014,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 218656
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.017,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 235312
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "LP_714_100_unknown",
+   "mode": "no-card",
+   "base": {
+    "rc": 1,
+    "wall": 60.012,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 243168
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.014,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 230448
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "PK_31",
+   "mode": "card-mto",
+   "base": {
+    "rc": 1,
+    "wall": 60.019,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 276816
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.021,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 289872
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "PK_31",
+   "mode": "card-sinz",
+   "base": {
+    "rc": 1,
+    "wall": 60.021,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 272608
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.016,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 297392
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "PK_31",
+   "mode": "default",
+   "base": {
+    "rc": 1,
+    "wall": 60.027,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 248992
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.019,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 302528
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "PK_31",
+   "mode": "no-card",
+   "base": {
+    "rc": 1,
+    "wall": 60.019,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 265152
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.014,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 302272
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_108_2_12",
+   "mode": "card-mto",
+   "base": {
+    "rc": 0,
+    "wall": 12.596,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     12
+    ],
+    "peak_rss_kb": 24976
+   },
+   "cand": {
+    "rc": 0,
+    "wall": 10.736,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     12
+    ],
+    "peak_rss_kb": 32240
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_108_2_12",
+   "mode": "card-sinz",
+   "base": {
+    "rc": 0,
+    "wall": 12.494,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     12
+    ],
+    "peak_rss_kb": 24848
+   },
+   "cand": {
+    "rc": 0,
+    "wall": 10.353,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     12
+    ],
+    "peak_rss_kb": 29504
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_108_2_12",
+   "mode": "default",
+   "base": {
+    "rc": 0,
+    "wall": 12.643,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     12
+    ],
+    "peak_rss_kb": 24976
+   },
+   "cand": {
+    "rc": 0,
+    "wall": 10.772,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     16,
+     12
+    ],
+    "peak_rss_kb": 32192
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_108_2_12",
+   "mode": "no-card",
+   "base": {
+    "rc": 0,
+    "wall": 10.935,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     12
+    ],
+    "peak_rss_kb": 21360
+   },
+   "cand": {
+    "rc": 0,
+    "wall": 9.382,
+    "o": 12,
+    "status": "done",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     12
+    ],
+    "ubs": [
+     12
+    ],
+    "peak_rss_kb": 28992
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_144_2_13",
+   "mode": "card-mto",
+   "base": {
+    "rc": 1,
+    "wall": 60.016,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 203904
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.016,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     15,
+     14,
+     14
+    ],
+    "peak_rss_kb": 245328
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_144_2_13",
+   "mode": "card-sinz",
+   "base": {
+    "rc": 1,
+    "wall": 60.024,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 208800
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.005,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     14,
+     14
+    ],
+    "peak_rss_kb": 183440
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_144_2_13",
+   "mode": "default",
+   "base": {
+    "rc": 1,
+    "wall": 60.019,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     16
+    ],
+    "peak_rss_kb": 203872
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     15,
+     14,
+     14
+    ],
+    "peak_rss_kb": 245216
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_144_2_13",
+   "mode": "no-card",
+   "base": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     13,
+     13
+    ],
+    "peak_rss_kb": 180464
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.007,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [
+     16,
+     15,
+     15
+    ],
+    "peak_rss_kb": 188544
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_180_2_17",
+   "mode": "card-mto",
+   "base": {
+    "rc": 1,
+    "wall": 60.009,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 136720
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.019,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 142592
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_180_2_17",
+   "mode": "card-sinz",
+   "base": {
+    "rc": 1,
+    "wall": 60.011,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 85232
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 87520
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_180_2_17",
+   "mode": "default",
+   "base": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 136560
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.016,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 142624
+   },
+   "problems": [],
+   "ok": true
+  },
+  {
+   "stem": "TN_180_2_17",
+   "mode": "no-card",
+   "base": {
+    "rc": 1,
+    "wall": 60.004,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 137632
+   },
+   "cand": {
+    "rc": 1,
+    "wall": 60.013,
+    "o": null,
+    "status": "TIMEOUT",
+    "lbs": [
+     2,
+     3,
+     5,
+     9,
+     9
+    ],
+    "ubs": [],
+    "peak_rss_kb": 141072
+   },
+   "problems": [],
+   "ok": true
+  }
+ ]
+}
