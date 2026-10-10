@@ -1,0 +1,40 @@
+Sort by top of stack, same collapsed (when >= 5):
+        Minisat::Solver::propagateForLK()  (in distqldpc)        8237
+        Minisat::Solver::pickAuxiVar()  (in distqldpc)        1144
+        Minisat::Solver::lookbackResetTrail(unsigned int, int, int, Minisat::vec<Minisat::Lit>&, bool)  (in distqldpc)        1086
+        Minisat::Solver::uncheckedEnqueueForLK(Minisat::Lit, unsigned int)  (in distqldpc)        353
+        Minisat::Solver::propagate()  (in distqldpc)        266
+        Minisat::Heap<Minisat::Solver::VarOrderGt>::insert(int)  (in distqldpc)        259
+        Minisat::Solver::relocAll(Minisat::ClauseAllocator&)  (in distqldpc)        148
+        Minisat::Solver::litRedundant(Minisat::Lit, unsigned int)  (in distqldpc)        137
+        Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        134
+        Minisat::Solver::simplifyConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        128
+        Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        117
+        Minisat::Solver::bumpConflVars()  (in distqldpc)        106
+        Minisat::Solver::lookahead()  (in distqldpc)        87
+        Minisat::Solver::resetConflicts(int)  (in distqldpc)        67
+        Minisat::Solver::cancelUntil(int)  (in distqldpc)        61
+        Minisat::Solver::uncheckedEnqueue(Minisat::Lit, unsigned int)  (in distqldpc)        53
+        <deduplicated_symbol>  (in distqldpc)        34
+        Minisat::Solver::pickBranchLit()  (in distqldpc)        29
+        Minisat::Solver::setConflict(int&)  (in distqldpc)        29
+        Minisat::Solver::simplePropagate()  (in distqldpc)        24
+        mach_absolute_time  (in libsystem_kernel.dylib)        22
+        Minisat::ClauseAllocator::alloc<Minisat::vec<Minisat::Lit>>(Minisat::vec<Minisat::Lit> const&, bool)  (in distqldpc)        17
+        Minisat::Solver::hardenFromQuasiSoftConflict(int, int)  (in distqldpc)        16
+        pow  (in libsystem_m.dylib)        15
+        xzm_malloc_zone_malloc_type_realloc  (in libsystem_malloc.dylib)        11
+        Minisat::ClauseAllocator::reloc(unsigned int&, Minisat::ClauseAllocator&)  (in distqldpc)        10
+        _realloc  (in libsystem_malloc.dylib)        10
+        _xzm_xzone_malloc_tiny  (in libsystem_malloc.dylib)        10
+        Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        8
+        _platform_memmove  (in libsystem_platform.dylib)        8
+        _xzm_free  (in libsystem_malloc.dylib)        8
+        _xzm_free_main  (in libsystem_malloc.dylib)        8
+        Minisat::OccLists<Minisat::Lit, Minisat::vec<Minisat::Solver::Watcher>, Minisat::Solver::WatcherDeleted>::smudge(Minisat::Lit const&)  (in distqldpc)        6
+        Minisat::Solver::simplifyQuasiConflictClause(Minisat::vec<Minisat::Lit>&, int&, int&)  (in distqldpc)        6
+        _xzm_malloc  (in libsystem_malloc.dylib)        6
+        Minisat::sort<unsigned int, reduceDB_lt>(unsigned int*, int, reduceDB_lt)  (in distqldpc)        5
+        Minisat::vec<Minisat::Lit>::growTo(int)  (in distqldpc)        5
+        mach_vm_reclaim_update_kernel_accounting_trap  (in libsystem_kernel.dylib)        5
+

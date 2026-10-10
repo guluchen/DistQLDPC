@@ -1,0 +1,7 @@
+self-check build (XOR_SELFCHECK) 50 codes x {default,nocard,sinz,mto}, -cpu-lim=20
+runs:      200
+XOR_SELFCHECK_FAIL files:        0
+  56 exit=0
+ 144 exit=1
+exit=1 runs all with 'c status: TIMEOUT':      144
+completed values equal to the named distance:       56

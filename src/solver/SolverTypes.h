@@ -138,7 +138,8 @@ class Clause {
     struct {
       unsigned size      : 32;
       unsigned lastPoint : 32;
-      unsigned lbd       : 24;
+      unsigned lbd       : 23;
+      unsigned xorc      : 1;   // GH-98: clause of a native XOR record (unwatched)
       unsigned mark      : 2;
       unsigned simplified     : 2;
         unsigned learnt    : 1;
@@ -164,6 +165,7 @@ class Clause {
         header.size      = ps.size();
         header.lbd       = ps.size();
         header.removable = 1;
+        header.xorc      = 0;
 	header.lastPoint = 2;
 	//	header.involved  = 0;
 		//simplify
@@ -215,6 +217,8 @@ public:
     int          lbd         ()      const   { return header.lbd; }
     void         set_lbd     (int lbd)       { header.lbd = lbd; }
     bool         removable   ()      const   { return header.removable; }
+    bool         xorc        ()      const   { return header.xorc; }   // GH-98
+    void         xorc        (bool b)        { header.xorc = b; }
     void         removable   (bool b)        { header.removable = b; }
 
     // NOTE: somewhat unsafe to change the clause in-place! Must manually call 'calcAbstraction' afterwards for
@@ -311,6 +315,7 @@ class ClauseAllocator : public RegionAllocator<uint32_t>
 	//	to[cr].setUsed(c.used());
 	to[cr].set_lbd(c.lbd());
 	to[cr].setLastPoint(c.lastPoint());
+	to[cr].xorc(c.xorc());   // GH-98
 	//	to[cr].setInvolved(c.involved());
         if (to[cr].learnt()){
             to[cr].touched() = c.touched();
