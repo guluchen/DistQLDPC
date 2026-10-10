@@ -81,6 +81,25 @@ class vec2
 
 //=================================================================================================
 // Solver -- the main class:
+//
+// DistQLDPC (GH-95): the member functions are implemented in src/engine/, compiled as one unity
+// translation unit (src/engine/Engine.cc). Module map:
+//   State.cc            options, constructor/destructor
+//   Inprocessing.cc     learnt-clause vivification, failed literals, original-clause minimisation
+//   ClauseDB.cc         newVar, addClause_, attach/detach/removeClause, relocAll, garbageCollect
+//   Propagation.cc      cancelUntil(Beginning), uncheckedEnqueue, propagate, lPropagate
+//   Heuristics.cc       pickBranchLit, rebuildOrderHeap, progressEstimate, Luby sequence
+//   Analysis.cc         analyze, minimisation, analyzeFinal, UIP helpers
+//   SoftConflict.cc     soft / quasi-soft conflict analysis
+//   ClauseReduction.cc  reduceDB*, removeSatisfied, simplify, clause splitting
+//   Hardening.cc        harden and variants
+//   Lookahead.cc        lower-bound lookahead (LK propagation, lookback, inconsistent sets)
+//   Search.cc           search, solve_
+//   Objective.cc        bounds pipe, cost bounds, incumbent, checkSolution
+//   Preprocessing.cc    soft-literal partition, initial conflicts
+//   Cardinality.cc      auxiliary variables, Sinz / MTO encodings
+//   Export.cc           toDimacs, toWcnf, toOpb
+// Member order below is unchanged from MaxCDCL (object layout and code generation depend on it).
 
 class Solver {
 private:
