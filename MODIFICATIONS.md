@@ -23,6 +23,10 @@ New code, not derived from MaxCDCL.
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
 | Quiet / debug | Default `verb=0`; child stdout to `/dev/null`; `-v` / `-debug` for solver log |
 | CLI flags | `-no-card`, `-card-sinz`, `-card-mto`, `-card-both-force`, `-cpu-lim`, `-q` |
+| CSS split with persistent half solvers (GH-76, experimental; PI-approved formulation 2026-10-09) | Default MaxCDCL path computes d = min(dX, dZ) by GH-73's interleaved global bound search over the X-type and Z-type halves; each half keeps one solver for all its probes; every reported half weight is checked against its witness; only global bounds are forwarded; `-joint` keeps the original encoding |
+| Per-half symmetry breaking (GH-85, interaction GH-73 x GH-75, experimental) | Split path only: candidate qubit permutations (GH-75 family) are kept for a CSS half only if GF(2) row-space checks prove they preserve rs(Hpar) and rs([Hpar;Glog]) of that half (plain maps only, no XZ-dual maps); optimum-preserving orbit clauses over the half variables (unit clause for transitive groups, orbit chain otherwise) in every oracle instance of that half. `-no-symbreak` disables them; `-symbreak-report` prints per-half generators/orbits; `-joint`, dumps and RoundingSat unchanged. See `optimization/experiments/GH-85/`. |
+| Incremental half solver with per-half symmetry breaking (GH-89, interaction GH-85 x GH-76, experimental) | GH-85's orbit clauses are added once to each half's persistent GH-76 solver at construction (and identically on every rebuild); `-no-symbreak` = GH-76. See `optimization/experiments/GH-89/`. |
+| Dual-map bound sharing (GH-102, on GH-89; detection from GH-87/GH-94, experimental) | Split path only: if a qubit permutation (identity or GH-75 generic candidate family) is verified by GF(2) rank/row-space checks to map rs(Hz) onto rs(Hx) and rs([Hz;Gx]) onto rs([Hx;Gz]), then dX = dZ; both halves stay in the interleaved global bound search and every proven half lower bound is written into both halves (probes whose NONE is implied are skipped; UBs stay global). `-no-dualshare` = GH-89; `-dualshare-b` runs refutation probes on the X half only; `-dualshare-stats` prints work counts; `-dualskip-report` prints the verified maps; `-joint`, dumps and RoundingSat unchanged. See `optimization/experiments/GH-102/`. |
 
 ---
 
@@ -75,6 +79,16 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
 - Call `emitTryUpdate(UB)` when testing a new upper-bound candidate
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
+
+#### Persistent probing of one instance (GH-76; controls adapted from GH-73)
+
+- `incPrepare()` (the `solve_()` prologue, once) and `incProbe()` (one bounded test from the current state, using
+  the `solve_()` loop body); bound raises only before the first solution and only after the `solve_()` fail-path
+  reset, bound falls keep all state, raises after the first solution are refused (caller rebuilds)
+- `stopAtFirstSolution` in `search()`; `boundsLbCap`, `boundsUbCap`, `boundsHideLB` cap/suppress emitted bounds
+- Former function-local `static` heuristic state in `search()`, `lookahead()` and
+  `addCardinalityConstraints()` is now per-instance (identical behaviour for a single instance)
+- `solve_()` itself is unchanged
 
 ---
 
