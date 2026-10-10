@@ -1,0 +1,11 @@
+ci/xrepo-gh107 commit d22799b8745bb6db3114d227aac426775ab20cae (parent 72d1fe1, tree = tree of 0889c59; src = 0889c59)
+CI run https://github.com/guluchen/DistQLDPC/actions/runs/38077108280 : success
+QDistSAT cross-repo https://github.com/guluchen/DistQLDPC/actions/runs/38077114639 : success
+Baseline checked out by the workflow: 72d1fe18ccd91d061d0c6f1d9816d1c96ed685c7
+(shared-runner timings are informational only)
+Scientific results match: **YES**
+| Stem | Config | Baseline | Candidate | Cand/Base time | Semantic match |
+| LP_136_32_4 | no-card | d=4 (0.15s) | d=4 (0.10s) | 0.67x | YES |
+| LP_136_32_4 | card-mto | d=4 (0.23s) | d=4 (0.08s) | 0.35x | YES |
+| BB_108_8_10 | no-card | d=10 (3.45s) | d=10 (0.50s) | 0.14x | YES |
+| BB_108_8_10 | card-mto | d=10 (4.49s) | d=10 (0.64s) | 0.14x | YES |

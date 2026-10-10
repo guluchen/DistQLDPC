@@ -1,0 +1,67 @@
+start Sun Oct 11 02:45:39 CST 2026
+68338e32e891b5514ebbbc26f881659a92805931601a03d984411be8128fbfd5  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh107/bin/cand
+6bdcaa2523cdcbeae5164cedbf54c9ac0f9e64f9a91c3da7ef4b804df393db9d  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh107/bin/main7e
+49e37dee170eb6685344aefd25b37bdb1dccc129d640d6802ded25562b51d28f  /private/tmp/claude-501/-Users-yfc-Library-Application-Support-Claude-scratch-workspaces-1417068f-a9d4-4e40-a6ba-6b2464faa27e-de902d21-d9e1-45a1-a1dd-f95718bf744f-scratch-2026-10-08-ce0ddb/0c1b524e-a9a2-4adc-9aa0-a630e73d8d02/scratchpad/gh107/bin/gh92
+68338e32e891b5514ebbbc26f881659a92805931601a03d984411be8128fbfd5  bin/distqldpc
+smoke rc=0 peak_rss_kb=0 DistQLDPC smoke validation passed
+partition_py rc=0 peak_rss_kb=0 Partition adjacent oracles passed: 11 total inputs, 1024 assignments each.
+oracle_build=0
+partition_oracle rc=0 peak_rss_kb=0 GH58_PARTITION_ORACLE_PASS cases=80 no_conflict=1
+test_split_dualshare build=0
+test_split_dualshare rc=0 peak_rss_kb=8192 GH107_DUALSHARE_PASS instances=20000 skipped=3852 runs=64592 planted_family=7668 planted_random=1943 near_miss=4082 independent=2455 detected=8600 near_miss_detected=614 dX!=dZ=2049 detected_with_xhalf_orbits=3158 detected_with_both_half_orbits=2737 d>=3=3131 shared_runs=17200 shared_runs_with_implied_skips=6160 implied_skips=17422 skip_runs=8600 skip_zprobes=0 shared_descents=107 failures=0
+mutants:
+m1 rc=1 failures=21
+m1s rc=1 failures=24
+m2 rc=1 failures=21
+m3 rc=1 failures=23
+rc=0 peak_rss_kb=53888
+verify_half_autos ALL_PASS
+rc=0 peak_rss_kb=47312
+check_dual_maps ALL_PASS
+reports vs gh92 (cpu masked): identical=100 differ=0
+BB_90_8_10 no-card off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=5 o: main=10 gh92=10 joint=10 off=10 skip=10 share=10
+BB_90_8_10 card-mto off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=5 o: main=10 gh92=10 joint=10 off=10 skip=10 share=10
+BB_90_8_10 default off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=5 o: main=10 gh92=10 joint=10 off=10 skip=10 share=10
+GB_144_12_8 no-card off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=4 o: main=8 gh92=8 joint=8 off=8 skip=8 share=8
+GB_144_12_8 card-mto off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=4 o: main=8 gh92=8 joint=8 off=8 skip=8 share=8
+GB_144_12_8 default off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=4 o: main=8 gh92=8 joint=8 off=8 skip=8 share=8
+BB_108_8_10 no-card off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=5 o: main=10 gh92=10 joint=10 off=10 skip=10 share=10
+BB_108_8_10 card-mto off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=5 o: main=10 gh92=10 joint=10 off=10 skip=10 share=10
+BB_108_8_10 default off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=5 o: main=10 gh92=10 joint=10 off=10 skip=10 share=10
+LP_238_44_6 no-card off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=IDENTICAL_MOD_DUALSHARE_LINE c dualshare: no dual map (ranks  skips=0 o: main=6 gh92=6 joint=6 off=6 skip=6 share=6
+LP_238_44_6 card-mto off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=IDENTICAL_MOD_DUALSHARE_LINE c dualshare: no dual map (ranks  skips=0 o: main=6 gh92=6 joint=6 off=6 skip=6 share=6
+LP_238_44_6 default off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=IDENTICAL_MOD_DUALSHARE_LINE c dualshare: no dual map (ranks  skips=0 o: main=6 gh92=6 joint=6 off=6 skip=6 share=6
+LP_34_20_2 no-card off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=IDENTICAL_MOD_DUALSHARE_LINE c dualshare: no dual map (ranks  skips=0 o: main=2 gh92=2 joint=2 off=2 skip=2 share=2
+LP_34_20_2 card-mto off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=IDENTICAL_MOD_DUALSHARE_LINE c dualshare: no dual map (ranks  skips=0 o: main=2 gh92=2 joint=2 off=2 skip=2 share=2
+LP_34_20_2 default off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=IDENTICAL_MOD_DUALSHARE_LINE c dualshare: no dual map (ranks  skips=0 o: main=2 gh92=2 joint=2 off=2 skip=2 share=2
+BB_72_12_6 no-card off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=4 o: main=6 gh92=6 joint=6 off=6 skip=6 share=6
+BB_72_12_6 card-mto off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=4 o: main=6 gh92=6 joint=6 off=6 skip=6 share=6
+BB_72_12_6 default off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'halfswap- skips=4 o: main=6 gh92=6 joint=6 off=6 skip=6 share=6
+TN_36_8_4 no-card off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'blockshif skips=3 o: main=4 gh92=4 joint=4 off=4 skip=4 share=4
+TN_36_8_4 card-mto off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'blockshif skips=3 o: main=4 gh92=4 joint=4 off=4 skip=4 share=4
+TN_36_8_4 default off-vs-main7e=IDENTICAL nodualskip-vs-main7e=IDENTICAL skip-vs-gh92=IDENTICAL joint-vs-main7e-joint=IDENTICAL default-vs-main7e=DIFFER c dualshare: dual map 'blockshif skips=3 o: main=4 gh92=4 joint=4 off=4 skip=4 share=4
+BB_90_8_10 no-card off | mode off map 0 probes X 6 Z 6 conflicts X 4672 Z 3755 implied_skips 0 d 10 | o=10 
+BB_90_8_10 no-card share | mode share map 1 probes X 6 Z 1 conflicts X 4672 Z 1 implied_skips 5 d 10 | o=10 
+BB_90_8_10 no-card skip | mode skip map 1 probes X 6 Z 0 conflicts X 4672 Z 0 implied_skips 0 d 10 | o=10 
+BB_90_8_10 card-mto off | mode off map 0 probes X 6 Z 6 conflicts X 3661 Z 4147 implied_skips 0 d 10 | o=10 
+BB_90_8_10 card-mto share | mode share map 1 probes X 6 Z 1 conflicts X 3661 Z 20 implied_skips 5 d 10 | o=10 
+BB_90_8_10 card-mto skip | mode skip map 1 probes X 6 Z 0 conflicts X 3661 Z 0 implied_skips 0 d 10 | o=10 
+BB_108_8_10 no-card off | mode off map 0 probes X 7 Z 6 conflicts X 11866 Z 3985 implied_skips 0 d 10 | o=10 
+BB_108_8_10 no-card share | mode share map 1 probes X 6 Z 2 conflicts X 9279 Z 2272 implied_skips 5 d 10 | o=10 
+BB_108_8_10 no-card skip | mode skip map 1 probes X 6 Z 0 conflicts X 10330 Z 0 implied_skips 0 d 10 | o=10 
+BB_108_8_10 card-mto off | mode off map 0 probes X 7 Z 6 conflicts X 15054 Z 3000 implied_skips 0 d 10 | o=10 
+BB_108_8_10 card-mto share | mode share map 1 probes X 6 Z 2 conflicts X 12541 Z 2012 implied_skips 5 d 10 | o=10 
+BB_108_8_10 card-mto skip | mode skip map 1 probes X 6 Z 0 conflicts X 13336 Z 0 implied_skips 0 d 10 | o=10 
+GB_144_12_8 no-card off | mode off map 0 probes X 5 Z 5 conflicts X 961 Z 3403 implied_skips 0 d 8 | o=8 
+GB_144_12_8 no-card share | mode share map 1 probes X 5 Z 1 conflicts X 961 Z 2102 implied_skips 4 d 8 | o=8 
+GB_144_12_8 no-card skip | mode skip map 1 probes X 5 Z 0 conflicts X 961 Z 0 implied_skips 0 d 8 | o=8 
+GB_144_12_8 card-mto off | mode off map 0 probes X 5 Z 5 conflicts X 1082 Z 2918 implied_skips 0 d 8 | o=8 
+GB_144_12_8 card-mto share | mode share map 1 probes X 5 Z 1 conflicts X 1082 Z 1348 implied_skips 4 d 8 | o=8 
+GB_144_12_8 card-mto skip | mode skip map 1 probes X 5 Z 0 conflicts X 1082 Z 0 implied_skips 0 d 8 | o=8 
+GB_144_12_12 no-card off | mode off map 0 probes X 7 Z 7 conflicts X 354414 Z 976144 implied_skips 0 d 12 | o=12 
+GB_144_12_12 no-card share | mode share map 1 probes X 6 Z 3 conflicts X 237320 Z 973567 implied_skips 5 d 12 | o=12 
+GB_144_12_12 no-card skip | mode skip map 1 probes X 6 Z 0 conflicts X 1937192 Z 0 implied_skips 0 d 12 | o=12 
+GB_144_12_12 card-mto off | mode off map 0 probes X 6 Z 6 conflicts X 1367081 Z 410584 implied_skips 0 d 12 | o=12 
+GB_144_12_12 card-mto share | mode share map 1 probes X 6 Z 1 conflicts X 1367081 Z 302781 implied_skips 5 d 12 | o=12 
+GB_144_12_12 card-mto skip | mode skip map 1 probes X 6 Z 0 conflicts X 918306 Z 0 implied_skips 0 d 12 | o=12 
+MAC_DONE Sun Oct 11 02:57:21 CST 2026

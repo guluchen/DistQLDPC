@@ -1,0 +1,38 @@
+mutation m1: bounds shared without a verified dual map (whenever both halves exist)
+1073a1074
+>         if (dualmode == DUALMODE_SHARE && dm.maps.empty()) { share = true; dm.maps.push_back("UNVERIFIED"); }
+rc=1 peak_rss_kb=0
+GH107_DUALSHARE_FAIL inst=0 cfg=0 sharing reported iff a dual map is verified
+GH107_DUALSHARE_FAIL inst=0 cfg=2 sharing reported iff a dual map is verified
+GH107_DUALSHARE_FAIL inst=4 cfg=0 sharing reported iff a dual map is verified
+GH107_DUALSHARE_FAIL instances=2000 skipped=0 runs=25 planted_family=3 planted_random=1 near_miss=2 independent=1 detected=3 near_miss_detected=0 dX!=dZ=1 detected_with_xhalf_orbits=1 detected_with_both_half_orbits=1 d>=3=0 shared_runs=13 shared_runs_with_implied_skips=2 implied_skips=12 skip_runs=3 skip_zprobes=0 shared_descents=0 failures=21
+rc=1
+mutation m1s: m1, test run with GH107_SEMANTIC_ONLY=1 (caught by d/LB/UB checks alone)
+1073a1074
+>         if (dualmode == DUALMODE_SHARE && dm.maps.empty()) { share = true; dm.maps.push_back("UNVERIFIED"); }
+rc=1 peak_rss_kb=0
+GH107_DUALSHARE_FAIL inst=5 cfg=0 no RESULT d OPTIMAL
+GH107_DUALSHARE_FAIL inst=5 cfg=0 d != min(dX, dZ) by enumeration
+GH107_DUALSHARE_FAIL inst=5 cfg=0 emitted LB > d
+GH107_DUALSHARE_FAIL instances=2000 skipped=2 runs=39 planted_family=4 planted_random=2 near_miss=3 independent=1 detected=4 near_miss_detected=0 dX!=dZ=2 detected_with_xhalf_orbits=2 detected_with_both_half_orbits=2 d>=3=2 shared_runs=20 shared_runs_with_implied_skips=6 implied_skips=36 skip_runs=4 skip_zprobes=0 shared_descents=0 failures=24
+rc=1
+mutation m2: shared lb off by one (L+1)
+1037c1037
+<     hs[0].lb = hs[1].lb = L;
+---
+>     hs[0].lb = hs[1].lb = L + 1;
+rc=1 peak_rss_kb=0
+GH107_DUALSHARE_FAIL inst=1 cfg=0 emitted LB > d
+GH107_DUALSHARE_FAIL inst=1 cfg=2 emitted LB > d
+GH107_DUALSHARE_FAIL inst=2 cfg=0 emitted LB > d
+GH107_DUALSHARE_FAIL instances=2000 skipped=2 runs=53 planted_family=7 planted_random=2 near_miss=4 independent=1 detected=8 near_miss_detected=1 dX!=dZ=2 detected_with_xhalf_orbits=5 detected_with_both_half_orbits=4 d>=3=2 shared_runs=15 shared_runs_with_implied_skips=15 implied_skips=27 skip_runs=7 skip_zprobes=0 shared_descents=0 failures=21
+rc=1
+mutation m3: skip mode eliminates the Z half without a verified map (GH107_SEMANTIC_ONLY=1)
+1073a1074
+>         if (dualmode == DUALMODE_SKIP && dm.maps.empty()) { hs[1].exists = false; z_eliminated = true; dm.maps.push_back("UNVERIFIED"); }
+rc=1 peak_rss_kb=0
+GH107_DUALSHARE_FAIL inst=5 cfg=1 no RESULT d OPTIMAL
+GH107_DUALSHARE_FAIL inst=5 cfg=1 d != min(dX, dZ) by enumeration
+GH107_DUALSHARE_FAIL inst=5 cfg=1 emitted LB > d
+GH107_DUALSHARE_FAIL instances=2000 skipped=8 runs=126 planted_family=16 planted_random=4 near_miss=7 independent=5 detected=17 near_miss_detected=1 dX!=dZ=5 detected_with_xhalf_orbits=11 detected_with_both_half_orbits=10 d>=3=9 shared_runs=34 shared_runs_with_implied_skips=12 implied_skips=32 skip_runs=32 skip_zprobes=0 shared_descents=0 failures=23
+rc=1
