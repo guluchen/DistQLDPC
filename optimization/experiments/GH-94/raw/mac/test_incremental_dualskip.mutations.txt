@@ -1,0 +1,12 @@
+mutation m1: Z half eliminated whenever rank Hz = rank Hx (dual-map verification skipped)
+GH94_DUALSKIP_FAIL inst=11 cfg=0 d != min(dX, dZ) by enumeration
+GH94_DUALSKIP_FAIL inst=11 cfg=0 emitted LB > d
+GH94_DUALSKIP_FAIL inst=11 cfg=0 emitted LB > d
+GH94_DUALSKIP_FAIL instances=2000 skipped=25 runs=274 planted_family=49 planted_random=12 near_miss=20 independent=11 detected=54 near_miss_detected=5 dX!=dZ=11 detected_with_xhalf_orbits=27 d>=3=23 dual_descents=0 failures=22
+rc=1
+mutation m2: A1 cap U-2 instead of U-1 (off by one)
+GH94_DUALSKIP_FAIL inst=272 cfg=0 d != min(dX, dZ) by enumeration
+GH94_DUALSKIP_FAIL inst=272 cfg=0 emitted LB > d
+GH94_DUALSKIP_FAIL inst=272 cfg=0 emitted LB > d
+GH94_DUALSKIP_FAIL instances=2000 skipped=381 runs=4709 planted_family=744 planted_random=201 near_miss=381 independent=244 detected=840 near_miss_detected=61 dX!=dZ=200 detected_with_xhalf_orbits=323 d>=3=304 dual_descents=7 failures=21
+rc=1
