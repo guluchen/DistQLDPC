@@ -1,0 +1,61 @@
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/main7e/src/core/distqldpc.cc	2026-10-10 09:55:03
++++ src/core/distqldpc.cc	2026-10-11 02:06:26
+@@ -935,7 +935,10 @@
+     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
+     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
+     vec<Lit> dummy;
++    printf("c GH106P %s cap %llu lb %llu first %d builds 1\n", h.tag, (unsigned long long)cap, (unsigned long long)h.lb, (int)first_only);
++    S.gh106Dump("pre");
+     lbool ret = S.solveLimited(dummy);
++    S.gh106Dump(ret==l_True?"post TRUE":ret==l_False?"post FALSE":"post UNDEF");
+     uint64_t opt = S.getLastOptimalCost();
+     HalfStatus st = HALF_UNKNOWN;
+     if (first_only && ret == l_True) { value = S.getCostUB(); st = HALF_FOUND; }
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/main7e/src/solver/Solver.cc	2026-10-10 09:55:03
++++ src/solver/Solver.cc	2026-10-11 02:06:04
+@@ -7226,3 +7226,35 @@
+     to.moveTo(ca);
+ }
+ 
++
++// ---- GH-106 diagnostic counter dump (counter build only; not part of any candidate binary) ----
++void Solver::gh106Dump(const char* tag) {
++  double avM=0, avS=0, acM=0, acS=0, alM=0, alS=0; int alNZ=0, polT=0;
++  for (int v = 0; v < nVars(); v++) {
++    if (v < activity_VSIDS.size()) { double a = activity_VSIDS[v]; avS += a; if (a > avM) avM = a; }
++    if (v < activity_CHB.size()) { double a = activity_CHB[v]; acS += a; if (a > acM) acM = a; }
++    if (v < activityLB.size()) { double a = activityLB[v]; alS += a; if (a > alM) alM = a; if (a != 0) alNZ++; }
++    if (v < polarity.size() && polarity[v]) polT++;
++  }
++  printf("c GH106 %s confl %llu dec %llu prop %llu starts %llu lk %llu lksucc %llu lkprop %llu softconfl %llu"
++         " core %d tier2 %d local %d card %d hardens %d isetcl %d clauses %d vars %d static %d trail %d"
++         " coreLimit %d tier2Limit %d corecut %d t2cut %d maxl %.0f"
++         " VSIDS %d var_inc %.3g var_decay %.3f timer %d step %.4f cla_inc %.3g conflV %llu glbd %.0f lbdq %d"
++         " subc %llu curSimp %ld nbcbs %llu nextL %llu nbSimpAll %llu"
++         " lk_thres %d lk_coef %.3f lk_nbS %d lk_sumLB %.0f lk_maxS %d lk_myLH %d lk_mySucc %d lk_prevC %d srchPrevUB %llu"
++         " actV %.3g/%.3g actC %.3g/%.3g actLB %.3g/%.3g/%d polT %d UB %llu feas %d nbHardens %u\n",
++         tag, (unsigned long long)conflicts, (unsigned long long)decisions, (unsigned long long)propagations,
++         (unsigned long long)starts, (unsigned long long)LOOKAHEAD, (unsigned long long)nbLKsuccess,
++         (unsigned long long)lk_propagations, (unsigned long long)softConflicts,
++         learnts_core.size(), learnts_tier2.size(), learnts_local.size(), cardinalityC.size(), hardens.size(),
++         isetClauses.size(), clauses.size(), nVars(), staticNbVars, trail.size(),
++         coreLimit, tier2Limit, core_lbd_cut, tier2_lbd_cut, max_learnts,
++         (int)VSIDS, var_inc, var_decay, timer, step_size, cla_inc, (unsigned long long)conflicts_VSIDS,
++         (double)global_lbd_sum, lbd_queue.full() ? 1 : 0,
++         (unsigned long long)subconflicts, curSimplify, (unsigned long long)nbconfbeforesimplify,
++         (unsigned long long)next_L_reduce, (unsigned long long)nbSimplifyAll,
++         lk_thres, lk_coef, lk_nbSample, lk_sumLB, lk_maxSuccLB, lk_myLH, lk_mySucc, lk_prevConflicts,
++         (unsigned long long)srch_prevUB,
++         avM, avS, acM, acS, alM, alS, alNZ, polT, (unsigned long long)UB, (int)feasible, nbHardens);
++  fflush(stdout);
++}
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/main7e/src/solver/Solver.h	2026-10-10 09:55:03
++++ src/solver/Solver.h	2026-10-11 02:06:04
+@@ -558,6 +558,7 @@
+     void emitBoundsUpdate();
+     void emitTryUpdate(uint64_t try_val);
+     int bounds_pipe_w;
++    void gh106Dump(const char* tag);
+     // DistQLDPC GH-73 (interleaved CSS split): multi-instance search controls.
+     uint64_t initLB = 0;              // known: no solution with total cost < initLB
+     bool     strictUB = false;        // initUB is a hard cap: never search above it
