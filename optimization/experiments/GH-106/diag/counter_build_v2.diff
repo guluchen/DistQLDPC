@@ -1,0 +1,106 @@
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/cand106/optimization/experiments/GH-106/../../../src/core/distqldpc.cc	2026-10-11 10:01:42
++++ src/core/distqldpc.cc	2026-10-11 09:02:39
+@@ -977,7 +977,7 @@
+  * built instance of the same formula (css_half_build, the construction path GH-76 already uses for the first
+  * probe and for INC_REBUILD); every probe is still answered by Solver::incProbe. Engine unchanged.
+  *   gh89      never (GH-89 exactly);
+- *   postsol   while the half's solver has not found a solution (v1 default): before the first solution GH-76's
++ *   postsol   while the half's solver has not found a solution (default): before the first solution GH-76's
+  *             fail-path reset drops all learnt clauses on every raise, so persistence carries only decision-
+  *             heuristic state (activities, saved phases), which made e.g. TN_144_2_13's first FOUND probe cost
+  *             ~635k conflicts instead of ~35; after the first solution learnt clauses pay off;
+@@ -987,18 +987,15 @@
+  *             (GH-106 DIAGNOSIS F2: persistent post-solution probes tend to stop at the cap, 16 -> 15 -> 14);
+  *   atcapfeas as atcap, but only before feasibility probes (optimisation probes stay persistent);
+  *   budget    as postsol; a post-solution feasibility probe on the persistent solver gets a conflict budget of
+- *             -inc-budget=K (default 3) times the most conflicts any fresh probe of that half used (at least
+- *             -inc-budget-floor=F, default 10000); when it is exhausted the persistent instance is discarded and
++ *             -inc-budget=K (default 4) times the most conflicts any fresh probe of that half used (at least
++ *             -inc-budget-floor=F, default 2000); when it is exhausted the persistent instance is discarded and
+  *             the probe is answered by a freshly built one (deterministic: conflicts are counted, not time);
+- *   budgettot as budget, but the budget is K times all conflicts spent so far by both halves in this run
+- *             (default since GH-106 v2: on TN_144_2_13 no-card the persistent post-solution feasibility probes
+- *             stop exactly at the cap, 16 -> 15 -> 14, each costing more than a fresh probe; the budget bounds that
+- *             loss while keeping the persistent probes that finish cheaply). */
++ *   budgettot as budget, but the budget is K times all conflicts spent so far by both halves in this run. */
+ enum IncPolicy { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH,
+                  INC_POLICY_ATCAP, INC_POLICY_ATCAPFEAS, INC_POLICY_BUDGET, INC_POLICY_BUDGETTOT };
+-static IncPolicy g_inc_policy = INC_POLICY_BUDGETTOT;   /* GH-106 v2 default (PROPOSAL_V2.md) */
+-static uint64_t g_inc_budget_factor = 3;
+-static uint64_t g_inc_budget_floor = 10000;   /* minimum budget (tests lower it to exercise the fallback) */
++static IncPolicy g_inc_policy = INC_POLICY_POSTSOL;
++static uint64_t g_inc_budget_factor = 4;
++static uint64_t g_inc_budget_floor = 2000;   /* minimum budget (tests lower it to exercise the fallback) */
+ static uint64_t g_inc_conflicts_total = 0;   /* conflicts spent by all half probes of this run (budgettot) */
+ static const char* inc_policy_name(IncPolicy p) {
+     switch (p) {
+@@ -1057,7 +1054,10 @@
+         }
+         const uint64_t c0 = S.conflicts;
+         S.inc_conflictLimit = limit;
++        printf("c GH106P %s cap %llu lb %llu first %d builds %d\n", h.tag, (unsigned long long)cap, (unsigned long long)h.lb, (int)first_only, h.builds);
++        S.gh106Dump("pre");
+         r = S.incProbe(cap, first_only, h.lb, value);
++        S.gh106Dump(r==Solver::INC_FOUND?"post FOUND":r==Solver::INC_OPT?"post OPT":r==Solver::INC_NONE?"post NONE":r==Solver::INC_REBUILD?"post REBUILD":"post INTR");
+         S.inc_conflictLimit = UINT64_MAX;
+         S.setBoundsPipe(-1);
+         if (built_now && S.conflicts - c0 > h.fresh_max) h.fresh_max = S.conflicts - c0;
+@@ -1579,8 +1579,8 @@
+             printf("  Symmetry (split only): default adds optimum-preserving orbit clauses per CSS half from\n");
+             printf("            verified half automorphisms; -no-symbreak disables them;\n");
+             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
+-            printf("  Incremental (split only): -inc-policy=budgettot (default; -inc-budget=K, default 3; -inc-budget-floor=F,\n");
+-            printf("            default 10000) | postsol | gh89 | feasfresh | fresh | atcap | atcapfeas | budget: when a CSS half\n");
++            printf("  Incremental (split only): -inc-policy=postsol (default) | gh89 | feasfresh | fresh | atcap | atcapfeas |\n");
++            printf("            budget | budgettot [-inc-budget=K -inc-budget-floor=F]: when a CSS half\n");
+             printf("            gets a fresh solver instead of its persistent one (see optimization/experiments/GH-106)\n");
+             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
+             printf("  -v / -debug: solver search log and matrix paths\n");
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/cand106/optimization/experiments/GH-106/../../../src/solver/Solver.cc	2026-10-11 08:28:28
++++ src/solver/Solver.cc	2026-10-11 09:02:02
+@@ -7422,3 +7422,35 @@
+     to.moveTo(ca);
+ }
+ 
++
++// ---- GH-106 diagnostic counter dump (counter build only; not part of any candidate binary) ----
++void Solver::gh106Dump(const char* tag) {
++  double avM=0, avS=0, acM=0, acS=0, alM=0, alS=0; int alNZ=0, polT=0;
++  for (int v = 0; v < nVars(); v++) {
++    if (v < activity_VSIDS.size()) { double a = activity_VSIDS[v]; avS += a; if (a > avM) avM = a; }
++    if (v < activity_CHB.size()) { double a = activity_CHB[v]; acS += a; if (a > acM) acM = a; }
++    if (v < activityLB.size()) { double a = activityLB[v]; alS += a; if (a > alM) alM = a; if (a != 0) alNZ++; }
++    if (v < polarity.size() && polarity[v]) polT++;
++  }
++  printf("c GH106 %s confl %llu dec %llu prop %llu starts %llu lk %llu lksucc %llu lkprop %llu softconfl %llu"
++         " core %d tier2 %d local %d card %d hardens %d isetcl %d clauses %d vars %d static %d trail %d"
++         " coreLimit %d tier2Limit %d corecut %d t2cut %d maxl %.0f"
++         " VSIDS %d var_inc %.3g var_decay %.3f timer %d step %.4f cla_inc %.3g conflV %llu glbd %.0f lbdq %d"
++         " subc %llu curSimp %ld nbcbs %llu nextL %llu nbSimpAll %llu"
++         " lk_thres %d lk_coef %.3f lk_nbS %d lk_sumLB %.0f lk_maxS %d lk_myLH %d lk_mySucc %d lk_prevC %d srchPrevUB %llu"
++         " actV %.3g/%.3g actC %.3g/%.3g actLB %.3g/%.3g/%d polT %d UB %llu feas %d nbHardens %u\n",
++         tag, (unsigned long long)conflicts, (unsigned long long)decisions, (unsigned long long)propagations,
++         (unsigned long long)starts, (unsigned long long)LOOKAHEAD, (unsigned long long)nbLKsuccess,
++         (unsigned long long)lk_propagations, (unsigned long long)softConflicts,
++         learnts_core.size(), learnts_tier2.size(), learnts_local.size(), cardinalityC.size(), hardens.size(),
++         isetClauses.size(), clauses.size(), nVars(), staticNbVars, trail.size(),
++         coreLimit, tier2Limit, core_lbd_cut, tier2_lbd_cut, max_learnts,
++         (int)VSIDS, var_inc, var_decay, timer, step_size, cla_inc, (unsigned long long)conflicts_VSIDS,
++         (double)global_lbd_sum, lbd_queue.full() ? 1 : 0,
++         (unsigned long long)subconflicts, curSimplify, (unsigned long long)nbconfbeforesimplify,
++         (unsigned long long)next_L_reduce, (unsigned long long)nbSimplifyAll,
++         lk_thres, lk_coef, lk_nbSample, lk_sumLB, lk_maxSuccLB, lk_myLH, lk_mySucc, lk_prevConflicts,
++         (unsigned long long)srch_prevUB,
++         avM, avS, acM, acS, alM, alS, alNZ, polT, (unsigned long long)UB, (int)feasible, nbHardens);
++  fflush(stdout);
++}
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/cand106/optimization/experiments/GH-106/../../../src/solver/Solver.h	2026-10-11 08:28:28
++++ src/solver/Solver.h	2026-10-11 09:02:02
+@@ -558,6 +558,7 @@
+     void emitBoundsUpdate();
+     void emitTryUpdate(uint64_t try_val);
+     int bounds_pipe_w;
++    void gh106Dump(const char* tag);
+     // DistQLDPC GH-76 (CSS split, persistent per-half solver; controls adapted from GH-73).
+     bool     stopAtFirstSolution = false;  // search() returns l_True at the first solution under UB
+     uint64_t boundsLbCap = UINT64_MAX, boundsUbCap = UINT64_MAX;  // caps on emitted LB/UB

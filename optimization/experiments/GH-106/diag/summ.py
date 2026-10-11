@@ -7,7 +7,12 @@ def summ(path):
     res = [l for l in open(path, errors='replace') if re.match(r'c CSS i[a-z]*: [XZ] half cap', l)]
     o = [l.strip() for l in open(path, errors='replace') if l.startswith('o ')]
     parts = []; tc = tl = tp = 0
-    for r, l in zip(rows, res):
+    it = iter(res)
+    for r in rows:
+        if r['outcome'] in ('INTR', 'REBUILD'):
+            tc += r['d_confl']; tl += r['d_lk']; tp += r['d_prop']
+            parts.append('%s%d:%s/%dk' % (r['half'], r['cap'], r['outcome'][0], round(r['d_confl'] / 1000))); continue
+        l = next(it)
         m = re.search(r'(feasibility|optimize) -> (\w+) (\d+)', l)
         kind = 'f' if m.group(1) == 'feasibility' else 'o'
         v = m.group(3) if m.group(2) in ('FOUND', 'OPT') else ''
