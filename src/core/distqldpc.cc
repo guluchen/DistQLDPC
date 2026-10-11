@@ -987,7 +987,7 @@ static bool css_half_build(CssHalf& h, int verb, int card_mode) {
  *             (GH-106 DIAGNOSIS F2: persistent post-solution probes tend to stop at the cap, 16 -> 15 -> 14);
  *   atcapfeas as atcap, but only before feasibility probes (optimisation probes stay persistent);
  *   budget    as postsol; a post-solution feasibility probe on the persistent solver gets a conflict budget of
- *             -inc-budget=K (default 2) times the most conflicts any fresh probe of that half used (at least
+ *             -inc-budget=K (default 3) times the most conflicts any fresh probe of that half used (at least
  *             -inc-budget-floor=F, default 10000); when it is exhausted the persistent instance is discarded and
  *             the probe is answered by a freshly built one (deterministic: conflicts are counted, not time);
  *   budgettot as budget, but the budget is K times all conflicts spent so far by both halves in this run
@@ -997,7 +997,7 @@ static bool css_half_build(CssHalf& h, int verb, int card_mode) {
 enum IncPolicy { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH,
                  INC_POLICY_ATCAP, INC_POLICY_ATCAPFEAS, INC_POLICY_BUDGET, INC_POLICY_BUDGETTOT };
 static IncPolicy g_inc_policy = INC_POLICY_BUDGETTOT;   /* GH-106 v2 default (PROPOSAL_V2.md) */
-static uint64_t g_inc_budget_factor = 2;
+static uint64_t g_inc_budget_factor = 3;
 static uint64_t g_inc_budget_floor = 10000;   /* minimum budget (tests lower it to exercise the fallback) */
 static uint64_t g_inc_conflicts_total = 0;   /* conflicts spent by all half probes of this run (budgettot) */
 static const char* inc_policy_name(IncPolicy p) {
@@ -1579,7 +1579,7 @@ int main(int argc, char** argv) {
             printf("  Symmetry (split only): default adds optimum-preserving orbit clauses per CSS half from\n");
             printf("            verified half automorphisms; -no-symbreak disables them;\n");
             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
-            printf("  Incremental (split only): -inc-policy=budgettot (default; -inc-budget=K, default 2; -inc-budget-floor=F,\n");
+            printf("  Incremental (split only): -inc-policy=budgettot (default; -inc-budget=K, default 3; -inc-budget-floor=F,\n");
             printf("            default 10000) | postsol | gh89 | feasfresh | fresh | atcap | atcapfeas | budget: when a CSS half\n");
             printf("            gets a fresh solver instead of its persistent one (see optimization/experiments/GH-106)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");

@@ -75,3 +75,11 @@ exercises the interrupt-and-rebuild path) plus atcap/atcapfeas/budget, 0 failure
 `-inc-policy=gh89 -v` and `-joint -v` byte-identical to frozen89 (21 + 21) and `-inc-policy=postsol -v` byte-identical
 to frozen106 (21); science sweep in chunks under the lock (2 GB cap) vs main; cross-repo `ci/xrepo-gh106v2`; freeze
 `frozen106/v2/distqldpc`.
+
+## Addendum (before freezing; selection updated from K=2 to K=3)
+The screen was extended to the remaining Tier3 cells (BB_144_14_14 / BB_144_12_12 card-mto, LP_544_80_12 both modes)
+before freezing. With K=2, BB_144_14_14 card-mto regressed to 1.19 (its persistent Z13 refutation needs 360k conflicts;
+the K=2 budget stopped it at 315k and the fresh redo cost 411k). K=3 (floor 10000) was then screened on all 22 cells:
+worst cell 0.96 (BB_144_14_14 no-card), TN_144 no-card 0.88, BB_144_14_14 card-mto 0.85 (= postsol), every other cell
+equal to postsol (no fallback fired); LP_544 no-card hit the wall limit under host load but is search-identical to
+postsol up to the cut (no budgeted probe in its schedule). **Default: `budgettot`, K=3, F=10000.** Table: TIER0_V2_RESULT.md.
