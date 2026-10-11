@@ -4,7 +4,10 @@
  * Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
- * Data: data/matrices/<code>_{Hx,Hz,Gx,Gz}.txt
+ * Data: data/matrices/tierN/<code>_{Hx,Hz,Gx,Gz}.txt (N = 0..5, see data/matrices/README.md).
+ *   A bare code name (no '/') resolves to data/matrices/<code> if <code>_Hx.txt is there,
+ *   else to the first of data/matrices/tier0 .. tier5 containing it; an argument with
+ *   a '/' is used as a path prefix unchanged.
  *   Hx, Hz: X / Z stabilizer parity checks (rows of 0/1).
  *   Gx: Z-type logical basis rows (ker(Hx) / rowspan(Hz)), n bits each.
  *   Gz: X-type logical basis rows (ker(Hz) / rowspan(Hx)), n bits each.
@@ -1347,11 +1350,22 @@ static bool dump_stabilizer_instance(
     return true;
 }
 
+/* Bare code name (no '/'): data/matrices/<code> if <code>_Hx.txt exists there, else the
+ * first of data/matrices/tier0 .. tier5 that has it; if none, data/matrices/<code> (so the
+ * load error names the old flat path). Arguments containing '/' are returned unchanged. */
 static std::string resolve_prefix(const char* prefix) {
     std::string p(prefix);
-    if (p.find('/') == std::string::npos)
-        p = std::string("data/matrices/") + p;
-    return p;
+    if (p.find('/') != std::string::npos)
+        return p;
+    std::string flat = std::string("data/matrices/") + p;
+    if (access((flat + "_Hx.txt").c_str(), F_OK) == 0)
+        return flat;
+    for (int t = 0; t <= 5; t++) {
+        std::string cand = std::string("data/matrices/tier") + std::to_string(t) + "/" + p;
+        if (access((cand + "_Hx.txt").c_str(), F_OK) == 0)
+            return cand;
+    }
+    return flat;
 }
 
 int main(int argc, char** argv) {
@@ -1405,7 +1419,8 @@ int main(int argc, char** argv) {
             symbreak_report = true;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
-            printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/<code>_{{Hx,Hz,Gx,Gz}}.txt)\n");
+            printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/[tierN/]<code>_{Hx,Hz,Gx,Gz}.txt;\n");
+            printf("          flat dir first, then tier0..tier5; a path containing '/' is used as given)\n");
             printf("  Distance: min Pauli weight in S^perp \\\\ S (symplectic MaxSAT).\n");
             printf("  Options: -cpu-lim=N  -v|-debug  -q  -dump-wcnf=PATH  -dump-opb=PATH  -dump-only\n");
             printf("           -native-parity-opb  GF(2) parity as PB equalities (OPB dump only)\n");
