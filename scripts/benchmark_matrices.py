@@ -2,6 +2,12 @@
 """
 Run bin/distqldpc on a fixed benchmark set in data/matrices/.
 
+Codes are looked up by stem in --matrices-dir itself and then in its tier*/
+subdirectories (data/matrices/tier0 .. tier5, searched recursively, natural
+order); the first directory holding all four <code>_{Hx,Hz,Gx,Gz}.txt wins,
+matching bin/distqldpc's own bare-name resolution. A flat directory (e.g.
+--matrices-dir data/matrices/tier3) works as before.
+
 Default: 18 curated codes, 3 minute timeout per instance, 5 in parallel.
 Use --advanced for 4 long-run instances (~20–75 min reference, 8h timeout default).
 Use --full for default 18 + advanced 4 (22 codes).
@@ -80,22 +86,45 @@ def repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
 
+def _natural_key(path: Path) -> list:
+    return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", path.as_posix())]
+
+
+def search_dirs(matrices_dir: Path) -> List[Path]:
+    """matrices_dir itself, then every directory under its tier*/ subdirectories."""
+    tier_dirs: List[Path] = []
+    for top in matrices_dir.glob("tier*"):
+        if top.is_dir():
+            tier_dirs.append(top)
+            tier_dirs.extend(p for p in top.rglob("*") if p.is_dir())
+    return [matrices_dir] + sorted(tier_dirs, key=_natural_key)
+
+
+def _complete(prefix_dir: Path, code: str) -> bool:
+    return all((prefix_dir / f"{code}_{t}.txt").is_file() for t in SUFFIXES)
+
+
+def code_prefix(code: str, matrices_dir: Path) -> Optional[Path]:
+    """Path prefix (dir / code) of the first search dir with all four files, else None."""
+    for d in search_dirs(matrices_dir):
+        if _complete(d, code):
+            return d / code
+    return None
+
+
 def discover_codes(matrices_dir: Path) -> List[str]:
     stems: set[str] = set()
-    for path in matrices_dir.glob("*.txt"):
-        m = re.match(r"(.+)_(Hx|Hz|Gx|Gz)\.txt$", path.name)
-        if m:
-            stems.add(m.group(1))
-    complete = [
-        s
-        for s in sorted(stems)
-        if all((matrices_dir / f"{s}_{t}.txt").is_file() for t in SUFFIXES)
-    ]
+    for d in search_dirs(matrices_dir):
+        for path in d.glob("*.txt"):
+            m = re.match(r"(.+)_(Hx|Hz|Gx|Gz)\.txt$", path.name)
+            if m:
+                stems.add(m.group(1))
+    complete = [s for s in sorted(stems) if code_prefix(s, matrices_dir) is not None]
     return complete
 
 
 def code_has_matrices(code: str, matrices_dir: Path) -> bool:
-    return all((matrices_dir / f"{code}_{t}.txt").is_file() for t in SUFFIXES)
+    return code_prefix(code, matrices_dir) is not None
 
 
 def resolve_codes(
@@ -177,10 +206,11 @@ def run_one(
         if flag:
             cmd.append(flag)
     root = repo_root()
+    prefix = code_prefix(code, matrices_dir) or (matrices_dir / code)
     try:
-        mat_arg = str(matrices_dir.relative_to(root) / code)
+        mat_arg = str(prefix.relative_to(root))
     except ValueError:
-        mat_arg = str(matrices_dir / code)
+        mat_arg = str(prefix)
     cmd.extend([f"-cpu-lim={timeout_sec}", mat_arg])
 
     t0 = time.monotonic()
@@ -610,7 +640,8 @@ def main() -> int:
         "--matrices-dir",
         type=Path,
         default=root / "data" / "matrices",
-        help="directory with <code>_{Hx,Hz,Gx,Gz}.txt",
+        help="matrices root; <code>_{Hx,Hz,Gx,Gz}.txt is looked up here, then in its "
+        "tier*/ subdirectories (default: data/matrices, i.e. data/matrices/tier0..tier5)",
     )
     ap.add_argument(
         "--binary",
@@ -654,7 +685,8 @@ def main() -> int:
     ap.add_argument(
         "--all",
         action="store_true",
-        help="run all codes with Hx/Hz/Gx/Gz in matrices dir (not the default set)",
+        help="run all codes with Hx/Hz/Gx/Gz in matrices dir and its tier*/ subdirs "
+        "(not the default set)",
     )
     ap.add_argument(
         "--codes",

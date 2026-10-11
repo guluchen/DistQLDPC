@@ -2,7 +2,7 @@
 """
 Build Gx/Gz logical basis files from Hx/Hz parity checks (CSS / QLDPC).
 
-Writes the same format as data/matrices/*_{Gx,Gz}.txt:
+Writes the same format as data/matrices/tierN/*_{Gx,Gz}.txt:
 
   Gx — Z-type logical rows in F_2^n  (ker(Hx) / row(Hz))
   Gz — X-type logical rows in F_2^n  (ker(Hz) / row(Hx))
@@ -10,10 +10,15 @@ Writes the same format as data/matrices/*_{Gx,Gz}.txt:
 Requires only {STEM}_Hx.txt and {STEM}_Hz.txt. Uses the same
 GF(2) quotient-basis construction as the solver pipeline.
 
+--dir is one flat directory (no recursion). The bundled benchmark codes now live
+in tier subdirectories data/matrices/tier0 .. tier5 (see data/matrices/README.md),
+so point --dir at the tier directory, e.g. --dir data/matrices/tier0. The default
+data/matrices still works for a new code placed there directly.
+
 Usage:
   python3 scripts/compute_logicals.py MY_CODE
   python3 scripts/compute_logicals.py --dir path/to/matrices MY_CODE
-  python3 scripts/compute_logicals.py --all
+  python3 scripts/compute_logicals.py --dir data/matrices/tier0 --all
 """
 
 from __future__ import annotations
@@ -221,7 +226,8 @@ def main() -> int:
         "--dir",
         type=Path,
         default=Path("data/matrices"),
-        help="directory with {STEM}_Hx.txt / {STEM}_Hz.txt (default: data/matrices)",
+        help="flat directory with {STEM}_Hx.txt / {STEM}_Hz.txt (default: data/matrices; "
+        "bundled codes are in data/matrices/tierN, N=0..5)",
     )
     ap.add_argument(
         "--all",

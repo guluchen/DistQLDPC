@@ -29,7 +29,7 @@ The last line `o 6` is the distance (or the best upper bound found before timeou
 
 ## Input: four matrix files
 
-For a code named `<code>`, put four text files in one directory (default: `data/matrices/`):
+For a code named `<code>`, put four text files in one directory (default: `data/matrices/`; the bundled benchmark codes live in tier subdirectories `data/matrices/tier0` … `tier5`, see [data/matrices/README.md](data/matrices/README.md)):
 
 | File | Role |
 |------|------|
@@ -40,7 +40,7 @@ For a code named `<code>`, put four text files in one directory (default: `data/
 
 **File format:** each line is one binary row; entries are `0` or `1` separated by spaces. Lines starting with `#` are comments. All four matrices must have the same number of columns `n` (qubits).
 
-**Stem names** use `{family}_{n}_{k}_{d}` (e.g. `BB_72_12_6`, `LP_34_20_2`). Use `unknown` when minimum distance is not certified. Upstream `AJ_*` / `xu_*` ids are recorded in [NOTICE](NOTICE).
+**Stem names** use `{family}_{n}_{k}_{d}` (e.g. `BB_72_12_6`, `LP_34_20_2`), family in `BB`, `GB`, `LP`, `TN`. Use `unknown` when minimum distance is not certified. Upstream `AJ_*` / `xu_*` / `PK_*` ids and renames are recorded in [NOTICE](NOTICE) and [data/matrices/README.md](data/matrices/README.md).
 
 Example layout:
 
@@ -52,11 +52,13 @@ data/matrices/
   MY_CODE_Gz.txt
 ```
 
-Run with a path prefix (with or without directory):
+Run with a path prefix (with or without directory). A bare name is looked up in `data/matrices/` first, then in `data/matrices/tier0` … `tier5` (first match wins); a name containing `/` is used as given:
 
 ```bash
 ./bin/distqldpc MY_CODE
 ./bin/distqldpc data/matrices/MY_CODE
+./bin/distqldpc LP_34_20_2                      # -> data/matrices/tier0/LP_34_20_2
+./bin/distqldpc data/matrices/tier0/LP_34_20_2
 ```
 
 ---
@@ -69,11 +71,12 @@ You only need to **author** the parity checks `Hx` and `Hz`. The logical bases `
 # write data/matrices/MY_CODE_Gx.txt and MY_CODE_Gz.txt from Hx/Hz
 python3 scripts/compute_logicals.py MY_CODE
 
-# custom directory
+# custom directory (flat; e.g. a tier directory)
 python3 scripts/compute_logicals.py --dir path/to/matrices MY_CODE
 
-# batch: all codes that have Hx + Hz but no Gx/Gz yet
+# batch: all codes in one directory that have Hx + Hz but no Gx/Gz yet
 python3 scripts/compute_logicals.py --all
+python3 scripts/compute_logicals.py --dir data/matrices/tier0 --all
 
 # replace existing Gx/Gz
 python3 scripts/compute_logicals.py --overwrite MY_CODE
@@ -89,7 +92,7 @@ In symplectic form (used internally by the solver): Gx rows become `[0 | z]`, Gz
 Optional: remove redundant stabilizer rows or sparsify checks before distance search:
 
 ```bash
-python3 scripts/preprocess_matrices.py --src data/matrices --root data
+python3 scripts/preprocess_matrices.py --src data/matrices/tier0 --root data
 # writes data/s1/ and data/s2/ variants; re-run compute_logicals on those if needed
 ```
 
@@ -181,6 +184,7 @@ Optimization experiments must follow the [optimization loop policy](docs/OPTIMIZ
 ```bash
 python3 scripts/benchmark_matrices.py
 python3 scripts/benchmark_matrices.py --all --timeout 180
+python3 scripts/benchmark_matrices.py --matrices-dir data/matrices/tier1 --all   # one data tier
 python3 scripts/benchmark_matrices.py --compare-roundingsat
 ```
 
@@ -206,7 +210,7 @@ Requires **g++** and **zlib**. Binary: `bin/distqldpc`.
 ```
 src/core/distqldpc.cc   # CLI, QLDPC encoding, fork/pipe
 src/solver/             # MaxCDCL MaxSAT engine
-data/matrices/          # example codes (Hx, Hz, Gx, Gz)
+data/matrices/tierN/    # benchmark codes (Hx, Hz, Gx, Gz) by tier; see data/matrices/README.md
 ```
 
 ---
