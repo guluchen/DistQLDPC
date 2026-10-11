@@ -23,7 +23,7 @@ certified).
 | tier1 | lightweight performance filter | BB_90_8_10 [[90,8,10]], BB_108_8_10 [[108,8,10]], GB_144_12_8 [[144,12,8]], LP_238_44_6 [[238,44,6]] |
 | tier2 | medium filter | LP_340_56_8 [[340,56,8]] |
 | tier3 | decisive set | BB_144_12_12 [[144,12,12]], BB_144_14_14 [[144,14,14]], GB_144_12_12 [[144,12,12]], TN_144_2_13 [[144,2,13]], LP_442_68_10 [[442,68,10]], LP_544_80_12 [[544,80,12]] |
-| tier4 | hard; timeout 2000 s | TN_250_10_15 [[250,10,15]], BB_288_12_unknown [[288,12,?]], LP_714_100_unknown [[714,100,?]] |
+| tier4 | hard; timeout 2000 s | TN_250_10_15 [[250,10,15]], BB_288_12_18 [[288,12,18]], LP_714_100_16 [[714,100,16]] |
 | tier5 | very hard; timeout 21600 s (6 h) | TN_180_2_unknown [[180,2,?]], TN_216_4_unknown [[216,4,?]], TN_252_2_unknown [[252,2,?]], TN_288_2_unknown [[288,2,?]], TN_324_4_unknown [[324,4,?]], BB_360_12_unknown [[360,12,?]], TN_360_4_unknown [[360,4,?]], TN_396_4_unknown [[396,4,?]], TN_432_8_unknown [[432,8,?]], TN_468_4_unknown [[468,4,?]], TN_496_2_unknown [[496,2,?]], TN_504_2_unknown [[504,2,?]], TN_540_4_unknown [[540,4,?]], TN_576_2_unknown [[576,2,?]], TN_612_2_unknown [[612,2,?]], TN_648_10_unknown [[648,10,?]], TN_648_14_unknown [[648,14,?]], TN_684_2_unknown [[684,2,?]], BB_756_16_unknown [[756,16,?]], BB_864_4_unknown [[864,4,?]], LP_1020_136_unknown [[1020,136,?]], LP_1054_140_unknown [[1054,140,?]], BB_1080_4_unknown [[1080,4,?]], LP_1428_184_unknown [[1428,184,?]], LP_1768_224_unknown [[1768,224,?]] |
 
 Counts: tier0 10, tier1 4, tier2 1, tier3 6, tier4 3, tier5 25 (total 49).
@@ -49,6 +49,8 @@ section 5.
 
 | Date | Old | New | Note |
 |------|-----|-----|------|
+| 2026-10-11 | BB_288_12_unknown | BB_288_12_18 | d = 18 found by main 7eadd54 (Mac, 804 s no-card / 913 s card-mto); PI: written without strict cross-verification, re-check only if an inconsistency appears |
+| 2026-10-11 | LP_714_100_unknown | LP_714_100_16 | d = 16 found by main 7eadd54 (Mac, 1687 s both modes); same policy |
 | 2026-10-11 | PK_31 | LP_1054_140_unknown | n=1054, k=140 |
 | 2026-10-11 | xu_30 | LP_1020_136_unknown | n=1020, k=136 |
 | 2026-10-11 | xu_42 | LP_1428_184_unknown | n=1428, k=184 |
@@ -86,6 +88,4 @@ section 5.
 - **Former numeric tier5 names** (BB_756_16_34, BB_864_4_40, BB_1080_4_54, TN_180_2_17 ... TN_684_2_29): the old third field may be a literature value or an upstream index; it is kept in the rename history but not in the stem until DistQLDPC confirms the distance.
 - **TN_648_10_unknown:** d <= 52 (weight-52 nontrivial logicals in the bundled bases); the
   exact distance is unknown.
-- **BB_288_12_unknown / LP_714_100_unknown:** current main reports d = 18 and d = 16
-  respectively. These are pending results awaiting internal cross-checks; the stems will be
-  renamed to `BB_288_12_18` / `LP_714_100_16` only after the cross-checks agree.
+- **BB_288_12_18 / LP_714_100_16:** distances from main's solver (PI 2026-10-11: no strict cross-verification; partial internal checks agreed so far — `-no-symbreak` reached lb 17 / ub 18 on BB_288 and ub 16 on LP_714; re-check if a later run disagrees).
