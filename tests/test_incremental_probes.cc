@@ -6,7 +6,11 @@
 // violated-soft count equals the reported value, value <= cap; OPT => value == optimum.
 // GH-106: optional argv[2] = half-solver policy emulated by the probe driver exactly as in
 // src/core/distqldpc.cc run_css_half (gh89: never rebuild; postsol: fresh instance while !feasible;
-// feasfresh: also before every first-only probe; fresh: before every probe). Default gh89 = GH-76 counts.
+// feasfresh: also before every first-only probe; fresh: before every probe; atcap: postsol + fresh after a FOUND
+// exactly at its cap; atcapfeas: same, feasibility probes only; budget: postsol + a conflict budget on post-solution
+// feasibility probes of a kept solver, factor argv[3] (default 4) x the most conflicts of a fresh probe, floor
+// argv[4] (default 2000; small values exercise the interrupt-and-rebuild path); budgettot: the same with factor x all
+// conflicts spent so far on this instance's probes. Default gh89 = GH-76 counts.
 // Engine output goes to stdout; the verdict goes to stderr.
 #include "SimpSolver.h"
 #include <cstring>
@@ -70,9 +74,12 @@ static void checkWitness(const Inst& I, const SimpSolver& S, uint64_t v, int ins
 int main(int argc, char** argv) {
     int N = argc > 1 ? atoi(argv[1]) : 3000;
     const char* policy = argc > 2 ? argv[2] : "gh89";
-    const int pol = !strcmp(policy, "gh89") ? 0 : !strcmp(policy, "postsol") ? 1 : !strcmp(policy, "feasfresh") ? 2 : !strcmp(policy, "fresh") ? 3 : -1;
+    const char* names[8] = { "gh89", "postsol", "feasfresh", "fresh", "atcap", "atcapfeas", "budget", "budgettot" };
+    int pol = -1;
+    for (int i = 0; i < 8; i++) if (!strcmp(policy, names[i])) pol = i;
     if (pol < 0) { std::fprintf(stderr, "unknown policy %s\n", policy); return 2; }
-    long policy_builds = 0;
+    const uint64_t bfactor = argc > 3 ? (uint64_t)atoi(argv[3]) : 4, bfloor = argc > 4 ? (uint64_t)atoi(argv[4]) : 2000;
+    long policy_builds = 0, budget_fallbacks = 0;
     long probes = 0, rebuilds = 0, found = 0, opts = 0, nones = 0, unsat = 0;
     for (int inst = 0; inst < N; inst++) {
         Inst I; I.n = 3 + rnd(14);
@@ -95,12 +102,30 @@ int main(int argc, char** argv) {
         bool prep; SimpSolver* S = build(I, prep);
         if (!prep) { need(opt < 0, "prepare failed on a satisfiable instance", inst); unsat++; delete S; continue; }
         uint64_t lb = 0, ub = UINT64_MAX, v = 0;   // proven bounds known to the "driver"
+        bool last_at_cap = false, built = true; uint64_t fresh_max = 0, spent = 0;   // GH-106 policy state of this instance
         auto probe = [&](uint64_t cap, bool first) -> Solver::IncResult {
-            if (pol == 3 || (pol >= 1 && !S->feasible) || (pol == 2 && first)) {   // GH-106 policy rebuild
-                delete S; S = build(I, prep); policy_builds++;
+            const bool want = pol == 3 || (pol >= 1 && !S->feasible) || (pol == 2 && first)
+                              || (pol == 4 && last_at_cap) || (pol == 5 && last_at_cap && first);
+            if (want) {   // GH-106 policy rebuild
+                delete S; S = build(I, prep); policy_builds++; built = true;
                 need(prep, "policy rebuild prepare failed", inst);
             }
+            uint64_t limit = UINT64_MAX;
+            if (pol >= 6 && !built && first && S->feasible) { uint64_t b = bfactor * (pol == 6 ? fresh_max : spent); limit = S->conflicts + (b < bfloor ? bfloor : b); }
+            uint64_t c0 = S->conflicts;
+            S->inc_conflictLimit = limit;
             Solver::IncResult r = S->incProbe(cap, first, lb, v); probes++;
+            S->inc_conflictLimit = UINT64_MAX;
+            if (built && S->conflicts - c0 > fresh_max) fresh_max = S->conflicts - c0;
+            spent += S->conflicts - c0;
+            if (r == Solver::INC_INTERRUPTED && limit != UINT64_MAX && S->conflicts >= limit) {   // budget fallback
+                budget_fallbacks++; delete S; S = build(I, prep); built = true;
+                need(prep, "budget rebuild prepare failed", inst);
+                c0 = S->conflicts;
+                r = S->incProbe(cap, first, lb, v); probes++;
+                if (S->conflicts - c0 > fresh_max) fresh_max = S->conflicts - c0;
+                spent += S->conflicts - c0;
+            }
             if (r == Solver::INC_REBUILD) {
                 rebuilds++; delete S; S = build(I, prep);
                 need(prep, "rebuild prepare failed", inst);
@@ -116,6 +141,8 @@ int main(int argc, char** argv) {
                 if (v < ub) ub = v;
             }
             else need(false, "interrupted/unexpected result", inst);
+            last_at_cap = (r == Solver::INC_FOUND && v == cap);
+            built = false;   // the next probe starts on a kept solver unless rebuilt
             return r;
         };
         // phase 1: doubling feasibility caps until a solution or the maximum
@@ -142,6 +169,7 @@ int main(int argc, char** argv) {
     }
     std::fprintf(stderr, "GH76_INCREMENTAL_%s instances=%d unsat=%ld probes=%ld found=%ld opt=%ld none=%ld rebuilds=%ld failures=%d\n",
                  fails ? "FAIL" : "PASS", N, unsat, probes, found, opts, nones, rebuilds, fails);
-    if (pol != 0) std::fprintf(stderr, "GH106_POLICY %s policy_builds=%ld\n", policy, policy_builds);
+    if (pol != 0) std::fprintf(stderr, "GH106_POLICY %s policy_builds=%ld budget_fallbacks=%ld (factor %llu floor %llu)\n", policy, policy_builds,
+                               budget_fallbacks, (unsigned long long)bfactor, (unsigned long long)bfloor);
     return fails ? 1 : 0;
 }

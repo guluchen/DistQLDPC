@@ -80,6 +80,9 @@ int main(int argc, char** argv) {
     const int N = argc > 1 ? atoi(argv[1]) : 2000;
     g_inc_policy = INC_POLICY_GH89;   // GH-106: the GH-89 control unless a policy is given
     if (argc > 2 && !parse_inc_policy(argv[2], g_inc_policy)) { fprintf(stderr, "unknown policy %s\n", argv[2]); return 2; }
+    // GH-106 v2: optional argv[3] = budget factor, argv[4] = budget floor (small values exercise the budget fallback)
+    if (argc > 3) g_inc_budget_factor = (uint64_t)atoi(argv[3]);
+    if (argc > 4) g_inc_budget_floor = (uint64_t)atoi(argv[4]);
     long probes = 0, found = 0, opts = 0, nones = 0, infeasible = 0, rebuilds = 0, unsat = 0;
     long sym_none = 0, sym_unit = 0, sym_chain = 0;
     for (int inst = 0; inst < N; inst++) {
@@ -126,6 +129,7 @@ int main(int argc, char** argv) {
         for (int pass = 0; pass < 2; pass++) {
             const bool sb = pass == 0;
             CssHalf h = { "T", &Hm, &Gm, true, 1, UINT64_MAX, NULL, 0, 0 };
+            g_inc_conflicts_total = 0;   // GH-106 v2: one "run" per half instance for the budgettot policy
             if (sb) h.sb_orbit = orb;
             const uint64_t maxc = (uint64_t)n;
             uint64_t lb = 0, ub = UINT64_MAX, v = 0;
@@ -172,6 +176,7 @@ int main(int argc, char** argv) {
     }
     fprintf(stderr, "GH89_SYMBREAK_INC_%s instances=%d unsat=%ld sym(none/unit/chain)=%ld/%ld/%ld probes=%ld found=%ld opt=%ld none=%ld infeasible=%ld rebuilds=%ld failures=%d\n",
             fails ? "FAIL" : "PASS", N, unsat, sym_none, sym_unit, sym_chain, probes, found, opts, nones, infeasible, rebuilds, fails);
-    if (g_inc_policy != INC_POLICY_GH89) fprintf(stderr, "GH106_POLICY %s (rebuilds include policy rebuilds)\n", inc_policy_name(g_inc_policy));
+    if (g_inc_policy != INC_POLICY_GH89) fprintf(stderr, "GH106_POLICY %s budget_factor=%llu budget_floor=%llu (rebuilds include policy rebuilds)\n", inc_policy_name(g_inc_policy),
+                                                 (unsigned long long)g_inc_budget_factor, (unsigned long long)g_inc_budget_floor);
     return fails ? 1 : 0;
 }

@@ -46,7 +46,8 @@ Policies screened (all = postsol before the half's first solution):
 * **`budgettot`** (K x all conflicts spent so far by both halves in this run, floor F): the run's own cost so far is
   a scale that grows with instance difficulty. K=2, F=10000: worst cell 0.95 (LP_442 card-mto, BB_144_12_12 no-card,
   both = postsol), TN no-card **0.85** (X15 persistent probe stopped at 59k conflicts, fresh probe finds 13; the
-  persistent Z12 refutation finishes inside its budget at 242k vs 254k fresh), every other cell equal to postsol
+  persistent Z12 refutation finishes inside its budget at 242k vs 254k fresh); BB_144_14_14 no-card 0.91 (a
+  persistent Z13 refutation is stopped at 92k and redone fresh; postsol 0.82); every other cell equal to postsol
   (no fallback fired), large geomean 0.67, Tier1 0.68 (= postsol). K=1 cuts GB_144 no-card's good persistent probe (0.87).
 
 ## Design (selected default: `-inc-policy=budgettot -inc-budget=2 -inc-budget-floor=10000`)

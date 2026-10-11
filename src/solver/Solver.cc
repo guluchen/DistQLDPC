@@ -7019,8 +7019,8 @@ Solver::IncResult Solver::incProbe(uint64_t capTotal, bool firstOnly, uint64_t k
     }
     // Phase alternation of solve_(); after a solution the phase state carries over between probes,
     // as it does in a single run that descends from a solution.
-    while (status == l_Undef && !asynch_interrupt) {
-      while (status == l_Undef && propagations - inc_phaseUP < inc_phaseAllot && !asynch_interrupt) {
+    while (status == l_Undef && !asynch_interrupt && conflicts < inc_conflictLimit) {
+      while (status == l_Undef && propagations - inc_phaseUP < inc_phaseAllot && !asynch_interrupt && conflicts < inc_conflictLimit) {
 	if (VSIDS) {
 	  int weighted = INT32_MAX;
 	  status = search(weighted);
@@ -7031,7 +7031,7 @@ Solver::IncResult Solver::incProbe(uint64_t capTotal, bool firstOnly, uint64_t k
 	  status = search(nof_conflicts);
 	}
       }
-      if (status == l_Undef && !asynch_interrupt) {
+      if (status == l_Undef && !asynch_interrupt && conflicts < inc_conflictLimit) {
 	VSIDS = !VSIDS;
 	if (!VSIDS)
 	  inc_phaseAllot *= 2;

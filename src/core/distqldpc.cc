@@ -923,6 +923,8 @@ struct CssHalf {
     int n;
     int builds;           /* number of solver builds (1 unless the rebuild guard fired) */
     std::vector<int> sb_orbit;  /* GH-85: verified per-half orbits (empty: no clause) */
+    bool last_at_cap;     /* GH-106: the half's previous probe was a FOUND exactly at its cap */
+    uint64_t fresh_max;   /* GH-106: most conflicts used by a probe that started on a freshly built solver */
 };
 
 /* GH-76: independent check of a reported half weight against the solver's witness model:
@@ -975,27 +977,53 @@ static bool css_half_build(CssHalf& h, int verb, int card_mode) {
  * built instance of the same formula (css_half_build, the construction path GH-76 already uses for the first
  * probe and for INC_REBUILD); every probe is still answered by Solver::incProbe. Engine unchanged.
  *   gh89      never (GH-89 exactly);
- *   postsol   while the half's solver has not found a solution (default): before the first solution GH-76's
+ *   postsol   while the half's solver has not found a solution (v1 default): before the first solution GH-76's
  *             fail-path reset drops all learnt clauses on every raise, so persistence carries only decision-
  *             heuristic state (activities, saved phases), which made e.g. TN_144_2_13's first FOUND probe cost
  *             ~635k conflicts instead of ~35; after the first solution learnt clauses pay off;
  *   feasfresh as postsol, and also before every feasibility (stop-at-first) probe;
- *   fresh     before every probe (main 7eadd54's per-probe search). */
-enum IncPolicy { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH };
-static IncPolicy g_inc_policy = INC_POLICY_POSTSOL;
+ *   fresh     before every probe (main 7eadd54's per-probe search);
+ *   atcap     as postsol, and also before any probe that follows a FOUND exactly at its cap on that half
+ *             (GH-106 DIAGNOSIS F2: persistent post-solution probes tend to stop at the cap, 16 -> 15 -> 14);
+ *   atcapfeas as atcap, but only before feasibility probes (optimisation probes stay persistent);
+ *   budget    as postsol; a post-solution feasibility probe on the persistent solver gets a conflict budget of
+ *             -inc-budget=K (default 2) times the most conflicts any fresh probe of that half used (at least
+ *             -inc-budget-floor=F, default 10000); when it is exhausted the persistent instance is discarded and
+ *             the probe is answered by a freshly built one (deterministic: conflicts are counted, not time);
+ *   budgettot as budget, but the budget is K times all conflicts spent so far by both halves in this run
+ *             (default since GH-106 v2: on TN_144_2_13 no-card the persistent post-solution feasibility probes
+ *             stop exactly at the cap, 16 -> 15 -> 14, each costing more than a fresh probe; the budget bounds that
+ *             loss while keeping the persistent probes that finish cheaply). */
+enum IncPolicy { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH,
+                 INC_POLICY_ATCAP, INC_POLICY_ATCAPFEAS, INC_POLICY_BUDGET, INC_POLICY_BUDGETTOT };
+static IncPolicy g_inc_policy = INC_POLICY_BUDGETTOT;   /* GH-106 v2 default (PROPOSAL_V2.md) */
+static uint64_t g_inc_budget_factor = 2;
+static uint64_t g_inc_budget_floor = 10000;   /* minimum budget (tests lower it to exercise the fallback) */
+static uint64_t g_inc_conflicts_total = 0;   /* conflicts spent by all half probes of this run (budgettot) */
 static const char* inc_policy_name(IncPolicy p) {
-    return p == INC_POLICY_GH89 ? "gh89" : p == INC_POLICY_POSTSOL ? "postsol" : p == INC_POLICY_FEASFRESH ? "feasfresh" : "fresh";
+    switch (p) {
+    case INC_POLICY_GH89: return "gh89";       case INC_POLICY_POSTSOL: return "postsol";
+    case INC_POLICY_FEASFRESH: return "feasfresh"; case INC_POLICY_FRESH: return "fresh";
+    case INC_POLICY_ATCAP: return "atcap";     case INC_POLICY_ATCAPFEAS: return "atcapfeas";
+    case INC_POLICY_BUDGET: return "budget";
+    default: return "budgettot";
+    }
 }
 static bool parse_inc_policy(const char* s, IncPolicy& out) {
-    const IncPolicy all[4] = { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH };
-    for (int i = 0; i < 4; i++) if (!strcmp(s, inc_policy_name(all[i]))) { out = all[i]; return true; }
+    const IncPolicy all[8] = { INC_POLICY_GH89, INC_POLICY_POSTSOL, INC_POLICY_FEASFRESH, INC_POLICY_FRESH,
+                               INC_POLICY_ATCAP, INC_POLICY_ATCAPFEAS, INC_POLICY_BUDGET, INC_POLICY_BUDGETTOT };
+    for (int i = 0; i < 8; i++) if (!strcmp(s, inc_policy_name(all[i]))) { out = all[i]; return true; }
     return false;
 }
-static bool inc_policy_wants_fresh(const Solver& S, bool first_only) {
+static bool inc_policy_wants_fresh(const CssHalf& h, const Solver& S, bool first_only) {
     switch (g_inc_policy) {
     case INC_POLICY_GH89:      return false;
-    case INC_POLICY_POSTSOL:   return !S.feasible;
+    case INC_POLICY_POSTSOL:
+    case INC_POLICY_BUDGET:
+    case INC_POLICY_BUDGETTOT: return !S.feasible;
     case INC_POLICY_FEASFRESH: return !S.feasible || first_only;
+    case INC_POLICY_ATCAP:     return !S.feasible || h.last_at_cap;
+    case INC_POLICY_ATCAPFEAS: return !S.feasible || (h.last_at_cap && first_only);
     default:                   return true;
     }
 }
@@ -1006,20 +1034,48 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
                                int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value)
 {
     if (!h.exists) return HALF_INFEASIBLE;
-    if (h.S != NULL && inc_policy_wants_fresh(*h.S, first_only)    /* GH-106: fresh instance of the same formula */
-        && !css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
-    if (h.S == NULL && !css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
+    bool built_now = false;   /* GH-106: the solver answering this probe was built for it */
+    if (h.S != NULL && inc_policy_wants_fresh(h, *h.S, first_only)) {   /* GH-106: fresh instance of the same formula */
+        if (!css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
+        built_now = true;
+    }
+    if (h.S == NULL) {
+        if (!css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
+        built_now = true;
+    }
     Solver::IncResult r;
+    bool budget_spent = false;
     for (int attempt = 0; ; attempt++) {
         SimpSolver& S = *h.S;
         S.setBoundsPipe(pipe_w);
         S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
+        uint64_t limit = UINT64_MAX;   /* GH-106 budget: only for post-solution feasibility probes on a kept solver */
+        if ((g_inc_policy == INC_POLICY_BUDGET || g_inc_policy == INC_POLICY_BUDGETTOT)
+            && !built_now && first_only && S.feasible && !budget_spent) {
+            uint64_t b = g_inc_budget_factor * (g_inc_policy == INC_POLICY_BUDGET ? h.fresh_max : g_inc_conflicts_total);
+            limit = S.conflicts + (b < g_inc_budget_floor ? g_inc_budget_floor : b);
+        }
+        const uint64_t c0 = S.conflicts;
+        S.inc_conflictLimit = limit;
         r = S.incProbe(cap, first_only, h.lb, value);
+        S.inc_conflictLimit = UINT64_MAX;
         S.setBoundsPipe(-1);
+        if (built_now && S.conflicts - c0 > h.fresh_max) h.fresh_max = S.conflicts - c0;
+        g_inc_conflicts_total += S.conflicts - c0;
+        if (r == Solver::INC_INTERRUPTED && limit != UINT64_MAX && S.conflicts >= limit) {
+            /* budget exhausted: no solution found within it; answer the probe with a fresh instance instead */
+            if (verb > 0) printf("c CSS incremental: %s half budget %llu exhausted at cap %llu, fresh solver\n", h.tag,
+                                 (unsigned long long)(limit - c0), (unsigned long long)cap);
+            budget_spent = true;
+            if (!css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
+            built_now = true;
+            continue;
+        }
         if (r != Solver::INC_REBUILD || attempt > 0) break;
         /* a raise after the half's first solution: never reuse that state (see Solver::incProbe) */
         if (verb > 0) printf("c CSS incremental: %s half rebuilt for cap %llu\n", h.tag, (unsigned long long)cap);
         if (!css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
+        built_now = true;
     }
     HalfStatus st = HALF_UNKNOWN;
     if (r == Solver::INC_FOUND && first_only) st = HALF_FOUND;
@@ -1030,6 +1086,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
         printf("c CSS incremental: %s half witness check FAILED for weight %llu\n", h.tag, (unsigned long long)value);
         st = HALF_UNKNOWN;
     }
+    h.last_at_cap = (st == HALF_FOUND && value == cap);   /* GH-106 atcap policies */
     if (verb > 0)
         printf("c CSS incremental: %s half cap %llu lb %llu %s -> %s %llu\n", h.tag,
                (unsigned long long)cap, (unsigned long long)h.lb, first_only ? "feasibility" : "optimize",
@@ -1495,7 +1552,17 @@ int main(int argc, char** argv) {
             g_half_symbreak = false;
         else if (!strncmp(argv[i], "-inc-policy=", 12)) {   /* GH-106 */
             if (!parse_inc_policy(argv[i] + 12, g_inc_policy))
-                die("-inc-policy= expects gh89, postsol, feasfresh or fresh");
+                die("-inc-policy= expects gh89, postsol, feasfresh, fresh, atcap, atcapfeas, budget or budgettot");
+        }
+        else if (!strncmp(argv[i], "-inc-budget=", 12)) {   /* GH-106: factor of the budget policy */
+            int k = atoi(argv[i] + 12);
+            if (k < 1) die("-inc-budget= expects a positive integer");
+            g_inc_budget_factor = (uint64_t)k;
+        }
+        else if (!strncmp(argv[i], "-inc-budget-floor=", 18)) {   /* GH-106: minimum budget of the budget policies */
+            long long f = atoll(argv[i] + 18);
+            if (f < 0) die("-inc-budget-floor= expects a non-negative integer");
+            g_inc_budget_floor = (uint64_t)f;
         }
         else if (!strcmp(argv[i], "-symbreak-report"))
             symbreak_report = true;
@@ -1512,7 +1579,8 @@ int main(int argc, char** argv) {
             printf("  Symmetry (split only): default adds optimum-preserving orbit clauses per CSS half from\n");
             printf("            verified half automorphisms; -no-symbreak disables them;\n");
             printf("            -symbreak-report prints per-half generators/orbits and exits\n");
-            printf("  Incremental (split only): -inc-policy=postsol (default) | gh89 | feasfresh | fresh: when a CSS half\n");
+            printf("  Incremental (split only): -inc-policy=budgettot (default; -inc-budget=K, default 2; -inc-budget-floor=F,\n");
+            printf("            default 10000) | postsol | gh89 | feasfresh | fresh | atcap | atcapfeas | budget: when a CSS half\n");
             printf("            gets a fresh solver instead of its persistent one (see optimization/experiments/GH-106)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");

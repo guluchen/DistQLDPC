@@ -580,6 +580,9 @@ public:
     int       inc_beginning = 0;
     uint64_t  inc_phaseAllot = 0, inc_phaseUP = 0;
     int       inc_currRestarts = 0;
+    // GH-106 (policy budget): incProbe returns INC_INTERRUPTED once conflicts reaches this value (checked between
+    // search() calls; the caller then discards the instance). UINT64_MAX = no limit (GH-89 behaviour).
+    uint64_t  inc_conflictLimit = UINT64_MAX;
     bool feasible;
     bool bestSolutionFound;
     uint64_t bestSup;
