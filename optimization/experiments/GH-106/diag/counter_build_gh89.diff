@@ -1,0 +1,139 @@
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/cand106/src/core/distqldpc.cc	2026-10-11 02:02:29
++++ src/core/distqldpc.cc	2026-10-11 02:37:51
+@@ -976,13 +976,18 @@
+                                int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value)
+ {
+     if (!h.exists) return HALF_INFEASIBLE;
++    { static int fp = -1; if (fp < 0) { const char* e = getenv("GH106_FRESHPRE"); fp = e ? atoi(e) : 0; }
++      if (fp && h.S != NULL && (!h.S->feasible || (fp == 2 && first_only))) { delete h.S; h.S = NULL; h.builds--; } }
+     if (h.S == NULL && !css_half_build(h, verb, card_mode)) { h.exists = false; return HALF_INFEASIBLE; }
+     Solver::IncResult r;
+     for (int attempt = 0; ; attempt++) {
+         SimpSolver& S = *h.S;
+         S.setBoundsPipe(pipe_w);
+         S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
++        printf("c GH106P %s cap %llu lb %llu first %d builds %d\n", h.tag, (unsigned long long)cap, (unsigned long long)h.lb, (int)first_only, h.builds);
++        S.gh106Dump("pre");
+         r = S.incProbe(cap, first_only, h.lb, value);
++        S.gh106Dump(r==Solver::INC_FOUND?"post FOUND":r==Solver::INC_OPT?"post OPT":r==Solver::INC_NONE?"post NONE":r==Solver::INC_REBUILD?"post REBUILD":"post INTR");
+         S.setBoundsPipe(-1);
+         if (r != Solver::INC_REBUILD || attempt > 0) break;
+         /* a raise after the half's first solution: never reuse that state (see Solver::incProbe) */
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/cand106/src/solver/Solver.cc	2026-10-11 02:02:29
++++ src/solver/Solver.cc	2026-10-11 02:15:32
+@@ -6971,6 +6971,7 @@
+     hardenLevel = INT32_MAX;
+     inc_inf = 0; inc_sup = objForSearch + 1; inc_ceil = UINT64_MAX;
+     inc_phaseAllot = 0; inc_phaseUP = 0; inc_currRestarts = 0;
++    polarity.copyTo(gh106Pol); gh106VarDecay = var_decay; gh106Step = step_size;
+     return true;
+ }
+ 
+@@ -6999,6 +7000,14 @@
+       return INC_REBUILD;
+ 
+     cancelUntil(0);
++    if (gh106Mask < 0) { const char* e = getenv("GH106_RESET"); gh106Mask = e ? atoi(e) : 0; }
++    bool gh106Init = false;
++    if (gh106Mask && (feasible || (gh106Mask & 64))) {
++      gh106Reset(gh106Mask);
++      gh106Init = (gh106Mask & 1) && feasible;
++    }
++    printf("c GH106S VSIDS %d phaseAllot %llu sincePhase %llu currRestarts %d init %d\n", (int)VSIDS,
++           (unsigned long long)inc_phaseAllot, (unsigned long long)(propagations - inc_phaseUP), inc_currRestarts, (int)(gh106Init || !feasible));
+     stopAtFirstSolution = firstOnly;
+     UB = target;
+     lbool status = l_Undef;
+@@ -7007,12 +7016,12 @@
+     emitTryUpdate(UB);
+     fflush(stdout);
+ 
+-    if (!feasible) {                                     // a new UB level of solve_()'s loop
++    if (!feasible || gh106Init) {                                     // a new UB level of solve_()'s loop
+       if (UB == 1 && falseLits.size() == 0)
+ 	harden();
+       VSIDS = true;
+       int init = 10000;
+-      while (status == l_Undef && init > 0 && !feasible && !asynch_interrupt)
++      while (status == l_Undef && init > 0 && (!feasible || gh106Init) && !asynch_interrupt)
+         status = search(init);
+       VSIDS = false;
+       inc_phaseAllot = 20000000; inc_currRestarts = 0; inc_phaseUP = propagations;
+@@ -7422,3 +7431,65 @@
+     to.moveTo(ca);
+ }
+ 
++
++// ---- GH-106 diagnostic counter dump (counter build only; not part of any candidate binary) ----
++void Solver::gh106Dump(const char* tag) {
++  double avM=0, avS=0, acM=0, acS=0, alM=0, alS=0; int alNZ=0, polT=0;
++  for (int v = 0; v < nVars(); v++) {
++    if (v < activity_VSIDS.size()) { double a = activity_VSIDS[v]; avS += a; if (a > avM) avM = a; }
++    if (v < activity_CHB.size()) { double a = activity_CHB[v]; acS += a; if (a > acM) acM = a; }
++    if (v < activityLB.size()) { double a = activityLB[v]; alS += a; if (a > alM) alM = a; if (a != 0) alNZ++; }
++    if (v < polarity.size() && polarity[v]) polT++;
++  }
++  printf("c GH106 %s confl %llu dec %llu prop %llu starts %llu lk %llu lksucc %llu lkprop %llu softconfl %llu"
++         " core %d tier2 %d local %d card %d hardens %d isetcl %d clauses %d vars %d static %d trail %d"
++         " coreLimit %d tier2Limit %d corecut %d t2cut %d maxl %.0f"
++         " VSIDS %d var_inc %.3g var_decay %.3f timer %d step %.4f cla_inc %.3g conflV %llu glbd %.0f lbdq %d"
++         " subc %llu curSimp %ld nbcbs %llu nextL %llu nbSimpAll %llu"
++         " lk_thres %d lk_coef %.3f lk_nbS %d lk_sumLB %.0f lk_maxS %d lk_myLH %d lk_mySucc %d lk_prevC %d srchPrevUB %llu"
++         " actV %.3g/%.3g actC %.3g/%.3g actLB %.3g/%.3g/%d polT %d UB %llu feas %d nbHardens %u\n",
++         tag, (unsigned long long)conflicts, (unsigned long long)decisions, (unsigned long long)propagations,
++         (unsigned long long)starts, (unsigned long long)LOOKAHEAD, (unsigned long long)nbLKsuccess,
++         (unsigned long long)lk_propagations, (unsigned long long)softConflicts,
++         learnts_core.size(), learnts_tier2.size(), learnts_local.size(), cardinalityC.size(), hardens.size(),
++         isetClauses.size(), clauses.size(), nVars(), staticNbVars, trail.size(),
++         coreLimit, tier2Limit, core_lbd_cut, tier2_lbd_cut, max_learnts,
++         (int)VSIDS, var_inc, var_decay, timer, step_size, cla_inc, (unsigned long long)conflicts_VSIDS,
++         (double)global_lbd_sum, lbd_queue.full() ? 1 : 0,
++         (unsigned long long)subconflicts, curSimplify, (unsigned long long)nbconfbeforesimplify,
++         (unsigned long long)next_L_reduce, (unsigned long long)nbSimplifyAll,
++         lk_thres, lk_coef, lk_nbSample, lk_sumLB, lk_maxSuccLB, lk_myLH, lk_mySucc, lk_prevConflicts,
++         (unsigned long long)srch_prevUB,
++         avM, avS, acM, acS, alM, alS, alNZ, polT, (unsigned long long)UB, (int)feasible, nbHardens);
++  fflush(stdout);
++}
++
++void Solver::gh106Reset(int mask) {
++  // 2: lookahead statistics; 4: decision heuristics; 8: drop local+tier2 learnts; 16: drop core learnts too;
++  // 32: reduce/simplify schedules; 1: VSIDS init phase + fresh phase schedule (handled in incProbe)
++  if (mask & 1) { inc_phaseAllot = 20000000; inc_currRestarts = 0; inc_phaseUP = propagations; }
++  if (mask & 2) {
++    lk_thres = 2; lk_prevConflicts = 0; lk_maxSuccLB = 0; lk_prevUB = 0; lk_nbSample = 0; lk_myLH = 0; lk_mySucc = 0;
++    lk_sumLB = 0; lk_sumSQLB = 0; lk_coef = 2; stepSizeLB = 0.4;
++    for (int v = 0; v < activityLB.size(); v++) activityLB[v] = 0;
++  }
++  if (mask & 4) {
++    for (int v = 0; v < nVars(); v++) { activity_VSIDS[v] = 0; activity_CHB[v] = 0; activity_distance[v] = 0; }
++    for (int v = 0; v < gh106Pol.size() && v < polarity.size(); v++) polarity[v] = gh106Pol[v];
++    var_inc = 1; var_decay = gh106VarDecay; timer = 5000; step_size = gh106Step;
++    for (int v = 0; v < picked.size(); v++) { picked[v] = 0; conflicted[v] = 0; almost_conflicted[v] = 0; }
++  }
++  if (mask & (8 | 16)) {
++    for (int i = 0; i < learnts_local.size(); i++) removeClause(learnts_local[i]);
++    learnts_local.clear();
++    for (int i = 0; i < learnts_tier2.size(); i++) removeClause(learnts_tier2[i]);
++    learnts_tier2.clear();
++    if (mask & 16) { for (int i = 0; i < learnts_core.size(); i++) removeClause(learnts_core[i]); learnts_core.clear(); }
++    watches.cleanAll(); watches_bin.cleanAll(); checkGarbage();
++  }
++  if (mask & 32) {
++    coreLimit = 50000; tier2Limit = 7000; next_L_reduce = 0; next_T2_reduce = 0; subconflicts = 0; curSimplify = 1;
++    nbconfbeforesimplify = 1000; lbd_queue.clear(); global_lbd_sum = 0; conflicts_VSIDS = 0; cla_inc = 1;
++  }
++  if (mask & (2 | 4)) rebuildOrderHeap();
++}
+--- /Users/yfc/Library/Application Support/Claude/scratch-workspaces/1417068f-a9d4-4e40-a6ba-6b2464faa27e/de902d21-d9e1-45a1-a1dd-f95718bf744f/scratch-2026-10-08-ce0ddb/cand106/src/solver/Solver.h	2026-10-11 02:02:29
++++ src/solver/Solver.h	2026-10-11 02:15:32
+@@ -558,6 +558,9 @@
+     void emitBoundsUpdate();
+     void emitTryUpdate(uint64_t try_val);
+     int bounds_pipe_w;
++    void gh106Dump(const char* tag);
++    int gh106Mask = -1; vec<char> gh106Pol; double gh106VarDecay = 0, gh106Step = 0;
++    void gh106Reset(int mask);
+     // DistQLDPC GH-76 (CSS split, persistent per-half solver; controls adapted from GH-73).
+     bool     stopAtFirstSolution = false;  // search() returns l_True at the first solution under UB
+     uint64_t boundsLbCap = UINT64_MAX, boundsUbCap = UINT64_MAX;  // caps on emitted LB/UB

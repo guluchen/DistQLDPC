@@ -1,0 +1,61 @@
+0000.gate.BB_90_8_10.no-card.0.baseline 0.153s o 10 load=1.16
+0001.gate.BB_90_8_10.no-card.0.candidate 0.151s o 10 load=1.16
+0002.gate.BB_90_8_10.no-card.1.candidate 0.154s o 10 load=1.16
+0003.gate.BB_90_8_10.no-card.1.baseline 0.150s o 10 load=1.16
+0004.gate.BB_90_8_10.no-card.2.baseline 0.153s o 10 load=1.16
+0005.gate.BB_90_8_10.no-card.2.candidate 0.154s o 10 load=1.16
+0006.gate.BB_90_8_10.card-mto.0.baseline 0.133s o 10 load=1.16
+0007.gate.BB_90_8_10.card-mto.0.candidate 0.140s o 10 load=1.16
+0008.gate.BB_90_8_10.card-mto.1.candidate 0.140s o 10 load=1.16
+0009.gate.BB_90_8_10.card-mto.1.baseline 0.138s o 10 load=1.16
+0010.gate.BB_90_8_10.card-mto.2.baseline 0.138s o 10 load=1.16
+0011.gate.BB_90_8_10.card-mto.2.candidate 0.147s o 10 load=1.16
+0012.gate.GB_144_12_8.no-card.0.baseline 0.093s o 8 load=1.16
+0013.gate.GB_144_12_8.no-card.0.candidate 0.095s o 8 load=1.16
+0014.gate.GB_144_12_8.no-card.1.candidate 0.095s o 8 load=1.16
+0015.gate.GB_144_12_8.no-card.1.baseline 0.093s o 8 load=1.16
+0016.gate.GB_144_12_8.no-card.2.baseline 0.093s o 8 load=1.16
+0017.gate.GB_144_12_8.no-card.2.candidate 0.094s o 8 load=1.16
+0018.gate.GB_144_12_8.card-mto.0.baseline 0.075s o 8 load=1.16
+0019.gate.GB_144_12_8.card-mto.0.candidate 0.078s o 8 load=1.16
+0020.gate.GB_144_12_8.card-mto.1.candidate 0.080s o 8 load=1.16
+0021.gate.GB_144_12_8.card-mto.1.baseline 0.078s o 8 load=1.16
+0022.gate.GB_144_12_8.card-mto.2.baseline 0.078s o 8 load=1.16
+0023.gate.GB_144_12_8.card-mto.2.candidate 0.080s o 8 load=1.16
+0024.gate.BB_108_8_10.no-card.0.baseline 0.371s o 10 load=1.16
+0025.gate.BB_108_8_10.no-card.0.candidate 0.361s o 10 load=1.16
+0026.gate.BB_108_8_10.no-card.1.candidate 0.366s o 10 load=1.16
+0027.gate.BB_108_8_10.no-card.1.baseline 0.363s o 10 load=1.16
+0028.gate.BB_108_8_10.no-card.2.baseline 0.363s o 10 load=1.22
+0029.gate.BB_108_8_10.no-card.2.candidate 0.365s o 10 load=1.22
+0030.gate.BB_108_8_10.card-mto.0.baseline 0.468s o 10 load=1.22
+0031.gate.BB_108_8_10.card-mto.0.candidate 0.451s o 10 load=1.22
+0032.gate.BB_108_8_10.card-mto.1.candidate 0.446s o 10 load=1.22
+0033.gate.BB_108_8_10.card-mto.1.baseline 0.466s o 10 load=1.22
+0034.gate.BB_108_8_10.card-mto.2.baseline 0.472s o 10 load=1.22
+0035.gate.BB_108_8_10.card-mto.2.candidate 0.449s o 10 load=1.22
+0036.gate.LP_238_44_6.no-card.0.baseline 0.402s o 6 load=1.22
+0037.gate.LP_238_44_6.no-card.0.candidate 0.375s o 6 load=1.22
+0038.gate.LP_238_44_6.no-card.1.candidate 0.380s o 6 load=1.22
+0039.gate.LP_238_44_6.no-card.1.baseline 0.408s o 6 load=1.21
+0040.gate.LP_238_44_6.no-card.2.baseline 0.404s o 6 load=1.21
+0041.gate.LP_238_44_6.no-card.2.candidate 0.377s o 6 load=1.21
+0042.gate.LP_238_44_6.card-mto.0.baseline 0.390s o 6 load=1.21
+0043.gate.LP_238_44_6.card-mto.0.candidate 0.375s o 6 load=1.21
+0044.gate.LP_238_44_6.card-mto.1.candidate 0.380s o 6 load=1.21
+0045.gate.LP_238_44_6.card-mto.1.baseline 0.390s o 6 load=1.21
+0046.gate.LP_238_44_6.card-mto.2.baseline 0.402s o 6 load=1.21
+0047.gate.LP_238_44_6.card-mto.2.candidate 0.375s o 6 load=1.21
+{
+ "stopped": null,
+ "n_samples": 48,
+ "finished": "2026-10-11T08:24:30+0800",
+ "binary_sha256_after": {
+  "baseline": "6bdcaa2523cdcbeae5164cedbf54c9ac0f9e64f9a91c3da7ef4b804df393db9d",
+  "candidate": "40d165efeefa61f49c3bc2621ed098733d2e78acee3a9dada872a04ecde18f10"
+ },
+ "input_sha256_after_ok": true
+}
+gate no-card geomean 0.99134 envelope 0.99994 positive False flags ['GB_144_12_8']
+gate card-mto geomean 0.99136 envelope 1.02739 positive False flags ['BB_90_8_10']
+exit=0

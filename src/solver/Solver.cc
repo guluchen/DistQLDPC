@@ -3515,7 +3515,7 @@ lbool Solver::search(int& nof_conflicts)
     vec<Lit>    learnt_clause;
     bool        cached = false;
     
-    static uint64_t prevUB=0;
+    uint64_t& prevUB = srch_prevUB;  // GH-73: was function-local static
     starts++;
 
     // if (starts > 440)
@@ -3833,6 +3833,8 @@ lbool Solver::search(int& nof_conflicts)
 		//     UB, conflicts, conflicts-softConflicts);
 	      model.growTo(nVars());
 	      for (int i = 0; i < nVars(); i++) model[i] = value(i);
+	      if (stopAtFirstSolution)  // GH-73: feasibility test only; outer loop records it and stops
+		return l_True;
 	      //  softConflictFlag=true;
 	      if (UB==0)
 		return l_True;
@@ -4800,16 +4802,17 @@ void Solver::fixByLookahead(vec<Lit>& out_learnt) {
 // when analyzing the soft conflict
 // Otherwise, it is cleared here before returning true.
 bool Solver::lookahead() {
-  static int thres=2;
-  static int prevConflicts=0;
-  static int maxSuccLB=0;
-  static uint64_t prevUB=0;
-  static int nbSample=0;
-  static double sumLB=0;
-  static double sumSQLB=0;
-  static double coef = 2;
-  static int myLH=0;
-  static int mySucc=0;
+  // GH-73: former function-local statics, now per-instance members
+  int& thres = lk_thres;
+  int& prevConflicts = lk_prevConflicts;
+  int& maxSuccLB = lk_maxSuccLB;
+  uint64_t& prevUB = lk_prevUB;
+  int& nbSample = lk_nbSample;
+  double& sumLB = lk_sumLB;
+  double& sumSQLB = lk_sumSQLB;
+  double& coef = lk_coef;
+  int& myLH = lk_myLH;
+  int& mySucc = lk_mySucc;
 
   hardenEnable = false; LHconfl = CRef_Undef;
   // return true;
@@ -5197,15 +5200,17 @@ void Solver::emitBoundsUpdate() {
         return;
     char buf[64];
     int n;
-    if (infeasibleUB > 0) {
+    if (infeasibleUB > 0 && !boundsHideLB) {
+        uint64_t lbv = getCostLB(); if (lbv > boundsLbCap) lbv = boundsLbCap;
         n = snprintf(buf, sizeof(buf), "LB %llu\n",
-                     (unsigned long long)getCostLB());
+                     (unsigned long long)lbv);
         if (n > 0)
             (void)write(bounds_pipe_w, buf, (size_t)n);
     }
     if (bestSolutionFound) {
+        uint64_t ubv = getCostUB(); if (ubv > boundsUbCap) ubv = boundsUbCap;
         n = snprintf(buf, sizeof(buf), "UB %llu\n",
-                     (unsigned long long)getCostUB());
+                     (unsigned long long)ubv);
         if (n > 0)
             (void)write(bounds_pipe_w, buf, (size_t)n);
     }
@@ -6201,7 +6206,7 @@ inline Var Solver::newAuxiVarForCardinality() {
 // Precondition: n>k>0
 // Should be called only at the root of the search tree
 void Solver::addCardinalityConstraints() {
-  static uint64_t prevUB=0;
+  uint64_t& prevUB = card_prevUB;  // GH-73: was function-local static
 
   if (UB==1 || UB == prevUB)
     return;
@@ -6858,6 +6863,224 @@ solve_exit_stats:
     cancelUntil(0);
     
     return status;
+}
+
+//=================================================================================================
+// DistQLDPC GH-76: persistent instance answering a sequence of bounded probes (CSS-split halves).
+//
+// incPrepare() is the prologue of solve_() (preprocessing, soft-literal setup), run once.
+// incProbe() runs one bounded test from the current state with the loop body of solve_().
+// Soundness: only the bound transitions that solve_()/search() perform themselves are used.
+//  * Raise of UB: only while !feasible, and only after the fail-path reset of solve_()
+//    (cancelUntilBeginning(beginning) + removeLearntClauses()), which drops every learnt clause,
+//    hardening clause, cardinality clause, iset clause and level-0 unit derived under a bound.
+//  * Fall of UB: at level 0 with all state kept, as search() does after finding a solution.
+//  * Once feasible, reduceClause()/simplereduceClause() may also shorten original clauses using
+//    bound-dependent reasons, so UB must never rise above the UB of the previous probe (inc_ceil);
+//    such a request returns INC_REBUILD and the caller builds a fresh instance.
+// Unlike the l_True branch of solve_(), fixedCostBySearch and beginning are never re-based, so the
+// cost of an assignment is always incOffset() + falseLits.size().
+
+bool Solver::incPrepare()
+{
+    model.clear(); usedClauses.clear();
+    conflict.clear();
+    if (!ok) return false;
+
+    solves++;
+
+    max_learnts               = nClauses() * learntsize_factor;
+    learntsize_adjust_confl   = learntsize_adjust_start_confl;
+    learntsize_adjust_cnt     = (int)learntsize_adjust_confl;
+
+    addHardClausesForSoftClauses();
+
+    add_tmp.clear(); softConflictFlag=false; next_C_reduce = 0;
+    UBconflictFlag=false; softConflictFlag=false; falseVar = var_Undef;
+    LOOKAHEAD = 0; involvedLits.clear(); lk_propagations=0; nbLKsuccess=0;
+    stepSizeLB = 0.4;  subconflicts = 0;
+    totalPrunedLB=0; totalPrunedLB2=0; 	derivedCost=0; feasible=false; infeasibleUB = 0;
+    nbHardens=0; fixedByHardens=0; constraintRelaxed = false; nbSavedLits = 0;
+    savedLOOKAHEAD=0; savednbLKsuccess=0; rootNbIsets=0;
+    WithNewUB = false;
+
+    if (!simplifyOriginalClauses())
+        return false;
+    if (!findConflictSoftLits()) {
+      printf("c problem solved by preprocessing\n");
+      return false;
+    }
+    if (!detectInitConflicts()) {
+      printf("c problem solved by preprocessing2\n");
+      return false;
+    }
+
+    int initNbConlf=0;
+    int fixedCost=0, nbSatLits=0, i, j;
+
+    allSoftLits.clear();
+    for(i=0, j=0; i<unitSoftLits.size(); i++) {
+    	Lit p=unitSoftLits[i];
+    	if (value(p)==l_Undef) {
+	  unitSoftLits[j++] = p; allSoftLits.push(p);
+	}
+    	else if (value(p)==l_False)
+      		fixedCost++;
+    	else nbSatLits++;
+    }
+    unitSoftLits.shrink(i-j);
+    for(i=0, j=0; i<nonUnitSoftLits.size(); i++) {
+      Lit p=nonUnitSoftLits[i];
+      if (value(p)==l_Undef) {
+	nonUnitSoftLits[j++] = p; allSoftLits.push(p);
+      }
+      else if (value(p)==l_False)
+	fixedCost++;
+      else nbSatLits++;
+    }
+    nonUnitSoftLits.shrink(i-j);
+    assert(unitSoftLits.size() + nonUnitSoftLits.size() == allSoftLits.size());
+
+    objForSearch = unitSoftLits.size() + nonUnitSoftLits.size() - initNbConlf;
+    fixedCostBySearch=fixedCost;  relaxedCost = initNbConlf;
+    bestSolutionFound = false;
+    bestSup = objForSearch + 1;
+    nbSatLitsAtStart = nbSatLits;
+    printf("c fixedCost %d, nbSatLits %d, totalFixedVars %d, objForSearch: %llu\n\n",
+	 	fixedCost, nbSatLits, trail.size(), objForSearch);
+
+    counter++;
+    for(i=0, j=0; i<allSoftLitsForCardC.size(); i++) {
+      Lit p=allSoftLitsForCardC[i];
+      if (value(p) == l_Undef) {
+	Lit q= imply[toInt(p)];
+	if (softLits[var(p)] == p && seen2[var(p)] < counter) {
+	  allSoftLitsForCardC[j++] = p; seen2[var(p)] = counter;
+	}
+	else if (softLits[var(p)] == lit_Undef && q != lit_Undef && seen2[var(q)] < counter) {
+	  allSoftLitsForCardC[j++] = q; seen2[var(q)] = counter;
+	}
+      }
+    }
+    allSoftLitsForCardC.shrink(i-j);
+    assert(allSoftLitsForCardC.size() == allSoftLits.size());
+
+    staticNbVars = nVars();
+    inc_beginning = trail.size();
+    falseLits.clear();
+    hardenLevel = INT32_MAX;
+    inc_inf = 0; inc_sup = objForSearch + 1; inc_ceil = UINT64_MAX;
+    inc_phaseAllot = 0; inc_phaseUP = 0; inc_currRestarts = 0;
+    return true;
+}
+
+Solver::IncResult Solver::incProbe(uint64_t capTotal, bool firstOnly, uint64_t knownLB, uint64_t& valueTotal)
+{
+    if (!ok) return INC_NONE;
+    const uint64_t offs = incOffset();
+    if (knownLB > offs && knownLB - offs > inc_inf)
+      inc_inf = knownLB - offs;
+    if (infeasibleUB < inc_inf)
+      infeasibleUB = inc_inf;
+    if (capTotal < offs)
+      return INC_NONE;                                   // every solution costs at least offs
+    uint64_t capU = capTotal - offs;                     // want a solution of search cost <= capU
+    if (capU > objForSearch) capU = objForSearch;
+    if (inc_sup <= capU && (firstOnly || inc_sup <= inc_inf)) {
+      valueTotal = inc_sup + offs;
+      return firstOnly ? INC_FOUND : INC_OPT;
+    }
+    if (inc_inf > capU)
+      return INC_NONE;                                   // proven: no solution of cost < inc_inf
+    uint64_t target = capU + 1;                          // search for cost < target
+    if (inc_sup < target) target = inc_sup;
+    assert(target > inc_inf);
+    if (feasible && target > inc_ceil)
+      return INC_REBUILD;
+
+    cancelUntil(0);
+    stopAtFirstSolution = firstOnly;
+    UB = target;
+    lbool status = l_Undef;
+    add_tmp.clear(); softConflictFlag=false;
+    UBconflictFlag=false; falseVar = var_Undef;
+    emitTryUpdate(UB);
+    fflush(stdout);
+
+    if (!feasible) {                                     // a new UB level of solve_()'s loop
+      if (UB == 1 && falseLits.size() == 0)
+	harden();
+      VSIDS = true;
+      int init = 10000;
+      while (status == l_Undef && init > 0 && !feasible && !asynch_interrupt)
+        status = search(init);
+      VSIDS = false;
+      inc_phaseAllot = 20000000; inc_currRestarts = 0; inc_phaseUP = propagations;
+    }
+    // Phase alternation of solve_(); after a solution the phase state carries over between probes,
+    // as it does in a single run that descends from a solution.
+    while (status == l_Undef && !asynch_interrupt && conflicts < inc_conflictLimit) {
+      while (status == l_Undef && propagations - inc_phaseUP < inc_phaseAllot && !asynch_interrupt && conflicts < inc_conflictLimit) {
+	if (VSIDS) {
+	  int weighted = INT32_MAX;
+	  status = search(weighted);
+	}
+	else {
+	  int nof_conflicts = luby(restart_inc, inc_currRestarts) * restart_first;
+	  inc_currRestarts++;
+	  status = search(nof_conflicts);
+	}
+      }
+      if (status == l_Undef && !asynch_interrupt && conflicts < inc_conflictLimit) {
+	VSIDS = !VSIDS;
+	if (!VSIDS)
+	  inc_phaseAllot *= 2;
+	inc_phaseUP = propagations;
+      }
+    }
+    stopAtFirstSolution = false;
+    if (status == l_Undef) {
+      cancelUntil(0);
+      return INC_INTERRUPTED;
+    }
+    if (status == l_True) {                              // first solution (firstOnly) or a cost-0 solution
+      uint64_t c = UB;                                   // search() set UB to the solution's cost
+      cancelUntil(0);
+      if (c < inc_sup) inc_sup = c;
+      inc_ceil = UB;
+      if (c == 0) inc_inf = 0;
+      printf("c GH-76 probe: cost %llu found under cap %llu\n", c, capU);
+      valueTotal = c + offs;
+      if (!firstOnly && c == 0) return INC_OPT;
+      return INC_FOUND;
+    }
+    // l_False: no solution of cost < UB (UB may have fallen inside search() at solutions found).
+    const uint64_t failUB = UB;
+    if (bestSolutionFound && bestSup < inc_sup) inc_sup = bestSup;
+    if (failUB > inc_inf) inc_inf = failUB;
+    if (infeasibleUB < failUB) {
+      infeasibleUB = failUB;
+      emitBoundsUpdate();
+    }
+    printf("c GH-76 probe: UB=%llu fails (inf %llu, sup %llu, feasible %d), core %d, tier2 %d, local %d\n",
+	   failUB, inc_inf, inc_sup, (int)feasible, learnts_core.size(), learnts_tier2.size(), learnts_local.size());
+    if (feasible) {
+      cancelUntil(0);
+      inc_ceil = UB;
+    }
+    else {                                               // fail-path reset of solve_() before any raise
+      cancelUntilBeginning(inc_beginning);
+      next_C_reduce = 0;
+      next_L_reduce = 0; next_T2_reduce=0; subconflicts = 0; curSimplify = 1; nbconfbeforesimplify=1000;
+      totalPrunedLB=0; totalPrunedLB2=0; savedLOOKAHEAD = LOOKAHEAD; savednbLKsuccess=nbLKsuccess;
+      removeLearntClauses();
+      rebuildOrderHeap();
+    }
+    if (inc_sup <= inc_inf && inc_sup <= capU) {
+      valueTotal = inc_sup + offs;
+      return firstOnly ? INC_FOUND : INC_OPT;
+    }
+    return INC_NONE;
 }
 
 //=================================================================================================

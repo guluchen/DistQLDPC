@@ -23,6 +23,11 @@ New code, not derived from MaxCDCL.
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
 | Quiet / debug | Default `verb=0`; child stdout to `/dev/null`; `-v` / `-debug` for solver log |
 | CLI flags | `-no-card`, `-card-sinz`, `-card-mto`, `-card-both-force`, `-cpu-lim`, `-q` |
+| CSS split with persistent half solvers (GH-76, experimental; PI-approved formulation 2026-10-09) | Default MaxCDCL path computes d = min(dX, dZ) by GH-73's interleaved global bound search over the X-type and Z-type halves; each half keeps one solver for all its probes; every reported half weight is checked against its witness; only global bounds are forwarded; `-joint` keeps the original encoding |
+| Per-half symmetry breaking (GH-85, interaction GH-73 x GH-75, experimental) | Split path only: candidate qubit permutations (GH-75 family) are kept for a CSS half only if GF(2) row-space checks prove they preserve rs(Hpar) and rs([Hpar;Glog]) of that half (plain maps only, no XZ-dual maps); optimum-preserving orbit clauses over the half variables (unit clause for transitive groups, orbit chain otherwise) in every oracle instance of that half. `-no-symbreak` disables them; `-symbreak-report` prints per-half generators/orbits; `-joint`, dumps and RoundingSat unchanged. See `optimization/experiments/GH-85/`. |
+| Incremental half solver with per-half symmetry breaking (GH-89, interaction GH-85 x GH-76, experimental) | GH-85's orbit clauses are added once to each half's persistent GH-76 solver at construction (and identically on every rebuild); `-no-symbreak` = GH-76. See `optimization/experiments/GH-89/`. |
+| Incremental half-solver policy (GH-106, experimental) | `-inc-policy=postsol` (default): a CSS half gets a freshly built solver for every probe until its solver has found a solution, and keeps it afterwards (pre-solution persistence only carried decision-heuristic state); `gh89` = GH-89, `feasfresh` = also fresh for every feasibility probe, `fresh` = fresh for every probe. Driver only; engine unchanged. See `optimization/experiments/GH-106/`. |
+| Conflict-budgeted persistent probes (GH-106 v2, experimental) | New default `-inc-policy=budgettot`: postsol, plus a conflict budget (`-inc-budget=K` x conflicts spent so far, at least `-inc-budget-floor=F`; defaults 3 and 10000) on post-solution feasibility probes of a kept half solver; when it runs out the probe is answered by a freshly built instance. Engine: `Solver::inc_conflictLimit` (default none) checked in `incProbe`. Also `atcap`, `atcapfeas`, `budget`. See `optimization/experiments/GH-106/PROPOSAL_V2.md`. |
 
 ---
 
@@ -75,6 +80,16 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
 - Call `emitTryUpdate(UB)` when testing a new upper-bound candidate
 - Call `emitBoundsUpdate()` after LB/UB updates
 - Call `noteBestSolution()` when a better incumbent is found
+
+#### Persistent probing of one instance (GH-76; controls adapted from GH-73)
+
+- `incPrepare()` (the `solve_()` prologue, once) and `incProbe()` (one bounded test from the current state, using
+  the `solve_()` loop body); bound raises only before the first solution and only after the `solve_()` fail-path
+  reset, bound falls keep all state, raises after the first solution are refused (caller rebuilds)
+- `stopAtFirstSolution` in `search()`; `boundsLbCap`, `boundsUbCap`, `boundsHideLB` cap/suppress emitted bounds
+- Former function-local `static` heuristic state in `search()`, `lookahead()` and
+  `addCardinalityConstraints()` is now per-instance (identical behaviour for a single instance)
+- `solve_()` itself is unchanged
 
 ---
 
