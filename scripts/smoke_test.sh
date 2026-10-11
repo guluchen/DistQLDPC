@@ -28,7 +28,7 @@ if [[ $run_status -ne 0 && $run_status -ne 1 ]]; then
     exit 1
 fi
 
-grep -Fq "c Hx: data/matrices/LP_34_20_2_Hx.txt" <<<"$run_output"
+grep -Fq "c Hx: data/matrices/tier0/LP_34_20_2_Hx.txt" <<<"$run_output"
 grep -Eq '^c Hx: [0-9]+ x [0-9]+, Hz: [0-9]+ x [0-9]+, Gx: [0-9]+ x [0-9]+, Gz: [0-9]+ x [0-9]+, logicals: [0-9]+$' <<<"$run_output"
 grep -Eq '^(o [0-9]+|s UNKNOWN)$' <<<"$run_output"
 

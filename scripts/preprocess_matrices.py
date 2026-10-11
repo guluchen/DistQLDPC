@@ -10,6 +10,11 @@ s2: Same rank/row space as s1 for Hx/Hz, but row vectors may change via GF(2)
     row combinations to reduce Hamming weight (greedy sparse reduction).
 
 Gx/Gz are copied unchanged to both output trees.
+
+--src is one flat directory (no recursion). The bundled benchmark codes now live
+in tier subdirectories data/matrices/tier0 .. tier5 (see data/matrices/README.md),
+so pass e.g. --src data/matrices/tier0; the default data/matrices only holds codes
+placed there directly.
 """
 
 from __future__ import annotations
@@ -17,6 +22,7 @@ from __future__ import annotations
 import argparse
 import csv
 import shutil
+import sys
 from pathlib import Path
 from typing import List, Sequence, Tuple
 
@@ -207,7 +213,8 @@ def main() -> int:
         "--src",
         type=Path,
         default=Path("data/matrices"),
-        help="source matrices directory",
+        help="flat source matrices directory (default: data/matrices; bundled codes are "
+        "in data/matrices/tierN, N=0..5)",
     )
     ap.add_argument(
         "--root",
@@ -232,6 +239,13 @@ def main() -> int:
     root = args.root.resolve()
     src = args.src.resolve()
     codes = args.codes if args.codes else discover_codes(src)
+    if not codes:
+        print(
+            f"error: no *_Hx.txt in {src} (bundled codes are in data/matrices/tierN; "
+            "pass --src data/matrices/tierN)",
+            file=sys.stderr,
+        )
+        return 1
 
     variants = ("s1", "s2") if args.variant == "both" else (args.variant,)
 
