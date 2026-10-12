@@ -17,3 +17,5 @@ Addendum (PI 2026-10-12, before any tier5 run): tier5 runs on yfclab2 once it is
 runner tier5_server.py. On the Mac the same work would take ~4 days, so the Mac does tier0-tier4 only. The server tier5 run
 also records main's tier5 baseline (separate server table). Comparison per cell: time to result when both solve; otherwise
 bounds reached at the limit (a candidate is worse if it proves a weaker final bound than main in a cell).
+
+Addendum 2 (PI 2026-10-12, before any server run): server tasks use a 4 GB memory cap (server usage rule), not 2 GB; tier5_server.py updated.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tier 5 on yfclab2 (PI 2026-10-12): main and candidate on every tier5 code x mode, ALL AT ONCE, one pinned physical core
-per process (taskset), 2 GB cap (prlimit --as), wall limit 21600 s. Records timestamped bound events and checks every answer
+per process (taskset), 4 GB cap (prlimit --as; server rule 2026-10-12), wall limit 21600 s. Records timestamped bound events and checks every answer
 against the stem (d / {lb}to{ub} / ge{lb}). Usage (in a DistQLDPC main checkout with data/matrices/tier5):
   tier5_server.py --bins main=PATH cand=PATH --cpus 0-63,128-... --out DIR [--limit 21600]"""
 import argparse, glob, json, os, subprocess, threading, time, re
@@ -22,7 +22,7 @@ def bounds(stem):
 res=[]; lock=threading.Lock()
 def one(job,cpu):
     v,s,m=job; t0=time.time(); log=open(f'{a.out}/{s}.{m}.{v}.log','w',buffering=1)
-    cmd=['taskset','-c',str(cpu),'prlimit','--as=2147483648','--',bins[v],f'-cpu-lim={a.limit}','-'+m,f'data/matrices/tier5/{s}']
+    cmd=['taskset','-c',str(cpu),'prlimit','--as=4294967296','--',bins[v],f'-cpu-lim={a.limit}','-'+m,f'data/matrices/tier5/{s}']
     p=subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
     lbs=[];ubs=[];result=None
     for line in p.stdout:
