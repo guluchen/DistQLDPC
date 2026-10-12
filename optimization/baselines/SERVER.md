@@ -46,15 +46,15 @@ Binary: main a3fe591 built on yfclab2 (frozen/server-main/distqldpc), sha256 `56
 | 3 | LP_544_80_12 | no-card | 3 | 500.55 | 499.77 | 501.1 | yes |
 | 3 | TN_144_2_13 | card-mto | 3 | 328.15 | 327.56 | 328.89 | yes |
 | 3 | TN_144_2_13 | no-card | 3 | 341.27 | 340.47 | 341.42 | yes |
-| 4 | BB_288_12_18 | card-mto | 3 | 1673.99 | 1643.1 | 1674.42 | yes |
-| 4 | BB_288_12_18 | no-card | 3 | 1420.67 | 1415.91 | 1425.86 | yes |
-| 4 | LP_714_100_16 | card-mto | 3 | 2000.04 | 2000.03 | 2000.04 | TIMEOUT (lb 9, ub 16) |
-| 4 | LP_714_100_16 | no-card | 3 | 2000.04 | 2000.03 | 2000.04 | TIMEOUT (lb 9, ub 16) |
-| 4 | TN_250_10_15 | card-mto | 3 | 2000.04 | 2000.03 | 2000.04 | TIMEOUT (lb 9, ub 15) |
-| 4 | TN_250_10_15 | no-card | 3 | 1805.77 | 1804.21 | 1809.48 | yes |
+| 4 | BB_288_12_18 | card-mto | 3 | 1988.53 | 1967.42 | 1991.95 | yes |
+| 4 | BB_288_12_18 | no-card | 3 | 1693.54 | 1686.68 | 1694.19 | yes |
+| 4 | LP_714_100_16 | card-mto | 3 | 5000.07 | 5000.06 | 5000.07 | TIMEOUT at 5000 s (lb 9, ub 16) |
+| 4 | LP_714_100_16 | no-card | 3 | 5000.06 | 5000.05 | 5000.07 | TIMEOUT at 5000 s (lb 9, ub 16) |
+| 4 | TN_250_10_15 | card-mto | 3 | 3515.48 | 3514.62 | 3556.42 | yes |
+| 4 | TN_250_10_15 | no-card | 3 | 2148.15 | 2146.66 | 2148.95 | yes |
 
 Notes:
 - The server's cores are ~2-3x slower than the Mac's (e.g. BB_288_12_18 no-card 1421 s vs 618 s on the Mac).
-- With the Tier 4 limit of 2000 s, main times out on TN_250_10_15 card-mto and LP_714_100_16 (both modes) on this host;
-  a server-specific Tier 4 limit is a PI decision.
+- Server Tier 4 limit is 5000 s (PI 2026-10-12). Tier 4 rows were re-run at 5000 s while the Tier 5 run occupied 100 other cores:
+  TN_250 and BB_288 solve; LP_714_100_16 still times out at 5000 s (lb 9, ub 16) on this host, although the Mac solves it in ~1409 s.
 - Tier 5 on the server is recorded by the Tier 5 run (main + candidate, 100 processes at once, 6 h).
