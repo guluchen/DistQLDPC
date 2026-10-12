@@ -6,6 +6,78 @@
  "method": "all completed baseline-role runs of this exact binary in serial, timing-locked Mac experiment runs (tier1_mac_dist.py); one solve at a time",
  "rows": [
   {
+   "tier": 0,
+   "case": "BB_90_8_10",
+   "mode": "card-mto",
+   "n": 123,
+   "median_s": 0.1371,
+   "min_s": 0.1327,
+   "max_s": 0.1483,
+   "sources": [
+    "GH-102",
+    "GH-106",
+    "GH-107",
+    "GH-94",
+    "GH-95",
+    "GH-98",
+    "GH-99"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "BB_90_8_10",
+   "mode": "no-card",
+   "n": 123,
+   "median_s": 0.1487,
+   "min_s": 0.1373,
+   "max_s": 0.1557,
+   "sources": [
+    "GH-102",
+    "GH-106",
+    "GH-107",
+    "GH-94",
+    "GH-95",
+    "GH-98",
+    "GH-99"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "GB_144_12_8",
+   "mode": "card-mto",
+   "n": 123,
+   "median_s": 0.0775,
+   "min_s": 0.0736,
+   "max_s": 0.0896,
+   "sources": [
+    "GH-102",
+    "GH-106",
+    "GH-107",
+    "GH-94",
+    "GH-95",
+    "GH-98",
+    "GH-99"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "GB_144_12_8",
+   "mode": "no-card",
+   "n": 123,
+   "median_s": 0.0924,
+   "min_s": 0.0868,
+   "max_s": 0.0933,
+   "sources": [
+    "GH-102",
+    "GH-106",
+    "GH-107",
+    "GH-94",
+    "GH-95",
+    "GH-98",
+    "GH-99"
+   ]
+  },
+  {
    "tier": 1,
    "case": "BB_108_8_10",
    "mode": "card-mto",
@@ -43,74 +115,34 @@
   },
   {
    "tier": 1,
-   "case": "BB_90_8_10",
+   "case": "BB_144_12_12",
    "mode": "card-mto",
-   "n": 123,
-   "median_s": 0.1371,
-   "min_s": 0.1327,
-   "max_s": 0.1483,
+   "n": 18,
+   "median_s": 1.1456,
+   "min_s": 1.1332,
+   "max_s": 1.1623,
    "sources": [
     "GH-102",
     "GH-106",
     "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "GH-89",
+    "GH-92"
    ]
   },
   {
    "tier": 1,
-   "case": "BB_90_8_10",
+   "case": "BB_144_12_12",
    "mode": "no-card",
-   "n": 123,
-   "median_s": 0.1487,
-   "min_s": 0.1373,
-   "max_s": 0.1557,
+   "n": 18,
+   "median_s": 0.5088,
+   "min_s": 0.5011,
+   "max_s": 0.5183,
    "sources": [
     "GH-102",
     "GH-106",
     "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "GB_144_12_8",
-   "mode": "card-mto",
-   "n": 123,
-   "median_s": 0.0775,
-   "min_s": 0.0736,
-   "max_s": 0.0896,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "GB_144_12_8",
-   "mode": "no-card",
-   "n": 123,
-   "median_s": 0.0924,
-   "min_s": 0.0868,
-   "max_s": 0.0933,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "GH-89",
+    "GH-92"
    ]
   },
   {
@@ -150,7 +182,7 @@
    ]
   },
   {
-   "tier": 2,
+   "tier": 1,
    "case": "LP_340_56_8",
    "mode": "card-mto",
    "n": 33,
@@ -168,7 +200,7 @@
    ]
   },
   {
-   "tier": 2,
+   "tier": 1,
    "case": "LP_340_56_8",
    "mode": "no-card",
    "n": 33,
@@ -186,35 +218,29 @@
    ]
   },
   {
-   "tier": 3,
-   "case": "BB_144_12_12",
+   "tier": 2,
+   "case": "LP_442_68_10",
    "mode": "card-mto",
-   "n": 18,
-   "median_s": 1.1456,
-   "min_s": 1.1332,
-   "max_s": 1.1623,
+   "n": 9,
+   "median_s": 20.6901,
+   "min_s": 20.6265,
+   "max_s": 21.2572,
    "sources": [
-    "GH-102",
     "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92"
+    "GH-89"
    ]
   },
   {
-   "tier": 3,
-   "case": "BB_144_12_12",
+   "tier": 2,
+   "case": "LP_442_68_10",
    "mode": "no-card",
-   "n": 18,
-   "median_s": 0.5088,
-   "min_s": 0.5011,
-   "max_s": 0.5183,
+   "n": 9,
+   "median_s": 32.637,
+   "min_s": 32.5148,
+   "max_s": 32.8602,
    "sources": [
-    "GH-102",
     "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92"
+    "GH-89"
    ]
   },
   {
@@ -289,32 +315,6 @@
   },
   {
    "tier": 3,
-   "case": "LP_442_68_10",
-   "mode": "card-mto",
-   "n": 9,
-   "median_s": 20.6901,
-   "min_s": 20.6265,
-   "max_s": 21.2572,
-   "sources": [
-    "GH-106",
-    "GH-89"
-   ]
-  },
-  {
-   "tier": 3,
-   "case": "LP_442_68_10",
-   "mode": "no-card",
-   "n": 9,
-   "median_s": 32.637,
-   "min_s": 32.5148,
-   "max_s": 32.8602,
-   "sources": [
-    "GH-106",
-    "GH-89"
-   ]
-  },
-  {
-   "tier": 3,
    "case": "LP_544_80_12",
    "mode": "card-mto",
    "n": 12,
@@ -369,26 +369,14 @@
   },
   {
    "tier": 4,
-   "case": "TN_250_10_15",
-   "mode": "no-card",
-   "n": 3,
-   "median_s": 1090.786,
-   "min_s": 1090.437,
-   "max_s": 1090.836,
-   "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name TN_250_10_15)"
-   ]
-  },
-  {
-   "tier": 4,
-   "case": "TN_250_10_15",
+   "case": "BB_288_12_18",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 991.028,
-   "min_s": 990.953,
-   "max_s": 991.276,
+   "median_s": 707.937,
+   "min_s": 706.455,
+   "max_s": 708.436,
    "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name TN_250_10_15)"
+    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name BB_288_12_unknown)"
    ]
   },
   {
@@ -405,28 +393,27 @@
   },
   {
    "tier": 4,
-   "case": "BB_288_12_18",
+   "case": "TN_250_10_15",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 707.937,
-   "min_s": 706.455,
-   "max_s": 708.436,
+   "median_s": 991.028,
+   "min_s": 990.953,
+   "max_s": 991.276,
    "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name BB_288_12_unknown)"
+    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name TN_250_10_15)"
    ]
   },
   {
-   "tier": 5,
-   "case": "LP_714_100_16",
+   "tier": 4,
+   "case": "TN_250_10_15",
    "mode": "no-card",
    "n": 3,
-   "median_s": 1409.568,
-   "min_s": 1407.366,
-   "max_s": 1410.67,
+   "median_s": 1090.786,
+   "min_s": 1090.437,
+   "max_s": 1090.836,
    "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name LP_714_100_unknown)"
-   ],
-   "note": "tier5 since 2026-10-12 (moved from tier4)"
+    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name TN_250_10_15)"
+   ]
   },
   {
    "tier": 5,
@@ -436,6 +423,19 @@
    "median_s": 1408.853,
    "min_s": 1407.719,
    "max_s": 1409.049,
+   "sources": [
+    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name LP_714_100_unknown)"
+   ],
+   "note": "tier5 since 2026-10-12 (moved from tier4)"
+  },
+  {
+   "tier": 5,
+   "case": "LP_714_100_16",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 1409.568,
+   "min_s": 1407.366,
+   "max_s": 1410.67,
    "sources": [
     "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name LP_714_100_unknown)"
    ],
