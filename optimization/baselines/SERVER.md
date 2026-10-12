@@ -48,8 +48,8 @@ Binary: main a3fe591 built on yfclab2 (frozen/server-main/distqldpc), sha256 `56
 | 3 | TN_144_2_13 | no-card | 3 | 341.27 | 340.47 | 341.42 | yes |
 | 4 | BB_288_12_18 | card-mto | 3 | 1988.53 | 1967.42 | 1991.95 | yes |
 | 4 | BB_288_12_18 | no-card | 3 | 1693.54 | 1686.68 | 1694.19 | yes |
-| 4 | LP_714_100_16 | card-mto | 3 | 5000.07 | 5000.06 | 5000.07 | TIMEOUT at 5000 s (lb 9, ub 16) |
-| 4 | LP_714_100_16 | no-card | 3 | 5000.06 | 5000.05 | 5000.07 | TIMEOUT at 5000 s (lb 9, ub 16) |
+| 5 | LP_714_100_16 | card-mto | 3 | 5000.07 | 5000.06 | 5000.07 | TIMEOUT at 5000 s (lb 9, ub 16) |
+| 5 | LP_714_100_16 | no-card | 3 | 5000.06 | 5000.05 | 5000.07 | TIMEOUT at 5000 s (lb 9, ub 16) |
 | 4 | TN_250_10_15 | card-mto | 3 | 3515.48 | 3514.62 | 3556.42 | yes |
 | 4 | TN_250_10_15 | no-card | 3 | 2148.15 | 2146.66 | 2148.95 | yes |
 

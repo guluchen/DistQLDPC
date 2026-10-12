@@ -32,13 +32,13 @@ Method: every completed baseline-role run of this exact binary in serial, timing
 | 4 | TN_250_10_15 | card-mto | 3 | 991.028 | 990.953 | 991.276 |
 | 4 | BB_288_12_18 | no-card | 3 | 617.692 | 617.464 | 617.738 |
 | 4 | BB_288_12_18 | card-mto | 3 | 707.937 | 706.455 | 708.436 |
-| 4 | LP_714_100_16 | no-card | 3 | 1409.568 | 1407.366 | 1410.67 |
-| 4 | LP_714_100_16 | card-mto | 3 | 1408.853 | 1407.719 | 1409.049 |
+| 5 | LP_714_100_16 | no-card | 3 | 1409.568 | 1407.366 | 1410.67 |
+| 5 | LP_714_100_16 | card-mto | 3 | 1408.853 | 1407.719 | 1409.049 |
 
 Notes:
 - Session-to-session drift reaches ~10% on some cells (e.g. GB_144_12_12 no-card median 66.2 s, one batch at 72.6 s), so every cached
   comparison runs one drift-check sample of the baseline per cell (`tier_cached_mac.py`); a sample outside the recorded range +-3% forces a
   full AB/BA/AB comparison for that cell.
-- Tier 4 rows: 3 serial runs each (2026-10-11/12), limit 2000 s; spread within 0.5%. LP_714_100_16 (~1409 s) is the closest to the limit.
+- Tier 4 rows: 3 serial runs each (2026-10-11/12), limit 2000 s; spread within 0.5%. LP_714_100_16 (~1409 s) was moved to tier5 on 2026-10-12 (server timeout at 5000 s); its rows are kept with tier 5.
 - Tier 5 is not in this table: it needs the dedicated server (25 codes x 2 modes x up to 6 h); the Mac probes so far were parallel runs.
 - Rebuild this table whenever main's solver or the host changes. Server (yfclab2) times are a separate table.
