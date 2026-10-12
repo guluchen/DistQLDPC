@@ -8,22 +8,22 @@ Method: every completed baseline-role run of this exact binary in serial, timing
 |---:|---|---|---:|---:|---:|---:|
 | 1 | BB_108_8_10 | card-mto | 123 | 0.4631 | 0.445 | 0.4905 |
 | 1 | BB_108_8_10 | no-card | 123 | 0.3615 | 0.3459 | 0.3821 |
-| 1 | BB_90_8_10 | card-mto | 123 | 0.1371 | 0.1327 | 0.1483 |
-| 1 | BB_90_8_10 | no-card | 123 | 0.1487 | 0.1373 | 0.1557 |
-| 1 | GB_144_12_8 | card-mto | 123 | 0.0775 | 0.0736 | 0.0896 |
-| 1 | GB_144_12_8 | no-card | 123 | 0.0924 | 0.0868 | 0.0933 |
+| 0 | BB_90_8_10 | card-mto | 123 | 0.1371 | 0.1327 | 0.1483 |
+| 0 | BB_90_8_10 | no-card | 123 | 0.1487 | 0.1373 | 0.1557 |
+| 0 | GB_144_12_8 | card-mto | 123 | 0.0775 | 0.0736 | 0.0896 |
+| 0 | GB_144_12_8 | no-card | 123 | 0.0924 | 0.0868 | 0.0933 |
 | 1 | LP_238_44_6 | card-mto | 123 | 0.3908 | 0.3812 | 0.4029 |
 | 1 | LP_238_44_6 | no-card | 123 | 0.4037 | 0.3921 | 0.4163 |
-| 2 | LP_340_56_8 | card-mto | 33 | 1.618 | 1.5897 | 1.6471 |
-| 2 | LP_340_56_8 | no-card | 33 | 1.5312 | 1.5067 | 1.5724 |
-| 3 | BB_144_12_12 | card-mto | 18 | 1.1456 | 1.1332 | 1.1623 |
-| 3 | BB_144_12_12 | no-card | 18 | 0.5088 | 0.5011 | 0.5183 |
+| 1 | LP_340_56_8 | card-mto | 33 | 1.618 | 1.5897 | 1.6471 |
+| 1 | LP_340_56_8 | no-card | 33 | 1.5312 | 1.5067 | 1.5724 |
+| 1 | BB_144_12_12 | card-mto | 18 | 1.1456 | 1.1332 | 1.1623 |
+| 1 | BB_144_12_12 | no-card | 18 | 0.5088 | 0.5011 | 0.5183 |
 | 3 | BB_144_14_14 | card-mto | 21 | 51.7116 | 51.5874 | 56.5674 |
 | 3 | BB_144_14_14 | no-card | 21 | 49.0029 | 48.8988 | 53.4698 |
 | 3 | GB_144_12_12 | card-mto | 24 | 106.4605 | 106.2974 | 116.1613 |
 | 3 | GB_144_12_12 | no-card | 24 | 66.2305 | 65.9917 | 72.6734 |
-| 3 | LP_442_68_10 | card-mto | 9 | 20.6901 | 20.6265 | 21.2572 |
-| 3 | LP_442_68_10 | no-card | 9 | 32.637 | 32.5148 | 32.8602 |
+| 2 | LP_442_68_10 | card-mto | 9 | 20.6901 | 20.6265 | 21.2572 |
+| 2 | LP_442_68_10 | no-card | 9 | 32.637 | 32.5148 | 32.8602 |
 | 3 | LP_544_80_12 | card-mto | 12 | 50.9969 | 50.8745 | 55.7626 |
 | 3 | LP_544_80_12 | no-card | 9 | 220.5567 | 219.9041 | 241.7144 |
 | 3 | TN_144_2_13 | card-mto | 9 | 160.7049 | 160.5322 | 160.8308 |
@@ -32,13 +32,13 @@ Method: every completed baseline-role run of this exact binary in serial, timing
 | 4 | TN_250_10_15 | card-mto | 3 | 991.028 | 990.953 | 991.276 |
 | 4 | BB_288_12_18 | no-card | 3 | 617.692 | 617.464 | 617.738 |
 | 4 | BB_288_12_18 | card-mto | 3 | 707.937 | 706.455 | 708.436 |
-| 4 | LP_714_100_16 | no-card | 3 | 1409.568 | 1407.366 | 1410.67 |
-| 4 | LP_714_100_16 | card-mto | 3 | 1408.853 | 1407.719 | 1409.049 |
+| 5 | LP_714_100_16 | no-card | 3 | 1409.568 | 1407.366 | 1410.67 |
+| 5 | LP_714_100_16 | card-mto | 3 | 1408.853 | 1407.719 | 1409.049 |
 
 Notes:
 - Session-to-session drift reaches ~10% on some cells (e.g. GB_144_12_12 no-card median 66.2 s, one batch at 72.6 s), so every cached
   comparison runs one drift-check sample of the baseline per cell (`tier_cached_mac.py`); a sample outside the recorded range +-3% forces a
   full AB/BA/AB comparison for that cell.
-- Tier 4 rows: 3 serial runs each (2026-10-11/12), limit 2000 s; spread within 0.5%. LP_714_100_16 (~1409 s) is the closest to the limit.
+- Tier 4 rows: 3 serial runs each (2026-10-11/12), limit 2000 s; spread within 0.5%. LP_714_100_16 (~1409 s) was moved to tier5 on 2026-10-12 (server timeout at 5000 s); its rows are kept with tier 5.
 - Tier 5 is not in this table: it needs the dedicated server (25 codes x 2 modes x up to 6 h); the Mac probes so far were parallel runs.
 - Rebuild this table whenever main's solver or the host changes. Server (yfclab2) times are a separate table.
