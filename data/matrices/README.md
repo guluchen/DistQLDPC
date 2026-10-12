@@ -28,7 +28,7 @@ certified).
 
 Counts: tier0 10, tier1 4, tier2 1, tier3 6, tier4 3, tier5 25 (total 49).
 
-**Timeouts.** tier4: 2000 s per instance; tier5: 21600 s (6 h) per instance.
+**Timeouts.** tier4: 2000 s per instance on the Mac, 5000 s on yfclab2; tier5: 21600 s (6 h) per instance.
 tier0–tier3 are the filtering tiers of the
 [optimization loop policy](../../docs/OPTIMIZATION_LOOP_POLICY.md) (Tier 0 correctness/smoke,
 Tier 1 lightweight filter, Tier 2 medium filter, Tier 3 decisive set); the policy fixes no
