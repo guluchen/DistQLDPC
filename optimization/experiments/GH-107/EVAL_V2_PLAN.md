@@ -12,3 +12,8 @@ tier4 BB_288_12_18; tier5 BB_360_12_17to24, BB_756_16_ge17, BB_864_4_ge17, BB_10
 Pass rule: no answer inconsistency; tiers 1-4: every cell median <= recorded main median with no non-overlapping regression,
 per-mode geomean < 1 (tier0: correctness / severe slowdown only); tier5: never a weaker final bound than main where main
 times out, and not slower where main solves.
+
+Addendum (2026-10-13): the first Mac run (raw/eval-v2-INVALID-mac-slept) is void — the Mac went into idle/maintenance sleep
+from 2026-10-12 20:19 (pmset log), stretching seconds of work into hours and triggering wall-clock watchdog kills. The Mac part is
+re-run under caffeinate -i -s (2 GB cap, serial, >= 2 cores left free) into raw/eval-v2b. Tier5 (yfclab2) result: GH-107 equals
+main on all 8 dual-map tier5 cells (same final bounds; all time out) => tier5 PASS (never weaker than main).
