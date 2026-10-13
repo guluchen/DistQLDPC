@@ -34,6 +34,26 @@ Method: every completed baseline-role run of this exact binary in serial, timing
 | 4 | BB_288_12_18 | card-mto | 3 | 707.937 | 706.455 | 708.436 |
 | 5 | LP_714_100_16 | no-card | 3 | 1409.568 | 1407.366 | 1410.67 |
 | 5 | LP_714_100_16 | card-mto | 3 | 1408.853 | 1407.719 | 1409.049 |
+| 0 | BB_72_12_6 | no-card | 3 | 0.0177 | 0.0176 | 0.0181 |
+| 0 | BB_72_12_6 | card-mto | 3 | 0.0176 | 0.0175 | 0.0177 |
+| 0 | LP_34_20_2 | no-card | 3 | 0.0176 | 0.0144 | 0.0176 |
+| 0 | LP_34_20_2 | card-mto | 3 | 0.0178 | 0.0175 | 0.0178 |
+| 0 | LP_136_32_4 | no-card | 3 | 0.0629 | 0.0627 | 0.0629 |
+| 0 | LP_136_32_4 | card-mto | 3 | 0.0476 | 0.0474 | 0.0478 |
+| 0 | TN_36_8_3 | no-card | 3 | 0.0176 | 0.0173 | 0.0176 |
+| 0 | TN_36_8_3 | card-mto | 3 | 0.0176 | 0.0175 | 0.0176 |
+| 0 | TN_36_8_4 | no-card | 3 | 0.0174 | 0.0173 | 0.0175 |
+| 0 | TN_36_8_4 | card-mto | 3 | 0.0173 | 0.0172 | 0.0175 |
+| 0 | TN_54_11_4 | no-card | 3 | 0.0175 | 0.0173 | 0.0175 |
+| 0 | TN_54_11_4 | card-mto | 3 | 0.0175 | 0.0136 | 0.0177 |
+| 0 | TN_72_14_4 | no-card | 3 | 0.0176 | 0.0174 | 0.0177 |
+| 0 | TN_72_14_4 | card-mto | 3 | 0.0326 | 0.0326 | 0.0327 |
+| 0 | TN_72_8_8 | no-card | 3 | 0.2049 | 0.1982 | 0.209 |
+| 0 | TN_72_8_8 | card-mto | 3 | 0.3187 | 0.3183 | 0.3276 |
+| 2 | TN_108_2_12 | no-card | 3 | 9.3271 | 9.3197 | 9.3564 |
+| 2 | TN_108_2_12 | card-mto | 3 | 10.7224 | 10.7083 | 10.7646 |
+| 3 | TN_200_10_10 | no-card | 3 | 13.3596 | 13.2865 | 13.3816 |
+| 3 | TN_200_10_10 | card-mto | 3 | 10.396 | 10.3658 | 10.4086 |
 
 Notes:
 - Session-to-session drift reaches ~10% on some cells (e.g. GB_144_12_12 no-card median 66.2 s, one batch at 72.6 s), so every cached
@@ -41,4 +61,6 @@ Notes:
   full AB/BA/AB comparison for that cell.
 - Tier 4 rows: 3 serial runs each (2026-10-11/12), limit 2000 s; spread within 0.5%. LP_714_100_16 (~1409 s) was moved to tier5 on 2026-10-12 (server timeout at 5000 s); its rows are kept with tier 5.
 - Tier 5 is not in this table: it needs the dedicated server (25 codes x 2 modes x up to 6 h); the Mac probes so far were parallel runs.
+- **Refresh rule (PI 2026-10-13):** whenever a PR that can change solver behaviour or speed is merged into main, re-record main's
+  tier0-5 times as the new basis (this Mac table: tiers 0-4; SERVER.md: tiers 0-4 and tier5) and re-check tier placement.
 - Rebuild this table whenever main's solver or the host changes. Server (yfclab2) times are a separate table.
