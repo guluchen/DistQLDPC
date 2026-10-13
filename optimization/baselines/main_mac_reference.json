@@ -1,114 +1,127 @@
 {
  "host": "Mac (Apple M6, 12 CPUs), macOS",
- "baseline_binary": "frozen-main7e/distqldpc (main 7eadd54; d52c1a6 has the same solver, path resolver only)",
- "binary_sha256": "6bdcaa2523cdcbeae5164cedbf54c9ac0f9e64f9a91c3da7ef4b804df393db9d",
- "collected": "2026-10-11",
- "method": "all completed baseline-role runs of this exact binary in serial, timing-locked Mac experiment runs (tier1_mac_dist.py); one solve at a time",
+ "baseline_binary": "main 398054e (GH-107 adopted)",
+ "binary_sha256": "2c9e33b443f724ed6fc7902eda8cc41a4687c9c66c52d2a7d66f890d1df584d3",
+ "collected": "2026-10-14",
+ "method": "record_main_mac.py: 3 serial runs per case/mode under caffeinate -i -s, 2 GB cap, >=2 cores free; limits tier0 600 s, tier1-3 1800 s, tier4 2000 s",
  "rows": [
   {
    "tier": 0,
    "case": "BB_72_12_6",
-   "mode": "card-mto",
+   "mode": "no-card",
    "n": 3,
-   "median_s": 0.0176,
+   "median_s": 0.0178,
    "min_s": 0.0175,
-   "max_s": 0.0177,
+   "max_s": 0.0183,
    "solved": true,
    "limit_s": 600,
    "result": "o 6",
    "final_lb": 6,
    "final_ub": 6,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
    "case": "BB_72_12_6",
-   "mode": "no-card",
+   "mode": "card-mto",
    "n": 3,
    "median_s": 0.0177,
-   "min_s": 0.0176,
-   "max_s": 0.0181,
+   "min_s": 0.0175,
+   "max_s": 0.018,
    "solved": true,
    "limit_s": 600,
    "result": "o 6",
    "final_lb": 6,
    "final_ub": 6,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 0,
-   "case": "BB_90_8_10",
-   "mode": "card-mto",
-   "n": 123,
-   "median_s": 0.1371,
-   "min_s": 0.1327,
-   "max_s": 0.1483,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
    "case": "BB_90_8_10",
    "mode": "no-card",
-   "n": 123,
-   "median_s": 0.1487,
-   "min_s": 0.1373,
-   "max_s": 0.1557,
+   "n": 3,
+   "median_s": 0.0906,
+   "min_s": 0.0906,
+   "max_s": 0.0927,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 10",
+   "final_lb": 10,
+   "final_ub": 10,
    "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
-   "case": "GB_144_12_8",
+   "case": "BB_90_8_10",
    "mode": "card-mto",
-   "n": 123,
-   "median_s": 0.0775,
-   "min_s": 0.0736,
-   "max_s": 0.0896,
+   "n": 3,
+   "median_s": 0.0628,
+   "min_s": 0.0626,
+   "max_s": 0.074,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 10",
+   "final_lb": 10,
+   "final_ub": 10,
    "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
    "case": "GB_144_12_8",
    "mode": "no-card",
-   "n": 123,
-   "median_s": 0.0924,
-   "min_s": 0.0868,
-   "max_s": 0.0933,
+   "n": 3,
+   "median_s": 0.0626,
+   "min_s": 0.0601,
+   "max_s": 0.0629,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 8",
+   "final_lb": 8,
+   "final_ub": 8,
    "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "GB_144_12_8",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 0.0479,
+   "min_s": 0.0469,
+   "max_s": 0.0485,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 8",
+   "final_lb": 8,
+   "final_ub": 8,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "LP_136_32_4",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 0.0601,
+   "min_s": 0.0586,
+   "max_s": 0.0633,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 4",
+   "final_lb": 4,
+   "final_ub": 4,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
@@ -116,8 +129,8 @@
    "case": "LP_136_32_4",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0476,
-   "min_s": 0.0474,
+   "median_s": 0.0477,
+   "min_s": 0.0475,
    "max_s": 0.0478,
    "solved": true,
    "limit_s": 600,
@@ -125,24 +138,24 @@
    "final_lb": 4,
    "final_ub": 4,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
-   "case": "LP_136_32_4",
+   "case": "LP_34_20_2",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0629,
-   "min_s": 0.0627,
-   "max_s": 0.0629,
+   "median_s": 0.0176,
+   "min_s": 0.0174,
+   "max_s": 0.0178,
    "solved": true,
    "limit_s": 600,
-   "result": "o 4",
-   "final_lb": 4,
-   "final_ub": 4,
+   "result": "o 2",
+   "final_lb": 2,
+   "final_ub": 2,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
@@ -151,7 +164,7 @@
    "mode": "card-mto",
    "n": 3,
    "median_s": 0.0178,
-   "min_s": 0.0175,
+   "min_s": 0.0178,
    "max_s": 0.0178,
    "solved": true,
    "limit_s": 600,
@@ -159,24 +172,24 @@
    "final_lb": 2,
    "final_ub": 2,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
-   "case": "LP_34_20_2",
+   "case": "TN_36_8_3",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0176,
-   "min_s": 0.0144,
-   "max_s": 0.0176,
+   "median_s": 0.0179,
+   "min_s": 0.0177,
+   "max_s": 0.0182,
    "solved": true,
    "limit_s": 600,
-   "result": "o 2",
-   "final_lb": 2,
-   "final_ub": 2,
+   "result": "o 3",
+   "final_lb": 3,
+   "final_ub": 3,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
@@ -184,135 +197,135 @@
    "case": "TN_36_8_3",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0176,
-   "min_s": 0.0175,
-   "max_s": 0.0176,
+   "median_s": 0.018,
+   "min_s": 0.0179,
+   "max_s": 0.018,
    "solved": true,
    "limit_s": 600,
    "result": "o 3",
    "final_lb": 3,
    "final_ub": 3,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 0,
-   "case": "TN_36_8_3",
-   "mode": "no-card",
-   "n": 3,
-   "median_s": 0.0176,
-   "min_s": 0.0173,
-   "max_s": 0.0176,
-   "solved": true,
-   "limit_s": 600,
-   "result": "o 3",
-   "final_lb": 3,
-   "final_ub": 3,
-   "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
    "case": "TN_36_8_4",
-   "mode": "card-mto",
+   "mode": "no-card",
    "n": 3,
-   "median_s": 0.0173,
-   "min_s": 0.0172,
-   "max_s": 0.0175,
+   "median_s": 0.0177,
+   "min_s": 0.0176,
+   "max_s": 0.0179,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 0,
    "case": "TN_36_8_4",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 0.0178,
+   "min_s": 0.0175,
+   "max_s": 0.0179,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 4",
+   "final_lb": 4,
+   "final_ub": 4,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "TN_54_11_4",
    "mode": "no-card",
+   "n": 3,
+   "median_s": 0.0175,
+   "min_s": 0.0175,
+   "max_s": 0.0181,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 4",
+   "final_lb": 4,
+   "final_ub": 4,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "TN_54_11_4",
+   "mode": "card-mto",
    "n": 3,
    "median_s": 0.0174,
-   "min_s": 0.0173,
-   "max_s": 0.0175,
-   "solved": true,
-   "limit_s": 600,
-   "result": "o 4",
-   "final_lb": 4,
-   "final_ub": 4,
-   "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 0,
-   "case": "TN_54_11_4",
-   "mode": "card-mto",
-   "n": 3,
-   "median_s": 0.0175,
-   "min_s": 0.0136,
-   "max_s": 0.0177,
-   "solved": true,
-   "limit_s": 600,
-   "result": "o 4",
-   "final_lb": 4,
-   "final_ub": 4,
-   "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 0,
-   "case": "TN_54_11_4",
-   "mode": "no-card",
-   "n": 3,
-   "median_s": 0.0175,
-   "min_s": 0.0173,
-   "max_s": 0.0175,
-   "solved": true,
-   "limit_s": 600,
-   "result": "o 4",
-   "final_lb": 4,
-   "final_ub": 4,
-   "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 0,
-   "case": "TN_72_14_4",
-   "mode": "card-mto",
-   "n": 3,
-   "median_s": 0.0326,
-   "min_s": 0.0326,
-   "max_s": 0.0327,
-   "solved": true,
-   "limit_s": 600,
-   "result": "o 4",
-   "final_lb": 4,
-   "final_ub": 4,
-   "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 0,
-   "case": "TN_72_14_4",
-   "mode": "no-card",
-   "n": 3,
-   "median_s": 0.0176,
    "min_s": 0.0174,
-   "max_s": 0.0177,
+   "max_s": 0.0176,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "TN_72_14_4",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 0.0179,
+   "min_s": 0.0177,
+   "max_s": 0.0182,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 4",
+   "final_lb": 4,
+   "final_ub": 4,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "TN_72_14_4",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 0.0325,
+   "min_s": 0.0325,
+   "max_s": 0.0326,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 4",
+   "final_lb": 4,
+   "final_ub": 4,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
+   ]
+  },
+  {
+   "tier": 0,
+   "case": "TN_72_8_8",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 0.1981,
+   "min_s": 0.198,
+   "max_s": 0.2054,
+   "solved": true,
+   "limit_s": 600,
+   "result": "o 8",
+   "final_lb": 8,
+   "final_ub": 8,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
@@ -320,216 +333,186 @@
    "case": "TN_72_8_8",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.3187,
-   "min_s": 0.3183,
-   "max_s": 0.3276,
+   "median_s": 0.3186,
+   "min_s": 0.317,
+   "max_s": 0.3187,
    "solved": true,
    "limit_s": 600,
    "result": "o 8",
    "final_lb": 8,
    "final_ub": 8,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 0,
-   "case": "TN_72_8_8",
-   "mode": "no-card",
-   "n": 3,
-   "median_s": 0.2049,
-   "min_s": 0.1982,
-   "max_s": 0.209,
-   "solved": true,
-   "limit_s": 600,
-   "result": "o 8",
-   "final_lb": 8,
-   "final_ub": 8,
-   "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "BB_108_8_10",
-   "mode": "card-mto",
-   "n": 123,
-   "median_s": 0.4631,
-   "min_s": 0.445,
-   "max_s": 0.4905,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 600s"
    ]
   },
   {
    "tier": 1,
    "case": "BB_108_8_10",
    "mode": "no-card",
-   "n": 123,
-   "median_s": 0.3615,
-   "min_s": 0.3459,
-   "max_s": 0.3821,
+   "n": 3,
+   "median_s": 0.2847,
+   "min_s": 0.2847,
+   "max_s": 0.2849,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 10",
+   "final_lb": 10,
+   "final_ub": 10,
    "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
    "tier": 1,
-   "case": "BB_144_12_12",
-   "mode": "card-mto",
-   "n": 18,
-   "median_s": 1.1456,
-   "min_s": 1.1332,
-   "max_s": 1.1623,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "BB_144_12_12",
-   "mode": "no-card",
-   "n": 18,
-   "median_s": 0.5088,
-   "min_s": 0.5011,
-   "max_s": 0.5183,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "LP_238_44_6",
-   "mode": "card-mto",
-   "n": 123,
-   "median_s": 0.3908,
-   "min_s": 0.3812,
-   "max_s": 0.4029,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "LP_238_44_6",
-   "mode": "no-card",
-   "n": 123,
-   "median_s": 0.4037,
-   "min_s": 0.3921,
-   "max_s": 0.4163,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "LP_340_56_8",
-   "mode": "card-mto",
-   "n": 33,
-   "median_s": 1.618,
-   "min_s": 1.5897,
-   "max_s": 1.6471,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
-   ]
-  },
-  {
-   "tier": 1,
-   "case": "LP_340_56_8",
-   "mode": "no-card",
-   "n": 33,
-   "median_s": 1.5312,
-   "min_s": 1.5067,
-   "max_s": 1.5724,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-94",
-    "GH-95",
-    "GH-98",
-    "GH-99"
-   ]
-  },
-  {
-   "tier": 2,
-   "case": "LP_442_68_10",
-   "mode": "card-mto",
-   "n": 9,
-   "median_s": 20.6901,
-   "min_s": 20.6265,
-   "max_s": 21.2572,
-   "sources": [
-    "GH-106",
-    "GH-89"
-   ]
-  },
-  {
-   "tier": 2,
-   "case": "LP_442_68_10",
-   "mode": "no-card",
-   "n": 9,
-   "median_s": 32.637,
-   "min_s": 32.5148,
-   "max_s": 32.8602,
-   "sources": [
-    "GH-106",
-    "GH-89"
-   ]
-  },
-  {
-   "tier": 2,
-   "case": "TN_108_2_12",
+   "case": "BB_108_8_10",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 10.7224,
-   "min_s": 10.7083,
-   "max_s": 10.7646,
+   "median_s": 0.3877,
+   "min_s": 0.375,
+   "max_s": 0.3883,
    "solved": true,
-   "limit_s": 600,
+   "limit_s": 1800,
+   "result": "o 10",
+   "final_lb": 10,
+   "final_ub": 10,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 1,
+   "case": "BB_144_12_12",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 0.2516,
+   "min_s": 0.2464,
+   "max_s": 0.253,
+   "solved": true,
+   "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 1,
+   "case": "BB_144_12_12",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 0.5496,
+   "min_s": 0.5429,
+   "max_s": 0.5517,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 12",
+   "final_lb": 12,
+   "final_ub": 12,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 1,
+   "case": "LP_238_44_6",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 0.3949,
+   "min_s": 0.3919,
+   "max_s": 0.4007,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 6",
+   "final_lb": 6,
+   "final_ub": 6,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 1,
+   "case": "LP_238_44_6",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 0.3761,
+   "min_s": 0.3751,
+   "max_s": 0.3856,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 6",
+   "final_lb": 6,
+   "final_ub": 6,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 1,
+   "case": "LP_340_56_8",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 1.4836,
+   "min_s": 1.4804,
+   "max_s": 1.4844,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 8",
+   "final_lb": 8,
+   "final_ub": 8,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 1,
+   "case": "LP_340_56_8",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 1.563,
+   "min_s": 1.5622,
+   "max_s": 1.5699,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 8",
+   "final_lb": 8,
+   "final_ub": 8,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 2,
+   "case": "LP_442_68_10",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 32.1846,
+   "min_s": 31.7241,
+   "max_s": 32.2025,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 10",
+   "final_lb": 10,
+   "final_ub": 10,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 2,
+   "case": "LP_442_68_10",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 20.5178,
+   "min_s": 20.4937,
+   "max_s": 20.5289,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 10",
+   "final_lb": 10,
+   "final_ub": 10,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
@@ -537,140 +520,186 @@
    "case": "TN_108_2_12",
    "mode": "no-card",
    "n": 3,
-   "median_s": 9.3271,
-   "min_s": 9.3197,
-   "max_s": 9.3564,
+   "median_s": 9.5874,
+   "min_s": 9.5842,
+   "max_s": 9.5922,
    "solved": true,
-   "limit_s": 600,
+   "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 2,
+   "case": "TN_108_2_12",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 11.0157,
+   "min_s": 11.0108,
+   "max_s": 11.0182,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 12",
+   "final_lb": 12,
+   "final_ub": 12,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 3,
+   "case": "BB_144_14_14",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 30.2756,
+   "min_s": 30.2543,
+   "max_s": 30.2842,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 14",
+   "final_lb": 14,
+   "final_ub": 14,
+   "sources": [
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
    "tier": 3,
    "case": "BB_144_14_14",
    "mode": "card-mto",
-   "n": 21,
-   "median_s": 51.7116,
-   "min_s": 51.5874,
-   "max_s": 56.5674,
+   "n": 3,
+   "median_s": 28.1921,
+   "min_s": 28.1299,
+   "max_s": 28.1952,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 14",
+   "final_lb": 14,
+   "final_ub": 14,
    "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92",
-    "GH-98"
-   ]
-  },
-  {
-   "tier": 3,
-   "case": "BB_144_14_14",
-   "mode": "no-card",
-   "n": 21,
-   "median_s": 49.0029,
-   "min_s": 48.8988,
-   "max_s": 53.4698,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92",
-    "GH-98"
-   ]
-  },
-  {
-   "tier": 3,
-   "case": "GB_144_12_12",
-   "mode": "card-mto",
-   "n": 24,
-   "median_s": 106.4605,
-   "min_s": 106.2974,
-   "max_s": 116.1613,
-   "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
    "tier": 3,
    "case": "GB_144_12_12",
    "mode": "no-card",
-   "n": 24,
-   "median_s": 66.2305,
-   "min_s": 65.9917,
-   "max_s": 72.6734,
+   "n": 3,
+   "median_s": 60.1825,
+   "min_s": 60.1636,
+   "max_s": 60.2222,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 12",
+   "final_lb": 12,
+   "final_ub": 12,
    "sources": [
-    "GH-102",
-    "GH-106",
-    "GH-107",
-    "GH-89",
-    "GH-92",
-    "GH-98",
-    "GH-99"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
    "tier": 3,
-   "case": "LP_544_80_12",
+   "case": "GB_144_12_12",
    "mode": "card-mto",
-   "n": 12,
-   "median_s": 50.9969,
-   "min_s": 50.8745,
-   "max_s": 55.7626,
+   "n": 3,
+   "median_s": 100.6553,
+   "min_s": 100.6262,
+   "max_s": 100.6571,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 12",
+   "final_lb": 12,
+   "final_ub": 12,
    "sources": [
-    "GH-106",
-    "GH-89",
-    "GH-98"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
    "tier": 3,
    "case": "LP_544_80_12",
    "mode": "no-card",
-   "n": 9,
-   "median_s": 220.5567,
-   "min_s": 219.9041,
-   "max_s": 241.7144,
+   "n": 3,
+   "median_s": 219.4915,
+   "min_s": 219.4605,
+   "max_s": 219.736,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 12",
+   "final_lb": 12,
+   "final_ub": 12,
    "sources": [
-    "GH-106",
-    "GH-89"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
    "tier": 3,
-   "case": "TN_144_2_13",
+   "case": "LP_544_80_12",
    "mode": "card-mto",
-   "n": 9,
-   "median_s": 160.7049,
-   "min_s": 160.5322,
-   "max_s": 160.8308,
+   "n": 3,
+   "median_s": 50.755,
+   "min_s": 50.7045,
+   "max_s": 50.7573,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 12",
+   "final_lb": 12,
+   "final_ub": 12,
    "sources": [
-    "GH-106",
-    "GH-89"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
    ]
   },
   {
    "tier": 3,
    "case": "TN_144_2_13",
    "mode": "no-card",
-   "n": 12,
-   "median_s": 71.6527,
-   "min_s": 71.4534,
-   "max_s": 73.427,
+   "n": 3,
+   "median_s": 70.6652,
+   "min_s": 70.6536,
+   "max_s": 70.716,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 13",
+   "final_lb": 13,
+   "final_ub": 13,
    "sources": [
-    "GH-106",
-    "GH-89",
-    "GH-98"
+    "record_main_mac.py 2026-10-13 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 3,
+   "case": "TN_144_2_13",
+   "mode": "card-mto",
+   "n": 3,
+   "median_s": 158.7232,
+   "min_s": 158.5818,
+   "max_s": 159.021,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 13",
+   "final_lb": 13,
+   "final_ub": 13,
+   "sources": [
+    "record_main_mac.py 2026-10-14 serial, limit 1800s"
+   ]
+  },
+  {
+   "tier": 3,
+   "case": "TN_200_10_10",
+   "mode": "no-card",
+   "n": 3,
+   "median_s": 13.6329,
+   "min_s": 13.6163,
+   "max_s": 13.6457,
+   "solved": true,
+   "limit_s": 1800,
+   "result": "o 10",
+   "final_lb": 10,
+   "final_ub": 10,
+   "sources": [
+    "record_main_mac.py 2026-10-14 serial, limit 1800s"
    ]
   },
   {
@@ -678,45 +707,16 @@
    "case": "TN_200_10_10",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 10.396,
-   "min_s": 10.3658,
-   "max_s": 10.4086,
+   "median_s": 10.5733,
+   "min_s": 10.5621,
+   "max_s": 10.5758,
    "solved": true,
-   "limit_s": 600,
+   "limit_s": 1800,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 3,
-   "case": "TN_200_10_10",
-   "mode": "no-card",
-   "n": 3,
-   "median_s": 13.3596,
-   "min_s": 13.2865,
-   "max_s": 13.3816,
-   "solved": true,
-   "limit_s": 600,
-   "result": "o 10",
-   "final_lb": 10,
-   "final_ub": 10,
-   "sources": [
-    "record_main_mac.py 2026-10-12 serial, limit 600s"
-   ]
-  },
-  {
-   "tier": 4,
-   "case": "BB_288_12_18",
-   "mode": "card-mto",
-   "n": 3,
-   "median_s": 707.937,
-   "min_s": 706.455,
-   "max_s": 708.436,
-   "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name BB_288_12_unknown)"
+    "record_main_mac.py 2026-10-14 serial, limit 1800s"
    ]
   },
   {
@@ -724,23 +724,33 @@
    "case": "BB_288_12_18",
    "mode": "no-card",
    "n": 3,
-   "median_s": 617.692,
-   "min_s": 617.464,
-   "max_s": 617.738,
+   "median_s": 303.8057,
+   "min_s": 303.6885,
+   "max_s": 303.9141,
+   "solved": true,
+   "limit_s": 2000,
+   "result": "o 18",
+   "final_lb": 18,
+   "final_ub": 18,
    "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name BB_288_12_unknown)"
+    "record_main_mac.py 2026-10-14 serial, limit 2000s"
    ]
   },
   {
    "tier": 4,
-   "case": "TN_250_10_15",
+   "case": "BB_288_12_18",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 991.028,
-   "min_s": 990.953,
-   "max_s": 991.276,
+   "median_s": 377.6117,
+   "min_s": 377.5122,
+   "max_s": 377.6555,
+   "solved": true,
+   "limit_s": 2000,
+   "result": "o 18",
+   "final_lb": 18,
+   "final_ub": 18,
    "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name TN_250_10_15)"
+    "record_main_mac.py 2026-10-14 serial, limit 2000s"
    ]
   },
   {
@@ -748,38 +758,34 @@
    "case": "TN_250_10_15",
    "mode": "no-card",
    "n": 3,
-   "median_s": 1090.786,
-   "min_s": 1090.437,
-   "max_s": 1090.836,
+   "median_s": 1082.4894,
+   "min_s": 1082.3075,
+   "max_s": 1082.7601,
+   "solved": true,
+   "limit_s": 2000,
+   "result": "o 15",
+   "final_lb": 15,
+   "final_ub": 15,
    "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name TN_250_10_15)"
+    "record_main_mac.py 2026-10-14 serial, limit 2000s"
    ]
   },
   {
-   "tier": 5,
-   "case": "LP_714_100_16",
+   "tier": 4,
+   "case": "TN_250_10_15",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 1408.853,
-   "min_s": 1407.719,
-   "max_s": 1409.049,
+   "median_s": 985.0892,
+   "min_s": 984.2891,
+   "max_s": 985.7636,
+   "solved": true,
+   "limit_s": 2000,
+   "result": "o 15",
+   "final_lb": 15,
+   "final_ub": 15,
    "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name LP_714_100_unknown)"
-   ],
-   "note": "tier5 since 2026-10-12 (moved from tier4)"
-  },
-  {
-   "tier": 5,
-   "case": "LP_714_100_16",
-   "mode": "no-card",
-   "n": 3,
-   "median_s": 1409.568,
-   "min_s": 1407.366,
-   "max_s": 1410.67,
-   "sources": [
-    "tier4-baseline-serial 2026-10-12 (serial, 2 GB cap, limit 2000 s; run under the former stem name LP_714_100_unknown)"
-   ],
-   "note": "tier5 since 2026-10-12 (moved from tier4)"
+    "record_main_mac.py 2026-10-14 serial, limit 2000s"
+   ]
   }
  ]
 }
