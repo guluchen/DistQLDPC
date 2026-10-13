@@ -136,6 +136,8 @@ two smaller MaxSAT instances, the X half (`Hz x = 0`, nontrivial w.r.t. `Gx`) an
 (`Hx z = 0`, nontrivial w.r.t. `Gz`), with an interleaved global bound search that keeps reporting valid
 `d_lb` / `d_ub` while it runs (also on timeout). Inside each half, qubit permutations that are verified
 automorphisms of that half (exact GF(2) rank checks) are used for optimum-preserving symmetry breaking.
+When a verified XZ-dual qubit permutation maps the X half onto the Z half (so `d_X = d_Z`), both halves
+still run, but every lower bound proven in one half is shared with the other, so duplicated refutations are skipped.
 The distance definition, Pauli weight and output format are unchanged.
 
 | Flag | Effect |
@@ -143,6 +145,9 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-joint` | Original single symplectic encoding over `(x, z)` (previous default) |
 | `-no-symbreak` | CSS split without the per-half symmetry breaking |
 | `-symbreak-report` | Print the detected per-half automorphism generators and orbits, then exit |
+| `-dualmode=off` (alias `-no-dualskip`) | Ignore XZ-dual maps (previous default) |
+| `-dualmode=skip` | With a verified dual map, solve only the X half |
+| `-dualskip-report` | Print the verified XZ-dual maps, then exit |
 
 `-dump-wcnf` / `-dump-opb` and the RoundingSat backend still use the joint encoding.
 
