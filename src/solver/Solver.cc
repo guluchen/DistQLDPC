@@ -3649,7 +3649,7 @@ lbool Solver::search(int& nof_conflicts)
     for (;;){
         CRef confl = lPropagate();
         
-        if (confl != CRef_Undef || softConflictFlag || !lookahead()){
+        if (confl != CRef_Undef || softConflictFlag || !lookaheadPib()){
 
 	  if (confl == CRef_Undef && !softConflictFlag) {
 	    assert(LHconfl != CRef_Undef);
@@ -3681,6 +3681,16 @@ lbool Solver::search(int& nof_conflicts)
 	      softConflicts++;
 	      analyzeSoftConflict(learnt_clause, backtrack_level, lbd);
 	      softConflictFlag = false; softLearnt = true;
+	      if (pibJustPruned) {   // GH-121 debug: the learnt clause of a PIB conflict is falsified now
+		pibJustPruned = false;
+		if (pibCheck)
+		  for (int i = 0; i < learnt_clause.size(); i++)
+		    if (value(learnt_clause[i]) != l_False) {
+		      pibCheckFails++;
+		      fprintf(stderr, "c PIB CHECK FAIL: learnt literal %d not false\n", toInt(learnt_clause[i]));
+		      break;
+		    }
+	      }
 	    }
 	    else
 	      analyze(confl, learnt_clause, backtrack_level, lbd);
@@ -4838,6 +4848,9 @@ bool Solver::lookahead() {
     return false;
   }
   if (lb == 1) {
+    // GH-121: -pib=2 prunes here too; -pib-stats counts these skipped calls
+    if (pibMode == 2) { if (pibBound(lb) >= lb) { pibPrunesEarly++; return pibPrune(lb); } }
+    else if (pibStats) { pibSkipped++; if (pibBound(INT32_MAX) >= lb) pibSkippedSge++; }
     if (!orderHeapAuxi.empty())
       moreHarden();
     return true;
@@ -4856,8 +4869,11 @@ bool Solver::lookahead() {
   }
   if (LOOKAHEAD == nbLKsuccess)
     thres = UB;
-  if (lb > thres)
+  if (lb > thres) {
+    if (pibMode == 2) { if (pibBound(lb) >= lb) { pibPrunesEarly++; return pibPrune(lb); } }
+    else if (pibStats) { pibSkipped++; if (pibBound(INT32_MAX) >= lb) pibSkippedSge++; }
     return true;
+  }
 
   if (stepSizeLB > 0.06) stepSizeLB -= 0.000001;
   
@@ -4885,6 +4901,51 @@ bool Solver::lookahead() {
 
   if (!sampled)
     myLH+=2;
+
+  // GH-121 PIB hook (generic iset-search point). pibMode 0 and !pibStats: nothing here (main).
+  if (pibMode || pibStats) {
+    int pibS;
+    if (pibStats) {
+      double t0 = cpuTime();
+      pibS = pibBound(INT32_MAX);
+      pibSeconds += cpuTime() - t0;
+      pibCalls++; pibSumS += pibS; pibSumLb += lb;
+      if (pibS >= lb) pibSge++;
+      pibEval = true; pibLastS = pibS; pibLastLb = lb;
+      if ((pibCalls & 0xFFFF) == 0) {
+        double t = cpuTime();
+        if (t - pibLastPrint >= 10) { pibLastPrint = t; pibPrintStats(stderr, "PIBp"); }
+      }
+    } else pibS = pibBound(lb);
+    if (pibMode >= 1 && pibS >= lb) {
+      pibEval = false;
+      // Threshold bookkeeping exactly as a generic lookahead success with nbConfl == lb (keeps the
+      // engine's adaptive lookahead threshold maxSuccLB alive; without it lookahead starves).
+      if (sampled) {
+	nbSample++;
+	sumLB += lb; sumSQLB += lb*lb;
+	double meanLB = ((double)sumLB)/nbSample;
+	double meanSQLB = ((double)sumSQLB)/nbSample;
+	double stddev = sqrt(meanSQLB - meanLB*meanLB);
+	if (myLH > 0) {
+	  int rate = (mySucc * 100)/myLH;
+	  if (rate > 75 && (meanLB + coef*stddev) < UB)
+	    coef += 0.1;
+	  else if (rate <= 60 && (meanLB + coef*stddev) > 1)
+	    coef -= 0.1;
+	}
+	else {
+	  if (coef < 2)
+	    coef = 2;
+	}
+	maxSuccLB = (int) (meanLB + coef*stddev);
+	myLH=0; mySucc = 0;
+      }
+      else { mySucc+=2; }
+      nbLKsuccess++; totalPrunedLB += lb; totalPrunedLB2 += lb*lb;
+      return pibPrune(lb);
+    }
+  }
   //  printf("\n");
   while (1) {
     Var v = pickAuxiVar();
@@ -5053,6 +5114,141 @@ bool Solver::lookahead() {
   }
   involvedLits.clear();
   return true;
+}
+
+// ---- GH-121 PIB: parity-row iset bound -------------------------------------------------------
+void Solver::setPibRows(const std::vector<std::vector<Var> >& rows) {
+  pibRowStart.clear(); pibRowVars.clear();
+  int maxv = -1;
+  for (size_t r = 0; r < rows.size(); r++) {
+    if (rows[r].empty()) continue;
+    pibRowStart.push_back((int)pibRowVars.size());
+    for (size_t t = 0; t < rows[r].size(); t++) {
+      pibRowVars.push_back(rows[r][t]);
+      if (rows[r][t] > maxv) maxv = rows[r][t];
+    }
+  }
+  pibRowStart.push_back((int)pibRowVars.size());
+  pibStamp.assign(maxv + 1, 0); pibStampCtr = 0;
+}
+
+// Greedy number S of pairwise-disjoint parity-row isets under the current assignment.
+// A row is a candidate when the parity of its assigned-true vars is odd and its unassigned vars U are
+// non-empty and all unit soft vars (softLits[u] == ~u); then {softLits[u] : u in U} is an iset (some
+// u in U must be true). Candidates are taken by increasing |U| (ties: row order) when disjoint from the
+// U sets taken so far. pibUsed lists the taken rows in order. With need < INT32_MAX the result is only
+// meaningful as "S >= need" or not (returns early when fewer than need candidates exist).
+int Solver::pibBound(int need) {
+  pibCand.clear(); pibUsed.clear();
+  const int nRows = (int)pibRowStart.size() - 1;
+  for (int r = 0; r < nRows; r++) {
+    int cntU = 0, par = 0; bool bad = false;
+    for (int t = pibRowStart[r]; t < pibRowStart[r+1]; t++) {
+      Var v = pibRowVars[t];
+      lbool val = value(v);
+      if (val == l_Undef) {
+        if (softLits[v] != ~mkLit(v)) { bad = true; break; }
+        cntU++;
+      } else if (val == l_True) par ^= 1;
+    }
+    if (!bad && par && cntU > 0) pibCand.push_back(std::make_pair(cntU, r));
+  }
+  if (need < INT32_MAX && (int)pibCand.size() < need) return (int)pibCand.size();
+  std::sort(pibCand.begin(), pibCand.end());
+  if (++pibStampCtr == 0) { std::fill(pibStamp.begin(), pibStamp.end(), 0); pibStampCtr = 1; }
+  int S = 0;
+  for (size_t c = 0; c < pibCand.size(); c++) {
+    const int r = pibCand[c].second;
+    bool ok = true;
+    for (int t = pibRowStart[r]; t < pibRowStart[r+1]; t++) {
+      Var v = pibRowVars[t];
+      if (value(v) == l_Undef && pibStamp[v] == pibStampCtr) { ok = false; break; }
+    }
+    if (!ok) continue;
+    for (int t = pibRowStart[r]; t < pibRowStart[r+1]; t++) {
+      Var v = pibRowVars[t];
+      if (value(v) == l_Undef) pibStamp[v] = pibStampCtr;
+    }
+    pibUsed.push_back(r);
+    S++;
+  }
+  return S;
+}
+
+// Soft conflict from S >= lb (pibUsed holds >= lb rows). The conflict is analysed by
+// analyzeSoftConflict() exactly like a generic lookahead success (UBconflictFlag): its literals are the
+// false soft literals (falseLits, cost already paid) plus involvedLits = for each of the first lb used
+// rows, the currently false literal of every assigned (level > 0) var of the row. Given those values each
+// row forces one of its (unassigned, pairwise disjoint) U vars true, so cost >= |falseLits| + lb = UB.
+bool Solver::pibPrune(int lb) {
+  assert((int)pibUsed.size() >= lb && involvedLits.size() == 0);
+  if ((int)pibUsed.size() > lb) {   // keep the lb rows with the fewest assigned (level > 0) vars: shorter reason
+    pibCand.clear();
+    for (size_t k = 0; k < pibUsed.size(); k++) {
+      const int r = pibUsed[k];
+      int na = 0;
+      for (int t = pibRowStart[r]; t < pibRowStart[r+1]; t++)
+        if (value(pibRowVars[t]) != l_Undef && level(pibRowVars[t]) > 0) na++;
+      pibCand.push_back(std::make_pair(na, r));
+    }
+    std::sort(pibCand.begin(), pibCand.end());
+    for (int k = 0; k < lb; k++) pibUsed[k] = pibCand[k].second;
+  }
+  for (int k = 0; k < lb; k++) {
+    const int r = pibUsed[k];
+    for (int t = pibRowStart[r]; t < pibRowStart[r+1]; t++) {
+      Var v = pibRowVars[t];
+      if (value(v) == l_Undef || level(v) == 0 || involved[v]) continue;
+      involved[v] = 1;
+      involvedLits.push(value(v) == l_True ? ~mkLit(v) : mkLit(v));
+    }
+  }
+  if (pibCheck) {
+    bool ok = (int)(UB - falseLits.size()) == lb;
+    if (++pibStampCtr == 0) { std::fill(pibStamp.begin(), pibStamp.end(), 0); pibStampCtr = 1; }
+    for (int k = 0; ok && k < lb; k++) {
+      const int r = pibUsed[k];
+      int par = 0, cntU = 0;
+      for (int t = pibRowStart[r]; t < pibRowStart[r+1]; t++) {
+        Var v = pibRowVars[t];
+        if (value(v) == l_Undef) {
+          if (softLits[v] != ~mkLit(v) || pibStamp[v] == pibStampCtr) ok = false;
+          pibStamp[v] = pibStampCtr; cntU++;
+        } else if (value(v) == l_True) par ^= 1;
+      }
+      if (par != 1 || cntU == 0) ok = false;
+    }
+    for (int i = 0; ok && i < involvedLits.size(); i++)
+      if (value(involvedLits[i]) != l_False) ok = false;
+    for (int i = 0; ok && i < falseLits.size(); i++)
+      if (value(falseLits[i]) != l_False) ok = false;
+    if (!ok) { pibCheckFails++; fprintf(stderr, "c PIB CHECK FAIL: invalid PIB conflict (lb %d)\n", lb); }
+  }
+  pibPrunes++; pibJustPruned = true;
+  UBconflictFlag = true; softConflictFlag = true;
+  return false;
+}
+
+// lookahead() plus GH-121 accounting of the generic iset search's result (identical return value).
+bool Solver::lookaheadPib() {
+  pibEval = false; pibJustPruned = false;
+  bool r = lookahead();
+  if (pibEval && !r) {
+    pibGenPruned++;
+    if (pibLastS >= pibLastLb) pibJoint++;
+  }
+  return r;
+}
+
+void Solver::pibPrintStats(FILE* f, const char* tag) {
+  fprintf(f, "c %s calls %llu S>=lb %llu genPruned %llu joint %llu skipped %llu skippedS>=lb %llu "
+          "pibPrunes %llu early %llu sumS %llu sumLb %llu Ssec %.3f conflicts %llu lookaheads %llu lkSuccess %llu checkFails %llu\n",
+          tag, (unsigned long long)pibCalls, (unsigned long long)pibSge, (unsigned long long)pibGenPruned,
+          (unsigned long long)pibJoint, (unsigned long long)pibSkipped, (unsigned long long)pibSkippedSge,
+          (unsigned long long)pibPrunes, (unsigned long long)pibPrunesEarly, (unsigned long long)pibSumS,
+          (unsigned long long)pibSumLb, pibSeconds, (unsigned long long)conflicts,
+          (unsigned long long)LOOKAHEAD, (unsigned long long)nbLKsuccess, (unsigned long long)pibCheckFails);
+  fflush(f);
 }
 
 // for each soft clause of the form 1 2 3, create a new variable non decisional v and

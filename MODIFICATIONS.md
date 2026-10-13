@@ -28,6 +28,7 @@ New code, not derived from MaxCDCL.
 | Per-half symmetry breaking (GH-85, interaction GH-73 x GH-75, experimental) | Split path only: candidate qubit permutations (GH-75 family) are kept for a CSS half only if GF(2) row-space checks prove they preserve rs(Hpar) and rs([Hpar;Glog]) of that half (plain maps only, no XZ-dual maps); optimum-preserving orbit clauses over the half variables (unit clause for transitive groups, orbit chain otherwise) in every oracle instance of that half. `-no-symbreak` = GH-73 split; `-symbreak-report` prints per-half generators/orbits; `-joint`, dumps and RoundingSat unchanged. See `optimization/experiments/GH-85/`. |
 | Dual-half elimination (GH-87, extension of GH-73, experimental) | Split path only: if a qubit permutation (identity or GH-75 generic candidate family) is verified by GF(2) rank/row-space checks to map rs(Hz) onto rs(Hx) and rs([Hz;Gx]) onto rs([Hx;Gz]), then dX = dZ and the global bound search runs on the X half only (its bounds are global). `-no-dualskip` = GH-73 split; `-dualskip-report` prints the verified maps; `-joint`, dumps and RoundingSat unchanged. See `optimization/experiments/GH-87/`. |
 | Dual-map bound sharing on the fresh-solver split (GH-107, port of GH-102's sharing to GH-92; experimental) | Split path only: with a verified XZ-dual map (detection as in GH-87), `-dualmode=share` (default) keeps both halves in the interleaved global bound search (fresh solver per probe) and writes every proven half lower bound into both halves (probes whose NONE is implied are skipped; UBs stay global; a shared lower bound above the incumbent refuses to answer). `-dualmode=skip` = GH-87/GH-92 X-half-only search; `-dualmode=off` (alias `-no-dualskip`) = GH-85 split; `-dualshare-stats` prints work counts. See `optimization/experiments/GH-107/`. |
+| PIB — parity-row iset bound (GH-121, experimental, default off) | Split path only: `-pib` (=`-pib=1`) passes each CSS half's parity rows to the engine, whose lookahead prunes when S disjoint parity-row isets reach lb = UB - #falseLits (see the engine section); `-pib=2` also at the lookahead shortcut exits; `-pib-stats` prints per-probe counters to stderr without changing the search; `-pib-check` enables debug checks of PIB conflicts. Without these flags the behaviour is main's. |
 
 ---
 
@@ -88,6 +89,27 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
 - `boundsLbCap`, `boundsUbCap`, `boundsHideLB`: emitted bounds are capped/suppressed to stay global
 - Former function-local `static` heuristic state in `search()`, `lookahead()` and
   `addCardinalityConstraints()` is now per-instance (identical behaviour for a single instance)
+
+#### PIB — parity-row iset bound in lookahead (GH-121, experimental, default off)
+
+- `setPibRows(rows)`: the CSS half's parity rows (qubit vars only; each row XOR = 0) passed by
+  `run_css_half()` in `distqldpc.cc` when `-pib[=1|2]`, `-pib-stats` or `-pib-check` is given.
+- `pibBound(need)`: under the current assignment, a row whose assigned-true vars have odd parity and
+  whose unassigned vars U are non-empty and all unit soft vars (`softLits[u] == ~u`) forces some u in U
+  true, so `{softLits[u] : u in U}` is an iset. Rows are taken greedily by increasing |U| when their U
+  is disjoint from the U sets already taken; S = number taken.
+- `lookahead()`: with `pibMode >= 1`, at the generic iset-search point (after the `lb == 1` and
+  threshold shortcuts) S >= lb = UB - |falseLits| prunes without running the generic search
+  (`pibMode == 2` also tries the two shortcut exits). `pibPrune()` builds the conflict for the existing
+  `analyzeSoftConflict()` (UBconflictFlag): the reason is `falseLits` plus, as `involvedLits`, the
+  currently false literal of every assigned (level > 0) var of the lb chosen rows (the lb used rows with
+  the fewest such vars). A prune at the generic point does the generic success's threshold bookkeeping
+  (`LOOKAHEAD`, `nbLKsuccess`, sampled `maxSuccLB` update); without it the adaptive threshold starves.
+- `lookaheadPib()` wraps `lookahead()` in `search()` for counters only (same return value);
+  `-pib-stats` counts at every call and prints `c PIB ...` lines to stderr per probe; the search is
+  identical to main with `pibMode == 0` (verified: identical `-v` logs on tier0/tier1).
+- `pibCheck` (`-pib-check`): re-verifies each PIB conflict (row parities, disjoint unassigned soft U
+  sets, lb) and that the analysed learnt clause is falsified before backjumping.
 
 ---
 

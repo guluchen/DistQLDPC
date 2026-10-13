@@ -917,6 +917,13 @@ static bool build_css_half(SimpSolver& S, std::vector<Var>& aux, int& n_out,
 
 enum HalfStatus { HALF_FOUND, HALF_NONE, HALF_OPT, HALF_UNKNOWN, HALF_INFEASIBLE };
 
+/* GH-121 PIB (parity-row iset bound, see Solver::pibBound): -pib (=1) prunes at the generic lookahead
+ * iset-search point when S >= lb; -pib=2 also before the engine's lb==1 / threshold shortcuts;
+ * -pib-stats counts only (search identical); -pib-check enables debug checks of PIB conflicts. */
+static int g_pib_mode = 0;
+static bool g_pib_stats = false;
+static bool g_pib_check = false;
+
 struct CssHalf {
     const char* tag; const Matrix* H; const Matrix* G;
     bool exists;          /* has a nontrivial logical of this type (instance SAT) */
@@ -945,8 +952,23 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     S.stopAtFirstSolution = first_only;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
+    if (g_pib_mode || g_pib_stats) {   /* GH-121: the half's parity rows over qubit vars 0..n-1 */
+        std::vector<std::vector<Var> > rows;
+        for (int r = 0; r < h.H->rows; r++) {
+            std::vector<Var> row;
+            for (int i = 0; i < n; i++) if (getm(*h.H, r, i)) row.push_back(i);
+            rows.push_back(row);
+        }
+        S.setPibRows(rows);
+        S.pibMode = g_pib_mode; S.pibStats = g_pib_stats; S.pibCheck = g_pib_check;
+    }
     vec<Lit> dummy;
     lbool ret = S.solveLimited(dummy);
+    if (g_pib_stats || g_pib_check) {
+        char tag[96];
+        snprintf(tag, sizeof(tag), "PIB %s cap %llu", h.tag, (unsigned long long)cap);
+        S.pibPrintStats(stderr, tag);
+    }
     h.probes++; h.conflicts += S.conflicts;   /* GH-107 work counters (fresh solver per probe) */
     uint64_t opt = S.getLastOptimalCost();
     HalfStatus st = HALF_UNKNOWN;
@@ -1591,6 +1613,16 @@ int main(int argc, char** argv) {
             g_dualmode = DUALMODE_SKIP;
         else if (!strncmp(argv[i], "-dualmode=", 10))
             die("invalid -dualmode (share | skip | off)");
+        else if (!strcmp(argv[i], "-pib") || !strcmp(argv[i], "-pib=1"))
+            g_pib_mode = 1;
+        else if (!strcmp(argv[i], "-pib=2"))
+            g_pib_mode = 2;
+        else if (!strcmp(argv[i], "-pib=0"))
+            g_pib_mode = 0;
+        else if (!strcmp(argv[i], "-pib-stats"))
+            g_pib_stats = true;
+        else if (!strcmp(argv[i], "-pib-check"))
+            g_pib_check = true;
         else if (!strcmp(argv[i], "-dualshare-stats"))
             g_dualshare_stats = true;
         else if (!strcmp(argv[i], "-dualskip-report"))
@@ -1614,6 +1646,8 @@ int main(int argc, char** argv) {
             printf("            (implied NONE probes skipped); -dualmode=skip solves only the X half;\n");
             printf("            -dualmode=off (alias -no-dualskip) ignores dual maps; -dualshare-stats prints\n");
             printf("            work counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
+            printf("  PIB (split only, GH-121): -pib[=1|2] parity-row iset bound pruning in lookahead (default off);\n");
+            printf("            -pib-stats prints per-probe PIB counters to stderr; -pib-check debug checks\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

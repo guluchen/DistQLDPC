@@ -52,6 +52,9 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #include "mtl/Alg.h"
 #include "utils/Options.h"
 #include "SolverTypes.h"
+#include <vector>
+#include <utility>
+#include <algorithm>
 
 
 // Don't change the actual numbers.
@@ -565,6 +568,28 @@ public:
     bool     startAtCap = false;      // with strictUB: first UB test is the cap itself (find, then descend)
     uint64_t boundsLbCap = UINT64_MAX, boundsUbCap = UINT64_MAX;  // caps on emitted LB/UB
     bool     boundsHideLB = false;    // do not emit LB (not a global bound)
+    // GH-121 PIB (parity-row iset bound). Rows are the CSS half's parity checks over qubit vars
+    // (each row XOR = 0). At a lookahead, a row whose assigned-true vars have odd parity and whose
+    // unassigned vars U are all unit soft vars forces >= 1 of U true: {softLits[u] : u in U} is an iset.
+    // Greedy pairwise-disjoint rows give S isets; S >= lb (= UB - |falseLits|) prunes.
+    int      pibMode = 0;             // 0 off (main); 1 prune at the generic iset-search point; 2 also before the lb==1 / thres shortcuts
+    bool     pibStats = false;        // count only (search identical with pibMode 0)
+    bool     pibCheck = false;        // debug checks on every PIB conflict (sets pibCheckFails)
+    std::vector<int> pibRowStart, pibRowVars;   // CSR rows of qubit vars
+    void     setPibRows(const std::vector<std::vector<Var> >& rows);
+    uint64_t pibCalls = 0, pibSge = 0, pibGenPruned = 0, pibJoint = 0, pibPrunes = 0, pibPrunesEarly = 0;
+    uint64_t pibSkipped = 0, pibSkippedSge = 0, pibSumS = 0, pibSumLb = 0, pibCheckFails = 0;
+    double   pibSeconds = 0, pibLastPrint = 0;
+    bool     pibEval = false, pibJustPruned = false;
+    int      pibLastS = 0, pibLastLb = 0;
+    std::vector<uint32_t> pibStamp;
+    uint32_t pibStampCtr = 0;
+    std::vector<std::pair<int,int> > pibCand;
+    std::vector<int> pibUsed;
+    int      pibBound(int need);
+    bool     pibPrune(int lb);
+    bool     lookaheadPib();
+    void     pibPrintStats(FILE* f, const char* tag);
     // Former function-local statics, now per instance (identical for single-instance runs).
     uint64_t srch_prevUB = 0, card_prevUB = 0, lk_prevUB = 0;
     int      lk_thres = 2, lk_prevConflicts = 0, lk_maxSuccLB = 0, lk_nbSample = 0, lk_myLH = 0, lk_mySucc = 0;
