@@ -28,7 +28,7 @@ New code, not derived from MaxCDCL.
 | Per-half symmetry breaking (GH-85, interaction GH-73 x GH-75, experimental) | Split path only: candidate qubit permutations (GH-75 family) are kept for a CSS half only if GF(2) row-space checks prove they preserve rs(Hpar) and rs([Hpar;Glog]) of that half (plain maps only, no XZ-dual maps); optimum-preserving orbit clauses over the half variables (unit clause for transitive groups, orbit chain otherwise) in every oracle instance of that half. `-no-symbreak` = GH-73 split; `-symbreak-report` prints per-half generators/orbits; `-joint`, dumps and RoundingSat unchanged. See `optimization/experiments/GH-85/`. |
 | Dual-half elimination (GH-87, extension of GH-73, experimental) | Split path only: if a qubit permutation (identity or GH-75 generic candidate family) is verified by GF(2) rank/row-space checks to map rs(Hz) onto rs(Hx) and rs([Hz;Gx]) onto rs([Hx;Gz]), then dX = dZ and the global bound search runs on the X half only (its bounds are global). `-no-dualskip` = GH-73 split; `-dualskip-report` prints the verified maps; `-joint`, dumps and RoundingSat unchanged. See `optimization/experiments/GH-87/`. |
 | Dual-map bound sharing on the fresh-solver split (GH-107, port of GH-102's sharing to GH-92; experimental) | Split path only: with a verified XZ-dual map (detection as in GH-87), `-dualmode=share` (default) keeps both halves in the interleaved global bound search (fresh solver per probe) and writes every proven half lower bound into both halves (probes whose NONE is implied are skipped; UBs stay global; a shared lower bound above the incumbent refuses to answer). `-dualmode=skip` = GH-87/GH-92 X-half-only search; `-dualmode=off` (alias `-no-dualskip`) = GH-85 split; `-dualshare-stats` prints work counts. See `optimization/experiments/GH-107/`. |
-| PIB — parity-row iset bound (GH-121, experimental, default off) | Split path only: `-pib` (=`-pib=1`) passes each CSS half's parity rows to the engine, whose lookahead prunes when S disjoint parity-row isets reach lb = UB - #falseLits (see the engine section); `-pib=2` also at the lookahead shortcut exits; `-pib-stats` prints per-probe counters to stderr without changing the search; `-pib-check` enables debug checks of PIB conflicts. Without these flags the behaviour is main's. |
+| PIB — parity-row iset bound (GH-121, experimental, default off) | Split path only: `-pib` (=`-pib=1`) passes each CSS half's parity rows to the engine, whose lookahead prunes when S disjoint parity-row isets reach lb = UB - #falseLits (see the engine section); `-pib=2` also at the lookahead shortcut exits; **`-pib=4` (v2)** additionally gives each PIB prune the generic lookahead success's iset memory (see the engine section; `-pib=3/5/6/7` are diagnosis variants); `-pib-stats` prints per-probe counters to stderr without changing the search; `-pib-check` enables debug checks of PIB conflicts. Diagnosis only: `-pib-diag` (conflict-kind / learnt-clause / decision counters, search unchanged), `-pib-seed=X` (engine random seed; changes the search, used for perturbation studies), `-pib-probe=X|Z:CAP[:LB]` (run one feasibility probe of that half, then stop). Without these flags the behaviour is main's. See `optimization/experiments/GH-121/V2_DIAGNOSIS.md`. |
 
 ---
 
@@ -93,7 +93,7 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
 #### PIB — parity-row iset bound in lookahead (GH-121, experimental, default off)
 
 - `setPibRows(rows)`: the CSS half's parity rows (qubit vars only; each row XOR = 0) passed by
-  `run_css_half()` in `distqldpc.cc` when `-pib[=1|2]`, `-pib-stats` or `-pib-check` is given.
+  `run_css_half()` in `distqldpc.cc` when `-pib[=1..7]`, `-pib-stats` or `-pib-diag` is given.
 - `pibBound(need)`: under the current assignment, a row whose assigned-true vars have odd parity and
   whose unassigned vars U are non-empty and all unit soft vars (`softLits[u] == ~u`) forces some u in U
   true, so `{softLits[u] : u in U}` is an iset. Rows are taken greedily by increasing |U| when their U
@@ -110,6 +110,16 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
   identical to main with `pibMode == 0` (verified: identical `-v` logs on tier0/tier1).
 - `pibCheck` (`-pib-check`): re-verifies each PIB conflict (row parities, disjoint unassigned soft U
   sets, lb) and that the analysed learnt clause is falsified before backjumping.
+- v2 (`pibMode` 3..7, `pibPrune()` / `analyzeSoftConflict()`): a generic lookahead success leaves the
+  literals of its isets in `conflLits` (tried first by the next lookahead's iset search, `pickAuxiVar`)
+  and bumps their `activityLB` (`bumpConflVars`); v1 PIB prunes skipped this, so the next generic
+  lookahead started from stale seeds. `pibMode == 4` (v2) does both with the PIB isets
+  `{softLits[u] : u in U}` of the lb used rows (`conflLits` replaced, `insertAuxiVarOrder`,
+  `bumpConflVars`); 6 = `conflLits` only, 7 = `activityLB` bump only; 3 = v1 without VSIDS/LRB activity
+  bumps in the analysis of PIB conflicts (`pibNoBumpNow`), 5 = 3 + 4. `pibMode` 1 and 2 are unchanged.
+- Diagnosis counters (`pibDiag`, `-pib-diag`, `pibPrintDiag()`): learnt size / LBD / backjump per
+  conflict kind (hard, generic soft, PIB), reason sizes, decisions on qubit vars; printed per probe and
+  at each LRB/VSIDS phase end. Search unchanged.
 
 ---
 

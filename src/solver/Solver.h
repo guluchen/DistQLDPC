@@ -590,6 +590,15 @@ public:
     bool     pibPrune(int lb);
     bool     lookaheadPib();
     void     pibPrintStats(FILE* f, const char* tag);
+    // GH-121 v2 diagnosis (-pib-diag; search unchanged). Learnt-clause stats by conflict kind
+    // k = 0 hard, 1 generic soft (lookahead / pure soft), 2 PIB.
+    bool     pibDiag = false;
+    bool     pibNoBumpNow = false;    // v2 -pib=3/5: the soft conflict being analysed is a PIB one, skip activity bumps
+    uint64_t dgN[3] = {0,0,0}, dgSize[3] = {0,0,0}, dgLbd[3] = {0,0,0}, dgBj[3] = {0,0,0};
+    uint64_t dgDl[3] = {0,0,0}, dgVs[3] = {0,0,0}, dgUnit[3] = {0,0,0};
+    uint64_t dgDecQ = 0, dgDecQ1 = 0, dgDecVs = 0, dgDecQVs = 0;   // decisions on qubit (row) vars / with value 1 / in VSIDS
+    uint64_t dgPibReason = 0, dgPibFalse = 0, dgPibLb = 0, dgGenReason = 0, dgGenFalse = 0, dgGenN = 0;
+    void     pibPrintDiag(FILE* f, const char* tag);
     // Former function-local statics, now per instance (identical for single-instance runs).
     uint64_t srch_prevUB = 0, card_prevUB = 0, lk_prevUB = 0;
     int      lk_thres = 2, lk_prevConflicts = 0, lk_maxSuccLB = 0, lk_nbSample = 0, lk_myLH = 0, lk_mySucc = 0;

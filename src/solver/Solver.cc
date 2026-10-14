@@ -2263,11 +2263,13 @@ void Solver::analyzeSoftConflict(vec<Lit>& out_learnt, int& out_btlevel, int& ou
     for(int a=nbFalseLits; a<falseLits.size(); a++)
       seen[var(falseLits[a])] = 0;
     
+    pibNoBumpNow = pibJustPruned && (pibMode == 3 || pibMode == 5);   // GH-121 v2
     for(int a=debutFalse; a<falseLits.size(); a++) {
       Var v=var(falseLits[a]);
       if (!seen[v] && level(v) > 0) { // && !redundantLit(falseLits[a])) {
 	seen[v] = 1;
-	if (VSIDS){
+	if (pibNoBumpNow) ;
+	else if (VSIDS){
 	  varBumpActivity(v, .5);
 	  add_tmp.push(falseLits[a]);
 	}else
@@ -2304,6 +2306,7 @@ void Solver::analyzeSoftConflict(vec<Lit>& out_learnt, int& out_btlevel, int& ou
     if (maxConflLevel==0) {
       printf("c ***** \n");
       assert(pathC == 0 && UBconflictFlag);
+      pibNoBumpNow = false;
       UBconflictFlag=false; softConflictFlag=false; falseVar = var_Undef;
       out_btlevel=0; out_lbd=0; out_learnt.clear();
       return;
@@ -2375,7 +2378,8 @@ void Solver::analyzeSoftConflict(vec<Lit>& out_learnt, int& out_btlevel, int& ou
 	    else {
 	  // if (level(v) > 0 && !seen[v] && !redundantLit(q)) {
 	        nbNotSeen++;
-		if (VSIDS){
+		if (pibNoBumpNow) ;
+		else if (VSIDS){
 		  varBumpActivity(v, .5);
 		  add_tmp.push(q);
 		}else
@@ -2399,6 +2403,7 @@ void Solver::analyzeSoftConflict(vec<Lit>& out_learnt, int& out_btlevel, int& ou
     assert(out_btlevel >0 || out_learnt.size() == 1);
     if (out_lbd > core_lbd_cut)
       getAllUIP(out_learnt, out_btlevel, out_lbd);
+    pibNoBumpNow = false;
 
 
     // for(int i=0; i<out_learnt.size(); i++)
@@ -2475,7 +2480,8 @@ void Solver::simplifyConflictClause(vec<Lit>& out_learnt, int& out_btlevel, int&
         out_btlevel       = level(var(p));
     }
     
-    if (VSIDS){
+    if (pibNoBumpNow) add_tmp.clear();   // GH-121 v2 -pib=3/5
+    else if (VSIDS){
         for (int i = 0; i < add_tmp.size(); i++){
             Var v = var(add_tmp[i]);
             if (level(v) >= out_btlevel - 1)
@@ -3677,7 +3683,9 @@ lbool Solver::search(int& nof_conflicts)
 	    DISTANCE=0;
 
 	    softLearnt = false;
+	    int dgCat = 0, dgDL = decisionLevel();   // GH-121 v2 diagnosis
             if (softConflictFlag) {
+	      dgCat = pibJustPruned ? 2 : 1;
 	      softConflicts++;
 	      analyzeSoftConflict(learnt_clause, backtrack_level, lbd);
 	      softConflictFlag = false; softLearnt = true;
@@ -3694,6 +3702,12 @@ lbool Solver::search(int& nof_conflicts)
 	    }
 	    else
 	      analyze(confl, learnt_clause, backtrack_level, lbd);
+	    if (pibDiag) {
+	      dgN[dgCat]++; dgSize[dgCat] += learnt_clause.size(); dgLbd[dgCat] += lbd;
+	      dgBj[dgCat] += dgDL - backtrack_level; dgDl[dgCat] += dgDL;
+	      if (VSIDS) dgVs[dgCat]++;
+	      if (learnt_clause.size() == 1) dgUnit[dgCat]++;
+	    }
             cancelUntil(backtrack_level);
 	    if (backtrack_level == 0 && learnt_clause.size()==0) return l_False;
             
@@ -3812,6 +3826,11 @@ lbool Solver::search(int& nof_conflicts)
                 // New variable decision:
 	    decisions++;
 	    next = pickBranchLit();
+	    if (pibDiag && next != lit_Undef) {   // GH-121 v2 diagnosis
+	      bool q = var(next) < (Var)pibStamp.size();
+	      if (VSIDS) dgDecVs++;
+	      if (q) { dgDecQ++; if (!sign(next)) dgDecQ1++; if (VSIDS) dgDecQVs++; }
+	    }
 	    
 	    if (next == lit_Undef) {
 	      // better solution found
@@ -5051,6 +5070,7 @@ bool Solver::lookahead() {
       //The UB is reached, the soft conflict will be analyzed 
       // and the involvedClauses stack will be cleared together with the involved flag
       UBconflictFlag = true; softConflictFlag = true;
+      if (pibDiag) { dgGenN++; dgGenReason += involvedLits.size(); dgGenFalse += falseLits.size(); }
       //  trail_lim.shrink(1);
       //  lastConflLits.shrink(lastConflLits.size() - savedConflLits);
       nbLKsuccess++; totalPrunedLB += lb; totalPrunedLB2 += lb*lb;
@@ -5224,7 +5244,26 @@ bool Solver::pibPrune(int lb) {
       if (value(falseLits[i]) != l_False) ok = false;
     if (!ok) { pibCheckFails++; fprintf(stderr, "c PIB CHECK FAIL: invalid PIB conflict (lb %d)\n", lb); }
   }
+  if (pibMode >= 4 && pibMode <= 7) {
+    // GH-121 v2: the generic lookahead success's memory for the next iset search: its iset literals
+    // become conflLits (tried first by the next lookahead, pickAuxiVar) and their activityLB is bumped
+    // (bumpConflVars). Here the iset literals are the PIB rows' {softLits[u] : u in U}.
+    // 4/5: both; 6: conflLits only; 7: activityLB bump only (diagnosis).
+    if (pibMode != 7) conflLits.clear();
+    for (int k = 0; k < lb; k++) {
+      const int r = pibUsed[k];
+      for (int t = pibRowStart[r]; t < pibRowStart[r+1]; t++) {
+        Var v = pibRowVars[t];
+        if (value(v) != l_Undef || !auxiVar(v)) continue;
+        insertAuxiVarOrder(v);
+        if (pibMode != 7) conflLits.push(softLits[v]);
+        else { activityLB[v] = activityLB[v] + (1 - activityLB[v]) * stepSizeLB; orderHeapAuxi.increase(v); }
+      }
+    }
+    if (pibMode != 6 && pibMode != 7) bumpConflVars();
+  }
   pibPrunes++; pibJustPruned = true;
+  if (pibDiag) { dgPibReason += involvedLits.size(); dgPibFalse += falseLits.size(); dgPibLb += lb; }
   UBconflictFlag = true; softConflictFlag = true;
   return false;
 }
@@ -5248,6 +5287,24 @@ void Solver::pibPrintStats(FILE* f, const char* tag) {
           (unsigned long long)pibPrunes, (unsigned long long)pibPrunesEarly, (unsigned long long)pibSumS,
           (unsigned long long)pibSumLb, pibSeconds, (unsigned long long)conflicts,
           (unsigned long long)LOOKAHEAD, (unsigned long long)nbLKsuccess, (unsigned long long)pibCheckFails);
+  fflush(f);
+}
+
+void Solver::pibPrintDiag(FILE* f, const char* tag) {
+  static const char* nm[3] = {"hard", "gen", "pib"};
+  fprintf(f, "c %s decisions %llu (vsids %llu) qubitDec %llu (val1 %llu, vsids %llu) starts %llu conflicts %llu", tag,
+          (unsigned long long)decisions, (unsigned long long)dgDecVs, (unsigned long long)dgDecQ,
+          (unsigned long long)dgDecQ1, (unsigned long long)dgDecQVs, (unsigned long long)starts, (unsigned long long)conflicts);
+  for (int k = 0; k < 3; k++) {
+    double n = dgN[k] ? (double)dgN[k] : 1.0;
+    fprintf(f, " | %s n %llu size %.1f lbd %.1f bj %.2f dl %.1f vsids %llu unit %llu", nm[k],
+            (unsigned long long)dgN[k], dgSize[k] / n, dgLbd[k] / n, dgBj[k] / n, dgDl[k] / n,
+            (unsigned long long)dgVs[k], (unsigned long long)dgUnit[k]);
+  }
+  fprintf(f, " | genSucc %llu reason %.1f false %.1f | pibPrune reason %.1f false %.1f lb %.2f\n",
+          (unsigned long long)dgGenN, dgGenN ? (double)dgGenReason / dgGenN : 0.0,
+          dgGenN ? (double)dgGenFalse / dgGenN : 0.0, pibPrunes ? (double)dgPibReason / pibPrunes : 0.0,
+          pibPrunes ? (double)dgPibFalse / pibPrunes : 0.0, pibPrunes ? (double)dgPibLb / pibPrunes : 0.0);
   fflush(f);
 }
 
@@ -6924,6 +6981,7 @@ lbool Solver::solve_()
 		 starts-savedRestarts, propagations-savedUP);
 	}
 
+	if (pibDiag) pibPrintDiag(stderr, VSIDS ? "PIBDphase VSIDS" : "PIBDphase LRB");   // GH-121 v2 diagnosis
 	// if (status != l_Undef /*|| !withinBudget()*/)
         //     break; //
 	//Should break here for correctness in incremental SAT solving.

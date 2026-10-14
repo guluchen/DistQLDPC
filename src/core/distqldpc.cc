@@ -919,10 +919,17 @@ enum HalfStatus { HALF_FOUND, HALF_NONE, HALF_OPT, HALF_UNKNOWN, HALF_INFEASIBLE
 
 /* GH-121 PIB (parity-row iset bound, see Solver::pibBound): -pib (=1) prunes at the generic lookahead
  * iset-search point when S >= lb; -pib=2 also before the engine's lb==1 / threshold shortcuts;
- * -pib-stats counts only (search identical); -pib-check enables debug checks of PIB conflicts. */
+ * -pib=3..7 v2 variants (see Solver::pibPrune; -pib=4 = v2 candidate);
+ * -pib-stats counts only (search identical); -pib-check enables debug checks of PIB conflicts.
+ * Diagnosis only (search identical unless noted): -pib-diag conflict-kind / learnt-clause counters;
+ * -pib-seed=X engine random seed (changes the search); -pib-probe=H:CAP:LB one feasibility probe. */
 static int g_pib_mode = 0;
 static bool g_pib_stats = false;
 static bool g_pib_check = false;
+static bool g_pib_diag = false;
+static double g_pib_seed = 0;
+static int g_pib_probe_half = -1;  /* GH-121 v2 diagnosis: -pib-probe=X|Z:CAP:LB runs that single feasibility probe */
+static uint64_t g_pib_probe_cap = 0, g_pib_probe_lb = 1;     /* GH-121 v2: -pib-seed=X sets the engine random_seed (0: default) */   /* GH-121 v2: -pib-diag learnt-clause / conflict-kind counters */
 
 struct CssHalf {
     const char* tag; const Matrix* H; const Matrix* G;
@@ -950,9 +957,10 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     S.strictUB = cap < (uint64_t)INT32_MAX;
     S.initLB = h.lb;
     S.stopAtFirstSolution = first_only;
+    if (g_pib_seed > 0) S.random_seed = g_pib_seed;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
-    if (g_pib_mode || g_pib_stats) {   /* GH-121: the half's parity rows over qubit vars 0..n-1 */
+    if (g_pib_mode || g_pib_stats || g_pib_diag) {   /* GH-121: the half's parity rows over qubit vars 0..n-1 */
         std::vector<std::vector<Var> > rows;
         for (int r = 0; r < h.H->rows; r++) {
             std::vector<Var> row;
@@ -960,7 +968,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
             rows.push_back(row);
         }
         S.setPibRows(rows);
-        S.pibMode = g_pib_mode; S.pibStats = g_pib_stats; S.pibCheck = g_pib_check;
+        S.pibMode = g_pib_mode; S.pibStats = g_pib_stats; S.pibCheck = g_pib_check; S.pibDiag = g_pib_diag;
     }
     vec<Lit> dummy;
     lbool ret = S.solveLimited(dummy);
@@ -968,6 +976,11 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
         char tag[96];
         snprintf(tag, sizeof(tag), "PIB %s cap %llu", h.tag, (unsigned long long)cap);
         S.pibPrintStats(stderr, tag);
+    }
+    if (g_pib_diag) {
+        char tag[96];
+        snprintf(tag, sizeof(tag), "PIBD %s cap %llu", h.tag, (unsigned long long)cap);
+        S.pibPrintDiag(stderr, tag);
     }
     h.probes++; h.conflicts += S.conflicts;   /* GH-107 work counters (fresh solver per probe) */
     uint64_t opt = S.getLastOptimalCost();
@@ -1128,6 +1141,13 @@ static int min_distance_css_interleaved(
         if ((int)info.reps.size() < info.n) hs[k].sb_orbit = info.orbit_of;
     }
     uint64_t U = INF, v = 0, lastLB = 0;
+    if (g_pib_probe_half >= 0) {   /* GH-121 v2 diagnosis: one feasibility probe, then stop (result unknown) */
+        CssHalf& h = hs[g_pib_probe_half];
+        h.lb = g_pib_probe_lb;
+        run_css_half(h, g_pib_probe_cap, true, verb, card_mode, pipe_w, INF, INF, true, v);
+        pipe_write_result(pipe_w, -1, false);
+        return -1;
+    }
     /* Phase 1: doubling feasibility tests on both halves; anytime global LB. */
     for (uint64_t m = 1; ; m = (m >= n ? n : 2 * m)) {
         for (int k = 0; k < 2; k++) {
@@ -1619,10 +1639,22 @@ int main(int argc, char** argv) {
             g_pib_mode = 2;
         else if (!strcmp(argv[i], "-pib=0"))
             g_pib_mode = 0;
+        else if (!strcmp(argv[i], "-pib=3") || !strcmp(argv[i], "-pib=4") || !strcmp(argv[i], "-pib=5") ||
+                 !strcmp(argv[i], "-pib=6") || !strcmp(argv[i], "-pib=7"))
+            g_pib_mode = argv[i][5] - '0';   /* GH-121 v2 variants (see Solver::pibPrune) */
+        else if (!strncmp(argv[i], "-pib-probe=", 11)) {
+            char hc = 0; unsigned long long c = 0, l = 1;
+            if (sscanf(argv[i] + 11, "%c:%llu:%llu", &hc, &c, &l) < 2 || (hc != 'X' && hc != 'Z')) die("invalid -pib-probe (X|Z:CAP[:LB])");
+            g_pib_probe_half = hc == 'X' ? 0 : 1; g_pib_probe_cap = c; g_pib_probe_lb = l;
+        }
+        else if (!strncmp(argv[i], "-pib-seed=", 10))
+            g_pib_seed = atof(argv[i] + 10);  /* GH-121 v2 diagnosis: engine random seed (perturbation runs) */
         else if (!strcmp(argv[i], "-pib-stats"))
             g_pib_stats = true;
         else if (!strcmp(argv[i], "-pib-check"))
             g_pib_check = true;
+        else if (!strcmp(argv[i], "-pib-diag"))
+            g_pib_diag = true;
         else if (!strcmp(argv[i], "-dualshare-stats"))
             g_dualshare_stats = true;
         else if (!strcmp(argv[i], "-dualskip-report"))
@@ -1647,7 +1679,10 @@ int main(int argc, char** argv) {
             printf("            -dualmode=off (alias -no-dualskip) ignores dual maps; -dualshare-stats prints\n");
             printf("            work counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
             printf("  PIB (split only, GH-121): -pib[=1|2] parity-row iset bound pruning in lookahead (default off);\n");
-            printf("            -pib-stats prints per-probe PIB counters to stderr; -pib-check debug checks\n");
+            printf("            -pib=4 (v2) also keeps the lookahead's iset memory like a generic success\n");
+            printf("            (-pib=3 no activity bump, 5 = 3+4, 6/7 = parts of 4: diagnosis variants);\n");
+            printf("            -pib-stats prints per-probe PIB counters to stderr; -pib-check debug checks;\n");
+            printf("            -pib-diag conflict-kind counters; -pib-seed=X engine seed; -pib-probe=X|Z:CAP[:LB] one probe\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
