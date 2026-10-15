@@ -1311,6 +1311,42 @@ static bool cc_auto_select(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx,
     return true;
 }
 
+/* GH-124: strict non-negative decimal integer (no sign, no trailing characters, no overflow). */
+static bool cc_parse_uint(const char* s, unsigned long long* out)
+{
+    if (!s || *s < '0' || *s > '9') return false;
+    errno = 0;
+    char* end = NULL;
+    const unsigned long long v = strtoull(s, &end, 10);
+    if (errno != 0 || !end || *end != '\0') return false;
+    *out = v;
+    return true;
+}
+
+/* GH-124: engine-specific flags (exact spellings accepted by main's parser), used to reject combinations
+ * that the selected engine would silently override or ignore.
+ *   ENGFLAG_MAXSAT_FORM  MaxSAT formulation, backend or dump: refused with -engine=cc and -engine=auto
+ *   ENGFLAG_MAXSAT_TUNE  MaxSAT tuning (cardinality encoding, -dualshare-stats): refused with -engine=cc;
+ *                        with -engine=auto applied when auto selects maxsat (warning otherwise)
+ *   ENGFLAG_CC           CC engine flags: refused with -engine=maxsat (and the default); with -engine=auto
+ *                        applied when auto selects cc (warning otherwise)
+ * -dualmode=off (no dual map), -no-symbreak (index seeds), -cpu-lim, -v/-q and the report flags are
+ * shared by both engines. */
+enum { ENGFLAG_NONE = 0, ENGFLAG_MAXSAT_FORM = 1, ENGFLAG_MAXSAT_TUNE = 2, ENGFLAG_CC = 3 };
+static int engine_flag_family(const char* a)
+{
+    if (!strcmp(a, "-joint") || !strcmp(a, "-roundingsat") || !strncmp(a, "-roundingsat=", 13) ||
+        !strncmp(a, "-dump-wcnf=", 11) || !strncmp(a, "-dump-opb=", 10) || !strcmp(a, "-dump-only") ||
+        !strcmp(a, "-native-parity-opb"))
+        return ENGFLAG_MAXSAT_FORM;
+    if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
+        !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats"))
+        return ENGFLAG_MAXSAT_TUNE;
+    if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10))
+        return ENGFLAG_CC;
+    return ENGFLAG_NONE;
+}
+
 static int parse_roundingsat_cost(const std::string& out)
 {
     bool optimum = false;
@@ -1721,15 +1757,29 @@ int main(int argc, char** argv) {
             g_cc_opt.ub_basis = true;
         else if (!strcmp(argv[i], "-ub-basis=off"))
             g_cc_opt.ub_basis = false;
-        else if (!strncmp(argv[i], "-cc-seed=", 9))
-            g_cc_opt.seed = strtoull(argv[i] + 9, NULL, 10);
-        else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
-            g_cc_opt.mutant = atoi(argv[i] + 11);
-            if (g_cc_opt.mutant < 0 || g_cc_opt.mutant > 4) die("invalid -cc-mutant (0..4, test only)");
-        } else if (!strncmp(argv[i], "-cc-trace=", 10))
+        else if (!strncmp(argv[i], "-ub-basis=", 10))
+            die("invalid -ub-basis (on | off)");
+        else if (!strncmp(argv[i], "-cc-seed=", 9)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 9, &v)) die("invalid -cc-seed (non-negative integer)");
+            g_cc_opt.seed = (uint64_t)v;
+        } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 4) die("invalid -cc-mutant (0..4, test only)");
+            g_cc_opt.mutant = (int)v;
+        } else if (!strncmp(argv[i], "-cc-trace=", 10)) {
             g_cc_opt.trace_path = argv[i] + 10;
-        else if (!strcmp(argv[i], "-cc-stats"))
+            if (g_cc_opt.trace_path.empty()) die("invalid -cc-trace (needs a file name)");
+        } else if (!strcmp(argv[i], "-cc-stats"))
             g_cc_opt.stats = true;
+        else if (!strcmp(argv[i], "-cc-schedule=lockstep"))   /* test only */
+            g_cc_opt.sequential = false;
+        else if (!strcmp(argv[i], "-cc-schedule=sequential"))
+            g_cc_opt.sequential = true;
+        else if (!strncmp(argv[i], "-cc-schedule=", 13))
+            die("invalid -cc-schedule (lockstep | sequential, test only)");
+        else if (!strncmp(argv[i], "-cc-", 4))
+            die("unknown -cc- option (see --help)");
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/[tierN/]<code>_{Hx,Hz,Gx,Gz}.txt;\n");
@@ -1757,6 +1807,10 @@ int main(int argc, char** argv) {
             printf("            -ub-basis  verified logical basis rows as initial upper bound (default off)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
             printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..4)\n");
+            printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
+            printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
+            printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");
+            printf("            cardinality flags and -dualshare-stats (auto warns when its choice ignores a flag)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -1766,6 +1820,32 @@ int main(int argc, char** argv) {
         else
             die("unexpected argument");
     }
+
+    /* GH-124: conflicting engine flags are rejected (see engine_flag_family); without any -engine= or CC
+     * flag nothing below fires, so the default path is main's */
+    std::string auto_ignored_by_cc, auto_ignored_by_maxsat;
+    {
+        std::string fam[4];
+        for (int i = 1; i < argc; i++) {
+            const int f = engine_flag_family(argv[i]);
+            if (f == ENGFLAG_NONE) continue;
+            if (!fam[f].empty()) fam[f] += " ";
+            fam[f] += argv[i];
+        }
+        const char* ename = g_engine == ENGINE_CC ? "cc" : g_engine == ENGINE_AUTO ? "auto" : "maxsat";
+        std::string msg;
+        if (g_engine == ENGINE_MAXSAT && !fam[ENGFLAG_CC].empty())
+            msg = fam[ENGFLAG_CC] + ": CC engine option(s) need -engine=cc or -engine=auto (the default engine is maxsat)";
+        else if (g_engine != ENGINE_MAXSAT && !fam[ENGFLAG_MAXSAT_FORM].empty())
+            msg = fam[ENGFLAG_MAXSAT_FORM] + ": MaxSAT formulation/backend/dump option(s) cannot be combined with -engine=" +
+                  ename + " (use -engine=maxsat)";
+        else if (g_engine == ENGINE_CC && !fam[ENGFLAG_MAXSAT_TUNE].empty())
+            msg = fam[ENGFLAG_MAXSAT_TUNE] + ": MaxSAT option(s) have no effect with -engine=cc (use -engine=maxsat or -engine=auto)";
+        if (!msg.empty()) die(msg.c_str());
+        auto_ignored_by_cc = fam[ENGFLAG_MAXSAT_TUNE];
+        auto_ignored_by_maxsat = fam[ENGFLAG_CC];
+    }
+
     if (!prefix) die("need code name (e.g. LP_34_20_2)");
     if (card_mode != 0 && card_mode != 1 && card_mode != 2 && card_mode != 3 && card_mode != 4)
         die("invalid cardinality mode");
@@ -1828,6 +1908,10 @@ int main(int argc, char** argv) {
         if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
             die("matrix column mismatch");
         g_engine = cc_auto_select(Hx, Hz, Gx, Gz, engine_why) ? ENGINE_CC : ENGINE_MAXSAT;
+        const std::string& ignored = g_engine == ENGINE_CC ? auto_ignored_by_cc : auto_ignored_by_maxsat;
+        if (!ignored.empty())
+            fprintf(stderr, "warning: -engine=auto selected %s (%s); ignoring %s\n",
+                    g_engine == ENGINE_CC ? "cc" : "maxsat", engine_why.c_str(), ignored.c_str());
     }
 
     if (verb > 0) {

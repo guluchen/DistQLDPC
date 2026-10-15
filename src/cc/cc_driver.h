@@ -48,12 +48,16 @@ struct DriverOptions {
     bool dual;               /* -cc-dual=on|off (default on) */
     bool ub_basis;           /* -ub-basis (default off): verified basis rows as initial upper bound */
     uint64_t seed;           /* -cc-seed=N (default 0 = identity labels) */
-    int mutant;              /* -cc-mutant=K (test only; 0 = none) */
+    int mutant;              /* -cc-mutant=K (test only; 0 = none). Driver mutant 4: stop rule without the
+                                other half's lower bound, run under the sequential schedule (under lockstep
+                                the pick order already gives olb >= w at every hit, so skipping the check
+                                alone could never change an answer) */
     std::string trace_path;  /* -cc-trace=FILE */
     bool stats;              /* -cc-stats */
     int verb;
-    bool sequential;         /* TEST ONLY (no flag): halves searched one after the other instead of
-                                level by level; used to expose driver mutant 4 */
+    bool sequential;         /* -cc-schedule=sequential (TEST ONLY; default lockstep): the first searchable
+                                half is raised to its own distance before the other half, so the stop rule's
+                                other-half check is load-bearing; mutant 4 forces it */
     DriverOptions() : dual(true), ub_basis(false), seed(0), mutant(0), stats(false), verb(0), sequential(false) {}
 };
 

@@ -157,7 +157,8 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-cc-seed=N` | **(experimental, testing)** Deterministic relabeling of qubits and rows for CC (default 0 = identity), for seed-median timing |
 | `-cc-trace=FILE` | **(experimental)** One line per finished (half, level): half, level, `EMPTY`/`FOUND`, nodes, seconds, witness support |
 | `-cc-stats` | **(experimental)** Per-level CC node counts (printed also without `-v`) |
-| `-cc-mutant=K` | **(test only)** Deliberately broken CC variants K = 1..4 for mutation tests; never use for results |
+| `-cc-mutant=K` | **(test only)** Deliberately broken CC variants for mutation tests, each able to give a wrong answer; never use for results. 1 = sibling-exclusion set not restored on backtrack; 2 = packing prune uses `>=`; 3 = orbit seed rule off by one (the seed's own orbit is forbidden during its search); 4 = stop rule without the other half's lower bound (runs the sequential schedule) |
+| `-cc-schedule=lockstep\|sequential` | **(test only)** CC half schedule (default `lockstep`: both halves level by level); `sequential` raises the first half to its distance before the other half, which makes the stop rule's other-half check load-bearing |
 
 `-dump-wcnf` / `-dump-opb` and the RoundingSat backend still use the joint encoding.
 
@@ -168,8 +169,14 @@ with sibling exclusion, a disjoint odd-row packing bound and orbit seeds from Di
 automorphisms. The two halves run interleaved level by level, so `c d_lb` rises by one per completed level;
 every reported upper bound is a witness verified by `H e = 0` and an independent GF(2) rank test against the
 stabilizer row space. The output lines, the pipe protocol and the `-cpu-lim` timeout are the same as for
-MaxSAT; the cardinality flags have no effect on this engine, `-engine=cc` takes precedence over `-joint` and
-`-roundingsat`, and `-no-symbreak` gives index seeds instead of orbit seeds. `make test-cc` runs its brute-force tests.
+MaxSAT; `-no-symbreak` gives index seeds instead of orbit seeds and `-dualmode=off` disables the dual map
+(`-dualmode=share` and `skip` both allow it). Conflicting flags are rejected with an error (exit 1): the
+`-cc-*` and `-ub-basis` flags need `-engine=cc` or `-engine=auto`; `-engine=cc` and `-engine=auto` refuse
+`-joint`, `-roundingsat[=BIN]`, `-dump-wcnf`, `-dump-opb`, `-dump-only` and `-native-parity-opb`; `-engine=cc`
+also refuses the cardinality flags and `-dualshare-stats`. With `-engine=auto` the cardinality flags and
+`-dualshare-stats` apply when it selects `maxsat`, the CC flags when it selects `cc`, and a warning on stderr
+names the flags that its choice ignores. `make test-cc` runs the brute-force engine tests and
+`make test-cc-flags` the command-line flag checks.
 
 ---
 

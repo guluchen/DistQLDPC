@@ -12,11 +12,12 @@
 //   planted shifts and self-dual codes (Hx = Hz, so the identity XZ-dual map is verified). Configurations:
 //   default, -cc-dual=off, -ub-basis, -cc-seed 1/2, -cc-rules none / mrv. Each run: RESULT d OPTIMAL with
 //   d = min(dX, dZ) from enumeration (dX: Hz x = 0, x not in rs Hx), every LB <= d <= every UB, LBs monotone.
-// Part C (mutants, -cc-mutant=K): 1 (forbidden set not restored) and 2 (packing prune >=) must produce wrong
-//   half-level verdicts; 3 (orbit seeds without forbidding earlier orbits) is a sound weakening of orbf and can
-//   only be detected by its node counts, which must differ from the canonical search; 4 (stop rule without the
-//   other half's lower bound) is unobservable in the S0 lockstep driver (the other half's lb is always >= the
-//   hit level there) and must produce wrong answers under the test-only sequential schedule.
+// Part C (mutants, -cc-mutant=K): every mutant must change an answer. 1 (forbidden set not restored), 2 (packing
+//   prune >=) and 3 (orbit seed rule off by one: O_1..O_i forbidden while r_i is searched, on instances with
+//   verified orbits) must produce wrong half-level verdicts; 4 (stop rule without the other half's lower bound,
+//   which forces the sequential schedule) must produce wrong driver answers, both when the schedule is requested
+//   (-cc-schedule=sequential) and when it is not (default options, as the binary runs -cc-mutant=4). The
+//   canonical driver must stay correct under the sequential schedule, where the other-half check is load-bearing.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -199,7 +200,7 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[5] = {0, 0, 0, 0, 0}, mut_runs[5] = {0, 0, 0, 0, 0}, m3_nodes_diff = 0, m3_orb_runs = 0;
+    long mut_bad[5] = {0, 0, 0, 0, 0}, mut_runs[5] = {0, 0, 0, 0, 0};
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
         std::vector<std::vector<int> > gens;
@@ -234,15 +235,8 @@ int main(int argc, char** argv) {
                 if (mt == 2 && !(rm & 2)) continue;
                 if (mt == 3 && (!(rm & 4) || orb.empty())) continue;
                 std::string why;
-                uint64_t nm = 0, nc = 0;
                 mut_runs[mt]++;
-                if (!ladder_ok(H, G, n, dh, orb, rm, 0, mt, &nm, why)) mut_bad[mt]++;
-                if (mt == 3) {
-                    std::string w2;
-                    ladder_ok(H, G, n, dh, orb, rm, 0, 0, &nc, w2);
-                    m3_orb_runs++;
-                    if (nm != nc) m3_nodes_diff++;
-                }
+                if (!ladder_ok(H, G, n, dh, orb, rm, 0, mt, NULL, why)) mut_bad[mt]++;
             }
     }
     printf("partA: %ld half instances (%ld with verified orbits, %ld without any nontrivial element), %ld ladder runs over 16 rule subsets x 3 seeds, %ld bad\n",
@@ -331,7 +325,7 @@ int main(int argc, char** argv) {
                 if (b_bad <= 10) fprintf(stderr, "CC_FAIL partB inst=%d n=%d cfg=%s: d=%d (dX %d dZ %d) got %d\n", inst, n, c.name, d, dX, dZ, r.d);
             }
         }
-        {   // test-only sequential schedule: canonical must pass; mutant 4 must be caught when dZ < dX
+        {   // test-only sequential schedule: canonical must pass; mutant 4 (forces sequential) must be caught when dZ < dX
             distcc::DriverOptions o; o.sequential = true;
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, true, false);
             b_runs++; b_seq++;
@@ -340,10 +334,10 @@ int main(int argc, char** argv) {
             mut_runs[4]++;
             RunOut r4 = run_driver(mHx, mHz, mGx, mGz, o, true, false);
             if (!run_ok(r4, d)) { mut_bad[4]++; b_seqbad4++; }
-            distcc::DriverOptions l; l.mutant = 4;
+            distcc::DriverOptions l; l.mutant = 4;   // schedule not requested: mutant 4 must switch to sequential itself
             RunOut l4 = run_driver(mHx, mHz, mGx, mGz, l, true, true);
-            b_lock4++;
-            if (!run_ok(l4, d)) b_lock4bad++;
+            b_lock4++; mut_runs[4]++;
+            if (!run_ok(l4, d)) { mut_bad[4]++; b_lock4bad++; }
         }
     }
     printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ), %ld driver runs, %ld bad, %ld RESULT -1\n",
@@ -352,11 +346,10 @@ int main(int argc, char** argv) {
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);
     printf("mutant 2 (packing prune >=): %ld/%ld half ladders wrong\n", mut_bad[2], mut_runs[2]);
-    printf("mutant 3 (orbit seeds, earlier orbits not forbidden): %ld/%ld half ladders wrong (sound weakening), node counts differ in %ld/%ld\n",
-           mut_bad[3], mut_runs[3], m3_nodes_diff, m3_orb_runs);
-    printf("mutant 4 (stop rule without other half's lb): sequential schedule %ld/%ld runs wrong; lockstep (production) %ld/%ld wrong\n",
+    printf("mutant 3 (orbit seed rule off by one, instances with orbits): %ld/%ld half ladders wrong\n", mut_bad[3], mut_runs[3]);
+    printf("mutant 4 (stop rule without other half's lb, forces sequential): schedule requested %ld/%ld runs wrong; default options %ld/%ld wrong\n",
            b_seqbad4, b_seq, b_lock4bad, b_lock4);
-    bool mut_ok = mut_bad[1] > 0 && mut_bad[2] > 0 && mut_bad[3] == 0 && m3_nodes_diff > 0 && b_seqbad4 > 0 && b_lock4bad == 0;
+    bool mut_ok = mut_bad[1] > 0 && mut_bad[2] > 0 && mut_bad[3] > 0 && b_seqbad4 > 0 && b_lock4bad > 0;
     if (!mut_ok) { fprintf(stderr, "CC_FAIL mutant expectations not met\n"); fails++; }
     printf(fails ? "CC_ENGINE_TESTS FAIL (%d)\n" : "CC_ENGINE_TESTS PASS\n", fails);
     return fails ? 1 : 0;

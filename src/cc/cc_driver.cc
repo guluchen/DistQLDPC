@@ -235,6 +235,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
     if (n <= 0 || in.Hz.cols != n || in.Gx.cols != n || in.Gz.cols != n) return fail("matrix column mismatch");
     if (opt.mutant != 0)
         fprintf(stderr, "warning: cc: test mutant %d active (deliberately broken; results are unreliable)\n", opt.mutant);
+    /* mutant 4 runs under the sequential schedule, where the other-half check of the stop rule matters */
+    const bool sequential = opt.sequential || opt.mutant == 4;
 
     Half hs[2];
     hs[0].tag = "X"; hs[0].H = &in.Hz; hs[0].G = &in.Gx; hs[0].S = &in.Hx; hs[0].B = &in.Gz;
@@ -266,7 +268,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
     if (verb > 0) {
         printf("c cc: rules %s, cc-seed %llu, dual %s, ub-basis %s%s\n", rules_string(opt.rules).c_str(),
                (unsigned long long)opt.seed, opt.dual ? "on" : "off", opt.ub_basis ? "on" : "off",
-               opt.sequential ? ", schedule sequential (test)" : "");
+               sequential ? ", schedule sequential (test)" : "");
         if (dual)
             printf("c cc: dual map '%s' verified: dX = dZ, searching the X half only (Z bounds mirrored)\n",
                    in.dual_desc.c_str());
@@ -328,7 +330,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         for (int k = 0; k < 2; k++) {
             if (!hs[k].searched || hs[k].lb >= U) continue;
             if (pick < 0) pick = k;
-            else if (!opt.sequential &&
+            else if (!sequential &&
                      (hs[k].lb < hs[pick].lb || (hs[k].lb == hs[pick].lb && hs[k].last_nodes < hs[pick].last_nodes)))
                 pick = k;
         }
@@ -386,7 +388,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 U = w;
                 sink.bound(sink.ctx, "UB", (uint64_t)U);
             }
-            /* stop rule: d = w once the other half's lower bound is >= w (mutant 4 skips the check) */
+            /* stop rule: d = w once the other half's lower bound is >= w. Under lockstep this always holds
+             * at a hit (the picked half has the lowest lb; a mirrored dual half has lb = w); under the
+             * sequential schedule it is load-bearing. Mutant 4 (which forces sequential) skips the check. */
             const Half& o = hs[1 - pick];
             const int olb = o.exists ? o.lb : INF;
             if (opt.mutant == 4 || olb >= w) {

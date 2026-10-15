@@ -72,8 +72,12 @@ struct LevelResult {
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0) {}
 };
 
-/* Test-only mutants (-cc-mutant=K): 1 forbidden set not restored on backtrack; 2 packing prune uses
- * >= instead of >; 3 orbit seeds without forbidding earlier orbits; 4 is a driver mutant. */
+/* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
+ * restored on backtrack; 2 packing prune uses >= instead of >; 3 orbit seed rule off by one (while r_i is
+ * searched, O_1..O_i instead of O_1..O_{i-1} are forbidden, apart from r_i itself; no effect without
+ * orbit seeds); 4 is a driver mutant (cc_driver.h). (GH-124 fix round 1: the S0 spec's literal mutant 3,
+ * "orbit seeds without forbidding earlier orbits", only drops a restriction and is a sound weakening
+ * that can never change a level verdict, so it was replaced by this non-equivalent orbit-rule mutant.) */
 class HalfSearch {
 public:
     /* H, G: the half's parity checks and detector rows (n = H.cols columns). orbit_of: per ORIGINAL

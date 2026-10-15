@@ -283,22 +283,29 @@ LevelResult HalfSearch::run_level(int w) {
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
     for (size_t i = 0; i < seed_.size(); i++) {
         const int s = seed_[i];
-        if (!blk_[s]) {   /* a seed is never forbidden, except through mutant 1's leak */
+        /* mutant 3 (orbit seed rule off by one): the seed rule's forbidding of O_i is applied BEFORE the
+         * search from r_i, so O_1..O_i (not O_1..O_{i-1}) are forbidden apart from r_i itself; this loses
+         * every element of F that needs two qubits of its first orbit */
+        const bool m3 = orbit_mode_ && mutant_ == 3;
+        if (m3)
+            for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_[block_[t]]++;
+        /* a seed is never forbidden by an earlier seed, except through mutant 1's leak */
+        if (blk_[s] == (m3 ? 1u : 0u)) {
             r.seeds++;
-            blk_[s]++;
+            if (!m3) blk_[s]++;
             toggle(s);
             cur_[0] = s;
             const bool hit = dfs(1);
             toggle(s);
-            blk_[s]--;
+            if (!m3) blk_[s]--;
             if (hit) {
                 r.verdict = incons_ ? LEVEL_INCONSISTENT : LEVEL_FOUND;
                 res_ = NULL;
                 return r;
             }
         }
-        /* seed rule: index rule forbids the seed; orbit rule forbids its whole orbit (mutant 3: nothing) */
-        if (!(orbit_mode_ && mutant_ == 3))
+        /* seed rule: index rule forbids the seed; orbit rule forbids its whole orbit (mutant 3: done above) */
+        if (!m3)
             for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_[block_[t]]++;
     }
     res_ = NULL;

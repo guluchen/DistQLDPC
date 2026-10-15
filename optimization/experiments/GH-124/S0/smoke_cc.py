@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """GH-124 S0 smoke: run bin/distqldpc -engine=cc (serially, one process at a time) on every code of the
-given tiers in both card modes and check 'o N' against the stem's distance.
+given tiers and check 'o N' against the stem's distance.
 
 Usage: smoke_cc.py [--bin bin/distqldpc] [--cpu-lim 300] [--out DIR] [--extra=FLAG ...] [--modes M1,M2] [--tag T] tier0 ...
+--modes: comma list of extra per-run flags, 'default' = none (default). Since fix round 1 the binary rejects the
+MaxSAT cardinality flags with -engine=cc (they never had an effect on it), so the S0 runs' '-no-card,-card-mto'
+modes are no longer valid.
 Writes DIR/smoke_<tiers>.tsv and DIR/raw/<code>_<mode>.log. Memory: the CC engine needs a few MB; the
 parent's -cpu-lim is the wall limit, and each run is additionally capped with RLIMIT_AS = 2 GB where the OS
 supports it (macOS does not enforce RLIMIT_AS; RSS is reported from wait4)."""
@@ -13,7 +16,7 @@ ap.add_argument("--bin", default="bin/distqldpc")
 ap.add_argument("--cpu-lim", type=int, default=300)
 ap.add_argument("--out", default="optimization/experiments/GH-124/S0")
 ap.add_argument("--extra", action="append", default=[])
-ap.add_argument("--modes", default="-no-card,-card-mto")
+ap.add_argument("--modes", default="default")
 ap.add_argument("--tag", default="", help="suffix for the TSV name and the raw-log directory")
 ap.add_argument("tiers", nargs="+")
 a = ap.parse_args()
@@ -28,7 +31,7 @@ for tier in a.tiers:
         m = re.match(r"^[A-Z]+_\d+_\d+_(\d+)$", stem)
         expect = int(m.group(1)) if m else None
         for mode in a.modes.split(","):
-            cmd = [a.bin, "-engine=cc", mode, "-cpu-lim=%d" % a.cpu_lim] + a.extra + [stem]
+            cmd = [a.bin, "-engine=cc"] + ([] if mode == "default" else [mode]) + ["-cpu-lim=%d" % a.cpu_lim] + a.extra + [stem]
             t0 = time.time()
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             _, status, ru = os.wait4(p.pid, 0)
@@ -43,7 +46,7 @@ for tier in a.tiers:
             if not ok:
                 bad += 1
             rows.append((tier, stem, mode, expect, got, "%.3f" % dt, "%.1f" % rss_mb, "OK" if ok else "MISMATCH"))
-            with open(os.path.join(raw, "%s%s.log" % (stem, mode)), "w") as f:
+            with open(os.path.join(raw, "%s%s.log" % (stem, "" if mode == "default" else mode)), "w") as f:
                 f.write("$ " + " ".join(cmd) + "\n" + out)
             print("\t".join(str(x) for x in rows[-1]), flush=True)
 name = os.path.join(a.out, "smoke_%s%s.tsv" % ("_".join(a.tiers), "_" + a.tag if a.tag else ""))

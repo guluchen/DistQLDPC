@@ -26,7 +26,7 @@ CC_OBJS = \
 CC_HDRS = $(CCDIR)/cc_half.h $(CCDIR)/cc_driver.h
 TEST_CC = $(BUILD)/test_cc_engine
 
-.PHONY: all clean test-cc
+.PHONY: all clean test-cc test-cc-flags
 
 all: $(BIN) $(MAXCDCL)
 
@@ -63,6 +63,10 @@ $(TEST_CC): tests/test_cc_engine.cc $(CORE)/distqldpc.cc $(ENGINE_OBJS) $(CC_OBJ
 
 test-cc: $(TEST_CC)
 	./$(TEST_CC)
+
+# GH-124 command-line checks: engine flag conflicts rejected, invalid CC flag values rejected
+test-cc-flags: $(BIN)
+	bash tests/test_cc_flags.sh ./$(BIN)
 
 clean:
 	rm -rf build $(BIN) $(MAXCDCL)
