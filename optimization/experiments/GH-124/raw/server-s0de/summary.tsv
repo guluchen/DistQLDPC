@@ -1,0 +1,110 @@
+id	args	result	empty levels (contiguous from 1)	found	witness ok	wall s	nodes X/Z	notes
+c_PLANAR_1105_1_24_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	600.3	4880958039/4972456674	-
+c_PLANAR_1105_1_24_ccpack	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 20 Z<= 19	found X[] Z[]	-	600.3	8355360307/3328120925	-
+c_PLANAR_1105_1_24_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.2	-	-
+c_PLANAR_113_1_8_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=8	X<= 7 Z<= 7	found X[8] Z[]	yes	0.2	11667/12033	-
+c_PLANAR_113_1_8_ccpack	-engine=cc -cc-stats	d=8	X<= 7 Z<= 7	found X[8] Z[]	yes	0.2	9231/9602	-
+c_PLANAR_113_1_8_maxsat	-engine=maxsat	d=8	-	-	-	0.4	-	-
+c_PLANAR_1513_1_28_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	600.3	6729672139/6837132398	-
+c_PLANAR_1513_1_28_ccpack	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	600.3	4263130561/4370577329	-
+c_PLANAR_1513_1_28_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.3	-	-
+c_PLANAR_181_1_10_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=10	X<= 9 Z<= 9	found X[10] Z[]	yes	0.2	95656/98502	-
+c_PLANAR_181_1_10_ccpack	-engine=cc -cc-stats	d=10	X<= 9 Z<= 9	found X[10] Z[]	yes	0.2	73017/75839	-
+c_PLANAR_181_1_10_maxsat	-engine=maxsat	d=10	-	-	-	2.0	-	-
+c_PLANAR_1985_1_32_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	600.1	8855024415/8978446298	-
+c_PLANAR_1985_1_32_ccpack	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	600.1	5398800777/5524514085	-
+c_PLANAR_1985_1_32_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.1	-	-
+c_PLANAR_265_1_12_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	786268/808166	-
+c_PLANAR_265_1_12_ccpack	-engine=cc -cc-stats	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	584783/606040	-
+c_PLANAR_265_1_12_maxsat	-engine=maxsat	d=12	-	-	-	22.4	-	-
+c_PLANAR_481_1_16_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=16	X<= 15 Z<= 15	found X[16] Z[]	yes	2.6	52018860/53312089	-
+c_PLANAR_481_1_16_ccpack	-engine=cc -cc-stats	d=16	X<= 15 Z<= 15	found X[16] Z[]	yes	3.0	37420133/38643059	-
+c_PLANAR_481_1_16_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=16	-	-	-	600.1	-	-
+c_PLANAR_61_1_6_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=6	X<= 5 Z<= 5	found X[6] Z[]	yes	0.2	1402/1452	-
+c_PLANAR_61_1_6_ccpack	-engine=cc -cc-stats	d=6	X<= 5 Z<= 5	found X[6] Z[]	yes	0.2	1176/1228	-
+c_PLANAR_61_1_6_maxsat	-engine=maxsat	d=6	-	-	-	0.2	-	-
+c_PLANAR_761_1_20_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=20	X<= 19 Z<= 19	found X[20] Z[]	yes	169.4	3308882135/3384419126	-
+c_PLANAR_761_1_20_ccpack	-engine=cc -cc-stats	d=20	X<= 19 Z<= 19	found X[20] Z[]	yes	179.6	2326231205/2397144873	-
+c_PLANAR_761_1_20_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.2	-	-
+c_TORIC_1152_2_24_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=24	X<= 23 Z<= mirror	found X[24] Z[]	yes	372.3	13794604786/0	-
+c_TORIC_1152_2_24_ccpack	-engine=cc -cc-stats	d=24	X<= 23 Z<= mirror	found X[24] Z[]	yes	510.0	5113905243/0	-
+c_TORIC_1152_2_24_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.3	-	-
+c_TORIC_128_2_8_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=8	X<= 7 Z<= mirror	found X[8] Z[]	yes	0.2	1416/0	-
+c_TORIC_128_2_8_ccpack	-engine=cc -cc-stats	d=8	X<= 7 Z<= mirror	found X[8] Z[]	yes	0.2	545/0	-
+c_TORIC_128_2_8_maxsat	-engine=maxsat	d=8	-	-	-	0.2	-	-
+c_TORIC_1568_2_28_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	TIMEOUT lb=24 ub=-	X<= 23 Z<= mirror	found X[] Z[]	-	600.1	13794604762/0	-
+c_TORIC_1568_2_28_ccpack	-engine=cc -cc-stats	TIMEOUT lb=24 ub=-	X<= 23 Z<= mirror	found X[] Z[]	-	600.3	5113905219/0	-
+c_TORIC_1568_2_28_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.3	-	-
+c_TORIC_200_2_10_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=10	X<= 9 Z<= mirror	found X[10] Z[]	yes	0.2	10769/0	-
+c_TORIC_200_2_10_ccpack	-engine=cc -cc-stats	d=10	X<= 9 Z<= mirror	found X[10] Z[]	yes	0.2	4021/0	-
+c_TORIC_200_2_10_maxsat	-engine=maxsat	d=10	-	-	-	0.2	-	-
+c_TORIC_2048_2_32_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	TIMEOUT lb=23 ub=-	X<= 22 Z<= mirror	found X[] Z[]	-	600.1	5092125197/0	-
+c_TORIC_2048_2_32_ccpack	-engine=cc -cc-stats	TIMEOUT lb=24 ub=-	X<= 23 Z<= mirror	found X[] Z[]	-	600.1	5113905219/0	-
+c_TORIC_2048_2_32_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.3	-	-
+c_TORIC_288_2_12_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=12	X<= 11 Z<= mirror	found X[12] Z[]	yes	0.2	81849/0	-
+c_TORIC_288_2_12_ccpack	-engine=cc -cc-stats	d=12	X<= 11 Z<= mirror	found X[12] Z[]	yes	0.2	30302/0	-
+c_TORIC_288_2_12_maxsat	-engine=maxsat	d=12	-	-	-	1.2	-	-
+c_TORIC_512_2_16_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=16	X<= 15 Z<= mirror	found X[16] Z[]	yes	0.2	4621984/0	-
+c_TORIC_512_2_16_ccpack	-engine=cc -cc-stats	d=16	X<= 15 Z<= mirror	found X[16] Z[]	yes	0.4	1708628/0	-
+c_TORIC_512_2_16_maxsat	-engine=maxsat	d=16	-	-	-	144.1	-	-
+c_TORIC_72_2_6_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=6	X<= 5 Z<= mirror	found X[6] Z[]	yes	0.2	192/0	-
+c_TORIC_72_2_6_ccpack	-engine=cc -cc-stats	d=6	X<= 5 Z<= mirror	found X[6] Z[]	yes	0.2	82/0	-
+c_TORIC_72_2_6_maxsat	-engine=maxsat	d=6	-	-	-	0.2	-	-
+c_TORIC_800_2_20_ccnopack	-engine=cc -cc-stats -cc-rules=excl,orbf	d=20	X<= 19 Z<= mirror	found X[20] Z[]	yes	7.0	254587615/0	-
+c_TORIC_800_2_20_ccpack	-engine=cc -cc-stats	d=20	X<= 19 Z<= mirror	found X[20] Z[]	yes	6.0	94243073/0	-
+c_TORIC_800_2_20_maxsat	-engine=maxsat	TIMEOUT lb=9 ub=-	-	-	-	600.2	-	-
+d_BB_288_12_18_dualoff	-engine=cc -cc-stats -cc-dual=off	d=18	X<= 17 Z<= 17	found X[18] Z[]	yes	6.8	11181340/11611581	-
+d_BB_288_12_18_seed0	-engine=cc -cc-stats -cc-seed=0	d=18	X<= 17 Z<= mirror	found X[18] Z[]	yes	2.4	11181340/0	-
+d_BB_288_12_18_seed1	-engine=cc -cc-stats -cc-seed=1	d=18	X<= 17 Z<= mirror	found X[18] Z[]	yes	3.0	14528120/0	-
+d_BB_288_12_18_seed2	-engine=cc -cc-stats -cc-seed=2	d=18	X<= 17 Z<= mirror	found X[18] Z[]	yes	2.4	11229127/0	-
+d_BB_288_12_18_seed3	-engine=cc -cc-stats -cc-seed=3	d=18	X<= 17 Z<= mirror	found X[18] Z[]	yes	2.8	13303895/0	-
+d_BB_288_12_18_seed4	-engine=cc -cc-stats -cc-seed=4	d=18	X<= 17 Z<= mirror	found X[18] Z[]	yes	3.8	13097851/0	-
+d_LP_544_80_12_seed0	-engine=cc -cc-stats -cc-seed=0	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	145074/188762	-
+d_LP_544_80_12_seed1	-engine=cc -cc-stats -cc-seed=1	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	147477/152793	-
+d_LP_544_80_12_seed2	-engine=cc -cc-stats -cc-seed=2	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	163757/165006	-
+d_LP_544_80_12_seed3	-engine=cc -cc-stats -cc-seed=3	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	159694/150045	-
+d_LP_544_80_12_seed4	-engine=cc -cc-stats -cc-seed=4	d=12	X<= 11 Z<= 11	found X[] Z[12]	yes	0.2	153522/155356	-
+d_TN_250_10_15_seed0	-engine=cc -cc-stats -cc-seed=0	d=15	X<= 14 Z<= 14	found X[] Z[15]	yes	75.1	210331614/97702339	-
+d_TN_250_10_15_seed1	-engine=cc -cc-stats -cc-seed=1	d=15	X<= 14 Z<= 14	found X[] Z[15]	yes	108.5	240158932/183356872	-
+d_TN_250_10_15_seed2	-engine=cc -cc-stats -cc-seed=2	d=15	X<= 14 Z<= 14	found X[] Z[15]	yes	140.9	302827626/241891150	-
+d_TN_250_10_15_seed3	-engine=cc -cc-stats -cc-seed=3	d=15	X<= 14 Z<= 14	found X[] Z[15]	yes	180.6	295309706/207522679	-
+d_TN_250_10_15_seed4	-engine=cc -cc-stats -cc-seed=4	d=15	X<= 14 Z<= 14	found X[] Z[15]	yes	169.5	262653067/212136075	-
+e_BB_360_12_17to24_def	-engine=cc -cc-stats	d=24	X<= 23 Z<= mirror	found X[24] Z[]	yes	1993.2	8465662596/0	-
+e_BB_360_12_17to24_mrv	-engine=cc -cc-stats -cc-rules=excl,pack,orbf,mrv	d=24	X<= 23 Z<= mirror	found X[24] Z[]	yes	1606.2	6203140765/0	-
+e_LP_1054_140_17to32_def	-engine=cc -cc-stats	d=20	X<= 19 Z<= 19	found X[20] Z[]	yes	82.7	105611611/278076362	-
+e_LP_1054_140_17to32_mrv	-engine=cc -cc-stats -cc-rules=excl,pack,orbf,mrv	d=20	X<= 19 Z<= 19	found X[20] Z[]	yes	69.1	106176304/186493123	-
+e_LP_1054_140_17to32_noorb	-engine=cc -cc-stats -cc-rules=excl,pack	d=20	X<= 19 Z<= 19	found X[20] Z[]	yes	1552.2	1344381414/5547479011	-
+e_LP_1428_184_ge17_def	-engine=cc -cc-stats	d=24	X<= 23 Z<= 23	found X[24] Z[]	yes	4234.9	2036219774/10064185066	-
+e_LP_1428_184_ge17_mrv	-engine=cc -cc-stats -cc-rules=excl,pack,orbf,mrv	d=24	X<= 23 Z<= 23	found X[24] Z[]	yes	3044.6	2397564926/5594150933	-
+e_LP_1768_224_ge17_def	-engine=cc -cc-stats	d=22	X<= 21 Z<= 21	found X[22] Z[]	yes	344.5	209382369/1117816034	-
+e_LP_1768_224_ge17_mrv	-engine=cc -cc-stats -cc-rules=excl,pack,orbf,mrv	d=22	X<= 21 Z<= 21	found X[22] Z[]	yes	247.2	250299109/643543140	-
+e_TN_252_2_17to28_def	-engine=cc -cc-stats	TIMEOUT lb=21 ub=-	X<= 20 Z<= 21	found X[] Z[]	-	21600.2	23411576010/45681615274	-
+e_TN_252_2_17to28_mrv	-engine=cc -cc-stats -cc-rules=excl,pack,orbf,mrv	TIMEOUT lb=21 ub=-	X<= 20 Z<= 20	found X[] Z[]	-	21600.2	43798320156/23446901778	-
+e_TN_252_2_17to28_seqsched	-engine=cc -cc-stats -cc-schedule=sequential	d=21	X<= 20 Z<= 20	found X[21] Z[]	yes	17115.5	47587701238/12789869129	-
+o_BB_1080_4_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=25 ub=-	X<= 24 Z<= mirror	found X[] Z[]	-	3600.2	5162233217/0	-
+o_BB_756_16_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=25 ub=-	X<= 24 Z<= mirror	found X[] Z[]	-	3600.1	5535556557/0	-
+o_BB_864_4_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=26 ub=-	X<= 25 Z<= mirror	found X[] Z[]	-	3600.2	13328426755/0	-
+o_TN_288_2_ge9_def	-engine=cc -cc-stats	TIMEOUT lb=18 ub=-	X<= 17 Z<= 18	found X[] Z[]	-	3600.1	1975134559/4675774652	-
+o_TN_324_4_ge9_def	-engine=cc -cc-stats	TIMEOUT lb=18 ub=-	X<= 17 Z<= 18	found X[] Z[]	-	3600.2	2188768698/3646176321	-
+o_TN_360_4_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=21 ub=-	X<= 20 Z<= 20	found X[] Z[]	-	3600.2	3871335944/4143437168	-
+o_TN_396_4_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=21 ub=-	X<= 20 Z<= 20	found X[] Z[]	-	3600.2	7194086621/2909620577	-
+o_TN_432_8_ge9_def	-engine=cc -cc-stats	TIMEOUT lb=19 ub=-	X<= 18 Z<= 19	found X[] Z[]	-	3600.1	2697395545/6415255315	-
+o_TN_468_4_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=21 ub=-	X<= 20 Z<= 21	found X[] Z[]	-	3600.1	5955294336/4904820550	-
+o_TN_496_2_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 20 Z<= 19	found X[] Z[]	-	3600.2	5607510034/2420370859	-
+o_TN_504_2_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=21 ub=-	X<= 20 Z<= 21	found X[] Z[]	-	3600.1	1300014294/3797188956	-
+o_TN_540_4_ge9_def	-engine=cc -cc-stats	TIMEOUT lb=19 ub=-	X<= 18 Z<= 19	found X[] Z[]	-	3600.1	2566650135/5325964532	-
+o_TN_576_2_ge9_def	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	3600.2	4067836268/2636782594	-
+o_TN_612_2_ge17_def	-engine=cc -cc-stats	TIMEOUT lb=22 ub=-	X<= 21 Z<= 22	found X[] Z[]	-	3600.2	3029624501/5885534786	-
+o_TN_648_10_9to52_def	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	3600.2	4989970434/3272657923	-
+o_TN_648_14_ge9_def	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 19 Z<= 19	found X[] Z[]	-	3600.1	5436939103/3841579823	-
+o_TN_684_2_ge9_def	-engine=cc -cc-stats	TIMEOUT lb=20 ub=-	X<= 19 Z<= 20	found X[] Z[]	-	3600.1	3711940811/6279334096	-
+r_BB_288_12_18_rep2	-engine=cc -cc-stats	d=18	X<= 17 Z<= mirror	found X[18] Z[]	yes	2.2	11181340/0	-
+r_BB_288_12_18_rep3	-engine=cc -cc-stats	d=18	X<= 17 Z<= mirror	found X[18] Z[]	yes	2.2	11181340/0	-
+r_LP_544_80_12_rep2	-engine=cc -cc-stats	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	145074/188762	-
+r_LP_544_80_12_rep3	-engine=cc -cc-stats	d=12	X<= 11 Z<= 11	found X[12] Z[]	yes	0.2	145074/188762	-
+r_TN_250_10_15_rep2	-engine=cc -cc-stats	d=15	X<= 14 Z<= 14	found X[] Z[15]	yes	75.1	210331614/97702339	-
+r_TN_250_10_15_rep3	-engine=cc -cc-stats	d=15	X<= 14 Z<= 14	found X[] Z[15]	yes	106.3	210331614/97702339	-
+x_LP_1020_136_16_def	-engine=cc -cc-stats	d=16	X<= 15 Z<= 15	found X[16] Z[]	yes	2.6	2686766/5137806	-
+x_LP_714_100_16_def	-engine=cc -cc-stats	d=16	X<= 15 Z<= 15	found X[16] Z[]	yes	3.9	5355350/8250969	-
+x_TN_180_2_17_def	-engine=cc -cc-stats	d=17	X<= 16 Z<= 16	found X[] Z[17]	yes	267.2	544503592/513551265	-
+x_TN_216_4_18_def	-engine=cc -cc-stats	d=18	X<= 17 Z<= 17	found X[] Z[18]	yes	672.5	1522771886/1084225964	-
