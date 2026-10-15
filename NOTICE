@@ -14,6 +14,7 @@ Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
 Includes, without limitation:
 
   src/core/distqldpc.cc
+  src/cc/ (GH-124 CC level-search engine, experimental)
   scripts/compute_logicals.py
   scripts/preprocess_matrices.py
   scripts/benchmark_matrices.py
@@ -70,6 +71,17 @@ Modified files (partial list): Solver.h, Solver.cc
   original use of the verified XZ-dual maps of GH-87 to share proven lower
   bounds between the two GH-73 split halves; ported from GH-102). No
   third-party code.
+
+  DRAFT (pending PI approval): src/cc/ (GH-124, experimental CC engine)
+  implements the connected-cluster distance search of I. Dumer,
+  A. A. Kovalev, L. P. Pryadko, "Distance verification for classical and
+  quantum LDPC codes", IEEE Trans. Inf. Theory 63(7), 2017, written
+  clean-room from the published algorithm and DistQLDPC's own code, with
+  DistQLDPC's own additions (sibling exclusion, disjoint odd-row packing
+  bound, orbit seeds from the GH-85 verified automorphisms, single-half
+  search under the GH-87/GH-107 verified XZ-dual maps). Quantinuum's
+  Qubitserf (MIT License) was studied as a reference; no Qubitserf code
+  was copied.
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and

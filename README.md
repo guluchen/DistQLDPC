@@ -148,8 +148,28 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-dualmode=off` (alias `-no-dualskip`) | Ignore XZ-dual maps (previous default) |
 | `-dualmode=skip` | With a verified dual map, solve only the X half |
 | `-dualskip-report` | Print the verified XZ-dual maps, then exit |
+| `-engine=maxsat` | **(experimental flag, GH-124)** The MaxSAT search described above (default; identical to the behaviour without the flag) |
+| `-engine=cc` | **(experimental, GH-124)** Exact connected-cluster (CC) level search per CSS half instead of MaxSAT (see below) |
+| `-engine=auto` | **(experimental, GH-124)** `cc` when every qubit has degree >= 3 and every row weight is <= 16 in each half's parity matrix, else `maxsat` (not the default) |
+| `-cc-rules=excl,pack,orbf[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf`; `none` = plain CC): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, fewest-candidate branching |
+| `-cc-dual=on\|off` | **(experimental)** With a verified XZ-dual map, CC searches only the X half (default `on`; `-dualmode=off` also disables it) |
+| `-ub-basis` | **(experimental, CC only)** Emit the minimum weight of the verified logical basis rows as an initial upper bound (default off) |
+| `-cc-seed=N` | **(experimental, testing)** Deterministic relabeling of qubits and rows for CC (default 0 = identity), for seed-median timing |
+| `-cc-trace=FILE` | **(experimental)** One line per finished (half, level): half, level, `EMPTY`/`FOUND`, nodes, seconds, witness support |
+| `-cc-stats` | **(experimental)** Per-level CC node counts (printed also without `-v`) |
+| `-cc-mutant=K` | **(test only)** Deliberately broken CC variants K = 1..4 for mutation tests; never use for results |
 
 `-dump-wcnf` / `-dump-opb` and the RoundingSat backend still use the joint encoding.
+
+**CC engine (`-engine=cc`, experimental, GH-124).** Each CSS half is searched one weight level at a time
+(1, 2, 3, ...): a level-w search decides exactly whether the half has a nontrivial logical of weight w by
+growing Tanner-connected clusters from a seed (Dumer, Kovalev, Pryadko, IEEE Trans. Inf. Theory 63(7), 2017),
+with sibling exclusion, a disjoint odd-row packing bound and orbit seeds from DistQLDPC's verified per-half
+automorphisms. The two halves run interleaved level by level, so `c d_lb` rises by one per completed level;
+every reported upper bound is a witness verified by `H e = 0` and an independent GF(2) rank test against the
+stabilizer row space. The output lines, the pipe protocol and the `-cpu-lim` timeout are the same as for
+MaxSAT; the cardinality flags have no effect on this engine, `-engine=cc` takes precedence over `-joint` and
+`-roundingsat`, and `-no-symbreak` gives index seeds instead of orbit seeds. `make test-cc` runs its brute-force tests.
 
 ---
 
@@ -214,6 +234,7 @@ Requires **g++** and **zlib**. Binary: `bin/distqldpc`.
 
 ```
 src/core/distqldpc.cc   # CLI, QLDPC encoding, fork/pipe
+src/cc/                 # CC level-search engine (experimental, -engine=cc)
 src/solver/             # MaxCDCL MaxSAT engine
 data/matrices/tierN/    # benchmark codes (Hx, Hz, Gx, Gz) by tier; see data/matrices/README.md
 ```

@@ -41,6 +41,7 @@
 
 #include "utils/System.h"
 #include "SimpSolver.h"
+#include "../cc/cc_driver.h"   /* GH-124: CC level-search engine (-engine=cc, experimental) */
 
 using namespace Minisat;
 
@@ -981,6 +982,7 @@ static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
 struct DualMapInfo {
     int n, rank_hz, rank_hx, rank_hzgx, rank_hxgz, candidates;
     std::vector<std::string> maps;   /* verified dual maps, in candidate order (first = used) */
+    std::vector<std::vector<int> > perms;   /* GH-124: the qubit maps of `maps` (same order) */
     double seconds;
 };
 
@@ -1011,6 +1013,7 @@ static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matr
             const std::vector<int>& pi = cands[k].perm;
             if (!permuted_rows_in(sHz, pi, bHx) || !permuted_rows_in(sHzGx, pi, bHxGz)) continue;
             info.maps.push_back(cands[k].desc);
+            info.perms.push_back(pi);
             if (!all) break;
         }
     }
@@ -1208,6 +1211,105 @@ static bool g_css_joint = false;   /* -joint: original symplectic joint encoding
 static bool g_half_symbreak = true; /* GH-85: per-half orbit clauses in the split path; -no-symbreak disables */
 static int g_dualmode = DUALMODE_SHARE; /* GH-107: -dualmode=share (default) | skip (GH-92) | off (main); -no-dualskip = off */
 static bool g_dualshare_stats = false;  /* GH-107: -dualshare-stats prints one work-count line (with -v) */
+
+/* ---- GH-124 (S0, experimental): connected-cluster (CC) level-search engine, src/cc/.
+ * -engine=maxsat (default) runs main's search above unchanged; -engine=cc runs the exact CC level search
+ * of src/cc/cc_driver.h on the same CSS split (X half: Hz x = 0, Gx x != 0; Z half: Hx z = 0, Gz z != 0;
+ * d = min(dX, dZ)) and reports through the same pipe protocol (TRY / LB / UB / RESULT); -engine=auto routes
+ * to cc when every qubit has degree >= 3 in each half's parity matrix and every row weight is <= 16.
+ * Symmetry input is DistQLDPC's own verified machinery: GH-85 per-half orbits (find_half_symmetry) as CC
+ * seeds (orbf; -no-symbreak gives index seeds) and the GH-87/GH-107 verified XZ-dual map (find_dual_maps;
+ * -cc-dual=on searches the X half only; -dualmode=off also disables it). */
+enum { ENGINE_MAXSAT = 0, ENGINE_CC = 1, ENGINE_AUTO = 2 };
+static int g_engine = ENGINE_MAXSAT;
+static distcc::DriverOptions g_cc_opt;
+
+static distcc::SparseRows cc_rows(const Matrix& M) {
+    distcc::SparseRows R;
+    R.cols = M.cols;
+    R.rows.resize((size_t)M.rows);
+    for (int r = 0; r < M.rows; r++)
+        for (int c = 0; c < M.cols; c++)
+            if (getm(M, r, c)) R.rows[r].push_back(c);
+    return R;
+}
+
+static void cc_sink_bound(void* ctx, const char* kind, uint64_t v) { pipe_bound(*(int*)ctx, kind, v); }
+static void cc_sink_result(void* ctx, int d, bool optimal) { pipe_write_result(*(int*)ctx, d, optimal); }
+
+static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+                               int verb, int pipe_w, const distcc::DriverOptions& opt_in, bool symbreak, bool dual_allowed)
+{
+    if (Hx.cols != Hz.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols) die("matrix column mismatch");
+    distcc::DriverOptions opt = opt_in;
+    opt.verb = verb;
+    distcc::DriverInput in;
+    in.Hx = cc_rows(Hx); in.Hz = cc_rows(Hz); in.Gx = cc_rows(Gx); in.Gz = cc_rows(Gz);
+    bool dual = false;
+    if (opt.dual && dual_allowed && Gx.rows > 0 && Gz.rows > 0) {
+        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, false);
+        if (!dm.maps.empty()) {
+            in.dual_perm = dm.perms[0];
+            in.dual_desc = dm.maps[0];
+            dual = true;
+        }
+        if (verb > 0) {
+            if (dual)
+                printf("c cc: dual map detection: '%s' verified (rank Hz=Hx=%d, [Hz;Gx]=[Hx;Gz]=%d, cpu %.3fs)\n",
+                       dm.maps[0].c_str(), dm.rank_hx, dm.rank_hxgz, dm.seconds);
+            else
+                printf("c cc: dual map detection: none (ranks Hz %d Hx %d [Hz;Gx] %d [Hx;Gz] %d, %d candidates, cpu %.3fs): both halves\n",
+                       dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.seconds);
+        }
+    }
+    if (opt.rules.orbf && symbreak) {
+        for (int k = 0; k < 2; k++) {
+            const Matrix& H = k == 0 ? Hz : Hx;
+            const Matrix& G = k == 0 ? Gx : Gz;
+            if (G.rows == 0 || (k == 1 && dual)) continue;   /* seeds only from per-half automorphisms of a searched half */
+            HalfSymInfo info = find_half_symmetry(H, G);
+            if (verb > 0) print_half_symmetry(info, k == 0 ? "c cc symbreak X:" : "c cc symbreak Z:", false);
+            if ((int)info.reps.size() < info.n) in.orbit_of[k] = info.orbit_of;
+        }
+    }
+    fflush(stdout);
+    int pw = pipe_w;
+    distcc::BoundSink sink;
+    sink.ctx = &pw;
+    sink.bound = cc_sink_bound;
+    sink.result = cc_sink_result;
+    return distcc::min_distance_cc(in, opt, sink);
+}
+
+/* -engine=auto (GH-124 S0 structural selector, not the default): cc iff, in the parity matrix of every half
+ * that has logicals, every qubit lies in >= 3 rows and every row has weight <= 16. */
+static bool cc_auto_select(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, std::string& why)
+{
+    char buf[160];
+    for (int k = 0; k < 2; k++) {
+        const Matrix& H = k == 0 ? Hz : Hx;
+        if ((k == 0 ? Gx : Gz).rows == 0) continue;
+        int mindeg = INT_MAX, maxrow = 0;
+        for (int c = 0; c < H.cols; c++) {
+            int deg = 0;
+            for (int r = 0; r < H.rows; r++) deg += getm(H, r, c);
+            if (deg < mindeg) mindeg = deg;
+        }
+        for (int r = 0; r < H.rows; r++) {
+            int wt = 0;
+            for (int c = 0; c < H.cols; c++) wt += getm(H, r, c);
+            if (wt > maxrow) maxrow = wt;
+        }
+        if (mindeg < 3 || maxrow > 16) {
+            snprintf(buf, sizeof(buf), "%s half (%s): min qubit degree %d, max row weight %d", k == 0 ? "X" : "Z",
+                     k == 0 ? "Hz" : "Hx", mindeg, maxrow);
+            why = buf;
+            return false;
+        }
+    }
+    why = "every qubit degree >= 3 and every row weight <= 16";
+    return true;
+}
 
 static int parse_roundingsat_cost(const std::string& out)
 {
@@ -1411,7 +1513,8 @@ static int solve_in_child_fork(
 
     if (pid == 0) {
         close(pipefd[0]);
-        if (verb == 0 && backend == SOLVER_MAXCDCL) {
+        /* GH-124: -cc-stats lines of the CC engine stay visible without -v */
+        if (verb == 0 && backend == SOLVER_MAXCDCL && !(g_engine == ENGINE_CC && g_cc_opt.stats)) {
             int devnull = open("/dev/null", O_WRONLY);
             if (devnull >= 0) {
                 dup2(devnull, STDOUT_FILENO);
@@ -1419,7 +1522,9 @@ static int solve_in_child_fork(
             }
         }
         int d;
-        if (backend == SOLVER_ROUNDINGSAT) {
+        if (g_engine == ENGINE_CC) {   /* GH-124 (experimental); -engine=maxsat (default) takes the paths below */
+            d = min_distance_css_cc(Hx, Hz, Gx, Gz, verb, pipefd[1], g_cc_opt, g_half_symbreak, g_dualmode != DUALMODE_OFF);
+        } else if (backend == SOLVER_ROUNDINGSAT) {
             d = min_distance_stabilizer_roundingsat(
                 Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
         } else if (!g_css_joint) {
@@ -1595,6 +1700,36 @@ int main(int argc, char** argv) {
             g_dualshare_stats = true;
         else if (!strcmp(argv[i], "-dualskip-report"))
             dualskip_report = true;
+        else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
+            g_engine = ENGINE_MAXSAT;
+        else if (!strcmp(argv[i], "-engine=cc"))
+            g_engine = ENGINE_CC;
+        else if (!strcmp(argv[i], "-engine=auto"))
+            g_engine = ENGINE_AUTO;
+        else if (!strncmp(argv[i], "-engine=", 8))
+            die("invalid -engine (maxsat | cc | auto)");
+        else if (!strncmp(argv[i], "-cc-rules=", 10)) {
+            if (!distcc::parse_rules(argv[i] + 10, g_cc_opt.rules))
+                die("invalid -cc-rules (comma list of excl, pack, orbf, mrv, or none)");
+        } else if (!strcmp(argv[i], "-cc-dual=on"))
+            g_cc_opt.dual = true;
+        else if (!strcmp(argv[i], "-cc-dual=off"))
+            g_cc_opt.dual = false;
+        else if (!strncmp(argv[i], "-cc-dual=", 9))
+            die("invalid -cc-dual (on | off)");
+        else if (!strcmp(argv[i], "-ub-basis") || !strcmp(argv[i], "-ub-basis=on"))
+            g_cc_opt.ub_basis = true;
+        else if (!strcmp(argv[i], "-ub-basis=off"))
+            g_cc_opt.ub_basis = false;
+        else if (!strncmp(argv[i], "-cc-seed=", 9))
+            g_cc_opt.seed = strtoull(argv[i] + 9, NULL, 10);
+        else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
+            g_cc_opt.mutant = atoi(argv[i] + 11);
+            if (g_cc_opt.mutant < 0 || g_cc_opt.mutant > 4) die("invalid -cc-mutant (0..4, test only)");
+        } else if (!strncmp(argv[i], "-cc-trace=", 10))
+            g_cc_opt.trace_path = argv[i] + 10;
+        else if (!strcmp(argv[i], "-cc-stats"))
+            g_cc_opt.stats = true;
         else if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             printf("Usage: %s [options] <code>\n", argv[0]);
             printf("  <code>  e.g. LP_34_20_2  (loads data/matrices/[tierN/]<code>_{Hx,Hz,Gx,Gz}.txt;\n");
@@ -1614,6 +1749,14 @@ int main(int argc, char** argv) {
             printf("            (implied NONE probes skipped); -dualmode=skip solves only the X half;\n");
             printf("            -dualmode=off (alias -no-dualskip) ignores dual maps; -dualshare-stats prints\n");
             printf("            work counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
+            printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
+            printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc iff every\n");
+            printf("            qubit has degree >= 3 and every row weight <= 16 in each half's parity matrix\n");
+            printf("            -cc-rules=excl,pack,orbf[,mrv] (default excl,pack,orbf; 'none' = plain CC)\n");
+            printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
+            printf("            -ub-basis  verified logical basis rows as initial upper bound (default off)\n");
+            printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..4)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -1679,9 +1822,23 @@ int main(int argc, char** argv) {
         return 0;
     }
 
+    std::string engine_why;   /* GH-124 */
+    const bool engine_auto = g_engine == ENGINE_AUTO;
+    if (engine_auto) {
+        if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
+            die("matrix column mismatch");
+        g_engine = cc_auto_select(Hx, Hz, Gx, Gz, engine_why) ? ENGINE_CC : ENGINE_MAXSAT;
+    }
+
     if (verb > 0) {
         printf("c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)\n");
-        if (backend == SOLVER_ROUNDINGSAT)
+        if (engine_auto)
+            printf("c engine: auto -> %s (%s)\n", g_engine == ENGINE_CC ? "cc" : "maxsat", engine_why.c_str());
+        if (g_engine == ENGINE_CC)
+            printf("c solver: CC connected-cluster level search (GH-124, experimental), rules %s, cc-seed %llu%s\n",
+                   distcc::rules_string(g_cc_opt.rules).c_str(), (unsigned long long)g_cc_opt.seed,
+                   g_cc_opt.mutant ? " [TEST MUTANT]" : "");
+        else if (backend == SOLVER_ROUNDINGSAT)
             printf("c solver: RoundingSat (%s)\n", roundingsat_bin);
         else
             printf("c solver: MaxCDCL, cardinality encoding: %s\n", cardinality_mode_label(card_mode));
