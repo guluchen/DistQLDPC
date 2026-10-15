@@ -1804,7 +1804,7 @@ int main(int argc, char** argv) {
             printf("            qubit has degree >= 3 and every row weight <= 16 in each half's parity matrix\n");
             printf("            -cc-rules=excl,pack,orbf[,mrv] (default excl,pack,orbf; 'none' = plain CC)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
-            printf("            -ub-basis  verified logical basis rows as initial upper bound (default off)\n");
+            printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
             printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..4)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");

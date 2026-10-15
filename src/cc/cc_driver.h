@@ -46,7 +46,7 @@ struct DriverInput {
 struct DriverOptions {
     Rules rules;             /* -cc-rules (default excl,pack,orbf) */
     bool dual;               /* -cc-dual=on|off (default on) */
-    bool ub_basis;           /* -ub-basis (default off): verified basis rows as initial upper bound */
+    bool ub_basis;           /* -ub-basis (default on; -ub-basis=off): verified basis rows as initial upper bound */
     uint64_t seed;           /* -cc-seed=N (default 0 = identity labels) */
     int mutant;              /* -cc-mutant=K (test only; 0 = none). Driver mutant 4: stop rule without the
                                 other half's lower bound, run under the sequential schedule (under lockstep
@@ -58,7 +58,7 @@ struct DriverOptions {
     bool sequential;         /* -cc-schedule=sequential (TEST ONLY; default lockstep): the first searchable
                                 half is raised to its own distance before the other half, so the stop rule's
                                 other-half check is load-bearing; mutant 4 forces it */
-    DriverOptions() : dual(true), ub_basis(false), seed(0), mutant(0), stats(false), verb(0), sequential(false) {}
+    DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false). */

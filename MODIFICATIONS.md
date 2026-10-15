@@ -32,6 +32,8 @@ New code, not derived from MaxCDCL.
 
 ### `src/cc/` (GH-124, experimental; new code, not derived from MaxCDCL or any third-party code)
 
+Optional engine, off by default (PI 2026-10-16): enable with `-engine=cc` (or `-engine=auto`); `-ub-basis` is on by default inside CC (`-ub-basis=off` disables it). Algorithm: Dumer-Kovalev-Pryadko connected clusters (IEEE TIT 2017); the skeleton was studied in Quantinuum's Qubitserf (MIT), no code copied. DistQLDPC additions and how to switch each one on or off are listed in README, "Connected-cluster (CC) engine".
+
 | File | Description |
 |------|-------------|
 | `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one). |
