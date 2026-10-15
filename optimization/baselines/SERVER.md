@@ -38,8 +38,8 @@ Binary: main 398054e (GH-107 adopted) built on yfclab2 (frozen/server-main398/di
 | 2 | LP_442_68_10 | no-card | 3 | 40.69 | 40.52 | 40.8 | yes |
 | 2 | TN_108_2_12 | card-mto | 3 | 30.16 | 30.01 | 30.28 | yes |
 | 2 | TN_108_2_12 | no-card | 3 | 25.1 | 25.08 | 25.16 | yes |
-| 3 | BB_144_14_14 | card-mto | 3 | 62.33 | 62.22 | 62.64 | yes |
-| 3 | BB_144_14_14 | no-card | 3 | 72.66 | 72.09 | 72.73 | yes |
+| 2 | BB_144_14_14 | card-mto | 3 | 62.33 | 62.22 | 62.64 | yes |
+| 2 | BB_144_14_14 | no-card | 3 | 72.66 | 72.09 | 72.73 | yes |
 | 3 | GB_144_12_12 | card-mto | 3 | 59.26 | 59.25 | 59.71 | yes |
 | 3 | GB_144_12_12 | no-card | 3 | 130.93 | 130.89 | 131.61 | yes |
 | 3 | LP_544_80_12 | card-mto | 3 | 335.48 | 335.21 | 612.01 | yes |
@@ -48,8 +48,8 @@ Binary: main 398054e (GH-107 adopted) built on yfclab2 (frozen/server-main398/di
 | 3 | TN_144_2_13 | no-card | 3 | 362.4 | 359.64 | 362.43 | yes |
 | 3 | TN_200_10_10 | card-mto | 3 | 20.55 | 20.37 | 21.81 | yes |
 | 3 | TN_200_10_10 | no-card | 3 | 129.44 | 128.44 | 132.5 | yes |
-| 4 | BB_288_12_18 | card-mto | 3 | 918.98 | 915.33 | 919.56 | yes |
-| 4 | BB_288_12_18 | no-card | 3 | 735.39 | 734.91 | 739.12 | yes |
+| 3 | BB_288_12_18 | card-mto | 3 | 918.98 | 915.33 | 919.56 | yes |
+| 3 | BB_288_12_18 | no-card | 3 | 735.39 | 734.91 | 739.12 | yes |
 | 4 | TN_250_10_15 | card-mto | 3 | 3090.89 | 3086.84 | 3099.3 | yes |
 | 4 | TN_250_10_15 | no-card | 3 | 1786.05 | 1785.97 | 1818.79 | yes |
 
@@ -114,4 +114,4 @@ Notes:
 - vs main a3fe591 server table (2026-10-12): dual-map codes faster (BB_288_12_18 0.46/0.43, BB_144_14_14 0.61/0.71, BB_144_12_12 0.62/0.49); non-dual codes 4-27% slower here, but neutral (+-3%) on the Mac with identical search, so this is load noise (the Tier 5 run shared the host). Use server times for tier placement, not for small ratios.
 - Tier 5: 7 of 52 cells solved within 6 h (LP_714_100_16 both modes, LP_1020_136_16 both, TN_216_4_18 both, TN_180_2_17 no-card).
 - The lb sequence 3/5/9/17 comes from the doubling phase of the interleaved bound search (caps 2,4,8,16,32): lb 17 means no logical of weight <= 16 exists and the solver is searching for any logical of weight <= 32.
-- Tier placement re-check with these times (slower mode median): BB_144_14_14 72.7 s -> tier2 rule; BB_288_12_18 919 s -> tier3 rule (PI placed BB_288 in tier4 on 2026-10-12; not moved, pending PI decision).
+- Tier placement re-check with these times (slower mode median): BB_144_14_14 72.7 s -> tier2 rule; BB_288_12_18 919 s -> tier3 rule (applied 2026-10-14, PI).
