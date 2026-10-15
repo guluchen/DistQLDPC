@@ -21,13 +21,15 @@
  *   and pi(witness) is verified in the Z half.
  * Every witness is verified before it is reported: H e = 0 for the half's parity checks and
  * e not in the row space of the same-type stabilizers (an independent GF(2) rank test, not the
- * detector rows). Always-on traps (error + RESULT -1, never a value): detector check failure at
- * start-up, a witness that fails verification, a nontrivial syndrome-free cluster below a level,
+ * detector rows). Always-on traps (error + RESULT -1 TRAP, never a value; the receiver withdraws the
+ * bounds already sent): detector check failure at start-up, a dual map that fails the driver's own
+ * check, a witness that fails verification, a nontrivial syndrome-free cluster below a level,
  * lb_h > ub_h for a half, LB > U.
  */
 #ifndef DISTQLDPC_CC_DRIVER_H
 #define DISTQLDPC_CC_DRIVER_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include <string>
 #include <vector>
@@ -61,17 +63,21 @@ struct DriverOptions {
     DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false) {}
 };
 
-/* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false). */
+/* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).
+ * trap (optional): called instead of result(-1, false) when the driver stops without an answer (a trap or
+ * an unusable input); it tells the receiver to withdraw every bound already sent ("RESULT -1 TRAP"). */
 struct BoundSink {
     void* ctx;
     void (*bound)(void* ctx, const char* kind, uint64_t v);
     void (*result)(void* ctx, int d, bool optimal);
+    void (*trap)(void* ctx);
+    BoundSink() : ctx(NULL), bound(NULL), result(NULL), trap(NULL) {}
 };
 
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
-/* "-cc-rules=" value: comma list of excl, pack, orbf, mrv (or "none"). */
+/* "-cc-rules=" value: comma list of excl, pack, orbf, mrv (or "none"); empty values and empty items are invalid. */
 bool parse_rules(const char* s, Rules& out);
 std::string rules_string(const Rules& r);
 

@@ -498,6 +498,30 @@ static bool build_stabilizer_instance(
     return true;
 }
 
+/* GH-124 (timing seeds): -seed=N. N = 0 (default) leaves every MaxCDCL solver at its built-in random_seed
+ * (91648253), so the search is main's, byte for byte. N > 0 sets random_seed of every fresh solver of the
+ * MaxSAT path to a value derived from N (splitmix64, in [1, 2^31 - 2], never the built-in value). In this
+ * build random_seed only drives the engine's 1% sampling of the lookahead threshold (Solver::lookahead;
+ * rnd-init and random decisions are off), so a seed perturbs the search order but never the encoding, the
+ * bounds or the answer. With the CC engine -seed=N is -cc-seed=N (relabeling). */
+static uint64_t g_seed = 0;
+
+static double maxsat_random_seed(uint64_t seed)
+{
+    uint64_t z = seed + 0x9e3779b97f4a7c15ULL;
+    z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9ULL;
+    z = (z ^ (z >> 27)) * 0x94d049bb133111ebULL;
+    z ^= z >> 31;
+    uint64_t v = 1 + z % 2147483646ULL;   /* drand() is a Lehmer generator mod 2^31 - 1: seed in [1, 2^31 - 2] */
+    if (v == 91648253ULL) v++;            /* never MaxCDCL's built-in default */
+    return (double)v;
+}
+
+static void apply_maxsat_seed(Solver& S)
+{
+    if (g_seed != 0) S.random_seed = maxsat_random_seed(g_seed);
+}
+
 static int min_distance_stabilizer_maxsat(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int cpu_lim, int verb, int bounds_pipe_w, int card_mode,
@@ -505,6 +529,7 @@ static int min_distance_stabilizer_maxsat(
 {
     (void)cpu_lim;
     SimpSolver S;
+    apply_maxsat_seed(S);
     std::vector<Var> aux;
     StabilizerInstance meta;
     if (!build_stabilizer_instance(S, aux, meta, Hx, Hz, Gx, Gz, verb, card_mode, bounds_pipe_w))
@@ -936,6 +961,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
                                int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value)
 {
     SimpSolver S;
+    apply_maxsat_seed(S);   /* GH-124: -seed=N (no-op for N = 0) */
     std::vector<Var> aux;
     int n = 0;
     if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, h.sb_orbit.empty() ? NULL : &h.sb_orbit)) { h.exists = false; return HALF_INFEASIBLE; }
@@ -1216,7 +1242,7 @@ static bool g_dualshare_stats = false;  /* GH-107: -dualshare-stats prints one w
  * -engine=maxsat (default) runs main's search above unchanged; -engine=cc runs the exact CC level search
  * of src/cc/cc_driver.h on the same CSS split (X half: Hz x = 0, Gx x != 0; Z half: Hx z = 0, Gz z != 0;
  * d = min(dX, dZ)) and reports through the same pipe protocol (TRY / LB / UB / RESULT); -engine=auto routes
- * to cc when every qubit has degree >= 3 in each half's parity matrix and every row weight is <= 16.
+ * to cc unless a half's parity matrix is dense (cc_auto_select).
  * Symmetry input is DistQLDPC's own verified machinery: GH-85 per-half orbits (find_half_symmetry) as CC
  * seeds (orbf; -no-symbreak gives index seeds) and the GH-87/GH-107 verified XZ-dual map (find_dual_maps;
  * -cc-dual=on searches the X half only; -dualmode=off also disables it). */
@@ -1236,6 +1262,10 @@ static distcc::SparseRows cc_rows(const Matrix& M) {
 
 static void cc_sink_bound(void* ctx, const char* kind, uint64_t v) { pipe_bound(*(int*)ctx, kind, v); }
 static void cc_sink_result(void* ctx, int d, bool optimal) { pipe_write_result(*(int*)ctx, d, optimal); }
+static void cc_sink_trap(void* ctx) {   /* withdraws the bounds already sent (parent: BoundsBook::trapped) */
+    const int pw = *(int*)ctx;
+    if (pw >= 0) (void)write(pw, "RESULT -1 TRAP\n", 15);
+}
 
 static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
                                int verb, int pipe_w, const distcc::DriverOptions& opt_in, bool symbreak, bool dual_allowed)
@@ -1278,37 +1308,50 @@ static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix&
     sink.ctx = &pw;
     sink.bound = cc_sink_bound;
     sink.result = cc_sink_result;
+    sink.trap = cc_sink_trap;
     return distcc::min_distance_cc(in, opt, sink);
 }
 
-/* -engine=auto (GH-124 S0 structural selector, not the default): cc iff, in the parity matrix of every half
- * that has logicals, every qubit lies in >= 3 rows and every row has weight <= 16. */
+/* -engine=auto (GH-124 pre-S1 structural selector, not the default). CC unless the code is clearly dense:
+ * MaxSAT iff, in the parity matrix H of some half that has logicals (X half: Hz, Z half: Hx),
+ *   (a) some row has weight > CC_AUTO_MAX_ROW_WEIGHT (32), or
+ *   (b) n >= 64 and the mean row weight exceeds n / 4 (relative row density > 25%).
+ * Basis (optimization/experiments/GH-124/S0_REPORT.md section 5.5 and PRE_S1_NOTES.md): CC was never slower than
+ * MaxSAT on toric and planar surface codes L = 6..32 (qubit degree 1-2, row weight <= 4), and on the 49
+ * bundled codes (row weight 6..16, density <= 12.5% at n >= 64) it is at the process floor (tier0) or
+ * 14x to > 1000x faster (tier1-5), so qubit degree is not a criterion. CC branches over the candidates of one odd row, so its per-level branching grows
+ * with the row weight; dense codes were not calibrated, and they go to main's MaxSAT search. Both limits
+ * leave a 2x margin over every calibrated code (max row weight 16, max density 12.5% at n >= 64). */
+static const int CC_AUTO_MAX_ROW_WEIGHT = 32;
+
 static bool cc_auto_select(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, std::string& why)
 {
-    char buf[160];
+    char buf[200];
+    std::string stats;
+    bool cc = true;
     for (int k = 0; k < 2; k++) {
         const Matrix& H = k == 0 ? Hz : Hx;
         if ((k == 0 ? Gx : Gz).rows == 0) continue;
-        int mindeg = INT_MAX, maxrow = 0;
-        for (int c = 0; c < H.cols; c++) {
-            int deg = 0;
-            for (int r = 0; r < H.rows; r++) deg += getm(H, r, c);
-            if (deg < mindeg) mindeg = deg;
-        }
+        long total = 0;
+        int maxrow = 0;
         for (int r = 0; r < H.rows; r++) {
             int wt = 0;
             for (int c = 0; c < H.cols; c++) wt += getm(H, r, c);
+            total += wt;
             if (wt > maxrow) maxrow = wt;
         }
-        if (mindeg < 3 || maxrow > 16) {
-            snprintf(buf, sizeof(buf), "%s half (%s): min qubit degree %d, max row weight %d", k == 0 ? "X" : "Z",
-                     k == 0 ? "Hz" : "Hx", mindeg, maxrow);
-            why = buf;
-            return false;
-        }
+        const double mean = H.rows > 0 ? (double)total / H.rows : 0.0;
+        const bool heavy = maxrow > CC_AUTO_MAX_ROW_WEIGHT;
+        const bool dense = H.cols >= 64 && mean * 4.0 > (double)H.cols;
+        snprintf(buf, sizeof(buf), "%s%s half (%s): max row weight %d, mean %.2f, n %d%s%s", stats.empty() ? "" : "; ",
+                 k == 0 ? "X" : "Z", k == 0 ? "Hz" : "Hx", maxrow, mean, H.cols,
+                 heavy ? " [row weight > 32]" : "", dense ? " [mean row weight > n/4]" : "");
+        stats += buf;
+        if (heavy || dense) cc = false;
     }
-    why = "every qubit degree >= 3 and every row weight <= 16";
-    return true;
+    why = stats.empty() ? std::string("no half with logicals") : stats;
+    why += cc ? ": sparse (max row weight <= 32, mean row weight <= n/4 or n < 64)" : ": dense";
+    return cc;
 }
 
 /* GH-124: strict non-negative decimal integer (no sign, no trailing characters, no overflow). */
@@ -1429,10 +1472,11 @@ struct BoundsBook {
     int distance;
     bool optimal;
     bool finished;
+    bool trapped;   /* GH-124: "RESULT -1 TRAP" (CC trap or other no-answer stop): earlier bounds withdrawn */
 
     BoundsBook()
         : has_lb(false), has_ub(false), lb(0), ub(0),
-          distance(-1), optimal(false), finished(false) {}
+          distance(-1), optimal(false), finished(false), trapped(false) {}
 };
 
 struct ProgressState {
@@ -1492,6 +1536,11 @@ static void apply_pipe_line(BoundsBook& b, const char* line, ProgressState* prog
         b.distance = -1;
         b.optimal = false;
         b.finished = true;
+        if (strcmp(line, "RESULT -1 TRAP") == 0) {   /* GH-124: only the CC engine sends this */
+            b.trapped = true;
+            b.has_lb = false;
+            b.has_ub = false;
+        }
     }
 }
 
@@ -1687,6 +1736,7 @@ int main(int argc, char** argv) {
     bool native_parity_opb = false;
     bool symbreak_report = false;  /* GH-85 */
     bool dualskip_report = false;  /* GH-87 */
+    bool seed_given = false, cc_seed_given = false;   /* GH-124: -seed=N, -cc-seed=N */
 
     for (int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "-cpu-lim=", 9))
@@ -1759,10 +1809,16 @@ int main(int argc, char** argv) {
             g_cc_opt.ub_basis = false;
         else if (!strncmp(argv[i], "-ub-basis=", 10))
             die("invalid -ub-basis (on | off)");
-        else if (!strncmp(argv[i], "-cc-seed=", 9)) {
+        else if (!strncmp(argv[i], "-seed=", 6)) {   /* GH-124: timing seed for either engine */
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 6, &v)) die("invalid -seed (non-negative integer)");
+            g_seed = (uint64_t)v;
+            seed_given = true;
+        } else if (!strncmp(argv[i], "-cc-seed=", 9)) {
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 9, &v)) die("invalid -cc-seed (non-negative integer)");
             g_cc_opt.seed = (uint64_t)v;
+            cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 11, &v) || v > 4) die("invalid -cc-mutant (0..4, test only)");
@@ -1800,12 +1856,14 @@ int main(int argc, char** argv) {
             printf("            -dualmode=off (alias -no-dualskip) ignores dual maps; -dualshare-stats prints\n");
             printf("            work counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
-            printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc iff every\n");
-            printf("            qubit has degree >= 3 and every row weight <= 16 in each half's parity matrix\n");
+            printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
+            printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
             printf("            -cc-rules=excl,pack,orbf[,mrv] (default excl,pack,orbf; 'none' = plain CC)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
+            printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
+            printf("            path; with the CC engine the same as -cc-seed=N\n");
             printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..4)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
@@ -1841,7 +1899,12 @@ int main(int argc, char** argv) {
                   ename + " (use -engine=maxsat)";
         else if (g_engine == ENGINE_CC && !fam[ENGFLAG_MAXSAT_TUNE].empty())
             msg = fam[ENGFLAG_MAXSAT_TUNE] + ": MaxSAT option(s) have no effect with -engine=cc (use -engine=maxsat or -engine=auto)";
+        if (msg.empty() && seed_given && backend == SOLVER_ROUNDINGSAT)
+            msg = "-seed: no effect with -roundingsat (it seeds MaxCDCL or the CC engine)";
+        if (msg.empty() && seed_given && cc_seed_given && g_seed != g_cc_opt.seed)
+            msg = "-seed and -cc-seed give different seeds (-cc-seed is an alias of -seed for the CC engine)";
         if (!msg.empty()) die(msg.c_str());
+        if (seed_given) g_cc_opt.seed = g_seed;   /* one flag seeds both engines (-cc-seed: CC only) */
         auto_ignored_by_cc = fam[ENGFLAG_MAXSAT_TUNE];
         auto_ignored_by_maxsat = fam[ENGFLAG_CC];
     }
@@ -1915,7 +1978,10 @@ int main(int argc, char** argv) {
     }
 
     if (verb > 0) {
-        printf("c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)\n");
+        if (g_engine == ENGINE_CC)   /* GH-124; the MaxSAT banner below is main's */
+            printf("c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)\n");
+        else
+            printf("c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)\n");
         if (engine_auto)
             printf("c engine: auto -> %s (%s)\n", g_engine == ENGINE_CC ? "cc" : "maxsat", engine_why.c_str());
         if (g_engine == ENGINE_CC)
@@ -1924,6 +1990,9 @@ int main(int argc, char** argv) {
                    g_cc_opt.mutant ? " [TEST MUTANT]" : "");
         else if (backend == SOLVER_ROUNDINGSAT)
             printf("c solver: RoundingSat (%s)\n", roundingsat_bin);
+        else if (g_seed != 0)   /* GH-124 -seed=N; without it (or with N = 0) the line is main's */
+            printf("c solver: MaxCDCL, cardinality encoding: %s, seed %llu (rnd-seed %.0f)\n", cardinality_mode_label(card_mode),
+                   (unsigned long long)g_seed, maxsat_random_seed(g_seed));
         else
             printf("c solver: MaxCDCL, cardinality encoding: %s\n", cardinality_mode_label(card_mode));
         if (dump_wcnf_path)
@@ -1954,6 +2023,8 @@ int main(int argc, char** argv) {
     }
     if (timed_out)
         printf("c status: TIMEOUT (child killed after -cpu-lim)\n");
+    else if (book.trapped)   /* GH-124 */
+        printf("c status: UNKNOWN (CC engine stopped without an answer: earlier d_lb/d_ub lines withdrawn)\n");
     else
         printf("c status: UNKNOWN\n");
     printf("c d  : UNKNOWN\n");

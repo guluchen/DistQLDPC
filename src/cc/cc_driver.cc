@@ -158,6 +158,30 @@ bool verify_in_half(const Half& h, const std::vector<int>& e, int n, std::string
     return true;
 }
 
+/* Driver-side check of the XZ-dual map pi (X-half qubit i -> Z-half qubit pi[i]), independent of the caller's
+ * detection: pi(rs Hz) is contained in rs Hx, pi(rs Hx) in rs Hz, and rank Hz = rank Hx. A permutation preserves
+ * orthogonality, so then pi(ker Hz) = (pi rs Hz)^perp = (rs Hx)^perp = ker Hx and pi(rs Hx) = rs Hz: pi maps
+ * F_X = ker Hz \ rs Hx onto F_Z = ker Hx \ rs Hz and preserves weight, so dX = dZ. Needs detector_check first
+ * (hbits and sbasis: X half H = Hz, S = Hx; Z half H = Hx, S = Hz). */
+bool dual_map_check(const Half hs[2], const std::vector<int>& perm, int n, std::string& why) {
+    if (hs[0].rankS != hs[1].rankS) { why = "rank Hx != rank Hz"; return false; }
+    for (int k = 0; k < 2; k++) {   /* k = 0: pi(rows of Hz) in rs Hx; k = 1: pi(rows of Hx) in rs Hz */
+        for (size_t r = 0; r < hs[k].hbits.size(); r++) {
+            const Bits& v = hs[k].hbits[r];
+            Bits img(v.size(), 0);
+            for (int q = 0; q < n; q++)
+                if ((v[(size_t)q >> 6] >> (q & 63)) & 1) img[(size_t)perm[q] >> 6] ^= 1ULL << (perm[q] & 63);
+            if (!hs[k].sbasis->reduce(img)) {
+                char buf[96];
+                snprintf(buf, sizeof(buf), "image of %s row %zu is not in rs %s", k == 0 ? "Hz" : "Hx", r, k == 0 ? "Hx" : "Hz");
+                why = buf;
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 std::string support_string(const std::vector<int>& e) {
     std::string s;
     char buf[16];
@@ -202,7 +226,7 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "pack") r.pack = true;
         else if (tok == "orbf") r.orbf = true;
         else if (tok == "mrv") r.mrv = true;
-        else if (tok == "none" || tok.empty()) { /* nothing */ }
+        else if (tok == "none") { /* nothing */ }
         else return false;
         pos = e + 1;
     }
@@ -229,7 +253,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (verb > 0) printf("c cc: TRAP: %s: no answer\n", msg.c_str());
         fflush(stdout);
         if (trace) { fprintf(trace, "# TRAP %s\n", msg.c_str()); fclose(trace); trace = NULL; }
-        sink.result(sink.ctx, -1, false);
+        if (sink.trap) sink.trap(sink.ctx);   /* withdraw the bounds already sent */
+        else sink.result(sink.ctx, -1, false);
         return -1;
     };
     if (n <= 0 || in.Hz.cols != n || in.Gx.cols != n || in.Gz.cols != n) return fail("matrix column mismatch");
@@ -260,6 +285,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             if (j < 0 || j >= n || hit[j]) return fail("dual map is not a permutation");
             hit[j] = 1;
         }
+        std::string why;
+        if (!dual_map_check(hs, in.dual_perm, n, why)) return fail("dual map failed the driver's check: " + why);
         dual = true;
     }
     hs[0].searched = hs[0].exists;
@@ -267,7 +294,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
     for (int k = 0; k < 2; k++) hs[k].lb = hs[k].exists ? 1 : INF;
     if (verb > 0) {
         printf("c cc: rules %s, cc-seed %llu, dual %s, ub-basis %s%s\n", rules_string(opt.rules).c_str(),
-               (unsigned long long)opt.seed, opt.dual ? "on" : "off", opt.ub_basis ? "on" : "off",
+               (unsigned long long)opt.seed,
+               dual ? "on (verified map in use)" : opt.dual ? "on (no verified map: both halves)" : "off",
+               opt.ub_basis ? "on" : "off",
                sequential ? ", schedule sequential (test)" : "");
         if (dual)
             printf("c cc: dual map '%s' verified: dX = dZ, searching the X half only (Z bounds mirrored)\n",

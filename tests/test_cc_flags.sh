@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
-# GH-124 S0 (fix round 1): command-line checks of the engine flags of bin/distqldpc.
+# GH-124 S0 (fix round 1, pre-S1): command-line checks of the engine flags of bin/distqldpc.
 #   - conflicting engine flag combinations are rejected (exit 1, "error:" on stderr, no answer line);
-#   - invalid values of the CC flags are rejected;
-#   - valid combinations still answer, and -engine=auto warns on stderr about flags its choice ignores.
-# Runs one solver process at a time on two tier0 codes (TN_36_8_3: auto -> maxsat; LP_34_20_2: auto -> cc),
-# each with -cpu-lim=20 (a few MB of memory). Usage: tests/test_cc_flags.sh [BINARY]
+#   - invalid values of the CC flags and of -seed are rejected;
+#   - valid combinations still answer, and -engine=auto warns on stderr about flags its choice ignores;
+#   - -engine=auto picks cc on sparse codes and maxsat on dense ones (decision printed with -v).
+# Runs one solver process at a time on two tier0 codes (TN_36_8_3, LP_34_20_2; auto -> cc) and three generated
+# d = 2 codes (Hx = Hz = one all-ones row per block): D1 one block of 34 (row weight 34 > 32: auto -> maxsat),
+# D2 two blocks of 32 (n = 64, mean row weight 32 > n/4: auto -> maxsat), S4 four blocks of 32 (n = 128, mean
+# row weight 32 = n/4: auto -> cc), each with -cpu-lim=20 (a few MB of memory). Usage: tests/test_cc_flags.sh [BINARY]
 set -u
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -54,8 +57,40 @@ accept() {   # accept D WARN_PATTERN ARGS...: exit 0 with 'o D'; WARN_PATTERN ''
     fi
 }
 
-M=TN_36_8_3    # auto -> maxsat (qubit degree 2)
+vgrep() {   # vgrep D PATTERN ARGS...: exit 0 with 'o D' and a stdout line matching PATTERN
+    local d="$1" pat="$2"; shift 2
+    runs=$((runs + 1))
+    run "$@"
+    if [[ $rc -ne 0 ]] || ! grep -qx "o $d" <<<"$out" || ! grep -q "$pat" <<<"$out"; then
+        echo "FAIL (expected o $d and /$pat/): $* -> rc=$rc stdout tail: $(tail -1 <<<"$out") stderr: $err" >&2
+        fails=$((fails + 1))
+    fi
+}
+
+gen_blocks() {   # gen_blocks PREFIX SIZE...: Hx = Hz = one all-ones row per block, Gx = Gz = e_s + e_{s+i}, d = 2
+    local prefix="$1"; shift
+    awk -v sizes="$*" -v prefix="$prefix" 'BEGIN {
+        nb = split(sizes, b, " "); n = 0
+        for (i = 1; i <= nb; i++) { st[i] = n; n += b[i] }
+        hx = prefix "_Hx.txt"; hz = prefix "_Hz.txt"; gx = prefix "_Gx.txt"; gz = prefix "_Gz.txt"
+        for (i = 1; i <= nb; i++) {
+            line = ""
+            for (q = 0; q < n; q++) line = line (q ? " " : "") ((q >= st[i] && q < st[i] + b[i]) ? 1 : 0)
+            print line > hx; print line > hz
+            for (j = 1; j <= b[i] - 2; j++) {
+                line = ""
+                for (q = 0; q < n; q++) line = line (q ? " " : "") ((q == st[i] || q == st[i] + j) ? 1 : 0)
+                print line > gx; print line > gz
+            }
+        }
+    }'
+}
+
+M=TN_36_8_3    # auto -> cc (pre-S1 rule; the S0 rule sent it to maxsat for its degree-2 qubits)
 C=LP_34_20_2   # auto -> cc
+D1="$tmp/D1_34_32_2"; gen_blocks "$D1" 34              # auto -> maxsat (row weight 34 > 32)
+D2="$tmp/D2_64_60_2"; gen_blocks "$D2" 32 32           # auto -> maxsat (n 64, mean row weight 32 > 16)
+S4="$tmp/S4_128_120_2"; gen_blocks "$S4" 32 32 32 32   # auto -> cc (n 128, mean row weight 32 = n/4)
 L=-cpu-lim=20
 
 # 1. MaxSAT formulation / backend / dump flags with -engine=cc or -engine=auto
@@ -84,9 +119,18 @@ reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L 
 
 # 4. invalid values
 for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=5 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
-         -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-dual=maybe -cc-unknown -engine=fast; do
+         -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
+         -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
+for f in -seed=abc -seed=-1 -seed= -seed=1x; do
+    reject "invalid" "$f" $L $M
+done
+
+# 4b. -seed conflicts: different -seed / -cc-seed values; -seed with -roundingsat
+reject "different seeds" -engine=cc -seed=1 -cc-seed=2 $L $C
+reject "different seeds" -engine=auto -cc-seed=3 -seed=0 $L $C
+reject "no effect with -roundingsat" -seed=1 -roundingsat $L $M
 
 # 5. valid combinations still answer
 accept 3 "" $L $M                                         # default engine (main's path)
@@ -99,9 +143,44 @@ accept 2 "" -engine=cc -cc-mutant=0 -cc-schedule=lockstep -ub-basis=off "-cc-tra
 accept 2 "" -engine=auto $L $C
 accept 3 "" -engine=auto $L $M
 accept 2 "" -engine=auto -cc-rules=mrv -ub-basis $L $C           # auto -> cc: CC flags apply
-accept 3 "" -engine=auto -card-mto $L $M                         # auto -> maxsat: tuning flag applies
+accept 2 "" -engine=auto -card-mto $L $D1                        # auto -> maxsat: tuning flag applies
 accept 2 "selected cc .*ignoring -card-mto -dualshare-stats" -engine=auto -card-mto -dualshare-stats $L $C
-accept 3 "selected maxsat .*ignoring -cc-rules=mrv -ub-basis" -engine=auto -cc-rules=mrv -ub-basis $L $M
+accept 2 "selected maxsat .*ignoring -cc-rules=mrv -ub-basis" -engine=auto -cc-rules=mrv -ub-basis $L $D2
+accept 2 "" -engine=cc $L $D1                                    # dense codes still answer when forced
+accept 2 "" -engine=maxsat $L $S4
+
+# 6. -seed: one flag for both engines (-cc-seed = alias for CC)
+accept 3 "" -seed=0 $L $M
+accept 3 "" -seed=3 $L $M
+accept 3 "" -engine=maxsat -seed=2 -card-mto $L $M
+accept 3 "" -joint -seed=1 $L $M
+accept 2 "" -engine=cc -seed=2 $L $C
+accept 2 "" -engine=cc -seed=2 -cc-seed=2 $L $C
+accept 2 "" -engine=auto -seed=4 $L $C
+accept 2 "" -engine=auto -seed=4 $L $D1
+vgrep 3 "^c solver: MaxCDCL, cardinality encoding: .*, seed 3 (rnd-seed [0-9]*)$" -v -seed=3 $L $M
+vgrep 3 "^c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)$" -v -seed=0 $L $M   # main's line
+vgrep 2 "^c solver: CC .*cc-seed 5" -v -engine=cc -seed=5 $L $C
+
+# 7. -engine=auto decision (printed with -v) and the CC banner
+vgrep 2 "^c engine: auto -> maxsat (.*row weight > 32.*: dense)$" -v -engine=auto $L $D1
+vgrep 2 "^c engine: auto -> maxsat (.*mean row weight > n/4.*: dense)$" -v -engine=auto $L $D2
+vgrep 2 "^c engine: auto -> cc (.*: sparse " -v -engine=auto $L $S4
+vgrep 3 "^c engine: auto -> cc (.*: sparse " -v -engine=auto $L $M
+vgrep 2 "^c DistQLDPC .*(connected-cluster level search)$" -v -engine=cc $L $C
+vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
+vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
+vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
+
+# 8. a CC trap withdraws the bounds already sent (test mutant 2 traps on LP_136_32_4 after emitting d_lb lines)
+runs=$((runs + 1))
+run -engine=cc -cc-mutant=2 $L LP_136_32_4
+if [[ $rc -ne 1 ]] || ! grep -q "^c d_lb: [0-9]" <<<"$out" || [[ "$(grep '^c d_lb:' <<<"$out" | tail -1)" != "c d_lb: -" ]] \
+    || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: -" ]] || ! grep -q "^c status: UNKNOWN (CC engine stopped without an answer" <<<"$out" \
+    || ! grep -qx "s UNKNOWN" <<<"$out"; then
+    echo "FAIL (expected withdrawn bounds after a CC trap): rc=$rc stdout: $out" >&2
+    fails=$((fails + 1))
+fi
 
 echo "test_cc_flags: $runs checks, $fails failed"
 [[ $fails -eq 0 ]] && echo "CC_FLAG_TESTS PASS" || echo "CC_FLAG_TESTS FAIL"

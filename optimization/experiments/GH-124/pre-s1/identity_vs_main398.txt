@@ -1,0 +1,31 @@
+# GH-124 pre-S1 identity check: candidate bin/distqldpc (sha256 64aad1aa2b6319b145b0bd8db7326a66cdba51a6f7566f63795da5a8cea4d635) vs frozen main 398054e (sha256 2c9e33b443f724ed6fc7902eda8cc41a4687c9c66c52d2a7d66f890d1df584d3), Mac, 4 parallel, -cpu-lim=300
+# columns: code mode | -v default | -v -seed=0 | -v -engine=maxsat | quiet default | sha256[:16] of main -v log (raw stdout+stderr byte comparison)
+BB_108_8_10 -card-mto | identical | identical | identical | identical | 1748bb2c2a8a0b5e
+BB_108_8_10 -no-card | identical | identical | identical | identical | 07bc7f63e2e07316
+BB_144_12_12 -card-mto | identical | identical | identical | identical | 6ce82bf9d05408ee
+BB_144_12_12 -no-card | identical | identical | identical | identical | c471e301e2638932
+BB_72_12_6 -card-mto | identical | identical | identical | identical | 33875c898eacf2ca
+BB_72_12_6 -no-card | identical | identical | identical | identical | 67d2fa9c419b8f50
+BB_90_8_10 -card-mto | identical | identical | identical | identical | a780bec914add70b
+BB_90_8_10 -no-card | identical | identical | identical | identical | 2432acdd5c6e49f2
+GB_144_12_8 -card-mto | identical | identical | identical | identical | 94dfe0c1010886ce
+GB_144_12_8 -no-card | identical | identical | identical | identical | a92d77b25edc8c91
+LP_136_32_4 -card-mto | identical | identical | identical | identical | b82ebb248f31b388
+LP_136_32_4 -no-card | identical | identical | identical | identical | b50d6ff18aaf9677
+LP_238_44_6 -card-mto | identical | identical | identical | identical | 3f56b820c93c18ef
+LP_238_44_6 -no-card | identical | identical | identical | identical | 7f11580649d3b826
+LP_340_56_8 -card-mto | identical | identical | identical | identical | 8494c40a6eb09dad
+LP_340_56_8 -no-card | identical | identical | identical | identical | 053240cb56634a8e
+LP_34_20_2 -card-mto | identical | identical | identical | identical | 83b2b3915cb275c9
+LP_34_20_2 -no-card | identical | identical | identical | identical | 3534cd88d4a31646
+TN_36_8_3 -card-mto | identical | identical | identical | identical | 4e5b6a799d1fe722
+TN_36_8_3 -no-card | identical | identical | identical | identical | f831baf393c3d0e0
+TN_36_8_4 -card-mto | identical | identical | identical | identical | 41f8f9e2ebb6ada7
+TN_36_8_4 -no-card | identical | identical | identical | identical | 8e522d709ac530c8
+TN_54_11_4 -card-mto | identical | identical | identical | identical | 9fcf1dfdc5085948
+TN_54_11_4 -no-card | identical | identical | identical | identical | f68dd290725e09de
+TN_72_14_4 -card-mto | identical | identical | identical | identical | 87e50ca034660aaf
+TN_72_14_4 -no-card | identical | identical | identical | identical | 5a7760645f967caa
+TN_72_8_8 -card-mto | identical | identical | identical | identical | 33b0e6ecd748935e
+TN_72_8_8 -no-card | identical | identical | identical | identical | f392cb473822a7b3
+# 28 cells x 4 comparisons = 112, 0 different (first pass; an earlier pre-commit build of the same source also gave 84/84 identical -v comparisons)

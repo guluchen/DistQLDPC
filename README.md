@@ -150,11 +150,12 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-dualskip-report` | Print the verified XZ-dual maps, then exit |
 | `-engine=maxsat` | **(experimental flag, GH-124)** The MaxSAT search described above (default; identical to the behaviour without the flag) |
 | `-engine=cc` | **(experimental, GH-124)** Exact connected-cluster (CC) level search per CSS half instead of MaxSAT (see below) |
-| `-engine=auto` | **(experimental, GH-124)** `cc` when every qubit has degree >= 3 and every row weight is <= 16 in each half's parity matrix, else `maxsat` (not the default) |
+| `-engine=auto` | **(experimental, GH-124)** `cc` unless a half's parity matrix is dense (some row weight > 32, or mean row weight > n/4 with n >= 64), then `maxsat`; every bundled code goes to `cc`; `-v` prints the decision (not the default) |
+| `-seed=N` | **(timing seeds)** Default 0 = the unchanged search. With MaxSAT, N > 0 sets MaxCDCL's random seed (it only drives the engine's 1% sampling of the lookahead threshold, so the search order changes but never the answer or the bounds' validity); with the CC engine it is `-cc-seed=N`. Used for seed-median timing |
 | `-cc-rules=excl,pack,orbf[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf`; `none` = plain CC): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, fewest-candidate branching |
 | `-cc-dual=on\|off` | **(experimental)** With a verified XZ-dual map, CC searches only the X half (default `on`; `-dualmode=off` also disables it) |
 | `-ub-basis[=on\|off]` | **(experimental, CC only)** Emit the minimum weight of the verified logical basis rows as an initial upper bound (default on; `-ub-basis=off` disables it) |
-| `-cc-seed=N` | **(experimental, testing)** Deterministic relabeling of qubits and rows for CC (default 0 = identity), for seed-median timing |
+| `-cc-seed=N` | **(experimental, testing)** Deterministic relabeling of qubits and rows for CC (default 0 = identity), for seed-median timing; alias of `-seed=N` for the CC engine (both given with different values is an error) |
 | `-cc-trace=FILE` | **(experimental)** One line per finished (half, level): half, level, `EMPTY`/`FOUND`, nodes, seconds, witness support |
 | `-cc-stats` | **(experimental)** Per-level CC node counts (printed also without `-v`) |
 | `-cc-mutant=K` | **(test only)** Deliberately broken CC variants for mutation tests, each able to give a wrong answer; never use for results. 1 = sibling-exclusion set not restored on backtrack; 2 = packing prune uses `>=`; 3 = orbit seed rule off by one (the seed's own orbit is forbidden during its search); 4 = stop rule without the other half's lower bound (runs the sequential schedule) |
@@ -173,7 +174,8 @@ to the behaviour before GH-124.
 | What | On | Off |
 |------|----|-----|
 | Use the CC engine | `-engine=cc` | no flag, or `-engine=maxsat` (default) |
-| Let DistQLDPC choose per code | `-engine=auto` (CC when every qubit has degree >= 3 and every row weight is <= 16 in both halves' parity matrices, else MaxSAT) | `-engine=maxsat` |
+| Let DistQLDPC choose per code | `-engine=auto` (CC unless the code is dense, see below; `-v` prints `c engine: auto -> cc\|maxsat (...)`) | `-engine=maxsat` |
+| Seed for timing panels (both engines) | `-seed=N` (N > 0; CC: same as `-cc-seed=N`) | no flag or `-seed=0` (main's search) |
 | Pruning rules (CC only) | `-cc-rules=excl,pack,orbf` (default), add `mrv` for fewest-candidate branching | `-cc-rules=none` (plain CC), or list only the rules you want, e.g. `-cc-rules=excl,pack` |
 | Orbit seeds (CC only) | default (rule `orbf`) | drop `orbf` from `-cc-rules`, or `-no-symbreak` (index seeds) |
 | Single-half search under a verified XZ-dual map (CC only) | `-cc-dual=on` (default) | `-cc-dual=off` or `-dualmode=off` |
@@ -198,6 +200,21 @@ Conflicting flags are rejected with an error (exit 1): the `-cc-*` and `-ub-basi
 With `-engine=auto` the cardinality flags and `-dualshare-stats` apply when it selects `maxsat`, the CC flags
 when it selects `cc`, and a warning on stderr names the flags that its choice ignores. `make test-cc` runs the
 brute-force engine tests and `make test-cc-flags` the command-line flag checks.
+
+**`-engine=auto`.** It picks CC unless, in the parity matrix of a half that has logicals (X half: `Hz`, Z half:
+`Hx`), some row has weight > 32, or n >= 64 and the mean row weight exceeds n/4; such clearly dense codes go to
+MaxSAT. Basis (`optimization/experiments/GH-124/S0_REPORT.md` §5.5, `PRE_S1_NOTES.md`): CC was never slower than
+MaxSAT on toric and planar surface codes with L = 6..32 (qubit degree 1-2), so qubit degree is not a criterion,
+and it is faster or at the process floor on all 49 bundled codes (row weight 6..16, mean row density <= 12.5% at
+n >= 64), which all go to CC. CC branches over the qubits of one odd row, so its cost grows with the row weight;
+dense codes were not calibrated, and both limits keep a 2x margin over every calibrated code.
+
+**Inputs and failures.** CC needs a complete logical basis in each half (rank `[H; G]` + rank of the same-type
+stabilizers = n, i.e. `Gx`/`Gz` span the logicals modulo the stabilizers, as all bundled data does); on an
+incomplete basis it refuses to answer (`s UNKNOWN`), where MaxSAT answers relative to the given `G`. When CC
+stops without an answer (a consistency trap or an unusable input), the final summary withdraws every bound it
+had sent (`c d_lb: -`, `c d_ub: -`, `c status: UNKNOWN (CC engine stopped without an answer: ...)`); live
+`c d_lb:` lines printed earlier do not count.
 
 **What CC borrows, and from where**
 
@@ -242,7 +259,7 @@ LP_1768_224_22); see `optimization/experiments/GH-124/`.
 | `c d_lb: N` | proven lower bound on `d` |
 | `c d_ub: N` | best upper bound found so far |
 | `c d  : N` | final distance (when optimal) |
-| `o N` | result line for scripts (`N` = distance or `-1` on failure) |
+| `o N` | result line for scripts (`N` = distance); without an answer (timeout or failure) `c d  : UNKNOWN` and `s UNKNOWN` are printed instead |
 
 Use `-v` or `-debug` for matrix paths, dimensions, and internal solver log.
 
