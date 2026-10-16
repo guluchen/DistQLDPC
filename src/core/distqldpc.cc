@@ -31,6 +31,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <vector>
+#include <algorithm>   /* GH-127: std::stable_sort */
 #include <string>
 #include <sys/wait.h>
 #include <sys/time.h>
@@ -881,7 +882,8 @@ static bool add_half_orbit_clauses(SimpSolver& S, std::vector<Var>& aux, int n, 
 /* Returns false when this half has no nontrivial logical (instance UNSAT). */
 static bool build_css_half(SimpSolver& S, std::vector<Var>& aux, int& n_out,
                            const Matrix& Hpar, const Matrix& Glog, int verb, int card_mode,
-                           const std::vector<int>* sb_orbit)
+                           const std::vector<int>* sb_orbit,
+                           int force_one = -1, const std::vector<int>* force_zero = NULL)   /* GH-127 split */
 {
     const int n = Hpar.cols;
     n_out = n;
@@ -934,6 +936,14 @@ static bool build_css_half(SimpSolver& S, std::vector<Var>& aux, int& n_out,
     }
     if (ok && sb_orbit && (int)sb_orbit->size() == n)   /* GH-85 */
         ok = add_half_orbit_clauses(S, aux, n, *sb_orbit);
+    if (ok && force_one >= 0) {   /* GH-127 orbit-seed subproblem: x_{r_i} = 1, x_q = 0 on earlier orbits */
+        std::vector<Lit> c; c.push_back(mkLit(force_one));
+        ok = add_clause_soft_fail(S, c, S.hardWeight);
+        for (size_t t = 0; ok && force_zero && t < force_zero->size(); t++) {
+            std::vector<Lit> z; z.push_back(~mkLit((*force_zero)[t]));
+            ok = add_clause_soft_fail(S, z, S.hardWeight);
+        }
+    }
     if (!ok) return false;
     S.parsing = false;
     S.setFrozenVars();
@@ -953,22 +963,34 @@ struct CssHalf {
     uint64_t probes;      /* oracle calls (fresh solvers) on this half */
     uint64_t conflicts;   /* engine conflicts spent in those calls */
     uint64_t own_lb;      /* lb this half would hold without dual-map sharing (skip accounting only) */
+    /* GH-127 orbit-seed split (empty split_reps: main's path). Subproblem i (i = 0..k-1, in split order) forces
+     * x_{split_reps[i]} = 1 and x_q = 0 for q in split_zero[i] (the members of the orbits before i). */
+    std::vector<int> split_reps;
+    std::vector<std::vector<int> > split_zero;
+    std::vector<int> split_size;      /* orbit size of subproblem i (log only) */
+    std::vector<uint64_t> split_lb;   /* proven: subproblem i has no solution of weight < split_lb[i] */
+    uint64_t subprobes, subskips;     /* solver calls on subproblems / subproblems skipped by split_lb */
 };
 
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
  * first_only: stop at the first solution. Emitted bounds are capped/hidden as requested. */
 static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int verb, int card_mode,
-                               int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value)
+                               int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value,
+                               int sub = -1, uint64_t sub_lb = 0)   /* GH-127: sub >= 0 = split subproblem */
 {
     SimpSolver S;
     apply_maxsat_seed(S);   /* GH-124: -seed=N (no-op for N = 0) */
     std::vector<Var> aux;
     int n = 0;
+    if (sub >= 0) {   /* GH-127: no orbit-chain clauses in a split subproblem; build failure = this subproblem empty */
+        if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, NULL, h.split_reps[sub], &h.split_zero[sub]))
+            return HALF_INFEASIBLE;
+    } else
     if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, h.sb_orbit.empty() ? NULL : &h.sb_orbit)) { h.exists = false; return HALF_INFEASIBLE; }
     S.setBoundsPipe(pipe_w);
     S.initUB = cap >= (uint64_t)INT32_MAX ? INT32_MAX : cap;
     S.strictUB = cap < (uint64_t)INT32_MAX;
-    S.initLB = h.lb;
+    S.initLB = sub >= 0 ? sub_lb : h.lb;
     S.stopAtFirstSolution = first_only;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
@@ -980,12 +1002,91 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     if (first_only && ret == l_True) { value = S.getCostUB(); st = HALF_FOUND; }
     else if (!first_only && opt != UINT64_MAX && opt <= (uint64_t)n) { value = opt; st = HALF_OPT; }
     else if (ret == l_False && opt == UINT64_MAX) st = HALF_NONE;      /* nothing of weight <= cap */
+    if (sub >= 0) {   /* GH-127: per-subproblem log line; the half's aggregate line is printed by run_css_half_split */
+        h.subprobes++;
+        if (verb > 0)
+            printf("c orbit-split: %s half cap %llu %s sub %d/%zu rep %d (orbit size %d, zeroed %zu, lb %llu) -> %s %llu (conflicts %llu)\n",
+                   h.tag, (unsigned long long)cap, first_only ? "feasibility" : "optimize", sub + 1, h.split_reps.size(),
+                   h.split_reps[sub], h.split_size[sub], h.split_zero[sub].size(), (unsigned long long)sub_lb,
+                   st == HALF_FOUND ? "FOUND" : st == HALF_OPT ? "OPT" : st == HALF_NONE ? "NONE" : "UNKNOWN",
+                   (unsigned long long)(st == HALF_FOUND || st == HALF_OPT ? value : 0), (unsigned long long)S.conflicts);
+        return st;
+    }
     if (verb > 0)
         printf("c CSS interleave: %s half cap %llu lb %llu %s -> %s %llu\n", h.tag,
                (unsigned long long)cap, (unsigned long long)h.lb, first_only ? "feasibility" : "optimize",
                st == HALF_FOUND ? "FOUND" : st == HALF_OPT ? "OPT" : st == HALF_NONE ? "NONE" : "UNKNOWN",
                (unsigned long long)(st == HALF_FOUND || st == HALF_OPT ? value : 0));
     return st;
+}
+
+static void pipe_bound(int pipe_w, const char* kind, uint64_t v);
+
+/* ---- GH-127 (experimental, -orbit-split=on|auto): orbit-seed split of one oracle call on a half with verified
+ * GH-85 orbits O_1..O_k (split order). Subproblem i adds x_{r_i} = 1 and x_q = 0 for q in O_1..O_{i-1} and no
+ * GH-85 orbit-chain clause. Soundness (MODIFICATIONS.md, GH-127): every half solution v is mapped by a verified
+ * half automorphism g (weight, feasibility and every orbit preserved) to g v, which meets no orbit before the
+ * first orbit O_j met by v and contains r_j; so for every w the half has a solution of weight <= w iff some
+ * subproblem has one, and the half optimum is the minimum of the subproblem optima.
+ * Feasibility (first_only): FOUND at the first subproblem with a solution of weight <= cap; NONE only when every
+ * subproblem is NONE. Optimise: min over subproblems, each later one capped strictly below the best so far.
+ * split_lb[i] (proven per-subproblem bound) skips subproblems already refuted at the cap and is their initLB
+ * (with the half lb, a valid lower bound of every subproblem). Solver LBs of subproblems are not half bounds:
+ * they are hidden, and the half's proven LB is emitted here (non-hidden calls only; capped as main's). */
+static HalfStatus run_css_half_split(CssHalf& h, uint64_t cap, bool first_only, int verb, int card_mode,
+                                     int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value,
+                                     uint64_t& lastLB)
+{
+    const int k = (int)h.split_reps.size();
+    const uint64_t INF = UINT64_MAX;
+    uint64_t best = INF, c = cap;
+    int empty = 0;
+    HalfStatus st = HALF_NONE;
+    for (int i = 0; i < k; i++) {
+        uint64_t lb = h.split_lb[i] > h.lb ? h.split_lb[i] : h.lb;
+        if (h.split_lb[i] == INF) { empty++; continue; }
+        if (lb > c) { h.subskips++; continue; }   /* refuted at this cap by an earlier call */
+        uint64_t v = 0;
+        HalfStatus s = run_css_half(h, c, first_only, verb, card_mode, pipe_w, lb_cap, ub_cap, true, v, i, lb);
+        if (s == HALF_INFEASIBLE) { h.split_lb[i] = INF; empty++; continue; }
+        if (s == HALF_UNKNOWN) { st = HALF_UNKNOWN; break; }
+        if (s == HALF_FOUND) { best = v; st = HALF_FOUND; break; }
+        if (s == HALF_OPT) {
+            h.split_lb[i] = v;
+            if (v < best) best = v;
+            if (best == 0 || best <= h.lb) break;   /* cannot be beaten (half lb) */
+            c = best - 1;
+            continue;
+        }
+        h.split_lb[i] = c + 1;   /* NONE */
+    }
+    if (st != HALF_UNKNOWN && st != HALF_FOUND) {
+        if (best != INF) st = HALF_OPT;
+        else if (empty == k) { h.exists = false; st = HALF_INFEASIBLE; }   /* all subproblems empty: half empty */
+        else st = HALF_NONE;
+    }
+    if (st == HALF_FOUND || st == HALF_OPT) value = best;
+    if (!hide_lb && (st == HALF_NONE || st == HALF_OPT)) {
+        uint64_t L = st == HALF_OPT ? best : cap + 1;
+        if (L > lb_cap) L = lb_cap;
+        if (L > lastLB) { lastLB = L; pipe_bound(pipe_w, "LB", L); }
+    }
+    if (verb > 0)
+        printf("c CSS interleave: %s half cap %llu lb %llu %s -> %s %llu [orbit-split %d subproblems]\n", h.tag,
+               (unsigned long long)cap, (unsigned long long)h.lb, first_only ? "feasibility" : "optimize",
+               st == HALF_FOUND ? "FOUND" : st == HALF_OPT ? "OPT" : st == HALF_NONE ? "NONE" :
+               st == HALF_INFEASIBLE ? "INFEASIBLE" : "UNKNOWN",
+               (unsigned long long)(st == HALF_FOUND || st == HALF_OPT ? value : 0), k);
+    return st;
+}
+
+/* GH-127 dispatch: main's oracle call, or the orbit-seed split when this half has split subproblems. */
+static HalfStatus probe_half(CssHalf& h, uint64_t cap, bool first_only, int verb, int card_mode,
+                             int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value, uint64_t& lastLB)
+{
+    if (h.split_reps.empty())
+        return run_css_half(h, cap, first_only, verb, card_mode, pipe_w, lb_cap, ub_cap, hide_lb, value);
+    return run_css_half_split(h, cap, first_only, verb, card_mode, pipe_w, lb_cap, ub_cap, hide_lb, value, lastLB);
 }
 
 static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
@@ -1075,6 +1176,46 @@ static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
     return true;
 }
 
+/* GH-127 (experimental, all off by default = main): -orbit-split=off|on|auto[:K], -lb-ladder=doubling|unit[:K]. */
+enum { ORBIT_SPLIT_OFF = 0, ORBIT_SPLIT_ON = 1, ORBIT_SPLIT_AUTO = 2 };
+static int g_orbit_split = ORBIT_SPLIT_OFF;
+static int g_orbit_split_k = 4;        /* auto: split only halves with at most this many orbits */
+static uint64_t g_lb_ladder_k = 0;     /* 0 = doubling (main); K > 0 = unit ladder above K */
+
+/* Phase 1 cap sequence. Doubling (main): 1, 2, 4, ... ; unit:K: doubling capped at K, then K+1, K+2, ... */
+static uint64_t next_phase1_cap(uint64_t m, uint64_t n) {
+    if (m >= n) return n;
+    if (g_lb_ladder_k == 0) return 2 * m;
+    if (m < g_lb_ladder_k) return 2 * m < g_lb_ladder_k ? 2 * m : g_lb_ladder_k;
+    return m + 1;
+}
+
+/* GH-127: split order = orbits by decreasing size, ties by increasing representative (orbit minimum). */
+static void setup_orbit_split(CssHalf& h, const HalfSymInfo& info, int verb)
+{
+    const int n = info.n, k = (int)info.reps.size();
+    std::vector<int> size((size_t)n, 0);
+    for (int i = 0; i < n; i++) size[info.orbit_of[i]]++;
+    std::vector<int> order(info.reps);
+    std::stable_sort(order.begin(), order.end(), [&](int a, int b) { return size[a] > size[b]; });
+    h.split_reps = order;
+    h.split_zero.assign((size_t)k, std::vector<int>());
+    h.split_size.assign((size_t)k, 0);
+    h.split_lb.assign((size_t)k, 0);
+    std::vector<int> pos((size_t)n, -1);
+    for (int j = 0; j < k; j++) { pos[order[j]] = j; h.split_size[j] = size[order[j]]; }
+    for (int i = 0; i < n; i++) {
+        const int j = pos[info.orbit_of[i]];
+        for (int t = j + 1; t < k; t++) h.split_zero[t].push_back(i);
+    }
+    if (verb > 0) {
+        printf("c orbit-split %s: %d orbits -> %d subproblems (order: larger orbits first), reps:", h.tag, k, k);
+        for (int j = 0; j < k && j < 64; j++) printf(" %d(%d)", order[j], h.split_size[j]);
+        printf(k > 64 ? " ...\n" : "\n");
+        fflush(stdout);
+    }
+}
+
 static int min_distance_css_interleaved(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int verb, int pipe_w, int card_mode, bool symbreak, int dualmode, bool stats = false)
@@ -1133,10 +1274,25 @@ static int min_distance_css_interleaved(
             print_half_symmetry(info, pre, false);
         }
         if ((int)info.reps.size() < info.n) hs[k].sb_orbit = info.orbit_of;
+        if (g_orbit_split != ORBIT_SPLIT_OFF && (int)info.reps.size() < info.n) {   /* GH-127 */
+            const int ko = (int)info.reps.size();
+            if (g_orbit_split == ORBIT_SPLIT_ON || ko <= g_orbit_split_k) setup_orbit_split(hs[k], info, verb);
+            else if (verb > 0) printf("c orbit-split %s: %d orbits > auto limit %d: orbit-chain clauses (main)\n",
+                                      hs[k].tag, ko, g_orbit_split_k);
+        }
     }
+    if (verb > 0 && g_orbit_split != ORBIT_SPLIT_OFF) {   /* GH-127 fallbacks */
+        for (int k = 0; k < 2; k++)
+            if (hs[k].exists && hs[k].split_reps.empty() && hs[k].sb_orbit.empty())
+                printf("c orbit-split %s: no verified orbits (%s): main's path\n", hs[k].tag,
+                       symbreak ? "trivial automorphism group" : "-no-symbreak");
+    }
+    if (verb > 0 && g_lb_ladder_k > 0)
+        printf("c lb-ladder: unit above %llu (Phase 1 caps double up to %llu, then +1)\n",
+               (unsigned long long)g_lb_ladder_k, (unsigned long long)g_lb_ladder_k);
     uint64_t U = INF, v = 0, lastLB = 0;
     /* Phase 1: doubling feasibility tests on both halves; anytime global LB. */
-    for (uint64_t m = 1; ; m = (m >= n ? n : 2 * m)) {
+    for (uint64_t m = 1; ; m = next_phase1_cap(m, n)) {   /* GH-127: = main's doubling unless -lb-ladder=unit */
         for (int k = 0; k < 2; k++) {
             CssHalf& h = hs[k];
             if (!h.exists || h.ub != INF || h.lb > m) {
@@ -1148,7 +1304,7 @@ static int min_distance_css_interleaved(
                 }
                 continue;
             }
-            HalfStatus st = run_css_half(h, m, true, verb, card_mode, pipe_w, INF, U, true, v);
+            HalfStatus st = probe_half(h, m, true, verb, card_mode, pipe_w, INF, U, true, v, lastLB);
             if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
             else if (st == HALF_NONE) h.lb = h.own_lb = m + 1;
             else if (st == HALF_UNKNOWN) { pipe_write_result(pipe_w, -1, false); return -1; }
@@ -1181,7 +1337,7 @@ static int min_distance_css_interleaved(
             }
             uint64_t lbc = U;
             if (!share && !done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
-            HalfStatus st = run_css_half(h, U - 1, true, verb, card_mode, pipe_w, lbc, U, false, v);
+            HalfStatus st = probe_half(h, U - 1, true, verb, card_mode, pipe_w, lbc, U, false, v, lastLB);
             if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
             else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = h.own_lb = (h.ub < U ? h.ub : U); done[k] = true; }
             else { pipe_write_result(pipe_w, -1, false); return -1; }
@@ -1211,7 +1367,7 @@ static int min_distance_css_interleaved(
          * optimisation only seeks weight <= U-1 (no re-find of its own incumbent): OPT improves U,
          * NONE proves lb = U. Without elimination (main, GH-107 share) the cap stays U exactly as in GH-73. */
         const uint64_t cap = (z_eliminated && h.ub == U) ? U - 1 : U;
-        HalfStatus st = run_css_half(h, cap, false, verb, card_mode, pipe_w, lbc, U, false, v);
+        HalfStatus st = probe_half(h, cap, false, verb, card_mode, pipe_w, lbc, U, false, v, lastLB);
         if (st == HALF_OPT) { h.lb = h.ub = h.own_lb = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
         else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = h.own_lb = U; }
         else { pipe_write_result(pipe_w, -1, false); return -1; }
@@ -1228,6 +1384,11 @@ static int min_distance_css_interleaved(
                (unsigned long long)hs[0].probes, (unsigned long long)hs[1].probes,
                (unsigned long long)hs[0].conflicts, (unsigned long long)hs[1].conflicts,
                (unsigned long long)implied, (unsigned long long)U);
+    if (stats && (g_orbit_split != ORBIT_SPLIT_OFF || g_lb_ladder_k > 0))   /* GH-127 */
+        printf("c gh127 stats: split X %d Z %d subprobes X %llu Z %llu subskips X %llu Z %llu ladder %llu\n",
+               (int)hs[0].split_reps.size(), (int)hs[1].split_reps.size(),
+               (unsigned long long)hs[0].subprobes, (unsigned long long)hs[1].subprobes,
+               (unsigned long long)hs[0].subskips, (unsigned long long)hs[1].subskips, (unsigned long long)g_lb_ladder_k);
     pipe_bound(pipe_w, "LB", U);
     pipe_write_result(pipe_w, (int)U, true);
     return (int)U;
@@ -1383,7 +1544,8 @@ static int engine_flag_family(const char* a)
         !strcmp(a, "-native-parity-opb"))
         return ENGFLAG_MAXSAT_FORM;
     if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
-        !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats"))
+        !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") ||
+        !strncmp(a, "-orbit-split=", 13) || !strncmp(a, "-lb-ladder=", 11))   /* GH-127 */
         return ENGFLAG_MAXSAT_TUNE;
     if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10))
         return ENGFLAG_CC;
@@ -1784,6 +1946,29 @@ int main(int argc, char** argv) {
             die("invalid -dualmode (share | skip | off)");
         else if (!strcmp(argv[i], "-dualshare-stats"))
             g_dualshare_stats = true;
+        else if (!strcmp(argv[i], "-orbit-split=off"))   /* GH-127 (experimental) */
+            g_orbit_split = ORBIT_SPLIT_OFF;
+        else if (!strcmp(argv[i], "-orbit-split=on"))
+            g_orbit_split = ORBIT_SPLIT_ON;
+        else if (!strcmp(argv[i], "-orbit-split=auto"))
+            g_orbit_split = ORBIT_SPLIT_AUTO;
+        else if (!strncmp(argv[i], "-orbit-split=auto:", 18)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 18, &v) || v < 1 || v > 1000000) die("invalid -orbit-split=auto:K (K >= 1)");
+            g_orbit_split = ORBIT_SPLIT_AUTO;
+            g_orbit_split_k = (int)v;
+        } else if (!strncmp(argv[i], "-orbit-split=", 13))
+            die("invalid -orbit-split (off | on | auto[:K])");
+        else if (!strcmp(argv[i], "-lb-ladder=doubling"))
+            g_lb_ladder_k = 0;
+        else if (!strcmp(argv[i], "-lb-ladder=unit"))
+            g_lb_ladder_k = 16;
+        else if (!strncmp(argv[i], "-lb-ladder=unit:", 16)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 16, &v) || v < 1 || v > 1000000000ULL) die("invalid -lb-ladder=unit:K (K >= 1)");
+            g_lb_ladder_k = (uint64_t)v;
+        } else if (!strncmp(argv[i], "-lb-ladder=", 11))
+            die("invalid -lb-ladder (doubling | unit[:K])");
         else if (!strcmp(argv[i], "-dualskip-report"))
             dualskip_report = true;
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
@@ -1855,6 +2040,11 @@ int main(int argc, char** argv) {
             printf("            (implied NONE probes skipped); -dualmode=skip solves only the X half;\n");
             printf("            -dualmode=off (alias -no-dualskip) ignores dual maps; -dualshare-stats prints\n");
             printf("            work counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
+            printf("  GH-127 (experimental, split only; defaults = main):\n");
+            printf("            -orbit-split=off|on|auto[:K]  solve every probe of a half with verified orbits O_1..O_k as k\n");
+            printf("            subproblems (x_{r_i} = 1, earlier orbits zero) instead of orbit-chain clauses; auto splits\n");
+            printf("            only halves with k <= K (default 4); needs symmetry (-no-symbreak: no split)\n");
+            printf("            -lb-ladder=doubling|unit[:K]  Phase 1 caps double up to K (default 16), then rise by 1\n");
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
@@ -1909,6 +2099,8 @@ int main(int argc, char** argv) {
         auto_ignored_by_maxsat = fam[ENGFLAG_CC];
     }
 
+    if ((g_orbit_split != ORBIT_SPLIT_OFF || g_lb_ladder_k > 0) && (g_css_joint || backend == SOLVER_ROUNDINGSAT))
+        die("-orbit-split / -lb-ladder apply to the CSS split MaxCDCL path only (not -joint / -roundingsat)");   /* GH-127 */
     if (!prefix) die("need code name (e.g. LP_34_20_2)");
     if (card_mode != 0 && card_mode != 1 && card_mode != 2 && card_mode != 3 && card_mode != 4)
         die("invalid cardinality mode");

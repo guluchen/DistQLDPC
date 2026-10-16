@@ -148,6 +148,8 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-dualmode=off` (alias `-no-dualskip`) | Ignore XZ-dual maps (previous default) |
 | `-dualmode=skip` | With a verified dual map, solve only the X half |
 | `-dualskip-report` | Print the verified XZ-dual maps, then exit |
+| `-orbit-split=off\|on\|auto[:K]` | **(experimental, GH-127)** Default `off` = the search above. `on`: every MaxSAT probe of a half with verified orbits O_1..O_k is solved as k subproblems (subproblem i: the representative of O_i is in the support, O_1..O_{i-1} are zero; larger orbits first), replacing that half's orbit-chain clauses; a feasibility probe stops at the first subproblem with a solution, a refutation needs all k. `auto`: split only halves with k <= K (default 4), else the orbit-chain clauses. Without orbits (`-no-symbreak` or no verified automorphism) the half keeps the default path |
+| `-lb-ladder=doubling\|unit[:K]` | **(experimental, GH-127)** Default `doubling` = Phase 1 caps 1, 2, 4, 8, 16, 32, ... `unit[:K]`: caps double up to K (default 16) and then rise by 1 (K+1, K+2, ...), so the anytime `d_lb` rises one unit at a time instead of jumping from K+1 to 2K+1 |
 | `-engine=maxsat` | **(experimental flag, GH-124)** The MaxSAT search described above (default; identical to the behaviour without the flag) |
 | `-engine=cc` | **(experimental, GH-124)** Exact connected-cluster (CC) level search per CSS half instead of MaxSAT (see below) |
 | `-engine=auto` | **(experimental, GH-124)** `cc` unless a half's parity matrix is dense (some row weight > 32, or mean row weight > n/4 with n >= 64), then `maxsat`; every bundled code goes to `cc`; `-v` prints the decision (not the default) |
