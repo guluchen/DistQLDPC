@@ -14,6 +14,7 @@ Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
 Includes, without limitation:
 
   src/core/distqldpc.cc
+  src/cc/ (GH-124 CC level-search engine, experimental)
   scripts/compute_logicals.py
   scripts/preprocess_matrices.py
   scripts/benchmark_matrices.py
@@ -70,6 +71,23 @@ Modified files (partial list): Solver.h, Solver.cc
   original use of the verified XZ-dual maps of GH-87 to share proven lower
   bounds between the two GH-73 split halves; ported from GH-102). No
   third-party code.
+
+  src/cc/ (GH-124, optional connected-cluster engine, off by default;
+  enable with -engine=cc) implements the connected-cluster distance
+  search of I. Dumer, A. A. Kovalev, L. P. Pryadko, "Distance
+  verification for classical and quantum LDPC codes", IEEE Trans. Inf.
+  Theory 63(7), 4675-4686, 2017. It was written from scratch from the
+  published algorithm and DistQLDPC's own code. The search skeleton
+  (connected clusters grown from a seed, branching on one unsatisfied
+  check, closed-cluster dead ends, interleaved X/Z weight levels) was
+  studied in Quantinuum's Qubitserf (https://github.com/Quantinuum/Qubitserf,
+  Copyright (c) 2026 Serban Cercelescu and the qubitserf contributors,
+  MIT License); no Qubitserf code was copied. DistQLDPC's own additions
+  are the disjoint odd-check packing bound, sibling exclusion, orbit
+  seeds from the GH-85 verified automorphisms, single-half search under
+  the GH-87/GH-107 verified XZ-dual maps, the stop rule, independent
+  witness verification and the verified basis-row upper bound (see
+  README, "Connected-cluster (CC) engine").
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and

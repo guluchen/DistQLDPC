@@ -1,0 +1,78 @@
+# start 1792103781.968 cpu 68 cmd: taskset -c 68 prlimit --as=4294967296 -- /home/yfc/mac-agent-20261009/frozen/server-gh124-244f670/distqldpc -engine=cc -v -cpu-lim=21600 data/matrices/tier5/LP_1020_136_16
+       0.1	c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+       0.1	c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf, cc-seed 0
+       0.1	c Hx: data/matrices/tier5/LP_1020_136_16_Hx.txt
+       0.1	c Hz: data/matrices/tier5/LP_1020_136_16_Hz.txt
+       0.1	c Gx: data/matrices/tier5/LP_1020_136_16_Gx.txt
+       0.1	c Gz: data/matrices/tier5/LP_1020_136_16_Gz.txt
+       0.1	c Hx: 450 x 1020, Hz: 450 x 1020, Gx: 136 x 1020, Gz: 136 x 1020, logicals: 272
+       0.1	c cc: dual map detection: none (ranks Hz 442 Hx 442 [Hz;Gx] 578 [Hx;Gz] 578, 154 candidates, cpu 0.009s): both halves
+       0.1	c cc symbreak X: n=1020 candidates=153 verified_generators=7 orbits=34 detect_cpu=0.011s clause=orbit-chain
+       0.1	c cc symbreak X: generator: plain blockshift L=30
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=30 (2x15)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=30 (3x10)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=30 (5x6)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=30 (6x5)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=30 (10x3)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=30 (15x2)
+       0.1	c cc symbreak X: orbit reps (size): 0(30) 30(30) 60(30) 90(30) 120(30) 150(30) 180(30) 210(30) 240(30) 270(30) 300(30) 330(30) 360(30) 390(30) 420(30) 450(30) 480(30) 510(30) 540(30) 570(30) 600(30) 630(30) 660(30) 690(30) 720(30) 750(30) 780(30) 810(30) 840(30) 870(30) 900(30) 930(30) 960(30) 990(30)
+       0.1	c cc symbreak Z: n=1020 candidates=153 verified_generators=7 orbits=34 detect_cpu=0.011s clause=orbit-chain
+       0.1	c cc symbreak Z: generator: plain blockshift L=30
+       0.1	c cc symbreak Z: generator: plain 2dshift-a L=30 (2x15)
+       0.1	c cc symbreak Z: generator: plain 2dshift-a L=30 (3x10)
+       0.1	c cc symbreak Z: generator: plain 2dshift-a L=30 (5x6)
+       0.1	c cc symbreak Z: generator: plain 2dshift-a L=30 (6x5)
+       0.1	c cc symbreak Z: generator: plain 2dshift-a L=30 (10x3)
+       0.1	c cc symbreak Z: generator: plain 2dshift-a L=30 (15x2)
+       0.1	c cc symbreak Z: orbit reps (size): 0(30) 30(30) 60(30) 90(30) 120(30) 150(30) 180(30) 210(30) 240(30) 270(30) 300(30) 330(30) 360(30) 390(30) 420(30) 450(30) 480(30) 510(30) 540(30) 570(30) 600(30) 630(30) 660(30) 690(30) 720(30) 750(30) 780(30) 810(30) 840(30) 870(30) 900(30) 930(30) 960(30) 990(30)
+       0.1	c cc: X half: n 1020, rank H 442, rank [H;G] 578, rank S 442: detectors complete, 136 logical(s)
+       0.1	c cc: Z half: n 1020, rank H 442, rank [H;G] 578, rank S 442: detectors complete, 136 logical(s)
+       0.1	c cc: rules excl,pack,orbf, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+       0.1	c cc: ub-basis: verified basis rows give UB 24 (X 24, Z 24)
+       0.1	c cc: X half search: 34 seeds (orbit representatives)
+       0.1	c cc: Z half search: 34 seeds (orbit representatives)
+       0.1	c cc: X half level 1 EMPTY nodes 34 seeds 34 time 0.000s
+       0.1	c cc: Z half level 1 EMPTY nodes 34 seeds 34 time 0.000s
+       0.1	c cc: X half level 2 EMPTY nodes 34 seeds 34 time 0.000s
+       0.1	c cc: Z half level 2 EMPTY nodes 34 seeds 34 time 0.000s
+       0.1	c cc: X half level 3 EMPTY nodes 34 seeds 34 time 0.000s
+       0.1	c cc: Z half level 3 EMPTY nodes 34 seeds 34 time 0.000s
+       0.1	c cc: X half level 4 EMPTY nodes 159 seeds 34 time 0.000s
+       0.1	c cc: Z half level 4 EMPTY nodes 159 seeds 34 time 0.000s
+       0.1	c cc: X half level 5 EMPTY nodes 194 seeds 34 time 0.000s
+       0.1	c cc: Z half level 5 EMPTY nodes 194 seeds 34 time 0.000s
+       0.1	c cc: X half level 6 EMPTY nodes 573 seeds 34 time 0.000s
+       0.1	c cc: Z half level 6 EMPTY nodes 573 seeds 34 time 0.000s
+       0.1	c cc: X half level 7 EMPTY nodes 973 seeds 34 time 0.000s
+       0.1	c cc: Z half level 7 EMPTY nodes 973 seeds 34 time 0.000s
+       0.1	c cc: X half level 8 EMPTY nodes 2877 seeds 34 time 0.000s
+       0.1	c cc: Z half level 8 EMPTY nodes 2971 seeds 34 time 0.000s
+       0.1	c cc: X half level 9 EMPTY nodes 5519 seeds 34 time 0.001s
+       0.1	c cc: Z half level 9 EMPTY nodes 6713 seeds 34 time 0.001s
+       0.1	c cc: X half level 10 EMPTY nodes 13889 seeds 34 time 0.002s
+       0.1	c cc: Z half level 10 EMPTY nodes 26647 seeds 34 time 0.004s
+       0.1	c cc: X half level 11 EMPTY nodes 33219 seeds 34 time 0.005s
+       0.1	c cc: Z half level 11 EMPTY nodes 58523 seeds 34 time 0.009s
+       0.1	c cc: X half level 12 EMPTY nodes 87740 seeds 34 time 0.013s
+       0.1	c cc: Z half level 12 EMPTY nodes 162756 seeds 34 time 0.026s
+       0.2	c cc: X half level 13 EMPTY nodes 219679 seeds 34 time 0.032s
+       0.2	c cc: Z half level 13 EMPTY nodes 399123 seeds 34 time 0.063s
+       0.3	c cc: X half level 14 EMPTY nodes 616753 seeds 34 time 0.093s
+       0.5	c cc: Z half level 14 EMPTY nodes 1150985 seeds 34 time 0.194s
+       0.8	c cc: X half level 15 EMPTY nodes 1593648 seeds 34 time 0.253s
+       1.4	c cc: Z half level 15 EMPTY nodes 3328087 seeds 34 time 0.623s
+       1.4	c cc: X half level 16 FOUND nodes 111441 seeds 1 time 0.019s
+       1.4	c witness X: 0 2 14 17 30 31 45 76 79 92 105 107 121 134 136 139
+       1.4	c cc: total nodes X 2686766 Z 5137806, search time X 0.418s Z 0.919s, wall 1.337s
+       1.4	c cc: d = 16
+       1.4	c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+       1.4	c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf, cc-seed 0
+       1.4	c Hx: data/matrices/tier5/LP_1020_136_16_Hx.txt
+       1.4	c Hz: data/matrices/tier5/LP_1020_136_16_Hz.txt
+       1.4	c Gx: data/matrices/tier5/LP_1020_136_16_Gx.txt
+       1.4	c Gz: data/matrices/tier5/LP_1020_136_16_Gz.txt
+       1.4	c Hx: 450 x 1020, Hz: 450 x 1020, Gx: 136 x 1020, Gz: 136 x 1020, logicals: 272
+       1.4	c d_lb: 16
+       1.4	c d_ub: 16
+       1.4	c d  : 16
+       1.4	o 16

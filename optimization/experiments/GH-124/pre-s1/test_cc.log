@@ -1,0 +1,10 @@
+c++ -Wno-reserved-user-defined-literal -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -std=c++17 -o build/test_cc_engine tests/test_cc_engine.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o build/cc_half.o build/cc_driver.o -lz
+./build/test_cc_engine
+partA: 300 half instances (156 with verified orbits, 110 without any nontrivial element), 14400 ladder runs over 16 rule subsets x 3 seeds, 0 bad
+partB: 200 CSS codes (67 with a verified dual map, 43 with X-half orbits, 35 with dX != dZ), 1800 driver runs, 0 bad, 0 RESULT -1
+mutant 1 (forbidden set not restored): 112/2400 half ladders wrong
+mutant 2 (packing prune >=): 568/2400 half ladders wrong
+mutant 3 (orbit seed rule off by one, instances with orbits): 272/1248 half ladders wrong
+mutant 4 (stop rule without other half's lb, forces sequential): schedule requested 1/200 runs wrong; default options 1/200 wrong
+CC_ENGINE_TESTS PASS
+make test-cc CXX="c++ -Wno-reserved-user-defined-literal"  2.90s user 0.58s system 82% cpu 4.195 total

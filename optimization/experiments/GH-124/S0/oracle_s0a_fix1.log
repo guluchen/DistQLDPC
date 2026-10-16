@@ -1,0 +1,33 @@
+# GH-124 fix round 1: S0a oracle harness (branch tests/gh-124-cc-oracle, commit 985ea93, tests/cc/cc_oracle.py, corpus seed 124, --jobs 2)
+# binary: fix round 1 build of bin/distqldpc, sha256 ce248743702cb3a202ee6617342ef8020a43c9e9886034dd5242583e9815ffd5
+corpus: 266 codes (252 with n <= 24): asym 12, bb 45, gb 20, hgp 35, hgpcyc 10, neardual 15, nearsym 15, planted 35, selforth 15, sparse 30, surface 19, toric 15
+brute force + logicals ready in 3.0s
+info runs: 106 codes with a verified XZ-dual map (bb 45, gb 20, hgp 1, hgpcyc 10, selforth 15, toric 15); nontrivial orbits: X half 133, Z half 133 (dual off); orbit seeds used in 133 codes; 440 generators re-verified
+codes with d_X != d_Z: 71; d range 1..7
+canonical: 16226 runs (61 configurations x 266 codes) in 155.8s, 0 check failures
+mutant 1: KILLED; 8512 runs, 46 wrong values, 2 no-answer, 108 other check failures (81.5s)
+   e.g. ccbb007 [rules=excl,orbf dual=on]: answer 4, d 2
+   e.g. ccbb007 [rules=excl,orbf,mrv dual=on]: answer 4, d 2
+   e.g. ccbb020 [rules=excl dual=on]: answer 6, d 4
+   e.g. ccbb007 [rules=excl dual=on]: answer UNKNOWN, d 2
+mutant 2: only no-answer failures after the canonical stage (8512 runs), looking for a wrong value in the next stage
+mutant 2: KILLED; 16226 runs, 4 wrong values, 5157 no-answer, 0 other check failures (155.7s)
+   e.g. ccgb002 [ub-basis dual=on]: answer 4, d 3
+   e.g. ccgb002 [ub-basis dual=off]: answer 4, d 3
+   e.g. ccgb008 [ub-basis dual=on]: answer 4, d 3
+   e.g. ccbb000 [rules=pack dual=on]: answer UNKNOWN, d 3
+   e.g. ccbb000 [rules=pack dual=off]: answer UNKNOWN, d 3
+mutant 3: KILLED; 8512 runs, 200 wrong values, 1080 no-answer, 80 other check failures (81.9s)
+   e.g. ccbb001 [rules=orbf dual=off]: answer 5, d 4
+   e.g. ccbb001 [rules=excl,orbf dual=off]: answer 5, d 4
+   e.g. ccbb001 [rules=pack,orbf dual=off]: answer 5, d 4
+   e.g. ccbb000 [rules=orbf dual=on]: answer UNKNOWN, d 3
+   e.g. ccbb000 [rules=excl,orbf dual=on]: answer UNKNOWN, d 3
+mutant 4: KILLED; 8512 runs, 1184 wrong values, 0 no-answer, 0 other check failures (82.0s)
+   e.g. cchgp003 [rules=none dual=on]: answer 2, d 1
+   e.g. cchgp003 [rules=none dual=off]: answer 2, d 1
+   e.g. cchgp003 [rules=excl dual=on]: answer 2, d 1
+max RSS of a solver process: 1.9 MB; watchdog kills: 0
+canonical: all runs correct, every witness verified
+PASS: every mutant killed (1,2,3,4)
+rc=0

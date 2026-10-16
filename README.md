@@ -148,8 +148,106 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-dualmode=off` (alias `-no-dualskip`) | Ignore XZ-dual maps (previous default) |
 | `-dualmode=skip` | With a verified dual map, solve only the X half |
 | `-dualskip-report` | Print the verified XZ-dual maps, then exit |
+| `-engine=maxsat` | **(experimental flag, GH-124)** The MaxSAT search described above (default; identical to the behaviour without the flag) |
+| `-engine=cc` | **(experimental, GH-124)** Exact connected-cluster (CC) level search per CSS half instead of MaxSAT (see below) |
+| `-engine=auto` | **(experimental, GH-124)** `cc` unless a half's parity matrix is dense (some row weight > 32, or mean row weight > n/4 with n >= 64), then `maxsat`; every bundled code goes to `cc`; `-v` prints the decision (not the default) |
+| `-seed=N` | **(timing seeds)** Default 0 = the unchanged search. With MaxSAT, N > 0 sets MaxCDCL's random seed (it only drives the engine's 1% sampling of the lookahead threshold, so the search order changes but never the answer or the bounds' validity); with the CC engine it is `-cc-seed=N`. Used for seed-median timing |
+| `-cc-rules=excl,pack,orbf[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf`; `none` = plain CC): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, fewest-candidate branching |
+| `-cc-dual=on\|off` | **(experimental)** With a verified XZ-dual map, CC searches only the X half (default `on`; `-dualmode=off` also disables it) |
+| `-ub-basis[=on\|off]` | **(experimental, CC only)** Emit the minimum weight of the verified logical basis rows as an initial upper bound (default on; `-ub-basis=off` disables it) |
+| `-cc-seed=N` | **(experimental, testing)** Deterministic relabeling of qubits and rows for CC (default 0 = identity), for seed-median timing; alias of `-seed=N` for the CC engine (both given with different values is an error) |
+| `-cc-trace=FILE` | **(experimental)** One line per finished (half, level): half, level, `EMPTY`/`FOUND`, nodes, seconds, witness support |
+| `-cc-stats` | **(experimental)** Per-level CC node counts (printed also without `-v`) |
+| `-cc-mutant=K` | **(test only)** Deliberately broken CC variants for mutation tests, each able to give a wrong answer; never use for results. 1 = sibling-exclusion set not restored on backtrack; 2 = packing prune uses `>=`; 3 = orbit seed rule off by one (the seed's own orbit is forbidden during its search); 4 = stop rule without the other half's lower bound (runs the sequential schedule) |
+| `-cc-schedule=lockstep\|sequential` | **(test only)** CC half schedule (default `lockstep`: both halves level by level); `sequential` raises the first half to its distance before the other half, which makes the stop rule's other-half check load-bearing |
 
 `-dump-wcnf` / `-dump-opb` and the RoundingSat backend still use the joint encoding.
+
+### Connected-cluster (CC) engine: optional, off by default (GH-124)
+
+DistQLDPC includes an exact connected-cluster (CC) distance engine in `src/cc/`. **It is not the default**:
+without any flag (or with `-engine=maxsat`) DistQLDPC runs the MaxSAT search described above, byte-identical
+to the behaviour before GH-124.
+
+**Turning it on and off**
+
+| What | On | Off |
+|------|----|-----|
+| Use the CC engine | `-engine=cc` | no flag, or `-engine=maxsat` (default) |
+| Let DistQLDPC choose per code | `-engine=auto` (CC unless the code is dense, see below; `-v` prints `c engine: auto -> cc\|maxsat (...)`) | `-engine=maxsat` |
+| Seed for timing panels (both engines) | `-seed=N` (N > 0; CC: same as `-cc-seed=N`) | no flag or `-seed=0` (main's search) |
+| Pruning rules (CC only) | `-cc-rules=excl,pack,orbf` (default), add `mrv` for fewest-candidate branching | `-cc-rules=none` (plain CC), or list only the rules you want, e.g. `-cc-rules=excl,pack` |
+| Orbit seeds (CC only) | default (rule `orbf`) | drop `orbf` from `-cc-rules`, or `-no-symbreak` (index seeds) |
+| Single-half search under a verified XZ-dual map (CC only) | `-cc-dual=on` (default) | `-cc-dual=off` or `-dualmode=off` |
+| Initial upper bound from the verified logical basis rows (CC only) | `-ub-basis` / `-ub-basis=on` (default) | `-ub-basis=off` |
+| Diagnostics (CC only) | `-cc-trace=FILE`, `-cc-stats`, `-v` | omit them |
+
+Examples:
+
+```bash
+./bin/distqldpc -engine=cc BB_288_12_18                  # CC with all rules (excl, pack, orbf), dual map, basis UB
+./bin/distqldpc -engine=cc -cc-rules=none BB_288_12_18   # plain connected-cluster search, no extra pruning
+./bin/distqldpc -engine=cc -ub-basis=off BB_288_12_18    # no initial upper bound from the basis rows
+./bin/distqldpc BB_288_12_18                             # default: MaxSAT, CC not used
+```
+
+The output lines (`c d_lb`, `c d_ub`, `c d  :`, `o N`), the pipe protocol and the `-cpu-lim` timeout are the
+same as for MaxSAT. With CC, `c d_lb` rises by one per completed weight level, and every reported upper bound
+is a witness checked by `H e = 0` and an independent GF(2) rank test against the stabilizer row space.
+Conflicting flags are rejected with an error (exit 1): the `-cc-*` and `-ub-basis` flags need `-engine=cc` or
+`-engine=auto`; `-engine=cc` and `-engine=auto` refuse `-joint`, `-roundingsat[=BIN]`, `-dump-wcnf`, `-dump-opb`,
+`-dump-only` and `-native-parity-opb`; `-engine=cc` also refuses the cardinality flags and `-dualshare-stats`.
+With `-engine=auto` the cardinality flags and `-dualshare-stats` apply when it selects `maxsat`, the CC flags
+when it selects `cc`, and a warning on stderr names the flags that its choice ignores. `make test-cc` runs the
+brute-force engine tests and `make test-cc-flags` the command-line flag checks.
+
+**`-engine=auto`.** It picks CC unless, in the parity matrix of a half that has logicals (X half: `Hz`, Z half:
+`Hx`), some row has weight > 32, or n >= 64 and the mean row weight exceeds n/4; such clearly dense codes go to
+MaxSAT. Basis (`optimization/experiments/GH-124/S0_REPORT.md` §5.5, `PRE_S1_NOTES.md`): CC was never slower than
+MaxSAT on toric and planar surface codes with L = 6..32 (qubit degree 1-2), so qubit degree is not a criterion,
+and it is faster or at the process floor on all 49 bundled codes (row weight 6..16, mean row density <= 12.5% at
+n >= 64), which all go to CC. CC branches over the qubits of one odd row, so its cost grows with the row weight;
+dense codes were not calibrated, and both limits keep a 2x margin over every calibrated code.
+
+**Inputs and failures.** CC needs a complete logical basis in each half (rank `[H; G]` + rank of the same-type
+stabilizers = n, i.e. `Gx`/`Gz` span the logicals modulo the stabilizers, as all bundled data does); on an
+incomplete basis it refuses to answer (`s UNKNOWN`), where MaxSAT answers relative to the given `G`. When CC
+stops without an answer (a consistency trap or an unusable input), the final summary withdraws every bound it
+had sent (`c d_lb: -`, `c d_ub: -`, `c status: UNKNOWN (CC engine stopped without an answer: ...)`); live
+`c d_lb:` lines printed earlier do not count.
+
+**What CC borrows, and from where**
+
+The search skeleton is the published connected-cluster algorithm of I. Dumer, A. A. Kovalev and
+L. P. Pryadko, "Distance verification for classical and quantum LDPC codes", IEEE Trans. Inf. Theory 63(7),
+2017. We learned how it performs in practice by studying Quantinuum's **Qubitserf** library (Serban Cercelescu,
+MIT License, commit `ab96b9c`, `method="cc"`), whose CC implementation follows the same skeleton. From that
+study DistQLDPC takes these ideas (re-implemented from scratch; no Qubitserf code is copied):
+
+1. a minimum-weight nontrivial logical of a CSS half is connected in the half's Tanner graph, so it suffices
+   to grow clusters from a seed qubit;
+2. each weight level is searched exhaustively and in increasing order, so every empty level is a certified
+   lower bound and the first hit is the half's distance;
+3. branching only over the qubits of one unsatisfied (odd) check, with the seed as the smallest index of
+   the support;
+4. a cluster that becomes syndrome-free before reaching the target weight is a dead end;
+5. the X and Z halves are searched interleaved, level by level.
+
+**What DistQLDPC adds**
+
+| Addition | Effect |
+|----------|--------|
+| Disjoint odd-check **packing bound** (`pack`): odd checks whose remaining candidate qubits are pairwise disjoint each need a distinct extra qubit, so a branch is pruned when the cluster size plus the packing exceeds the target weight | cuts nodes 50-500x per level; per-level growth drops from about 4.5-6x to about 3x |
+| **Sibling exclusion** (`excl`): after the branch adding qubit a is exhausted, a is forbidden in the later sibling branches | removes duplicate cluster orderings (large effect on weight-8/9 checks) |
+| **Orbit seeds** (`orbf`) from DistQLDPC's GF(2)-verified per-half automorphisms (GH-85): one seed per orbit, earlier orbits forbidden | 10-16x on BB codes, 6-18x on LP codes, 2-3x on TN codes with symmetry |
+| **Single-half search** under DistQLDPC's verified XZ-dual map (GH-87/GH-107) | about 2x on BB/GB codes |
+| **Stop rule**: once one half hits at level w and the other half's lower bound is >= w, d = w | no wasted level after the distance is determined |
+| **Witness verification** by an independent GF(2) rank test, always-on consistency traps, verified **basis-row upper bound** at t = 0 (`-ub-basis`) | every reported bound is checked; an anytime upper bound before the exact level |
+| DistQLDPC's anytime bound reporting, timeout handling and output format; `-cc-seed`, `-cc-trace`, `-cc-stats`; brute-force and mutation tests (`make test-cc`) | drop-in use with the existing tools and benchmarks |
+
+With these additions the CC engine solves every bundled tier1-4 code in seconds on one core and confirmed five
+distances that MaxSAT had not solved in 6 h (BB_360_12_24, TN_252_2_21, LP_1054_140_20, LP_1428_184_24,
+LP_1768_224_22); see `optimization/experiments/GH-124/`.
 
 ---
 
@@ -161,7 +259,7 @@ The distance definition, Pauli weight and output format are unchanged.
 | `c d_lb: N` | proven lower bound on `d` |
 | `c d_ub: N` | best upper bound found so far |
 | `c d  : N` | final distance (when optimal) |
-| `o N` | result line for scripts (`N` = distance or `-1` on failure) |
+| `o N` | result line for scripts (`N` = distance); without an answer (timeout or failure) `c d  : UNKNOWN` and `s UNKNOWN` are printed instead |
 
 Use `-v` or `-debug` for matrix paths, dimensions, and internal solver log.
 
@@ -214,6 +312,7 @@ Requires **g++** and **zlib**. Binary: `bin/distqldpc`.
 
 ```
 src/core/distqldpc.cc   # CLI, QLDPC encoding, fork/pipe
+src/cc/                 # CC level-search engine (experimental, -engine=cc)
 src/solver/             # MaxCDCL MaxSAT engine
 data/matrices/tierN/    # benchmark codes (Hx, Hz, Gx, Gz) by tier; see data/matrices/README.md
 ```

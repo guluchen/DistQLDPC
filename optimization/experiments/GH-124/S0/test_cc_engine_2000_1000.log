@@ -1,0 +1,7 @@
+partA: 2000 half instances (1030 with verified orbits, 679 without any nontrivial element), 96000 ladder runs over 16 rule subsets x 3 seeds, 0 bad
+partB: 1000 CSS codes (280 with a verified dual map, 224 with X-half orbits, 229 with dX != dZ), 9000 driver runs, 0 bad, 0 RESULT -1
+mutant 1 (forbidden set not restored): 805/16000 half ladders wrong
+mutant 2 (packing prune >=): 4152/16000 half ladders wrong
+mutant 3 (orbit seeds, earlier orbits not forbidden): 0/8240 half ladders wrong (sound weakening), node counts differ in 930/8240
+mutant 4 (stop rule without other half's lb): sequential schedule 113/1000 runs wrong; lockstep (production) 0/1000 wrong
+CC_ENGINE_TESTS PASS

@@ -1,0 +1,53 @@
+# start 1792103781.968 cpu 67 cmd: taskset -c 67 prlimit --as=4294967296 -- /home/yfc/mac-agent-20261009/frozen/server-gh124-244f670/distqldpc -engine=cc -v -cpu-lim=21600 data/matrices/tier5/BB_864_4_ge17
+       0.0	c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+       0.0	c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf, cc-seed 0
+       0.0	c Hx: data/matrices/tier5/BB_864_4_ge17_Hx.txt
+       0.0	c Hz: data/matrices/tier5/BB_864_4_ge17_Hz.txt
+       0.0	c Gx: data/matrices/tier5/BB_864_4_ge17_Gx.txt
+       0.0	c Gz: data/matrices/tier5/BB_864_4_ge17_Gz.txt
+       0.0	c Hx: 432 x 864, Hz: 432 x 864, Gx: 4 x 864, Gz: 4 x 864, logicals: 8
+       0.0	c cc: dual map detection: 'halfswap-inverse Z_12 x Z_36' verified (rank Hz=Hx=430, [Hz;Gx]=[Hx;Gz]=434, cpu 0.008s)
+       0.0	c cc symbreak X: n=864 candidates=205 verified_generators=13 orbits=2 detect_cpu=0.011s clause=orbit-chain
+       0.0	c cc symbreak X: generator: plain blockshift L=36
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=36 (2x18)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=36 (3x12)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=36 (4x9)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=36 (6x6)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=36 (9x4)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=36 (12x3)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=36 (18x2)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=432 (2x216)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=432 (3x144)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=432 (4x108)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=432 (6x72)
+       0.1	c cc symbreak X: generator: plain 2dshift-a L=432 (12x36)
+       0.1	c cc symbreak X: orbit reps (size): 0(432) 432(432)
+       0.1	c cc: X half: n 864, rank H 430, rank [H;G] 434, rank S 430: detectors complete, 4 logical(s)
+       0.1	c cc: Z half: n 864, rank H 430, rank [H;G] 434, rank S 430: detectors complete, 4 logical(s)
+       0.1	c cc: rules excl,pack,orbf, cc-seed 0, dual on (verified map in use), ub-basis on
+       0.1	c cc: dual map 'halfswap-inverse Z_12 x Z_36' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+       0.1	c cc: ub-basis: verified basis rows give UB 108 (X 108, Z 108)
+       0.1	c cc: X half search: 2 seeds (orbit representatives)
+       0.1	c cc: X half level 1 EMPTY nodes 2 seeds 2 time 0.000s
+       0.1	c cc: X half level 2 EMPTY nodes 2 seeds 2 time 0.000s
+       0.1	c cc: X half level 3 EMPTY nodes 2 seeds 2 time 0.000s
+       0.1	c cc: X half level 4 EMPTY nodes 9 seeds 2 time 0.000s
+       0.1	c cc: X half level 5 EMPTY nodes 23 seeds 2 time 0.000s
+       0.1	c cc: X half level 6 EMPTY nodes 95 seeds 2 time 0.000s
+       0.1	c cc: X half level 7 EMPTY nodes 126 seeds 2 time 0.000s
+       0.1	c cc: X half level 8 EMPTY nodes 361 seeds 2 time 0.000s
+       0.1	c cc: X half level 9 EMPTY nodes 995 seeds 2 time 0.000s
+       0.1	c cc: X half level 10 EMPTY nodes 2790 seeds 2 time 0.000s
+       0.1	c cc: X half level 11 EMPTY nodes 6404 seeds 2 time 0.001s
+       0.1	c cc: X half level 12 EMPTY nodes 17805 seeds 2 time 0.003s
+       0.1	c cc: X half level 13 EMPTY nodes 46716 seeds 2 time 0.008s
+       0.1	c cc: X half level 14 EMPTY nodes 127720 seeds 2 time 0.022s
+       0.2	c cc: X half level 15 EMPTY nodes 334844 seeds 2 time 0.062s
+       0.3	c cc: X half level 16 EMPTY nodes 932155 seeds 2 time 0.177s
+       0.8	c cc: X half level 17 EMPTY nodes 2481151 seeds 2 time 0.490s
+       2.2	c cc: X half level 18 EMPTY nodes 6852555 seeds 2 time 1.415s
+       6.1	c cc: X half level 19 EMPTY nodes 18575308 seeds 2 time 3.872s
+      17.2	c cc: X half level 20 EMPTY nodes 51543894 seeds 2 time 11.075s
+      48.5	c cc: X half level 21 EMPTY nodes 141300138 seeds 2 time 31.296s
+     135.9	c cc: X half level 22 EMPTY nodes 393848923 seeds 2 time 87.452s
+     392.2	c cc: X half level 23 EMPTY nodes 1091377683 seeds 2 time 256.315s

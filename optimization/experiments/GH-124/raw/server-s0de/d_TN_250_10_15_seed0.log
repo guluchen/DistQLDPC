@@ -1,0 +1,88 @@
+# cmd: taskset -c 37 prlimit --as=4294967296 -- /home/yfc/mac-agent-20261009/frozen/server-gh124-114b901/distqldpc /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15 -engine=cc -v -cc-stats -cc-seed=0 -cpu-lim=3600 -cc-trace=out/d_TN_250_10_15_seed0.trace
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf, cc-seed 0
+c Hx: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Hx.txt
+c Hz: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Hz.txt
+c Gx: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Gx.txt
+c Gz: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Gz.txt
+c Hx: 120 x 250, Hz: 120 x 250, Gx: 10 x 250, Gz: 10 x 250, logicals: 20
+c cc: dual map detection: none (ranks Hz 120 Hx 120 [Hz;Gx] 130 [Hx;Gz] 130, 26 candidates, cpu 0.001s): both halves
+c cc symbreak X: n=250 candidates=25 verified_generators=0 orbits=250 detect_cpu=0.000s clause=none
+c cc symbreak Z: n=250 candidates=25 verified_generators=0 orbits=250 detect_cpu=0.000s clause=none
+c cc: X half: n 250, rank H 120, rank [H;G] 130, rank S 120: detectors complete, 10 logical(s)
+c cc: Z half: n 250, rank H 120, rank [H;G] 130, rank S 120: detectors complete, 10 logical(s)
+c cc: rules excl,pack,orbf, cc-seed 0, dual on, ub-basis off
+c cc: X half search: 250 seeds (index rule)
+c cc: Z half search: 250 seeds (index rule)
+c cc: X half level 1 EMPTY nodes 250 seeds 250 time 0.000s
+c cc-stats: X level 1 EMPTY nodes 250 seeds 250 closed 0 nocand 0 packprune 0 time 0.000051s
+c cc: Z half level 1 EMPTY nodes 250 seeds 250 time 0.000s
+c cc-stats: Z level 1 EMPTY nodes 250 seeds 250 closed 0 nocand 0 packprune 0 time 0.000008s
+c cc: X half level 2 EMPTY nodes 271 seeds 250 time 0.000s
+c cc-stats: X level 2 EMPTY nodes 271 seeds 250 closed 0 nocand 47 packprune 197 time 0.000091s
+c cc: Z half level 2 EMPTY nodes 250 seeds 250 time 0.000s
+c cc-stats: Z level 2 EMPTY nodes 250 seeds 250 closed 0 nocand 86 packprune 164 time 0.000021s
+c cc: Z half level 3 EMPTY nodes 540 seeds 250 time 0.000s
+c cc-stats: Z level 3 EMPTY nodes 540 seeds 250 closed 0 nocand 93 packprune 369 time 0.000072s
+c cc: X half level 3 EMPTY nodes 1113 seeds 250 time 0.000s
+c cc-stats: X level 3 EMPTY nodes 1113 seeds 250 closed 0 nocand 114 packprune 821 time 0.000143s
+c cc: Z half level 4 EMPTY nodes 1218 seeds 250 time 0.000s
+c cc-stats: Z level 4 EMPTY nodes 1218 seeds 250 closed 0 nocand 118 packprune 847 time 0.000175s
+c cc: X half level 4 EMPTY nodes 2167 seeds 250 time 0.000s
+c cc-stats: X level 4 EMPTY nodes 2167 seeds 250 closed 0 nocand 200 packprune 1617 time 0.000338s
+c cc: Z half level 5 EMPTY nodes 3037 seeds 250 time 0.000s
+c cc-stats: Z level 5 EMPTY nodes 3037 seeds 250 closed 0 nocand 171 packprune 2220 time 0.000497s
+c cc: X half level 5 EMPTY nodes 5489 seeds 250 time 0.001s
+c cc-stats: X level 5 EMPTY nodes 5489 seeds 250 closed 0 nocand 461 packprune 4010 time 0.000889s
+c cc: Z half level 6 EMPTY nodes 8725 seeds 250 time 0.001s
+c cc-stats: Z level 6 EMPTY nodes 8725 seeds 250 closed 0 nocand 270 packprune 6167 time 0.001436s
+c cc: X half level 6 EMPTY nodes 16046 seeds 250 time 0.003s
+c cc-stats: X level 6 EMPTY nodes 16046 seeds 250 closed 0 nocand 990 packprune 11684 time 0.002803s
+c cc: Z half level 7 EMPTY nodes 22415 seeds 250 time 0.004s
+c cc-stats: Z level 7 EMPTY nodes 22415 seeds 250 closed 80 nocand 547 packprune 17105 time 0.004136s
+c cc: X half level 7 EMPTY nodes 44570 seeds 250 time 0.009s
+c cc-stats: X level 7 EMPTY nodes 44570 seeds 250 closed 80 nocand 2541 packprune 34160 time 0.008969s
+c cc: Z half level 8 EMPTY nodes 66059 seeds 250 time 0.013s
+c cc-stats: Z level 8 EMPTY nodes 66059 seeds 250 closed 80 nocand 1415 packprune 50687 time 0.013492s
+c cc: X half level 8 EMPTY nodes 132393 seeds 250 time 0.028s
+c cc-stats: X level 8 EMPTY nodes 132393 seeds 250 closed 80 nocand 6808 packprune 102555 time 0.028264s
+c cc: Z half level 9 EMPTY nodes 192890 seeds 250 time 0.040s
+c cc-stats: Z level 9 EMPTY nodes 192890 seeds 250 closed 120 nocand 3730 packprune 148734 time 0.040329s
+c cc: X half level 9 EMPTY nodes 403646 seeds 250 time 0.091s
+c cc-stats: X level 9 EMPTY nodes 403646 seeds 250 closed 120 nocand 19668 packprune 313989 time 0.090654s
+c cc: Z half level 10 EMPTY nodes 583779 seeds 250 time 0.129s
+c cc-stats: Z level 10 EMPTY nodes 583779 seeds 250 closed 280 nocand 10929 packprune 452238 time 0.129160s
+c cc: X half level 10 EMPTY nodes 1280538 seeds 250 time 0.289s
+c cc-stats: X level 10 EMPTY nodes 1280538 seeds 250 closed 280 nocand 59571 packprune 1003541 time 0.289012s
+c cc: Z half level 11 EMPTY nodes 1799398 seeds 250 time 0.404s
+c cc-stats: Z level 11 EMPTY nodes 1799398 seeds 250 closed 490 nocand 32934 packprune 1400531 time 0.403525s
+c cc: X half level 11 EMPTY nodes 4097788 seeds 250 time 0.966s
+c cc-stats: X level 11 EMPTY nodes 4097788 seeds 250 closed 490 nocand 187250 packprune 3219164 time 0.965650s
+c cc: Z half level 12 EMPTY nodes 5641912 seeds 250 time 1.284s
+c cc-stats: Z level 12 EMPTY nodes 5641912 seeds 250 closed 490 nocand 102844 packprune 4390950 time 1.283997s
+c cc: X half level 12 EMPTY nodes 13383314 seeds 250 time 3.210s
+c cc-stats: X level 12 EMPTY nodes 13383314 seeds 250 closed 490 nocand 607339 packprune 10510172 time 3.209892s
+c cc: Z half level 13 EMPTY nodes 17937675 seeds 250 time 4.234s
+c cc-stats: Z level 13 EMPTY nodes 17937675 seeds 250 closed 1272 nocand 326504 packprune 13975621 time 4.234369s
+c cc: X half level 13 EMPTY nodes 44128354 seeds 250 time 10.857s
+c cc-stats: X level 13 EMPTY nodes 44128354 seeds 250 closed 1434 nocand 2012063 packprune 34629993 time 10.857397s
+c cc: Z half level 14 EMPTY nodes 57601659 seeds 250 time 13.526s
+c cc-stats: Z level 14 EMPTY nodes 57601659 seeds 250 closed 3048 nocand 1061584 packprune 44878828 time 13.526080s
+c cc: X half level 14 EMPTY nodes 146835675 seeds 250 time 36.479s
+c cc-stats: X level 14 EMPTY nodes 146835675 seeds 250 closed 3210 nocand 6750883 packprune 115103767 time 36.479408s
+c cc: Z half level 15 FOUND nodes 13842532 seeds 2 time 3.336s
+c cc-stats: Z level 15 FOUND nodes 13842532 seeds 2 closed 298 nocand 151154 packprune 11086129 time 3.336131s
+c witness Z: 1 2 3 8 19 29 104 108 114 136 144 201 202 212 247
+c cc-stats: total nodes X 210331614 Z 97702339, search time X 51.934s Z 22.973s, wall 74.917s
+c cc: d = 15
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf, cc-seed 0
+c Hx: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Hx.txt
+c Hz: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Hz.txt
+c Gx: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Gx.txt
+c Gz: /home/yfc/mac-agent-20261009/gh124-114b901/data/matrices/tier4/TN_250_10_15_Gz.txt
+c Hx: 120 x 250, Hz: 120 x 250, Gx: 10 x 250, Gz: 10 x 250, logicals: 20
+c d_lb: 15
+c d_ub: 15
+c d  : 15
+o 15
