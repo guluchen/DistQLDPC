@@ -119,16 +119,16 @@ Codes in data/matrices/tier*/ derived from codeDistancePYPI examples
   LP_* (from upstream AJ_*):
     LP_34_20_2 (AJ_01), LP_136_32_4 (AJ_04), LP_238_44_6 (AJ_07),
     LP_340_56_8 (AJ_10), LP_442_68_10 (AJ_13),
-    LP_1768_224_ge17 (AJ_52)
+    LP_1768_224_22 (AJ_52; was LP_1768_224_ge17)
   LP_* (from upstream xu_*):
     LP_544_80_12 (xu_16), LP_714_100_16 (xu_21; was LP_714_100_unknown),
-    LP_1020_136_16 (was xu_30), LP_1428_184_ge17 (was xu_42)
+    LP_1020_136_16 (was xu_30), LP_1428_184_24 (was xu_42, then LP_1428_184_ge17)
   LP_* (from upstream PK_*):
-    LP_1054_140_17to32 (was PK_31)
+    LP_1054_140_20 (was PK_31, then LP_1054_140_17to32)
   TN_* — TN_36_8_3 (was QT_36_8_3), TN_36_8_4, TN_54_11_4 (was QT_54_11_4),
          TN_72_8_8, TN_72_14_4 (was QT_72_14_4), TN_108_2_12, TN_144_2_13,
          TN_180_2_17 (was TN_180_2_17), TN_200_10_10 (was QT_200_10_10), TN_216_4_18 (was TN_216_4_18),
-         TN_250_10_15 (was QT_250_10_15), TN_252_2_17to28 (was TN_252_2_21), TN_288_2_ge9 (was TN_288_2_24),
+         TN_250_10_15 (was QT_250_10_15), TN_252_2_21 (was TN_252_2_21, then TN_252_2_17to28 until d = 21 was confirmed), TN_288_2_ge9 (was TN_288_2_24),
          TN_324_4_ge9 (was TN_324_4_25), TN_360_4_ge17 (was TN_360_4_24), TN_396_4_ge17 (was TN_396_4_26),
          TN_432_8_ge9 (was TN_432_8_33), TN_468_4_ge17 (was TN_468_4_31),
          TN_496_2_ge17 (was TN_496_2_32), TN_504_2_ge17 (was TN_504_2_45), TN_540_4_ge9 (was TN_540_4_40), TN_576_2_ge9 (was TN_576_2_57; TN_576_2_59 was a duplicate of the same code and was removed),
@@ -142,7 +142,7 @@ otherwise noted.
 Renamed in this repository (same matrices, corrected metadata in filenames),
 aligned with QDistSAT:
   BB_144_14_14 (was BB_144_14_0), BB_288_12_18 (was BB_288_12_18, then BB_288_12_unknown; d = 18 found by DistQLDPC 2026-10-11),
-  BB_360_12_17to24 (was BB_360_12_24), GB_144_12_8 (was GB_144_12_24),
+  BB_360_12_24 (was BB_360_12_24, then BB_360_12_17to24 until d = 24 was confirmed), GB_144_12_8 (was GB_144_12_24),
   GB_144_12_12 (was GB_144_12_37).
 Renamed 2026-10-11 (PI decision; same matrices, stem = {family}_{n}_{k}_{d}
 with n = columns of Hx, k = rows of Gx): LP_1054_140_17to32 (was PK_31),
@@ -173,3 +173,10 @@ When you receive DistQLDPC as a whole (source or binary):
 
 For questions about upstream MaxCDCL, contact the original authors
 (see src/solver/ file headers).
+
+Renamed 2026-10-16 (PI decision; same matrices): distances confirmed by
+DistQLDPC's experimental connected-cluster engine (GH-124, -engine=cc) and by two
+independent clean-room reimplementations plus a from-scratch prototype, all with
+GF(2)-verified witnesses: BB_360_12_24 (was BB_360_12_17to24), TN_252_2_21 (was
+TN_252_2_17to28), LP_1054_140_20 (was LP_1054_140_17to32), LP_1428_184_24 (was
+LP_1428_184_ge17), LP_1768_224_22 (was LP_1768_224_ge17).

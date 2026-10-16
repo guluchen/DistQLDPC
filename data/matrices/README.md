@@ -24,7 +24,7 @@ certified).
 | tier2 | medium filter; main 10–100 s on yfclab2 | TN_108_2_12 [[108,2,12]], BB_144_14_14 [[144,14,14]], LP_442_68_10 [[442,68,10]] |
 | tier3 | decisive set; main 100–2000 s on yfclab2 | GB_144_12_12 [[144,12,12]], TN_144_2_13 [[144,2,13]], TN_200_10_10 [[200,10,10]], BB_288_12_18 [[288,12,18]], LP_544_80_12 [[544,80,12]] |
 | tier4 | hard; main 2000–5000 s on yfclab2; timeout 2000 s Mac / 5000 s yfclab2 | TN_250_10_15 [[250,10,15]] |
-| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_17to28 [[252,2,17–28]], TN_288_2_ge9 [[288,2,≥9]], TN_324_4_ge9 [[324,4,≥9]], BB_360_12_17to24 [[360,12,17–24]], TN_360_4_ge17 [[360,4,≥17]], TN_396_4_ge17 [[396,4,≥17]], TN_432_8_ge9 [[432,8,≥9]], TN_468_4_ge17 [[468,4,≥17]], TN_496_2_ge17 [[496,2,≥17]], TN_504_2_ge17 [[504,2,≥17]], TN_540_4_ge9 [[540,4,≥9]], TN_576_2_ge9 [[576,2,≥9]], TN_612_2_ge17 [[612,2,≥17]], TN_648_10_9to52 [[648,10,9–52]], TN_648_14_ge9 [[648,14,≥9]], TN_684_2_ge9 [[684,2,≥9]], LP_714_100_16 [[714,100,16]], BB_756_16_ge17 [[756,16,≥17]], BB_864_4_ge17 [[864,4,≥17]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_17to32 [[1054,140,17–32]], BB_1080_4_ge17 [[1080,4,≥17]], LP_1428_184_ge17 [[1428,184,≥17]], LP_1768_224_ge17 [[1768,224,≥17]] |
+| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_ge9 [[288,2,≥9]], TN_324_4_ge9 [[324,4,≥9]], BB_360_12_24 [[360,12,24]], TN_360_4_ge17 [[360,4,≥17]], TN_396_4_ge17 [[396,4,≥17]], TN_432_8_ge9 [[432,8,≥9]], TN_468_4_ge17 [[468,4,≥17]], TN_496_2_ge17 [[496,2,≥17]], TN_504_2_ge17 [[504,2,≥17]], TN_540_4_ge9 [[540,4,≥9]], TN_576_2_ge9 [[576,2,≥9]], TN_612_2_ge17 [[612,2,≥17]], TN_648_10_9to52 [[648,10,9–52]], TN_648_14_ge9 [[648,14,≥9]], TN_684_2_ge9 [[684,2,≥9]], LP_714_100_16 [[714,100,16]], BB_756_16_ge17 [[756,16,≥17]], BB_864_4_ge17 [[864,4,≥17]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_ge17 [[1080,4,≥17]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]] |
 
 Counts: tier0 10, tier1 4, tier2 3, tier3 5, tier4 1, tier5 26 (total 49).
 
@@ -49,6 +49,11 @@ section 5.
 
 | Date | Old | New | Note |
 |------|-----|-----|------|
+| 2026-10-16 | BB_360_12_17to24 | BB_360_12_24 | d = 24 confirmed (GH-124 -engine=cc in-repo, 1993 s on yfclab2; prototype + 2 clean-room reimplementations; witnesses GF(2)-verified); matches the original upstream name |
+| 2026-10-16 | TN_252_2_17to28 | TN_252_2_21 | d = 21 confirmed (dX = 21, dZ >= 22; GH-124 -engine=cc sequential schedule 17116 s; prototype + 2 reimplementations); matches the original upstream name |
+| 2026-10-16 | LP_1054_140_17to32 | LP_1054_140_20 | d = 20 confirmed (GH-124 -engine=cc 83 s, also without orbit seeds 1552 s; prototype + 2 reimplementations) |
+| 2026-10-16 | LP_1428_184_ge17 | LP_1428_184_24 | d = 24 confirmed (GH-124 -engine=cc 4235 s; prototype + 2 reimplementations) |
+| 2026-10-16 | LP_1768_224_ge17 | LP_1768_224_22 | d = 22 confirmed (GH-124 -engine=cc 345 s; prototype + 2 reimplementations) |
 | 2026-10-12 | TN_180_2_ge9 | TN_180_2_17 | d = 17 solved by main on yfclab2 (10282 s no-card) and by GH-106 v2 |
 | 2026-10-12 | TN_216_4_ge9 | TN_216_4_18 | d = 18 solved by main on yfclab2 (13553 s no-card, 19170 s card-mto) |
 | 2026-10-12 | TN_252_2_ge9 | TN_252_2_17to28 | lb 17, ub 28 (yfclab2 6 h) |
