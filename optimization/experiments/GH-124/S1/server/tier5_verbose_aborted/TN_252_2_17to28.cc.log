@@ -1,0 +1,56 @@
+# start 1792103781.977 cpu 75 cmd: taskset -c 75 prlimit --as=4294967296 -- /home/yfc/mac-agent-20261009/frozen/server-gh124-244f670/distqldpc -engine=cc -v -cpu-lim=21600 data/matrices/tier5/TN_252_2_17to28
+       0.0	c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+       0.0	c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf, cc-seed 0
+       0.0	c Hx: data/matrices/tier5/TN_252_2_17to28_Hx.txt
+       0.0	c Hz: data/matrices/tier5/TN_252_2_17to28_Hz.txt
+       0.0	c Gx: data/matrices/tier5/TN_252_2_17to28_Gx.txt
+       0.0	c Gz: data/matrices/tier5/TN_252_2_17to28_Gz.txt
+       0.0	c Hx: 126 x 252, Hz: 126 x 252, Gx: 2 x 252, Gz: 2 x 252, logicals: 4
+       0.0	c cc: dual map detection: none (ranks Hz 125 Hx 125 [Hz;Gx] 127 [Hx;Gz] 127, 102 candidates, cpu 0.001s): both halves
+       0.0	c cc symbreak X: n=252 candidates=101 verified_generators=1 orbits=36 detect_cpu=0.001s clause=orbit-chain
+       0.0	c cc symbreak X: generator: plain blockshift L=7
+       0.0	c cc symbreak X: orbit reps (size): 0(7) 7(7) 14(7) 21(7) 28(7) 35(7) 42(7) 49(7) 56(7) 63(7) 70(7) 77(7) 84(7) 91(7) 98(7) 105(7) 112(7) 119(7) 126(7) 133(7) 140(7) 147(7) 154(7) 161(7) 168(7) 175(7) 182(7) 189(7) 196(7) 203(7) 210(7) 217(7) 224(7) 231(7) 238(7) 245(7)
+       0.0	c cc symbreak Z: n=252 candidates=101 verified_generators=1 orbits=36 detect_cpu=0.000s clause=orbit-chain
+       0.0	c cc symbreak Z: generator: plain blockshift L=7
+       0.0	c cc symbreak Z: orbit reps (size): 0(7) 7(7) 14(7) 21(7) 28(7) 35(7) 42(7) 49(7) 56(7) 63(7) 70(7) 77(7) 84(7) 91(7) 98(7) 105(7) 112(7) 119(7) 126(7) 133(7) 140(7) 147(7) 154(7) 161(7) 168(7) 175(7) 182(7) 189(7) 196(7) 203(7) 210(7) 217(7) 224(7) 231(7) 238(7) 245(7)
+       0.0	c cc: X half: n 252, rank H 125, rank [H;G] 127, rank S 125: detectors complete, 2 logical(s)
+       0.0	c cc: Z half: n 252, rank H 125, rank [H;G] 127, rank S 125: detectors complete, 2 logical(s)
+       0.0	c cc: rules excl,pack,orbf, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+       0.0	c cc: ub-basis: verified basis rows give UB 28 (X 28, Z 28)
+       0.0	c cc: X half search: 36 seeds (orbit representatives)
+       0.0	c cc: Z half search: 36 seeds (orbit representatives)
+       0.0	c cc: X half level 1 EMPTY nodes 36 seeds 36 time 0.000s
+       0.0	c cc: Z half level 1 EMPTY nodes 36 seeds 36 time 0.000s
+       0.0	c cc: X half level 2 EMPTY nodes 36 seeds 36 time 0.000s
+       0.0	c cc: Z half level 2 EMPTY nodes 36 seeds 36 time 0.000s
+       0.0	c cc: X half level 3 EMPTY nodes 123 seeds 36 time 0.000s
+       0.0	c cc: Z half level 3 EMPTY nodes 115 seeds 36 time 0.000s
+       0.0	c cc: Z half level 4 EMPTY nodes 202 seeds 36 time 0.000s
+       0.0	c cc: X half level 4 EMPTY nodes 195 seeds 36 time 0.000s
+       0.0	c cc: X half level 5 EMPTY nodes 574 seeds 36 time 0.000s
+       0.0	c cc: Z half level 5 EMPTY nodes 429 seeds 36 time 0.000s
+       0.0	c cc: Z half level 6 EMPTY nodes 1180 seeds 36 time 0.000s
+       0.0	c cc: X half level 6 EMPTY nodes 1480 seeds 36 time 0.000s
+       0.0	c cc: Z half level 7 EMPTY nodes 3030 seeds 36 time 0.001s
+       0.0	c cc: X half level 7 EMPTY nodes 3846 seeds 36 time 0.001s
+       0.0	c cc: Z half level 8 EMPTY nodes 7827 seeds 36 time 0.001s
+       0.0	c cc: X half level 8 EMPTY nodes 10508 seeds 36 time 0.002s
+       0.0	c cc: Z half level 9 EMPTY nodes 22210 seeds 36 time 0.004s
+       0.0	c cc: X half level 9 EMPTY nodes 30062 seeds 36 time 0.006s
+       0.1	c cc: Z half level 10 EMPTY nodes 63739 seeds 36 time 0.013s
+       0.1	c cc: X half level 10 EMPTY nodes 83811 seeds 36 time 0.018s
+       0.1	c cc: Z half level 11 EMPTY nodes 189449 seeds 36 time 0.040s
+       0.2	c cc: X half level 11 EMPTY nodes 250418 seeds 36 time 0.055s
+       0.3	c cc: Z half level 12 EMPTY nodes 579315 seeds 36 time 0.125s
+       0.5	c cc: X half level 12 EMPTY nodes 774578 seeds 36 time 0.176s
+       0.9	c cc: Z half level 13 EMPTY nodes 1817512 seeds 36 time 0.412s
+       1.5	c cc: X half level 13 EMPTY nodes 2476590 seeds 36 time 0.638s
+       2.9	c cc: Z half level 14 EMPTY nodes 5827902 seeds 36 time 1.421s
+       5.0	c cc: X half level 14 EMPTY nodes 8195491 seeds 36 time 2.093s
+       9.8	c cc: Z half level 15 EMPTY nodes 19075709 seeds 36 time 4.779s
+      17.3	c cc: X half level 15 EMPTY nodes 27940379 seeds 36 time 7.438s
+      33.7	c cc: Z half level 16 EMPTY nodes 63498528 seeds 36 time 16.451s
+      60.2	c cc: X half level 16 EMPTY nodes 97459695 seeds 36 time 26.473s
+     116.1	c cc: Z half level 17 EMPTY nodes 214973633 seeds 36 time 55.890s
+     210.8	c cc: X half level 17 EMPTY nodes 346544901 seeds 36 time 94.778s
+     409.2	c cc: Z half level 18 EMPTY nodes 739508817 seeds 36 time 198.314s

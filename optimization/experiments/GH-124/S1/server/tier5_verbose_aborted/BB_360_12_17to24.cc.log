@@ -1,0 +1,48 @@
+# start 1792103781.967 cpu 65 cmd: taskset -c 65 prlimit --as=4294967296 -- /home/yfc/mac-agent-20261009/frozen/server-gh124-244f670/distqldpc -engine=cc -v -cpu-lim=21600 data/matrices/tier5/BB_360_12_17to24
+       0.0	c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+       0.0	c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf, cc-seed 0
+       0.0	c Hx: data/matrices/tier5/BB_360_12_17to24_Hx.txt
+       0.0	c Hz: data/matrices/tier5/BB_360_12_17to24_Hz.txt
+       0.0	c Gx: data/matrices/tier5/BB_360_12_17to24_Gx.txt
+       0.0	c Gz: data/matrices/tier5/BB_360_12_17to24_Gz.txt
+       0.0	c Hx: 180 x 360, Hz: 180 x 360, Gx: 12 x 360, Gz: 12 x 360, logicals: 24
+       0.0	c cc: dual map detection: 'halfswap-inverse Z_6 x Z_30' verified (rank Hz=Hx=174, [Hz;Gx]=[Hx;Gz]=186, cpu 0.003s)
+       0.0	c cc symbreak X: n=360 candidates=173 verified_generators=10 orbits=2 detect_cpu=0.004s clause=orbit-chain
+       0.0	c cc symbreak X: generator: plain blockshift L=30
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=30 (2x15)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=30 (3x10)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=30 (5x6)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=30 (6x5)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=30 (10x3)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=30 (15x2)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=180 (2x90)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=180 (3x60)
+       0.0	c cc symbreak X: generator: plain 2dshift-a L=180 (6x30)
+       0.0	c cc symbreak X: orbit reps (size): 0(180) 180(180)
+       0.0	c cc: X half: n 360, rank H 174, rank [H;G] 186, rank S 174: detectors complete, 12 logical(s)
+       0.0	c cc: Z half: n 360, rank H 174, rank [H;G] 186, rank S 174: detectors complete, 12 logical(s)
+       0.0	c cc: rules excl,pack,orbf, cc-seed 0, dual on (verified map in use), ub-basis on
+       0.0	c cc: dual map 'halfswap-inverse Z_6 x Z_30' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+       0.0	c cc: ub-basis: verified basis rows give UB 30 (X 30, Z 30)
+       0.0	c cc: X half search: 2 seeds (orbit representatives)
+       0.0	c cc: X half level 1 EMPTY nodes 2 seeds 2 time 0.000s
+       0.0	c cc: X half level 2 EMPTY nodes 2 seeds 2 time 0.000s
+       0.0	c cc: X half level 3 EMPTY nodes 2 seeds 2 time 0.000s
+       0.0	c cc: X half level 4 EMPTY nodes 9 seeds 2 time 0.000s
+       0.0	c cc: X half level 5 EMPTY nodes 23 seeds 2 time 0.000s
+       0.0	c cc: X half level 6 EMPTY nodes 90 seeds 2 time 0.000s
+       0.0	c cc: X half level 7 EMPTY nodes 141 seeds 2 time 0.000s
+       0.0	c cc: X half level 8 EMPTY nodes 381 seeds 2 time 0.000s
+       0.0	c cc: X half level 9 EMPTY nodes 1201 seeds 2 time 0.000s
+       0.0	c cc: X half level 10 EMPTY nodes 3535 seeds 2 time 0.000s
+       0.0	c cc: X half level 11 EMPTY nodes 9577 seeds 2 time 0.002s
+       0.0	c cc: X half level 12 EMPTY nodes 28683 seeds 2 time 0.005s
+       0.0	c cc: X half level 13 EMPTY nodes 82924 seeds 2 time 0.014s
+       0.1	c cc: X half level 14 EMPTY nodes 248379 seeds 2 time 0.041s
+       0.2	c cc: X half level 15 EMPTY nodes 734295 seeds 2 time 0.121s
+       0.6	c cc: X half level 16 EMPTY nodes 2224958 seeds 2 time 0.378s
+       1.8	c cc: X half level 17 EMPTY nodes 6666161 seeds 2 time 1.227s
+       5.6	c cc: X half level 18 EMPTY nodes 20347417 seeds 2 time 3.768s
+      17.6	c cc: X half level 19 EMPTY nodes 61939874 seeds 2 time 11.970s
+      55.1	c cc: X half level 20 EMPTY nodes 190965002 seeds 2 time 37.539s
+     210.7	c cc: X half level 21 EMPTY nodes 589087355 seeds 2 time 155.590s
