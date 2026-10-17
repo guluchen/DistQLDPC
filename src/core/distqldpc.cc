@@ -1075,14 +1075,15 @@ static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
     return true;
 }
 
-/* ---- GH-128: -p1skip=on|off (default off = main). Redundant-probe removal in the interleaved search.
+/* ---- GH-128: -p1skip=on|off (default on after the S1 evaluation; off = main's probe sequence). Redundant-probe
+ * removal in the interleaved search.
  * d = min(dX, dZ) with UB U = the weight of a logical found by some probe (U >= d). A half whose proven lb
  * (own or shared via GH-107) is >= U holds no logical of weight < U, so no probe on it can lower U and every
  * probe on it would leave d = min(U, d of the other half) unchanged: it is skipped in Phase 1 (Phase 2a/2b
  * already skip such a half through their h.lb >= U guards, so nothing is added there). When every existing half has lb >= U the global lb min(lbX, lbZ) equals U and
  * d = U is proven: the search stops at once and reports d = U through the usual output (no probe follows,
  * the reported LB/UB/d are the values main would report). No other probe, cap or bound changes. */
-static bool g_p1skip = false;
+static bool g_p1skip = true;   /* GH-128 S1: default on (sound, never more probes; see the experiment REPORT) */
 
 /* GH-128: global lb (min of the existing halves' proven lbs) has reached U (U finite). */
 static bool css_bounds_meet(const CssHalf hs[2], uint64_t U) {
@@ -1893,9 +1894,9 @@ int main(int argc, char** argv) {
             printf("            (implied NONE probes skipped); -dualmode=skip solves only the X half;\n");
             printf("            -dualmode=off (alias -no-dualskip) ignores dual maps; -dualshare-stats prints\n");
             printf("            work counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
-            printf("  Redundant probes (GH-128, split MaxSAT path): -p1skip=on skips a half's probe once its proven\n");
-            printf("            lb >= the global UB and stops as soon as the global lb equals the UB; -p1skip=off\n");
-            printf("            (default) = main's probe sequence\n");
+            printf("  Redundant probes (GH-128, split MaxSAT path): -p1skip=on (default) skips a half's probe once its\n");
+            printf("            proven lb >= the global UB and stops as soon as the global lb equals the UB; -p1skip=off\n");
+            printf("            = main abd1770's probe sequence\n");
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
