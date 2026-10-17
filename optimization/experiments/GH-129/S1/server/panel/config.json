@@ -1,0 +1,56 @@
+{
+ "bin": "../frozen/server-gh129-d1f3f41/distqldpc",
+ "cpus": [
+  116,
+  117,
+  118,
+  119,
+  120,
+  121,
+  122,
+  123
+ ],
+ "limits": {
+  "0": 600,
+  "1": 1800,
+  "2": 1800,
+  "3": 1800,
+  "4": 5000
+ },
+ "seeds": [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4"
+ ],
+ "arms": [
+  [
+   "main-nc",
+   [
+    "-no-card"
+   ]
+  ],
+  [
+   "main-mto",
+   [
+    "-card-mto"
+   ]
+  ],
+  [
+   "cand-nc",
+   [
+    "-no-card",
+    "-frontier=on"
+   ]
+  ],
+  [
+   "cand-mto",
+   [
+    "-card-mto",
+    "-frontier=on"
+   ]
+  ]
+ ],
+ "njobs": 260
+}
