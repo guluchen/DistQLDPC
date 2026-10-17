@@ -1078,8 +1078,8 @@ static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
 /* ---- GH-128: -p1skip=on|off (default off = main). Redundant-probe removal in the interleaved search.
  * d = min(dX, dZ) with UB U = the weight of a logical found by some probe (U >= d). A half whose proven lb
  * (own or shared via GH-107) is >= U holds no logical of weight < U, so no probe on it can lower U and every
- * probe on it would leave d = min(U, d of the other half) unchanged: it is skipped (Phase 1; Phase 2a/2b
- * already skip such a half). When every existing half has lb >= U the global lb min(lbX, lbZ) equals U and
+ * probe on it would leave d = min(U, d of the other half) unchanged: it is skipped in Phase 1 (Phase 2a/2b
+ * already skip such a half through their h.lb >= U guards, so nothing is added there). When every existing half has lb >= U the global lb min(lbX, lbZ) equals U and
  * d = U is proven: the search stops at once and reports d = U through the usual output (no probe follows,
  * the reported LB/UB/d are the values main would report). No other probe, cap or bound changes. */
 static bool g_p1skip = false;
@@ -1201,7 +1201,6 @@ static int min_distance_css_interleaved(
         for (int k = 0; k < 2; k++) {
             CssHalf& h = hs[k];
             if (done[k]) continue;
-            if (g_p1skip && css_bounds_meet(hs, U)) { done[0] = done[1] = true; break; }   /* GH-128 (implied by the guard below) */
             if (h.lb >= U) {
                 if (share && h.own_lb < U) {   /* GH-107 */
                     implied++;
@@ -1223,7 +1222,6 @@ static int min_distance_css_interleaved(
     /* Phase 2b/3: optimise the unfinished halves in order of incumbent (smaller first), each with
      * cap U (find, then descend and prove); the second therefore only searches weight <= U. */
     for (int round = 0; round < 2; round++) {
-        if (g_p1skip && css_bounds_meet(hs, U)) break;   /* GH-128 (implied by the h.lb >= U guard below) */
         int k = -1;
         for (int j = 0; j < 2; j++)
             if (!done[j] && (k < 0 || hs[j].ub < hs[k].ub)) k = j;
