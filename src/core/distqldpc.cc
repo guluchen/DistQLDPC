@@ -943,6 +943,14 @@ static bool build_css_half(SimpSolver& S, std::vector<Var>& aux, int& n_out,
 
 enum HalfStatus { HALF_FOUND, HALF_NONE, HALF_OPT, HALF_UNKNOWN, HALF_INFEASIBLE };
 
+/* GH-129 frontier branching (split path only; see Solver::pickFrontierLit): -frontier=off (default,
+ * main's search) | on (every probe) | postsol (only after the probe's solver found a solution) |
+ * presol (only until then). The half's parity rows (Hpar, qubit vars 0..n-1) are passed to the
+ * engine as in GH-121. -frontier-stats prints per-probe counters to stderr; -frontier-check
+ * re-verifies the incremental odd-row state at every frontier decision (debug). */
+static int g_frontier_mode = 0;
+static bool g_frontier_stats = false, g_frontier_check = false;
+
 struct CssHalf {
     const char* tag; const Matrix* H; const Matrix* G;
     bool exists;          /* has a nontrivial logical of this type (instance SAT) */
@@ -972,8 +980,28 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     S.stopAtFirstSolution = first_only;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
+    if (g_frontier_mode) {   /* GH-129: the half's parity rows over qubit vars 0..n-1 */
+        std::vector<std::vector<int> > rows;
+        for (int r = 0; r < h.H->rows; r++) {
+            std::vector<int> row;
+            for (int i = 0; i < n; i++) if (getm(*h.H, r, i)) row.push_back(i);
+            rows.push_back(row);
+        }
+        S.setFrontierRows(rows, n);
+        S.frontierMode = g_frontier_mode;
+        S.frontierCheck = g_frontier_check;
+    }
     vec<Lit> dummy;
     lbool ret = S.solveLimited(dummy);
+    if (g_frontier_stats || (g_frontier_mode && g_frontier_check)) {   /* stats also with -frontier=off (main's search) */
+        fprintf(stderr, "c FRONTIER %s cap %llu %s: conflicts %llu decisions %llu frontier_picks %llu fallbacks %llu "
+                "no_eligible %llu mean_odd_rows %.2f check_fails %llu\n", h.tag, (unsigned long long)cap,
+                first_only ? "feasibility" : "optimize", (unsigned long long)S.conflicts,
+                (unsigned long long)S.decisions, (unsigned long long)S.frPicks, (unsigned long long)S.frFallbacks,
+                (unsigned long long)S.frNoEligible, S.frPicks ? (double)S.frOddSum / (double)(S.frPicks + S.frNoEligible) : 0.0,
+                (unsigned long long)S.frCheckFails);
+        fflush(stderr);
+    }
     h.probes++; h.conflicts += S.conflicts;   /* GH-107 work counters (fresh solver per probe) */
     uint64_t opt = S.getLastOptimalCost();
     HalfStatus st = HALF_UNKNOWN;
@@ -1784,6 +1812,20 @@ int main(int argc, char** argv) {
             die("invalid -dualmode (share | skip | off)");
         else if (!strcmp(argv[i], "-dualshare-stats"))
             g_dualshare_stats = true;
+        else if (!strcmp(argv[i], "-frontier=off"))   /* GH-129 */
+            g_frontier_mode = 0;
+        else if (!strcmp(argv[i], "-frontier=on"))
+            g_frontier_mode = 1;
+        else if (!strcmp(argv[i], "-frontier=postsol"))
+            g_frontier_mode = 2;
+        else if (!strcmp(argv[i], "-frontier=presol"))
+            g_frontier_mode = 3;
+        else if (!strncmp(argv[i], "-frontier=", 10))
+            die("invalid -frontier (off | on | postsol | presol)");
+        else if (!strcmp(argv[i], "-frontier-stats"))
+            g_frontier_stats = true;
+        else if (!strcmp(argv[i], "-frontier-check"))
+            g_frontier_check = true;
         else if (!strcmp(argv[i], "-dualskip-report"))
             dualskip_report = true;
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
@@ -1869,6 +1911,10 @@ int main(int argc, char** argv) {
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");
             printf("            cardinality flags and -dualshare-stats (auto warns when its choice ignores a flag)\n");
+            printf("  Frontier branching (split MaxSAT path only, GH-129): -frontier=off|on|postsol|presol (default off):\n");
+            printf("            decide x_q = 1 for a qubit of an odd parity row first (CC's growth rule); postsol/presol\n");
+            printf("            apply it only after/before the probe's first solution; -frontier-stats per-probe counters\n");
+            printf("            (stderr); -frontier-check re-verifies the incremental row state (debug)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

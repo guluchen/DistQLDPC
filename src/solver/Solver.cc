@@ -1499,6 +1499,7 @@ bool Solver::satisfied(const Clause& c) const {
 //
 void Solver::cancelUntil(int level) {
     if (decisionLevel() > level){
+        if (frontierMode && trail_lim[level] < frSynced) frSynced = trail_lim[level];   // GH-129
         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
             Var      x  = var(trail[c]);
             
@@ -3801,11 +3802,16 @@ lbool Solver::search(int& nof_conflicts)
              if (next == lit_Undef)*/
                 // New variable decision:
 	    decisions++;
-	    next = pickBranchLit();
+	    // GH-129 frontier branching (-frontier): odd-row qubit decided to 1 first; else main's decision.
+	    if (frontierMode && (frontierMode == 1 || (frontierMode == 2) == frSeenSolution))
+	      next = pickFrontierLit();
+	    if (next == lit_Undef)
+	      next = pickBranchLit();
 	    
 	    if (next == lit_Undef) {
 	      // better solution found
 	      feasible = true;
+	      frSeenSolution = true;   // GH-129 (-frontier=postsol / presol)
 	      assert(falseLits.size() < UB);
 	      int nbFixeds = trail_lim.size() == 0 ? 0 : trail_lim[0];
 	      int nbFalses = falseLits_lim.size() == 0 ? 0 : falseLits_lim[0];
@@ -5146,6 +5152,7 @@ void Solver::removeLearntClauses() {
 }
 
 void Solver::cancelUntilBeginning(int begnning) {
+  if (frontierMode && begnning < frSynced) frSynced = begnning;   // GH-129
   for (int c = trail.size()-1; c >= begnning; c--){
     Var      x  = var(trail[c]);
     if (!VSIDS){
@@ -7226,3 +7233,116 @@ void Solver::garbageCollect()
     to.moveTo(ca);
 }
 
+
+//=================================================================================================
+// DistQLDPC GH-129: frontier branching (CC's growth rule as a MaxCDCL decision rule).
+// A parity row is "odd" when its currently true qubits have odd parity and it still has an
+// unassigned qubit: every completion that satisfies the row must set one more of its qubits to 1.
+// pickFrontierLit() returns x_q = 1 for a qubit q of the odd row with the fewest unassigned qubits
+// (ties: smallest row index), q = the unassigned decision qubit with the highest activity of the
+// active heuristic (VSIDS in VSIDS phases, LRB/CHB score in LRB phases; ties: smallest index).
+// lit_Undef when no row is odd (the caller then uses pickBranchLit()). The row state is kept
+// incrementally: frApplied lists the qubit literals reflected in it with their trail positions;
+// cancelUntil()/cancelUntilBeginning() lower frSynced, and frSync() undoes the entries at or above
+// frSynced and applies the trail from there. Only the decision order changes (soundness).
+
+void Solver::setFrontierRows(const std::vector<std::vector<int> >& rows, int nQubits)
+{
+    frN = nQubits;
+    frRows.clear();
+    for (size_t r = 0; r < rows.size(); r++)
+        if (!rows[r].empty()) frRows.push_back(rows[r]);
+    frColRows.assign((size_t)frN, std::vector<int>());
+    for (size_t r = 0; r < frRows.size(); r++)
+        for (size_t t = 0; t < frRows[r].size(); t++)
+            frColRows[(size_t)frRows[r][t]].push_back((int)r);
+    frUnass.assign(frRows.size(), 0);
+    for (size_t r = 0; r < frRows.size(); r++) frUnass[r] = (int)frRows[r].size();
+    frPar.assign(frRows.size(), 0);
+    frOddPos.assign(frRows.size(), -1);
+    frOdd.clear(); frApplied.clear(); frAppliedPos.clear();
+    frSynced = 0;
+}
+
+void Solver::frApply(Lit p, int sgn)
+{
+    const bool t = !sign(p);
+    const std::vector<int>& rs = frColRows[(size_t)var(p)];
+    for (size_t k = 0; k < rs.size(); k++) {
+        const int r = rs[k];
+        frUnass[r] -= sgn;
+        if (t) frPar[r] ^= 1;
+        const bool odd = frPar[r] && frUnass[r] > 0;
+        if (odd) {
+            if (frOddPos[r] < 0) { frOddPos[r] = (int)frOdd.size(); frOdd.push_back(r); }
+        } else if (frOddPos[r] >= 0) {
+            const int pos = frOddPos[r], last = frOdd.back();
+            frOdd[pos] = last; frOddPos[last] = pos;
+            frOdd.pop_back(); frOddPos[r] = -1;
+        }
+    }
+}
+
+void Solver::frSync()
+{
+    const int lo = frSynced < trail.size() ? frSynced : trail.size();
+    while (!frAppliedPos.empty() && frAppliedPos.back() >= lo) {
+        frApply(frApplied.back(), -1);
+        frApplied.pop_back(); frAppliedPos.pop_back();
+    }
+    for (int i = lo; i < trail.size(); i++) {
+        const Lit p = trail[i];
+        if (var(p) < frN) { frApply(p, +1); frApplied.push_back(p); frAppliedPos.push_back(i); }
+    }
+    frSynced = trail.size();
+}
+
+// Debug (-frontier-check): compare the incremental state with a recomputation from the current
+// assignment; on a mismatch count it and rebuild the state from the trail.
+void Solver::frCheckState()
+{
+    bool bad = false;
+    for (size_t a = 0; a < frApplied.size() && !bad; a++) {
+        const int pos = frAppliedPos[a];
+        if (pos >= trail.size() || trail[pos] != frApplied[a]) bad = true;
+    }
+    std::vector<char> inOdd(frRows.size(), 0);
+    for (size_t k = 0; k < frOdd.size(); k++) inOdd[(size_t)frOdd[k]] = 1;
+    for (size_t r = 0; r < frRows.size() && !bad; r++) {
+        int un = 0, par = 0;
+        for (size_t t = 0; t < frRows[r].size(); t++) {
+            const lbool v = value(frRows[r][t]);
+            if (v == l_Undef) un++; else if (v == l_True) par ^= 1;
+        }
+        const bool odd = par && un > 0;
+        if (un != frUnass[r] || par != frPar[r] || odd != (bool)inOdd[r] || odd != (frOddPos[r] >= 0)) bad = true;
+    }
+    if (!bad) return;
+    frCheckFails++;
+    std::vector<std::vector<int> > rows = frRows;
+    setFrontierRows(rows, frN);
+    frSync();
+}
+
+Lit Solver::pickFrontierLit()
+{
+    frSync();
+    if (frontierCheck) frCheckState();
+    if (frOdd.empty()) { frFallbacks++; return lit_Undef; }
+    frOddSum += frOdd.size();
+    int best = -1;
+    for (size_t k = 0; k < frOdd.size(); k++) {
+        const int r = frOdd[k];
+        if (best < 0 || frUnass[r] < frUnass[best] || (frUnass[r] == frUnass[best] && r < best)) best = r;
+    }
+    const vec<double>& act = VSIDS ? activity_VSIDS : activity_CHB;
+    Var bv = var_Undef;
+    const std::vector<int>& row = frRows[(size_t)best];
+    for (size_t t = 0; t < row.size(); t++) {
+        const Var q = row[t];
+        if (value(q) == l_Undef && decision[q] && (bv == var_Undef || act[q] > act[bv])) bv = q;
+    }
+    if (bv == var_Undef) { frNoEligible++; return lit_Undef; }
+    frPicks++;
+    return mkLit(bv, false);
+}
