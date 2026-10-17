@@ -951,6 +951,44 @@ enum HalfStatus { HALF_FOUND, HALF_NONE, HALF_OPT, HALF_UNKNOWN, HALF_INFEASIBLE
 static int g_frontier_mode = 0;
 static bool g_frontier_stats = false, g_frontier_check = false;
 
+/* GH-130 -frontier=auto (g_frontier_mode 4): per CSS half, frontier branching (mode on) iff the half's
+ * parity matrix has fewer than FRONTIER_AUTO_C4 Tanner-graph 4-cycles per (nonzero) row, decided once
+ * from the matrix before any search. A 4-cycle is a pair of rows sharing a pair of qubits; the count is
+ * sum over row pairs of C(|r cap s|, 2). Rationale (optimization/experiments/GH-130/REPORT.md): the rule
+ * grows a cluster by repairing odd rows; where rows overlap in >= 2 qubits, a repair qubit toggles rows
+ * the cluster already touches, the odd-row frontier does not grow with the cluster and the forced
+ * positive decisions stop shortening refutations (GH-129: all BB/GB/LP halves <= 1.6, all TN halves
+ * >= 6.15 on tiers 1-5). */
+static const double FRONTIER_AUTO_C4 = 3.0;
+
+static double tanner_c4_per_row(const Matrix& H) {
+    std::vector<std::vector<int> > rows, inc(H.cols);
+    for (int r = 0; r < H.rows; r++) {
+        std::vector<int> row;
+        for (int i = 0; i < H.cols; i++) if (getm(H, r, i)) row.push_back(i);
+        if (row.empty()) continue;
+        for (size_t t = 0; t < row.size(); t++) inc[row[t]].push_back((int)rows.size());
+        rows.push_back(row);
+    }
+    if (rows.empty()) return 0.0;
+    std::vector<int> cnt(rows.size(), 0), touched;
+    double c4 = 0.0;
+    for (size_t r = 0; r < rows.size(); r++) {
+        touched.clear();
+        for (size_t t = 0; t < rows[r].size(); t++) {
+            const std::vector<int>& L = inc[rows[r][t]];
+            for (size_t u = 0; u < L.size(); u++)
+                if ((size_t)L[u] > r) { if (cnt[L[u]]++ == 0) touched.push_back(L[u]); }
+        }
+        for (size_t u = 0; u < touched.size(); u++) {
+            double c = cnt[touched[u]];
+            c4 += c * (c - 1) / 2;
+            cnt[touched[u]] = 0;
+        }
+    }
+    return c4 / (double)rows.size();
+}
+
 struct CssHalf {
     const char* tag; const Matrix* H; const Matrix* G;
     bool exists;          /* has a nontrivial logical of this type (instance SAT) */
@@ -961,6 +999,7 @@ struct CssHalf {
     uint64_t probes;      /* oracle calls (fresh solvers) on this half */
     uint64_t conflicts;   /* engine conflicts spent in those calls */
     uint64_t own_lb;      /* lb this half would hold without dual-map sharing (skip accounting only) */
+    int frontier;         /* GH-130: frontier mode of this half's probes (= g_frontier_mode unless auto) */
 };
 
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
@@ -980,7 +1019,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     S.stopAtFirstSolution = first_only;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
-    if (g_frontier_mode) {   /* GH-129: the half's parity rows over qubit vars 0..n-1 */
+    if (h.frontier) {   /* GH-129: the half's parity rows over qubit vars 0..n-1 */
         std::vector<std::vector<int> > rows;
         for (int r = 0; r < h.H->rows; r++) {
             std::vector<int> row;
@@ -988,12 +1027,12 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
             rows.push_back(row);
         }
         S.setFrontierRows(rows, n);
-        S.frontierMode = g_frontier_mode;
+        S.frontierMode = h.frontier;
         S.frontierCheck = g_frontier_check;
     }
     vec<Lit> dummy;
     lbool ret = S.solveLimited(dummy);
-    if (g_frontier_stats || (g_frontier_mode && g_frontier_check)) {   /* stats also with -frontier=off (main's search) */
+    if (g_frontier_stats || (h.frontier && g_frontier_check)) {   /* stats also with -frontier=off (main's search) */
         fprintf(stderr, "c FRONTIER %s cap %llu %s: conflicts %llu decisions %llu frontier_picks %llu fallbacks %llu "
                 "no_eligible %llu mean_odd_rows %.2f check_fails %llu\n", h.tag, (unsigned long long)cap,
                 first_only ? "feasibility" : "optimize", (unsigned long long)S.conflicts,
@@ -1111,6 +1150,18 @@ static int min_distance_css_interleaved(
     const uint64_t n = (uint64_t)Hx.cols, INF = UINT64_MAX;
     CssHalf hs[2] = { {"X", &Hz, &Gx, Gx.rows > 0, 1, INF}, {"Z", &Hx, &Gz, Gz.rows > 0, 1, INF} };
     hs[0].own_lb = hs[1].own_lb = 1;
+    for (int k = 0; k < 2; k++) {   /* GH-130: per-half frontier mode (-frontier=auto decides from structure) */
+        hs[k].frontier = g_frontier_mode == 4 ? 0 : g_frontier_mode;
+        if (g_frontier_mode == 4 && hs[k].exists) {
+            double c4 = tanner_c4_per_row(*hs[k].H);
+            hs[k].frontier = c4 < FRONTIER_AUTO_C4 ? 1 : 0;
+            if (verb > 0) {
+                printf("c frontier auto %s: %.2f Tanner 4-cycles per row (threshold %.2f) -> %s\n",
+                       hs[k].tag, c4, FRONTIER_AUTO_C4, hs[k].frontier ? "on" : "off");
+                fflush(stdout);
+            }
+        }
+    }
     /* GH-92 (stack of GH-87 on GH-85): dual-map detection first, then per-half symmetry detection on
      * every half that is still solved. Soundness of the combination: a verified XZ-dual map proves
      * dX = dZ (weight-preserving bijection F_X -> F_Z, see the GH-87 block), so solving only the X
@@ -1820,8 +1871,10 @@ int main(int argc, char** argv) {
             g_frontier_mode = 2;
         else if (!strcmp(argv[i], "-frontier=presol"))
             g_frontier_mode = 3;
+        else if (!strcmp(argv[i], "-frontier=auto"))   /* GH-130 */
+            g_frontier_mode = 4;
         else if (!strncmp(argv[i], "-frontier=", 10))
-            die("invalid -frontier (off | on | postsol | presol)");
+            die("invalid -frontier (off | on | postsol | presol | auto)");
         else if (!strcmp(argv[i], "-frontier-stats"))
             g_frontier_stats = true;
         else if (!strcmp(argv[i], "-frontier-check"))
@@ -1911,10 +1964,11 @@ int main(int argc, char** argv) {
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");
             printf("            cardinality flags and -dualshare-stats (auto warns when its choice ignores a flag)\n");
-            printf("  Frontier branching (split MaxSAT path only, GH-129): -frontier=off|on|postsol|presol (default off):\n");
+            printf("  Frontier branching (split MaxSAT path only, GH-129): -frontier=off|on|postsol|presol|auto (default off):\n");
             printf("            decide x_q = 1 for a qubit of an odd parity row first (CC's growth rule); postsol/presol\n");
             printf("            apply it only after/before the probe's first solution; -frontier-stats per-probe counters\n");
-            printf("            (stderr); -frontier-check re-verifies the incremental row state (debug)\n");
+            printf("            (stderr); -frontier-check re-verifies the incremental row state (debug); auto (GH-130):\n");
+            printf("            on per half iff its parity matrix has < 3 Tanner 4-cycles per row (-v prints the choice)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
