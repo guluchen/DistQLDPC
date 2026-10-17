@@ -1075,6 +1075,23 @@ static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
     return true;
 }
 
+/* ---- GH-128: -p1skip=on|off (default off = main). Redundant-probe removal in the interleaved search.
+ * d = min(dX, dZ) with UB U = the weight of a logical found by some probe (U >= d). A half whose proven lb
+ * (own or shared via GH-107) is >= U holds no logical of weight < U, so no probe on it can lower U and every
+ * probe on it would leave d = min(U, d of the other half) unchanged: it is skipped (Phase 1; Phase 2a/2b
+ * already skip such a half). When every existing half has lb >= U the global lb min(lbX, lbZ) equals U and
+ * d = U is proven: the search stops at once and reports d = U through the usual output (no probe follows,
+ * the reported LB/UB/d are the values main would report). No other probe, cap or bound changes. */
+static bool g_p1skip = false;
+
+/* GH-128: global lb (min of the existing halves' proven lbs) has reached U (U finite). */
+static bool css_bounds_meet(const CssHalf hs[2], uint64_t U) {
+    if (U == UINT64_MAX) return false;
+    bool any = false;
+    for (int k = 0; k < 2; k++) if (hs[k].exists) { any = true; if (hs[k].lb < U) return false; }
+    return any;
+}
+
 static int min_distance_css_interleaved(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int verb, int pipe_w, int card_mode, bool symbreak, int dualmode, bool stats = false)
@@ -1135,6 +1152,8 @@ static int min_distance_css_interleaved(
         if ((int)info.reps.size() < info.n) hs[k].sb_orbit = info.orbit_of;
     }
     uint64_t U = INF, v = 0, lastLB = 0;
+    uint64_t p1skips = 0;   /* GH-128: probes skipped because lb >= U */
+    bool met = false;       /* GH-128: global lb = U reached (d proven) */
     /* Phase 1: doubling feasibility tests on both halves; anytime global LB. */
     for (uint64_t m = 1; ; m = (m >= n ? n : 2 * m)) {
         for (int k = 0; k < 2; k++) {
@@ -1148,6 +1167,13 @@ static int min_distance_css_interleaved(
                 }
                 continue;
             }
+            if (g_p1skip && U != INF && h.lb >= U) {   /* GH-128: cannot lower U; d unaffected (when every half
+                                                          * has lb >= U this skips all remaining probes: d = U) */
+                p1skips++;
+                if (verb > 0) printf("c p1skip: %s half cap %llu skipped (lb %llu >= UB %llu)\n", h.tag,
+                                     (unsigned long long)m, (unsigned long long)h.lb, (unsigned long long)U);
+                continue;
+            }
             HalfStatus st = run_css_half(h, m, true, verb, card_mode, pipe_w, INF, U, true, v);
             if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
             else if (st == HALF_NONE) h.lb = h.own_lb = m + 1;
@@ -1159,8 +1185,12 @@ static int min_distance_css_interleaved(
         for (int k = 0; k < 2; k++) if (hs[k].exists) { any = true; if (hs[k].lb < glb) glb = hs[k].lb; if (hs[k].ub != INF) any_ub = true; }
         if (!any) die("no nontrivial logical operator in either half");
         if (glb != INF && glb > lastLB) { lastLB = glb; pipe_bound(pipe_w, "LB", glb); }
+        if (g_p1skip && css_bounds_meet(hs, U)) met = true;   /* GH-128 */
         if (any_ub || m >= n) break;
     }
+    if (met && verb > 0)
+        printf("c p1skip: global lb %llu = UB %llu after Phase 1: d determined, no further probe\n",
+               (unsigned long long)U, (unsigned long long)U);
     /* Phase 2a: tie-breaking probes for a logical of weight <= U-1 (stop at first), alternating
      * halves while their incumbents are equal.
      * FOUND improves the global UB; NONE proves the half cannot beat U, which finishes it. */
@@ -1171,6 +1201,7 @@ static int min_distance_css_interleaved(
         for (int k = 0; k < 2; k++) {
             CssHalf& h = hs[k];
             if (done[k]) continue;
+            if (g_p1skip && css_bounds_meet(hs, U)) { done[0] = done[1] = true; break; }   /* GH-128 (implied by the guard below) */
             if (h.lb >= U) {
                 if (share && h.own_lb < U) {   /* GH-107 */
                     implied++;
@@ -1192,6 +1223,7 @@ static int min_distance_css_interleaved(
     /* Phase 2b/3: optimise the unfinished halves in order of incumbent (smaller first), each with
      * cap U (find, then descend and prove); the second therefore only searches weight <= U. */
     for (int round = 0; round < 2; round++) {
+        if (g_p1skip && css_bounds_meet(hs, U)) break;   /* GH-128 (implied by the h.lb >= U guard below) */
         int k = -1;
         for (int j = 0; j < 2; j++)
             if (!done[j] && (k < 0 || hs[j].ub < hs[k].ub)) k = j;
@@ -1222,12 +1254,14 @@ static int min_distance_css_interleaved(
         if (glb > lastLB) { lastLB = glb; pipe_bound(pipe_w, "LB", glb); }
     }
     if (verb > 0) printf("c CSS interleave: d = %llu\n", (unsigned long long)U);
+    char p1buf[48] = "";   /* GH-128: the p1skips field appears only with -p1skip=on (off = main's line) */
+    if (g_p1skip) snprintf(p1buf, sizeof(p1buf), " p1skips %llu", (unsigned long long)p1skips);
     if (stats)
-        printf("c dualshare stats: mode %s map %d probes X %llu Z %llu conflicts X %llu Z %llu implied_skips %llu d %llu\n",
+        printf("c dualshare stats: mode %s map %d probes X %llu Z %llu conflicts X %llu Z %llu implied_skips %llu%s d %llu\n",
                dualmode == DUALMODE_OFF ? "off" : dualmode == DUALMODE_SKIP ? "skip" : "share", (int)(share || z_eliminated),
                (unsigned long long)hs[0].probes, (unsigned long long)hs[1].probes,
                (unsigned long long)hs[0].conflicts, (unsigned long long)hs[1].conflicts,
-               (unsigned long long)implied, (unsigned long long)U);
+               (unsigned long long)implied, p1buf, (unsigned long long)U);
     pipe_bound(pipe_w, "LB", U);
     pipe_write_result(pipe_w, (int)U, true);
     return (int)U;
@@ -1784,6 +1818,12 @@ int main(int argc, char** argv) {
             die("invalid -dualmode (share | skip | off)");
         else if (!strcmp(argv[i], "-dualshare-stats"))
             g_dualshare_stats = true;
+        else if (!strcmp(argv[i], "-p1skip=on"))   /* GH-128 */
+            g_p1skip = true;
+        else if (!strcmp(argv[i], "-p1skip=off"))
+            g_p1skip = false;
+        else if (!strncmp(argv[i], "-p1skip=", 8))
+            die("invalid -p1skip (on | off)");
         else if (!strcmp(argv[i], "-dualskip-report"))
             dualskip_report = true;
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
@@ -1855,6 +1895,9 @@ int main(int argc, char** argv) {
             printf("            (implied NONE probes skipped); -dualmode=skip solves only the X half;\n");
             printf("            -dualmode=off (alias -no-dualskip) ignores dual maps; -dualshare-stats prints\n");
             printf("            work counts (with -v); -dualskip-report prints the verified dual maps and exits\n");
+            printf("  Redundant probes (GH-128, split MaxSAT path): -p1skip=on skips a half's probe once its proven\n");
+            printf("            lb >= the global UB and stops as soon as the global lb equals the UB; -p1skip=off\n");
+            printf("            (default) = main's probe sequence\n");
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
