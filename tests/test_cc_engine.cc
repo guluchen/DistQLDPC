@@ -30,6 +30,7 @@
 #include "../src/core/distqldpc.cc"
 #undef main
 
+#include <algorithm>
 #include <set>
 #include <sys/wait.h>
 
