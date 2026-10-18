@@ -108,7 +108,39 @@ one lookup per surviving budget-2 candidate (`leaf2` = old budget-1 count). dist
 applies to a plain CC whose leaves are not pruned by a packing bound; in our engine the packing bound already
 does the leaf work.
 
-TIER5_UNSOLVED_MAC_PLACEHOLDER
+**Tier 5 codes not solved within the Mac cap of 3600 s** (new rules on all 18; old rules on four reference codes;
+2 workers, 2 GB cap, no memory kill, no sleep event in `pmset -g log`). Final certified lower bound and the last
+completed levels (half, level: nodes, seconds). The old-rule levels of the GH-124 logs (quiet mode) have no node
+counts; the Mac references below do.
+
+| Code | arm | final lb at 3600 s | last completed levels (half level: nodes, s) |
+|---|---|---:|---|
+| BB_1080_4_ge17 | new | **28** | X22: 427M, 45; X24: 3300M, 364; X26: 25 775M, 2982 |
+| BB_864_4_ge17 | new | **28** | X22: 392M, 39; X24: 3053M, 323; X26: 24 123M, 2527 |
+| BB_756_16_ge17 | new | 26 | X22: 448M, 46; X24: 3569M, 384 (level 26 unfinished at 3600 s) |
+| BB_756_16_ge17 | old | 26 | X23: 1261M, 122; X24: 3575M, 355; X25: 10 129M, 1032 (level 26 unfinished) |
+| TN_252_2_21 | new / old | 20 / 20 | Z20: 9157M, 1090 / 9160M, 1070 (X19 570 / 564) |
+| TN_288_2_ge9 | new / old | 19 / 19 | Z19: 10 930M, 1332 / 10 933M, 1332 |
+| TN_612_2_ge17 | new / old | 23 / 23 | X22: 6071M, 954 / 6071M, 954 |
+| TN_324_4_ge9 | new | 19 | Z19: 7952M, 993 |
+| TN_360_4_ge17 | new | 21 | X21: 9183M, 1331 |
+| TN_396_4_ge17 | new | 21 | Z21: 5917M, 753 |
+| TN_432_8_ge9 | new | 20 | X19: 5527M, 774 |
+| TN_468_4_ge17 | new | 22 | X21: 12 532M, 1672 |
+| TN_496_2_ge17 | new | 21 | X21: 10 923M, 1508 |
+| TN_504_2_ge17 | new | 22 | Z22: 8038M, 1212 |
+| TN_540_4_ge9 | new | 20 | Z20: 10 626M, 1496 |
+| TN_576_2_ge9 | new | 21 | X20: 7684M, 1128 |
+| TN_648_10_9to52 | new | 21 | X20: 9176M, 1404 |
+| TN_648_14_ge9 | new | 20 | Z20: 7179M, 1054 |
+| TN_684_2_ge9 | new | 21 | X20: 7695M, 932 |
+
+On the TN references the per-level node counts and times of old and new agree to 0.1 % (the leaf rule removes
+only the budget-0/1 nodes, which at these levels are below 0.1 % of the tree). On the BB codes the even levels cost
+the same as before (BB_756 X24: 3575M / 355 s old vs 3569M / 384 s new) and the odd levels are gone: level 25
+(10 129M nodes, 1032 s) is skipped, so the Mac reaches lb 28 on BB_864/BB_1080 within the hour where the old
+engine, on the server, needed 8722-10206 s for lb 27. Raw: `S0/mac/results.tsv`, `S0/mac/logs.tar.gz`,
+`S0/s0mac_table.md`.
 
 ## 4. S1 Tier 1-4 panel, `-engine=cc` old rules vs new rules (yfclab2, cores 105-123, 4 GB cap, seeds 0-4)
 
