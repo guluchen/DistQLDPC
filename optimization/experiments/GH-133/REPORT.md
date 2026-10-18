@@ -14,10 +14,10 @@ mathematics; no Qubitserf, dist-m4ri, Crocker or Lee code was read.
 | CC `parity` rule (odd levels skipped on halves with only odd column weights: all BB and LP codes) | **3.7-4.2x** on every BB/LP code with a level above ~12: BB_288 0.86 -> 0.21 s (Mac), BB_360 795 -> 192 s (Mac) / 1706 -> 426 s (server), LP_1428 1371 -> 342 s (Mac) / 2884 -> 744 s (server), LP_1768 149 -> 40 s, LP_1054 35 -> 9 s; no effect on TN/GB (rule off: even column weights) |
 | CC `leaf` rule (hash lookup of the closing qubit at budget 1 and 2) | **neutral**: 0-5 % fewer nodes, -3 % .. +3 % time. The packing bound already prunes almost every cluster at budget 2-4, so budget-0/1 nodes are ~5 % of the tree (`-cc-stats` nodes-by-budget) |
 | Tier 1-4 panel, `-engine=cc` old rules vs new rules, 5 seeds (yfclab2) | geomean of seed-median ratios tier1 0.969, tier2 0.900, tier3 0.677, tier4 1.004; max cell ratio 1.007; 130/130 correct answers; **PASS** |
-| Tier 5 (6 h, new rules) vs GH-124 S1 (old rules) | section 5 |
+| Tier 5 (6 h, new rules) vs GH-124 S1 (old rules) | 158/158 server runs clean; BB_360 1706 -> 426 s, LP_1428 2884 -> 744 s, LP_1768 327 -> 87 s, LP_1054 123 -> 20 s; BB_756/864/1080 certified lb 27 -> **28**; LP_1122_148_20 d=20 (18 s), LP_2610_744_16 d=16 (5 s); every TN cell same final bound (time to it 0.79-1.02x) |
 | Correctness | `make test-cc`: 57 600 ladders (64 rule subsets x 3 seeds, 300 halves, 121 with all-odd columns), 2 200 driver runs on 200 random CSS codes (new rules, GH-124 rules, none, mrv, seeds, dual off, ub-basis, no-symbreak, sequential), 400 MaxSAT split runs with `-oddcap-skip` off/on, 0 bad; every mutant (1-7) changes answers. `make test-cc-flags`: 164 checks pass. Tier 0-4 answers = stem in every CC run (old and new rules), Mac and server |
-| `-oddcap-skip` (MaxSAT path, default off) | section 6 |
-| Recommendation | section 7 |
+| `-oddcap-skip` (MaxSAT path, default off) | Tier 1-3 BB/LP 5-seed panel: geomeans 0.62/0.69, 0.58/0.59, 0.43/0.48 (mto/nc), max cell 1.002 (control), 160 correct; Tier 5: LP_714 2663 -> 473 s, LP_1020 2316/8955 -> 1058/1056 s, every timeout cell lb 17 -> 18, none worse |
+| Recommendation | adopt `parity` + `leaf` as CC defaults (branch does); make `-oddcap-skip=on` the MaxSAT default in a follow-up PR (PI decision); details in section 7 |
 
 Scientific semantics changed: no. Every bound emitted by the new rules is implied by the parity theorem (proof
 in `MODIFICATIONS.md`) or identical to the old engine's; every witness is still verified by the independent GF(2)
@@ -272,11 +272,82 @@ little (0.88-0.98). Raw: `S1/server/oddcap/results.jsonl`.
 
 ### 6.2 Tier 5 BB/LP codes (6 h, default seed), `-oddcap-skip=on` vs main `cbb0642`
 
-ODDCAP5_PLACEHOLDER
+18 runs (9 BB/LP tier5 codes x {`-no-card`, `-card-mto`}), cores 100-115 + 118-119, 4 GB cap, 6 h, started
+00:25 on 2026-10-19 after the CC runs; 18/18 without a science problem. Main arm: the main `cbb0642` Tier 5
+baseline recorded concurrently on the same server by the baseline session (`frozen/server-main-cbb0642`, 6 h, 56
+cells, copied to `S1/server/oddcap5/main_cbb0642_tier5_baseline.json`); main `398054e` values are in GH-124 S1
+section 4. "lb" = last `c d_lb` line (timeouts without an upper bound print `c d_ub: -`).
+
+| Code | mode | main `cbb0642`: result, lb/ub, wall s | `-oddcap-skip=on`: result, lb/ub, wall s | lb events on (value@s) | lb events main |
+|---|---|---|---|---|---|
+| BB_1080_4_ge17 | card-mto | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@2160 | 17@9263 |
+| BB_1080_4_ge17 | no-card | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@2178 | 17@2566 |
+| BB_360_12_24 | card-mto | TIMEOUT, 17/24, 21600 | TIMEOUT, 18/24, 21600 | 18@70 | 17@87 |
+| BB_360_12_24 | no-card | TIMEOUT, 17/24, 21600 | TIMEOUT, 18/24, 21600 | 18@68 | 17@85 |
+| BB_756_16_ge17 | card-mto | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@554 | 17@672 |
+| BB_756_16_ge17 | no-card | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@553 | 17@3352 |
+| BB_864_4_ge17 | card-mto | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@718 | 17@873 |
+| BB_864_4_ge17 | no-card | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@716 | 17@876 |
+| LP_1020_136_16 | card-mto | d=16 @ 2316 | **d=16 @ 1058** | 16@1058 | 16@2315 |
+| LP_1020_136_16 | no-card | d=16 @ 8955 | **d=16 @ 1056** | 16@1056 | 16@8954 |
+| LP_1054_140_20 | card-mto | TIMEOUT, 17/32, 21600 | TIMEOUT, 18/32, 21600 | 18@7691 | 17@9356 |
+| LP_1054_140_20 | no-card | TIMEOUT, 17/32, 21600 | TIMEOUT, 18/32, 21600 | 18@7703 | 17@9360 |
+| LP_1428_184_24 | card-mto | TIMEOUT, 17/32, 21600 | TIMEOUT, 18/32, 21600 | 18@8193 | 17@9149 |
+| LP_1428_184_24 | no-card | TIMEOUT, 17/32, 21600 | TIMEOUT, 18/32, 21600 | 18@8197 | 17@9157 |
+| LP_1768_224_22 | card-mto | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@12403 | 17@14204 |
+| LP_1768_224_22 | no-card | TIMEOUT, 17/-, 21600 | TIMEOUT, 18/-, 21600 | 18@12364 | 17@14094 |
+| LP_714_100_16 | card-mto | d=16 @ 2663 | **d=16 @ 473** | 16@472 | 16@2662 |
+| LP_714_100_16 | no-card | d=16 @ 2670 | **d=16 @ 661** | 16@661 | 16@2670 |
+
+Both solved codes are solved 2.2-8.5x sooner (LP_714 473 / 661 s vs 2663 / 2670 s; LP_1020 1058 / 1056 s vs
+2316 / 8955 s): d = 16 is found at cap 32 in Phase 1, and the Phase 2a refutation of cap 15 becomes the cap-14
+refutation, which is cheaper than main's cap-15 probe. Every timeout cell ends with lb 18 instead of 17 (the
+NONE at cap 16 certifies 18) and reaches it earlier than main reaches 17 (same probe, 16 cells; the difference
+is the cores' speed and the skipped cap-1 probe). No cell is worse; no bound disagrees with the stems or with the
+CC results (section 5). The MaxSAT path remains far behind the CC engine on these codes (BB_360: CC 426 s, MaxSAT
+lb 18 / ub 24 at 6 h), as in GH-124.
+
+Raw: `S1/server/oddcap5/results.jsonl`, `S1/server/oddcap5/logs.tar.gz`.
 
 ## 7. Gate verdicts and recommendation
 
-VERDICT_PLACEHOLDER
+| Gate | Criterion | Result | Verdict |
+|---|---|---|---|
+| Tier 0 (correctness / smoke) | tests pass; default path byte-identical to main; CC answers = stem on tier0 | `make test-cc` and `make test-cc-flags` pass on Mac and yfclab2; 28/28 identical `-v` logs; 10/10 tier0 codes correct with both rule sets | PASS |
+| Tier 1 (CC old vs new, 5 seeds) | geomean < 1, no cell > 1.25 | 0.969, max 1.000 (process floor) | PASS |
+| Tier 2 | same | 0.900, max 1.007 | PASS |
+| Tier 3 | same | 0.677, max 0.999 (BB_288 0.250, LP_544 0.590) | PASS |
+| Tier 4 | same | 1.004, max 1.003 (TN_250: parity off, leaf neutral) | PASS (neutral, within seed noise) |
+| Tier 5 (CC, 6 h) | no cell worse; bounds consistent | 10 solved (incl. the 2 new LP codes), all 3.7-6x faster where parity applies, TN cells equal; lb 27 -> 28 on BB_756/864/1080; 0 science problems | PASS |
+| `-oddcap-skip` Tier 1-3 (BB/LP, 5 seeds, 2 modes) | geomean < 1 per mode, no cell > 1.25 | 0.62 / 0.69, 0.58 / 0.59, 0.43 / 0.48; max 1.002 (control cell) | PASS |
+| `-oddcap-skip` Tier 4 | - | no BB/LP code in tier4 (TN_250 only) | n/a |
+| `-oddcap-skip` Tier 5 (6 h) | no cell worse | LP_714 / LP_1020 solved 2.2-8.5x sooner; every timeout cell lb 17 -> 18; no cell worse | PASS |
+
+**Recommendation.**
+1. **CC engine: keep `parity` and `leaf` on by default** (as the branch does; `-engine=cc` itself stays optional,
+   PI decision of GH-124). `parity` is a theorem-backed 3.7-6x on every BB and LP code with a hard level and
+   raised the certified lower bound of the three open BB codes to 28 within the same 6 h. `leaf` is neutral
+   (0-5 % fewer nodes, no measurable time change); it is kept because it is exact, free, and removes the budget-1
+   recursion, but it is not a performance argument: in a packing-bounded CC the leaves are already gone. The
+   literature's 3-5x for the leaf trick applies to plain CC searches without a packing bound.
+2. **`-oddcap-skip=on` should become the default of the MaxSAT path** (a separate adoption PR after PI
+   approval, per the policy: this round only evaluated it). It is a pure cap-sequence change on halves with
+   only odd column weights, proven by the same theorem, identity-tested in the off position, never slower in
+   160 + 18 server cells, 2-5x on the BB/LP codes whose final refutation lines up with a Phase 1 cap (BB_288
+   0.21-0.24, LP_442 0.34, LP_714 0.18-0.25, LP_1020 0.12-0.46), and a free +1 on every timeout lower bound.
+   Caveat: its gain depends on where the distance sits relative to the doubling caps (LP_544, d = 12: 0.88-0.98);
+   a Phase 2 cap sequence in steps of 2 after the first FOUND, instead of a single U-1 probe, would make the
+   gain uniform and is the natural next MaxSAT-path round.
+3. Next CC round, from the node histogram: the packing scan at budget 2-4 is where the time goes (78 % of the
+   nodes are packing prunes). Candidates: Lee's stabilizer-overlap rule with forbidden-qubit propagation
+   (survey Rank 3) and the degree bound as a cheap pre-check before the scan; the leaf trick has no further
+   room. For the open BB codes (level 30 needs ~1e5 core-s single-threaded), only the parallel partition search
+   (survey Rank 5) moves the bound further within 6 h.
+
+**Scientific semantics changed:** no. **PI action required:** decide on (a) merging the branch (CC defaults;
+`-oddcap-skip` present but off) and (b) a follow-up PR making `-oddcap-skip=on` the default; (c) whether the
+BB_756/864/1080 `ge17` stems should be advanced to `ge28` (same certification status as the GH-124 `ge27`
+bounds, which were not written into the stems either).
 
 ## 8. Reproduction
 
