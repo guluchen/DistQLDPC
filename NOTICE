@@ -198,3 +198,19 @@ independent clean-room reimplementations plus a from-scratch prototype, all with
 GF(2)-verified witnesses: BB_360_12_24 (was BB_360_12_17to24), TN_252_2_21 (was
 TN_252_2_17to28), LP_1054_140_20 (was LP_1054_140_17to32), LP_1428_184_24 (was
 LP_1428_184_ge17), LP_1768_224_22 (was LP_1768_224_ge17).
+
+Independent results by others: C. Crocker, "Exact minimum distances of five
+lifted-product quantum codes from Cain et al. (2026), Xu et al. (2024) and
+Panteleev-Kalachev", Zenodo, v1.0 14 Oct 2026 (doi:10.5281/zenodo.23379787),
+v1.1 17 Oct 2026 (doi:10.5281/zenodo.23445463), CC BY 4.0. It published
+d = 20 for [[1054,140]] (our LP_1054_140_20) before DistQLDPC did, and
+independently agrees with DistQLDPC's earlier d = 16 for [[714,100]]
+(LP_714_100_16) and [[1020,136]] (LP_1020_136_16).
+
+Added 2026-10-18: LP_1122_148_20 and LP_2610_744_16, the lifted-product codes
+lp20^{3,5} [[1122,148]] and lp16^{3,7} [[2610,744]] of M. Cain et al.,
+arXiv:2603.28627 (2026), Appendix A.1, Eqs. (A3) and (A5). The matrices were
+built by DistQLDPC from the seed matrices as listed in C. Crocker's Zenodo
+record above (data/codes.json, CC BY 4.0), which first established their exact
+distances d = 20 and d = 16; DistQLDPC re-verified both values with its own
+connected-cluster engine and checked Crocker's witnesses with its own GF(2) code.

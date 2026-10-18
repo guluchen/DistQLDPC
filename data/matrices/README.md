@@ -24,9 +24,9 @@ certified).
 | tier2 | medium filter; main 10–100 s on yfclab2 | TN_108_2_12 [[108,2,12]], BB_144_14_14 [[144,14,14]], LP_442_68_10 [[442,68,10]] |
 | tier3 | decisive set; main 100–2000 s on yfclab2 | GB_144_12_12 [[144,12,12]], TN_144_2_13 [[144,2,13]], TN_200_10_10 [[200,10,10]], BB_288_12_18 [[288,12,18]], LP_544_80_12 [[544,80,12]] |
 | tier4 | hard; main 2000–5000 s on yfclab2; timeout 2000 s Mac / 5000 s yfclab2 | TN_250_10_15 [[250,10,15]] |
-| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_ge9 [[288,2,≥9]], TN_324_4_ge9 [[324,4,≥9]], BB_360_12_24 [[360,12,24]], TN_360_4_ge17 [[360,4,≥17]], TN_396_4_ge17 [[396,4,≥17]], TN_432_8_ge9 [[432,8,≥9]], TN_468_4_ge17 [[468,4,≥17]], TN_496_2_ge17 [[496,2,≥17]], TN_504_2_ge17 [[504,2,≥17]], TN_540_4_ge9 [[540,4,≥9]], TN_576_2_ge9 [[576,2,≥9]], TN_612_2_ge17 [[612,2,≥17]], TN_648_10_9to52 [[648,10,9–52]], TN_648_14_ge9 [[648,14,≥9]], TN_684_2_ge9 [[684,2,≥9]], LP_714_100_16 [[714,100,16]], BB_756_16_ge17 [[756,16,≥17]], BB_864_4_ge17 [[864,4,≥17]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_ge17 [[1080,4,≥17]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]] |
+| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_ge9 [[288,2,≥9]], TN_324_4_ge9 [[324,4,≥9]], BB_360_12_24 [[360,12,24]], TN_360_4_ge17 [[360,4,≥17]], TN_396_4_ge17 [[396,4,≥17]], TN_432_8_ge9 [[432,8,≥9]], TN_468_4_ge17 [[468,4,≥17]], TN_496_2_ge17 [[496,2,≥17]], TN_504_2_ge17 [[504,2,≥17]], TN_540_4_ge9 [[540,4,≥9]], TN_576_2_ge9 [[576,2,≥9]], TN_612_2_ge17 [[612,2,≥17]], TN_648_10_9to52 [[648,10,9–52]], TN_648_14_ge9 [[648,14,≥9]], TN_684_2_ge9 [[684,2,≥9]], LP_714_100_16 [[714,100,16]], BB_756_16_ge17 [[756,16,≥17]], BB_864_4_ge17 [[864,4,≥17]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_ge17 [[1080,4,≥17]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_1122_148_20 [[1122,148,20]], LP_2610_744_16 [[2610,744,16]] |
 
-Counts: tier0 10, tier1 4, tier2 3, tier3 5, tier4 1, tier5 26 (total 49).
+Counts: tier0 10, tier1 4, tier2 3, tier3 5, tier4 1, tier5 28 (total 51).
 
 **Tier assignment rule (PI 2026-10-12):** by main's time on yfclab2 (slower of no-card / card-mto, `optimization/baselines/SERVER.md`): < 1 s tier0, 1–10 s tier1, 10–100 s tier2, 100–2000 s tier3, 2000–5000 s tier4, > 5000 s or unsolved tier5. Re-check placements when main changes. 2026-10-14 (main 398054e, GH-107; PI): BB_144_14_14 tier3 -> tier2 (72.7 s), BB_288_12_18 tier4 -> tier3 (919 s).
 
@@ -49,9 +49,11 @@ section 5.
 
 | Date | Old | New | Note |
 |------|-----|-----|------|
+| 2026-10-18 | (new) | LP_1122_148_20 | added: lp20^{3,5} [[1122,148]] of Cain et al., arXiv:2603.28627 (seed matrix Eq. (A3), as listed in C. Crocker, Zenodo doi:10.5281/zenodo.23445463, which first established d = 20); d = 20 re-verified by DistQLDPC (-engine=cc, 28 s, Mac; Crocker's weight-20 witnesses GF(2)-checked). Tier provisional (tier5) until main's server time is recorded |
+| 2026-10-18 | (new) | LP_2610_744_16 | added: lp16^{3,7} [[2610,744]] of Cain et al., arXiv:2603.28627 (seed matrix Eq. (A5), as listed in C. Crocker, Zenodo doi:10.5281/zenodo.23445463, which first established d = 16); d = 16 re-verified by DistQLDPC (-engine=cc, 8 s, Mac; Crocker's weight-16 witnesses GF(2)-checked). Tier provisional (tier5) until main's server time is recorded |
 | 2026-10-16 | BB_360_12_17to24 | BB_360_12_24 | d = 24 confirmed (GH-124 -engine=cc in-repo, 1993 s on yfclab2; prototype + 2 clean-room reimplementations; witnesses GF(2)-verified); matches the original upstream name |
 | 2026-10-16 | TN_252_2_17to28 | TN_252_2_21 | d = 21 confirmed (dX = 21, dZ >= 22; GH-124 -engine=cc sequential schedule 17116 s; prototype + 2 reimplementations); matches the original upstream name |
-| 2026-10-16 | LP_1054_140_17to32 | LP_1054_140_20 | d = 20 confirmed (GH-124 -engine=cc 83 s, also without orbit seeds 1552 s; prototype + 2 reimplementations) |
+| 2026-10-16 | LP_1054_140_17to32 | LP_1054_140_20 | d = 20 confirmed (GH-124 -engine=cc 83 s, also without orbit seeds 1552 s; prototype + 2 reimplementations). The same value was published earlier, independently, by C. Crocker (Zenodo, doi:10.5281/zenodo.23379787, v1.0, 14 Oct 2026; v1.1 doi:10.5281/zenodo.23445463) |
 | 2026-10-16 | LP_1428_184_ge17 | LP_1428_184_24 | d = 24 confirmed (GH-124 -engine=cc 4235 s; prototype + 2 reimplementations) |
 | 2026-10-16 | LP_1768_224_ge17 | LP_1768_224_22 | d = 22 confirmed (GH-124 -engine=cc 345 s; prototype + 2 reimplementations) |
 | 2026-10-12 | TN_180_2_ge9 | TN_180_2_17 | d = 17 solved by main on yfclab2 (10282 s no-card) and by GH-106 v2 |
@@ -70,7 +72,7 @@ section 5.
 | 2026-10-11 | BB_360_12_unknown | BB_360_12_17to24 | current bounds: lb 17, ub 24 (6 h probe, card-mto) |
 | 2026-10-11 | BB_756_16_unknown | BB_756_16_ge17 | current bounds: lb 9 (60 s sweeps) |
 | 2026-10-11 | BB_864_4_unknown | BB_864_4_ge17 | current bounds: lb 9 (60 s sweeps) |
-| 2026-10-11 | LP_1020_136_unknown | LP_1020_136_16 | current bounds: d = 16 solved by main (6 h probe, 2674-2679 s both modes) |
+| 2026-10-11 | LP_1020_136_unknown | LP_1020_136_16 | current bounds: d = 16 solved by main (6 h probe, 2674-2679 s both modes); independently recomputed later by C. Crocker (Zenodo, doi:10.5281/zenodo.23445463) |
 | 2026-10-11 | LP_1054_140_unknown | LP_1054_140_17to32 | current bounds: lb 17, ub 32 (6 h probe, still running) |
 | 2026-10-11 | LP_1428_184_unknown | LP_1428_184_ge17 | current bounds: lb 17 (6 h probe, still running) |
 | 2026-10-11 | LP_1768_224_unknown | LP_1768_224_ge17 | current bounds: lb 17 (6 h probe) |
@@ -92,7 +94,7 @@ section 5.
 | 2026-10-11 | TN_648_14_unknown | TN_648_14_ge9 | current bounds: lb 9 (60 s sweeps) |
 | 2026-10-11 | TN_684_2_unknown | TN_684_2_ge9 | current bounds: lb 9 (60 s sweeps) |
 | 2026-10-11 | BB_288_12_unknown | BB_288_12_18 | d = 18 found by main 7eadd54 (Mac, 804 s no-card / 913 s card-mto); PI: written without strict cross-verification, re-check only if an inconsistency appears |
-| 2026-10-11 | LP_714_100_unknown | LP_714_100_16 | d = 16 found by main 7eadd54 (Mac, 1687 s both modes); same policy |
+| 2026-10-11 | LP_714_100_unknown | LP_714_100_16 | d = 16 found by main 7eadd54 (Mac, 1687 s both modes); same policy; independently recomputed later by C. Crocker (Zenodo, doi:10.5281/zenodo.23445463) |
 | 2026-10-11 | PK_31 | LP_1054_140_17to32 | n=1054, k=140 |
 | 2026-10-11 | xu_30 | LP_1020_136_16 | n=1020, k=136 |
 | 2026-10-11 | xu_42 | LP_1428_184_ge17 | n=1428, k=184 |
