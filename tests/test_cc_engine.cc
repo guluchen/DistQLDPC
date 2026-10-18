@@ -5,19 +5,27 @@
 // production bounds pipe protocol (TRY / LB / UB / RESULT).
 //
 // Part A (half level): random halves (H, G) with n = 4..18 (half X convention: F = {v : H v = 0, G v != 0}),
-//   half of them closed under a planted GH-75 shift so that find_half_symmetry verifies nontrivial orbits.
-//   Every subset of {excl, pack, orbf, mrv} and relabeling seeds 0..2: the level ladder 1..d_h must give EMPTY
-//   below d_h and FOUND at d_h with a witness of weight d_h in F (no element: EMPTY at every level <= n).
+//   half of them closed under a planted GH-75 shift so that find_half_symmetry verifies nontrivial orbits, and a
+//   third of them with all column weights made odd (GH-133: one extra row over the even-weight columns, invariant
+//   under the planted shift) so that the parity rule is in force. Every subset of {excl, pack, orbf, mrv, parity,
+//   leaf} and relabeling seeds 0..2: the level ladder 1..d_h must give EMPTY below d_h and FOUND at d_h with a
+//   witness of weight d_h in F (no element: EMPTY at every level <= n); on an all-odd half d_h must be even.
 // Part B (driver): random consistent CSS codes (Hx Hz^T = 0, Gx/Gz computed as quotient bases, n = 6..16),
 //   planted shifts and self-dual codes (Hx = Hz, so the identity XZ-dual map is verified). Configurations:
-//   default, -cc-dual=off, -ub-basis, -cc-seed 1/2, -cc-rules none / mrv. Each run: RESULT d OPTIMAL with
-//   d = min(dX, dZ) from enumeration (dX: Hz x = 0, x not in rs Hx), every LB <= d <= every UB, LBs monotone.
+//   default (GH-133 rules excl,pack,orbf,parity,leaf), -cc-dual=off, -ub-basis, -cc-seed 1/2, -cc-rules none / mrv,
+//   the GH-124 rule set excl,pack,orbf ("oldrules"). Each run: RESULT d OPTIMAL with d = min(dX, dZ) from
+//   enumeration (dX: Hz x = 0, x not in rs Hx), every LB <= d <= every UB, LBs monotone. A third of the codes get
+//   all-odd column weights in Hz (fix-up row before Hx is drawn from ker Hz), so the X half qualifies for parity.
 // Part C (mutants, -cc-mutant=K): every mutant must change an answer. 1 (forbidden set not restored), 2 (packing
 //   prune >=) and 3 (orbit seed rule off by one: O_1..O_i forbidden while r_i is searched, on instances with
 //   verified orbits) must produce wrong half-level verdicts; 4 (stop rule without the other half's lower bound,
 //   which forces the sequential schedule) must produce wrong driver answers, both when the schedule is requested
 //   (-cc-schedule=sequential) and when it is not (default options, as the binary runs -cc-mutant=4). The
 //   canonical driver must stay correct under the sequential schedule, where the other-half check is load-bearing.
+//   GH-133: 5 (parity rule forced although a column weight is even; instances with an even column weight), 6 (leaf
+//   budget off by one) and 7 (leaf closure without the detector check) must produce wrong half-level verdicts.
+// Part D (GH-133, MaxSAT path): the production interleaved split driver (min_distance_css_interleaved, -no-card)
+//   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d].
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -55,6 +63,16 @@ static Mask rand_vec(int n, int wmin, int wmax) {
     Mask v = 0; int w = wmin + (int)rnd((unsigned)(wmax - wmin + 1));
     for (int j = 0; j < w; j++) v |= 1u << rnd(n);
     return v;
+}
+// GH-133: make every column weight of H odd by adding one row over the even-weight columns (if any)
+static void make_columns_odd(std::vector<Mask>& H, int n) {
+    Mask fix = 0;
+    for (int c = 0; c < n; c++) { int w = 0; for (Mask h : H) w += (h >> c) & 1; if (!(w & 1)) fix |= 1u << c; }
+    if (fix) H.push_back(fix);
+}
+static bool all_odd(const std::vector<Mask>& H, int n) {
+    for (int c = 0; c < n; c++) { int w = 0; for (Mask h : H) w += (h >> c) & 1; if (!(w & 1)) return false; }
+    return true;
 }
 static Matrix to_matrix(const std::vector<Mask>& rows, int n) {
     Matrix m; m.rows = (int)rows.size(); m.cols = n; m.data.assign((size_t)m.rows * n, 0);
@@ -103,9 +121,14 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
     return std::vector<int>();
 }
 
+static distcc::Rules rules_of(int mask) {
+    distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
+    return r;
+}
+static const int RM_OLD = 7, RM_NEW = 7 | 16 | 32, RM_ALL = 63;
 static const char* rules_name(int mask) {
     static char buf[64];
-    distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8;
+    distcc::Rules r = rules_of(mask);
     snprintf(buf, sizeof(buf), "%s", distcc::rules_string(r).c_str());
     return buf;
 }
@@ -113,7 +136,7 @@ static const char* rules_name(int mask) {
 // ladder 1..dh for one configuration; returns true if every verdict matches; nodes summed into *nodes
 static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, int n, int dh, const std::vector<int>& orb,
                       int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why) {
-    distcc::Rules r; r.excl = rmask & 1; r.pack = rmask & 2; r.orbf = rmask & 4; r.mrv = rmask & 8;
+    distcc::Rules r = rules_of(rmask);
     distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant);
     const int top = dh < 0 ? n : dh;
     char buf[160];
@@ -174,6 +197,41 @@ static RunOut run_driver(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
     return r;
 }
 
+// GH-133 Part D: the production MaxSAT split driver (fresh solver per probe, -no-card) with -oddcap-skip off/on
+static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool oddcap) {
+    RunOut r; r.ok = false; r.d = -2;
+    int fd[2];
+    if (pipe(fd) != 0) { perror("pipe"); exit(2); }
+    fflush(stdout); fflush(stderr);
+    pid_t pid = fork();
+    if (pid == 0) {
+        close(fd[0]);
+        int devnull = open("/dev/null", O_WRONLY);
+        if (devnull >= 0 && !getenv("CC_TEST_VERBOSE")) { dup2(devnull, 1); dup2(devnull, 2); }
+        alarm(120);
+        g_oddcap_skip = oddcap;
+        (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], 0, true, DUALMODE_SHARE, false);
+        fflush(stdout);
+        _exit(0);
+    }
+    close(fd[1]);
+    std::string all; char buf[4096]; ssize_t k;
+    while ((k = read(fd[0], buf, sizeof(buf))) > 0) all.append(buf, (size_t)k);
+    close(fd[0]);
+    int st = 0; waitpid(pid, &st, 0);
+    size_t pos = 0;
+    while (pos < all.size()) {
+        size_t e = all.find('\n', pos); if (e == std::string::npos) e = all.size();
+        std::string line = all.substr(pos, e - pos); pos = e + 1;
+        unsigned long long v; int d;
+        if (sscanf(line.c_str(), "LB %llu", &v) == 1) r.lbs.push_back((long long)v);
+        else if (sscanf(line.c_str(), "UB %llu", &v) == 1) r.ubs.push_back((long long)v);
+        else if (!strncmp(line.c_str(), "RESULT -1", 9)) r.d = -1;
+        else if (sscanf(line.c_str(), "RESULT %d", &d) == 1 && strstr(line.c_str(), " OPTIMAL")) { r.d = d; r.ok = true; }
+    }
+    return r;
+}
+
 static bool run_ok(const RunOut& r, int d) {
     if (!r.ok || r.d != d) return false;
     long long prev = 0;
@@ -199,8 +257,8 @@ int main(int argc, char** argv) {
     int fails = 0;
 
     // ---------------- Part A: half level ----------------
-    long a_inst = 0, a_orb = 0, a_none = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[5] = {0, 0, 0, 0, 0}, mut_runs[5] = {0, 0, 0, 0, 0};
+    long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
+    long mut_bad[8] = {0, 0, 0, 0, 0, 0, 0, 0}, mut_runs[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
         std::vector<std::vector<int> > gens;
@@ -215,10 +273,13 @@ int main(int argc, char** argv) {
         for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
         std::vector<Mask> H = closure(h0, gens, 20), G = closure(g0, gens, 12);
         if (G.empty()) G.push_back(1u << rnd(n));
+        if (inst % 3 == 0) make_columns_odd(H, n);   // GH-133: parity rule in force on these halves
         const int dh = half_opt(H, G, n);
         std::vector<int> orb = orbits_of(H, G, n);
-        a_inst++; if (!orb.empty()) a_orb++; if (dh < 0) a_none++;
-        for (int rm = 0; rm < 16; rm++)
+        const bool allodd = all_odd(H, n);
+        a_inst++; if (!orb.empty()) a_orb++; if (dh < 0) a_none++; if (allodd) a_odd++;
+        if (allodd && dh > 0 && (dh & 1)) { fails++; a_bad++; fprintf(stderr, "CC_FAIL partA inst=%d: all-odd half with odd d_h=%d\n", inst, dh); }
+        for (int rm = 0; rm < 64; rm++)
             for (uint64_t seed = 0; seed < 3; seed++) {
                 std::string why;
                 a_runs++;
@@ -228,23 +289,26 @@ int main(int argc, char** argv) {
                                              (unsigned long long)seed, why.c_str());
                 }
             }
-        // mutants 1-3 on the configurations where they apply
-        for (int mt = 1; mt <= 3; mt++)
-            for (int rm = 0; rm < 16; rm++) {
+        // mutants 1-3 and 5-7 on the configurations where they apply
+        for (int mt = 1; mt <= 7; mt++)
+            for (int rm = 0; rm < 64; rm++) {
+                if (mt == 4) break;
                 if (mt == 1 && !(rm & 1)) continue;
                 if (mt == 2 && !(rm & 2)) continue;
                 if (mt == 3 && (!(rm & 4) || orb.empty())) continue;
+                if (mt == 5 && (!(rm & 16) || allodd)) continue;   // parity forced where a column weight is even
+                if ((mt == 6 || mt == 7) && !(rm & 32)) continue;
                 std::string why;
                 mut_runs[mt]++;
                 if (!ladder_ok(H, G, n, dh, orb, rm, 0, mt, NULL, why)) mut_bad[mt]++;
             }
     }
-    printf("partA: %ld half instances (%ld with verified orbits, %ld without any nontrivial element), %ld ladder runs over 16 rule subsets x 3 seeds, %ld bad\n",
-           a_inst, a_orb, a_none, a_runs, a_bad);
+    printf("partA: %ld half instances (%ld with verified orbits, %ld with all column weights odd, %ld without any nontrivial element), %ld ladder runs over 64 rule subsets x 3 seeds, %ld bad\n",
+           a_inst, a_orb, a_odd, a_none, a_runs, a_bad);
 
     // ---------------- Part B: driver through the forked pipe ----------------
-    long b_inst = 0, b_runs = 0, b_bad = 0, b_dual = 0, b_xorb = 0, b_dxdz = 0, b_seqbad4 = 0, b_seq = 0, b_lock4bad = 0, b_lock4 = 0;
-    long b_traps = 0;
+    long b_inst = 0, b_runs = 0, b_bad = 0, b_dual = 0, b_xorb = 0, b_dxdz = 0, b_odd = 0, b_seqbad4 = 0, b_seq = 0, b_lock4bad = 0, b_lock4 = 0;
+    long b_traps = 0, d_runs = 0, d_bad = 0, d_odd = 0;
     for (int inst = 0; inst < NB; inst++) {
         const int n = 6 + (int)rnd(11);
         std::vector<std::vector<int> > gens;
@@ -275,6 +339,7 @@ int main(int argc, char** argv) {
             int mz = 1 + (int)rnd((unsigned)(n / 3 + 1));
             for (int k = 0; k < mz; k++) z0.push_back(rand_vec(n, 2, 5));
             Hz = closure(z0, gens, 12);
+            if (inst % 3 == 0) make_columns_odd(Hz, n);   // GH-133: the X half (Hz) qualifies for parity / odd-cap skip
             std::vector<Mask> ker;
             for (Mask v = 1; v < (1u << n); v++) if (popc(v) <= 6 && in_kernel(Hz, v)) ker.push_back(v);
             int mx = 1 + (int)rnd((unsigned)(n / 3 + 1));
@@ -302,6 +367,7 @@ int main(int argc, char** argv) {
         if (dX != dX2 || dZ != dZ2) { fprintf(stderr, "CC_FAIL generator: detectors incomplete inst=%d\n", inst); fails++; continue; }
         const int d = std::min(dX, dZ);
         if (dX != dZ) b_dxdz++;
+        if (all_odd(Hz, n)) { b_odd++; if (dX & 1) { fprintf(stderr, "CC_FAIL generator: all-odd Hz with odd dX inst=%d\n", inst); fails++; } }
         Matrix mHx = to_matrix(Hx, n), mHz = to_matrix(Hz, n), mGx = to_matrix(Gx, n), mGz = to_matrix(Gz, n);
         DualMapInfo dm = find_dual_maps(mHx, mHz, mGx, mGz, false);
         if (!dm.maps.empty()) b_dual++;
@@ -309,13 +375,14 @@ int main(int argc, char** argv) {
         b_inst++;
         struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; };
         const Cfg cfgs[] = {
-            {"default", 7, true, false, 0, true}, {"dual-off", 7, false, false, 0, true}, {"ub-basis", 7, true, true, 0, true},
-            {"seed1", 7, true, false, 1, true}, {"seed2", 7, false, true, 2, true}, {"none", 0, true, false, 0, true},
-            {"mrv", 15, true, false, 0, true}, {"no-symbreak", 7, true, false, 0, false},
+            {"default", RM_NEW, true, false, 0, true}, {"dual-off", RM_NEW, false, false, 0, true}, {"ub-basis", RM_NEW, true, true, 0, true},
+            {"seed1", RM_NEW, true, false, 1, true}, {"seed2", RM_NEW, false, true, 2, true}, {"none", 0, true, false, 0, true},
+            {"mrv", RM_ALL, true, false, 0, true}, {"no-symbreak", RM_NEW, true, false, 0, false},
+            {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
-            o.rules.excl = c.rmask & 1; o.rules.pack = c.rmask & 2; o.rules.orbf = c.rmask & 4; o.rules.mrv = c.rmask & 8;
+            o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
@@ -325,8 +392,11 @@ int main(int argc, char** argv) {
                 if (b_bad <= 10) fprintf(stderr, "CC_FAIL partB inst=%d n=%d cfg=%s: d=%d (dX %d dZ %d) got %d\n", inst, n, c.name, d, dX, dZ, r.d);
             }
         }
-        {   // test-only sequential schedule: canonical must pass; mutant 4 (forces sequential) must be caught when dZ < dX
-            distcc::DriverOptions o; o.sequential = true;
+        {   // test-only sequential schedule: canonical must pass; mutant 4 (forces sequential) must be caught when dZ < dX.
+            // -ub-basis off (GH-133): with the basis upper bound the X half may stop at U before its own hit, which made
+            // the detection of mutant 4 depend on the instance stream (1/200 in GH-124); without it the X half always
+            // runs to its own distance under the sequential schedule and the other-half check decides the answer.
+            distcc::DriverOptions o; o.sequential = true; o.ub_basis = false;
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, true, false);
             b_runs++; b_seq++;
             if (!run_ok(r, d)) { b_bad++; fails++; fprintf(stderr, "CC_FAIL partB sequential inst=%d d=%d got %d\n", inst, d, r.d); }
@@ -334,14 +404,23 @@ int main(int argc, char** argv) {
             mut_runs[4]++;
             RunOut r4 = run_driver(mHx, mHz, mGx, mGz, o, true, false);
             if (!run_ok(r4, d)) { mut_bad[4]++; b_seqbad4++; }
-            distcc::DriverOptions l; l.mutant = 4;   // schedule not requested: mutant 4 must switch to sequential itself
+            distcc::DriverOptions l; l.mutant = 4; l.ub_basis = false;   // schedule not requested: mutant 4 must switch to sequential itself
             RunOut l4 = run_driver(mHx, mHz, mGx, mGz, l, true, true);
             b_lock4++; mut_runs[4]++;
             if (!run_ok(l4, d)) { mut_bad[4]++; b_lock4bad++; }
         }
+        {   // Part D (GH-133): the MaxSAT split driver with -oddcap-skip off (main) and on, -no-card
+            if (all_odd(Hz, n) || all_odd(Hx, n)) d_odd++;
+            for (int oc = 0; oc < 2; oc++) {
+                RunOut r = run_maxsat(mHx, mHz, mGx, mGz, oc == 1);
+                d_runs++;
+                if (!run_ok(r, d)) { d_bad++; fails++; if (d_bad <= 10) fprintf(stderr, "CC_FAIL partD inst=%d oddcap=%d: d=%d got %d\n", inst, oc, d, r.d); }
+            }
+        }
     }
-    printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ), %ld driver runs, %ld bad, %ld RESULT -1\n",
-           b_inst, b_dual, b_xorb, b_dxdz, b_runs, b_bad, b_traps);
+    printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ, %ld with all-odd Hz), %ld driver runs, %ld bad, %ld RESULT -1\n",
+           b_inst, b_dual, b_xorb, b_dxdz, b_odd, b_runs, b_bad, b_traps);
+    printf("partD (MaxSAT split, -oddcap-skip off/on): %ld runs on %ld codes (%ld with an all-odd half), %ld bad\n", d_runs, b_inst, d_odd, d_bad);
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);
@@ -349,7 +428,11 @@ int main(int argc, char** argv) {
     printf("mutant 3 (orbit seed rule off by one, instances with orbits): %ld/%ld half ladders wrong\n", mut_bad[3], mut_runs[3]);
     printf("mutant 4 (stop rule without other half's lb, forces sequential): schedule requested %ld/%ld runs wrong; default options %ld/%ld wrong\n",
            b_seqbad4, b_seq, b_lock4bad, b_lock4);
-    bool mut_ok = mut_bad[1] > 0 && mut_bad[2] > 0 && mut_bad[3] > 0 && b_seqbad4 > 0 && b_lock4bad > 0;
+    printf("mutant 5 (parity rule forced on halves with an even column weight): %ld/%ld half ladders wrong\n", mut_bad[5], mut_runs[5]);
+    printf("mutant 6 (leaf budget off by one): %ld/%ld half ladders wrong\n", mut_bad[6], mut_runs[6]);
+    printf("mutant 7 (leaf closure without the detector check): %ld/%ld half ladders wrong\n", mut_bad[7], mut_runs[7]);
+    bool mut_ok = mut_bad[1] > 0 && mut_bad[2] > 0 && mut_bad[3] > 0 && b_seqbad4 > 0 && b_lock4bad > 0 &&
+                  mut_bad[5] > 0 && mut_bad[6] > 0 && mut_bad[7] > 0;
     if (!mut_ok) { fprintf(stderr, "CC_FAIL mutant expectations not met\n"); fails++; }
     printf(fails ? "CC_ENGINE_TESTS FAIL (%d)\n" : "CC_ENGINE_TESTS PASS\n", fails);
     return fails ? 1 : 0;

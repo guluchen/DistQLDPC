@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # GH-124 S0 (fix round 1, pre-S1): command-line checks of the engine flags of bin/distqldpc.
 #   - conflicting engine flag combinations are rejected (exit 1, "error:" on stderr, no answer line);
-#   - invalid values of the CC flags and of -seed are rejected;
+#   - invalid values of the CC flags, of -seed and of -oddcap-skip are rejected (GH-133: -oddcap-skip is a MaxSAT flag);
 #   - valid combinations still answer, and -engine=auto warns on stderr about flags its choice ignores;
 #   - -engine=auto picks cc on sparse codes and maxsat on dense ones (decision printed with -v).
 # Runs one solver process at a time on two tier0 codes (TN_36_8_3, LP_34_20_2; auto -> cc) and three generated
@@ -104,13 +104,13 @@ done
 reject "cannot be combined with -engine=cc" -engine=cc -dump-only "-dump-wcnf=$tmp/dump.wcnf" $M
 
 # 2. MaxSAT tuning flags with -engine=cc
-for f in -no-card -card-sinz -card-mto -card-both -card-both-force -dualshare-stats; do
+for f in -no-card -card-sinz -card-mto -card-both -card-both-force -dualshare-stats -oddcap-skip=on -oddcap-skip=off; do
     reject "no effect with -engine=cc" -engine=cc "$f" $L $C
 done
 
 # 3. CC flags without -engine=cc|auto (default engine and explicit -engine=maxsat)
-for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-dual=on -cc-dual=off -cc-seed=1 \
-         "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-schedule=sequential -cc-schedule=lockstep; do
+for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-rules=parity,leaf -cc-dual=on -cc-dual=off -cc-seed=1 \
+         "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-schedule=sequential -cc-schedule=lockstep; do
     reject "need -engine=cc or -engine=auto" "$f" $L $M
     reject "need -engine=cc or -engine=auto" -engine=maxsat "$f" $L $M
 done
@@ -118,12 +118,12 @@ reject "need -engine=cc or -engine=auto" -cc-rules=mrv -cc-mutant=2 -engine=maxs
 reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L $M   # the last -engine= wins
 
 # 4. invalid values
-for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=5 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
+for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=8 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
          -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
-         -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
+         -cc-rules=parity, -cc-rules=Leaf -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
-for f in -seed=abc -seed=-1 -seed= -seed=1x; do
+for f in -seed=abc -seed=-1 -seed= -seed=1x -oddcap-skip=maybe -oddcap-skip= -oddcap-skip -oddcap-skip=ON; do
     reject "invalid" "$f" $L $M
 done
 
@@ -138,6 +138,15 @@ accept 3 "" -engine=maxsat -card-mto -dualshare-stats $L $M
 accept 3 "" -engine=maxsat -joint $L $M
 accept 2 "" -engine=cc $L $C
 accept 3 "" -engine=cc -ub-basis -cc-rules=excl,pack,orbf,mrv -cc-seed=2 -cc-stats -cc-schedule=sequential $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,mrv $L $M                                   # GH-133 rules
+accept 2 "" -engine=cc -cc-rules=parity $L $C
+accept 2 "" -engine=cc -cc-rules=leaf -cc-seed=3 $L $C
+accept 2 "" -engine=cc -cc-rules=excl,pack,orbf $L $C                                                   # GH-124 rule set
+accept 2 "" -oddcap-skip=on $L $C                                                                       # GH-133 MaxSAT flag
+accept 2 "" -oddcap-skip=off -card-mto $L $C
+accept 3 "" -oddcap-skip=on -no-card $L $M
+accept 2 "" -engine=auto -oddcap-skip=on $L $D1                                                         # auto -> maxsat: applies
+accept 2 "selected cc .*ignoring -oddcap-skip=on" -engine=auto -oddcap-skip=on $L $C
 accept 3 "" -engine=cc -no-symbreak -dualmode=off -cc-dual=off -cc-rules=none $L $M
 accept 2 "" -engine=cc -cc-mutant=0 -cc-schedule=lockstep -ub-basis=off "-cc-trace=$tmp/trace.txt" $L $C
 accept 2 "" -engine=auto $L $C
@@ -171,10 +180,28 @@ vgrep 2 "^c DistQLDPC .*(connected-cluster level search)$" -v -engine=cc $L $C
 vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
+# 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf, " -v -engine=cc -cc-rules=excl,pack,orbf $L $C
+vgrep 2 "^c cc: X half parity: on (column weights 3..5, all odd)" -v -engine=cc $L $C
+vgrep 3 "^c cc: X half parity: off (column weights 2..4, an even weight present)" -v -engine=cc $L $M
+vgrep 3 "^c cc: Z half parity: off (column weights 2..3, an even weight present)" -v -engine=cc $L $M
+vgrep 2 "^c cc: X half parity: rule off" -v -engine=cc -cc-rules=excl,pack,orbf $L $C
+vgrep 2 "^c cc: X half level 1 skipped\|^c d_lb: 2" -v -engine=cc $L $C
+vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 [0-9]* time" -engine=cc -cc-stats -ub-basis=off $L $C
+vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 0 time" -engine=cc -cc-stats $L $M
+vgrep 2 "^c oddcap X: column weights 3..5 all odd (every logical has even weight) -> odd caps skipped" -v -oddcap-skip=on $L $C
+vgrep 2 "^c oddcap: X half cap 1 skipped (odd cap, no probe): lb 2" -v -oddcap-skip=on $L $C
+vgrep 3 "^c oddcap X: column weights 2..4 (an even weight present) -> odd caps kept" -v -oddcap-skip=on $L $M
+runs=$((runs + 1)); run -v -oddcap-skip=off $L $C
+if grep -q "^c oddcap" <<<"$out"; then echo "FAIL (-oddcap-skip=off must not print oddcap lines)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -v $L $C
+if grep -q "^c oddcap" <<<"$out"; then echo "FAIL (default must not print oddcap lines)" >&2; fails=$((fails + 1)); fi
 
-# 8. a CC trap withdraws the bounds already sent (test mutant 2 traps on LP_136_32_4 after emitting d_lb lines)
+# 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
+#    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)
 runs=$((runs + 1))
-run -engine=cc -cc-mutant=2 $L LP_136_32_4
+run -engine=cc -cc-mutant=2 -cc-rules=excl,pack,orbf $L LP_136_32_4
 if [[ $rc -ne 1 ]] || ! grep -q "^c d_lb: [0-9]" <<<"$out" || [[ "$(grep '^c d_lb:' <<<"$out" | tail -1)" != "c d_lb: -" ]] \
     || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: -" ]] || ! grep -q "^c status: UNKNOWN (CC engine stopped without an answer" <<<"$out" \
     || ! grep -qx "s UNKNOWN" <<<"$out"; then
