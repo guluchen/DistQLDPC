@@ -943,12 +943,12 @@ static bool build_css_half(SimpSolver& S, std::vector<Var>& aux, int& n_out,
 
 enum HalfStatus { HALF_FOUND, HALF_NONE, HALF_OPT, HALF_UNKNOWN, HALF_INFEASIBLE };
 
-/* GH-129 frontier branching (split path only; see Solver::pickFrontierLit): -frontier=off (default,
- * main's search) | on (every probe) | postsol (only after the probe's solver found a solution) |
+/* GH-129 frontier branching (split path only; see Solver::pickFrontierLit): -frontier=off (main's search
+ * before GH-130) | on (every probe) | postsol (only after the probe's solver found a solution) |
  * presol (only until then). The half's parity rows (Hpar, qubit vars 0..n-1) are passed to the
  * engine as in GH-121. -frontier-stats prints per-probe counters to stderr; -frontier-check
  * re-verifies the incremental odd-row state at every frontier decision (debug). */
-static int g_frontier_mode = 0;
+static int g_frontier_mode = 4;   /* GH-130: auto is the default (PI 2026-10-18); -frontier=off restores main's pre-GH-130 search */
 static bool g_frontier_stats = false, g_frontier_check = false;
 
 /* GH-130 -frontier=auto (g_frontier_mode 4): per CSS half, frontier branching (mode on) iff the half's
@@ -1964,11 +1964,12 @@ int main(int argc, char** argv) {
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");
             printf("            cardinality flags and -dualshare-stats (auto warns when its choice ignores a flag)\n");
-            printf("  Frontier branching (split MaxSAT path only, GH-129): -frontier=off|on|postsol|presol|auto (default off):\n");
+            printf("  Frontier branching (split MaxSAT path only, GH-129): -frontier=off|on|postsol|presol|auto (default auto):\n");
             printf("            decide x_q = 1 for a qubit of an odd parity row first (CC's growth rule); postsol/presol\n");
             printf("            apply it only after/before the probe's first solution; -frontier-stats per-probe counters\n");
             printf("            (stderr); -frontier-check re-verifies the incremental row state (debug); auto (GH-130):\n");
-            printf("            on per half iff its parity matrix has < 3 Tanner 4-cycles per row (-v prints the choice)\n");
+            printf("            on per half iff its parity matrix has < 3 Tanner 4-cycles per row (-v prints the choice);\n");
+            printf("            -frontier=off reproduces the search of main before GH-130\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
