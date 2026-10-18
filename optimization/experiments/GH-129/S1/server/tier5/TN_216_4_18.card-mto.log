@@ -1,0 +1,26 @@
+# start 1792221587.937 cpu 85 cmd: taskset -c 85 prlimit --as=4294967296 -- ../frozen/server-gh129-d1f3f41/distqldpc -frontier=on -card-mto -cpu-lim=21600 data/matrices/tier5/TN_216_4_18
+       0.1	c trying d: 2
+       0.1	c trying d: 2
+       0.1	c d_lb: 2
+       0.1	c trying d: 3
+       0.1	c trying d: 3
+       0.1	c d_lb: 3
+       0.1	c trying d: 5
+       0.2	c trying d: 5
+       0.3	c d_lb: 5
+       0.3	c trying d: 9
+       1.6	c trying d: 9
+       2.1	c d_lb: 9
+       2.1	c trying d: 17
+   11977.1	c trying d: 17
+   19084.1	c d_lb: 17
+   19084.1	c trying d: 33
+   19347.7	c d_ub: 32
+   19347.7	c trying d: 33
+   19347.7	c d_ub: 24
+   19347.7	c trying d: 25
+   21600.1	c d_lb: 17
+   21600.1	c d_ub: 24
+   21600.1	c status: TIMEOUT (child killed after -cpu-lim)
+   21600.1	c d  : UNKNOWN
+   21600.1	s UNKNOWN

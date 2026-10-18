@@ -47,6 +47,7 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
   #define LOOSE_PROP_STAT
 #endif
 
+#include <vector>
 #include "mtl/Vec.h"
 #include "mtl/Heap.h"
 #include "mtl/Alg.h"
@@ -565,6 +566,28 @@ public:
     bool     startAtCap = false;      // with strictUB: first UB test is the cap itself (find, then descend)
     uint64_t boundsLbCap = UINT64_MAX, boundsUbCap = UINT64_MAX;  // caps on emitted LB/UB
     bool     boundsHideLB = false;    // do not emit LB (not a global bound)
+    // DistQLDPC GH-129 (frontier branching, -frontier): CC's "grow the cluster through an unsatisfied
+    // check" as a decision rule. frontierMode 0 = off (main's search, untouched), 1 = always,
+    // 2 = only after this solver found a solution (postsol), 3 = only before it (presol).
+    // Rows are the half's parity rows over qubit vars 0..frN-1. Decision order only: no clause, no
+    // bound and no propagation is changed. State (per row: unassigned count, parity of true qubits)
+    // is synchronised lazily with the main trail at each decision (frSync).
+    int      frontierMode = 0;
+    bool     frontierCheck = false;   // debug: recompute the row state from scratch at every frontier pick
+    void     setFrontierRows(const std::vector<std::vector<int> >& rows, int nQubits);
+    Lit      pickFrontierLit();
+    void     frSync();
+    void     frApply(Lit p, int sgn);
+    void     frCheckState();
+    int      frN = 0;
+    int      frSynced = 0;            // trail[0..frSynced) is reflected in the row state
+    bool     frSeenSolution = false;
+    std::vector<std::vector<int> > frRows, frColRows;
+    std::vector<int>  frUnass, frOdd, frOddPos;
+    std::vector<char> frPar;
+    std::vector<Lit>  frApplied;
+    std::vector<int>  frAppliedPos;
+    uint64_t frPicks = 0, frFallbacks = 0, frNoEligible = 0, frCheckFails = 0, frOddSum = 0;
     // Former function-local statics, now per instance (identical for single-instance runs).
     uint64_t srch_prevUB = 0, card_prevUB = 0, lk_prevUB = 0;
     int      lk_thres = 2, lk_prevConflicts = 0, lk_maxSuccLB = 0, lk_nbSample = 0, lk_myLH = 0, lk_mySucc = 0;
