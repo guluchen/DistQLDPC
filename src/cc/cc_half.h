@@ -94,6 +94,7 @@ struct LevelResult {
     uint64_t parprune;         /* parity: w - |S| != wt(syn) mod 2 (never on a qualifying half, see cc_half.h) */
     uint64_t leaf1, leaf2;     /* leaf: budget-1 lookups; budget-2 lookups (one per candidate a) */
     bool skipped;              /* parity: odd level, EMPTY without a search */
+    std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
                     leaf1(0), leaf2(0), skipped(false) {}

@@ -251,6 +251,7 @@ void HalfSearch::record_witness(int size) {
 
 bool HalfSearch::dfs(int size) {
     ++res_->nodes;
+    ++res_->by_budget[(size_t)(w_ - size)];
     if (size == w_) {
         if (nodd_ == 0 && gpar_nonzero()) {
             record_witness(size);
@@ -396,6 +397,7 @@ LevelResult HalfSearch::run_level(int w) {
     synkey_ = 0;
     cur_.assign((size_t)w, -1);
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
+    r.by_budget.assign((size_t)w + 1, 0);
     for (size_t i = 0; i < seed_.size(); i++) {
         const int s = seed_[i];
         /* mutant 3 (orbit seed rule off by one): the seed rule's forbidding of O_i is applied BEFORE the
