@@ -12,7 +12,9 @@
  * this half" established by the half's own earlier levels (levels are contiguous from 1).
  *
  * Bound algebra (all bounds emitted are global):
- *   lb_h  proven: every nontrivial logical of half h has weight >= lb_h (level lb_h - 1 EMPTY);
+ *   lb_h  proven: every nontrivial logical of half h has weight >= lb_h (level lb_h - 1 EMPTY; with the parity
+ *         rule on a half whose column weights are all odd, every logical has even weight, so odd levels are
+ *         skipped: level 1 is empty and an EMPTY level 2t gives lb_h = 2t + 2, GH-133);
  *   ub_h  weight of a verified nontrivial logical of half h; U = min_h ub_h;  LB = min_h lb_h.
  *   A level-w hit in half h (with lb_h = w) gives d_h = w; with the other half's lb >= w, d = w.
  *   Termination: LB >= U gives d = U.
@@ -46,7 +48,7 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf) */
     bool dual;               /* -cc-dual=on|off (default on) */
     bool ub_basis;           /* -ub-basis (default on; -ub-basis=off): verified basis rows as initial upper bound */
     uint64_t seed;           /* -cc-seed=N (default 0 = identity labels) */
@@ -77,7 +79,8 @@ struct BoundSink {
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
-/* "-cc-rules=" value: comma list of excl, pack, orbf, mrv (or "none"); empty values and empty items are invalid. */
+/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, mrv (or "none"); empty values and empty items
+ * are invalid. */
 bool parse_rules(const char* s, Rules& out);
 std::string rules_string(const Rules& r);
 

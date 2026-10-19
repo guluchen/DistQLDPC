@@ -989,6 +989,28 @@ static double tanner_c4_per_row(const Matrix& H) {
     return c4 / (double)rows.size();
 }
 
+/* GH-133 -oddcap-skip=on|off (default off = main's cap sequence byte for byte). On a CSS half whose parity
+ * matrix H has only odd column weights every element of ker H has even weight (sum of the rows of H v is
+ * sum_j colwt_j v_j = |v| mod 2), so a probe cap m odd is equivalent to the cap m - 1 (no element of weight m),
+ * and NONE at an even cap 2t certifies the lower bound 2t + 2. With the flag on, the interleaved search uses
+ * the even cap in Phase 1 (cap 1: no probe, lb 2), Phase 2a (cap U-1 -> U-2) and Phase 2b/3 (an odd cap
+ * U-1 -> U-2), and raises the lower bound after a NONE to the next even value. Evaluated in
+ * optimization/experiments/GH-133/. */
+static bool g_oddcap_skip = false;
+
+static bool all_column_weights_odd(const Matrix& H, int& mincw, int& maxcw) {
+    bool allodd = H.cols > 0;
+    mincw = maxcw = -1;
+    for (int c = 0; c < H.cols; c++) {
+        int wt = 0;
+        for (int r = 0; r < H.rows; r++) wt += getm(H, r, c);
+        if (!(wt & 1)) allodd = false;
+        if (mincw < 0 || wt < mincw) mincw = wt;
+        if (wt > maxcw) maxcw = wt;
+    }
+    return allodd;
+}
+
 struct CssHalf {
     const char* tag; const Matrix* H; const Matrix* G;
     bool exists;          /* has a nontrivial logical of this type (instance SAT) */
@@ -1000,6 +1022,7 @@ struct CssHalf {
     uint64_t conflicts;   /* engine conflicts spent in those calls */
     uint64_t own_lb;      /* lb this half would hold without dual-map sharing (skip accounting only) */
     int frontier;         /* GH-130: frontier mode of this half's probes (= g_frontier_mode unless auto) */
+    bool par;             /* GH-133: -oddcap-skip in force (all column weights of H odd): odd caps skipped */
 };
 
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
@@ -1201,6 +1224,19 @@ static int min_distance_css_interleaved(
             fflush(stdout);
         }
     }
+    for (int k = 0; k < 2; k++) {   /* GH-133: -oddcap-skip per half (all column weights odd) */
+        hs[k].par = false;
+        if (g_oddcap_skip && hs[k].exists) {
+            int mincw = 0, maxcw = 0;
+            hs[k].par = all_column_weights_odd(*hs[k].H, mincw, maxcw);
+            if (verb > 0) {
+                printf("c oddcap %s: column weights %d..%d %s -> odd caps %s\n", hs[k].tag, mincw, maxcw,
+                       hs[k].par ? "all odd (every logical has even weight)" : "(an even weight present)",
+                       hs[k].par ? "skipped" : "kept");
+                fflush(stdout);
+            }
+        }
+    }
     uint64_t implied = 0;   /* GH-107: probes main would issue whose NONE the other half already proved */
     /* GH-85: per-half verified orbits, detected once and used by every oracle call of that half. */
     for (int k = 0; symbreak && k < 2; k++) {
@@ -1227,9 +1263,23 @@ static int min_distance_css_interleaved(
                 }
                 continue;
             }
-            HalfStatus st = run_css_half(h, m, true, verb, card_mode, pipe_w, INF, U, true, v);
+            uint64_t cap = m;
+            if (h.par && (m & 1)) {   /* GH-133: an odd cap is equivalent to the even cap below it */
+                if (m == 1) {   /* weight <= 1: nothing (weight 0 is trivial, weight 1 odd): NONE without a probe */
+                    h.lb = h.own_lb = 2;
+                    if (verb > 0) printf("c oddcap: %s half cap 1 skipped (odd cap, no probe): lb 2\n", h.tag);
+                    if (share && !dualshare_sync(hs, U)) { pipe_write_result(pipe_w, -1, false); return -1; }
+                    continue;
+                }
+                cap = m - 1;
+            }
+            HalfStatus st = run_css_half(h, cap, true, verb, card_mode, pipe_w, INF, U, true, v);
             if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
-            else if (st == HALF_NONE) h.lb = h.own_lb = m + 1;
+            else if (st == HALF_NONE) {
+                h.lb = cap + 1;
+                if (h.par && (h.lb & 1)) h.lb++;   /* GH-133: NONE at an even cap 2t certifies 2t + 2 */
+                h.own_lb = h.lb;
+            }
             else if (st == HALF_UNKNOWN) { pipe_write_result(pipe_w, -1, false); return -1; }
             if (share && !dualshare_sync(hs, U)) { pipe_write_result(pipe_w, -1, false); return -1; }
         }
@@ -1260,7 +1310,8 @@ static int min_distance_css_interleaved(
             }
             uint64_t lbc = U;
             if (!share && !done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
-            HalfStatus st = run_css_half(h, U - 1, true, verb, card_mode, pipe_w, lbc, U, false, v);
+            const uint64_t cap2 = (h.par && ((U - 1) & 1)) ? U - 2 : U - 1;   /* GH-133: odd cap -> even cap below */
+            HalfStatus st = run_css_half(h, cap2, true, verb, card_mode, pipe_w, lbc, U, false, v);
             if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
             else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = h.own_lb = (h.ub < U ? h.ub : U); done[k] = true; }
             else { pipe_write_result(pipe_w, -1, false); return -1; }
@@ -1289,7 +1340,8 @@ static int min_distance_css_interleaved(
         /* GH-87: with the Z half eliminated the X half holds the global incumbent itself, so its
          * optimisation only seeks weight <= U-1 (no re-find of its own incumbent): OPT improves U,
          * NONE proves lb = U. Without elimination (main, GH-107 share) the cap stays U exactly as in GH-73. */
-        const uint64_t cap = (z_eliminated && h.ub == U) ? U - 1 : U;
+        uint64_t cap = (z_eliminated && h.ub == U) ? U - 1 : U;
+        if (h.par && (cap & 1)) cap--;   /* GH-133: an odd cap is equivalent to the even cap below it */
         HalfStatus st = run_css_half(h, cap, false, verb, card_mode, pipe_w, lbc, U, false, v);
         if (st == HALF_OPT) { h.lb = h.ub = h.own_lb = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
         else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = h.own_lb = U; }
@@ -1462,7 +1514,7 @@ static int engine_flag_family(const char* a)
         !strcmp(a, "-native-parity-opb"))
         return ENGFLAG_MAXSAT_FORM;
     if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
-        !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats"))
+        !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") || !strncmp(a, "-oddcap-skip=", 13))
         return ENGFLAG_MAXSAT_TUNE;
     if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10))
         return ENGFLAG_CC;
@@ -1881,6 +1933,12 @@ int main(int argc, char** argv) {
             g_frontier_check = true;
         else if (!strcmp(argv[i], "-dualskip-report"))
             dualskip_report = true;
+        else if (!strcmp(argv[i], "-oddcap-skip=on"))   /* GH-133 */
+            g_oddcap_skip = true;
+        else if (!strcmp(argv[i], "-oddcap-skip=off"))
+            g_oddcap_skip = false;
+        else if (!strncmp(argv[i], "-oddcap-skip", 12))
+            die("invalid -oddcap-skip (on | off)");
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
             g_engine = ENGINE_MAXSAT;
         else if (!strcmp(argv[i], "-engine=cc"))
@@ -1891,7 +1949,7 @@ int main(int argc, char** argv) {
             die("invalid -engine (maxsat | cc | auto)");
         else if (!strncmp(argv[i], "-cc-rules=", 10)) {
             if (!distcc::parse_rules(argv[i] + 10, g_cc_opt.rules))
-                die("invalid -cc-rules (comma list of excl, pack, orbf, mrv, or none)");
+                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, mrv, or none)");
         } else if (!strcmp(argv[i], "-cc-dual=on"))
             g_cc_opt.dual = true;
         else if (!strcmp(argv[i], "-cc-dual=off"))
@@ -1916,7 +1974,7 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || v > 4) die("invalid -cc-mutant (0..4, test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 7) die("invalid -cc-mutant (0..7, test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strncmp(argv[i], "-cc-trace=", 10)) {
             g_cc_opt.trace_path = argv[i] + 10;
@@ -1953,13 +2011,15 @@ int main(int argc, char** argv) {
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
-            printf("            -cc-rules=excl,pack,orbf[,mrv] (default excl,pack,orbf; 'none' = plain CC)\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf[,mrv] (default excl,pack,orbf,parity,leaf; 'none' = plain CC;\n");
+            printf("            parity = skip odd levels when every column weight of the half is odd; leaf = hash lookup of\n");
+            printf("            the closing qubit at budget 1 and 2)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..4)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..7)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");
@@ -1970,6 +2030,9 @@ int main(int argc, char** argv) {
             printf("            (stderr); -frontier-check re-verifies the incremental row state (debug); auto (GH-130):\n");
             printf("            on per half iff its parity matrix has < 3 Tanner 4-cycles per row (-v prints the choice);\n");
             printf("            -frontier=off reproduces the search of main before GH-130\n");
+            printf("  Odd-cap skip (split MaxSAT path only, GH-133): -oddcap-skip=on|off (default off): on a half whose\n");
+            printf("            parity matrix has only odd column weights every logical has even weight, so odd probe caps\n");
+            printf("            are replaced by the even cap below (NONE at cap 2t certifies 2t+2)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

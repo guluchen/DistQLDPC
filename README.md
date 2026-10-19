@@ -153,7 +153,8 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-engine=auto` | **(experimental, GH-124)** `cc` unless a half's parity matrix is dense (some row weight > 32, or mean row weight > n/4 with n >= 64), then `maxsat`; every bundled code goes to `cc`; `-v` prints the decision (not the default) |
 | `-frontier=auto` (default) | **(GH-129/GH-130)** Frontier branching inside MaxCDCL on the CSS split: when some parity row of the half is odd (its qubits set to 1 have odd parity and it still has unassigned qubits), the next decision sets to 1 a qubit of the odd row with the fewest candidates (CC's growth rule); otherwise MaxCDCL decides as usual. `auto` enables it per half only when the half's parity matrix has fewer than 3 Tanner 4-cycles per row (pairs of rows sharing two qubits; BB/GB/LP 0–1.6, TN 6–26), decided before the search; `-v` prints the value and the choice. `-frontier=off` reproduces the search before GH-130; `-frontier=on` forces it on every half; `postsol` / `presol` apply it only after / before a probe's first solution. The formula is unchanged, only the decision order |
 | `-seed=N` | **(timing seeds)** Default 0 = the unchanged search. With MaxSAT, N > 0 sets MaxCDCL's random seed (it only drives the engine's 1% sampling of the lookahead threshold, so the search order changes but never the answer or the bounds' validity); with the CC engine it is `-cc-seed=N`. Used for seed-median timing |
-| `-cc-rules=excl,pack,orbf[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf`; `none` = plain CC): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, fewest-candidate branching |
+| `-oddcap-skip=on\|off` | **(experimental, GH-133; default `off` = the unchanged search)** MaxSAT split only: on a CSS half whose parity matrix has only odd column weights every logical has even weight, so the odd probe caps of the bound search are replaced by the even cap below them (cap 1: no probe, lower bound 2; a NONE at cap 2t certifies 2t+2); `-v` prints the decision per half. Applies to all bundled BB and LP codes (column weights 3 / 3,5), not to TN or GB |
+| `-cc-rules=excl,pack,orbf,parity,leaf[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf,parity,leaf`; `none` = plain CC; `excl,pack,orbf` = the GH-124 engine): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, even-weight parity shortcut (GH-133), leaf hash lookup (GH-133), fewest-candidate branching |
 | `-cc-dual=on\|off` | **(experimental)** With a verified XZ-dual map, CC searches only the X half (default `on`; `-dualmode=off` also disables it) |
 | `-ub-basis[=on\|off]` | **(experimental, CC only)** Emit the minimum weight of the verified logical basis rows as an initial upper bound (default on; `-ub-basis=off` disables it) |
 | `-cc-seed=N` | **(experimental, testing)** Deterministic relabeling of qubits and rows for CC (default 0 = identity), for seed-median timing; alias of `-seed=N` for the CC engine (both given with different values is an error) |
@@ -177,7 +178,7 @@ to the behaviour before GH-124.
 | Use the CC engine | `-engine=cc` | no flag, or `-engine=maxsat` (default) |
 | Let DistQLDPC choose per code | `-engine=auto` (CC unless the code is dense, see below; `-v` prints `c engine: auto -> cc\|maxsat (...)`) | `-engine=maxsat` |
 | Seed for timing panels (both engines) | `-seed=N` (N > 0; CC: same as `-cc-seed=N`) | no flag or `-seed=0` (main's search) |
-| Pruning rules (CC only) | `-cc-rules=excl,pack,orbf` (default), add `mrv` for fewest-candidate branching | `-cc-rules=none` (plain CC), or list only the rules you want, e.g. `-cc-rules=excl,pack` |
+| Pruning rules (CC only) | `-cc-rules=excl,pack,orbf,parity,leaf` (default), add `mrv` for fewest-candidate branching | `-cc-rules=none` (plain CC), or list only the rules you want, e.g. `-cc-rules=excl,pack,orbf` (the GH-124 engine) |
 | Orbit seeds (CC only) | default (rule `orbf`) | drop `orbf` from `-cc-rules`, or `-no-symbreak` (index seeds) |
 | Single-half search under a verified XZ-dual map (CC only) | `-cc-dual=on` (default) | `-cc-dual=off` or `-dualmode=off` |
 | Initial upper bound from the verified logical basis rows (CC only) | `-ub-basis` / `-ub-basis=on` (default) | `-ub-basis=off` |
@@ -186,14 +187,15 @@ to the behaviour before GH-124.
 Examples:
 
 ```bash
-./bin/distqldpc -engine=cc BB_288_12_18                  # CC with all rules (excl, pack, orbf), dual map, basis UB
+./bin/distqldpc -engine=cc BB_288_12_18                  # CC with all rules (excl, pack, orbf, parity, leaf), dual map, basis UB
 ./bin/distqldpc -engine=cc -cc-rules=none BB_288_12_18   # plain connected-cluster search, no extra pruning
 ./bin/distqldpc -engine=cc -ub-basis=off BB_288_12_18    # no initial upper bound from the basis rows
 ./bin/distqldpc BB_288_12_18                             # default: MaxSAT, CC not used
 ```
 
 The output lines (`c d_lb`, `c d_ub`, `c d  :`, `o N`), the pipe protocol and the `-cpu-lim` timeout are the
-same as for MaxSAT. With CC, `c d_lb` rises by one per completed weight level, and every reported upper bound
+same as for MaxSAT. With CC, `c d_lb` rises by one per completed weight level (by two on a half with only odd
+column weights, where the `parity` rule skips the odd levels), and every reported upper bound
 is a witness checked by `H e = 0` and an independent GF(2) rank test against the stabilizer row space.
 Conflicting flags are rejected with an error (exit 1): the `-cc-*` and `-ub-basis` flags need `-engine=cc` or
 `-engine=auto`; `-engine=cc` and `-engine=auto` refuse `-joint`, `-roundingsat[=BIN]`, `-dump-wcnf`, `-dump-opb`,
@@ -243,12 +245,15 @@ study DistQLDPC takes these ideas (re-implemented from scratch; no Qubitserf cod
 | **Orbit seeds** (`orbf`) from DistQLDPC's GF(2)-verified per-half automorphisms (GH-85): one seed per orbit, earlier orbits forbidden | 10-16x on BB codes, 6-18x on LP codes, 2-3x on TN codes with symmetry |
 | **Single-half search** under DistQLDPC's verified XZ-dual map (GH-87/GH-107) | about 2x on BB/GB codes |
 | **Stop rule**: once one half hits at level w and the other half's lower bound is >= w, d = w | no wasted level after the distance is determined |
+| **Even-weight parity shortcut** (`parity`, GH-133): when every column weight of the half's parity matrix is odd, the sum of the rows of `H v` equals `\|v\|` mod 2, so every logical has even weight; odd levels are skipped (an EMPTY level 2t certifies 2t+2) and the per-node parity check is a free consistency check. The fact is classical (C. Crocker uses it for BB_360); its use in the lockstep level schedule is ours. Applies to all bundled BB and LP codes, not to TN/GB | 3-4x on BB/LP codes (the skipped odd level is the most expensive one before each hit); nothing on TN/GB |
+| **Leaf hash lookup** (`leaf`, GH-133; the idea is described in dist-m4ri's README): at remaining budget 1 the closing qubit is looked up in a hash from column to qubit, at budget 2 each candidate of the branching row is completed by one lookup instead of a recursion | neutral in our engine (0-5% fewer nodes, 0-3% time): the packing bound already prunes almost every cluster before budget 1 (`-cc-stats` nodes-by-budget) |
 | **Witness verification** by an independent GF(2) rank test, always-on consistency traps, verified **basis-row upper bound** at t = 0 (`-ub-basis`) | every reported bound is checked; an anytime upper bound before the exact level |
 | DistQLDPC's anytime bound reporting, timeout handling and output format; `-cc-seed`, `-cc-trace`, `-cc-stats`; brute-force and mutation tests (`make test-cc`) | drop-in use with the existing tools and benchmarks |
 
 With these additions the CC engine solves every bundled tier1-4 code in seconds on one core and confirmed five
 distances that MaxSAT had not solved in 6 h (BB_360_12_24, TN_252_2_21, LP_1054_140_20, LP_1428_184_24,
-LP_1768_224_22); see `optimization/experiments/GH-124/`.
+LP_1768_224_22); see `optimization/experiments/GH-124/` and, for the GH-133 rules, `optimization/experiments/GH-133/`.
+A survey of the published connected-cluster searches and of the ideas still open is in `docs/LITERATURE_CC_2026.md`.
 
 ---
 

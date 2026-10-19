@@ -88,6 +88,7 @@ struct Half {
     const SparseRows* S;   /* same-type stabilizers (trivial logicals = rs S) */
     const SparseRows* B;   /* logical basis rows of this half's type (for -ub-basis) */
     bool exists, searched;
+    bool par;              /* GH-133: parity rule in force (all column weights odd): odd levels skipped */
     int rankH, rankHG, rankS;
     int lb, ub;
     uint64_t last_nodes, total_nodes;
@@ -95,7 +96,7 @@ struct Half {
     std::vector<Bits> hbits;
     std::unique_ptr<Echelon> sbasis;
     std::unique_ptr<HalfSearch> search;
-    Half() : tag(""), H(NULL), G(NULL), S(NULL), B(NULL), exists(false), searched(false), rankH(0), rankHG(0),
+    Half() : tag(""), H(NULL), G(NULL), S(NULL), B(NULL), exists(false), searched(false), par(false), rankH(0), rankHG(0),
              rankS(0), lb(INT_MAX), ub(INT_MAX), last_nodes(0), total_nodes(0), total_time(0) {}
 };
 
@@ -215,7 +216,7 @@ bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::
 
 bool parse_rules(const char* s, Rules& out) {
     Rules r;
-    r.excl = r.pack = r.orbf = r.mrv = false;
+    r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = false;
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -226,6 +227,8 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "pack") r.pack = true;
         else if (tok == "orbf") r.orbf = true;
         else if (tok == "mrv") r.mrv = true;
+        else if (tok == "parity") r.parity = true;
+        else if (tok == "leaf") r.leaf = true;
         else if (tok == "none") { /* nothing */ }
         else return false;
         pos = e + 1;
@@ -239,6 +242,8 @@ std::string rules_string(const Rules& r) {
     if (r.excl) s += ",excl";
     if (r.pack) s += ",pack";
     if (r.orbf) s += ",orbf";
+    if (r.parity) s += ",parity";
+    if (r.leaf) s += ",leaf";
     if (r.mrv) s += ",mrv";
     return s.empty() ? std::string("none") : s.substr(1);
 }
@@ -331,21 +336,49 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
     for (int k = 0; k < 2; k++) {
         if (!hs[k].searched) continue;
         hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant));
-        if (verb > 0)
+        hs[k].par = hs[k].search->parity_active();
+        if (verb > 0) {
             printf("c cc: %s half search: %d seeds (%s)\n", hs[k].tag, hs[k].search->num_seeds(),
                    hs[k].search->orbit_seeds() ? "orbit representatives" : "index rule");
+            const HalfSearch& S = *hs[k].search;
+            if (!opt.rules.parity)
+                printf("c cc: %s half parity: rule off (column weights %d..%d)\n", hs[k].tag, S.min_col_weight(), S.max_col_weight());
+            else if (S.all_odd_columns())
+                printf("c cc: %s half parity: on (column weights %d..%d, all odd): every logical has even weight, odd levels skipped\n",
+                       hs[k].tag, S.min_col_weight(), S.max_col_weight());
+            else if (hs[k].par)
+                printf("c cc: %s half parity: FORCED by test mutant 5 (column weights %d..%d, an even weight present)\n",
+                       hs[k].tag, S.min_col_weight(), S.max_col_weight());
+            else
+                printf("c cc: %s half parity: off (column weights %d..%d, an even weight present)\n",
+                       hs[k].tag, S.min_col_weight(), S.max_col_weight());
+        }
     }
+    /* GH-133 parity: level 1 of a qualifying half is empty (every element has even weight) */
+    for (int k = 0; k < 2; k++)
+        if (hs[k].searched && hs[k].par && (hs[k].lb & 1)) hs[k].lb++;
+    if (dual) hs[1].lb = hs[0].lb;
     fflush(stdout);
     if (!opt.trace_path.empty()) {
         trace = fopen(opt.trace_path.c_str(), "w");
         if (!trace) return fail("cannot open trace file " + opt.trace_path);
         fprintf(trace, "# DistQLDPC cc-trace v1: half level verdict nodes seconds [witness support]\n");
-        fprintf(trace, "# n %d rules %s cc-seed %llu dual %s mutant %d\n", n, rules_string(opt.rules).c_str(),
-                (unsigned long long)opt.seed, dual ? in.dual_desc.c_str() : "off", opt.mutant);
+        fprintf(trace, "# n %d rules %s cc-seed %llu dual %s mutant %d parity X %s Z %s\n", n, rules_string(opt.rules).c_str(),
+                (unsigned long long)opt.seed, dual ? in.dual_desc.c_str() : "off", opt.mutant,
+                hs[0].searched ? (hs[0].par ? "on" : "off") : "-", hs[1].searched ? (hs[1].par ? "on" : "off") : "-");
         fflush(trace);
     }
 
     int lastLB = 1, lastTry = 0, d = -1;   /* the trivial bound 1 is not emitted */
+    {   /* parity: the certified bound 2 of a qualifying half is emitted before the first level */
+        int glb0 = INF;
+        for (int k = 0; k < 2; k++)
+            if (hs[k].exists && hs[k].lb < glb0) glb0 = hs[k].lb;
+        if (glb0 > lastLB && glb0 < U) {
+            sink.bound(sink.ctx, "LB", (uint64_t)glb0);
+            lastLB = glb0;
+        }
+    }
     const double t_start = now_seconds();
     for (;;) {
         int glb = INF;
@@ -383,10 +416,18 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (verb > 0)
             printf("c cc: %s half level %d %s nodes %llu seeds %llu time %.3fs\n", h.tag, w, vs,
                    (unsigned long long)r.nodes, (unsigned long long)r.seeds, dt);
-        if (opt.stats)
-            printf("c cc-stats: %s level %d %s nodes %llu seeds %llu closed %llu nocand %llu packprune %llu time %.6fs\n",
+        if (opt.stats) {
+            printf("c cc-stats: %s level %d %s nodes %llu seeds %llu closed %llu nocand %llu packprune %llu parprune %llu "
+                   "leaf1 %llu leaf2 %llu time %.6fs\n",
                    h.tag, w, vs, (unsigned long long)r.nodes, (unsigned long long)r.seeds,
-                   (unsigned long long)r.closed, (unsigned long long)r.nocand, (unsigned long long)r.packprune, dt);
+                   (unsigned long long)r.closed, (unsigned long long)r.nocand, (unsigned long long)r.packprune,
+                   (unsigned long long)r.parprune, (unsigned long long)r.leaf1, (unsigned long long)r.leaf2, dt);
+            if (!r.by_budget.empty()) {   /* nodes by remaining budget w - |S|, budget 0 (full clusters) first */
+                printf("c cc-stats: %s level %d nodes-by-budget", h.tag, w);
+                for (size_t b = 0; b < r.by_budget.size(); b++) printf(" %llu", (unsigned long long)r.by_budget[b]);
+                printf("\n");
+            }
+        }
         fflush(stdout);
         if (r.verdict == LEVEL_INCONSISTENT) {
             char buf[160];
@@ -397,6 +438,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         bool stop = false;
         if (r.verdict == LEVEL_EMPTY) {
             h.lb = w + 1;
+            if (h.par && (h.lb & 1)) {   /* GH-133 parity: an EMPTY even level 2t certifies 2t+2 */
+                h.lb++;
+                if (trace) { fprintf(trace, "%s %d SKIPPED 0 0.000000\n", h.tag, w + 1); fflush(trace); }
+                if (verb > 0) printf("c cc: %s half level %d skipped (parity: every logical has even weight)\n", h.tag, w + 1);
+            }
             if (dual) hs[1].lb = hs[0].lb;
         } else {
             std::string why;

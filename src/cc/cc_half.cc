@@ -41,7 +41,8 @@ void shuffle_ints(std::vector<int>& v, uint64_t& s) {
 HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vector<int>& orbit_of,
                        const Rules& rules, uint64_t relabel_seed, int mutant)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
-      orbit_mode_(false), w_(0), nodd_(0), stamp_(0), res_(NULL), incons_(false)
+      orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0), w_(0), nodd_(0),
+      synkey_(0), stamp_(0), res_(NULL), incons_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
     if (G.cols != n_) fatal("detector column count differs from H");
@@ -87,6 +88,42 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         std::vector<uint32_t> fill(cstart_.begin(), cstart_.end() - 1);
         for (int i = 0; i < m_; i++)
             for (uint32_t t = rstart_[i]; t < rstart_[i + 1]; t++) cr_[fill[rq_[t]]++] = (uint32_t)i;
+    }
+
+    /* parity rule: column weights (a row listing a qubit twice counts once, as in rq above) */
+    allodd_ = true;
+    mincw_ = n_ > 0 ? (int)(cstart_[1] - cstart_[0]) : 0;
+    maxcw_ = mincw_;
+    for (int q = 0; q < n_; q++) {
+        const int cw = (int)(cstart_[q + 1] - cstart_[q]);
+        if (!(cw & 1)) allodd_ = false;
+        if (cw < mincw_) mincw_ = cw;
+        if (cw > maxcw_) maxcw_ = cw;
+    }
+    par_ = rules_.parity && (allodd_ || mutant_ == 5);
+
+    /* leaf rule: Zobrist keys per row and per qubit (column = XOR of its rows), hash table key -> qubits */
+    {
+        uint64_t ks = 0x5851f42d4c957f2dULL;
+        rowkey_.assign((size_t)m_, 0);
+        for (int i = 0; i < m_; i++) rowkey_[i] = splitmix64(ks);
+        colkey_.assign((size_t)n_, 0);
+        for (int q = 0; q < n_; q++)
+            for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) colkey_[q] ^= rowkey_[cr_[i]];
+        size_t sz = 4;
+        while (sz < 2 * (size_t)n_) sz <<= 1;
+        hmask_ = (uint64_t)sz - 1;
+        htab_.assign(sz, -1);
+        hnext_.assign((size_t)n_, -1);
+        for (int q = n_ - 1; q >= 0; q--) {   /* descending insertion: chains ascend (branch order) */
+            uint64_t i = colkey_[q] & hmask_;
+            for (;;) {
+                const int32_t h = htab_[i];
+                if (h < 0) { htab_[i] = q; break; }
+                if (colkey_[h] == colkey_[q]) { hnext_[q] = h; htab_[i] = q; break; }
+                i = (i + 1) & hmask_;
+            }
+        }
     }
 
     /* detector masks */
@@ -159,6 +196,7 @@ inline void HalfSearch::toggle(int q) {
         wd ^= b;
         nodd_ += (wd & b) ? 1 : -1;
     }
+    synkey_ ^= colkey_[q];
     const uint64_t* g = &gmask_[(size_t)q * kw_];
     for (int j = 0; j < kw_; j++) gpar_[j] ^= g[j];
 }
@@ -169,6 +207,42 @@ inline bool HalfSearch::gpar_nonzero() const {
     return acc != 0;
 }
 
+/* detector parity of S + q nonzero (mutant 7: no detector check at a leaf closure) */
+inline bool HalfSearch::gpar_nonzero_with(int q) const {
+    if (mutant_ == 7) return true;
+    const uint64_t* g = &gmask_[(size_t)q * kw_];
+    uint64_t acc = 0;
+    for (int j = 0; j < kw_; j++) acc |= gpar_[j] ^ g[j];
+    return acc != 0;
+}
+
+/* exact test col(q) == syn_: same weight and every row of q odd (keys are only a filter) */
+inline bool HalfSearch::column_is_syndrome(int q) const {
+    const uint32_t a = cstart_[q], e = cstart_[q + 1];
+    if ((int)(e - a) != nodd_) return false;
+    for (uint32_t i = a; i < e; i++) {
+        const uint32_t r = cr_[i];
+        if (!((syn_[r >> 6] >> (r & 63)) & 1)) return false;
+    }
+    return true;
+}
+
+/* leaf: the first free qubit (ascending, the branch order of any odd row, every one of which it lies in)
+ * whose column equals the syndrome and whose closure is nontrivial; -1 if none */
+inline int HalfSearch::closing_qubit() const {
+    uint64_t i = synkey_ & hmask_;
+    for (;;) {
+        const int32_t h = htab_[i];
+        if (h < 0) return -1;
+        if (colkey_[h] == synkey_) {
+            for (int q = h; q >= 0; q = hnext_[q])
+                if (blk_[q] == 0 && column_is_syndrome(q) && gpar_nonzero_with(q)) return q;
+            return -1;
+        }
+        i = (i + 1) & hmask_;
+    }
+}
+
 void HalfSearch::record_witness(int size) {
     res_->witness.clear();
     for (int i = 0; i < size; i++) res_->witness.push_back(to_orig_[cur_[i]]);
@@ -177,6 +251,7 @@ void HalfSearch::record_witness(int size) {
 
 bool HalfSearch::dfs(int size) {
     ++res_->nodes;
+    ++res_->by_budget[(size_t)(w_ - size)];
     if (size == w_) {
         if (nodd_ == 0 && gpar_nonzero()) {
             record_witness(size);
@@ -193,6 +268,23 @@ bool HalfSearch::dfs(int size) {
         }
         return false;
     }
+    /* parity: the qubits still to add must have the parity of the syndrome weight (implied for even w on a
+     * qualifying half, see cc_half.h; it prunes only under mutant 5) */
+    if (par_ && ((w_ - size - nodd_) & 1)) {
+        ++res_->parprune;
+        return false;
+    }
+    /* leaf, budget 1: the closing qubit (if any) is looked up instead of branching */
+    const bool leaf = rules_.leaf;
+    if (leaf && size == w_ - 1) {
+        ++res_->leaf1;
+        const int q = closing_qubit();
+        if (q < 0) return false;
+        cur_[size] = q;
+        record_witness(size + 1);
+        return true;
+    }
+    const bool meet = leaf && size == w_ - (mutant_ == 6 ? 3 : 2);   /* budget 2: lookup instead of recursion */
 
     /* scan the odd rows in index order: packing bound, no-candidate dead end, branching row */
     const bool pack = rules_.pack, mrv = rules_.mrv;
@@ -255,7 +347,26 @@ bool HalfSearch::dfs(int size) {
         blk_[a]++;
         toggle(a);
         cur_[size] = a;
-        hit = dfs(size + 1);
+        if (meet) {   /* the child S + a is closed by one more qubit iff syn(S + a) is a free column */
+            if (nodd_ == 0) {   /* as dfs(size + 1) would: dead end, or an inconsistency if nontrivial */
+                ++res_->closed;
+                if (gpar_nonzero()) {
+                    incons_ = true;
+                    record_witness(size + 1);
+                    hit = true;
+                }
+            } else {
+                ++res_->leaf2;
+                const int q = closing_qubit();
+                if (q >= 0) {
+                    cur_[size + 1] = q;
+                    record_witness(size + 2);
+                    hit = true;
+                }
+            }
+        } else {
+            hit = dfs(size + 1);
+        }
         toggle(a);
         blk_[a]--;
         if (hit) break;
@@ -272,6 +383,10 @@ bool HalfSearch::dfs(int size) {
 LevelResult HalfSearch::run_level(int w) {
     LevelResult r;
     if (w < 1 || w > n_) return r;
+    if (par_ && (w & 1)) {   /* parity: every element of ker H has even weight, so an odd level is empty */
+        r.skipped = true;
+        return r;
+    }
     res_ = &r;
     w_ = w;
     incons_ = false;
@@ -279,8 +394,10 @@ LevelResult HalfSearch::run_level(int w) {
     std::fill(gpar_.begin(), gpar_.end(), 0);
     std::fill(blk_.begin(), blk_.end(), 0);
     nodd_ = 0;
+    synkey_ = 0;
     cur_.assign((size_t)w, -1);
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
+    r.by_budget.assign((size_t)w + 1, 0);
     for (size_t i = 0; i < seed_.size(); i++) {
         const int s = seed_[i];
         /* mutant 3 (orbit seed rule off by one): the seed rule's forbidding of O_i is applied BEFORE the
