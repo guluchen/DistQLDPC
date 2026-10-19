@@ -9,7 +9,8 @@ import argparse, collections, json, math, re, statistics
 ap = argparse.ArgumentParser()
 for k in ('mac-tsv', 'mac-logs', 'panel', 'tier5', 'old-mac', 'old-server', 'mac-sha', 'server-sha', 'out'):
     ap.add_argument('--' + k, required=True)
-ap.add_argument('--date', default='2026-10-18')
+ap.add_argument('--date', default='2026-10-18', help='Mac collection date')
+ap.add_argument('--server-date', default='2026-10-18')
 ap.add_argument('--mac-note', action='append', default=[], help='extra note line(s) for README.md')
 a = ap.parse_args()
 g = lambda x: math.exp(sum(map(math.log, x)) / len(x)) if x else float('nan')
@@ -156,12 +157,12 @@ srv_method = ('tiers 0-4: runner/server_panel.py, 5 seeds (-seed=0..4; 0 = defau
               '5-seed median (seed-median judging, PI 2026-10-14; a timed-out seed counts as the limit); tier 5: runner/server_tier5.py, 1 run per '
               'case/mode, default seed, 6 h limit, cores 0-55, run concurrently with tiers 0-4')
 json.dump(dict(host=HOST_SRV, baseline_binary=BIN_DESC + ' built on yfclab2 (frozen/server-main-cbb0642/distqldpc)',
-               binary_sha256=a.server_sha, collected=a.date, method=srv_method,
+               binary_sha256=a.server_sha, collected=a.server_date, method=srv_method,
                previous_table='main 398054e (2026-10-14, 3-run medians), ratio_vs_398054e = median_s / its median_s', rows=srv_rows),
           open(f'{a.out}/main_server_reference.json', 'w'), indent=1)
 
 o = []; pr = o.append
-pr(f'# Recorded main baseline times on yfclab2 ({a.date})\n')
+pr(f'# Recorded main baseline times on yfclab2 ({a.server_date})\n')
 pr(f'Binary: {BIN_DESC} built on yfclab2 (frozen/server-main-cbb0642/distqldpc), sha256 `{a.server_sha}`. {srv_method}. '
    f'Column "vs 398054e" = this median / the main 398054e median (2026-10-14, 3-run medians, git history).\n')
 pr('## Tiers 0-4 (5 seeds; the median is the reference)\n')

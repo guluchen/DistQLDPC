@@ -2,7 +2,7 @@
  "host": "Mac (Apple M6, 12 CPUs), macOS",
  "baseline_binary": "main cbb0642 (GH-130 adopted: -frontier=auto default)",
  "binary_sha256": "aab6704cf7279b960620a2d5f7daa8ba83d08038457bc4ae035d8eea71ed9d3c",
- "collected": "2026-10-18",
+ "collected": "2026-10-19",
  "method": "runner/mac_jobs.py + runner/mac_serial.py: 3 serial runs per case/mode under caffeinate -i -s, 2 GB cap, >=2 cores free; default flags (frontier auto); limits tier0 600 s, tier1-3 1800 s, tier4 2000 s",
  "previous_table": "main 398054e (2026-10-14), ratio_vs_398054e = median_s / its median_s",
  "rows": [
@@ -12,8 +12,8 @@
    "mode": "card-mto",
    "n": 3,
    "median_s": 0.0174,
-   "min_s": 0.0172,
-   "max_s": 0.0175,
+   "min_s": 0.0173,
+   "max_s": 0.0179,
    "solved": true,
    "limit_s": 600,
    "result": "o 6",
@@ -22,7 +22,7 @@
    "prev_398054e_median_s": 0.0177,
    "ratio_vs_398054e": 0.9831,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -30,18 +30,18 @@
    "case": "BB_72_12_6",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0183,
-   "min_s": 0.0182,
-   "max_s": 0.0183,
+   "median_s": 0.019,
+   "min_s": 0.0187,
+   "max_s": 0.0203,
    "solved": true,
    "limit_s": 600,
    "result": "o 6",
    "final_lb": 6,
    "final_ub": 6,
    "prev_398054e_median_s": 0.0178,
-   "ratio_vs_398054e": 1.0281,
+   "ratio_vs_398054e": 1.0674,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -49,18 +49,18 @@
    "case": "BB_90_8_10",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0329,
-   "min_s": 0.0325,
-   "max_s": 0.0472,
+   "median_s": 0.0323,
+   "min_s": 0.0314,
+   "max_s": 0.0457,
    "solved": true,
    "limit_s": 600,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 0.0628,
-   "ratio_vs_398054e": 0.5239,
+   "ratio_vs_398054e": 0.5143,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -68,18 +68,18 @@
    "case": "BB_90_8_10",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0322,
+   "median_s": 0.033,
    "min_s": 0.0311,
-   "max_s": 0.0327,
+   "max_s": 0.0331,
    "solved": true,
    "limit_s": 600,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 0.0906,
-   "ratio_vs_398054e": 0.3554,
+   "ratio_vs_398054e": 0.3642,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -88,8 +88,8 @@
    "mode": "card-mto",
    "n": 3,
    "median_s": 0.0473,
-   "min_s": 0.0425,
-   "max_s": 0.0478,
+   "min_s": 0.0464,
+   "max_s": 0.0475,
    "solved": true,
    "limit_s": 600,
    "result": "o 8",
@@ -98,7 +98,7 @@
    "prev_398054e_median_s": 0.0479,
    "ratio_vs_398054e": 0.9875,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -106,8 +106,8 @@
    "case": "GB_144_12_8",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0476,
-   "min_s": 0.0472,
+   "median_s": 0.0454,
+   "min_s": 0.0439,
    "max_s": 0.0479,
    "solved": true,
    "limit_s": 600,
@@ -115,9 +115,9 @@
    "final_lb": 8,
    "final_ub": 8,
    "prev_398054e_median_s": 0.0626,
-   "ratio_vs_398054e": 0.7604,
+   "ratio_vs_398054e": 0.7252,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -125,18 +125,18 @@
    "case": "LP_136_32_4",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0588,
-   "min_s": 0.0471,
-   "max_s": 0.0623,
+   "median_s": 0.0475,
+   "min_s": 0.0473,
+   "max_s": 0.0605,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0477,
-   "ratio_vs_398054e": 1.2327,
+   "ratio_vs_398054e": 0.9958,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -144,18 +144,18 @@
    "case": "LP_136_32_4",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0606,
-   "min_s": 0.058,
-   "max_s": 0.0625,
+   "median_s": 0.0629,
+   "min_s": 0.0629,
+   "max_s": 0.0631,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0601,
-   "ratio_vs_398054e": 1.0083,
+   "ratio_vs_398054e": 1.0466,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -163,8 +163,8 @@
    "case": "LP_34_20_2",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0173,
-   "min_s": 0.0153,
+   "median_s": 0.0172,
+   "min_s": 0.0172,
    "max_s": 0.0176,
    "solved": true,
    "limit_s": 600,
@@ -172,9 +172,9 @@
    "final_lb": 2,
    "final_ub": 2,
    "prev_398054e_median_s": 0.0178,
-   "ratio_vs_398054e": 0.9719,
+   "ratio_vs_398054e": 0.9663,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -182,18 +182,18 @@
    "case": "LP_34_20_2",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0173,
-   "min_s": 0.0149,
-   "max_s": 0.0173,
+   "median_s": 0.0179,
+   "min_s": 0.0157,
+   "max_s": 0.0181,
    "solved": true,
    "limit_s": 600,
    "result": "o 2",
    "final_lb": 2,
    "final_ub": 2,
    "prev_398054e_median_s": 0.0176,
-   "ratio_vs_398054e": 0.983,
+   "ratio_vs_398054e": 1.017,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -201,8 +201,8 @@
    "case": "TN_36_8_3",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0172,
-   "min_s": 0.0165,
+   "median_s": 0.0174,
+   "min_s": 0.0172,
    "max_s": 0.0175,
    "solved": true,
    "limit_s": 600,
@@ -210,9 +210,9 @@
    "final_lb": 3,
    "final_ub": 3,
    "prev_398054e_median_s": 0.018,
-   "ratio_vs_398054e": 0.9556,
+   "ratio_vs_398054e": 0.9667,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -220,18 +220,18 @@
    "case": "TN_36_8_3",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0172,
-   "min_s": 0.0159,
-   "max_s": 0.0175,
+   "median_s": 0.0175,
+   "min_s": 0.0175,
+   "max_s": 0.018,
    "solved": true,
    "limit_s": 600,
    "result": "o 3",
    "final_lb": 3,
    "final_ub": 3,
    "prev_398054e_median_s": 0.0179,
-   "ratio_vs_398054e": 0.9609,
+   "ratio_vs_398054e": 0.9777,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -239,18 +239,18 @@
    "case": "TN_36_8_4",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0172,
-   "min_s": 0.0149,
-   "max_s": 0.0172,
+   "median_s": 0.0173,
+   "min_s": 0.0171,
+   "max_s": 0.0174,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0178,
-   "ratio_vs_398054e": 0.9663,
+   "ratio_vs_398054e": 0.9719,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -258,18 +258,18 @@
    "case": "TN_36_8_4",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0175,
-   "min_s": 0.0171,
-   "max_s": 0.0175,
+   "median_s": 0.0176,
+   "min_s": 0.0175,
+   "max_s": 0.0177,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0177,
-   "ratio_vs_398054e": 0.9887,
+   "ratio_vs_398054e": 0.9944,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -277,8 +277,8 @@
    "case": "TN_54_11_4",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.0172,
-   "min_s": 0.0171,
+   "median_s": 0.017,
+   "min_s": 0.0169,
    "max_s": 0.0173,
    "solved": true,
    "limit_s": 600,
@@ -286,9 +286,9 @@
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0174,
-   "ratio_vs_398054e": 0.9885,
+   "ratio_vs_398054e": 0.977,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -296,18 +296,18 @@
    "case": "TN_54_11_4",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0171,
-   "min_s": 0.0169,
-   "max_s": 0.0172,
+   "median_s": 0.0174,
+   "min_s": 0.0154,
+   "max_s": 0.0177,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0175,
-   "ratio_vs_398054e": 0.9771,
+   "ratio_vs_398054e": 0.9943,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -315,18 +315,18 @@
    "case": "TN_72_14_4",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.028,
-   "min_s": 0.0171,
-   "max_s": 0.0325,
+   "median_s": 0.0322,
+   "min_s": 0.0302,
+   "max_s": 0.0324,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0325,
-   "ratio_vs_398054e": 0.8615,
+   "ratio_vs_398054e": 0.9908,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -334,18 +334,18 @@
    "case": "TN_72_14_4",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.0172,
-   "min_s": 0.0137,
-   "max_s": 0.0175,
+   "median_s": 0.0178,
+   "min_s": 0.0175,
+   "max_s": 0.0292,
    "solved": true,
    "limit_s": 600,
    "result": "o 4",
    "final_lb": 4,
    "final_ub": 4,
    "prev_398054e_median_s": 0.0179,
-   "ratio_vs_398054e": 0.9609,
+   "ratio_vs_398054e": 0.9944,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -353,18 +353,18 @@
    "case": "TN_72_8_8",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.3626,
-   "min_s": 0.3303,
-   "max_s": 0.372,
+   "median_s": 0.3365,
+   "min_s": 0.3275,
+   "max_s": 0.3373,
    "solved": true,
    "limit_s": 600,
    "result": "o 8",
    "final_lb": 8,
    "final_ub": 8,
    "prev_398054e_median_s": 0.3186,
-   "ratio_vs_398054e": 1.1381,
+   "ratio_vs_398054e": 1.0562,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -372,18 +372,18 @@
    "case": "TN_72_8_8",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.2267,
-   "min_s": 0.2051,
-   "max_s": 0.2306,
+   "median_s": 0.2078,
+   "min_s": 0.2049,
+   "max_s": 0.2086,
    "solved": true,
    "limit_s": 600,
    "result": "o 8",
    "final_lb": 8,
    "final_ub": 8,
    "prev_398054e_median_s": 0.1981,
-   "ratio_vs_398054e": 1.1444,
+   "ratio_vs_398054e": 1.049,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 600s"
+    "mac_serial.py 2026-10-19 serial, limit 600s"
    ]
   },
   {
@@ -391,18 +391,18 @@
    "case": "BB_108_8_10",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.1153,
-   "min_s": 0.1083,
-   "max_s": 0.1166,
+   "median_s": 0.1075,
+   "min_s": 0.1041,
+   "max_s": 0.1076,
    "solved": true,
    "limit_s": 1800,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 0.3877,
-   "ratio_vs_398054e": 0.2974,
+   "ratio_vs_398054e": 0.2773,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -410,18 +410,18 @@
    "case": "BB_108_8_10",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.1059,
-   "min_s": 0.1033,
-   "max_s": 0.1078,
+   "median_s": 0.1074,
+   "min_s": 0.1054,
+   "max_s": 0.1086,
    "solved": true,
    "limit_s": 1800,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 0.2847,
-   "ratio_vs_398054e": 0.372,
+   "ratio_vs_398054e": 0.3772,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -429,18 +429,18 @@
    "case": "BB_144_12_12",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.1223,
-   "min_s": 0.104,
-   "max_s": 0.1228,
+   "median_s": 0.1081,
+   "min_s": 0.1077,
+   "max_s": 0.1204,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 0.5496,
-   "ratio_vs_398054e": 0.2225,
+   "ratio_vs_398054e": 0.1967,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -448,18 +448,18 @@
    "case": "BB_144_12_12",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.1204,
-   "min_s": 0.1033,
-   "max_s": 0.1206,
+   "median_s": 0.107,
+   "min_s": 0.1068,
+   "max_s": 0.1081,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 0.2516,
-   "ratio_vs_398054e": 0.4785,
+   "ratio_vs_398054e": 0.4253,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -467,18 +467,18 @@
    "case": "LP_238_44_6",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 0.3572,
-   "min_s": 0.3254,
-   "max_s": 0.3647,
+   "median_s": 0.3307,
+   "min_s": 0.3265,
+   "max_s": 0.338,
    "solved": true,
    "limit_s": 1800,
    "result": "o 6",
    "final_lb": 6,
    "final_ub": 6,
    "prev_398054e_median_s": 0.3761,
-   "ratio_vs_398054e": 0.9497,
+   "ratio_vs_398054e": 0.8793,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -486,18 +486,18 @@
    "case": "LP_238_44_6",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.3186,
-   "min_s": 0.2806,
-   "max_s": 0.3205,
+   "median_s": 0.2956,
+   "min_s": 0.2858,
+   "max_s": 0.304,
    "solved": true,
    "limit_s": 1800,
    "result": "o 6",
    "final_lb": 6,
    "final_ub": 6,
    "prev_398054e_median_s": 0.3949,
-   "ratio_vs_398054e": 0.8068,
+   "ratio_vs_398054e": 0.7485,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -505,18 +505,18 @@
    "case": "LP_340_56_8",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 1.307,
-   "min_s": 1.1523,
-   "max_s": 1.3138,
+   "median_s": 1.1929,
+   "min_s": 1.1723,
+   "max_s": 1.1935,
    "solved": true,
    "limit_s": 1800,
    "result": "o 8",
    "final_lb": 8,
    "final_ub": 8,
    "prev_398054e_median_s": 1.563,
-   "ratio_vs_398054e": 0.8362,
+   "ratio_vs_398054e": 0.7632,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -524,18 +524,18 @@
    "case": "LP_340_56_8",
    "mode": "no-card",
    "n": 3,
-   "median_s": 0.8418,
-   "min_s": 0.7395,
-   "max_s": 0.8465,
+   "median_s": 0.7703,
+   "min_s": 0.7648,
+   "max_s": 0.7786,
    "solved": true,
    "limit_s": 1800,
    "result": "o 8",
    "final_lb": 8,
    "final_ub": 8,
    "prev_398054e_median_s": 1.4836,
-   "ratio_vs_398054e": 0.5674,
+   "ratio_vs_398054e": 0.5192,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -543,18 +543,18 @@
    "case": "BB_144_14_14",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 7.7811,
-   "min_s": 6.9869,
-   "max_s": 7.7815,
+   "median_s": 7.124,
+   "min_s": 7.091,
+   "max_s": 7.1427,
    "solved": true,
    "limit_s": 1800,
    "result": "o 14",
    "final_lb": 14,
    "final_ub": 14,
    "prev_398054e_median_s": 28.1921,
-   "ratio_vs_398054e": 0.276,
+   "ratio_vs_398054e": 0.2527,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -562,18 +562,18 @@
    "case": "BB_144_14_14",
    "mode": "no-card",
    "n": 3,
-   "median_s": 7.587,
-   "min_s": 6.9316,
-   "max_s": 7.5911,
+   "median_s": 6.9609,
+   "min_s": 6.8992,
+   "max_s": 6.9813,
    "solved": true,
    "limit_s": 1800,
    "result": "o 14",
    "final_lb": 14,
    "final_ub": 14,
    "prev_398054e_median_s": 30.2756,
-   "ratio_vs_398054e": 0.2506,
+   "ratio_vs_398054e": 0.2299,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -581,18 +581,18 @@
    "case": "LP_442_68_10",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 10.2322,
-   "min_s": 9.2042,
-   "max_s": 10.8662,
+   "median_s": 9.3396,
+   "min_s": 9.2931,
+   "max_s": 9.3826,
    "solved": true,
    "limit_s": 1800,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 20.5178,
-   "ratio_vs_398054e": 0.4987,
+   "ratio_vs_398054e": 0.4552,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -600,18 +600,18 @@
    "case": "LP_442_68_10",
    "mode": "no-card",
    "n": 3,
-   "median_s": 12.2385,
-   "min_s": 10.936,
-   "max_s": 12.2436,
+   "median_s": 11.1619,
+   "min_s": 11.0686,
+   "max_s": 11.1634,
    "solved": true,
    "limit_s": 1800,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 32.1846,
-   "ratio_vs_398054e": 0.3803,
+   "ratio_vs_398054e": 0.3468,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -619,18 +619,18 @@
    "case": "TN_108_2_12",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 12.0807,
-   "min_s": 11.0335,
-   "max_s": 12.1142,
+   "median_s": 11.1002,
+   "min_s": 11.0725,
+   "max_s": 11.1023,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 11.0157,
-   "ratio_vs_398054e": 1.0967,
+   "ratio_vs_398054e": 1.0077,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -638,18 +638,18 @@
    "case": "TN_108_2_12",
    "mode": "no-card",
    "n": 3,
-   "median_s": 10.4967,
-   "min_s": 9.5662,
-   "max_s": 11.3212,
+   "median_s": 9.6786,
+   "min_s": 9.6545,
+   "max_s": 9.7044,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 9.5874,
-   "ratio_vs_398054e": 1.0948,
+   "ratio_vs_398054e": 1.0095,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -657,18 +657,18 @@
    "case": "BB_288_12_18",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 86.2447,
-   "min_s": 79.1008,
-   "max_s": 86.4923,
+   "median_s": 79.2298,
+   "min_s": 79.2037,
+   "max_s": 79.3079,
    "solved": true,
    "limit_s": 1800,
    "result": "o 18",
    "final_lb": 18,
    "final_ub": 18,
    "prev_398054e_median_s": 377.6117,
-   "ratio_vs_398054e": 0.2284,
+   "ratio_vs_398054e": 0.2098,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -676,18 +676,18 @@
    "case": "BB_288_12_18",
    "mode": "no-card",
    "n": 3,
-   "median_s": 109.7895,
-   "min_s": 100.3734,
-   "max_s": 109.919,
+   "median_s": 100.7872,
+   "min_s": 100.7062,
+   "max_s": 100.8397,
    "solved": true,
    "limit_s": 1800,
    "result": "o 18",
    "final_lb": 18,
    "final_ub": 18,
    "prev_398054e_median_s": 303.8057,
-   "ratio_vs_398054e": 0.3614,
+   "ratio_vs_398054e": 0.3317,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -695,18 +695,18 @@
    "case": "GB_144_12_12",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 10.6213,
-   "min_s": 9.746,
-   "max_s": 10.6731,
+   "median_s": 9.7464,
+   "min_s": 9.7372,
+   "max_s": 9.7527,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 100.6553,
-   "ratio_vs_398054e": 0.1055,
+   "ratio_vs_398054e": 0.0968,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -714,18 +714,18 @@
    "case": "GB_144_12_12",
    "mode": "no-card",
    "n": 3,
-   "median_s": 26.5492,
-   "min_s": 24.3053,
-   "max_s": 26.5966,
+   "median_s": 24.3163,
+   "min_s": 24.2837,
+   "max_s": 24.3464,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 60.1825,
-   "ratio_vs_398054e": 0.4411,
+   "ratio_vs_398054e": 0.404,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -733,18 +733,18 @@
    "case": "LP_544_80_12",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 20.9242,
-   "min_s": 19.0632,
-   "max_s": 20.9573,
+   "median_s": 19.0907,
+   "min_s": 19.0856,
+   "max_s": 19.1222,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 50.755,
-   "ratio_vs_398054e": 0.4123,
+   "ratio_vs_398054e": 0.3761,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -752,18 +752,18 @@
    "case": "LP_544_80_12",
    "mode": "no-card",
    "n": 3,
-   "median_s": 20.9727,
-   "min_s": 19.1284,
-   "max_s": 21.0304,
+   "median_s": 19.16,
+   "min_s": 19.1574,
+   "max_s": 19.17,
    "solved": true,
    "limit_s": 1800,
    "result": "o 12",
    "final_lb": 12,
    "final_ub": 12,
    "prev_398054e_median_s": 219.4915,
-   "ratio_vs_398054e": 0.0956,
+   "ratio_vs_398054e": 0.0873,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -771,18 +771,18 @@
    "case": "TN_144_2_13",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 173.6899,
-   "min_s": 159.1655,
-   "max_s": 173.7628,
+   "median_s": 159.1957,
+   "min_s": 159.047,
+   "max_s": 159.3078,
    "solved": true,
    "limit_s": 1800,
    "result": "o 13",
    "final_lb": 13,
    "final_ub": 13,
    "prev_398054e_median_s": 158.7232,
-   "ratio_vs_398054e": 1.0943,
+   "ratio_vs_398054e": 1.003,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -790,18 +790,18 @@
    "case": "TN_144_2_13",
    "mode": "no-card",
    "n": 3,
-   "median_s": 77.3737,
-   "min_s": 70.9009,
-   "max_s": 77.6241,
+   "median_s": 71.0081,
+   "min_s": 70.8932,
+   "max_s": 71.0483,
    "solved": true,
    "limit_s": 1800,
    "result": "o 13",
    "final_lb": 13,
    "final_ub": 13,
    "prev_398054e_median_s": 70.6652,
-   "ratio_vs_398054e": 1.0949,
+   "ratio_vs_398054e": 1.0049,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -809,18 +809,18 @@
    "case": "TN_200_10_10",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 11.5173,
-   "min_s": 10.5876,
-   "max_s": 11.5333,
+   "median_s": 10.6025,
+   "min_s": 10.5989,
+   "max_s": 10.6063,
    "solved": true,
    "limit_s": 1800,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 10.5733,
-   "ratio_vs_398054e": 1.0893,
+   "ratio_vs_398054e": 1.0028,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -828,18 +828,18 @@
    "case": "TN_200_10_10",
    "mode": "no-card",
    "n": 3,
-   "median_s": 14.8481,
-   "min_s": 13.6674,
-   "max_s": 14.8887,
+   "median_s": 13.6784,
+   "min_s": 13.6657,
+   "max_s": 13.6838,
    "solved": true,
    "limit_s": 1800,
    "result": "o 10",
    "final_lb": 10,
    "final_ub": 10,
    "prev_398054e_median_s": 13.6329,
-   "ratio_vs_398054e": 1.0891,
+   "ratio_vs_398054e": 1.0033,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 1800s"
+    "mac_serial.py 2026-10-19 serial, limit 1800s"
    ]
   },
   {
@@ -847,18 +847,18 @@
    "case": "TN_250_10_15",
    "mode": "card-mto",
    "n": 3,
-   "median_s": 1071.8057,
-   "min_s": 1037.6823,
-   "max_s": 1071.9626,
+   "median_s": 987.2325,
+   "min_s": 985.6268,
+   "max_s": 990.3781,
    "solved": true,
    "limit_s": 2000,
    "result": "o 15",
    "final_lb": 15,
    "final_ub": 15,
    "prev_398054e_median_s": 985.0892,
-   "ratio_vs_398054e": 1.088,
+   "ratio_vs_398054e": 1.0022,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 2000s"
+    "mac_serial.py 2026-10-19 serial, limit 2000s"
    ]
   },
   {
@@ -866,18 +866,18 @@
    "case": "TN_250_10_15",
    "mode": "no-card",
    "n": 3,
-   "median_s": 1180.8066,
-   "min_s": 1086.3538,
-   "max_s": 1184.2243,
+   "median_s": 1086.9182,
+   "min_s": 1085.9132,
+   "max_s": 1089.1859,
    "solved": true,
    "limit_s": 2000,
    "result": "o 15",
    "final_lb": 15,
    "final_ub": 15,
    "prev_398054e_median_s": 1082.4894,
-   "ratio_vs_398054e": 1.0908,
+   "ratio_vs_398054e": 1.0041,
    "sources": [
-    "mac_serial.py 2026-10-18 serial, limit 2000s"
+    "mac_serial.py 2026-10-19 serial, limit 2000s"
    ]
   }
  ]
