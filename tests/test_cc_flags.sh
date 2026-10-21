@@ -196,7 +196,7 @@ vgrep 3 "^c oddcap X: column weights 2..4 (an even weight present) -> odd caps k
 runs=$((runs + 1)); run -v -oddcap-skip=off $L $C
 if grep -q "^c oddcap" <<<"$out"; then echo "FAIL (-oddcap-skip=off must not print oddcap lines)" >&2; fails=$((fails + 1)); fi
 runs=$((runs + 1)); run -v $L $C
-if grep -q "^c oddcap" <<<"$out"; then echo "FAIL (default must not print oddcap lines)" >&2; fails=$((fails + 1)); fi
+if ! grep -q "^c oddcap" <<<"$out"; then echo "FAIL (default is -oddcap-skip=on since 2026-10-21: oddcap lines expected)" >&2; fails=$((fails + 1)); fi
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)

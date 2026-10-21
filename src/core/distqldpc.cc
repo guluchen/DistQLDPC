@@ -989,14 +989,14 @@ static double tanner_c4_per_row(const Matrix& H) {
     return c4 / (double)rows.size();
 }
 
-/* GH-133 -oddcap-skip=on|off (default off = main's cap sequence byte for byte). On a CSS half whose parity
+/* GH-133 -oddcap-skip=on|off (default on since 2026-10-21, PI; off = the cap sequence of main before that, byte for byte). On a CSS half whose parity
  * matrix H has only odd column weights every element of ker H has even weight (sum of the rows of H v is
  * sum_j colwt_j v_j = |v| mod 2), so a probe cap m odd is equivalent to the cap m - 1 (no element of weight m),
  * and NONE at an even cap 2t certifies the lower bound 2t + 2. With the flag on, the interleaved search uses
  * the even cap in Phase 1 (cap 1: no probe, lb 2), Phase 2a (cap U-1 -> U-2) and Phase 2b/3 (an odd cap
  * U-1 -> U-2), and raises the lower bound after a NONE to the next even value. Evaluated in
  * optimization/experiments/GH-133/. */
-static bool g_oddcap_skip = false;
+static bool g_oddcap_skip = true;   /* default on (PI 2026-10-21) */
 
 static bool all_column_weights_odd(const Matrix& H, int& mincw, int& maxcw) {
     bool allodd = H.cols > 0;
@@ -2030,9 +2030,9 @@ int main(int argc, char** argv) {
             printf("            (stderr); -frontier-check re-verifies the incremental row state (debug); auto (GH-130):\n");
             printf("            on per half iff its parity matrix has < 3 Tanner 4-cycles per row (-v prints the choice);\n");
             printf("            -frontier=off reproduces the search of main before GH-130\n");
-            printf("  Odd-cap skip (split MaxSAT path only, GH-133): -oddcap-skip=on|off (default off): on a half whose\n");
+            printf("  Odd-cap skip (split MaxSAT path only, GH-133): -oddcap-skip=on|off (default on): on a half whose\n");
             printf("            parity matrix has only odd column weights every logical has even weight, so odd probe caps\n");
-            printf("            are replaced by the even cap below (NONE at cap 2t certifies 2t+2)\n");
+            printf("            are replaced by the even cap below (NONE at cap 2t certifies 2t+2); off = previous search\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
