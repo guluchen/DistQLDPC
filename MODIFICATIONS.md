@@ -144,6 +144,7 @@ chosen), and it prunes no subset of e*. So every such argument goes through unch
 Statistics (`-cc-stats`): `ovtight` (rows that became tight), `ovforbid` (qubits turned from free to forbidden).
 The strict prune is implied by the forbids and never fires, so its count is not printed; the pruning effect is
 the node reduction against `-cc-rules=excl,pack,orbf,parity,leaf` (exact, deterministic node counts).
+*Evidence.* `optimization/experiments/GH-138/REPORT.md` (Tier 1-4 panel PASS, Tier 5: BB_756/864/1080 lb 28 -> 30).
 *Side note (not adopted).* Lemma 1 holds for every element of rs K, not only for the generator rows; adding the
 pair sums g1 + g2 whose limit is not implied by the rows (e.g. TN rows of weight 9 sharing 2-3 qubits) cut a
 further 0-17 % of the nodes on TN_250 / TN_144 / BB_288 but cost more time than they saved (S0 of GH-138).
