@@ -19,16 +19,16 @@ certified).
 
 | Tier | Purpose / timeout | Codes `[[n, k, d]]` |
 |------|-------------------|---------------------|
-| tier0 | correctness / smoke; main < 1 s on yfclab2 | LP_34_20_2 [[34,20,2]], TN_36_8_3 [[36,8,3]], TN_36_8_4 [[36,8,4]], TN_54_11_4 [[54,11,4]], BB_72_12_6 [[72,12,6]], TN_72_14_4 [[72,14,4]], TN_72_8_8 [[72,8,8]], BB_90_8_10 [[90,8,10]], LP_136_32_4 [[136,32,4]], GB_144_12_8 [[144,12,8]] |
-| tier1 | lightweight performance filter; main 1–10 s on yfclab2 | BB_108_8_10 [[108,8,10]], BB_144_12_12 [[144,12,12]], LP_238_44_6 [[238,44,6]], LP_340_56_8 [[340,56,8]] |
-| tier2 | medium filter; main 10–100 s on yfclab2 | TN_108_2_12 [[108,2,12]], BB_144_14_14 [[144,14,14]], LP_442_68_10 [[442,68,10]] |
-| tier3 | decisive set; main 100–2000 s on yfclab2 | GB_144_12_12 [[144,12,12]], TN_144_2_13 [[144,2,13]], TN_200_10_10 [[200,10,10]], BB_288_12_18 [[288,12,18]], LP_544_80_12 [[544,80,12]] |
-| tier4 | hard; main 2000–5000 s on yfclab2; timeout 2000 s Mac / 5000 s yfclab2 | TN_250_10_15 [[250,10,15]] |
-| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_ge9 [[288,2,≥9]], TN_324_4_ge9 [[324,4,≥9]], BB_360_12_24 [[360,12,24]], TN_360_4_ge17 [[360,4,≥17]], TN_396_4_ge17 [[396,4,≥17]], TN_432_8_ge9 [[432,8,≥9]], TN_468_4_ge17 [[468,4,≥17]], TN_496_2_ge17 [[496,2,≥17]], TN_504_2_ge17 [[504,2,≥17]], TN_540_4_ge9 [[540,4,≥9]], TN_576_2_ge9 [[576,2,≥9]], TN_612_2_ge17 [[612,2,≥17]], TN_648_10_9to52 [[648,10,9–52]], TN_648_14_ge9 [[648,14,≥9]], TN_684_2_ge9 [[684,2,≥9]], LP_714_100_16 [[714,100,16]], BB_756_16_ge17 [[756,16,≥17]], BB_864_4_ge17 [[864,4,≥17]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_ge17 [[1080,4,≥17]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_1122_148_20 [[1122,148,20]], LP_2610_744_16 [[2610,744,16]] |
+| tier0 | correctness / smoke; main < 1 s on yfclab2 | LP_34_20_2 [[34,20,2]], TN_36_8_3 [[36,8,3]], TN_36_8_4 [[36,8,4]], TN_54_11_4 [[54,11,4]], BB_72_12_6 [[72,12,6]], TN_72_14_4 [[72,14,4]], TN_72_8_8 [[72,8,8]], BB_90_8_10 [[90,8,10]], BB_108_8_10 [[108,8,10]], LP_136_32_4 [[136,32,4]], BB_144_12_12 [[144,12,12]], GB_144_12_8 [[144,12,8]], LP_238_44_6 [[238,44,6]] |
+| tier1 | lightweight performance filter; main 1–10 s on yfclab2 | LP_340_56_8 [[340,56,8]] |
+| tier2 | medium filter; main 10–100 s on yfclab2 | TN_108_2_12 [[108,2,12]], BB_144_14_14 [[144,14,14]], GB_144_12_12 [[144,12,12]], TN_200_10_10 [[200,10,10]], LP_442_68_10 [[442,68,10]], LP_544_80_12 [[544,80,12]] |
+| tier3 | decisive set; main 100–2000 s on yfclab2 | TN_144_2_13 [[144,2,13]], BB_288_12_18 [[288,12,18]] |
+| tier4 | hard; main 2000–5000 s on yfclab2; timeout 2000 s Mac / 5000 s yfclab2 | TN_250_10_15 [[250,10,15]], LP_714_100_16 [[714,100,16]] |
+| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_ge9 [[288,2,≥9]], TN_324_4_ge9 [[324,4,≥9]], BB_360_12_24 [[360,12,24]], TN_360_4_ge17 [[360,4,≥17]], TN_396_4_ge17 [[396,4,≥17]], TN_432_8_ge9 [[432,8,≥9]], TN_468_4_ge17 [[468,4,≥17]], TN_496_2_ge17 [[496,2,≥17]], TN_504_2_ge17 [[504,2,≥17]], TN_540_4_ge9 [[540,4,≥9]], TN_576_2_ge9 [[576,2,≥9]], TN_612_2_ge17 [[612,2,≥17]], TN_648_10_9to52 [[648,10,9–52]], TN_648_14_ge9 [[648,14,≥9]], TN_684_2_ge9 [[684,2,≥9]], BB_756_16_ge28 [[756,16,≥28]], BB_864_4_ge28 [[864,4,≥28]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_ge28 [[1080,4,≥28]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_1122_148_20 [[1122,148,20]], LP_2610_744_16 [[2610,744,16]] |
 
-Counts: tier0 10, tier1 4, tier2 3, tier3 5, tier4 1, tier5 28 (total 51).
+Counts: tier0 13, tier1 1, tier2 6, tier3 2, tier4 2, tier5 27 (total 51).
 
-**Tier assignment rule (PI 2026-10-12):** by main's time on yfclab2 (slower of no-card / card-mto, `optimization/baselines/SERVER.md`): < 1 s tier0, 1–10 s tier1, 10–100 s tier2, 100–2000 s tier3, 2000–5000 s tier4, > 5000 s or unsolved tier5. Re-check placements when main changes. 2026-10-14 (main 398054e, GH-107; PI): BB_144_14_14 tier3 -> tier2 (72.7 s), BB_288_12_18 tier4 -> tier3 (919 s).
+**Tier assignment rule (PI 2026-10-12):** by main's time on yfclab2 (slower of no-card / card-mto, `optimization/baselines/SERVER.md`): < 1 s tier0, 1–10 s tier1, 10–100 s tier2, 100–2000 s tier3, 2000–5000 s tier4, > 5000 s or unsolved tier5. Re-check placements when main changes. 2026-10-21 (main cbb0642, -frontier=auto; PI): BB_108_8_10, BB_144_12_12, LP_238_44_6 tier1 -> tier0; GB_144_12_12, LP_544_80_12, TN_200_10_10 tier3 -> tier2; LP_714_100_16 tier5 -> tier4 (optimization/baselines/SERVER.md). 2026-10-14 (main 398054e, GH-107; PI): BB_144_14_14 tier3 -> tier2 (72.7 s), BB_288_12_18 tier4 -> tier3 (919 s).
 
 **Timeouts.** tier4: 2000 s per instance on the Mac, 5000 s on yfclab2; tier5: 21600 s (6 h) per instance.
 tier0–tier3 are the filtering tiers of the
@@ -49,6 +49,9 @@ section 5.
 
 | Date | Old | New | Note |
 |------|-----|-----|------|
+| 2026-10-21 | BB_756_16_ge17 | BB_756_16_ge28 | lb 28: level 28 proven empty by the optional CC engine with GH-133's parity rule (yfclab2, 6669-7938 s; single canonical search, not cross-validated by a second method; PI 2026-10-21) |
+| 2026-10-21 | BB_864_4_ge17 | BB_864_4_ge28 | lb 28, as above |
+| 2026-10-21 | BB_1080_4_ge17 | BB_1080_4_ge28 | lb 28, as above |
 | 2026-10-18 | (new) | LP_1122_148_20 | added: lp20^{3,5} [[1122,148]] of Cain et al., arXiv:2603.28627 (seed matrix Eq. (A3), as listed in C. Crocker, Zenodo doi:10.5281/zenodo.23445463, which first established d = 20); d = 20 re-verified by DistQLDPC (-engine=cc, 28 s, Mac; Crocker's weight-20 witnesses GF(2)-checked). Tier provisional (tier5) until main's server time is recorded |
 | 2026-10-18 | (new) | LP_2610_744_16 | added: lp16^{3,7} [[2610,744]] of Cain et al., arXiv:2603.28627 (seed matrix Eq. (A5), as listed in C. Crocker, Zenodo doi:10.5281/zenodo.23445463, which first established d = 16); d = 16 re-verified by DistQLDPC (-engine=cc, 8 s, Mac; Crocker's weight-16 witnesses GF(2)-checked). Tier provisional (tier5) until main's server time is recorded |
 | 2026-10-16 | BB_360_12_17to24 | BB_360_12_24 | d = 24 confirmed (GH-124 -engine=cc in-repo, 1993 s on yfclab2; prototype + 2 clean-room reimplementations; witnesses GF(2)-verified); matches the original upstream name |
