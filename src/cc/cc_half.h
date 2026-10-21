@@ -110,7 +110,8 @@ struct LevelResult {
     uint64_t leaf1, leaf2;     /* leaf: budget-1 lookups; budget-2 lookups (one per candidate a) */
     uint64_t ovtight;          /* overlap: a stabilizer row reached |S & g| = floor(|g|/2) (rest of g forbidden) */
     uint64_t ovforbid;         /* overlap: qubits turned from free to forbidden by those events */
-    uint64_t ovcut;            /* overlap: qubits of a branching row left out only because the rule forbids them */
+    uint64_t ovcut;            /* overlap: qubits of a branching row left out only because the rule forbids them
+                                  (counted only with set_stats(true), i.e. -cc-stats) */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
@@ -162,6 +163,8 @@ public:
     int overlap_min_weight() const { return kminw_; }
     int overlap_max_weight() const { return kmaxw_; }
     int overlap_zero_rows() const { return kzero_; }
+    /* -cc-stats: also count ovcut (needs a per-qubit counter of overlap forbids; off by default for speed) */
+    void set_stats(bool on) { stats_ = on; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
@@ -186,8 +189,11 @@ private:
     int nk_, kminw_, kmaxw_, kzero_;
     std::vector<uint32_t> kstart_, kq_;
     std::vector<uint32_t> kcstart_, kcr_;
-    std::vector<int> klim_, ov_;
-    std::vector<uint32_t> ovf_;             /* qubit -> number of overlap forbids on it (ovcut statistic) */
+    std::vector<int> klim_;
+    std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
+    std::vector<uint32_t> ovf_;             /* qubit -> number of overlap forbids on it (ovcut statistic, stats only) */
+    bool stats_;                            /* -cc-stats: maintain ovf_ and count ovcut */
+    uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
 
     /* search state */
     int w_;

@@ -339,6 +339,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (!hs[k].searched) continue;
         /* GH-138: the half's stabilizer rows S (X half Hx, Z half Hz; verified by detector_check) feed rule overlap */
         hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S));
+        hs[k].search->set_stats(opt.stats);   /* GH-138: ovcut is counted only with -cc-stats */
         hs[k].par = hs[k].search->parity_active();
         if (verb > 0) {
             printf("c cc: %s half search: %d seeds (%s)\n", hs[k].tag, hs[k].search->num_seeds(),

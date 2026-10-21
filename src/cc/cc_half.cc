@@ -42,7 +42,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
                        const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
-      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), w_(0), nodd_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), stats_(false), ovtight_(0), ovforbid_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -209,7 +209,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         std::vector<uint32_t> fill(kcstart_.begin(), kcstart_.end() - 1);
         for (int i = 0; i < nk_; i++)
             for (uint32_t t = kstart_[i]; t < kstart_[i + 1]; t++) kcr_[fill[kq_[t]]++] = (uint32_t)i;
-        ov_.assign((size_t)nk_, 0);
+        slack_.assign((size_t)nk_, 0);
         ovf_.assign((size_t)n_, 0);
     }
 
@@ -278,14 +278,16 @@ inline void HalfSearch::toggle(int q) {
 inline void HalfSearch::ov_add(int q) {
     for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
         const uint32_t g = kcr_[i];
-        if (++ov_[g] == klim_[g]) {
-            ++res_->ovtight;
-            for (uint32_t t = kstart_[g], te = kstart_[g + 1]; t < te; t++) {
-                const uint32_t x = kq_[t];
-                res_->ovforbid += blk_[x] == 0;
-                blk_[x]++;
-                ovf_[x]++;
-            }
+        if (--slack_[g] == 0) {
+            ++ovtight_;
+            uint64_t nf = 0;
+            const uint32_t* t = &kq_[kstart_[g]];
+            const uint32_t* te = &kq_[kstart_[g + 1]];
+            if (stats_)
+                for (; t < te; ++t) { nf += blk_[*t]++ == 0; ovf_[*t]++; }
+            else
+                for (; t < te; ++t) nf += blk_[*t]++ == 0;
+            ovforbid_ += nf;
         }
     }
 }
@@ -294,12 +296,14 @@ inline void HalfSearch::ov_add(int q) {
 inline void HalfSearch::ov_del(int q) {
     for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
         const uint32_t g = kcr_[i];
-        if (ov_[g]-- == klim_[g])
-            for (uint32_t t = kstart_[g], te = kstart_[g + 1]; t < te; t++) {
-                const uint32_t x = kq_[t];
-                blk_[x]--;
-                ovf_[x]--;
-            }
+        if (slack_[g]++ == 0) {
+            const uint32_t* t = &kq_[kstart_[g]];
+            const uint32_t* te = &kq_[kstart_[g + 1]];
+            if (stats_)
+                for (; t < te; ++t) { blk_[*t]--; ovf_[*t]--; }
+            else
+                for (; t < te; ++t) blk_[*t]--;
+        }
     }
 }
 
@@ -440,8 +444,7 @@ bool HalfSearch::dfs(int size) {
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;
-    const bool ovr = ovr_;
-    if (ovr) {
+    if (ovr_ && stats_) {
         for (uint32_t t = rstart_[brow], e = rstart_[brow + 1]; t < e; t++) {
             const uint32_t q = rq_[t];
             if (!blk_[q]) cb[nc++] = q;
@@ -453,11 +456,15 @@ bool HalfSearch::dfs(int size) {
     }
     int excluded = 0;
     bool hit = false;
+    /* overlap: a child completed by a lookup (meet) needs no forbids: a closure S + a + b found by the lookup is an
+     * element of F of weight w, hence of minimum weight, and satisfies every overlap limit by itself, so the forbids
+     * of S + a could only remove closures that do not exist (a sound omission that saves the row updates) */
+    const bool ovrc = ovr_ && !meet;
     for (int i = 0; i < nc; i++) {
         const int a = (int)cb[i];
         blk_[a]++;
         toggle(a);
-        if (ovr) ov_add(a);
+        if (ovrc) ov_add(a);
         cur_[size] = a;
         if (meet) {   /* the child S + a is closed by one more qubit iff syn(S + a) is a free column */
             if (nodd_ == 0) {   /* as dfs(size + 1) would: dead end, or an inconsistency if nontrivial */
@@ -479,7 +486,7 @@ bool HalfSearch::dfs(int size) {
         } else {
             hit = dfs(size + 1);
         }
-        if (ovr) ov_del(a);
+        if (ovrc) ov_del(a);
         toggle(a);
         blk_[a]--;
         if (hit) break;
@@ -508,16 +515,18 @@ LevelResult HalfSearch::run_level(int w) {
     std::fill(blk_.begin(), blk_.end(), 0);
     nodd_ = 0;
     synkey_ = 0;
+    ovtight_ = ovforbid_ = 0;
     if (ovr_) {   /* overlap: counters reset; rows with limit 0 (|g| = 1) forbid their qubits for the whole level */
-        std::fill(ov_.begin(), ov_.end(), 0);
         std::fill(ovf_.begin(), ovf_.end(), 0);
-        for (int g = 0; g < nk_; g++)
+        for (int g = 0; g < nk_; g++) {
+            slack_[g] = klim_[g];
             if (klim_[g] == 0)
                 for (uint32_t t = kstart_[g]; t < kstart_[g + 1]; t++) {
-                    r.ovforbid += blk_[kq_[t]] == 0;
+                    ovforbid_ += blk_[kq_[t]] == 0;
                     blk_[kq_[t]]++;
                     ovf_[kq_[t]]++;
                 }
+        }
     }
     cur_.assign((size_t)w, -1);
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
@@ -543,6 +552,8 @@ LevelResult HalfSearch::run_level(int w) {
             if (!m3) blk_[s]--;
             if (hit) {
                 r.verdict = incons_ ? LEVEL_INCONSISTENT : LEVEL_FOUND;
+                r.ovtight = ovtight_;
+                r.ovforbid = ovforbid_;
                 res_ = NULL;
                 return r;
             }
@@ -551,6 +562,8 @@ LevelResult HalfSearch::run_level(int w) {
         if (!m3)
             for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_[block_[t]]++;
     }
+    r.ovtight = ovtight_;
+    r.ovforbid = ovforbid_;
     res_ = NULL;
     return r;
 }
