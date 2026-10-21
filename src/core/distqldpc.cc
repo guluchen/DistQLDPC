@@ -1949,7 +1949,7 @@ int main(int argc, char** argv) {
             die("invalid -engine (maxsat | cc | auto)");
         else if (!strncmp(argv[i], "-cc-rules=", 10)) {
             if (!distcc::parse_rules(argv[i] + 10, g_cc_opt.rules))
-                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, mrv, or none)");
+                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, mrv, or none)");
         } else if (!strcmp(argv[i], "-cc-dual=on"))
             g_cc_opt.dual = true;
         else if (!strcmp(argv[i], "-cc-dual=off"))
@@ -1974,7 +1974,7 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || v > 7) die("invalid -cc-mutant (0..7, test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 10) die("invalid -cc-mutant (0..10, test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strncmp(argv[i], "-cc-trace=", 10)) {
             g_cc_opt.trace_path = argv[i] + 10;
@@ -2011,15 +2011,16 @@ int main(int argc, char** argv) {
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
-            printf("            -cc-rules=excl,pack,orbf,parity,leaf[,mrv] (default excl,pack,orbf,parity,leaf; 'none' = plain CC;\n");
-            printf("            parity = skip odd levels when every column weight of the half is odd; leaf = hash lookup of\n");
-            printf("            the closing qubit at budget 1 and 2)\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap[,mrv] (default excl,pack,orbf,parity,leaf,overlap;\n");
+            printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
+            printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
+            printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..7)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..10)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");

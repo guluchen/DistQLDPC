@@ -110,7 +110,8 @@ done
 
 # 3. CC flags without -engine=cc|auto (default engine and explicit -engine=maxsat)
 for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-rules=parity,leaf -cc-dual=on -cc-dual=off -cc-seed=1 \
-         "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-schedule=sequential -cc-schedule=lockstep; do
+         "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-mutant=10 -cc-schedule=sequential \
+         -cc-schedule=lockstep -cc-rules=overlap; do
     reject "need -engine=cc or -engine=auto" "$f" $L $M
     reject "need -engine=cc or -engine=auto" -engine=maxsat "$f" $L $M
 done
@@ -118,9 +119,9 @@ reject "need -engine=cc or -engine=auto" -cc-rules=mrv -cc-mutant=2 -engine=maxs
 reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L $M   # the last -engine= wins
 
 # 4. invalid values
-for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=8 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
+for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=11 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
          -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
-         -cc-rules=parity, -cc-rules=Leaf -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
+         -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 for f in -seed=abc -seed=-1 -seed= -seed=1x -oddcap-skip=maybe -oddcap-skip= -oddcap-skip -oddcap-skip=ON; do
@@ -142,6 +143,9 @@ accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,mrv $L $M           
 accept 2 "" -engine=cc -cc-rules=parity $L $C
 accept 2 "" -engine=cc -cc-rules=leaf -cc-seed=3 $L $C
 accept 2 "" -engine=cc -cc-rules=excl,pack,orbf $L $C                                                   # GH-124 rule set
+accept 2 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C                                       # GH-133 rule set
+accept 3 "" -engine=cc -cc-rules=overlap $L $M                                                          # GH-138 rule alone
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,mrv -cc-seed=1 $L $M
 accept 2 "" -oddcap-skip=on $L $C                                                                       # GH-133 MaxSAT flag
 accept 2 "" -oddcap-skip=off -card-mto $L $C
 accept 3 "" -oddcap-skip=on -no-card $L $M
@@ -181,15 +185,22 @@ vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
 # 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
-vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf, " -v -engine=cc -cc-rules=excl,pack,orbf $L $C
 vgrep 2 "^c cc: X half parity: on (column weights 3..5, all odd)" -v -engine=cc $L $C
 vgrep 3 "^c cc: X half parity: off (column weights 2..4, an even weight present)" -v -engine=cc $L $M
 vgrep 3 "^c cc: Z half parity: off (column weights 2..3, an even weight present)" -v -engine=cc $L $M
 vgrep 2 "^c cc: X half parity: rule off" -v -engine=cc -cc-rules=excl,pack,orbf $L $C
 vgrep 2 "^c cc: X half level 1 skipped\|^c d_lb: 2" -v -engine=cc $L $C
-vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 [0-9]* time" -engine=cc -cc-stats -ub-basis=off $L $C
-vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 0 time" -engine=cc -cc-stats $L $M
+vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 [0-9]* ovtight [0-9]* ovforbid [0-9]* ovcut [0-9]* time" -engine=cc -cc-stats -ub-basis=off $L $C
+vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 0 ovtight [0-9]* ovforbid [0-9]* ovcut [0-9]* time" -engine=cc -cc-stats $L $M
+vgrep 3 "^c cc-stats: X level 2 EMPTY .* ovtight 0 ovforbid 0 ovcut 0 time" -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf $L $M
+# 7c. GH-138: overlap decision per half (K = same-type stabilizer rows; TN_36_8_3 rows have weight 4..6)
+vgrep 3 "^c cc: X half overlap: on ([0-9]* stabilizer rows of Hx, weights [0-9]*\.\.[0-9]*, 0 forbidden from the start)" -v -engine=cc $L $M
+vgrep 3 "^c cc: Z half overlap: on ([0-9]* stabilizer rows of Hz, weights " -v -engine=cc $L $M
+vgrep 3 "^c cc: X half overlap: rule off" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $M
+vgrep 3 "^c cc: X half overlap: on (TEST MUTANT 9: parity checks used, [0-9]* stabilizer rows of Hz" -v -engine=cc -cc-mutant=9 $L $M
 vgrep 2 "^c oddcap X: column weights 3..5 all odd (every logical has even weight) -> odd caps skipped" -v -oddcap-skip=on $L $C
 vgrep 2 "^c oddcap: X half cap 1 skipped (odd cap, no probe): lb 2" -v -oddcap-skip=on $L $C
 vgrep 3 "^c oddcap X: column weights 2..4 (an even weight present) -> odd caps kept" -v -oddcap-skip=on $L $M

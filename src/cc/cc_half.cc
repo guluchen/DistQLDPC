@@ -39,9 +39,10 @@ void shuffle_ints(std::vector<int>& v, uint64_t& s) {
 } /* namespace */
 
 HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vector<int>& orbit_of,
-                       const Rules& rules, uint64_t relabel_seed, int mutant)
+                       const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
-      orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0), w_(0), nodd_(0),
+      orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -141,6 +142,77 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         }
     }
 
+    /* overlap (GH-138): stabilizer rows K (mutant 9: the parity checks H instead), deduplicated; each row must
+     * satisfy H g = 0 and G g = 0 (then e + g is in F for every e in F), otherwise the input is rejected */
+    if (rules_.overlap) {
+        const SparseRows* src = mutant_ == 9 ? &H : K;
+        std::vector<std::vector<uint32_t> > kr;
+        if (src) {
+            if (src->cols != n_ && src->cols != 0 && !src->rows.empty()) fatal("stabilizer column count differs from H");
+            for (size_t r = 0; r < src->rows.size(); r++) {
+                std::vector<uint32_t> g;
+                for (size_t t = 0; t < src->rows[r].size(); t++) {
+                    const int q = src->rows[r][t];
+                    if (q < 0 || q >= n_) fatal("stabilizer entry out of range");
+                    g.push_back((uint32_t)new_of[q]);
+                }
+                std::sort(g.begin(), g.end());
+                /* a qubit listed twice cancels over GF(2) */
+                std::vector<uint32_t> h;
+                for (size_t t = 0; t < g.size(); t++) {
+                    if (t + 1 < g.size() && g[t] == g[t + 1]) { t++; continue; }
+                    h.push_back(g[t]);
+                }
+                if (!h.empty()) kr.push_back(h);
+            }
+        }
+        std::sort(kr.begin(), kr.end());
+        kr.erase(std::unique(kr.begin(), kr.end()), kr.end());
+        if (mutant_ != 9) {   /* H g = 0 and G g = 0 for every row g */
+            std::vector<uint8_t> par((size_t)m_, 0);
+            std::vector<uint64_t> gp((size_t)kw_, 0);
+            for (size_t r = 0; r < kr.size(); r++) {
+                std::fill(par.begin(), par.end(), 0);
+                std::fill(gp.begin(), gp.end(), 0);
+                for (size_t t = 0; t < kr[r].size(); t++) {
+                    const uint32_t q = kr[r][t];
+                    for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) par[cr_[i]] ^= 1;
+                    for (int j = 0; j < kw_; j++) gp[j] ^= gmask_[(size_t)q * kw_ + j];
+                }
+                for (int i = 0; i < m_; i++)
+                    if (par[i]) fatal("stabilizer row with odd overlap with a parity check (not in ker H)");
+                for (int j = 0; j < kw_; j++)
+                    if (gp[j]) fatal("stabilizer row detected by a detector row (not trivial)");
+            }
+        }
+        nk_ = (int)kr.size();
+        ovr_ = nk_ > 0;
+        kstart_.assign((size_t)nk_ + 1, 0);
+        klim_.assign((size_t)nk_, 0);
+        for (int i = 0; i < nk_; i++) {
+            const int wt = (int)kr[i].size();
+            int lim = wt / 2;
+            if (mutant_ == 8) lim = wt / 2 - 1;                       /* off by one */
+            if (mutant_ == 10 && !(wt & 1)) lim = wt / 2 - 1;         /* even-weight tie cut */
+            if (lim < 0) lim = 0;
+            klim_[i] = lim;
+            if (lim == 0) kzero_++;
+            if (i == 0 || wt < kminw_) kminw_ = wt;
+            if (i == 0 || wt > kmaxw_) kmaxw_ = wt;
+            kstart_[i + 1] = kstart_[i] + (uint32_t)wt;
+            kq_.insert(kq_.end(), kr[i].begin(), kr[i].end());
+        }
+        kcstart_.assign((size_t)n_ + 1, 0);
+        for (size_t t = 0; t < kq_.size(); t++) kcstart_[kq_[t] + 1]++;
+        for (int q = 0; q < n_; q++) kcstart_[q + 1] += kcstart_[q];
+        kcr_.assign(kq_.size(), 0);
+        std::vector<uint32_t> fill(kcstart_.begin(), kcstart_.end() - 1);
+        for (int i = 0; i < nk_; i++)
+            for (uint32_t t = kstart_[i]; t < kstart_[i + 1]; t++) kcr_[fill[kq_[t]]++] = (uint32_t)i;
+        ov_.assign((size_t)nk_, 0);
+        ovf_.assign((size_t)n_, 0);
+    }
+
     /* seeds: orbit representatives (orbf with nontrivial verified orbits) or every qubit (index rule) */
     bstart_.clear();
     block_.clear();
@@ -199,6 +271,36 @@ inline void HalfSearch::toggle(int q) {
     synkey_ ^= colkey_[q];
     const uint64_t* g = &gmask_[(size_t)q * kw_];
     for (int j = 0; j < kw_; j++) gpar_[j] ^= g[j];
+}
+
+/* overlap (GH-138): q joins S. A row g that reaches its limit (|S & g| = floor(|g|/2)) forbids all its qubits
+ * (those in S are blocked anyway; the count is undone symmetrically by ov_del). */
+inline void HalfSearch::ov_add(int q) {
+    for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
+        const uint32_t g = kcr_[i];
+        if (++ov_[g] == klim_[g]) {
+            ++res_->ovtight;
+            for (uint32_t t = kstart_[g], te = kstart_[g + 1]; t < te; t++) {
+                const uint32_t x = kq_[t];
+                res_->ovforbid += blk_[x] == 0;
+                blk_[x]++;
+                ovf_[x]++;
+            }
+        }
+    }
+}
+
+/* overlap: q leaves S (exact inverse of ov_add) */
+inline void HalfSearch::ov_del(int q) {
+    for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
+        const uint32_t g = kcr_[i];
+        if (ov_[g]-- == klim_[g])
+            for (uint32_t t = kstart_[g], te = kstart_[g + 1]; t < te; t++) {
+                const uint32_t x = kq_[t];
+                blk_[x]--;
+                ovf_[x]--;
+            }
+    }
 }
 
 inline bool HalfSearch::gpar_nonzero() const {
@@ -338,14 +440,24 @@ bool HalfSearch::dfs(int size) {
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;
-    for (uint32_t t = rstart_[brow], e = rstart_[brow + 1]; t < e; t++)
-        if (!blk_[rq_[t]]) cb[nc++] = rq_[t];
+    const bool ovr = ovr_;
+    if (ovr) {
+        for (uint32_t t = rstart_[brow], e = rstart_[brow + 1]; t < e; t++) {
+            const uint32_t q = rq_[t];
+            if (!blk_[q]) cb[nc++] = q;
+            else if (blk_[q] == ovf_[q]) ++res_->ovcut;   /* blocked by the overlap rule only */
+        }
+    } else {
+        for (uint32_t t = rstart_[brow], e = rstart_[brow + 1]; t < e; t++)
+            if (!blk_[rq_[t]]) cb[nc++] = rq_[t];
+    }
     int excluded = 0;
     bool hit = false;
     for (int i = 0; i < nc; i++) {
         const int a = (int)cb[i];
         blk_[a]++;
         toggle(a);
+        if (ovr) ov_add(a);
         cur_[size] = a;
         if (meet) {   /* the child S + a is closed by one more qubit iff syn(S + a) is a free column */
             if (nodd_ == 0) {   /* as dfs(size + 1) would: dead end, or an inconsistency if nontrivial */
@@ -367,6 +479,7 @@ bool HalfSearch::dfs(int size) {
         } else {
             hit = dfs(size + 1);
         }
+        if (ovr) ov_del(a);
         toggle(a);
         blk_[a]--;
         if (hit) break;
@@ -395,6 +508,17 @@ LevelResult HalfSearch::run_level(int w) {
     std::fill(blk_.begin(), blk_.end(), 0);
     nodd_ = 0;
     synkey_ = 0;
+    if (ovr_) {   /* overlap: counters reset; rows with limit 0 (|g| = 1) forbid their qubits for the whole level */
+        std::fill(ov_.begin(), ov_.end(), 0);
+        std::fill(ovf_.begin(), ovf_.end(), 0);
+        for (int g = 0; g < nk_; g++)
+            if (klim_[g] == 0)
+                for (uint32_t t = kstart_[g]; t < kstart_[g + 1]; t++) {
+                    r.ovforbid += blk_[kq_[t]] == 0;
+                    blk_[kq_[t]]++;
+                    ovf_[kq_[t]]++;
+                }
+    }
     cur_.assign((size_t)w, -1);
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
     r.by_budget.assign((size_t)w + 1, 0);
@@ -411,8 +535,10 @@ LevelResult HalfSearch::run_level(int w) {
             r.seeds++;
             if (!m3) blk_[s]++;
             toggle(s);
+            if (ovr_) ov_add(s);
             cur_[0] = s;
             const bool hit = dfs(1);
+            if (ovr_) ov_del(s);
             toggle(s);
             if (!m3) blk_[s]--;
             if (hit) {
