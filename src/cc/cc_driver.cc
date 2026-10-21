@@ -339,7 +339,6 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (!hs[k].searched) continue;
         /* GH-138: the half's stabilizer rows S (X half Hx, Z half Hz; verified by detector_check) feed rule overlap */
         hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S));
-        hs[k].search->set_stats(opt.stats);   /* GH-138: ovcut is counted only with -cc-stats */
         hs[k].par = hs[k].search->parity_active();
         if (verb > 0) {
             printf("c cc: %s half search: %d seeds (%s)\n", hs[k].tag, hs[k].search->num_seeds(),
@@ -431,11 +430,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                    (unsigned long long)r.nodes, (unsigned long long)r.seeds, dt);
         if (opt.stats) {
             printf("c cc-stats: %s level %d %s nodes %llu seeds %llu closed %llu nocand %llu packprune %llu parprune %llu "
-                   "leaf1 %llu leaf2 %llu ovtight %llu ovforbid %llu ovcut %llu time %.6fs\n",
+                   "leaf1 %llu leaf2 %llu ovtight %llu ovforbid %llu time %.6fs\n",
                    h.tag, w, vs, (unsigned long long)r.nodes, (unsigned long long)r.seeds,
                    (unsigned long long)r.closed, (unsigned long long)r.nocand, (unsigned long long)r.packprune,
                    (unsigned long long)r.parprune, (unsigned long long)r.leaf1, (unsigned long long)r.leaf2,
-                   (unsigned long long)r.ovtight, (unsigned long long)r.ovforbid, (unsigned long long)r.ovcut, dt);
+                   (unsigned long long)r.ovtight, (unsigned long long)r.ovforbid, dt);
             if (!r.by_budget.empty()) {   /* nodes by remaining budget w - |S|, budget 0 (full clusters) first */
                 printf("c cc-stats: %s level %d nodes-by-budget", h.tag, w);
                 for (size_t b = 0; b < r.by_budget.size(); b++) printf(" %llu", (unsigned long long)r.by_budget[b]);

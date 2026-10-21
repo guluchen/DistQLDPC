@@ -75,7 +75,9 @@
  *         element meets a qubit forbidden by the rule, so every argument of the other rules (which keep one
  *         chosen weight-w element e* reachable with S a subset of e* and no forbidden qubit in e*) is unchanged.
  *         The even-|g| tie (|e & g| = |g|/2, e + g of equal weight) is NOT cut: lim_g = |g|/2 allows it; cutting
- *         it would drop both e and e + g (mutant 10). Full proof: MODIFICATIONS.md (GH-138).
+ *         it would drop both e and e + g (mutant 10). With the leaf rule, children of remaining budget 1 or 2
+ *         (whose subtrees are lookups only) skip the counter updates: a closure found there is a weight-w element
+ *         of F and meets every limit by itself. Full proof: MODIFICATIONS.md (GH-138).
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -110,13 +112,11 @@ struct LevelResult {
     uint64_t leaf1, leaf2;     /* leaf: budget-1 lookups; budget-2 lookups (one per candidate a) */
     uint64_t ovtight;          /* overlap: a stabilizer row reached |S & g| = floor(|g|/2) (rest of g forbidden) */
     uint64_t ovforbid;         /* overlap: qubits turned from free to forbidden by those events */
-    uint64_t ovcut;            /* overlap: qubits of a branching row left out only because the rule forbids them
-                                  (counted only with set_stats(true), i.e. -cc-stats) */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
-                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0), ovcut(0), skipped(false) {}
+                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -163,8 +163,6 @@ public:
     int overlap_min_weight() const { return kminw_; }
     int overlap_max_weight() const { return kmaxw_; }
     int overlap_zero_rows() const { return kzero_; }
-    /* -cc-stats: also count ovcut (needs a per-qubit counter of overlap forbids; off by default for speed) */
-    void set_stats(bool on) { stats_ = on; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
@@ -191,8 +189,6 @@ private:
     std::vector<uint32_t> kcstart_, kcr_;
     std::vector<int> klim_;
     std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
-    std::vector<uint32_t> ovf_;             /* qubit -> number of overlap forbids on it (ovcut statistic, stats only) */
-    bool stats_;                            /* -cc-stats: maintain ovf_ and count ovcut */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
 
     /* search state */

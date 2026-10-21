@@ -38,7 +38,7 @@ Optional engine, off by default (PI 2026-10-16): enable with `-engine=cc` (or `-
 
 | File | Description |
 |------|-------------|
-| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check). |
+| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut). |
 | `cc_driver.h`, `cc_driver.cc` | Driver: start-up detector check (rank[H;G] + rank S = n and commutation), both halves interleaved level by level (cheaper half first) or one half under a verified XZ-dual map, stop rule (a hit at level w ends the run once the other half's lower bound is >= w), anytime `TRY`/`LB`/`UB`/`RESULT` lines, witness verification (H e = 0, independent GF(2) rank test against the same-type stabilizers, dual image check), its own check of the XZ-dual map (pi(rs Hz) = rs Hx and pi(rs Hx) = rs Hz), always-on traps (`RESULT -1 TRAP`, never a value; earlier bounds withdrawn), optional `-ub-basis`, `-cc-trace`, `-cc-stats`; test-only sequential schedule (`-cc-schedule=sequential`) and driver mutant 4 (stop rule without the other half's lower bound, run under the sequential schedule). |
 
 Tests: `tests/test_cc_engine.cc` (`make test-cc`): brute-force oracle on random halves and random consistent CSS
@@ -71,6 +71,82 @@ check), so it was replaced by mutants 6 and 7. Tests: 64 rule subsets x 3 relabe
 halves (a third with all column weights made odd), the GH-124 rule set as a driver configuration, Part D
 (MaxSAT split with `-oddcap-skip` off/on against enumeration), and the three new mutants, each of which
 must change half-level verdicts.
+
+GH-138 (`overlap`; in the default `-cc-rules` of branch `experiment/gh-138-overlap` as a candidate,
+`-cc-rules=excl,pack,orbf,parity,leaf` restores the GH-133 engine). Source of the inequality: J. Y. Lee,
+arXiv:2610.06820, App. A rule (iv), used from the published description only; the forbidding of the rest of a
+tight row is DistQLDPC's addition.
+
+*Setting.* Half with parity checks H, detector rows G and nontrivial set F = {v : H v = 0, G v != 0} (X half:
+H = Hz, G = Gx; Z half: H = Hx, G = Gz). K = the rows of the half's stabilizer generators (X half: rows of Hx;
+Z half: rows of Hz). Every row g of K satisfies H g = 0 and G g = 0 (the driver's start-up detector check
+verifies both: even overlap of every stabilizer row with every parity row and every detector row;
+`HalfSearch` re-checks them and refuses the input otherwise). Rows are deduplicated; a qubit listed twice
+cancels. lim_g = floor(|g|/2).
+
+*Lemma 1 (Lee).* If e in F has minimum weight in F, then |e & g| <= lim_g for every g in K.
+Proof: e + g satisfies H(e + g) = He + Hg = 0 and G(e + g) = Ge + Gg = Ge != 0, so e + g in F, and
+|e + g| = |e| + |g| - 2|e & g|. If |e & g| > |g|/2 then |e + g| < |e|, contradicting minimality; since
+|e & g| is an integer, |e & g| <= |g|/2 is |e & g| <= floor(|g|/2). (Only K rows are used, never H rows: a
+row h of H is in general not in ker H, so e + h is not in F; mutant 9 uses H and must fail.)
+
+*Lemma 2 (level).* At level w (precondition: F has no element of weight < w, established by the driver's
+contiguous levels and, on a parity half, by the parity theorem for the skipped odd levels) every element of
+F of weight w has minimum weight, so Lemma 1 applies to all of them.
+
+*Lemma 3 (forbidding).* Let S be a node (cluster) and e in F with |e| = w and S subset of e. Then
+|S & g| <= |e & g| <= lim_g for every g, and if |S & g| = lim_g then e & g = S & g, i.e. e contains no qubit
+of g \ S. Hence the strict prune (|S & g| > lim_g) never fires on a subset of a weight-w element of F, and the
+set Forb_ov(S) = union of g \ S over the tight rows (|S & g| = lim_g, including the rows with lim_g = 0, which
+are forbidden from the start of the level) is disjoint from every weight-w element of F that contains S.
+Forb_ov(S) depends on S only (not on the order in which S was built); the engine keeps the counters
+slack_g = lim_g - |S & g| incrementally on every qubit added to or removed from S (seeds and children) and adds
+/ removes the forbids when a counter reaches / leaves 0. With the forbids in force no qubit that would make a
+row exceed its limit can be added, so the strict prune is implied and never needs a separate test.
+
+*The even tie.* For even |g| a minimum logical may have |e & g| = |g|/2, and then e + g is another minimum
+logical with |(e + g) & g| = |g|/2. Equal weight does not contradict minimality, so the tie cannot be cut by
+Lemma 1; cutting it (limit |g|/2 - 1 for even |g|) removes both e and e + g, and with no canonical choice
+between them a level can lose every minimum element (mutant 10 does exactly this and fails on 2112 of 19 200
+ladders). The rule therefore uses the exact limit floor(|g|/2) for odd and even |g| alike, and the forbid at
+|S & g| = floor(|g|/2) is not a tie-break: it is Lemma 3 (one more qubit of g would violate the strict
+inequality). For odd |g| = 2t + 1 the limit t is already "tight" (t + 1 > |g|/2), so no tie exists.
+
+*Theorem (exactness with the other rules).* Each of the other rules is exact by an argument that fixes one
+weight-w element e* of F (excl: the e of the node; orbf: the image pi(e) under a verified automorphism; the
+packing bound and the no-candidate dead end: any e extending the node; parity: any e; leaf: the closing
+children) and shows that a node S subset of e* with forbidden set disjoint from e* is visited and branches
+on a row that still has a candidate in e* \ S. Adding the overlap rule changes the forbidden set of S by
+Forb_ov(S), which by Lemma 3 is disjoint from every weight-w element of F containing S, in particular from
+e* (whichever e* the other argument chose; Lemma 2 makes e* minimum without any condition on how it was
+chosen), and it prunes no subset of e*. So every such argument goes through unchanged:
+- excl: the first candidate of the branching row in e* is not overlap-forbidden; earlier siblings are not in
+  e*, so the sibling forbids stay disjoint from e*.
+- pack: the candidate sets exclude forbidden qubits; every selected odd row still needs its own qubit of
+  e* \ S, which is free, so |S| + p > w still excludes e*; an odd row with no free qubit cannot be completed
+  inside e*.
+- orbf: the automorphism pi need NOT map K rows to K rows (a verified automorphism preserves rs H and
+  rs [H; G], hence F and weights, but not the individual generator rows); the argument only needs pi(e) to be
+  a weight-w element of F, and Lemma 2 + Lemma 1 apply to pi(e) directly with the original rows g. Part A of
+  the tests uses row sets K that are not invariant under the planted symmetry (random elements of
+  ker [H; G]) to exercise exactly this.
+- parity: the parity theorem and the per-node check concern |e| and syn(S) only; unchanged.
+- leaf: the budget-1 lookup and the budget-2 meet accept only free qubits, so they respect the forbids. With
+  the leaf rule on, children of remaining budget 1 (completed by the budget-2 lookup) and 2 (meet nodes, whose
+  children are lookups, not counted as nodes) do not update the counters (an implementation shortcut, a sound
+  weakening): every closure found below them is a weight-w element of F, hence minimum, and satisfies every
+  limit by Lemma 1, so their forbids could only remove closures that do not exist. Node counts are unchanged.
+- The syndrome-free-cluster trap (a nontrivial syndrome-free cluster below w) can be hidden by the rule only
+  when the precondition is already violated; every witness is still verified by the independent GF(2) test.
+
+*Mutants (must fail; `make test-cc`).* 8: limit floor(|g|/2) - 1 (off by one: a row is tight one qubit early;
+2880/19 200 ladders wrong). 9: the parity checks H used as K (3776/19 200). 10: the even-|g| tie cut (2112/19 200).
+Statistics (`-cc-stats`): `ovtight` (rows that became tight), `ovforbid` (qubits turned from free to forbidden).
+The strict prune is implied by the forbids and never fires, so its count is not printed; the pruning effect is
+the node reduction against `-cc-rules=excl,pack,orbf,parity,leaf` (exact, deterministic node counts).
+*Side note (not adopted).* Lemma 1 holds for every element of rs K, not only for the generator rows; adding the
+pair sums g1 + g2 whose limit is not implied by the rows (e.g. TN rows of weight 9 sharing 2-3 qubits) cut a
+further 0-17 % of the nodes on TN_250 / TN_144 / BB_288 but cost more time than they saved (S0 of GH-138).
 
 Fix round 1 (S0a): the S0 spec's literal mutants 3 ("orbit seeds without forbidding earlier orbits") and 4 ("stop
 rule without checking the other half's lower bound") are equivalent mutants as built: the first only drops a

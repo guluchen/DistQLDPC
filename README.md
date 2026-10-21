@@ -154,7 +154,7 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-frontier=auto` (default) | **(GH-129/GH-130)** Frontier branching inside MaxCDCL on the CSS split: when some parity row of the half is odd (its qubits set to 1 have odd parity and it still has unassigned qubits), the next decision sets to 1 a qubit of the odd row with the fewest candidates (CC's growth rule); otherwise MaxCDCL decides as usual. `auto` enables it per half only when the half's parity matrix has fewer than 3 Tanner 4-cycles per row (pairs of rows sharing two qubits; BB/GB/LP 0–1.6, TN 6–26), decided before the search; `-v` prints the value and the choice. `-frontier=off` reproduces the search before GH-130; `-frontier=on` forces it on every half; `postsol` / `presol` apply it only after / before a probe's first solution. The formula is unchanged, only the decision order |
 | `-seed=N` | **(timing seeds)** Default 0 = the unchanged search. With MaxSAT, N > 0 sets MaxCDCL's random seed (it only drives the engine's 1% sampling of the lookahead threshold, so the search order changes but never the answer or the bounds' validity); with the CC engine it is `-cc-seed=N`. Used for seed-median timing |
 | `-oddcap-skip=on\|off` | **(GH-133; default `on` since 2026-10-21; `off` reproduces the previous search)** MaxSAT split only: on a CSS half whose parity matrix has only odd column weights every logical has even weight, so the odd probe caps of the bound search are replaced by the even cap below them (cap 1: no probe, lower bound 2; a NONE at cap 2t certifies 2t+2); `-v` prints the decision per half. Applies to all bundled BB and LP codes (column weights 3 / 3,5), not to TN or GB |
-| `-cc-rules=excl,pack,orbf,parity,leaf[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf,parity,leaf`; `none` = plain CC; `excl,pack,orbf` = the GH-124 engine): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, even-weight parity shortcut (GH-133), leaf hash lookup (GH-133), fewest-candidate branching |
+| `-cc-rules=excl,pack,orbf,parity,leaf,overlap[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf,parity,leaf,overlap`; `none` = plain CC; `excl,pack,orbf` = the GH-124 engine, `excl,pack,orbf,parity,leaf` = the GH-133 engine): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, even-weight parity shortcut (GH-133), leaf hash lookup (GH-133), stabilizer-overlap rule (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; the rest of a row that reaches this limit is forbidden), fewest-candidate branching |
 | `-cc-dual=on\|off` | **(experimental)** With a verified XZ-dual map, CC searches only the X half (default `on`; `-dualmode=off` also disables it) |
 | `-ub-basis[=on\|off]` | **(experimental, CC only)** Emit the minimum weight of the verified logical basis rows as an initial upper bound (default on; `-ub-basis=off` disables it) |
 | `-cc-seed=N` | **(experimental, testing)** Deterministic relabeling of qubits and rows for CC (default 0 = identity), for seed-median timing; alias of `-seed=N` for the CC engine (both given with different values is an error) |
@@ -178,7 +178,7 @@ to the behaviour before GH-124.
 | Use the CC engine | `-engine=cc` | no flag, or `-engine=maxsat` (default) |
 | Let DistQLDPC choose per code | `-engine=auto` (CC unless the code is dense, see below; `-v` prints `c engine: auto -> cc\|maxsat (...)`) | `-engine=maxsat` |
 | Seed for timing panels (both engines) | `-seed=N` (N > 0; CC: same as `-cc-seed=N`) | no flag or `-seed=0` (main's search) |
-| Pruning rules (CC only) | `-cc-rules=excl,pack,orbf,parity,leaf` (default), add `mrv` for fewest-candidate branching | `-cc-rules=none` (plain CC), or list only the rules you want, e.g. `-cc-rules=excl,pack,orbf` (the GH-124 engine) |
+| Pruning rules (CC only) | `-cc-rules=excl,pack,orbf,parity,leaf,overlap` (default), add `mrv` for fewest-candidate branching | `-cc-rules=none` (plain CC), or list only the rules you want, e.g. `-cc-rules=excl,pack,orbf,parity,leaf` (the GH-133 engine, no `overlap`) |
 | Orbit seeds (CC only) | default (rule `orbf`) | drop `orbf` from `-cc-rules`, or `-no-symbreak` (index seeds) |
 | Single-half search under a verified XZ-dual map (CC only) | `-cc-dual=on` (default) | `-cc-dual=off` or `-dualmode=off` |
 | Initial upper bound from the verified logical basis rows (CC only) | `-ub-basis` / `-ub-basis=on` (default) | `-ub-basis=off` |
@@ -187,7 +187,7 @@ to the behaviour before GH-124.
 Examples:
 
 ```bash
-./bin/distqldpc -engine=cc BB_288_12_18                  # CC with all rules (excl, pack, orbf, parity, leaf), dual map, basis UB
+./bin/distqldpc -engine=cc BB_288_12_18                  # CC with all rules (excl, pack, orbf, parity, leaf, overlap), dual map, basis UB
 ./bin/distqldpc -engine=cc -cc-rules=none BB_288_12_18   # plain connected-cluster search, no extra pruning
 ./bin/distqldpc -engine=cc -ub-basis=off BB_288_12_18    # no initial upper bound from the basis rows
 ./bin/distqldpc BB_288_12_18                             # default: MaxSAT, CC not used
