@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Baseline re-record (main cbb0642): job list for mac_serial.py.
+"""Baseline re-record (main c914ef5; first used for main cbb0642): job list for mac_serial.py.
 tier0-4 codes x {-no-card, -card-mto} x 3 runs, default flags (frontier auto), limits tier0 600 s, tier1-3 1800 s,
 tier4 2000 s. Runs are ordered run-major (r0 of every cell, then r1, then r2) so a partial table is usable early.
 usage (in a repo checkout): mac_jobs.py BIN LOGDIR > jobs.jsonl"""

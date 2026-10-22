@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Baseline re-record (main cbb0642) on yfclab2: tier0-4 x {no-card, card-mto} x seeds 0-4 (adapted from
+"""Baseline re-record (main c914ef5; first used for main cbb0642) on yfclab2: tier0-4 x {no-card, card-mto} x seeds 0-4 (adapted from
 GH-130 S1/runner/s1_panel.py). The 5-seed median per cell is the recorded main reference (seed-median judging,
 PI 2026-10-14). -seed=0 is the default search byte for byte.
 Every process: taskset -c CORE prlimit --as=4294967296 -- BIN -MODE -seed=S -cpu-lim=LIMIT data/matrices/tierT/STEM
 One process per pinned core; cases are queued longest first; the runner kills a process group at LIMIT + 600 s.
 Limits: tier0 600 s, tier1-3 1800 s, tier4 5000 s. Every output line is logged with its elapsed time; timestamped
 c d_lb / c d_ub events are recorded.
-usage: server_panel.py --bin BIN --cpus 68-99 --out DIR [--tiers 4 3 2 1 0] [--seeds 0 1 2 3 4]"""
+usage: server_panel.py --bin BIN --cpus 54-89 --out DIR [--tiers 4 3 2 1 0] [--seeds 0 1 2 3 4]"""
 import argparse, glob, json, os, re, signal, subprocess, threading, time, queue
 
 ap = argparse.ArgumentParser()
@@ -18,14 +18,14 @@ ap.add_argument('--out', required=True)
 a = ap.parse_args()
 os.makedirs(a.out + '/logs', exist_ok=True)
 LIMIT = {'0': 600, '1': 1800, '2': 1800, '3': 1800, '4': 5000}
-# main 398054e server medians (slower mode), used only to order the queue
-ORDER = {'TN_250_10_15': 3091, 'BB_288_12_18': 919, 'LP_544_80_12': 521, 'TN_144_2_13': 362, 'GB_144_12_12': 131,
-         'TN_200_10_10': 129, 'BB_144_14_14': 73, 'LP_442_68_10': 46, 'TN_108_2_12': 30}
+# main cbb0642 server medians (slower mode), used only to order the queue
+ORDER = {'TN_250_10_15': 4419, 'LP_714_100_16': 2670, 'TN_144_2_13': 423, 'BB_288_12_18': 245, 'LP_544_80_12': 86,
+         'GB_144_12_12': 61, 'TN_108_2_12': 30, 'TN_200_10_10': 28, 'LP_442_68_10': 25, 'BB_144_14_14': 25}
 MODES = ['no-card', 'card-mto']
 cpus = []
 for part in a.cpus.split(','):
     lo, _, hi = part.partition('-'); cpus += list(range(int(lo), int(hi or lo) + 1))
-assert all(0 <= c <= 59 or 64 <= c <= 99 for c in cpus), cpus   # allowed physical cores (another user has unpinned jobs)
+assert all(0 <= c <= 89 for c in cpus), cpus   # allowed physical cores 0-89 (another session uses 100-123; another user has unpinned jobs)
 
 cases = []
 for t in a.tiers:

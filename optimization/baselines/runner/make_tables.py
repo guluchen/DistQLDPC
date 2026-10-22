@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build optimization/baselines/{main_mac_reference.json, README.md, main_server_reference.json, SERVER.md} for main
-cbb0642 from the raw runs, with a comparison against the previous (main 398054e) tables.
+c914ef5 from the raw runs, with a comparison against the previous (main cbb0642) tables (first used for main cbb0642).
 usage: make_tables.py --mac-tsv results.tsv --mac-logs LOGDIR --panel panel/results.jsonl --tier5 tier5/results.json \
        --old-mac OLD_MAC.json --old-server OLD_SERVER.json --mac-sha SHA --server-sha SHA --out optimization/baselines
 Statistics: Mac = median of 3 serial runs; server tiers 0-4 = median over seeds 0-4 (a timed-out run counts as its limit);
@@ -9,9 +9,10 @@ import argparse, collections, json, math, re, statistics
 ap = argparse.ArgumentParser()
 for k in ('mac-tsv', 'mac-logs', 'panel', 'tier5', 'old-mac', 'old-server', 'mac-sha', 'server-sha', 'out'):
     ap.add_argument('--' + k, required=True)
-ap.add_argument('--date', default='2026-10-18', help='Mac collection date')
-ap.add_argument('--server-date', default='2026-10-18')
+ap.add_argument('--date', default='2026-10-21', help='Mac collection date')
+ap.add_argument('--server-date', default='2026-10-21')
 ap.add_argument('--mac-note', action='append', default=[], help='extra note line(s) for README.md')
+ap.add_argument('--server-note', action='append', default=[], help='extra note line(s) for SERVER.md')
 a = ap.parse_args()
 g = lambda x: math.exp(sum(map(math.log, x)) / len(x)) if x else float('nan')
 MAC_LIMIT = {0: 600, 1: 1800, 2: 1800, 3: 1800, 4: 2000}
@@ -21,7 +22,9 @@ old_mac = {(r['case'], r['mode']): r for r in json.load(open(a.old_mac))['rows']
 old_srv = {(r['case'], r['mode']): r for r in json.load(open(a.old_server))['rows']}
 HOST_MAC = 'Mac (Apple M6, 12 CPUs), macOS'
 HOST_SRV = 'yfclab2 (2x AMD EPYC 7742, 256 logical CPUs, Ubuntu 24.04, GCC 13.3)'
-BIN_DESC = 'main cbb0642 (GH-130 adopted: -frontier=auto default)'
+BIN_DESC = 'main c914ef5 (PR #137: -oddcap-skip=on default; PR #136 re-tier)'
+PREV = 'cbb0642'
+SRV_FROZEN = 'frozen/server-main-c914ef5/distqldpc'
 
 
 def stem_d(stem):
@@ -71,33 +74,33 @@ for (t, s, m) in sorted(mac, key=lambda k: (k[0], k[1], MODE_ORDER[k[2]])):
     mac_rows.append(dict(tier=t, case=s, mode=m, n=len(xs), median_s=round(med, 4), min_s=round(xs[0], 4),
                          max_s=round(xs[-1], 4), solved=all(v['res'] == stem_d(s) for v in mac[(t, s, m)]),
                          limit_s=MAC_LIMIT[t], result=f'o {v0["res"]}', final_lb=v0['lb'], final_ub=v0['ub'],
-                         prev_398054e_median_s=old['median_s'] if old else None, ratio_vs_398054e=ratio,
+                         prev_cbb0642_median_s=old['median_s'] if old else None, ratio_vs_cbb0642=ratio,
                          sources=[f'mac_serial.py {a.date} serial, limit {MAC_LIMIT[t]}s']))
 mac_method = ('runner/mac_jobs.py + runner/mac_serial.py: 3 serial runs per case/mode under caffeinate -i -s, 2 GB cap, '
-              '>=2 cores free; default flags (frontier auto); limits tier0 600 s, tier1-3 1800 s, tier4 2000 s')
+              '>=2 cores free, quiet-host gate before every run (runner/mac_gated.py); default flags (frontier auto, oddcap-skip on); limits tier0 600 s, tier1-3 1800 s, tier4 2000 s')
 json.dump(dict(host=HOST_MAC, baseline_binary=BIN_DESC, binary_sha256=a.mac_sha, collected=a.date, method=mac_method,
-               previous_table='main 398054e (2026-10-14), ratio_vs_398054e = median_s / its median_s', rows=mac_rows),
+               previous_table='main cbb0642 (2026-10-19 Mac table), ratio_vs_cbb0642 = median_s / its median_s', rows=mac_rows),
           open(f'{a.out}/main_mac_reference.json', 'w'), indent=1)
 o = []; pr = o.append
 pr(f'# Recorded main baseline times (PI 2026-10-11: record main\'s times instead of re-running main every time)\n')
 pr(f'Host: {HOST_MAC}. Baseline binary: {BIN_DESC}, sha256 `{a.mac_sha}`. Collected {a.date}.\n')
-pr(f'Method: {mac_method}. Column "vs 398054e" = this median / the main 398054e median (2026-10-14 table, git history).\n')
-pr('| Tier | Case | Mode | Runs | Median s | Min s | Max s | 398054e median s | vs 398054e |')
+pr(f'Method: {mac_method}. Column "vs cbb0642" = this median / the main cbb0642 median (2026-10-19 table, git history; tier column = current tiers).\n')
+pr('| Tier | Case | Mode | Runs | Median s | Min s | Max s | cbb0642 median s | vs cbb0642 |')
 pr('|---:|---|---|---:|---:|---:|---:|---:|---:|')
 for r in mac_rows:
     pr(f'| {r["tier"]} | {r["case"]} | {r["mode"]} | {r["n"]} | {fmt(r["median_s"])} | {fmt(r["min_s"])} | {fmt(r["max_s"])} | '
-       f'{fmt(r["prev_398054e_median_s"]) if r["prev_398054e_median_s"] is not None else "-"} | '
-       f'{fmt(r["ratio_vs_398054e"], 3) if r["ratio_vs_398054e"] is not None else "-"} |')
+       f'{fmt(r["prev_cbb0642_median_s"]) if r["prev_cbb0642_median_s"] is not None else "-"} | '
+       f'{fmt(r["ratio_vs_cbb0642"], 3) if r["ratio_vs_cbb0642"] is not None else "-"} |')
 pr('')
 pr('Notes:')
-pr('- Replaces the main 398054e table (2026-10-14) after GH-130 (PR #131, `-frontier=auto` default) was merged; old table is in git history.')
+pr('- Replaces the main cbb0642 table (2026-10-19) after PR #137 (`-oddcap-skip=on` default) was merged; old table is in git history. PR #136 re-tiered the codes (tier column = current tiers; the cbb0642 Mac table had no LP_714_100_16 row, it was tier 5 then).')
 gm = ' '.join(f'tier{t} {m} {g(mac_ratio[(t, m)]):.3f}' for t in range(5) for m in ('no-card', 'card-mto') if mac_ratio[(t, m)])
-pr(f'- vs main 398054e, geomean of per-cell median ratios: {gm}.')
-fast = [r for r in mac_rows if r['ratio_vs_398054e'] is not None and r['ratio_vs_398054e'] < 0.9]
-slow = [r for r in mac_rows if r['ratio_vs_398054e'] is not None and r['ratio_vs_398054e'] > 1.1]
-pr('- Cells faster than 0.90x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_398054e"]:.2f}' for r in fast) or 'none')
-   + '. Cells slower than 1.10x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_398054e"]:.2f}' for r in slow) or 'none')
-   + '. `-frontier=auto` turns frontier branching on for every BB/GB/LP half of tiers 1-4 and off for every TN half (TN cells run the 398054e search unchanged; their ratios are host noise).')
+pr(f'- vs main cbb0642, geomean of per-cell median ratios (current tiers): {gm}.')
+fast = [r for r in mac_rows if r['ratio_vs_cbb0642'] is not None and r['ratio_vs_cbb0642'] < 0.9]
+slow = [r for r in mac_rows if r['ratio_vs_cbb0642'] is not None and r['ratio_vs_cbb0642'] > 1.1]
+pr('- Cells faster than 0.90x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_cbb0642"]:.2f}' for r in fast) or 'none')
+   + '. Cells slower than 1.10x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_cbb0642"]:.2f}' for r in slow) or 'none')
+   + '. `-oddcap-skip=on` changes the bound search only on halves whose parity matrix has only odd column weights (all bundled BB and LP codes); TN and GB cells run the cbb0642 search unchanged, so their ratios are host noise.')
 pr(f'- Correctness: {sum(r["n"] for r in mac_rows)} runs, every answer equals the stem distance; ' +
    ('no run problems.' if not problems else 'PROBLEMS: ' + '; '.join(f'{k}: {v}' for k, v in problems)))
 for n in a.mac_note: pr('- ' + n)
@@ -128,7 +131,7 @@ for (t, s, m) in sorted(cells, key=lambda k: (k[0], k[1], MODE_ORDER[k[2]])):
                          timeouts=nto, seed_wall_s={str(sd): round(w, 2) for sd, w in walls.items()},
                          seed_solved={str(sd): seeds[sd]['solved'] for sd in sorted(seeds)},
                          result=r0['result'], final_lb=r0['final_lb'], final_ub=r0['final_ub'],
-                         prev_398054e_median_s=old['median_s'] if old else None, ratio_vs_398054e=ratio))
+                         prev_cbb0642_median_s=old['median_s'] if old else None, ratio_vs_cbb0642=ratio))
 
 # ---------------- server tier 5 ----------------
 t5 = json.load(open(a.tier5)); t5res = sorted(t5['results'], key=lambda r: (r['stem'], MODE_ORDER[r['mode']]))
@@ -153,44 +156,44 @@ for r in t5res:
                          lb_events=r['lb_events'], ub_events=r['ub_events'], withdrawn=r['withdrawn'], science_ok=r['science_ok']))
     slower[r['stem']][r['mode']] = (r['wall'] if solved else None, 0 if solved else 1)
 srv_method = ('tiers 0-4: runner/server_panel.py, 5 seeds (-seed=0..4; 0 = default search) per case/mode, one process per pinned physical core '
-              '(taskset, cores 56-59,64-99), 4 GB cap (prlimit --as), limits tier0 600 s, tier1-3 1800 s, tier4 5000 s; the recorded time is the '
+              '(taskset, cores 54-89), 4 GB cap (prlimit --as), limits tier0 600 s, tier1-3 1800 s, tier4 5000 s; the recorded time is the '
               '5-seed median (seed-median judging, PI 2026-10-14; a timed-out seed counts as the limit); tier 5: runner/server_tier5.py, 1 run per '
-              'case/mode, default seed, 6 h limit, cores 0-55, run concurrently with tiers 0-4')
-json.dump(dict(host=HOST_SRV, baseline_binary=BIN_DESC + ' built on yfclab2 (frozen/server-main-cbb0642/distqldpc)',
+              'case/mode, default seed, 6 h limit, cores 0-53, run concurrently with tiers 0-4')
+json.dump(dict(host=HOST_SRV, baseline_binary=BIN_DESC + f' built on yfclab2 ({SRV_FROZEN})',
                binary_sha256=a.server_sha, collected=a.server_date, method=srv_method,
-               previous_table='main 398054e (2026-10-14, 3-run medians), ratio_vs_398054e = median_s / its median_s', rows=srv_rows),
+               previous_table='main cbb0642 (2026-10-18, 5-seed medians; tier 5 and LP_714_100_16: one default-seed 6 h run), ratio_vs_cbb0642 = median_s / its median_s', rows=srv_rows),
           open(f'{a.out}/main_server_reference.json', 'w'), indent=1)
 
 o = []; pr = o.append
 pr(f'# Recorded main baseline times on yfclab2 ({a.server_date})\n')
-pr(f'Binary: {BIN_DESC} built on yfclab2 (frozen/server-main-cbb0642/distqldpc), sha256 `{a.server_sha}`. {srv_method}. '
-   f'Column "vs 398054e" = this median / the main 398054e median (2026-10-14, 3-run medians, git history).\n')
+pr(f'Binary: {BIN_DESC} built on yfclab2 ({SRV_FROZEN}), sha256 `{a.server_sha}`. {srv_method}. '
+   f'Column "vs cbb0642" = this median / the main cbb0642 median (2026-10-18, 5-seed medians, git history; tier column = current tiers; LP_714_100_16 was tier 5 then, its cbb0642 value is one default-seed run).\n')
 pr('## Tiers 0-4 (5 seeds; the median is the reference)\n')
-pr('| Tier | Case | Mode | Seeds | s0 | s1 | s2 | s3 | s4 | Median s | Min s | Max s | Solved | 398054e median s | vs 398054e |')
+pr('| Tier | Case | Mode | Seeds | s0 | s1 | s2 | s3 | s4 | Median s | Min s | Max s | Solved | cbb0642 median s | vs cbb0642 |')
 pr('|---:|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|---:|---:|')
 for r in srv_rows:
     if r['tier'] == 5: continue
     sw = r['seed_wall_s']; cellv = lambda k: (fmt(sw[k], 2) + ('T' if not r['seed_solved'][k] else '')) if k in sw else '-'
     pr(f'| {r["tier"]} | {r["case"]} | {r["mode"]} | {r["n"]} | {cellv("0")} | {cellv("1")} | {cellv("2")} | {cellv("3")} | {cellv("4")} | '
        f'{fmt(r["median_s"], 2)} | {fmt(r["min_s"], 2)} | {fmt(r["max_s"], 2)} | {"yes" if r["solved"] else str(5 - r["timeouts"]) + "/5"} | '
-       f'{fmt(r["prev_398054e_median_s"], 2) if r["prev_398054e_median_s"] is not None else "-"} | '
-       f'{fmt(r["ratio_vs_398054e"], 3) if r["ratio_vs_398054e"] is not None else "-"} |')
+       f'{fmt(r["prev_cbb0642_median_s"], 2) if r["prev_cbb0642_median_s"] is not None else "-"} | '
+       f'{fmt(r["ratio_vs_cbb0642"], 3) if r["ratio_vs_cbb0642"] is not None else "-"} |')
 pr('\n"T" marks a seed that reached the limit (counted as the limit in the median).\n')
 pr('## Tier 5 (6 h, 1 run per cell, default seed)\n')
-pr('| Case | Mode | Wall s | Result | Final lb | Final ub | lb reached at (s) | vs 398054e (result, lb/ub, wall) |')
+pr('| Case | Mode | Wall s | Result | Final lb | Final ub | lb reached at (s) | vs cbb0642 (result, lb/ub, wall) |')
 pr('|---|---|---:|---|---:|---:|---|---|')
 t5_better = []; t5_worse = []; nsolved = 0; nsolved_old = 0
 for r in t5res:
     solved = bool(r['result']); nsolved += solved
     old = old_srv.get((r['stem'], r['mode']))
-    if old is None: cmp = 'new code (not in the 398054e table)'
+    if old is None: cmp = 'new code (not in the cbb0642 table)'
     else:
         osolved = old['solved']; nsolved_old += osolved
         olb, oub = old['final_lb'], old['final_ub']; nlb, nub = r['final_lb'], r['final_ub']
         parts = []
         if solved and osolved: parts.append(f'solved {old["median_s"]:.0f} s -> {r["wall"]:.0f} s ({r["wall"] / old["median_s"]:.2f}x)')
-        elif solved and not osolved: parts.append(f'newly solved (398054e: TIMEOUT lb {olb} ub {oub if oub is not None else "-"})'); t5_better.append(f'{r["stem"]} {r["mode"]}')
-        elif not solved and osolved: parts.append(f'NOT solved (398054e solved in {old["median_s"]:.0f} s)'); t5_worse.append(f'{r["stem"]} {r["mode"]}')
+        elif solved and not osolved: parts.append(f'newly solved (cbb0642: TIMEOUT lb {olb} ub {oub if oub is not None else "-"})'); t5_better.append(f'{r["stem"]} {r["mode"]}')
+        elif not solved and osolved: parts.append(f'NOT solved (cbb0642 solved in {old["median_s"]:.0f} s)'); t5_worse.append(f'{r["stem"]} {r["mode"]}')
         else:
             lbc = 'lb =' if nlb == olb else (f'lb {olb} -> {nlb}')
             ubc = 'ub =' if nub == oub else (f'ub {oub if oub is not None else "-"} -> {nub if nub is not None else "-"}')
@@ -223,21 +226,21 @@ pr('Codes that the rule would move (listed only, not moved): ' + ('; '.join(move
    'Tier 5 rows use a single default-seed run (not a 5-seed median); for tier 0-4 cells with timed-out seeds the median counts the limit.\n')
 pr('Notes:')
 gm = ' '.join(f'tier{t} {m} {g(srv_ratio[(t, m)]):.3f}' for t in range(5) for m in ('no-card', 'card-mto') if srv_ratio[(t, m)])
-pr(f'- Replaces the main 398054e table (2026-10-14) after GH-130 (PR #131, `-frontier=auto` default) was merged; old table is in git history. The 398054e table used 3-run medians; this one uses 5-seed medians, so small ratios also carry the seed spread.')
-pr(f'- vs main 398054e, geomean of per-cell median ratios (tiers 0-4): {gm}.')
-fast = [r for r in srv_rows if 1 <= r['tier'] <= 4 and r['ratio_vs_398054e'] is not None and r['ratio_vs_398054e'] < 0.9]
-slow = [r for r in srv_rows if 1 <= r['tier'] <= 4 and r['ratio_vs_398054e'] is not None and r['ratio_vs_398054e'] > 1.1]
-pr('- `-frontier=auto` turns frontier branching on for every BB/GB/LP half and off for every TN half of tiers 1-5, so TN cells run the 398054e search unchanged (GH-130 S1 identity check): their ratios here are seed spread (5-seed median vs 3 default-seed runs) plus host load, not a solver change. Tier 0 cells are all < 1 s and their ratios (0.35-0.78) are dominated by the host load of the two batches.')
-pr('- Tier 1-4 cells faster than 0.90x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_398054e"]:.2f}' for r in fast) or 'none')
-   + '. Cells slower than 1.10x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_398054e"]:.2f}' for r in slow) or 'none') + '.')
+pr(f'- Replaces the main cbb0642 table (2026-10-18) after PR #137 (`-oddcap-skip=on` default) was merged; old table is in git history. PR #136 re-tiered the codes and renamed BB_756/864/1080 to ge28 (tier column = current tiers; comparisons by current stem).')
+pr(f'- vs main cbb0642, geomean of per-cell median ratios (tiers 0-4, current tiers): {gm}.')
+fast = [r for r in srv_rows if 1 <= r['tier'] <= 4 and r['ratio_vs_cbb0642'] is not None and r['ratio_vs_cbb0642'] < 0.9]
+slow = [r for r in srv_rows if 1 <= r['tier'] <= 4 and r['ratio_vs_cbb0642'] is not None and r['ratio_vs_cbb0642'] > 1.1]
+pr('- `-oddcap-skip=on` changes the bound search only on halves whose parity matrix has only odd column weights (all bundled BB and LP codes); TN and GB halves run the cbb0642 search unchanged (same 5 seeds), so their ratios measure the host only: most TN/GB seeds reproduce within a few %, but the long TN runs differ by up to ~1.4x per seed between the two batches (shared host: other users\' unpinned jobs, SMT siblings, concurrent sessions).')
+pr('- Tier 1-4 cells faster than 0.90x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_cbb0642"]:.2f}' for r in fast) or 'none')
+   + '. Cells slower than 1.10x: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["ratio_vs_cbb0642"]:.2f}' for r in slow) or 'none') + '.')
 to = [r for r in srv_rows if r['tier'] <= 4 and r['timeouts']]
 pr('- Tier 0-4 seeds that reached the limit: ' + (', '.join(f'{r["case"]} {r["mode"]} {r["timeouts"]}/5 (seeds {", ".join(k for k, v in r["seed_solved"].items() if not v)})' for r in to) or 'none') + '.')
-pr(f'- Tier 5: {nsolved} of {len(t5res)} cells solved within 6 h (398054e: {nsolved_old} of {len([r for r in t5res if (r["stem"], r["mode"]) in old_srv])} comparable cells). '
-   f'Cells better than 398054e (newly solved or tighter bound): {", ".join(t5_better) or "none"}. Worse: {", ".join(t5_worse) or "none"}.')
+pr(f'- Tier 5: {nsolved} of {len(t5res)} cells solved within 6 h (cbb0642: {nsolved_old} of {len([r for r in t5res if (r["stem"], r["mode"]) in old_srv])} comparable cells). '
+   f'Cells better than cbb0642 (newly solved or tighter bound): {", ".join(t5_better) or "none"}. Worse: {", ".join(t5_worse) or "none"}.')
 new5 = [r for r in t5res if (r['stem'], r['mode']) not in old_srv]
-pr('- New tier5 codes (PR #132, Cain et al. via C. Crocker\'s Zenodo distances): ' + '; '.join(
-    f'{r["stem"]} {r["mode"]}: {"solved d=%d at %.0f s" % (r["result"][1], r["result"][0]) if r["result"] else "TIMEOUT lb %s ub %s" % (r["final_lb"], r["final_ub"] if r["final_ub"] is not None else "-")}' for r in new5) + '.')
-pr('- The lb sequence 3/5/9/17 comes from the doubling phase of the interleaved bound search (caps 2,4,8,16,32): lb 17 means no logical of weight <= 16 exists and the solver is searching for any logical of weight <= 32.')
+if new5: pr('- Tier 5 cells without a cbb0642 row: ' + '; '.join(f'{r["stem"]} {r["mode"]}' for r in new5) + '.')
+pr('- Lower-bound ladders: on BB/LP halves (odd column weights, `-oddcap-skip=on`) the doubling phase probes caps 2,4,8,16,32, and a NONE at cap 2t certifies lb 2t+2 (ladder 2/4/6/10/18: lb 18 = no logical of weight <= 17); TN halves keep the cbb0642 ladder 2/3/5/9/17 (caps 1,2,4,8,16).')
+for n in a.server_note: pr('- ' + n)
 pr(f'- Correctness: panel {len(panel)} runs ({len(perr)} runner errors), every answer equals the stem distance and no bound crosses it' +
    ('' if not sproblems else f' EXCEPT: {sproblems}') + f'; tier 5 {len(t5res)} runs, bounds consistent with the stems' + ('' if not t5problems else f' EXCEPT: {t5problems}') + '.')
 open(f'{a.out}/SERVER.md', 'w').write('\n'.join(o) + '\n')

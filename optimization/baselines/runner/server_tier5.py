@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Baseline re-record (main cbb0642) Tier 5 on yfclab2 (adapted from GH-124/GH-130 S1/runner/s1_tier5.py).
+"""Baseline re-record (main c914ef5; first used for main cbb0642) Tier 5 on yfclab2 (adapted from GH-124/GH-130 S1/runner/s1_tier5.py).
 Every tier5 code x {no-card, card-mto} once, default seed and flags, all at once, one pinned core each, 4 GB cap,
 wall limit 21600 s via -cpu-lim (runner backstop at limit + 600 s). Every output line is written with its elapsed
 time; timestamped c d_lb / c d_ub events are recorded, withdrawn bounds honoured, and every answer and bound is
 checked against the stem ({d} / {lb}to{ub} / ge{lb}).
-usage: server_tier5.py --bin BIN --cpus 0-59,64-67 --out DIR [--limit 21600]"""
+usage: server_tier5.py --bin BIN --cpus 0-53 --out DIR [--limit 21600]"""
 import argparse, glob, json, os, re, signal, subprocess, threading, time
 
 ap = argparse.ArgumentParser()
@@ -14,7 +14,7 @@ a = ap.parse_args(); os.makedirs(a.out, exist_ok=True)
 cpus = []
 for part in a.cpus.split(','):
     lo, _, hi = part.partition('-'); cpus += list(range(int(lo), int(hi or lo) + 1))
-assert all(0 <= c <= 59 or 64 <= c <= 99 for c in cpus), cpus
+assert all(0 <= c <= 89 for c in cpus), cpus   # allowed cores 0-89 (another session uses 100-123)
 stems = sorted(os.path.basename(p)[:-7] for p in glob.glob('data/matrices/tier5/*_Hx.txt'))
 jobs = [(s, m) for s in stems for m in a.modes]
 assert len(jobs) <= len(cpus), (len(jobs), len(cpus))
