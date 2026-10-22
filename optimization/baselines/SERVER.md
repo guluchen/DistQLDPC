@@ -59,14 +59,14 @@ Binary: main cbb0642 (GH-130 adopted: -frontier=auto default) built on yfclab2 (
 
 | Case | Mode | Wall s | Result | Final lb | Final ub | lb reached at (s) | vs 398054e (result, lb/ub, wall) |
 |---|---|---:|---|---:|---:|---|---|
-| BB_1080_4_ge28 | card-mto | 21600 | TIMEOUT | 17 | - | 2@1, 3@1, 5@2, 9@3, 17@9264, 17@21600 | TIMEOUT both; lb =, ub = |
-| BB_1080_4_ge28 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@1, 17@2567, 17@21600 | TIMEOUT both; lb =, ub = |
+| BB_1080_4_ge30 | card-mto | 21600 | TIMEOUT | 17 | - | 2@1, 3@1, 5@2, 9@3, 17@9264, 17@21600 | TIMEOUT both; lb =, ub = |
+| BB_1080_4_ge30 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@1, 17@2567, 17@21600 | TIMEOUT both; lb =, ub = |
 | BB_360_12_24 | card-mto | 21600 | TIMEOUT | 17 | 24 | 2@0, 3@0, 5@0, 9@0, 17@87, 17@21600 | TIMEOUT both; lb =, ub = |
 | BB_360_12_24 | no-card | 21600 | TIMEOUT | 17 | 24 | 2@0, 3@0, 5@0, 9@0, 17@86, 17@21600 | TIMEOUT both; lb =, ub = |
-| BB_756_16_ge28 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@1, 17@673, 17@21600 | TIMEOUT both; lb =, ub = |
-| BB_756_16_ge28 | no-card | 21600 | TIMEOUT | 17 | - | 2@1, 3@1, 5@2, 9@2, 17@3352, 17@21600 | TIMEOUT both; lb =, ub = |
-| BB_864_4_ge28 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@1, 17@873, 17@21600 | TIMEOUT both; lb =, ub = |
-| BB_864_4_ge28 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@0, 17@876, 17@21600 | TIMEOUT both; lb =, ub = |
+| BB_756_16_ge30 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@1, 17@673, 17@21600 | TIMEOUT both; lb =, ub = |
+| BB_756_16_ge30 | no-card | 21600 | TIMEOUT | 17 | - | 2@1, 3@1, 5@2, 9@2, 17@3352, 17@21600 | TIMEOUT both; lb =, ub = |
+| BB_864_4_ge30 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@1, 17@873, 17@21600 | TIMEOUT both; lb =, ub = |
+| BB_864_4_ge30 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@0, 17@876, 17@21600 | TIMEOUT both; lb =, ub = |
 | LP_1020_136_16 | card-mto | 2316 | solved | 16 | 16 | 2@0, 3@1, 5@2, 9@7, 16@2316 | solved 8328 s -> 2316 s (0.28x) |
 | LP_1020_136_16 | no-card | 8955 | solved | 16 | 16 | 2@3, 3@7, 5@12, 9@54, 16@8955 | solved 7159 s -> 8955 s (1.25x) |
 | LP_1054_140_20 | card-mto | 21600 | TIMEOUT | 17 | 32 | 2@1, 3@1, 5@3, 9@11, 17@9357, 17@21600 | TIMEOUT both; lb =, ub - -> 32 |
@@ -143,10 +143,10 @@ Binary: main cbb0642 (GH-130 adopted: -frontier=auto default) built on yfclab2 (
 | TN_144_2_13 | 3 | card-mto | 422.99 | 3 | no |
 | TN_200_10_10 | 3 | no-card | 27.82 | 2 | tier3 -> tier2 |
 | TN_250_10_15 | 4 | no-card | 4419.18 | 4 | no |
-| BB_1080_4_ge28 | 5 | card-mto | unsolved | 5 | no |
+| BB_1080_4_ge30 | 5 | card-mto | unsolved | 5 | no |
 | BB_360_12_24 | 5 | card-mto | unsolved | 5 | no |
-| BB_756_16_ge28 | 5 | card-mto | unsolved | 5 | no |
-| BB_864_4_ge28 | 5 | card-mto | unsolved | 5 | no |
+| BB_756_16_ge30 | 5 | card-mto | unsolved | 5 | no |
+| BB_864_4_ge30 | 5 | card-mto | unsolved | 5 | no |
 | LP_1020_136_16 | 5 | no-card | 8954.80 | 5 | no |
 | LP_1054_140_20 | 5 | card-mto | unsolved | 5 | no |
 | LP_1122_148_20 | 5 | card-mto | unsolved | 5 | no |
