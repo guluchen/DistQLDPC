@@ -183,7 +183,7 @@ accept 3 "" -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 -cc
 accept 3 "" -engine=cc -ub-search=on -cc-ub-share=0 -cc-ub-pre=0 -cc-dual=off -cc-schedule=sequential $L $M
 accept 2 "" -engine=auto -ub-search=on $L $C                                                         # auto -> cc: applies
 accept 2 "selected maxsat .*ignoring -ub-search=on" -engine=auto -ub-search=on $L $D1
-vgrep 3 "^c cc: ub-search: pre-pass 0.100s, share 0.200 of wall time (/16 after 16 re-hits of U), cap 0.500000s" -v -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 $L $M
+vgrep 3 "^c cc: ub-search: pre-pass 0.100s, share 0.200 of wall time (/16 after 16 re-hits of U or a plateau), cap 0.500000s" -v -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 $L $M
 vgrep 3 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triples on, slack 4" -v -engine=cc -ub-search=on -cc-ub-triples=1000 $L $M
 vgrep 3 "^c cc-stats: ub-search X: iterations [0-9]*, finder time" -engine=cc -ub-search=on -cc-stats $L $M
 # finder-only diagnostic: an upper bound, no answer (s UNKNOWN, rc 1), d_ub kept

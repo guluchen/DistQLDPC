@@ -2070,8 +2070,9 @@ int main(int argc, char** argv) {
             printf("            -ub-search=off|on|budget:S (GH-140, default off): randomized low-weight logical finder per half\n");
             printf("            (random information sets, 1-2 systematic rows, stabilizer local improvement); verified words\n");
             printf("            lower d_ub and let the stop rule finish early; pre-pass -cc-ub-pre=S (default 0), then the share\n");
-            printf("            -cc-ub-share=F of the wall time (default 0.1; F/16 once -cc-ub-hits=H iterations, default 16, re-hit\n");
-            printf("            the current upper bound without improving it); budget:S caps the finder at S s; tuning\n");
+            printf("            -cc-ub-share=F of the wall time (default 0.05; F/16 once -cc-ub-hits=H iterations, default 16, re-hit\n");
+            printf("            the current upper bound, or after a plateau without improvement; H = 0: never); budget:S caps\n");
+            printf("            the finder at S s; tuning\n");
             printf("            -cc-ub-triples=K (triples when the information set has <= K columns, default 0), -cc-ub-slack=L\n");
             printf("            (default 4); -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");

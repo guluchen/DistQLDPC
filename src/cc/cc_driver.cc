@@ -402,13 +402,14 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         }
         if (verb > 0) {
             if (opt.ub_only) printf("c cc: ub-search only (diagnostic): %.3fs finder budget, no level ladder\n", opt.ub_cap);
-            else printf("c cc: ub-search: pre-pass %.3fs, share %.3f of wall time (/16 after %d re-hits of U), cap %s\n",
+            else printf("c cc: ub-search: pre-pass %.3fs, share %.3f of wall time (/16 after %d re-hits of U or a plateau), cap %s\n",
                         opt.ub_cap >= 0 ? std::min(opt.ub_pre, opt.ub_cap) : opt.ub_pre, opt.ub_share, opt.ub_hits,
                         opt.ub_cap >= 0 ? (std::to_string(opt.ub_cap) + "s").c_str() : "none");
         }
         fflush(stdout);
     }
     int ub_rehits = 0;          /* finder iterations that re-hit U since U last changed */
+    uint64_t ub_iters = 0, ub_iter_last = 0;   /* finder iterations (both halves); count at the last improvement */
     bool ub_conv = false;       /* ub_rehits reached opt.ub_hits: share / 16 from now on */
     auto ub_due = [&]() -> bool {
         if (!ubs) return false;
@@ -426,11 +427,15 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (k < 0) return;
         const int target = U < INF ? U : n + 1;
         std::vector<int> e;
+        ub_iters++;
         if (!uf[k]->iterate(target, e)) {
-            if (uf[k]->last_hit() && target == U && !ub_conv && opt.ub_hits > 0 && ++ub_rehits >= opt.ub_hits) {
+            if (uf[k]->last_hit() && target == U) ub_rehits++;
+            const uint64_t plateau = std::max<uint64_t>(64, 4 * ub_iter_last);
+            if (!ub_conv && opt.ub_hits > 0 && (ub_rehits >= opt.ub_hits || ub_iters - ub_iter_last >= plateau)) {
                 ub_conv = true;
-                if (verb > 0) printf("c cc: ub-search: U %d re-hit in %d iterations without improvement: finder share %.4f from now on (wall %.3fs)\n",
-                                     U, ub_rehits, opt.ub_share / 16, now_seconds() - t_start);
+                if (verb > 0) printf("c cc: ub-search: U %d %s: finder share %.4f from now on (iteration %llu, wall %.3fs)\n", U,
+                                     ub_rehits >= opt.ub_hits ? "re-hit without improvement" : "not improved on a plateau",
+                                     opt.ub_share / 16, (unsigned long long)ub_iters, now_seconds() - t_start);
                 if (trace) { fprintf(trace, "# ub-search converged at U %d, wall %.6f\n", U, now_seconds() - t_start); fflush(trace); }
             }
             return;
@@ -468,6 +473,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             sink.bound(sink.ctx, "UB", (uint64_t)U);
             ub_rehits = 0;
             ub_conv = false;
+            ub_iter_last = ub_iters;
         }
         fflush(stdout);
         for (int t = 0; t < 2; t++)

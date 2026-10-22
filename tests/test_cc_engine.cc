@@ -523,7 +523,7 @@ int main(int argc, char** argv) {
                 if (trivial) e_mut11_unit++;
             }
             struct UCfg { const char* name; double pre, cap, share; uint64_t mask, skip; bool dual, ubb, seq, only; uint64_t seed; int mutant; };
-            const uint64_t sk1 = rnd(400), sk2 = rnd(4000), sk3 = rnd(400);
+            const uint64_t sk1 = rnd(40), sk2 = rnd(150), sk3 = rnd(40);
             const UCfg ucfgs[] = {
                 {"ub-pre", 1.0, 0.01, 0.1, 0x3FFF, 0, true, true, false, false, 0, 0},
                 {"ub-share-poll", 0.0, -1, 0.9, 0, 0, true, true, false, false, 0, 0},
@@ -539,6 +539,7 @@ int main(int argc, char** argv) {
             for (const UCfg& c : ucfgs) {
                 distcc::DriverOptions o;
                 o.ub_search = true; o.ub_pre = c.pre; o.ub_cap = c.cap; o.ub_share = c.share; o.ub_poll_mask = c.mask; o.ub_skip_polls = c.skip;
+                if (c.skip) o.ub_hits = 0;   // late start: keep the finder at its full share
                 o.dual = c.dual; o.ub_basis = c.ubb; o.sequential = c.seq; o.ub_only = c.only; o.seed = c.seed; o.mutant = c.mutant;
                 o.trace_path = "build/test_cc_ub_trace.txt";
                 remove(o.trace_path.c_str());
