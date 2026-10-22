@@ -31,6 +31,16 @@
 //   weight <= 6 (at most 60), or a few random elements; K is NOT closed under the planted shift, so the orbit seed
 //   rule is tested with an arbitrary row set. Every subset of the 7 rules (128) x seeds 0..2. Part B runs the
 //   driver, where K = the same-type stabilizer matrix (X half Hx, Z half Hz), with and without overlap.
+// Part E (GH-140, -ub-search): on the Part B codes, (a) the randomized finder (UbFinder) of each half alone, 300
+//   iterations with a falling target: every returned word is in ker H, detected by G (nontrivial), lighter than the
+//   target and >= d_h from enumeration; a second finder with the same seed returns the same words (determinism); the
+//   count of halves where it reaches d_h is reported (triples on for odd instances); with mutant 11 (no detector check)
+//   some returned word must be trivial. (b) Driver runs with the finder: pre-pass capped at 10 ms, share 0.9 with a
+//   poll at every node, the same with the first N polls skipped (the finder starts mid-ladder, so levels are
+//   abandoned when U <= w; counted from -cc-trace ABORTED lines), dual off + seed 3,
+//   sequential schedule, -ub-basis off, ub-only (RESULT -1 without trap, every UB >= d): RESULT d OPTIMAL = enumeration,
+//   every UB >= d, LBs monotone <= d. (c) Mutants 11 (finder without the detector check: the driver's verification
+//   must stop the run) and 12 (mutant 11 plus words reported without verification: wrong answers) must fail.
 // Part D (GH-133, MaxSAT path): the production interleaved split driver (min_distance_css_interleaved, -no-card)
 //   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d].
 #define main distqldpc_main_unused
@@ -250,6 +260,19 @@ static bool run_ok(const RunOut& r, int d) {
     return true;
 }
 
+// GH-140: minimum weight of a nonzero element of rs(S) (n + 1 if rs(S) = 0)
+static int min_span_weight(const std::vector<Mask>& S, int n) {
+    Span sp; for (Mask v : S) sp.add(v);
+    int best = n + 1;
+    const size_t b = sp.b.size();
+    for (unsigned long long c = 1; c < (1ULL << b); c++) {
+        Mask v = 0;
+        for (size_t i = 0; i < b; i++) if ((c >> i) & 1) v ^= sp.b[i];
+        if (v && popc(v) < best) best = popc(v);
+    }
+    return best;
+}
+
 // quotient basis: elements of ker(A) not in rs(B) completing rs(B) to ker(A)
 static std::vector<Mask> quotient_basis(const std::vector<Mask>& A, const std::vector<Mask>& B, int n) {
     Span sp; for (Mask b : B) sp.add(b);
@@ -268,7 +291,7 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[11] = {0}, mut_runs[11] = {0};
+    long mut_bad[13] = {0}, mut_runs[13] = {0};
     long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
@@ -352,6 +375,7 @@ int main(int argc, char** argv) {
     // ---------------- Part B: driver through the forked pipe ----------------
     long b_inst = 0, b_runs = 0, b_bad = 0, b_dual = 0, b_xorb = 0, b_dxdz = 0, b_odd = 0, b_seqbad4 = 0, b_seq = 0, b_lock4bad = 0, b_lock4 = 0;
     long b_traps = 0, d_runs = 0, d_bad = 0, d_odd = 0;
+    long e_halves = 0, e_bad = 0, e_reach = 0, e_nondet = 0, e_mut11_unit = 0, e_runs = 0, e_dbad = 0, e_aborted = 0, e_mut12_wrong = 0, e_mut_halves = 0;
     for (int inst = 0; inst < NB; inst++) {
         const int n = 6 + (int)rnd(11);
         std::vector<std::vector<int> > gens;
@@ -454,6 +478,95 @@ int main(int argc, char** argv) {
             b_lock4++; mut_runs[4]++;
             if (!run_ok(l4, d)) { mut_bad[4]++; b_lock4bad++; }
         }
+        {   // Part E (GH-140): finder alone (a), driver with the finder (b), mutants 11/12 (c)
+            for (int half = 0; half < 2; half++) {
+                const std::vector<Mask>& H = half ? Hx : Hz;
+                const std::vector<Mask>& G = half ? Gz : Gx;
+                const std::vector<Mask>& S = half ? Hz : Hx;
+                const int dh = half ? dZ : dX;
+                distcc::UbParams up;
+                if (inst & 1) up.triples_max_k = 64;
+                const uint64_t fseed = 1000 + (uint64_t)inst * 2 + (uint64_t)half;
+                distcc::UbFinder f(to_rows(H, n), to_rows(G, n), to_rows(S, n), fseed, up);
+                distcc::UbFinder f2(to_rows(H, n), to_rows(G, n), to_rows(S, n), fseed, up);
+                int target = n + 1;
+                bool bad = false;
+                for (int it = 0; it < 300 && !bad; it++) {
+                    std::vector<int> e1, e2;
+                    const bool g1 = f.iterate(target, e1), g2 = f2.iterate(target, e2);
+                    if (g1 != g2 || e1 != e2) { bad = true; e_nondet++; break; }
+                    if (!g1) continue;
+                    Mask v = 0;
+                    for (int q : e1) v |= 1u << q;
+                    if (popc(v) != (int)e1.size() || !in_kernel(H, v) || !detected(G, v) || (int)e1.size() >= target ||
+                        (int)e1.size() < dh) bad = true;
+                    else target = (int)e1.size();
+                }
+                e_halves++;
+                if (bad) { e_bad++; fails++; if (e_bad <= 10) fprintf(stderr, "CC_FAIL partE finder inst=%d half=%d d_h=%d\n", inst, half, dh); }
+                else if (target == dh) e_reach++;
+                if (min_span_weight(S, n) >= dh) continue;   // mutant 11 can only show where a trivial word is lighter than d_h
+                e_mut_halves++;
+                distcc::UbParams um = up;
+                um.mutant = 11;
+                distcc::UbFinder fm(to_rows(H, n), to_rows(G, n), to_rows(S, n), fseed, um);
+                bool trivial = false;
+                for (int it = 0, tg = n + 1; it < 50 && !trivial; it++) {
+                    std::vector<int> e;
+                    if (!fm.iterate(tg, e)) continue;
+                    Mask v = 0;
+                    for (int q : e) v |= 1u << q;
+                    if (!detected(G, v)) trivial = true;
+                    else tg = (int)e.size();
+                }
+                mut_runs[11]++;
+                if (trivial) e_mut11_unit++;
+            }
+            struct UCfg { const char* name; double pre, cap, share; uint64_t mask, skip; bool dual, ubb, seq, only; uint64_t seed; int mutant; };
+            const uint64_t sk1 = rnd(400), sk2 = rnd(4000), sk3 = rnd(400);
+            const UCfg ucfgs[] = {
+                {"ub-pre", 1.0, 0.01, 0.1, 0x3FFF, 0, true, true, false, false, 0, 0},
+                {"ub-share-poll", 0.0, -1, 0.9, 0, 0, true, true, false, false, 0, 0},
+                {"ub-late-start", 0.0, -1, 0.9, 0, sk1, true, false, false, false, 0, 0},
+                {"ub-late-start2", 0.0, -1, 0.9, 0, sk2, false, true, false, false, 1, 0},
+                {"ub-dualoff-seed3", 1.0, 0.005, 0.5, 0, 0, false, true, false, false, 3, 0},
+                {"ub-sequential", 0.0, 0.02, 0.9, 0, sk3, true, false, true, false, 1, 0},
+                {"ub-no-ubbasis", 1.0, 0.005, 0.5, 0, 0, true, false, false, false, 2, 0},
+                {"ub-only", 0.0, 0.005, 0.1, 0x3FFF, 0, true, true, false, true, 0, 0},
+                {"mutant11", 1.0, 0.005, 0.1, 0x3FFF, 0, true, true, false, false, 0, 11},
+                {"mutant12", 1.0, 0.005, 0.1, 0x3FFF, 0, true, true, false, false, 0, 12},
+            };
+            for (const UCfg& c : ucfgs) {
+                distcc::DriverOptions o;
+                o.ub_search = true; o.ub_pre = c.pre; o.ub_cap = c.cap; o.ub_share = c.share; o.ub_poll_mask = c.mask; o.ub_skip_polls = c.skip;
+                o.dual = c.dual; o.ub_basis = c.ubb; o.sequential = c.seq; o.ub_only = c.only; o.seed = c.seed; o.mutant = c.mutant;
+                o.trace_path = "build/test_cc_ub_trace.txt";
+                remove(o.trace_path.c_str());
+                RunOut r = run_driver(mHx, mHz, mGx, mGz, o, true, true);
+                if (FILE* tf = fopen(o.trace_path.c_str(), "r")) {
+                    char line[4096];
+                    while (fgets(line, sizeof(line), tf)) if (strstr(line, " ABORTED ")) e_aborted++;
+                    fclose(tf);
+                }
+                if (c.mutant) {
+                    if (!(min_span_weight(Hx, n) < dX && dX == d) && !(min_span_weight(Hz, n) < dZ && dZ == d)) continue;
+                    mut_runs[c.mutant]++;
+                    if (!run_ok(r, d)) mut_bad[c.mutant]++;
+                    if (c.mutant == 12 && r.ok && r.d != d) e_mut12_wrong++;
+                    continue;
+                }
+                e_runs++;
+                bool ok;
+                if (c.only) {
+                    ok = r.d == -1 && r.lbs.empty();
+                    for (long long ub : r.ubs) if (ub < d) ok = false;
+                } else ok = run_ok(r, d);
+                if (!ok) {
+                    e_dbad++; fails++;
+                    if (e_dbad <= 10) fprintf(stderr, "CC_FAIL partE inst=%d n=%d cfg=%s: d=%d got %d\n", inst, n, c.name, d, r.d);
+                }
+            }
+        }
         {   // Part D (GH-133): the MaxSAT split driver with -oddcap-skip off (main) and on, -no-card
             if (all_odd(Hz, n) || all_odd(Hx, n)) d_odd++;
             for (int oc = 0; oc < 2; oc++) {
@@ -463,9 +576,82 @@ int main(int argc, char** argv) {
             }
         }
     }
+    // Part E on rotated surface codes [[d^2, 1, d]] (d = 3, 4; also with X and Z swapped): weight-2 boundary stabilizers
+    // are lighter than d, so mutants 11 and 12 must show here; the canonical driver with the finder must stay correct.
+    long e_surf = 0, e_surf_bad = 0;
+    for (int dd = 3; dd <= 4; dd++)
+        for (int swap = 0; swap < 2; swap++) {
+            const int n = dd * dd;
+            auto qb = [dd](int a, int b) { return a * dd + b; };
+            std::vector<Mask> SX, SZ;
+            for (int a = -1; a <= dd - 1; a++)
+                for (int b = -1; b <= dd - 1; b++) {
+                    Mask v = 0;
+                    for (int da = 0; da < 2; da++)
+                        for (int db = 0; db < 2; db++) {
+                            const int x = a + da, y = b + db;
+                            if (x >= 0 && x < dd && y >= 0 && y < dd) v |= 1u << qb(x, y);
+                        }
+                    const bool xtype = ((a + b) & 1) == 0;
+                    const bool interior = a >= 0 && b >= 0 && a <= dd - 2 && b <= dd - 2;
+                    const bool tb = (a == -1 || a == dd - 1) && b >= 0 && b <= dd - 2;   // top/bottom: X type only
+                    const bool lr = (b == -1 || b == dd - 1) && a >= 0 && a <= dd - 2;   // left/right: Z type only
+                    if (interior) (xtype ? SX : SZ).push_back(v);
+                    else if (tb && xtype) SX.push_back(v);
+                    else if (lr && !xtype) SZ.push_back(v);
+                }
+            std::vector<Mask> Hx = swap ? SZ : SX, Hz = swap ? SX : SZ;
+            bool comm = true;
+            for (Mask x : Hx) for (Mask z : Hz) if (odd(x & z)) comm = false;
+            std::vector<Mask> Gx = quotient_basis(Hx, Hz, n), Gz = quotient_basis(Hz, Hx, n);
+            if (!comm || Gx.size() != 1 || Gz.size() != 1) { fprintf(stderr, "CC_FAIL generator: surface code d=%d invalid\n", dd); fails++; continue; }
+            const int dX = half_opt(Hz, Gx, n), dZ = half_opt(Hx, Gz, n), d = std::min(dX, dZ);
+            if (d != dd) { fprintf(stderr, "CC_FAIL generator: surface code d=%d has d=%d\n", dd, d); fails++; continue; }
+            Matrix mHx = to_matrix(Hx, n), mHz = to_matrix(Hz, n), mGx = to_matrix(Gx, n), mGz = to_matrix(Gz, n);
+            for (int half = 0; half < 2; half++) {   // finder alone: canonical correct, mutant 11 returns a trivial word
+                const std::vector<Mask>& H = half ? Hx : Hz;
+                const std::vector<Mask>& G = half ? Gz : Gx;
+                const std::vector<Mask>& S = half ? Hz : Hx;
+                for (int mt = 0; mt <= 11; mt += 11) {
+                    distcc::UbParams up; up.mutant = mt;
+                    distcc::UbFinder f(to_rows(H, n), to_rows(G, n), to_rows(S, n), 77 + (uint64_t)half, up);
+                    bool trivial = false, bad = false;
+                    for (int it = 0, tg = n + 1; it < 100; it++) {
+                        std::vector<int> e;
+                        if (!f.iterate(tg, e)) continue;
+                        Mask v = 0;
+                        for (int q : e) v |= 1u << q;
+                        if (!detected(G, v)) trivial = true;
+                        if (!in_kernel(H, v) || (int)e.size() >= tg) bad = true;
+                        tg = (int)e.size();
+                    }
+                    if (mt == 0) { e_surf++; if (trivial || bad) { e_surf_bad++; fails++; } }
+                    else { mut_runs[11]++; e_mut_halves++; if (trivial) e_mut11_unit++; }
+                }
+            }
+            for (int cfg = 0; cfg < 4; cfg++) {   // canonical, mutant 11, mutant 12, canonical with a late start
+                distcc::DriverOptions o;
+                o.ub_search = true; o.ub_pre = 1.0; o.ub_cap = 0.01;
+                if (cfg == 1) o.mutant = 11;
+                if (cfg == 2) o.mutant = 12;
+                if (cfg == 3) { o.ub_cap = -1; o.ub_pre = 0; o.ub_share = 0.9; o.ub_poll_mask = 0; o.ub_skip_polls = 3; }
+                RunOut r = run_driver(mHx, mHz, mGx, mGz, o, true, true);
+                if (cfg == 0 || cfg == 3) { e_surf++; if (!run_ok(r, d)) { e_surf_bad++; fails++; fprintf(stderr, "CC_FAIL partE surface d=%d swap=%d cfg=%d got %d\n", dd, swap, cfg, r.d); } }
+                else {
+                    mut_runs[o.mutant]++;
+                    if (!run_ok(r, d)) mut_bad[o.mutant]++;
+                    if (o.mutant == 12 && r.ok && r.d != d) e_mut12_wrong++;
+                }
+            }
+        }
+    printf("partE (rotated surface codes d = 3, 4, X/Z swapped): %ld canonical checks, %ld bad\n", e_surf, e_surf_bad);
+
     printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ, %ld with all-odd Hz), %ld driver runs, %ld bad, %ld RESULT -1\n",
            b_inst, b_dual, b_xorb, b_dxdz, b_odd, b_runs, b_bad, b_traps);
     printf("partD (MaxSAT split, -oddcap-skip off/on): %ld runs on %ld codes (%ld with an all-odd half), %ld bad\n", d_runs, b_inst, d_odd, d_bad);
+    printf("partE (ub-search finder): %ld halves x 300 iterations, %ld bad, %ld nondeterministic, reached d_h on %ld/%ld halves\n",
+           e_halves, e_bad, e_nondet, e_reach, e_halves);
+    printf("partE (driver with ub-search): %ld runs, %ld bad, %ld levels abandoned (U <= w)\n", e_runs, e_dbad, e_aborted);
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);
@@ -479,6 +665,12 @@ int main(int argc, char** argv) {
     printf("mutant 8 (overlap limit off by one): %ld/%ld half ladders wrong\n", mut_bad[8], mut_runs[8]);
     printf("mutant 9 (overlap with the parity checks H as K): %ld/%ld half ladders wrong\n", mut_bad[9], mut_runs[9]);
     printf("mutant 10 (overlap even-|g| tie cut): %ld/%ld half ladders wrong\n", mut_bad[10], mut_runs[10]);
+    printf("mutant 11 (ub-search without the detector check; halves/codes where a trivial word is lighter than d): finder returned a trivial word on %ld/%ld halves; driver %ld/%ld runs stopped or wrong\n",
+           e_mut11_unit, e_mut_halves, mut_bad[11], mut_runs[11] - e_mut_halves);
+    printf("mutant 12 (mutant 11 + words reported without verification): %ld/%ld driver runs failed, %ld of them with a wrong RESULT d OPTIMAL\n",
+           mut_bad[12], mut_runs[12], e_mut12_wrong);
+    if (e_mut11_unit == 0 || mut_bad[11] == 0 || mut_bad[12] == 0 || e_mut12_wrong == 0) { fprintf(stderr, "CC_FAIL GH-140 mutant expectations not met\n"); fails++; }
+    if (e_aborted == 0) { fprintf(stderr, "CC_FAIL GH-140 abort path never exercised\n"); fails++; }
     bool mut_ok = mut_bad[1] > 0 && mut_bad[2] > 0 && mut_bad[3] > 0 && b_seqbad4 > 0 && b_lock4bad > 0 &&
                   mut_bad[5] > 0 && mut_bad[6] > 0 && mut_bad[7] > 0 && mut_bad[8] > 0 && mut_bad[9] > 0 && mut_bad[10] > 0;
     if (!mut_ok) { fprintf(stderr, "CC_FAIL mutant expectations not met\n"); fails++; }

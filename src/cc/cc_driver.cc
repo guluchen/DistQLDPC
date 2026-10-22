@@ -13,6 +13,7 @@
 #include <string.h>
 #include <algorithm>
 #include <chrono>
+#include <functional>
 #include <memory>
 
 namespace distcc {
@@ -381,6 +382,133 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         fflush(trace);
     }
 
+    /* GH-140 -ub-search: one finder per searched half (with a verified dual map: the X half only) */
+    const double t_start = now_seconds();
+    const bool ubs = opt.ub_search || opt.ub_only;
+    std::unique_ptr<UbFinder> uf[2];
+    double ub_spent = 0;
+    std::string ub_trap;
+    int ub_curw = 0;   /* level in progress (0: none) */
+    if (ubs) {
+        UbParams up = opt.ub;
+        up.mutant = (opt.mutant == 11 || opt.mutant == 12) ? 11 : 0;
+        for (int k = 0; k < 2; k++) {
+            if (!hs[k].searched) continue;
+            const uint64_t fs = opt.seed * 0x9e3779b97f4a7c15ULL + 0x6a09e667f3bcc909ULL + (uint64_t)k;
+            uf[k].reset(new UbFinder(*hs[k].H, *hs[k].G, *hs[k].S, fs, up));
+            if (verb > 0)
+                printf("c cc: %s half ub-search: rank H %d, information set %d, triples %s, slack %d, li-cap %d\n", hs[k].tag,
+                       uf[k]->rank(), uf[k]->dim(), uf[k]->dim() <= up.triples_max_k ? "on" : "off", up.slack, up.li_cap);
+        }
+        if (verb > 0) {
+            if (opt.ub_only) printf("c cc: ub-search only (diagnostic): %.3fs finder budget, no level ladder\n", opt.ub_cap);
+            else printf("c cc: ub-search: pre-pass %.3fs, share %.3f of wall time, cap %s\n",
+                        opt.ub_cap >= 0 ? std::min(opt.ub_pre, opt.ub_cap) : opt.ub_pre, opt.ub_share,
+                        opt.ub_cap >= 0 ? (std::to_string(opt.ub_cap) + "s").c_str() : "none");
+        }
+        fflush(stdout);
+    }
+    auto ub_due = [&]() -> bool {
+        if (!ubs) return false;
+        if (opt.ub_cap >= 0 && ub_spent >= opt.ub_cap) return false;
+        if (opt.ub_only) return true;
+        const double pre = opt.ub_cap >= 0 ? std::min(opt.ub_pre, opt.ub_cap) : opt.ub_pre;
+        return ub_spent < pre + opt.ub_share * (now_seconds() - t_start);
+    };
+    /* one finder iteration on the half with the least finder time; a word is verified (mutant 12: not) before it
+     * lowers ub_h / U and is reported; a failure or lb_h > ub_h sets ub_trap */
+    auto ub_step = [&]() {
+        int k = -1;
+        for (int t = 0; t < 2; t++)
+            if (uf[t] && (k < 0 || uf[t]->stats().seconds < uf[k]->stats().seconds)) k = t;
+        if (k < 0) return;
+        const int target = U < INF ? U : n + 1;
+        std::vector<int> e;
+        if (!uf[k]->iterate(target, e)) return;
+        Half& h = hs[k];
+        const int w = (int)e.size();
+        std::string why;
+        if (opt.mutant != 12 && (w >= target || !verify_in_half(h, e, n, why))) {
+            ub_trap = std::string(h.tag) + " half ub-search word failed verification: " + (w >= target ? "not below the target" : why);
+            return;
+        }
+        if (verb > 0) {
+            printf("c cc: ub-search: %s half word of weight %d (iteration %llu, wall %.3fs)\n", h.tag, w,
+                   (unsigned long long)uf[k]->stats().iterations, now_seconds() - t_start);
+            printf("c witness %s (ub-search): %s\n", h.tag, support_string(e).c_str());
+        }
+        if (trace) {
+            fprintf(trace, "%s %d UB-SEARCH %llu %.6f %s\n", h.tag, w, (unsigned long long)uf[k]->stats().iterations,
+                    now_seconds() - t_start, support_string(e).c_str());
+            fflush(trace);
+        }
+        if (dual) {
+            std::vector<int> img;
+            for (size_t t = 0; t < e.size(); t++) img.push_back(in.dual_perm[e[t]]);
+            std::sort(img.begin(), img.end());
+            if (opt.mutant != 12 && !verify_in_half(hs[1], img, n, why)) {
+                ub_trap = "dual image of the X ub-search word failed verification in the Z half: " + why;
+                return;
+            }
+            hs[1].ub = std::min(hs[1].ub, w);
+        }
+        h.ub = std::min(h.ub, w);
+        if (w < U) {
+            U = w;
+            sink.bound(sink.ctx, "UB", (uint64_t)U);
+        }
+        fflush(stdout);
+        for (int t = 0; t < 2; t++)
+            if (hs[t].exists && hs[t].lb > hs[t].ub && !opt.ub_only) {
+                char buf[160];
+                snprintf(buf, sizeof(buf), "%s half lower bound %d exceeds its verified (ub-search) upper bound %d",
+                         hs[t].tag, hs[t].lb, hs[t].ub);
+                ub_trap = buf;
+            }
+    };
+    /* runs the finder while it is due; true: abandon the level in progress (U <= its weight) or a trap */
+    uint64_t ub_skip = opt.ub_skip_polls;
+    auto ub_poll = [&]() -> bool {   /* all time spent in here counts as finder time (so a share < 1 always ends) */
+        if (ub_skip > 0) { ub_skip--; return false; }
+        double t0 = now_seconds();
+        while (ub_trap.empty() && ub_due()) {
+            ub_step();
+            const double t1 = now_seconds();
+            ub_spent += t1 - t0;
+            t0 = t1;
+            if (ub_curw > 0 && U <= ub_curw) break;
+        }
+        return !ub_trap.empty() || (ub_curw > 0 && U <= ub_curw);
+    };
+    struct PollThunk { std::function<bool()> f; } thunk;
+    thunk.f = ub_poll;
+    auto ub_report = [&]() {
+        if (!ubs || !(verb > 0 || opt.stats)) return;
+        for (int k = 0; k < 2; k++) {
+            if (!uf[k]) continue;
+            const UbStats& st = uf[k]->stats();
+            printf("c cc%s: ub-search %s: iterations %llu, finder time %.3fs, kept %llu, nontrivial %llu, li-gain %llu, "
+                   "improvements %llu, rank %d, K %d, ub %d\n", opt.stats ? "-stats" : "", hs[k].tag,
+                   (unsigned long long)st.iterations, st.seconds, (unsigned long long)st.kept,
+                   (unsigned long long)st.nontrivial, (unsigned long long)st.li_gain, (unsigned long long)st.found,
+                   uf[k]->rank(), uf[k]->dim(), hs[k].ub == INF ? -1 : hs[k].ub);
+        }
+        fflush(stdout);
+    };
+    if (opt.ub_only) {   /* diagnostic: the finder alone for the budget; RESULT -1 (no answer) */
+        ub_poll();
+        if (!ub_trap.empty()) return fail(ub_trap);
+        ub_report();
+        if (verb > 0) printf("c cc: ub-search only: U %d after %.3fs (no lower-bound search)\n", U == INF ? -1 : U, ub_spent);
+        fflush(stdout);
+        if (trace) { fprintf(trace, "# ub-only U %d\n", U == INF ? -1 : U); fclose(trace); trace = NULL; }
+        sink.result(sink.ctx, -1, false);
+        return -1;
+    }
+    if (ubs)
+        for (int k = 0; k < 2; k++)
+            if (hs[k].search) hs[k].search->set_poll([](void* c) { return ((PollThunk*)c)->f(); }, &thunk, opt.ub_poll_mask);
+
     int lastLB = 1, lastTry = 0, d = -1;   /* the trivial bound 1 is not emitted */
     {   /* parity: the certified bound 2 of a qualifying half is emitted before the first level */
         int glb0 = INF;
@@ -391,8 +519,12 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             lastLB = glb0;
         }
     }
-    const double t_start = now_seconds();
     for (;;) {
+        if (ubs) {   /* GH-140: finder slices due between levels (the pre-pass happens here on the first pass) */
+            ub_curw = 0;
+            ub_poll();
+            if (!ub_trap.empty()) return fail(ub_trap);
+        }
         int glb = INF;
         for (int k = 0; k < 2; k++)
             if (hs[k].exists && hs[k].lb < glb) glb = hs[k].lb;
@@ -414,12 +546,16 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (w > n) return fail(std::string(h.tag) + " half: rank shows a nontrivial logical but no level <= n found one");
         if (w > lastTry) { sink.bound(sink.ctx, "TRY", (uint64_t)w); lastTry = w; }
         const double t0 = now_seconds();
+        ub_curw = w;
         LevelResult r = h.search->run_level(w);
+        ub_curw = 0;
         const double dt = now_seconds() - t0;
+        if (!ub_trap.empty()) return fail(ub_trap);
         h.last_nodes = r.nodes;
         h.total_nodes += r.nodes;
         h.total_time += dt;
-        const char* vs = r.verdict == LEVEL_FOUND ? "FOUND" : r.verdict == LEVEL_EMPTY ? "EMPTY" : "INCONSISTENT";
+        const char* vs = r.verdict == LEVEL_FOUND ? "FOUND" : r.verdict == LEVEL_EMPTY ? "EMPTY" :
+                         r.verdict == LEVEL_ABORTED ? "ABORTED" : "INCONSISTENT";
         if (trace) {
             fprintf(trace, "%s %d %s %llu %.6f%s%s\n", h.tag, w, vs, (unsigned long long)r.nodes, dt,
                     r.witness.empty() ? "" : " ", support_string(r.witness).c_str());
@@ -447,6 +583,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             snprintf(buf, sizeof(buf), "%s half: nontrivial syndrome-free cluster of weight %zu below level %d (precondition violated)",
                      h.tag, r.witness.size(), w);
             return fail(buf);
+        }
+        if (r.verdict == LEVEL_ABORTED) {   /* GH-140: U <= w (ub-search); lb unchanged, the stop rule decides next */
+            if (verb > 0) printf("c cc: %s half level %d abandoned: ub-search upper bound %d <= %d\n", h.tag, w, U, w);
+            fflush(stdout);
+            continue;
         }
         bool stop = false;
         if (r.verdict == LEVEL_EMPTY) {
@@ -503,6 +644,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             lastLB = glb;
         }
     }
+    ub_report();
     if (verb > 0 || opt.stats) {
         printf("c cc%s: total nodes X %llu Z %llu, search time X %.3fs Z %.3fs, wall %.3fs\n", opt.stats ? "-stats" : "",
                (unsigned long long)hs[0].total_nodes, (unsigned long long)hs[1].total_nodes, hs[0].total_time,
