@@ -50,6 +50,14 @@
 //   every UB >= d, LBs monotone <= d, and the first UB (the pre-pass U0) >= d. Test mutants: 1 (finder without its
 //   detector check: trivial words must be rejected by the verification; answers stay correct) and 2 (mutant 1 plus
 //   words used without verification: some answer must be wrong, on the codes and on the rotated surface codes).
+// GH-146 (-ub-isd collision mode of the same finder): Part E (a) is repeated with six collision configurations (Stern
+//   p = 1, 2; Dumer p = 1, 2; window sizes automatic / 0 / 2 / 3; walk 0 / 1 / 8 / 32 Canteaut-Chabaud swaps; batch
+//   1 / 2 / 3; refresh 0 / 5): every returned word is in ker H, detected by G, lighter than the target and >= d_h;
+//   same seed, same words; the halves where d_h is reached are counted and must be >= 90 % per configuration; mutant 11
+//   (no detector check) must return a trivial word. Part E (b): the CC driver with Stern / Dumer (pre-pass, late start,
+//   finder-only), and mutants 11 / 12 in collision mode (12 = words reported without verification: some answer must be
+//   wrong). Part F: the MaxSAT pre-pass in collision mode (budget 1 s, cut after 2 iterations) and its mutants 1 / 2
+//   (2 must answer wrongly on the codes or on the rotated surface codes).
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -225,7 +233,8 @@ static RunOut run_driver(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
 }
 
 // GH-133 Part D: the production MaxSAT split driver (fresh solver per probe, -no-card) with -oddcap-skip off/on
-struct PreCfg { const char* name; double pre; uint64_t iters; bool oddcap; uint64_t seed; int dualmode; bool symbreak; int card; int mutant; };
+struct PreCfg { const char* name; double pre; uint64_t iters; bool oddcap; uint64_t seed; int dualmode; bool symbreak; int card; int mutant;
+                int isd = 0; int isd_p = 2; };   // GH-146: collision mode of the pre-pass finder
 static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool oddcap, const PreCfg* pc = NULL) {
     RunOut r; r.ok = false; r.d = -2;
     int fd[2];
@@ -240,6 +249,7 @@ static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
         g_oddcap_skip = oddcap;
         if (pc) {   // GH-144 Part F
             g_ub_pre = pc->pre; g_ub_pre_max_iters = pc->iters; g_seed = pc->seed; g_ub_pre_mutant = pc->mutant;
+            g_ub_isd.isd = pc->isd; g_ub_isd.isd_p = pc->isd_p;   // GH-146 (child process only)
             (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], pc->card, pc->symbreak, pc->dualmode, false);
         } else
         (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], 0, true, DUALMODE_SHARE, false);
@@ -389,6 +399,15 @@ int main(int argc, char** argv) {
     long b_traps = 0, d_runs = 0, d_bad = 0, d_odd = 0;
     long f_runs = 0, f_bad = 0, f_above = 0, f_exact = 0, f_m1_runs = 0, f_m1_bad = 0, f_m2_runs = 0, f_m2_wrong = 0;
     long e_halves = 0, e_bad = 0, e_reach = 0, e_nondet = 0, e_mut11_unit = 0, e_runs = 0, e_dbad = 0, e_aborted = 0, e_mut12_wrong = 0, e_mut_halves = 0;
+    // GH-146 collision mode
+    static const struct ICfg { const char* name; int isd, p, l, walk, batch, refresh; } icfgs[] = {
+        {"stern2", 1, 2, -1, 8, 1, 0}, {"stern1", 1, 1, -1, 8, 1, 0}, {"dumer2", 2, 2, -1, 8, 1, 0},
+        {"stern2-l0-fresh", 1, 2, 0, 0, 1, 0}, {"dumer1-l2-w1-b3-r5", 2, 1, 2, 1, 3, 5}, {"stern2-l3-w32-b2", 1, 2, 3, 32, 2, 0},
+    };
+    const int NI = (int)(sizeof(icfgs) / sizeof(icfgs[0]));
+    long i_halves[8] = {0}, i_bad[8] = {0}, i_nondet[8] = {0}, i_reach[8] = {0}, i_mut_halves = 0, i_mut_trivial = 0;
+    long i_runs = 0, i_dbad = 0, i_m11_runs = 0, i_m11_bad = 0, i_m12_runs = 0, i_m12_bad = 0, i_m12_wrong = 0;
+    long f_isd_runs = 0, f_isd_bad = 0, f_isd_m1_runs = 0, f_isd_m1_bad = 0, f_isd_m2_runs = 0, f_isd_m2_wrong = 0;
     for (int inst = 0; inst < NB; inst++) {
         const int n = 6 + (int)rnd(11);
         std::vector<std::vector<int> > gens;
@@ -535,6 +554,76 @@ int main(int argc, char** argv) {
                 mut_runs[11]++;
                 if (trivial) e_mut11_unit++;
             }
+            for (int half = 0; half < 2; half++) {   // GH-146: the finder alone in collision mode
+                const std::vector<Mask>& H = half ? Hx : Hz;
+                const std::vector<Mask>& G = half ? Gz : Gx;
+                const std::vector<Mask>& S = half ? Hz : Hx;
+                const int dh = half ? dZ : dX;
+                const uint64_t fseed = 5000 + (uint64_t)inst * 2 + (uint64_t)half;
+                for (int ci = 0; ci < NI; ci++) {
+                    const ICfg& ic = icfgs[ci];
+                    distcc::UbParams up;
+                    up.isd = ic.isd; up.isd_p = ic.p; up.isd_l = ic.l; up.isd_walk = ic.walk; up.isd_batch = ic.batch; up.isd_refresh = ic.refresh;
+                    distcc::UbFinder f(to_rows(H, n), to_rows(G, n), to_rows(S, n), fseed + 77 * (uint64_t)ci, up);
+                    distcc::UbFinder f2(to_rows(H, n), to_rows(G, n), to_rows(S, n), fseed + 77 * (uint64_t)ci, up);
+                    int target = n + 1;
+                    bool bad = false;
+                    for (int it = 0; it < 300 && !bad; it++) {
+                        std::vector<int> e1, e2;
+                        const bool g1 = f.iterate(target, e1), g2 = f2.iterate(target, e2);
+                        if (g1 != g2 || e1 != e2) { bad = true; i_nondet[ci]++; break; }
+                        if (!g1) continue;
+                        Mask v = 0;
+                        for (int q : e1) v |= 1u << q;
+                        if (popc(v) != (int)e1.size() || !in_kernel(H, v) || !detected(G, v) || (int)e1.size() >= target ||
+                            (int)e1.size() < dh) bad = true;
+                        else target = (int)e1.size();
+                    }
+                    i_halves[ci]++;
+                    if (bad) { i_bad[ci]++; fails++; if (i_bad[ci] <= 5) fprintf(stderr, "CC_FAIL GH-146 finder %s inst=%d half=%d d_h=%d\n", ic.name, inst, half, dh); }
+                    else if (target == dh) i_reach[ci]++;
+                }
+                if (min_span_weight(S, n) >= dh) continue;   // mutant 11 can only show where a trivial word is lighter than d_h
+                distcc::UbParams um;
+                um.isd = 1 + (inst & 1); um.isd_p = 2; um.mutant = 11;
+                distcc::UbFinder fm(to_rows(H, n), to_rows(G, n), to_rows(S, n), fseed, um);
+                bool trivial = false;
+                for (int it = 0, tg = n + 1; it < 50 && !trivial; it++) {
+                    std::vector<int> e;
+                    if (!fm.iterate(tg, e)) continue;
+                    Mask v = 0;
+                    for (int q : e) v |= 1u << q;
+                    if (!detected(G, v)) trivial = true;
+                    else tg = (int)e.size();
+                }
+                i_mut_halves++;
+                if (trivial) i_mut_trivial++;
+            }
+            {   // GH-146: the CC driver with the finder in collision mode (canonical configurations and mutants 11 / 12)
+                const uint64_t sk = rnd(40);
+                for (int cfg = 0; cfg < 5; cfg++) {
+                    distcc::DriverOptions o;
+                    o.ub_search = true;
+                    o.ub.isd = (cfg & 1) ? 2 : 1; o.ub.isd_p = cfg == 2 ? 1 : 2;
+                    if (cfg == 0) { o.ub_pre = 1.0; o.ub_cap = 0.01; }                                   // pre-pass
+                    if (cfg == 1) { o.ub_share = 0.9; o.ub_poll_mask = 0; o.ub_skip_polls = sk; o.ub_hits = 0; o.ub_basis = false; }   // late start
+                    if (cfg == 2) { o.ub_cap = 0.005; o.ub_only = true; }                               // finder only
+                    if (cfg == 3) { o.ub_pre = 1.0; o.ub_cap = 0.005; o.mutant = 11; }
+                    if (cfg == 4) { o.ub_pre = 1.0; o.ub_cap = 0.005; o.mutant = 12; }
+                    RunOut r = run_driver(mHx, mHz, mGx, mGz, o, true, true);
+                    if (cfg >= 3) {
+                        if (!(min_span_weight(Hx, n) < dX && dX == d) && !(min_span_weight(Hz, n) < dZ && dZ == d)) continue;
+                        if (cfg == 3) { i_m11_runs++; if (!run_ok(r, d)) i_m11_bad++; }
+                        else { i_m12_runs++; if (!run_ok(r, d)) i_m12_bad++; if (r.ok && r.d != d) i_m12_wrong++; }
+                        continue;
+                    }
+                    i_runs++;
+                    bool ok;
+                    if (o.ub_only) { ok = r.d == -1 && r.lbs.empty(); for (long long ub : r.ubs) if (ub < d) ok = false; }
+                    else ok = run_ok(r, d);
+                    if (!ok) { i_dbad++; fails++; if (i_dbad <= 10) fprintf(stderr, "CC_FAIL GH-146 driver inst=%d cfg=%d: d=%d got %d\n", inst, cfg, d, r.d); }
+                }
+            }
             struct UCfg { const char* name; double pre, cap, share; uint64_t mask, skip; bool dual, ubb, seq, only; uint64_t seed; int mutant; };
             const uint64_t sk1 = rnd(40), sk2 = rnd(150), sk3 = rnd(40);
             const UCfg ucfgs[] = {
@@ -611,6 +700,16 @@ int main(int argc, char** argv) {
                 if (ok) { if (r.ubs[0] > d) f_above++; else f_exact++; }
                 if (!ok) { f_bad++; fails++; if (f_bad <= 10) fprintf(stderr, "CC_FAIL partF inst=%d n=%d cfg=%s: d=%d got %d (ubs %zu)\n", inst, n, c.name, d, r.d, r.ubs.size()); }
             }
+            for (int ic = 0; ic < 4; ic++) {   // GH-146: the pre-pass finder in collision mode, and mutants 1 / 2
+                PreCfg c = {"isd", 1.0, ic == 1 ? (uint64_t)2 : 0, true, (uint64_t)(inst % 3), DUALMODE_SHARE, true, 0, ic >= 2 ? ic - 1 : 0};
+                c.isd = 1 + (ic & 1); c.isd_p = 1 + ((inst >> 1) & 1);
+                RunOut r = run_maxsat(mHx, mHz, mGx, mGz, true, &c);
+                if (ic == 3) { f_isd_m2_runs++; if (r.ok && r.d != d) f_isd_m2_wrong++; continue; }
+                const bool ok = run_ok(r, d) && !r.ubs.empty();
+                if (ic == 2) { f_isd_m1_runs++; if (!run_ok(r, d)) { f_isd_m1_bad++; fails++; fprintf(stderr, "CC_FAIL GH-146 partF mutant1 inst=%d: d=%d got %d\n", inst, d, r.d); } continue; }
+                f_isd_runs++;
+                if (!ok) { f_isd_bad++; fails++; if (f_isd_bad <= 10) fprintf(stderr, "CC_FAIL GH-146 partF inst=%d n=%d cfg=%d: d=%d got %d\n", inst, n, ic, d, r.d); }
+            }
         }
     }
     // Part E on rotated surface codes [[d^2, 1, d]] (d = 3, 4; also with X and Z swapped): weight-2 boundary stabilizers
@@ -649,8 +748,10 @@ int main(int argc, char** argv) {
                 const std::vector<Mask>& H = half ? Hx : Hz;
                 const std::vector<Mask>& G = half ? Gz : Gx;
                 const std::vector<Mask>& S = half ? Hz : Hx;
-                for (int mt = 0; mt <= 11; mt += 11) {
+                for (int mi = 0; mi < 6; mi++) {   // GH-146: mi 2..5 = collision mode (Stern, Dumer)
+                    const int mt = (mi & 1) ? 11 : 0;
                     distcc::UbParams up; up.mutant = mt;
+                    if (mi >= 2) { up.isd = mi < 4 ? 1 : 2; up.isd_p = 2; }
                     distcc::UbFinder f(to_rows(H, n), to_rows(G, n), to_rows(S, n), 77 + (uint64_t)half, up);
                     bool trivial = false, bad = false;
                     for (int it = 0, tg = n + 1; it < 100; it++) {
@@ -663,17 +764,22 @@ int main(int argc, char** argv) {
                         tg = (int)e.size();
                     }
                     if (mt == 0) { e_surf++; if (trivial || bad) { e_surf_bad++; fails++; } }
+                    else if (mi >= 2) { i_mut_halves++; if (trivial) i_mut_trivial++; }
                     else { mut_runs[11]++; e_mut_halves++; if (trivial) e_mut11_unit++; }
                 }
             }
-            for (int cfg = 0; cfg < 4; cfg++) {   // canonical, mutant 11, mutant 12, canonical with a late start
+            for (int cfg = 0; cfg < 8; cfg++) {   // canonical, mutant 11, mutant 12, canonical with a late start; 4-7: the same in collision mode (GH-146)
                 distcc::DriverOptions o;
                 o.ub_search = true; o.ub_pre = 1.0; o.ub_cap = 0.01;
-                if (cfg == 1) o.mutant = 11;
-                if (cfg == 2) o.mutant = 12;
-                if (cfg == 3) { o.ub_cap = -1; o.ub_pre = 0; o.ub_share = 0.9; o.ub_poll_mask = 0; o.ub_skip_polls = 3; }
+                if (cfg >= 4) { o.ub.isd = 1 + (cfg & 1); o.ub.isd_p = 2; }
+                const int cb = cfg & 3;
+                if (cb == 1) o.mutant = 11;
+                if (cb == 2) o.mutant = 12;
+                if (cb == 3) { o.ub_cap = -1; o.ub_pre = 0; o.ub_share = 0.9; o.ub_poll_mask = 0; o.ub_skip_polls = 3; }
                 RunOut r = run_driver(mHx, mHz, mGx, mGz, o, true, true);
-                if (cfg == 0 || cfg == 3) { e_surf++; if (!run_ok(r, d)) { e_surf_bad++; fails++; fprintf(stderr, "CC_FAIL partE surface d=%d swap=%d cfg=%d got %d\n", dd, swap, cfg, r.d); } }
+                if (cfg >= 4 && cb == 2) { i_m12_runs++; if (!run_ok(r, d)) i_m12_bad++; if (r.ok && r.d != d) i_m12_wrong++; continue; }
+                if (cfg >= 4 && cb == 1) { i_m11_runs++; if (!run_ok(r, d)) i_m11_bad++; continue; }
+                if (cb == 0 || cb == 3) { e_surf++; if (!run_ok(r, d)) { e_surf_bad++; fails++; fprintf(stderr, "CC_FAIL partE surface d=%d swap=%d cfg=%d got %d\n", dd, swap, cfg, r.d); } }
                 else {
                     mut_runs[o.mutant]++;
                     if (!run_ok(r, d)) mut_bad[o.mutant]++;
@@ -708,10 +814,12 @@ int main(int argc, char** argv) {
         if (d != dd || Gx.size() != 1) { fprintf(stderr, "CC_FAIL generator: partF surface d=%d\n", dd); fails++; continue; }
         Matrix mHx = to_matrix(SX, n), mHz = to_matrix(SZ, n), mGx = to_matrix(Gx, n), mGz = to_matrix(Gz, n);
         for (int mt = 0; mt <= 2; mt++)
-            for (uint64_t sd = 0; sd < 3; sd++) {
-                PreCfg c = {"surface", 1.0, 0, true, sd, DUALMODE_SHARE, true, 0, mt};
+            for (uint64_t sd = 0; sd < 6; sd++) {   // sd 3..5: collision mode (GH-146)
+                PreCfg c = {"surface", 1.0, 0, true, sd % 3, DUALMODE_SHARE, true, 0, mt};
+                if (sd >= 3) { c.isd = 1 + (int)(sd & 1); c.isd_p = 2; }
                 RunOut r = run_maxsat(mHx, mHz, mGx, mGz, true, &c);
                 if (mt < 2) { f_surf++; if (!run_ok(r, d)) { f_surf_bad++; fails++; fprintf(stderr, "CC_FAIL partF surface d=%d mutant=%d seed=%llu got %d\n", dd, mt, (unsigned long long)sd, r.d); } }
+                else if (sd >= 3) { f_isd_m2_runs++; if (r.ok && r.d != d) f_isd_m2_wrong++; }
                 else { f_surf_m2++; if (r.ok && r.d != d) f_surf_m2_wrong++; }
             }
     }
@@ -729,6 +837,18 @@ int main(int argc, char** argv) {
     printf("partE (ub-search finder): %ld halves x 300 iterations, %ld bad, %ld nondeterministic, reached d_h on %ld/%ld halves\n",
            e_halves, e_bad, e_nondet, e_reach, e_halves);
     printf("partE (driver with ub-search): %ld runs, %ld bad, %ld levels abandoned (U <= w)\n", e_runs, e_dbad, e_aborted);
+
+    for (int ci = 0; ci < NI; ci++) {
+        printf("GH-146 finder %-20s: %ld halves x 300 iterations, %ld bad, %ld nondeterministic, reached d_h on %ld/%ld halves\n",
+               icfgs[ci].name, i_halves[ci], i_bad[ci], i_nondet[ci], i_reach[ci], i_halves[ci]);
+        if (i_halves[ci] > 0 && i_reach[ci] * 10 < i_halves[ci] * 9) { fprintf(stderr, "CC_FAIL GH-146 finder %s reaches d_h on < 90 %% of the halves\n", icfgs[ci].name); fails++; }
+    }
+    printf("GH-146 finder mutant 11 (collision mode, no detector check): trivial word returned on %ld/%ld halves\n", i_mut_trivial, i_mut_halves);
+    printf("GH-146 CC driver in collision mode: %ld runs, %ld bad; mutant 11 %ld/%ld runs stopped or wrong; mutant 12 %ld/%ld failed, %ld with a wrong RESULT d OPTIMAL\n",
+           i_runs, i_dbad, i_m11_bad, i_m11_runs, i_m12_bad, i_m12_runs, i_m12_wrong);
+    printf("GH-146 MaxSAT pre-pass in collision mode: %ld runs, %ld bad; mutant 1 %ld runs, %ld bad; mutant 2 %ld/%ld runs wrong (codes + surface)\n",
+           f_isd_runs, f_isd_bad, f_isd_m1_runs, f_isd_m1_bad, f_isd_m2_wrong, f_isd_m2_runs);
+    if (i_mut_trivial == 0 || i_m11_bad == 0 || i_m12_wrong == 0 || f_isd_m2_wrong == 0) { fprintf(stderr, "CC_FAIL GH-146 mutant expectations not met\n"); fails++; }
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);

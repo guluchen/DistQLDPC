@@ -397,8 +397,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             const uint64_t fs = opt.seed * 0x9e3779b97f4a7c15ULL + 0x6a09e667f3bcc909ULL + (uint64_t)k;
             uf[k].reset(new UbFinder(*hs[k].H, *hs[k].G, *hs[k].S, fs, up));
             if (verb > 0)
-                printf("c cc: %s half ub-search: rank H %d, information set %d, triples %s, slack %d, li-cap %d\n", hs[k].tag,
-                       uf[k]->rank(), uf[k]->dim(), uf[k]->dim() <= up.triples_max_k ? "on" : "off", up.slack, up.li_cap);
+                printf("c cc: %s half ub-search: rank H %d, information set %d, triples %s, slack %d, li-cap %d%s\n", hs[k].tag,
+                       uf[k]->rank(), uf[k]->dim(), uf[k]->dim() <= up.triples_max_k ? "on" : "off", up.slack, up.li_cap,
+                       isd_desc(up, *uf[k]).c_str());
         }
         if (verb > 0) {
             if (opt.ub_only) printf("c cc: ub-search only (diagnostic): %.3fs finder budget, no level ladder\n", opt.ub_cap);
@@ -510,6 +511,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                    (unsigned long long)st.iterations, st.seconds, (unsigned long long)st.kept,
                    (unsigned long long)st.nontrivial, (unsigned long long)st.li_gain, (unsigned long long)st.found,
                    uf[k]->rank(), uf[k]->dim(), hs[k].ub == INF ? -1 : hs[k].ub);
+            if (opt.ub.isd)   /* GH-146 */
+                printf("c cc%s: ub-search %s collision: rounds %llu, colliding pairs %llu (nontrivial %llu)\n", opt.stats ? "-stats" : "",
+                       hs[k].tag, (unsigned long long)st.rounds, (unsigned long long)st.collisions, (unsigned long long)st.coll_nt);
         }
         fflush(stdout);
     };

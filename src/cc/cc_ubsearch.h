@@ -30,11 +30,34 @@
  * Test mutant 11 (-cc-mutant=11): the detector check of step 4 is skipped (trivial words accepted) and step 5 too
  * (local improvement would mostly cancel a trivial word to the empty word); the driver's verification must reject
  * such words (TRAP). Mutant 12 is a driver mutant (cc_driver.h).
+ *
+ * GH-146 collision mode (-ub-isd=stern|dumer[:p,l,w]; isd > 0 below). Written from the published descriptions of
+ * Stern's algorithm (1988), Dumer's / Finiasz-Sendrier's split with an overlapping window, and the Canteaut-Chabaud
+ * random walk on information sets; no third-party code was read. Steps 2-3 are kept (systematic basis c_j of
+ * ker H over the information set I, reduced rows A); only the enumeration and the re-randomisation change:
+ *   a. re-randomisation (Canteaut-Chabaud): instead of a fresh elimination every iteration, w pivot swaps: take a
+ *      random information column j with A_j != 0 and a random reduced row i with A[i][j] = 1; adding row i to every
+ *      other row with a 1 in column j makes j the pivot of row i and the old pivot P_i an information column. On
+ *      the stored columns this is: A_j' += A_j + e_i for every information column j' != j with A[i][j'] = 1, and
+ *      the new information column P_i has the column vector A_j (relabel j <-> P_i). The systematic invariant
+ *      (each c_j in ker H, identity on I) is preserved exactly (GF(2) row operations). A full random elimination
+ *      runs at the start and every `isd_refresh` iterations.
+ *   b. collision (Stern): split I at random into two halves I1, I2 and pick a random window Z of l reduced rows;
+ *      enumerate all subsets of size <= p of I1 (list L1) and of I2 (list L2); the key of a subset T is the window
+ *      part of sum_{j in T} A_j (l bits). Pairs (T1, T2) with equal keys give words c = sum_{j in T1 u T2} c_j with
+ *      no 1 in the window; their weight |T1| + |T2| + |sum A_j| is computed for every colliding pair (bucket sort of
+ *      L1 by key). Dumer / Finiasz-Sendrier variant (isd = 2): the window pivot columns P_i (i in Z) are elements
+ *      too, split with I1 / I2; such an element contributes e_i to the key and nothing to the word (it stands for a
+ *      1 of the word inside the window), so words with up to p ones per side on I u P_Z are matched.
+ *   Kept words (weight <= threshold, detector check, local improvement) are handled exactly as in steps 4-5; single
+ *   basis words c_j are also tried every round. One "iteration" (the unit counted by the stop rules) is `isd_batch`
+ *   such rounds (default 1); the lightest word of the iteration is returned.
  */
 #ifndef DISTQLDPC_CC_UBSEARCH_H
 #define DISTQLDPC_CC_UBSEARCH_H
 
 #include <stdint.h>
+#include <string>
 #include <vector>
 
 #include "cc_half.h"
@@ -50,13 +73,29 @@ struct UbParams {
                             each new order from a random one of them by 1..max(1, n/50) random transpositions (fitness:
                             lightest nontrivial word of the iteration, then the mean weight of the nontrivial systematic
                             words); 0: a fresh random order every iteration */
-    UbParams() : triples_max_k(0), slack(4), li_cap(64), mutant(0), evo_mu(0) {}
+    /* GH-146 collision mode */
+    int isd;             /* 0: GH-140 enumeration (default); 1: Stern; 2: Dumer / Finiasz-Sendrier (window columns as elements) */
+    int isd_p;           /* subsets of size <= p per side (1..3) */
+    int isd_l;           /* window rows (< 0: automatic, ~log2 of the list size) */
+    int isd_walk;        /* Canteaut-Chabaud pivot swaps per round (0: a fresh random elimination every round) */
+    int isd_refresh;     /* a fresh random elimination every this many rounds (0: never after the first) */
+    int isd_batch;       /* rounds per iteration (>= 1) */
+    UbParams() : triples_max_k(0), slack(4), li_cap(64), mutant(0), evo_mu(0),
+                 isd(0), isd_p(2), isd_l(-1), isd_walk(32), isd_refresh(0), isd_batch(1) {}
+};
+
+/* a kept candidate word: sum of cnt systematic basis words c_j (information indices j[0..cnt-1]) */
+struct UbCand {
+    int w;
+    int cnt;
+    int j[6];
 };
 
 struct UbStats {
     uint64_t iterations, kept, nontrivial, li_gain, found;
+    uint64_t rounds, collisions, coll_nt;   /* GH-146 collision mode: rounds, colliding pairs, of them nontrivial */
     double seconds;
-    UbStats() : iterations(0), kept(0), nontrivial(0), li_gain(0), found(0), seconds(0) {}
+    UbStats() : iterations(0), kept(0), nontrivial(0), li_gain(0), found(0), rounds(0), collisions(0), coll_nt(0), seconds(0) {}
 };
 
 class UbFinder {
@@ -73,6 +112,8 @@ public:
     bool last_hit() const { return hit_; }
 
     int n() const { return n_; }
+    int isd_l() const { return l_; }          /* GH-146: effective window size (collision mode) */
+    int isd_batch() const { return batch_; }  /* GH-146: rounds per iteration (collision mode) */
     int rank() const { return r_; }
     int dim() const { return K_; }
     const UbStats& stats() const { return st_; }
@@ -99,13 +140,36 @@ private:
     std::vector<char> detok_;
     std::vector<uint64_t> cbuf_;             /* candidate word (W_ words) */
     UbStats st_;
+    /* GH-146 collision mode */
+    int l_, batch_;
+    bool isd_ready_;
+    uint64_t rounds_;
+    std::vector<int> rowperm_, elems_, win_;
+    std::vector<uint32_t> ekey_;             /* element key (window part of its column) */
+    std::vector<int> einfo_;                 /* element -> information index, or -1 for a window pivot element */
+    struct Sub { uint32_t key; int a, b, c; int ninfo; };   /* subset of one side: up to 3 information indices (-1: none) */
+    std::vector<Sub> L1_, L2_;
+    std::vector<uint64_t> X1_;               /* L1 subset vectors (sum A_j, rw_ words each), in bucket order */
+    std::vector<uint64_t> D1_;               /* L1 subset detector parities (kw_ words each), in bucket order */
+    std::vector<int> head_;                  /* bucket starts (2^l + 1) */
+    std::vector<Sub> L1s_;                   /* L1 in bucket order */
     struct Member { int best; double mean; std::vector<int> perm; };
     std::vector<Member> pop_;                /* evolution population (evo_mu > 0) */
 
     const uint64_t* det_of(int j);
+    void eliminate_random();                 /* steps 1-3: random column order, elimination, systematic columns */
+    bool cc_swap();                          /* GH-146: one Canteaut-Chabaud pivot swap */
+    void isd_round(int& best_raw, std::vector<UbCand>& cands);
+    bool iterate_isd(int target, std::vector<int>& out);
+    void build_side(const int* el, int cnt, std::vector<Sub>& L);
     void build_word(const int* js, int cnt, std::vector<uint64_t>& c) const;
     int local_improve(std::vector<uint64_t>& c, int wt);
 };
+
+/* GH-146: parse "off" | "stern[:P,L,W,B,R]" | "dumer[:P,L,W,B,R]" into the isd* fields of p (empty field = default);
+ * false on a malformed value. isd_desc: "" for isd = 0, else ", collision stern p 2 l 15 walk 8 batch 12 refresh 0". */
+bool parse_isd(const char* s, UbParams& p);
+std::string isd_desc(const UbParams& p, const UbFinder& f);
 
 } /* namespace distcc */
 

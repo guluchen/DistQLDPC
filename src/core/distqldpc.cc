@@ -1196,6 +1196,11 @@ static uint64_t g_ub_pre_hits = 16;        /* -ub-pre-hits=H: a half stops after
 static uint64_t g_ub_pre_plateau = 1000;   /* -ub-pre-plateau=P: ... or after max(P, 4 x its iteration count at its last
                                               improvement) iterations without improvement (1000: S0 of GH-144) */
 static const double UBPRE_ON_SECONDS = 60.0;   /* -ub-pre=on: the S recommended by S0 of GH-144 */
+/* GH-146: -ub-isd=off|stern|dumer[:P,L,W,B,R] collision mode of the shared finder (cc_ubsearch.h), applied to the CC
+ * engine's -ub-search finder and to the -ub-pre pre-pass; default off = GH-140's enumeration. Only the isd* fields
+ * of this struct are used. */
+static distcc::UbParams g_ub_isd;
+static bool g_ub_isd_given = false;
 
 static distcc::SparseRows cc_rows(const Matrix& M);   /* GH-124, defined with the CC engine below */
 static double wall_seconds();                          /* defined with the forked driver below */
@@ -1254,12 +1259,14 @@ static void ub_prepass(const CssHalf hs[2], const Matrix* Ss[2], int n, double b
         Hr[k] = cc_rows(*hs[k].H); Gr[k] = cc_rows(*hs[k].G); Sr[k] = cc_rows(*Ss[k]);
         distcc::UbParams up;
         up.mutant = g_ub_pre_mutant ? 11 : 0;
+        up.isd = g_ub_isd.isd; up.isd_p = g_ub_isd.isd_p; up.isd_l = g_ub_isd.isd_l;   /* GH-146 */
+        up.isd_walk = g_ub_isd.isd_walk; up.isd_batch = g_ub_isd.isd_batch; up.isd_refresh = g_ub_isd.isd_refresh;
         const uint64_t fs = g_seed * 0x9e3779b97f4a7c15ULL + 0x6a09e667f3bcc909ULL + (uint64_t)k;   /* = the CC driver's */
         f[k].reset(new distcc::UbFinder(Hr[k], Gr[k], Sr[k], fs, up));
         conv[k] = false;
         if (verb > 0)
-            printf("c ub-pre %s: rank H %d, information set %d, seed %llu%s\n", hs[k].tag, f[k]->rank(), f[k]->dim(),
-                   (unsigned long long)g_seed, g_ub_pre_mutant ? " [TEST MUTANT]" : "");
+            printf("c ub-pre %s: rank H %d, information set %d, seed %llu%s%s\n", hs[k].tag, f[k]->rank(), f[k]->dim(),
+                   (unsigned long long)g_seed, g_ub_pre_mutant ? " [TEST MUTANT]" : "", distcc::isd_desc(up, *f[k]).c_str());
     }
     uint64_t U = INF;
     for (;;) {
@@ -2152,6 +2159,12 @@ int main(int argc, char** argv) {
             g_ub_pre_plateau = v;
         } else if (!strncmp(argv[i], "-ub-pre", 7))
             die("invalid -ub-pre (off | on | S seconds > 0)");
+        else if (!strncmp(argv[i], "-ub-isd=", 8)) {   /* GH-146 */
+            if (!distcc::parse_isd(argv[i] + 8, g_ub_isd))
+                die("invalid -ub-isd (off | stern[:P,L,W,B,R] | dumer[:P,L,W,B,R]; P = 1..2, L = 0..20, W = 0..100000, "
+                    "B = 1..4096, R = 0..1000000000; empty field = default)");
+            g_ub_isd_given = true;
+        }
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
             g_engine = ENGINE_MAXSAT;
         else if (!strcmp(argv[i], "-engine=cc"))
@@ -2303,6 +2316,13 @@ int main(int argc, char** argv) {
             printf("            without improvement; the lightest verified word weight U0 is the initial upper bound (c d_ub),\n");
             printf("            Phase 1 probes only caps < U0 - 1 and the rest proves 'no logical of weight <= U - 1' (Phase\n");
             printf("            2a/2b at U - 1); -seed=N also seeds the finder\n");
+            printf("  Finder collision mode (both finders, GH-146): -ub-isd=off|stern|dumer[:P,L,W,B,R] (default off =\n");
+            printf("            GH-140 enumeration): Stern collision step on two random halves of the information set (subsets\n");
+            printf("            of size <= P per side matched on L random redundancy rows; dumer: window columns as elements),\n");
+            printf("            re-randomised by W Canteaut-Chabaud pivot swaps per round (0 = fresh elimination), B rounds\n");
+            printf("            per iteration (default 1), a fresh elimination every R rounds (0 = never); needs\n");
+            printf("            -ub-search=on|budget:S or -ub-pre=S; defaults P 2, L automatic (~log2 of the list size), W 32,\n");
+            printf("            B 1, R 0 (S0 of GH-146); every word is still verified before use\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -2341,6 +2361,8 @@ int main(int argc, char** argv) {
                 if (!strncmp(argv[i], "-ub-pre-", 8)) t += (t.empty() ? "" : " ") + std::string(argv[i]);
             if (!t.empty()) msg = t + ": need -ub-pre=S";
         }
+        if (msg.empty() && g_ub_isd_given && !g_cc_opt.ub_search && g_ub_pre < 0)   /* GH-146 */
+            msg = "-ub-isd: needs the finder (-ub-search=on|budget:S with -engine=cc|auto, or -ub-pre=S on the MaxSAT path)";
         if (msg.empty() && seed_given && backend == SOLVER_ROUNDINGSAT)
             msg = "-seed: no effect with -roundingsat (it seeds MaxCDCL or the CC engine)";
         if (msg.empty() && seed_given && cc_seed_given && g_seed != g_cc_opt.seed)
@@ -2356,6 +2378,9 @@ int main(int argc, char** argv) {
         }
         if (!msg.empty()) die(msg.c_str());
         if (seed_given) g_cc_opt.seed = g_seed;   /* one flag seeds both engines (-cc-seed: CC only) */
+        g_cc_opt.ub.isd = g_ub_isd.isd; g_cc_opt.ub.isd_p = g_ub_isd.isd_p; g_cc_opt.ub.isd_l = g_ub_isd.isd_l;   /* GH-146 */
+        g_cc_opt.ub.isd_walk = g_ub_isd.isd_walk; g_cc_opt.ub.isd_batch = g_ub_isd.isd_batch;
+        g_cc_opt.ub.isd_refresh = g_ub_isd.isd_refresh;
         auto_ignored_by_cc = fam[ENGFLAG_MAXSAT_TUNE];
         auto_ignored_by_maxsat = fam[ENGFLAG_CC];
     }
