@@ -182,6 +182,7 @@ to the behaviour before GH-124.
 | Orbit seeds (CC only) | default (rule `orbf`) | drop `orbf` from `-cc-rules`, or `-no-symbreak` (index seeds) |
 | Single-half search under a verified XZ-dual map (CC only) | `-cc-dual=on` (default) | `-cc-dual=off` or `-dualmode=off` |
 | Initial upper bound from the verified logical basis rows (CC only) | `-ub-basis` / `-ub-basis=on` (default) | `-ub-basis=off` |
+| Randomized upper-bound finder feeding the stop rule (CC only, GH-140) | `-ub-search=on` (no time cap) or `-ub-search=budget:S` (at most S seconds) | `-ub-search=off` (default) |
 | Diagnostics (CC only) | `-cc-trace=FILE`, `-cc-stats`, `-v` | omit them |
 
 Examples:
@@ -190,15 +191,36 @@ Examples:
 ./bin/distqldpc -engine=cc BB_288_12_18                  # CC with all rules (excl, pack, orbf, parity, leaf, overlap), dual map, basis UB
 ./bin/distqldpc -engine=cc -cc-rules=none BB_288_12_18   # plain connected-cluster search, no extra pruning
 ./bin/distqldpc -engine=cc -ub-basis=off BB_288_12_18    # no initial upper bound from the basis rows
+./bin/distqldpc -engine=cc -ub-search=on TN_252_2_21     # CC plus the randomized upper-bound finder (GH-140)
 ./bin/distqldpc BB_288_12_18                             # default: MaxSAT, CC not used
 ```
+
+**Upper-bound finder (`-ub-search`, GH-140).** A randomized low-weight logical finder runs inside the CC process
+next to the level ladder (the ladder stays single-threaded; the two are time-sliced). Per CSS half it draws a random
+information set (random column order, Gauss-Jordan elimination of the half's parity matrix, systematic basis of
+its kernel), looks at the words made of one or two systematic basis vectors, keeps the nontrivial ones (detector
+check), and lowers their weight greedily by adding same-type stabilizer rows. Every word is verified exactly like a
+CC witness (H e = 0 and the independent rank test) before it becomes `c d_ub`. The stop rule then finishes as soon
+as both halves' certified lower bounds reach the upper bound, so the level that would have found the witness is
+skipped (and a level in progress at that weight is abandoned). The finder only ever produces upper bounds; the
+distance is still certified by the empty levels below it. Schedule: a pre-pass of `-cc-ub-pre=S` seconds (default
+0), then the share `-cc-ub-share=F` of the wall time (default 0.05), reduced to F/16 once `-cc-ub-hits=H` (default 16)
+iterations have re-found the current bound without improving it, or after a plateau of max(64, 4 x the iteration
+count of the last improvement) iterations without improvement (`H = 0`: never reduced); `budget:S` caps the finder's
+total time.
+`-cc-ub-triples=K` also tries sums of three basis vectors when the information set has at most K columns (default
+0), `-cc-ub-slack=L` sets how far above the bound a word may be and still be improved (default 4). The random
+choices follow `-seed` (deterministic sequence of words per seed; when they arrive depends on the wall clock).
+`-cc-ub-only` (with `budget:S`) runs the finder alone and reports only an upper bound (diagnostic, `s UNKNOWN`).
+Clean-room implementation from the published descriptions of random-information-set search (Lee-Brickell style,
+QDistRnd, dist-m4ri "RW"); evidence in `optimization/experiments/GH-140/`.
 
 The output lines (`c d_lb`, `c d_ub`, `c d  :`, `o N`), the pipe protocol and the `-cpu-lim` timeout are the
 same as for MaxSAT. With CC, `c d_lb` rises by one per completed weight level (by two on a half with only odd
 column weights, where the `parity` rule skips the odd levels), and every reported upper bound
 is a witness checked by `H e = 0` and an independent GF(2) rank test against the stabilizer row space.
-Conflicting flags are rejected with an error (exit 1): the `-cc-*` and `-ub-basis` flags need `-engine=cc` or
-`-engine=auto`; `-engine=cc` and `-engine=auto` refuse `-joint`, `-roundingsat[=BIN]`, `-dump-wcnf`, `-dump-opb`,
+Conflicting flags are rejected with an error (exit 1): the `-cc-*`, `-ub-basis` and `-ub-search` flags need
+`-engine=cc` or `-engine=auto` (and the `-cc-ub-*` flags need `-ub-search=on|budget:S`); `-engine=cc` and `-engine=auto` refuse `-joint`, `-roundingsat[=BIN]`, `-dump-wcnf`, `-dump-opb`,
 `-dump-only` and `-native-parity-opb`; `-engine=cc` also refuses the cardinality flags and `-dualshare-stats`.
 With `-engine=auto` the cardinality flags and `-dualshare-stats` apply when it selects `maxsat`, the CC flags
 when it selects `cc`, and a warning on stderr names the flags that its choice ignores. `make test-cc` runs the
@@ -248,6 +270,7 @@ study DistQLDPC takes these ideas (re-implemented from scratch; no Qubitserf cod
 | **Even-weight parity shortcut** (`parity`, GH-133): when every column weight of the half's parity matrix is odd, the sum of the rows of `H v` equals `\|v\|` mod 2, so every logical has even weight; odd levels are skipped (an EMPTY level 2t certifies 2t+2) and the per-node parity check is a free consistency check. The fact is classical (C. Crocker uses it for BB_360); its use in the lockstep level schedule is ours. Applies to all bundled BB and LP codes, not to TN/GB | 3-4x on BB/LP codes (the skipped odd level is the most expensive one before each hit); nothing on TN/GB |
 | **Leaf hash lookup** (`leaf`, GH-133; the idea is described in dist-m4ri's README): at remaining budget 1 the closing qubit is looked up in a hash from column to qubit, at budget 2 each candidate of the branching row is completed by one lookup instead of a recursion | neutral in our engine (0-5% fewer nodes, 0-3% time): the packing bound already prunes almost every cluster before budget 1 (`-cc-stats` nodes-by-budget) |
 | **Witness verification** by an independent GF(2) rank test, always-on consistency traps, verified **basis-row upper bound** at t = 0 (`-ub-basis`) | every reported bound is checked; an anytime upper bound before the exact level |
+| **Randomized upper-bound finder** (`-ub-search`, GH-140): random information sets with 1-2 systematic rows and stabilizer local improvement, time-sliced with the ladder, every word verified | the stop rule ends a run as soon as the certified lower bound meets the finder's bound (no hit level); realistic upper bounds on the open codes |
 | DistQLDPC's anytime bound reporting, timeout handling and output format; `-cc-seed`, `-cc-trace`, `-cc-stats`; brute-force and mutation tests (`make test-cc`) | drop-in use with the existing tools and benchmarks |
 
 With these additions the CC engine solves every bundled tier1-4 code in seconds on one core and confirmed five

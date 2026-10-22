@@ -111,7 +111,8 @@ done
 # 3. CC flags without -engine=cc|auto (default engine and explicit -engine=maxsat)
 for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-rules=parity,leaf -cc-dual=on -cc-dual=off -cc-seed=1 \
          "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-mutant=10 -cc-schedule=sequential \
-         -cc-schedule=lockstep -cc-rules=overlap; do
+         -cc-schedule=lockstep -cc-rules=overlap -ub-search=on -ub-search=off -ub-search=budget:5 -cc-ub-only -cc-ub-pre=1 \
+         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12; do
     reject "need -engine=cc or -engine=auto" "$f" $L $M
     reject "need -engine=cc or -engine=auto" -engine=maxsat "$f" $L $M
 done
@@ -119,11 +120,23 @@ reject "need -engine=cc or -engine=auto" -cc-rules=mrv -cc-mutant=2 -engine=maxs
 reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L $M   # the last -engine= wins
 
 # 4. invalid values
-for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=11 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
+for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=13 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
          -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
          -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
+# GH-140: -ub-search values and the finder's tuning flags
+for f in -ub-search -ub-search= -ub-search=maybe -ub-search=ON -ub-search=budget: -ub-search=budget:0 -ub-search=budget:-1 \
+         -ub-search=budget:x -ub-search=budget:1s -ub-searchX "-ub-search=budget:5 -cc-ub-pre=x" "-ub-search=on -cc-ub-pre=" \
+         "-ub-search=on -cc-ub-share=1" "-ub-search=on -cc-ub-share=1.5" "-ub-search=on -cc-ub-share=-0.1" "-ub-search=on -cc-ub-share=x" \
+         "-ub-search=on -cc-ub-triples=x" "-ub-search=on -cc-ub-triples=-1" "-ub-search=on -cc-ub-slack=x" "-ub-search=on -cc-ub-slack=1001" \
+         "-ub-search=on -cc-ub-hits=x" "-ub-search=on -cc-ub-hits=-1" "-ub-search=on -cc-ub-bogus"; do
+    reject "invalid\|unknown" -engine=cc $f $L $C
+done
+reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -cc-ub-pre=1 $L $C
+reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -ub-search=off -cc-ub-share=0.5 -cc-ub-slack=1 $L $C
+reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -ub-search=on -ub-search=off -cc-ub-only $L $C   # the last -ub-search wins
+reject "needs -ub-search=budget:S" -engine=cc -ub-search=on -cc-ub-only $L $C
 for f in -seed=abc -seed=-1 -seed= -seed=1x -oddcap-skip=maybe -oddcap-skip= -oddcap-skip -oddcap-skip=ON; do
     reject "invalid" "$f" $L $M
 done
@@ -161,6 +174,35 @@ accept 2 "selected cc .*ignoring -card-mto -dualshare-stats" -engine=auto -card-
 accept 2 "selected maxsat .*ignoring -cc-rules=mrv -ub-basis" -engine=auto -cc-rules=mrv -ub-basis $L $D2
 accept 2 "" -engine=cc $L $D1                                    # dense codes still answer when forced
 accept 2 "" -engine=maxsat $L $S4
+
+# 5b. GH-140 -ub-search
+accept 3 "" -engine=cc -ub-search=on $L $M
+accept 3 "" -engine=cc -ub-search=off $L $M
+accept 2 "" -engine=cc -ub-search=budget:1 $L $C
+accept 3 "" -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 -cc-ub-triples=100 -cc-ub-slack=2 -cc-ub-hits=0 -seed=3 $L $M
+accept 3 "" -engine=cc -ub-search=on -cc-ub-share=0 -cc-ub-pre=0 -cc-dual=off -cc-schedule=sequential $L $M
+accept 2 "" -engine=auto -ub-search=on $L $C                                                         # auto -> cc: applies
+accept 2 "selected maxsat .*ignoring -ub-search=on" -engine=auto -ub-search=on $L $D1
+vgrep 3 "^c cc: ub-search: pre-pass 0.100s, share 0.200 of wall time (/16 after 16 re-hits of U or a plateau), cap 0.500000s" -v -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 $L $M
+vgrep 3 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triples on, slack 4" -v -engine=cc -ub-search=on -cc-ub-triples=1000 $L $M
+vgrep 3 "^c cc-stats: ub-search X: iterations [0-9]*, finder time" -engine=cc -ub-search=on -cc-stats $L $M
+# finder-only diagnostic: an upper bound, no answer (s UNKNOWN, rc 1), d_ub kept
+runs=$((runs + 1)); run -engine=cc -ub-search=budget:0.2 -cc-ub-only $L TN_72_8_8
+if [[ $rc -ne 1 ]] || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: 8" ]] || ! grep -qx "s UNKNOWN" <<<"$out" \
+    || grep -q "^c d_lb: [0-9]" <<<"$out"; then
+    echo "FAIL (-cc-ub-only: expected d_ub 8 and s UNKNOWN): rc=$rc stdout: $out" >&2; fails=$((fails + 1))
+fi
+# mutants 11/12 on BB_90_8_10 (weight-6 stabilizer rows, d = 10): 11 must trap (bounds withdrawn), 12 must answer wrongly
+runs=$((runs + 1)); run -engine=cc -ub-search=budget:0.2 -cc-ub-pre=1 -cc-mutant=11 $L BB_90_8_10
+if [[ $rc -ne 1 ]] || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: -" ]] || ! grep -qx "s UNKNOWN" <<<"$out" \
+    || ! grep -q "ub-search word failed verification" <<<"$err"; then
+    echo "FAIL (mutant 11: expected a verification trap): rc=$rc stdout: $out stderr: $err" >&2; fails=$((fails + 1))
+fi
+runs=$((runs + 1)); run -engine=cc -ub-search=budget:0.2 -cc-ub-pre=1 -cc-mutant=12 $L BB_90_8_10
+if ! grep -Eq '^o [0-9]+$' <<<"$out" || grep -qx "o 10" <<<"$out"; then
+    echo "FAIL (mutant 12: expected a wrong answer): rc=$rc stdout: $out" >&2; fails=$((fails + 1))
+fi
+accept 10 "" -engine=cc -ub-search=budget:0.2 -cc-ub-pre=1 $L BB_90_8_10                            # canonical
 
 # 6. -seed: one flag for both engines (-cc-seed = alias for CC)
 accept 3 "" -seed=0 $L $M

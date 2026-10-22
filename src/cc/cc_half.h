@@ -99,7 +99,8 @@ struct Rules {
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true) {}
 };
 
-enum LevelVerdict { LEVEL_EMPTY = 0, LEVEL_FOUND = 1, LEVEL_INCONSISTENT = 2 };
+/* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */
+enum LevelVerdict { LEVEL_EMPTY = 0, LEVEL_FOUND = 1, LEVEL_INCONSISTENT = 2, LEVEL_ABORTED = 3 };
 
 struct LevelResult {
     LevelVerdict verdict;
@@ -146,6 +147,12 @@ public:
 
     /* Level w >= 1 (precondition: no element of F of weight < w). */
     LevelResult run_level(int w);
+
+    /* GH-140: poll callback, called when (nodes & mask) == 0 during run_level (default mask 0x3FFF: every 16384
+     * search nodes; tests use 0); returning true aborts the level (verdict LEVEL_ABORTED, search state reset). NULL
+     * (default): never called. The callback must not call back into this object. The search itself (node order,
+     * verdicts) does not depend on the callback. */
+    void set_poll(bool (*fn)(void*), void* ctx, uint64_t mask = 0x3FFF) { poll_fn_ = fn; poll_ctx_ = ctx; poll_mask_ = mask; }
 
     int n() const { return n_; }
     bool orbit_seeds() const { return orbit_mode_; }
@@ -204,6 +211,10 @@ private:
     std::vector<uint32_t> cand_;            /* per-depth candidate buffers */
     LevelResult* res_;
     bool incons_;
+    bool (*poll_fn_)(void*);                /* GH-140 poll callback (NULL: none) */
+    void* poll_ctx_;
+    uint64_t poll_mask_;
+    bool abort_;
 
     void toggle(int q);
     void ov_add(int q);

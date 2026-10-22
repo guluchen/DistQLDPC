@@ -1497,6 +1497,19 @@ static bool cc_parse_uint(const char* s, unsigned long long* out)
     return true;
 }
 
+/* GH-140: non-negative decimal number of seconds (or a fraction), e.g. "60", "0.5" */
+static bool cc_parse_seconds(const char* s, double* out)
+{
+    if (!s || !*s) return false;
+    for (const char* p = s; *p; p++)
+        if (!((*p >= '0' && *p <= '9') || *p == '.')) return false;
+    char* end = NULL;
+    const double v = strtod(s, &end);
+    if (!end || *end || !(v >= 0) || v > 1e9) return false;
+    *out = v;
+    return true;
+}
+
 /* GH-124: engine-specific flags (exact spellings accepted by main's parser), used to reject combinations
  * that the selected engine would silently override or ignore.
  *   ENGFLAG_MAXSAT_FORM  MaxSAT formulation, backend or dump: refused with -engine=cc and -engine=auto
@@ -1516,7 +1529,7 @@ static int engine_flag_family(const char* a)
     if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
         !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") || !strncmp(a, "-oddcap-skip=", 13))
         return ENGFLAG_MAXSAT_TUNE;
-    if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10))
+    if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10) || !strncmp(a, "-ub-search", 10))
         return ENGFLAG_CC;
     return ENGFLAG_NONE;
 }
@@ -1962,6 +1975,46 @@ int main(int argc, char** argv) {
             g_cc_opt.ub_basis = false;
         else if (!strncmp(argv[i], "-ub-basis=", 10))
             die("invalid -ub-basis (on | off)");
+        else if (!strcmp(argv[i], "-ub-search=off")) {   /* GH-140 */
+            g_cc_opt.ub_search = false;
+            g_cc_opt.ub_cap = -1;
+        } else if (!strcmp(argv[i], "-ub-search=on")) {
+            g_cc_opt.ub_search = true;
+            g_cc_opt.ub_cap = -1;
+        } else if (!strncmp(argv[i], "-ub-search=budget:", 18)) {
+            double v = 0;
+            if (!cc_parse_seconds(argv[i] + 18, &v) || v <= 0) die("invalid -ub-search=budget:S (S > 0 seconds)");
+            g_cc_opt.ub_search = true;
+            g_cc_opt.ub_cap = v;
+        } else if (!strncmp(argv[i], "-ub-search", 10))
+            die("invalid -ub-search (off | on | budget:S)");
+        else if (!strncmp(argv[i], "-cc-ub-pre=", 11)) {
+            double v = 0;
+            if (!cc_parse_seconds(argv[i] + 11, &v)) die("invalid -cc-ub-pre (seconds >= 0)");
+            g_cc_opt.ub_pre = v;
+        } else if (!strncmp(argv[i], "-cc-ub-share=", 13)) {
+            double v = 0;
+            if (!cc_parse_seconds(argv[i] + 13, &v) || v >= 1) die("invalid -cc-ub-share (0 <= F < 1)");
+            g_cc_opt.ub_share = v;
+        } else if (!strncmp(argv[i], "-cc-ub-hits=", 12)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 12, &v) || v > 1000000) die("invalid -cc-ub-hits (0..1000000)");
+            g_cc_opt.ub_hits = (int)v;
+        } else if (!strncmp(argv[i], "-cc-ub-evo=", 11)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 10000) die("invalid -cc-ub-evo (0..10000)");
+            g_cc_opt.ub.evo_mu = (int)v;
+        } else if (!strcmp(argv[i], "-cc-ub-only"))
+            g_cc_opt.ub_only = true;
+        else if (!strncmp(argv[i], "-cc-ub-triples=", 15)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 15, &v) || v > 100000) die("invalid -cc-ub-triples (0..100000)");
+            g_cc_opt.ub.triples_max_k = (int)v;
+        } else if (!strncmp(argv[i], "-cc-ub-slack=", 13)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 13, &v) || v > 1000) die("invalid -cc-ub-slack (0..1000)");
+            g_cc_opt.ub.slack = (int)v;
+        }
         else if (!strncmp(argv[i], "-seed=", 6)) {   /* GH-124: timing seed for either engine */
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 6, &v)) die("invalid -seed (non-negative integer)");
@@ -1974,7 +2027,7 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || v > 10) die("invalid -cc-mutant (0..10, test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 12) die("invalid -cc-mutant (0..12, test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strncmp(argv[i], "-cc-trace=", 10)) {
             g_cc_opt.trace_path = argv[i] + 10;
@@ -2018,9 +2071,18 @@ int main(int argc, char** argv) {
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
+            printf("            -ub-search=off|on|budget:S (GH-140, default off): randomized low-weight logical finder per half\n");
+            printf("            (random information sets, 1-2 systematic rows, stabilizer local improvement); verified words\n");
+            printf("            lower d_ub and let the stop rule finish early; pre-pass -cc-ub-pre=S (default 0), then the share\n");
+            printf("            -cc-ub-share=F of the wall time (default 0.05; F/16 once -cc-ub-hits=H iterations, default 16, re-hit\n");
+            printf("            the current upper bound, or after a plateau without improvement; H = 0: never); budget:S caps\n");
+            printf("            the finder at S s; tuning\n");
+            printf("            -cc-ub-triples=K (triples when the information set has <= K columns, default 0), -cc-ub-slack=L\n");
+            printf("            (default 4); -cc-ub-evo=MU column-order evolution with MU parents (default 0 = fresh random orders);\n");
+            printf("            -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..10)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..12)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");
@@ -2068,6 +2130,15 @@ int main(int argc, char** argv) {
             msg = "-seed: no effect with -roundingsat (it seeds MaxCDCL or the CC engine)";
         if (msg.empty() && seed_given && cc_seed_given && g_seed != g_cc_opt.seed)
             msg = "-seed and -cc-seed give different seeds (-cc-seed is an alias of -seed for the CC engine)";
+        if (msg.empty()) {   /* GH-140: the finder's tuning flags need the finder */
+            std::string ubt;
+            for (int i = 1; i < argc; i++)
+                if (!strncmp(argv[i], "-cc-ub-", 7)) ubt += (ubt.empty() ? "" : " ") + std::string(argv[i]);
+            if (!ubt.empty() && !g_cc_opt.ub_search)
+                msg = ubt + ": ub-search option(s) need -ub-search=on or -ub-search=budget:S";
+            else if (g_cc_opt.ub_only && g_cc_opt.ub_cap < 0)
+                msg = "-cc-ub-only needs -ub-search=budget:S (the finder's time budget)";
+        }
         if (!msg.empty()) die(msg.c_str());
         if (seed_given) g_cc_opt.seed = g_seed;   /* one flag seeds both engines (-cc-seed: CC only) */
         auto_ignored_by_cc = fam[ENGFLAG_MAXSAT_TUNE];

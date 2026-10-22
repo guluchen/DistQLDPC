@@ -43,7 +43,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), w_(0), nodd_(0),
-      synkey_(0), stamp_(0), res_(NULL), incons_(false)
+      synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
     if (G.cols != n_) fatal("detector column count differs from H");
@@ -346,6 +346,10 @@ void HalfSearch::record_witness(int size) {
 bool HalfSearch::dfs(int size) {
     ++res_->nodes;
     ++res_->by_budget[(size_t)(w_ - size)];
+    if (poll_fn_ && !(res_->nodes & poll_mask_) && poll_fn_(poll_ctx_)) {   /* GH-140: abort requested */
+        abort_ = true;
+        return true;
+    }
     if (size == w_) {
         if (nodd_ == 0 && gpar_nonzero()) {
             record_witness(size);
@@ -492,6 +496,7 @@ LevelResult HalfSearch::run_level(int w) {
     res_ = &r;
     w_ = w;
     incons_ = false;
+    abort_ = false;
     std::fill(syn_.begin(), syn_.end(), 0);
     std::fill(gpar_.begin(), gpar_.end(), 0);
     std::fill(blk_.begin(), blk_.end(), 0);
@@ -531,7 +536,8 @@ LevelResult HalfSearch::run_level(int w) {
             toggle(s);
             if (!m3) blk_[s]--;
             if (hit) {
-                r.verdict = incons_ ? LEVEL_INCONSISTENT : LEVEL_FOUND;
+                r.verdict = abort_ ? LEVEL_ABORTED : incons_ ? LEVEL_INCONSISTENT : LEVEL_FOUND;
+                if (abort_) r.witness.clear();
                 r.ovtight = ovtight_;
                 r.ovforbid = ovforbid_;
                 res_ = NULL;

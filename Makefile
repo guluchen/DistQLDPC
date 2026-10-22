@@ -22,8 +22,9 @@ ENGINE_OBJS = \
 # GH-124 (experimental): connected-cluster level-search engine (C++17), linked into bin/distqldpc
 CC_OBJS = \
 	$(BUILD)/cc_half.o \
-	$(BUILD)/cc_driver.o
-CC_HDRS = $(CCDIR)/cc_half.h $(CCDIR)/cc_driver.h
+	$(BUILD)/cc_driver.o \
+	$(BUILD)/cc_ubsearch.o
+CC_HDRS = $(CCDIR)/cc_half.h $(CCDIR)/cc_driver.h $(CCDIR)/cc_ubsearch.h
 TEST_CC = $(BUILD)/test_cc_engine
 
 .PHONY: all clean test-cc test-cc-flags
@@ -55,6 +56,9 @@ $(BUILD)/cc_half.o: $(CCDIR)/cc_half.cc $(CC_HDRS) | dirs
 	$(CXX) $(CXXFLAGS) -std=c++17 -c -o $@ $<
 
 $(BUILD)/cc_driver.o: $(CCDIR)/cc_driver.cc $(CC_HDRS) | dirs
+	$(CXX) $(CXXFLAGS) -std=c++17 -c -o $@ $<
+
+$(BUILD)/cc_ubsearch.o: $(CCDIR)/cc_ubsearch.cc $(CC_HDRS) | dirs
 	$(CXX) $(CXXFLAGS) -std=c++17 -c -o $@ $<
 
 # GH-124 engine tests (brute-force oracle, rule subsets, relabeling seeds, mutants, forked pipe driver)

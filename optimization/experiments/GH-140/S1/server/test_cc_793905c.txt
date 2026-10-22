@@ -1,0 +1,20 @@
+partA: 300 half instances (151 with verified orbits, 120 with all column weights odd, 113 without any nontrivial element), 115200 ladder runs over 128 rule subsets x 3 seeds, 0 bad
+partA K (GH-138): 100 basis, 100 low-weight sets, 55 random sets; 80 instances where a minimum element meets a row of K in floor(|g|/2) qubits
+partE (rotated surface codes d = 3, 4, X/Z swapped): 16 canonical checks, 0 bad
+partB: 200 CSS codes (53 with a verified dual map, 39 with X-half orbits, 77 with dX != dZ, 52 with all-odd Hz), 2800 driver runs, 0 bad, 0 RESULT -1
+partD (MaxSAT split, -oddcap-skip off/on): 400 runs on 200 codes (52 with an all-odd half), 0 bad
+partE (ub-search finder): 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+partE (driver with ub-search): 1600 runs, 0 bad, 34 levels abandoned (U <= w)
+mutant 1 (forbidden set not restored): 988/19200 half ladders wrong
+mutant 2 (packing prune >=): 4112/19200 half ladders wrong
+mutant 3 (orbit seed rule off by one, instances with orbits): 1856/9664 half ladders wrong
+mutant 4 (stop rule without other half's lb, forces sequential): schedule requested 60/200 runs wrong; default options 60/200 wrong
+mutant 5 (parity rule forced on halves with an even column weight): 6976/11520 half ladders wrong
+mutant 6 (leaf budget off by one): 2112/19200 half ladders wrong
+mutant 7 (leaf closure without the detector check): 1760/19200 half ladders wrong
+mutant 8 (overlap limit off by one): 2880/19200 half ladders wrong
+mutant 9 (overlap with the parity checks H as K): 3776/19200 half ladders wrong
+mutant 10 (overlap even-|g| tie cut): 2112/19200 half ladders wrong
+mutant 11 (ub-search without the detector check; halves/codes where a trivial word is lighter than d): finder returned a trivial word on 28/28 halves; driver 6/6 runs stopped or wrong
+mutant 12 (mutant 11 + words reported without verification): 6/6 driver runs failed, 6 of them with a wrong RESULT d OPTIMAL
+CC_ENGINE_TESTS PASS

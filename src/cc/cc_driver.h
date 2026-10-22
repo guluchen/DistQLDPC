@@ -21,6 +21,13 @@
  *   With a verified XZ-dual map pi (GH-87/GH-107 detection; a weight-preserving bijection
  *   F_X -> F_Z, so dX = dZ) only the X half is searched; its lb and ub are mirrored to the Z half
  *   and pi(witness) is verified in the Z half.
+ * GH-140 -ub-search: a randomized low-weight logical finder per searched half (cc_ubsearch.h) runs as a pre-pass
+ *   (ub_pre seconds) and interleaved with the level ladder (it gets the share ub_share of the elapsed wall time;
+ *   total finder time capped at ub_cap seconds when ub_cap >= 0). The ladder stays single-threaded: the finder runs
+ *   between levels and inside a level through HalfSearch's poll callback (every 16384 nodes). Every found word is
+ *   verified exactly like a level witness (with a dual map, its image too) before it lowers ub_h and U and is
+ *   reported as UB; a level in progress at weight w is abandoned (LEVEL_ABORTED, lb unchanged) once U <= w, after
+ *   which the termination rule LB >= U applies as before. A finder word lighter than a half's proven lb is a trap.
  * Every witness is verified before it is reported: H e = 0 for the half's parity checks and
  * e not in the row space of the same-type stabilizers (an independent GF(2) rank test, not the
  * detector rows). Always-on traps (error + RESULT -1 TRAP, never a value; the receiver withdraws the
@@ -37,6 +44,7 @@
 #include <vector>
 
 #include "cc_half.h"
+#include "cc_ubsearch.h"
 
 namespace distcc {
 
@@ -55,14 +63,30 @@ struct DriverOptions {
     int mutant;              /* -cc-mutant=K (test only; 0 = none). Driver mutant 4: stop rule without the
                                 other half's lower bound, run under the sequential schedule (under lockstep
                                 the pick order already gives olb >= w at every hit, so skipping the check
-                                alone could never change an answer) */
+                                alone could never change an answer). GH-140: mutant 11 = finder without the detector
+                                check (cc_ubsearch.h; the driver's verification must trap), mutant 12 = mutant 11 and
+                                finder words reported without the driver's verification (wrong upper bounds) */
     std::string trace_path;  /* -cc-trace=FILE */
     bool stats;              /* -cc-stats */
     int verb;
     bool sequential;         /* -cc-schedule=sequential (TEST ONLY; default lockstep): the first searchable
                                 half is raised to its own distance before the other half, so the stop rule's
                                 other-half check is load-bearing; mutant 4 forces it */
-    DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false) {}
+    /* GH-140 -ub-search=off|on|budget:S (CC engine) */
+    bool ub_search;          /* finder on */
+    double ub_cap;           /* total finder seconds (budget:S); < 0: no cap (on) */
+    double ub_pre;           /* -cc-ub-pre=S: pre-pass seconds before the first level (capped by ub_cap) */
+    double ub_share;         /* -cc-ub-share=F: share of the elapsed wall time given to the finder after the pre-pass */
+    int ub_hits;             /* -cc-ub-hits=H: after H finder iterations re-hit the current U without improving it, or
+                                after a plateau (max(64, 4 x the iteration count at the last improvement) iterations
+                                without improvement), the share drops to ub_share / 16 (QDistRnd-style convergence
+                                heuristic; scheduling only; 0 = never) */
+    bool ub_only;            /* -cc-ub-only (diagnostic): run only the finder for ub_cap seconds, no ladder, no answer */
+    UbParams ub;             /* -cc-ub-triples=K, -cc-ub-slack=L (finder tuning) */
+    uint64_t ub_poll_mask;   /* test only: level poll when (nodes & mask) == 0 (default 0x3FFF) */
+    uint64_t ub_skip_polls;  /* test only: the first N finder polls do nothing (the finder starts mid-ladder) */
+    DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
+                      ub_search(false), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).
