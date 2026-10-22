@@ -32,6 +32,8 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <memory>
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <fcntl.h>
@@ -1023,6 +1025,7 @@ struct CssHalf {
     uint64_t own_lb;      /* lb this half would hold without dual-map sharing (skip accounting only) */
     int frontier;         /* GH-130: frontier mode of this half's probes (= g_frontier_mode unless auto) */
     bool par;             /* GH-133: -oddcap-skip in force (all column weights of H odd): odd caps skipped */
+    bool pre;             /* GH-144: ub is a verified -ub-pre finder word (not a solver solution); false without -ub-pre */
 };
 
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
@@ -1165,6 +1168,150 @@ static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
     return true;
 }
 
+/* ---- GH-144: -ub-pre=off|S, verified upper-bound pre-pass for the interleaved MaxSAT search (issue #144).
+ * Before Phase 1, GH-140's randomized low-weight logical finder (src/cc/cc_ubsearch.h, class UbFinder: random
+ * information sets, words of 1-2 systematic rows, same-type stabilizer local improvement) runs on every half that
+ * has logicals (X half: H = Hz, G = Gx, S = Hx; Z half: H = Hx, G = Gz, S = Hz) for at most S seconds of wall time,
+ * one iteration at a time on the half with less finder time, always searching for a word lighter than the current
+ * global bound U. A half stops after H iterations that re-hit U without improving it, or after a plateau
+ * of max(P, 4 x the half's iteration count at its last improvement) iterations without one (the
+ * GH-140 convergence rule, iteration based, so for a given -seed the pre-pass is deterministic unless the S cap
+ * ends it); the pre-pass ends when both halves stopped or after S seconds.
+ * Every word is verified before use (ubpre_verify): it is a feasible solution of the half instance that
+ * build_css_half encodes (Hpar e = 0 and Glog e != 0, checked directly on the input matrices), and the CC engine's
+ * independent check distcc::verify_logical (Hpar e = 0, e not in rs S by its own echelon form) agrees. A word that
+ * fails discards the whole pre-pass (warning on stderr; the search then runs as without -ub-pre).
+ * The lightest verified weight U0 becomes the initial global UB (pipe "UB U0" -> c d_ub: U0) and each half's
+ * lightest word its incumbent (h.ub, h.pre). Changes to the search (only when U0 exists; -ub-pre=off or no word =
+ * main byte for byte): Phase 1 keeps probing a half with a pre-pass incumbent but only at caps < U - 1 (a FOUND
+ * there improves U and ends Phase 1 as in main); Phase 2a runs while both halves are unfinished (not only while
+ * their incumbents tie) with feasibility probes at U - 1, and reports the global lower bound after each probe;
+ * Phase 2b optimises each unfinished half with cap U - 1. Soundness: MODIFICATIONS.md (GH-144). */
+static double g_ub_pre = -1.0;             /* seconds; < 0: off (default) */
+static uint64_t g_ub_pre_max_iters = 0;    /* test only (no flag): cap on the pre-pass iterations of both halves (0: none) */
+static int g_ub_pre_mutant = 0;            /* test only (no flag): 1 = finder without its detector check and local improvement
+                                              (GH-140 mutant 11; trivial words reach the verification, which must reject
+                                              them); 2 = mutant 1 and words used without verification (wrong answers) */
+static uint64_t g_ub_pre_hits = 16;        /* -ub-pre-hits=H: a half stops after H re-hits of U without improvement (0: never) */
+static uint64_t g_ub_pre_plateau = 1000;   /* -ub-pre-plateau=P: ... or after max(P, 4 x its iteration count at its last
+                                              improvement) iterations without improvement (1000: S0 of GH-144) */
+static const double UBPRE_ON_SECONDS = 60.0;   /* -ub-pre=on: the S recommended by S0 of GH-144 */
+
+static distcc::SparseRows cc_rows(const Matrix& M);   /* GH-124, defined with the CC engine below */
+static double wall_seconds();                          /* defined with the forked driver below */
+
+/* GH-144: e (support) is a feasible solution of the half instance of build_css_half (Hpar e = 0, some row of Glog
+ * has odd overlap with e; nonzero), and distcc::verify_logical (Hpar e = 0, e not in rs S) agrees. */
+static bool ubpre_verify(const Matrix& H, const Matrix& G, const distcc::SparseRows& Hr, const distcc::SparseRows& Sr,
+                         const std::vector<int>& e, std::string& why)
+{
+    const int n = H.cols;
+    std::vector<int> s(e);
+    std::sort(s.begin(), s.end());
+    if (s.empty() || s.front() < 0 || s.back() >= n || std::adjacent_find(s.begin(), s.end()) != s.end()) {
+        why = "invalid support";
+        return false;
+    }
+    for (int r = 0; r < H.rows; r++) {
+        int par = 0;
+        for (size_t t = 0; t < s.size(); t++) par ^= getm(H, r, s[t]);
+        if (par) { why = "parity row " + std::to_string(r) + " violated"; return false; }
+    }
+    bool det = false;
+    for (int r = 0; r < G.rows && !det; r++) {
+        int par = 0;
+        for (size_t t = 0; t < s.size(); t++) par ^= getm(G, r, s[t]);
+        det = par != 0;
+    }
+    if (!det) { why = "even overlap with every logical row (not a solution of the half instance)"; return false; }
+    if (!distcc::verify_logical(Hr, Sr, s, why)) { why = "independent check: " + why; return false; }
+    return true;
+}
+
+struct UbPreOut {
+    uint64_t ub[2];                 /* lightest verified word per half (UINT64_MAX: none) */
+    uint64_t iters[2], found[2];
+    double seconds;
+    const char* stop;
+    bool failed;                    /* a word failed verification: nothing is used */
+};
+
+static void ub_prepass(const CssHalf hs[2], const Matrix* Ss[2], int n, double budget, int verb, UbPreOut& o)
+{
+    const uint64_t INF = UINT64_MAX;
+    const double t0 = wall_seconds();
+    o.ub[0] = o.ub[1] = INF;
+    o.iters[0] = o.iters[1] = o.found[0] = o.found[1] = 0;
+    o.seconds = 0;
+    o.stop = "no half";
+    o.failed = false;
+    distcc::SparseRows Hr[2], Gr[2], Sr[2];
+    std::unique_ptr<distcc::UbFinder> f[2];
+    bool conv[2] = { true, true };
+    uint64_t last[2] = { 0, 0 }, rehit[2] = { 0, 0 };
+    for (int k = 0; k < 2; k++) {
+        if (!hs[k].exists) continue;
+        Hr[k] = cc_rows(*hs[k].H); Gr[k] = cc_rows(*hs[k].G); Sr[k] = cc_rows(*Ss[k]);
+        distcc::UbParams up;
+        up.mutant = g_ub_pre_mutant ? 11 : 0;
+        const uint64_t fs = g_seed * 0x9e3779b97f4a7c15ULL + 0x6a09e667f3bcc909ULL + (uint64_t)k;   /* = the CC driver's */
+        f[k].reset(new distcc::UbFinder(Hr[k], Gr[k], Sr[k], fs, up));
+        conv[k] = false;
+        if (verb > 0)
+            printf("c ub-pre %s: rank H %d, information set %d, seed %llu%s\n", hs[k].tag, f[k]->rank(), f[k]->dim(),
+                   (unsigned long long)g_seed, g_ub_pre_mutant ? " [TEST MUTANT]" : "");
+    }
+    uint64_t U = INF;
+    for (;;) {
+        if (wall_seconds() - t0 >= budget) { o.stop = "time budget"; break; }
+        if (g_ub_pre_max_iters && o.iters[0] + o.iters[1] >= g_ub_pre_max_iters) { o.stop = "iteration cap (test)"; break; }
+        int k = -1;
+        for (int t = 0; t < 2; t++)
+            if (!conv[t] && (k < 0 || f[t]->stats().seconds < f[k]->stats().seconds)) k = t;
+        if (k < 0) { o.stop = "both halves converged"; break; }
+        const int target = U != INF ? (int)U : n + 1;
+        std::vector<int> e;
+        o.iters[k]++;
+        if (!f[k]->iterate(target, e)) {
+            if (f[k]->last_hit() && U != INF) rehit[k]++;
+            const uint64_t plateau = std::max<uint64_t>(g_ub_pre_plateau, 4 * last[k]);
+            const bool hits = g_ub_pre_hits > 0 && rehit[k] >= g_ub_pre_hits;
+            if (hits || o.iters[k] - last[k] >= plateau) {
+                conv[k] = true;
+                if (verb > 0)
+                    printf("c ub-pre %s: converged (%s) after %llu iterations, wall %.3fs\n", hs[k].tag,
+                           hits ? "re-hits of U without improvement" : "plateau",
+                           (unsigned long long)o.iters[k], wall_seconds() - t0);
+            }
+            continue;
+        }
+        std::string why;
+        if (g_ub_pre_mutant != 2 &&
+            ((int)e.size() >= target || !ubpre_verify(*hs[k].H, *hs[k].G, Hr[k], Sr[k], e, why))) {
+            fprintf(stderr, "warning: ub-pre: %s half word of weight %zu failed verification (%s): pre-pass discarded\n",
+                    hs[k].tag, e.size(), (int)e.size() >= target ? "not below the target" : why.c_str());
+            if (verb > 0) printf("c ub-pre: %s half word failed verification (%s): pre-pass discarded\n", hs[k].tag, why.c_str());
+            o.failed = true;
+            o.stop = "verification failure";
+            break;
+        }
+        U = (uint64_t)e.size();
+        o.ub[k] = U;
+        o.found[k]++;
+        last[k] = o.iters[k];
+        rehit[0] = rehit[1] = 0;   /* re-hits count against the current U */
+        if (verb > 0) {
+            printf("c ub-pre %s: word of weight %llu (iteration %llu, wall %.3fs)\n", hs[k].tag, (unsigned long long)U,
+                   (unsigned long long)o.iters[k], wall_seconds() - t0);
+            std::string sup;
+            for (size_t t = 0; t < e.size(); t++) sup += (t ? " " : "") + std::to_string(e[t]);
+            printf("c witness %s (ub-pre): %s\n", hs[k].tag, sup.c_str());
+        }
+    }
+    o.seconds = wall_seconds() - t0;
+    if (o.failed) o.ub[0] = o.ub[1] = INF;
+}
+
 static int min_distance_css_interleaved(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int verb, int pipe_w, int card_mode, bool symbreak, int dualmode, bool stats = false)
@@ -1250,12 +1397,38 @@ static int min_distance_css_interleaved(
         if ((int)info.reps.size() < info.n) hs[k].sb_orbit = info.orbit_of;
     }
     uint64_t U = INF, v = 0, lastLB = 0;
+    bool seeded = false;   /* GH-144: U holds a verified -ub-pre word (never without -ub-pre) */
+    if (g_ub_pre >= 0) {
+        const Matrix* Ss[2] = { &Hx, &Hz };   /* same-type stabilizers: X half Hx, Z half Hz */
+        UbPreOut po;
+        ub_prepass(hs, Ss, (int)n, g_ub_pre, verb, po);
+        for (int k = 0; k < 2; k++)
+            if (hs[k].exists && po.ub[k] != INF) {
+                hs[k].ub = po.ub[k];
+                hs[k].pre = true;
+                if (po.ub[k] < U) U = po.ub[k];
+            }
+        if (verb > 0) {
+            printf("c ub-pre: %s after %.3fs (%s; iterations X %llu Z %llu, words X %llu Z %llu): ", U != INF ? "U0" : "no word",
+                   po.seconds, po.stop, (unsigned long long)po.iters[0], (unsigned long long)po.iters[1],
+                   (unsigned long long)po.found[0], (unsigned long long)po.found[1]);
+            if (U != INF) printf("%llu (X %lld, Z %lld)\n", (unsigned long long)U, hs[0].pre ? (long long)hs[0].ub : -1LL,
+                                 hs[1].pre ? (long long)hs[1].ub : -1LL);
+            else printf("search as without -ub-pre\n");
+            fflush(stdout);
+        }
+        if (U != INF) { seeded = true; pipe_bound(pipe_w, "UB", U); }
+    }
+    /* GH-144: the Phase 1 cap of half h at doubling value m (GH-133 odd-cap rule; 0 = the no-probe cap-1 case) */
+    auto p1_cap = [](const CssHalf& h, uint64_t m) -> uint64_t { return (h.par && (m & 1)) ? m - 1 : m; };
     /* Phase 1: doubling feasibility tests on both halves; anytime global LB. */
     for (uint64_t m = 1; ; m = (m >= n ? n : 2 * m)) {
         for (int k = 0; k < 2; k++) {
             CssHalf& h = hs[k];
-            if (!h.exists || h.ub != INF || h.lb > m) {
-                if (share && h.exists && h.ub == INF && h.lb > m && h.own_lb <= m) {   /* GH-107 */
+            /* GH-144: a pre-pass incumbent does not end the half's Phase 1; caps >= U - 1 are left to Phase 2a */
+            const bool pre_skip = seeded && p1_cap(h, m) + 1 >= U;
+            if (!h.exists || (h.ub != INF && !h.pre) || h.lb > m || pre_skip) {
+                if (share && h.exists && (h.ub == INF || h.pre) && !pre_skip && h.lb > m && h.own_lb <= m) {   /* GH-107 */
                     implied++;
                     h.own_lb = m + 1;   /* the NONE main would have proven here */
                     if (verb > 0) printf("c dualshare: %s half cap %llu skipped (NONE implied, shared lb %llu)\n",
@@ -1274,7 +1447,7 @@ static int min_distance_css_interleaved(
                 cap = m - 1;
             }
             HalfStatus st = run_css_half(h, cap, true, verb, card_mode, pipe_w, INF, U, true, v);
-            if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
+            if (st == HALF_FOUND) { h.ub = v; h.pre = false; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
             else if (st == HALF_NONE) {
                 h.lb = cap + 1;
                 if (h.par && (h.lb & 1)) h.lb++;   /* GH-133: NONE at an even cap 2t certifies 2t + 2 */
@@ -1285,10 +1458,11 @@ static int min_distance_css_interleaved(
         }
         uint64_t glb = INF;
         bool any_ub = false, any = false;
-        for (int k = 0; k < 2; k++) if (hs[k].exists) { any = true; if (hs[k].lb < glb) glb = hs[k].lb; if (hs[k].ub != INF) any_ub = true; }
+        for (int k = 0; k < 2; k++) if (hs[k].exists) { any = true; if (hs[k].lb < glb) glb = hs[k].lb; if (hs[k].ub != INF && !hs[k].pre) any_ub = true; }
         if (!any) die("no nontrivial logical operator in either half");
         if (glb != INF && glb > lastLB) { lastLB = glb; pipe_bound(pipe_w, "LB", glb); }
         if (any_ub || m >= n) break;
+        if (seeded && (2 * m >= n ? n : 2 * m) + 1 >= U) break;   /* GH-144: every next cap is >= U - 1 */
     }
     /* Phase 2a: tie-breaking probes for a logical of weight <= U-1 (stop at first), alternating
      * halves while their incumbents are equal.
@@ -1296,7 +1470,8 @@ static int min_distance_css_interleaved(
     bool done[2] = { !hs[0].exists, !hs[1].exists };
     uint64_t lastU = INF;
     /* Rounds while the two incumbents tie (no basis for ordering); each round probes both halves. */
-    while (!done[0] && !done[1] && hs[0].ub == hs[1].ub) {
+    /* GH-144 (seeded): every unfinished half needs exactly the question "weight <= U - 1?", tie or not */
+    while (!done[0] && !done[1] && (hs[0].ub == hs[1].ub || seeded)) {
         for (int k = 0; k < 2; k++) {
             CssHalf& h = hs[k];
             if (done[k]) continue;
@@ -1312,10 +1487,15 @@ static int min_distance_css_interleaved(
             if (!share && !done[1 - k] && hs[1 - k].lb < lbc) lbc = hs[1 - k].lb;
             const uint64_t cap2 = (h.par && ((U - 1) & 1)) ? U - 2 : U - 1;   /* GH-133: odd cap -> even cap below */
             HalfStatus st = run_css_half(h, cap2, true, verb, card_mode, pipe_w, lbc, U, false, v);
-            if (st == HALF_FOUND) { h.ub = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
+            if (st == HALF_FOUND) { h.ub = v; h.pre = false; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
             else if (st == HALF_NONE || st == HALF_INFEASIBLE) { h.lb = h.own_lb = (h.ub < U ? h.ub : U); done[k] = true; }
             else { pipe_write_result(pipe_w, -1, false); return -1; }
             if (share && !dualshare_sync(hs, U)) { pipe_write_result(pipe_w, -1, false); return -1; }
+            if (seeded) {   /* GH-144: anytime global LB after every Phase 2a probe */
+                uint64_t glb = U;
+                for (int j = 0; j < 2; j++) if (!done[j] && hs[j].lb < glb) glb = hs[j].lb;
+                if (glb > lastLB) { lastLB = glb; pipe_bound(pipe_w, "LB", glb); }
+            }
         }
     }
     (void)lastU;
@@ -1341,6 +1521,7 @@ static int min_distance_css_interleaved(
          * optimisation only seeks weight <= U-1 (no re-find of its own incumbent): OPT improves U,
          * NONE proves lb = U. Without elimination (main, GH-107 share) the cap stays U exactly as in GH-73. */
         uint64_t cap = (z_eliminated && h.ub == U) ? U - 1 : U;
+        if (seeded) cap = U - 1;   /* GH-144: U is a verified weight (finder word or solver solution): only better counts */
         if (h.par && (cap & 1)) cap--;   /* GH-133: an odd cap is equivalent to the even cap below it */
         HalfStatus st = run_css_half(h, cap, false, verb, card_mode, pipe_w, lbc, U, false, v);
         if (st == HALF_OPT) { h.lb = h.ub = h.own_lb = v; if (v < U) { U = v; pipe_bound(pipe_w, "UB", U); } }
@@ -1527,7 +1708,8 @@ static int engine_flag_family(const char* a)
         !strcmp(a, "-native-parity-opb"))
         return ENGFLAG_MAXSAT_FORM;
     if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
-        !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") || !strncmp(a, "-oddcap-skip=", 13))
+        !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") || !strncmp(a, "-oddcap-skip=", 13) ||
+        !strncmp(a, "-ub-pre", 7))   /* GH-144: -ub-pre=, -ub-pre-hits=, -ub-pre-plateau= */
         return ENGFLAG_MAXSAT_TUNE;
     if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10) || !strncmp(a, "-ub-search", 10))
         return ENGFLAG_CC;
@@ -1952,6 +2134,24 @@ int main(int argc, char** argv) {
             g_oddcap_skip = false;
         else if (!strncmp(argv[i], "-oddcap-skip", 12))
             die("invalid -oddcap-skip (on | off)");
+        else if (!strcmp(argv[i], "-ub-pre=off"))   /* GH-144 */
+            g_ub_pre = -1.0;
+        else if (!strcmp(argv[i], "-ub-pre=on"))
+            g_ub_pre = UBPRE_ON_SECONDS;
+        else if (!strncmp(argv[i], "-ub-pre=", 8)) {
+            double v = 0;
+            if (!cc_parse_seconds(argv[i] + 8, &v) || v <= 0) die("invalid -ub-pre (off | on | S seconds > 0)");
+            g_ub_pre = v;
+        } else if (!strncmp(argv[i], "-ub-pre-hits=", 13)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 13, &v) || v > 1000000000ULL) die("invalid -ub-pre-hits (0..1000000000)");
+            g_ub_pre_hits = v;
+        } else if (!strncmp(argv[i], "-ub-pre-plateau=", 16)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 16, &v) || v < 1 || v > 1000000000ULL) die("invalid -ub-pre-plateau (1..1000000000)");
+            g_ub_pre_plateau = v;
+        } else if (!strncmp(argv[i], "-ub-pre", 7))
+            die("invalid -ub-pre (off | on | S seconds > 0)");
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
             g_engine = ENGINE_MAXSAT;
         else if (!strcmp(argv[i], "-engine=cc"))
@@ -2096,6 +2296,13 @@ int main(int argc, char** argv) {
             printf("  Odd-cap skip (split MaxSAT path only, GH-133): -oddcap-skip=on|off (default on): on a half whose\n");
             printf("            parity matrix has only odd column weights every logical has even weight, so odd probe caps\n");
             printf("            are replaced by the even cap below (NONE at cap 2t certifies 2t+2); off = previous search\n");
+            printf("  Upper-bound pre-pass (split MaxSAT path only, GH-144): -ub-pre=off|on|S (default off; on = 60 s):\n");
+            printf("            before the interleaved search, run the GH-140 randomized low-weight logical finder on both halves\n");
+            printf("            for at most S seconds; a half stops earlier after -ub-pre-hits=H (default 16) re-hits of the bound\n");
+            printf("            or max(-ub-pre-plateau=P (default 1000), 4 x the iteration of its last improvement) iterations\n");
+            printf("            without improvement; the lightest verified word weight U0 is the initial upper bound (c d_ub),\n");
+            printf("            Phase 1 probes only caps < U0 - 1 and the rest proves 'no logical of weight <= U - 1' (Phase\n");
+            printf("            2a/2b at U - 1); -seed=N also seeds the finder\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -2126,6 +2333,14 @@ int main(int argc, char** argv) {
                   ename + " (use -engine=maxsat)";
         else if (g_engine == ENGINE_CC && !fam[ENGFLAG_MAXSAT_TUNE].empty())
             msg = fam[ENGFLAG_MAXSAT_TUNE] + ": MaxSAT option(s) have no effect with -engine=cc (use -engine=maxsat or -engine=auto)";
+        if (msg.empty() && g_ub_pre >= 0 && (g_css_joint || backend == SOLVER_ROUNDINGSAT))   /* GH-144 */
+            msg = "-ub-pre: needs the split MaxSAT path (not -joint or -roundingsat)";
+        if (msg.empty() && g_ub_pre < 0) {   /* GH-144: the pre-pass tuning flags need the pre-pass */
+            std::string t;
+            for (int i = 1; i < argc; i++)
+                if (!strncmp(argv[i], "-ub-pre-", 8)) t += (t.empty() ? "" : " ") + std::string(argv[i]);
+            if (!t.empty()) msg = t + ": need -ub-pre=S";
+        }
         if (msg.empty() && seed_given && backend == SOLVER_ROUNDINGSAT)
             msg = "-seed: no effect with -roundingsat (it seeds MaxCDCL or the CC engine)";
         if (msg.empty() && seed_given && cc_seed_given && g_seed != g_cc_opt.seed)
