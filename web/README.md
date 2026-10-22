@@ -90,7 +90,9 @@ needed (single-threaded build).
 timing. Node runs include about 0.6 s of start-up.) Also run in the browser: BB_288_12_18 CC (d = 18, 0.12 s),
 BB_144_12_12 CC (12), TN_144_2_13 CC (13, 0.78 s), BB_72_12_6 pasted with Gx / Gz computed (6); Stop during
 LP_714_100_16 MaxSAT after 4 s (bounds 10 / 16 kept, worker gone); TN_144_2_13 MaxSAT with a 2 s limit (TIMEOUT,
-bounds 9 / 13, the CLI's summary text). Screenshots: `web/screenshots/`.
+bounds 9 / 13, the CLI's summary text). Screenshots: `web/screenshots/`. The first run after a new `dq.wasm` is
+slower while V8 still executes baseline (Liftoff) code: BB_288_12_18 CC took 0.69 s of engine time on the first
+run after the rebuild and 0.11 s once the optimized code was cached.
 
 ## Deploying later (needs the PI)
 
