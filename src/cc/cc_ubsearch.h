@@ -64,6 +64,10 @@ public:
      * nontrivial word of weight < target found in this iteration; false if none. */
     bool iterate(int target, std::vector<int>& out);
 
+    /* the last iteration met a nontrivial word of weight exactly target (a re-hit of the current bound; needs
+     * slack >= 1, since words heavier than target - 1 + slack are not kept) */
+    bool last_hit() const { return hit_; }
+
     int n() const { return n_; }
     int rank() const { return r_; }
     int dim() const { return K_; }
@@ -74,6 +78,7 @@ private:
     int n_, W_, m_, r_, K_, rw_, kw_;
     UbParams p_;
     uint64_t rng_;
+    bool hit_;
     std::vector<uint64_t> H0_;               /* m_ rows x W_ words */
     std::vector<uint64_t> dm_;               /* qubit -> detector mask (kw_ words) */
     std::vector<std::vector<int> > srows_;   /* stabilizer rows (sparse, GF(2)-reduced) */

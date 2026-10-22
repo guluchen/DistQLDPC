@@ -130,7 +130,7 @@ for f in -ub-search -ub-search= -ub-search=maybe -ub-search=ON -ub-search=budget
          -ub-search=budget:x -ub-search=budget:1s -ub-searchX "-ub-search=budget:5 -cc-ub-pre=x" "-ub-search=on -cc-ub-pre=" \
          "-ub-search=on -cc-ub-share=1" "-ub-search=on -cc-ub-share=1.5" "-ub-search=on -cc-ub-share=-0.1" "-ub-search=on -cc-ub-share=x" \
          "-ub-search=on -cc-ub-triples=x" "-ub-search=on -cc-ub-triples=-1" "-ub-search=on -cc-ub-slack=x" "-ub-search=on -cc-ub-slack=1001" \
-         "-ub-search=on -cc-ub-bogus"; do
+         "-ub-search=on -cc-ub-hits=x" "-ub-search=on -cc-ub-hits=-1" "-ub-search=on -cc-ub-bogus"; do
     reject "invalid\|unknown" -engine=cc $f $L $C
 done
 reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -cc-ub-pre=1 $L $C
@@ -179,11 +179,11 @@ accept 2 "" -engine=maxsat $L $S4
 accept 3 "" -engine=cc -ub-search=on $L $M
 accept 3 "" -engine=cc -ub-search=off $L $M
 accept 2 "" -engine=cc -ub-search=budget:1 $L $C
-accept 3 "" -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 -cc-ub-triples=100 -cc-ub-slack=2 -seed=3 $L $M
+accept 3 "" -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 -cc-ub-triples=100 -cc-ub-slack=2 -cc-ub-hits=0 -seed=3 $L $M
 accept 3 "" -engine=cc -ub-search=on -cc-ub-share=0 -cc-ub-pre=0 -cc-dual=off -cc-schedule=sequential $L $M
 accept 2 "" -engine=auto -ub-search=on $L $C                                                         # auto -> cc: applies
 accept 2 "selected maxsat .*ignoring -ub-search=on" -engine=auto -ub-search=on $L $D1
-vgrep 3 "^c cc: ub-search: pre-pass 0.100s, share 0.200 of wall time, cap 0.500000s" -v -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 $L $M
+vgrep 3 "^c cc: ub-search: pre-pass 0.100s, share 0.200 of wall time (/16 after 16 re-hits of U), cap 0.500000s" -v -engine=cc -ub-search=budget:0.5 -cc-ub-pre=0.1 -cc-ub-share=0.2 $L $M
 vgrep 3 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triples on, slack 4" -v -engine=cc -ub-search=on -cc-ub-triples=1000 $L $M
 vgrep 3 "^c cc-stats: ub-search X: iterations [0-9]*, finder time" -engine=cc -ub-search=on -cc-stats $L $M
 # finder-only diagnostic: an upper bound, no answer (s UNKNOWN, rc 1), d_ub kept

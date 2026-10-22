@@ -43,7 +43,7 @@ double now_s() {
 } /* namespace */
 
 UbFinder::UbFinder(const SparseRows& H, const SparseRows& G, const SparseRows& S, uint64_t seed, const UbParams& p)
-    : n_(H.cols), W_((H.cols + 63) / 64), m_(0), r_(0), K_(0), rw_(1), kw_(1), p_(p), rng_(seed)
+    : n_(H.cols), W_((H.cols + 63) / 64), m_(0), r_(0), K_(0), rw_(1), kw_(1), p_(p), rng_(seed), hit_(false)
 {
     if (n_ <= 0) ub_fatal("half without qubits");
     if (G.cols != n_ || (S.cols != n_ && !S.rows.empty())) ub_fatal("column count mismatch");
@@ -177,6 +177,7 @@ bool UbFinder::iterate(int target, std::vector<int>& out) {
     const double t0 = now_s();
     st_.iterations++;
     out.clear();
+    hit_ = false;
     if (K_ <= 0 || target <= 1) { st_.seconds += now_s() - t0; return false; }
     /* 1. random column order */
     for (int i = n_ - 1; i > 0; i--) {
@@ -310,6 +311,7 @@ bool UbFinder::iterate(int target, std::vector<int>& out) {
             if (w2 < w) st_.li_gain++;
             w = w2;
             done++;
+            if (w == target) hit_ = true;
             if (w > 0 && w < best) {
                 best = w;
                 bestw = cbuf_;

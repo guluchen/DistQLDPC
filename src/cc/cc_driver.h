@@ -77,12 +77,15 @@ struct DriverOptions {
     double ub_cap;           /* total finder seconds (budget:S); < 0: no cap (on) */
     double ub_pre;           /* -cc-ub-pre=S: pre-pass seconds before the first level (capped by ub_cap) */
     double ub_share;         /* -cc-ub-share=F: share of the elapsed wall time given to the finder after the pre-pass */
+    int ub_hits;             /* -cc-ub-hits=H: after H finder iterations re-hit the current U without improving it, the
+                                share drops to ub_share / 16 (QDistRnd-style convergence heuristic; scheduling only;
+                                0 = never) */
     bool ub_only;            /* -cc-ub-only (diagnostic): run only the finder for ub_cap seconds, no ladder, no answer */
     UbParams ub;             /* -cc-ub-triples=K, -cc-ub-slack=L (finder tuning) */
     uint64_t ub_poll_mask;   /* test only: level poll when (nodes & mask) == 0 (default 0x3FFF) */
     uint64_t ub_skip_polls;  /* test only: the first N finder polls do nothing (the finder starts mid-ladder) */
     DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
-                      ub_search(false), ub_cap(-1), ub_pre(0), ub_share(0.1), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0) {}
+                      ub_search(false), ub_cap(-1), ub_pre(0), ub_share(0.1), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).
