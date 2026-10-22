@@ -179,10 +179,20 @@ bool UbFinder::iterate(int target, std::vector<int>& out) {
     out.clear();
     hit_ = false;
     if (K_ <= 0 || target <= 1) { st_.seconds += now_s() - t0; return false; }
-    /* 1. random column order */
-    for (int i = n_ - 1; i > 0; i--) {
-        const int j = (int)(splitmix(rng_) % (uint64_t)(i + 1));
-        std::swap(perm_[i], perm_[j]);
+    /* 1. random column order (evolution: a mutated copy of a population member once the population is full) */
+    if (p_.evo_mu > 0 && (int)pop_.size() >= p_.evo_mu) {
+        perm_ = pop_[(size_t)(splitmix(rng_) % pop_.size())].perm;
+        const int mx = std::max(1, n_ / 50);
+        const int m = 1 + (int)(splitmix(rng_) % (uint64_t)mx);
+        for (int t = 0; t < m; t++) {
+            const int a = (int)(splitmix(rng_) % (uint64_t)n_), b = (int)(splitmix(rng_) % (uint64_t)n_);
+            std::swap(perm_[a], perm_[b]);
+        }
+    } else {
+        for (int i = n_ - 1; i > 0; i--) {
+            const int j = (int)(splitmix(rng_) % (uint64_t)(i + 1));
+            std::swap(perm_[i], perm_[j]);
+        }
     }
     /* 2. Gauss-Jordan elimination with pivots in that order */
     M_ = H0_;
@@ -297,6 +307,7 @@ bool UbFinder::iterate(int target, std::vector<int>& out) {
     /* 5. local improvement of the lightest kept words */
     bool found = false;
     int best = target;
+    int fit_best = 1 << 30;   /* evolution fitness: lightest nontrivial word of this iteration (any weight) */
     if (!cands.empty()) {
         std::stable_sort(cands.begin(), cands.end(), [](const Cand& u, const Cand& v) { return u.w < v.w; });
         const int lim = thr();
@@ -311,6 +322,7 @@ bool UbFinder::iterate(int target, std::vector<int>& out) {
             if (w2 < w) st_.li_gain++;
             w = w2;
             done++;
+            if (w > 0 && w < fit_best) fit_best = w;
             if (w == target) hit_ = true;
             if (w > 0 && w < best) {
                 best = w;
@@ -328,6 +340,26 @@ bool UbFinder::iterate(int target, std::vector<int>& out) {
             }
             if ((int)out.size() != best) ub_fatal("word weight bookkeeping");
             st_.found++;
+        }
+    }
+    if (p_.evo_mu > 0) {   /* evolution: fitness (fit_best, mean weight of the nontrivial systematic words) */
+        double sum = 0;
+        int cnt = 0;
+        for (int j = 0; j < K_; j++) {
+            const uint64_t* dj = det_of(j);
+            uint64_t acc = 0;
+            for (int t = 0; t < kw_; t++) acc |= dj[t];
+            if (acc) { sum += wt1_[j]; cnt++; }
+        }
+        Member mb;
+        mb.best = fit_best;
+        mb.mean = cnt ? sum / cnt : 1e18;
+        auto worse = [](const Member& a, const Member& b) { return a.best != b.best ? a.best > b.best : a.mean > b.mean; };
+        if ((int)pop_.size() < p_.evo_mu) { mb.perm = perm_; pop_.push_back(mb); }
+        else {
+            size_t wi = 0;
+            for (size_t t = 1; t < pop_.size(); t++) if (worse(pop_[t], pop_[wi])) wi = t;
+            if (worse(pop_[wi], mb)) { mb.perm = perm_; pop_[wi] = mb; }
         }
     }
     st_.seconds += now_s() - t0;

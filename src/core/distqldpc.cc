@@ -2000,6 +2000,10 @@ int main(int argc, char** argv) {
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 12, &v) || v > 1000000) die("invalid -cc-ub-hits (0..1000000)");
             g_cc_opt.ub_hits = (int)v;
+        } else if (!strncmp(argv[i], "-cc-ub-evo=", 11)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 10000) die("invalid -cc-ub-evo (0..10000)");
+            g_cc_opt.ub.evo_mu = (int)v;
         } else if (!strcmp(argv[i], "-cc-ub-only"))
             g_cc_opt.ub_only = true;
         else if (!strncmp(argv[i], "-cc-ub-triples=", 15)) {
@@ -2074,7 +2078,8 @@ int main(int argc, char** argv) {
             printf("            the current upper bound, or after a plateau without improvement; H = 0: never); budget:S caps\n");
             printf("            the finder at S s; tuning\n");
             printf("            -cc-ub-triples=K (triples when the information set has <= K columns, default 0), -cc-ub-slack=L\n");
-            printf("            (default 4); -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
+            printf("            (default 4); -cc-ub-evo=MU column-order evolution with MU parents (default 0 = fresh random orders);\n");
+            printf("            -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
             printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..12)\n");

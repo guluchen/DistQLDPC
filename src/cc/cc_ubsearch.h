@@ -46,7 +46,11 @@ struct UbParams {
     int slack;           /* local improvement on nontrivial words of weight <= target - 1 + slack */
     int li_cap;          /* at most this many local improvements per iteration */
     int mutant;          /* 11: detector check skipped */
-    UbParams() : triples_max_k(0), slack(4), li_cap(64), mutant(0) {}
+    int evo_mu;          /* > 0: permutation evolution (QDistEvol-like): keep the evo_mu fittest column orders and derive
+                            each new order from a random one of them by 1..max(1, n/50) random transpositions (fitness:
+                            lightest nontrivial word of the iteration, then the mean weight of the nontrivial systematic
+                            words); 0: a fresh random order every iteration */
+    UbParams() : triples_max_k(0), slack(4), li_cap(64), mutant(0), evo_mu(0) {}
 };
 
 struct UbStats {
@@ -95,6 +99,8 @@ private:
     std::vector<char> detok_;
     std::vector<uint64_t> cbuf_;             /* candidate word (W_ words) */
     UbStats st_;
+    struct Member { int best; double mean; std::vector<int> perm; };
+    std::vector<Member> pop_;                /* evolution population (evo_mu > 0) */
 
     const uint64_t* det_of(int j);
     void build_word(const int* js, int cnt, std::vector<uint64_t>& c) const;
