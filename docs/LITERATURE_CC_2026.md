@@ -307,7 +307,7 @@ PR #2206; a *different* code from BB_360_12_24), [[360,12,20]] non-CSS PBB (deep
 | Degree bound ceil(wt(s)/max col weight) | RD26, Crocker, Lee, dist-m4ri | implied by `pack`? (pack is usually stronger; the degree bound is cheaper and not always dominated) | no | add as a 1-line extra prune |
 | Disjoint odd-check packing bound | Crocker (greedy packing), Lee (rule iii) | yes `pack` (DistQLDPC 2026-10-15; Lee 2026-10-05: independent) | no (GH-130 notes a "parity-packing propagator" idea) | not novel any more |
 | **Even-weight / parity bound when all column weights are odd** | Crocker (BB360: level skipping; cluster4 parity bound); classical fact | **no** | **no** | applies to all BB and LP stems (col weights 3 / 3,5); not to TN, GB |
-| **Stabilizer-overlap rule** supp(z) ∩ supp(g) <= wt(g)/2 | Lee 2026 (rule iv) | **no** | no (could be a learned-clause family) | monotone along branches; safe at every level |
+| **Stabilizer-overlap rule** supp(z) ∩ supp(g) <= wt(g)/2 | Lee 2026 (rule iv) | yes `overlap` (GH-138, with forbidding of the rest of a tight row; BB 0.20-0.47x nodes, LP Z halves 0.5-0.7x, TN 0.67-0.96x) | no (could be a learned-clause family) | monotone along branches; safe at every level; even-weight ties must not be cut |
 | Block-grid / structured IP bound | Crocker lpcheck2 (LP) | no | no | LP only; TN analogue unpublished |
 | Translation / orbit anchoring, earlier orbits forbidden | RD26 (two anchors), Crocker, Lee, dist-m4ri `start=` | yes `orbf` (GF(2)-verified per-half automorphisms, general not only translations) | orbit clauses (GH-85) | ours is more general |
 | Canonicalisation under the point stabilizer (2nd-level symmetry) | RD26: named as future work | no | no | novel if done |

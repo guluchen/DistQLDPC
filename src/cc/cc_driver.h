@@ -48,7 +48,7 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap) */
     bool dual;               /* -cc-dual=on|off (default on) */
     bool ub_basis;           /* -ub-basis (default on; -ub-basis=off): verified basis rows as initial upper bound */
     uint64_t seed;           /* -cc-seed=N (default 0 = identity labels) */
@@ -79,7 +79,7 @@ struct BoundSink {
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
-/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, mrv (or "none"); empty values and empty items
+/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv (or "none"); empty values and empty items
  * are invalid. */
 bool parse_rules(const char* s, Rules& out);
 std::string rules_string(const Rules& r);

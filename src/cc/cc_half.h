@@ -61,6 +61,23 @@
  *         (nontrivial), exactly as the branching leaf does; a syndrome-free S + a of weight w - 1 is
  *         handled as the branching does (dead end, or inconsistency if nontrivial). The verdict of
  *         every node is unchanged (the lookup enumerates exactly the closing children).
+ *   overlap (GH-138; J. Y. Lee, arXiv:2610.06820, rule (iv), plus DistQLDPC's forbidding) with K = rows of the
+ *         half's STABILIZER generators (X half: rows of Hx; Z half: rows of Hz; every row g satisfies H g = 0 and
+ *         G g = 0, checked at construction). For e in F and g in K, e + g is in ker H with G(e + g) = G e != 0, so
+ *         e + g is in F and |e + g| = |e| + |g| - 2|e & g|. Under the level precondition every element of F of
+ *         weight w is of minimum weight, hence |e & g| <= lim_g = floor(|g|/2) for every g (else e + g is
+ *         lighter). A node S has an extension e of weight w in F only if |S & g| <= |e & g| <= lim_g, and if
+ *         |S & g| = lim_g then e & g = S & g: every qubit of g \ S is outside every such e. The rule keeps the
+ *         counters ov_g = |S & g| incrementally and, when ov_g reaches lim_g, forbids g \ S for the subtree
+ *         (rows with lim_g = 0, i.e. |g| = 1, are forbidden from the start); the forbidden qubits leave the
+ *         candidate lists and the packing bound. The strict prune |S & g| > lim_g is implied (no forbidden qubit
+ *         is ever added). Exactness: no node that is a subset of ANY weight-w element of F is pruned, and no such
+ *         element meets a qubit forbidden by the rule, so every argument of the other rules (which keep one
+ *         chosen weight-w element e* reachable with S a subset of e* and no forbidden qubit in e*) is unchanged.
+ *         The even-|g| tie (|e & g| = |g|/2, e + g of equal weight) is NOT cut: lim_g = |g|/2 allows it; cutting
+ *         it would drop both e and e + g (mutant 10). With the leaf rule, children of remaining budget 1 or 2
+ *         (whose subtrees are lookups only) skip the counter updates: a closure found there is a weight-w element
+ *         of F and meets every limit by itself. Full proof: MODIFICATIONS.md (GH-138).
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -78,8 +95,8 @@ struct SparseRows {
 };
 
 struct Rules {
-    bool excl, pack, orbf, mrv, parity, leaf;
-    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true) {}
+    bool excl, pack, orbf, mrv, parity, leaf, overlap;
+    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true) {}
 };
 
 enum LevelVerdict { LEVEL_EMPTY = 0, LEVEL_FOUND = 1, LEVEL_INCONSISTENT = 2 };
@@ -93,11 +110,13 @@ struct LevelResult {
     uint64_t packprune;        /* |S| + packing > w */
     uint64_t parprune;         /* parity: w - |S| != wt(syn) mod 2 (never on a qualifying half, see cc_half.h) */
     uint64_t leaf1, leaf2;     /* leaf: budget-1 lookups; budget-2 lookups (one per candidate a) */
+    uint64_t ovtight;          /* overlap: a stabilizer row reached |S & g| = floor(|g|/2) (rest of g forbidden) */
+    uint64_t ovforbid;         /* overlap: qubits turned from free to forbidden by those events */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
-                    leaf1(0), leaf2(0), skipped(false) {}
+                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -106,7 +125,10 @@ struct LevelResult {
  * orbit seeds); 4 is a driver mutant (cc_driver.h); 5 parity rule applied although a column weight is even
  * (odd levels skipped and the parity check used on a half where the invariant fails); 6 leaf budget off by
  * one (the budget-2 meet is used at budget 3, so no cluster needing three more qubits is ever closed);
- * 7 leaf closures accepted without the detector check (trivial closures reported as found).
+ * 7 leaf closures accepted without the detector check (trivial closures reported as found); GH-138 overlap
+ * mutants: 8 limit off by one (floor(|g|/2) - 1: a row is tight one qubit early), 9 the parity checks H used as K
+ * (rows of H are not in ker H in general), 10 the even-|g| tie cut (limit |g|/2 - 1 for even |g|, which loses
+ * both e and e + g when |e & g| = |g|/2).
  * (GH-124 fix round 1: the S0 spec's literal mutant 3, "orbit seeds without forbidding earlier orbits", only
  * drops a restriction and is a sound weakening that can never change a level verdict, so it was replaced by
  * this non-equivalent orbit-rule mutant. GH-133: the spec's literal leaf mutant, "leaf lookup ignoring the
@@ -117,9 +139,10 @@ class HalfSearch {
 public:
     /* H, G: the half's parity checks and detector rows (n = H.cols columns). orbit_of: per ORIGINAL
      * qubit the orbit id of the verified half automorphism group (empty: none). relabel_seed != 0
-     * relabels qubits and rows deterministically (testing hook -cc-seed). */
+     * relabels qubits and rows deterministically (testing hook -cc-seed). K (GH-138, rule overlap): rows of
+     * the half's stabilizer generators, each with H g = 0 and G g = 0 (checked; NULL or no rows: rule idle). */
     HalfSearch(const SparseRows& H, const SparseRows& G, const std::vector<int>& orbit_of,
-               const Rules& rules, uint64_t relabel_seed, int mutant);
+               const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K = NULL);
 
     /* Level w >= 1 (precondition: no element of F of weight < w). */
     LevelResult run_level(int w);
@@ -133,6 +156,13 @@ public:
     int max_col_weight() const { return maxcw_; }
     /* the parity rule is in force on this half (rule on and all columns odd; mutant 5: rule on) */
     bool parity_active() const { return par_; }
+    /* overlap rule (GH-138): in force (rule on and K has a nonempty row); K rows used (deduplicated), their
+     * weight range, and the number of rows whose qubits are forbidden from the start (limit 0) */
+    bool overlap_active() const { return ovr_; }
+    int overlap_rows() const { return nk_; }
+    int overlap_min_weight() const { return kminw_; }
+    int overlap_max_weight() const { return kmaxw_; }
+    int overlap_zero_rows() const { return kzero_; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
@@ -152,6 +182,14 @@ private:
     std::vector<uint64_t> rowkey_, colkey_;
     std::vector<int32_t> htab_, hnext_;
     uint64_t hmask_;
+    /* overlap (GH-138): stabilizer rows (relabeled, ascending), qubit -> rows, per-row limit and counter */
+    bool ovr_;
+    int nk_, kminw_, kmaxw_, kzero_;
+    std::vector<uint32_t> kstart_, kq_;
+    std::vector<uint32_t> kcstart_, kcr_;
+    std::vector<int> klim_;
+    std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
+    uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
 
     /* search state */
     int w_;
@@ -168,6 +206,8 @@ private:
     bool incons_;
 
     void toggle(int q);
+    void ov_add(int q);
+    void ov_del(int q);
     bool gpar_nonzero() const;
     bool gpar_nonzero_with(int q) const;
     bool column_is_syndrome(int q) const;

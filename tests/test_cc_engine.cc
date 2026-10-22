@@ -24,6 +24,13 @@
 //   canonical driver must stay correct under the sequential schedule, where the other-half check is load-bearing.
 //   GH-133: 5 (parity rule forced although a column weight is even; instances with an even column weight), 6 (leaf
 //   budget off by one) and 7 (leaf closure without the detector check) must produce wrong half-level verdicts.
+//   GH-138: 8 (overlap limit off by one), 9 (parity checks H used as the stabilizer rows K) and 10 (even-|g| tie cut)
+//   must produce wrong half-level verdicts.
+// GH-138 (rule overlap): Part A gives every half a set K of stabilizer rows g with H g = 0 and G g = 0 (the elements
+//   that make e + g an element of F): by instance, a basis of ker [H; G] in enumeration order, all its elements of
+//   weight <= 6 (at most 60), or a few random elements; K is NOT closed under the planted shift, so the orbit seed
+//   rule is tested with an arbitrary row set. Every subset of the 7 rules (128) x seeds 0..2. Part B runs the
+//   driver, where K = the same-type stabilizer matrix (X half Hx, Z half Hz), with and without overlap.
 // Part D (GH-133, MaxSAT path): the production interleaved split driver (min_distance_css_interleaved, -no-card)
 //   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d].
 #define main distqldpc_main_unused
@@ -124,9 +131,10 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
+    r.overlap = mask & 64;
     return r;
 }
-static const int RM_OLD = 7, RM_NEW = 7 | 16 | 32, RM_ALL = 63;
+static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128;
 static const char* rules_name(int mask) {
     static char buf[64];
     distcc::Rules r = rules_of(mask);
@@ -135,10 +143,11 @@ static const char* rules_name(int mask) {
 }
 
 // ladder 1..dh for one configuration; returns true if every verdict matches; nodes summed into *nodes
-static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, int n, int dh, const std::vector<int>& orb,
-                      int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why) {
+static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
+                      const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why) {
     distcc::Rules r = rules_of(rmask);
-    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant);
+    const distcc::SparseRows Kr = to_rows(K, n);
+    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
     const int top = dh < 0 ? n : dh;
     char buf[160];
     for (int w = 1; w <= top; w++) {
@@ -259,7 +268,8 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[8] = {0, 0, 0, 0, 0, 0, 0, 0}, mut_runs[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    long mut_bad[11] = {0}, mut_runs[11] = {0};
+    long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
         std::vector<std::vector<int> > gens;
@@ -276,36 +286,68 @@ int main(int argc, char** argv) {
         if (G.empty()) G.push_back(1u << rnd(n));
         if (inst % 3 == 0) make_columns_odd(H, n);   // GH-133: parity rule in force on these halves
         const int dh = half_opt(H, G, n);
+        // GH-138: stabilizer rows K inside ker [H; G] (e + g stays in F for every e in F)
+        std::vector<Mask> kerHG, K;
+        {
+            Span sp;
+            std::vector<Mask> basis;
+            for (Mask v = 1; v < (1u << n); v++) {
+                if (!in_kernel(H, v) || detected(G, v)) continue;
+                kerHG.push_back(v);
+                if (sp.add(v)) basis.push_back(v);
+            }
+            const int kind = inst % 3;
+            if (kind == 0) { K = basis; a_kbasis++; }
+            else if (kind == 1) { for (Mask v : kerHG) if (popc(v) <= 6 && K.size() < 60) K.push_back(v); a_klow++; }
+            else if (!basis.empty()) {
+                for (int t = 0, T = 1 + (int)rnd(8); t < T; t++) {
+                    Mask v = 0;
+                    for (Mask b : basis) if (rnd(2)) v ^= b;
+                    if (v) K.push_back(v);
+                }
+                a_krand++;
+            }
+            // does some minimum element of F meet a row of K in exactly floor(|g|/2) qubits (the rule can bind)?
+            bool tight = false;
+            if (dh > 0)
+                for (Mask v = 1; v < (1u << n) && !tight; v++)
+                    if (popc(v) == dh && in_kernel(H, v) && detected(G, v))
+                        for (Mask g : K) if (popc(g & v) == popc(g) / 2 && popc(g) >= 2) { tight = true; break; }
+            if (tight) a_ktight++;
+        }
         std::vector<int> orb = orbits_of(H, G, n);
         const bool allodd = all_odd(H, n);
         a_inst++; if (!orb.empty()) a_orb++; if (dh < 0) a_none++; if (allodd) a_odd++;
         if (allodd && dh > 0 && (dh & 1)) { fails++; a_bad++; fprintf(stderr, "CC_FAIL partA inst=%d: all-odd half with odd d_h=%d\n", inst, dh); }
-        for (int rm = 0; rm < 64; rm++)
+        for (int rm = 0; rm < RM_NSUB; rm++)
             for (uint64_t seed = 0; seed < 3; seed++) {
                 std::string why;
                 a_runs++;
-                if (!ladder_ok(H, G, n, dh, orb, rm, seed, 0, NULL, why)) {
+                if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, 0, NULL, why)) {
                     a_bad++; fails++;
                     if (a_bad <= 10) fprintf(stderr, "CC_FAIL partA inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rm),
                                              (unsigned long long)seed, why.c_str());
                 }
             }
-        // mutants 1-3 and 5-7 on the configurations where they apply
-        for (int mt = 1; mt <= 7; mt++)
-            for (int rm = 0; rm < 64; rm++) {
+        // mutants 1-3 and 5-10 on the configurations where they apply
+        for (int mt = 1; mt <= 10; mt++)
+            for (int rm = 0; rm < RM_NSUB; rm++) {
                 if (mt == 4) break;
                 if (mt == 1 && !(rm & 1)) continue;
                 if (mt == 2 && !(rm & 2)) continue;
                 if (mt == 3 && (!(rm & 4) || orb.empty())) continue;
                 if (mt == 5 && (!(rm & 16) || allodd)) continue;   // parity forced where a column weight is even
                 if ((mt == 6 || mt == 7) && !(rm & 32)) continue;
+                if (mt >= 8 && !(rm & 64)) continue;
                 std::string why;
                 mut_runs[mt]++;
-                if (!ladder_ok(H, G, n, dh, orb, rm, 0, mt, NULL, why)) mut_bad[mt]++;
+                if (!ladder_ok(H, G, K, n, dh, orb, rm, 0, mt, NULL, why)) mut_bad[mt]++;
             }
     }
-    printf("partA: %ld half instances (%ld with verified orbits, %ld with all column weights odd, %ld without any nontrivial element), %ld ladder runs over 64 rule subsets x 3 seeds, %ld bad\n",
-           a_inst, a_orb, a_odd, a_none, a_runs, a_bad);
+    printf("partA: %ld half instances (%ld with verified orbits, %ld with all column weights odd, %ld without any nontrivial element), %ld ladder runs over %d rule subsets x 3 seeds, %ld bad\n",
+           a_inst, a_orb, a_odd, a_none, a_runs, RM_NSUB, a_bad);
+    printf("partA K (GH-138): %ld basis, %ld low-weight sets, %ld random sets; %ld instances where a minimum element meets a row of K in floor(|g|/2) qubits\n",
+           a_kbasis, a_klow, a_krand, a_ktight);
 
     // ---------------- Part B: driver through the forked pipe ----------------
     long b_inst = 0, b_runs = 0, b_bad = 0, b_dual = 0, b_xorb = 0, b_dxdz = 0, b_odd = 0, b_seqbad4 = 0, b_seq = 0, b_lock4bad = 0, b_lock4 = 0;
@@ -380,6 +422,8 @@ int main(int argc, char** argv) {
             {"seed1", RM_NEW, true, false, 1, true}, {"seed2", RM_NEW, false, true, 2, true}, {"none", 0, true, false, 0, true},
             {"mrv", RM_ALL, true, false, 0, true}, {"no-symbreak", RM_NEW, true, false, 0, false},
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
+            {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
+            {"overlap-index", 1 | 2 | 64, true, true, 2, false},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
@@ -432,8 +476,11 @@ int main(int argc, char** argv) {
     printf("mutant 5 (parity rule forced on halves with an even column weight): %ld/%ld half ladders wrong\n", mut_bad[5], mut_runs[5]);
     printf("mutant 6 (leaf budget off by one): %ld/%ld half ladders wrong\n", mut_bad[6], mut_runs[6]);
     printf("mutant 7 (leaf closure without the detector check): %ld/%ld half ladders wrong\n", mut_bad[7], mut_runs[7]);
+    printf("mutant 8 (overlap limit off by one): %ld/%ld half ladders wrong\n", mut_bad[8], mut_runs[8]);
+    printf("mutant 9 (overlap with the parity checks H as K): %ld/%ld half ladders wrong\n", mut_bad[9], mut_runs[9]);
+    printf("mutant 10 (overlap even-|g| tie cut): %ld/%ld half ladders wrong\n", mut_bad[10], mut_runs[10]);
     bool mut_ok = mut_bad[1] > 0 && mut_bad[2] > 0 && mut_bad[3] > 0 && b_seqbad4 > 0 && b_lock4bad > 0 &&
-                  mut_bad[5] > 0 && mut_bad[6] > 0 && mut_bad[7] > 0;
+                  mut_bad[5] > 0 && mut_bad[6] > 0 && mut_bad[7] > 0 && mut_bad[8] > 0 && mut_bad[9] > 0 && mut_bad[10] > 0;
     if (!mut_ok) { fprintf(stderr, "CC_FAIL mutant expectations not met\n"); fails++; }
     printf(fails ? "CC_ENGINE_TESTS FAIL (%d)\n" : "CC_ENGINE_TESTS PASS\n", fails);
     return fails ? 1 : 0;
