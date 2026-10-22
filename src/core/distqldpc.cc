@@ -1187,7 +1187,8 @@ static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
  * there improves U and ends Phase 1 as in main); Phase 2a runs while both halves are unfinished (not only while
  * their incumbents tie) with feasibility probes at U - 1, and reports the global lower bound after each probe;
  * Phase 2b optimises each unfinished half with cap U - 1. Soundness: MODIFICATIONS.md (GH-144). */
-static double g_ub_pre = -1.0;             /* seconds; < 0: off (default) */
+static double g_ub_pre = 60.0;             /* seconds; < 0: off. Default on (= UBPRE_ON_SECONDS, PI 2026-10-23) */
+static bool g_ub_pre_given = false;        /* -ub-pre=... given explicitly */
 static uint64_t g_ub_pre_max_iters = 0;    /* test only (no flag): cap on the pre-pass iterations of both halves (0: none) */
 static int g_ub_pre_mutant = 0;            /* test only (no flag): 1 = finder without its detector check and local improvement
                                               (GH-140 mutant 11; trivial words reach the verification, which must reject
@@ -2134,14 +2135,15 @@ int main(int argc, char** argv) {
             g_oddcap_skip = false;
         else if (!strncmp(argv[i], "-oddcap-skip", 12))
             die("invalid -oddcap-skip (on | off)");
-        else if (!strcmp(argv[i], "-ub-pre=off"))   /* GH-144 */
-            g_ub_pre = -1.0;
-        else if (!strcmp(argv[i], "-ub-pre=on"))
-            g_ub_pre = UBPRE_ON_SECONDS;
+        else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */
+            g_ub_pre = -1.0; g_ub_pre_given = true;
+        } else if (!strcmp(argv[i], "-ub-pre=on")) {
+            g_ub_pre = UBPRE_ON_SECONDS; g_ub_pre_given = true;
+        }
         else if (!strncmp(argv[i], "-ub-pre=", 8)) {
             double v = 0;
             if (!cc_parse_seconds(argv[i] + 8, &v) || v <= 0) die("invalid -ub-pre (off | on | S seconds > 0)");
-            g_ub_pre = v;
+            g_ub_pre = v; g_ub_pre_given = true;
         } else if (!strncmp(argv[i], "-ub-pre-hits=", 13)) {
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 13, &v) || v > 1000000000ULL) die("invalid -ub-pre-hits (0..1000000000)");
@@ -2271,7 +2273,7 @@ int main(int argc, char** argv) {
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
-            printf("            -ub-search=off|on|budget:S (GH-140, default off): randomized low-weight logical finder per half\n");
+            printf("            -ub-search=off|on|budget:S (GH-140, default on): randomized low-weight logical finder per half\n");
             printf("            (random information sets, 1-2 systematic rows, stabilizer local improvement); verified words\n");
             printf("            lower d_ub and let the stop rule finish early; pre-pass -cc-ub-pre=S (default 0), then the share\n");
             printf("            -cc-ub-share=F of the wall time (default 0.05; F/16 once -cc-ub-hits=H iterations, default 16, re-hit\n");
@@ -2296,7 +2298,7 @@ int main(int argc, char** argv) {
             printf("  Odd-cap skip (split MaxSAT path only, GH-133): -oddcap-skip=on|off (default on): on a half whose\n");
             printf("            parity matrix has only odd column weights every logical has even weight, so odd probe caps\n");
             printf("            are replaced by the even cap below (NONE at cap 2t certifies 2t+2); off = previous search\n");
-            printf("  Upper-bound pre-pass (split MaxSAT path only, GH-144): -ub-pre=off|on|S (default off; on = 60 s):\n");
+            printf("  Upper-bound pre-pass (split MaxSAT path only, GH-144): -ub-pre=off|on|S (default on = 60 s; off restores the previous search):\n");
             printf("            before the interleaved search, run the GH-140 randomized low-weight logical finder on both halves\n");
             printf("            for at most S seconds; a half stops earlier after -ub-pre-hits=H (default 16) re-hits of the bound\n");
             printf("            or max(-ub-pre-plateau=P (default 1000), 4 x the iteration of its last improvement) iterations\n");
@@ -2333,8 +2335,10 @@ int main(int argc, char** argv) {
                   ename + " (use -engine=maxsat)";
         else if (g_engine == ENGINE_CC && !fam[ENGFLAG_MAXSAT_TUNE].empty())
             msg = fam[ENGFLAG_MAXSAT_TUNE] + ": MaxSAT option(s) have no effect with -engine=cc (use -engine=maxsat or -engine=auto)";
-        if (msg.empty() && g_ub_pre >= 0 && (g_css_joint || backend == SOLVER_ROUNDINGSAT))   /* GH-144 */
-            msg = "-ub-pre: needs the split MaxSAT path (not -joint or -roundingsat)";
+        if (msg.empty() && g_ub_pre >= 0 && (g_css_joint || backend == SOLVER_ROUNDINGSAT)) {   /* GH-144 */
+            if (g_ub_pre_given) msg = "-ub-pre: needs the split MaxSAT path (not -joint or -roundingsat)";
+            else g_ub_pre = -1.0;   /* default-on pre-pass silently off on paths it does not apply to */
+        }
         if (msg.empty() && g_ub_pre < 0) {   /* GH-144: the pre-pass tuning flags need the pre-pass */
             std::string t;
             for (int i = 1; i < argc; i++)

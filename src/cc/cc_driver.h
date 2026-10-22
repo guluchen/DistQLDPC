@@ -86,7 +86,7 @@ struct DriverOptions {
     uint64_t ub_poll_mask;   /* test only: level poll when (nodes & mask) == 0 (default 0x3FFF) */
     uint64_t ub_skip_polls;  /* test only: the first N finder polls do nothing (the finder starts mid-ladder) */
     DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
-                      ub_search(false), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0) {}
+                      ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).

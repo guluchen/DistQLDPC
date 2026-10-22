@@ -464,6 +464,7 @@ int main(int argc, char** argv) {
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
+            o.ub_search = false;   // Part B tests the ladder; -ub-search is on by default since 2026-10-23 (Part E/F test it)
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
@@ -478,7 +479,7 @@ int main(int argc, char** argv) {
             // -ub-basis off (GH-133): with the basis upper bound the X half may stop at U before its own hit, which made
             // the detection of mutant 4 depend on the instance stream (1/200 in GH-124); without it the X half always
             // runs to its own distance under the sequential schedule and the other-half check decides the answer.
-            distcc::DriverOptions o; o.sequential = true; o.ub_basis = false;
+            distcc::DriverOptions o; o.sequential = true; o.ub_basis = false; o.ub_search = false;
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, true, false);
             b_runs++; b_seq++;
             if (!run_ok(r, d)) { b_bad++; fails++; fprintf(stderr, "CC_FAIL partB sequential inst=%d d=%d got %d\n", inst, d, r.d); }
@@ -486,7 +487,7 @@ int main(int argc, char** argv) {
             mut_runs[4]++;
             RunOut r4 = run_driver(mHx, mHz, mGx, mGz, o, true, false);
             if (!run_ok(r4, d)) { mut_bad[4]++; b_seqbad4++; }
-            distcc::DriverOptions l; l.mutant = 4; l.ub_basis = false;   // schedule not requested: mutant 4 must switch to sequential itself
+            distcc::DriverOptions l; l.mutant = 4; l.ub_basis = false; l.ub_search = false;   // schedule not requested: mutant 4 must switch to sequential itself
             RunOut l4 = run_driver(mHx, mHz, mGx, mGz, l, true, true);
             b_lock4++; mut_runs[4]++;
             if (!run_ok(l4, d)) { mut_bad[4]++; b_lock4bad++; }

@@ -133,7 +133,7 @@ for f in -ub-search -ub-search= -ub-search=maybe -ub-search=ON -ub-search=budget
          "-ub-search=on -cc-ub-hits=x" "-ub-search=on -cc-ub-hits=-1" "-ub-search=on -cc-ub-bogus"; do
     reject "invalid\|unknown" -engine=cc $f $L $C
 done
-reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -cc-ub-pre=1 $L $C
+reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -ub-search=off -cc-ub-pre=1 $L $C   # -ub-search is on by default since 2026-10-23
 reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -ub-search=off -cc-ub-share=0.5 -cc-ub-slack=1 $L $C
 reject "need -ub-search=on or -ub-search=budget:S" -engine=cc -ub-search=on -ub-search=off -cc-ub-only $L $C   # the last -ub-search wins
 reject "needs -ub-search=budget:S" -engine=cc -ub-search=on -cc-ub-only $L $C
@@ -235,7 +235,7 @@ vgrep 3 "^c cc: X half parity: off (column weights 2..4, an even weight present)
 vgrep 3 "^c cc: Z half parity: off (column weights 2..3, an even weight present)" -v -engine=cc $L $M
 vgrep 2 "^c cc: X half parity: rule off" -v -engine=cc -cc-rules=excl,pack,orbf $L $C
 vgrep 2 "^c cc: X half level 1 skipped\|^c d_lb: 2" -v -engine=cc $L $C
-vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 [0-9]* ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats -ub-basis=off $L $C
+vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 [0-9]* ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats -ub-basis=off -ub-search=off $L $C
 vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 0 ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats $L $M
 vgrep 3 "^c cc-stats: X level 2 EMPTY .* ovtight 0 ovforbid 0 time" -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf $L $M
 # 7c. GH-138: overlap decision per half (K = same-type stabilizer rows; TN_36_8_3 rows have weight 4..6)
@@ -257,7 +257,7 @@ for f in -ub-pre -ub-pre= -ub-pre=0 -ub-pre=-1 -ub-pre=x -ub-pre=1s -ub-pre=ON -
          "-ub-pre=1 -ub-pre-bogus=1"; do
     reject "invalid" $f $L $M
 done
-reject "need -ub-pre=S" -ub-pre-hits=4 $L $M
+reject "need -ub-pre=S" -ub-pre=off -ub-pre-hits=4 $L $M   # -ub-pre is on by default since 2026-10-23
 reject "need -ub-pre=S" -ub-pre=1 -ub-pre=off -ub-pre-plateau=10 $L $M   # the last -ub-pre wins
 reject "no effect with -engine=cc" -engine=cc -ub-pre=on $L $C
 accept 3 "" -ub-pre=on $L $M
@@ -289,16 +289,16 @@ runs=$((runs + 1)); run -v -ub-pre=1 $L BB_90_8_10
 if grep -Eq "^c CSS interleave: . half cap (9|1[0-9]|[2-9][0-9]) " <<<"$out" || ! grep -q "^c CSS interleave: X half cap 8 lb [0-9]* feasibility -> NONE" <<<"$out"; then
     echo "FAIL (-ub-pre: expected no probe cap >= U0 - 1 = 9 and the Phase 2a probe at cap 8): $(grep 'CSS interleave' <<<"$out")" >&2; fails=$((fails + 1))
 fi
-# -ub-pre=off and the default print no ub-pre line (main's search)
-for a in -ub-pre=off ""; do
-    runs=$((runs + 1)); run -v $a $L BB_90_8_10
-    if grep -q "ub-pre" <<<"$out" || ! grep -qx "o 10" <<<"$out"; then echo "FAIL (no ub-pre output expected with '$a')" >&2; fails=$((fails + 1)); fi
-done
+# -ub-pre=off prints no ub-pre line (the previous search); the default (on since 2026-10-23) does
+runs=$((runs + 1)); run -v -ub-pre=off $L BB_90_8_10
+if grep -q "ub-pre" <<<"$out" || ! grep -qx "o 10" <<<"$out"; then echo "FAIL (no ub-pre output expected with -ub-pre=off)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -v $L BB_90_8_10
+if ! grep -q "ub-pre" <<<"$out" || ! grep -qx "o 10" <<<"$out"; then echo "FAIL (default: ub-pre output and o 10 expected)" >&2; fails=$((fails + 1)); fi
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)
 runs=$((runs + 1))
-run -engine=cc -cc-mutant=2 -cc-rules=excl,pack,orbf $L LP_136_32_4
+run -engine=cc -cc-mutant=2 -cc-rules=excl,pack,orbf -ub-search=off $L LP_136_32_4
 if [[ $rc -ne 1 ]] || ! grep -q "^c d_lb: [0-9]" <<<"$out" || [[ "$(grep '^c d_lb:' <<<"$out" | tail -1)" != "c d_lb: -" ]] \
     || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: -" ]] || ! grep -q "^c status: UNKNOWN (CC engine stopped without an answer" <<<"$out" \
     || ! grep -qx "s UNKNOWN" <<<"$out"; then
