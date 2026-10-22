@@ -1173,8 +1173,8 @@ static bool dualshare_sync(CssHalf hs[2], uint64_t U) {
  * information sets, words of 1-2 systematic rows, same-type stabilizer local improvement) runs on every half that
  * has logicals (X half: H = Hz, G = Gx, S = Hx; Z half: H = Hx, G = Gz, S = Hz) for at most S seconds of wall time,
  * one iteration at a time on the half with less finder time, always searching for a word lighter than the current
- * global bound U. A half stops after UBPRE_HITS iterations that re-hit U without improving it, or after a plateau
- * of max(UBPRE_PLATEAU_MIN, 4 x the half's iteration count at its last improvement) iterations without one (the
+ * global bound U. A half stops after H iterations that re-hit U without improving it, or after a plateau
+ * of max(P, 4 x the half's iteration count at its last improvement) iterations without one (the
  * GH-140 convergence rule, iteration based, so for a given -seed the pre-pass is deterministic unless the S cap
  * ends it); the pre-pass ends when both halves stopped or after S seconds.
  * Every word is verified before use (ubpre_verify): it is a feasible solution of the half instance that
@@ -1192,7 +1192,9 @@ static uint64_t g_ub_pre_max_iters = 0;    /* test only (no flag): cap on the pr
 static int g_ub_pre_mutant = 0;            /* test only (no flag): 1 = finder without its detector check and local improvement
                                               (GH-140 mutant 11; trivial words reach the verification, which must reject
                                               them); 2 = mutant 1 and words used without verification (wrong answers) */
-static const uint64_t UBPRE_HITS = 16, UBPRE_PLATEAU_MIN = 64;
+static uint64_t g_ub_pre_hits = 16;        /* -ub-pre-hits=H: a half stops after H re-hits of U without improvement (0: never) */
+static uint64_t g_ub_pre_plateau = 64;     /* -ub-pre-plateau=P: ... or after max(P, 4 x its iteration count at its last
+                                              improvement) iterations without improvement */
 
 static distcc::SparseRows cc_rows(const Matrix& M);   /* GH-124, defined with the CC engine below */
 static double wall_seconds();                          /* defined with the forked driver below */
@@ -1271,12 +1273,13 @@ static void ub_prepass(const CssHalf hs[2], const Matrix* Ss[2], int n, double b
         o.iters[k]++;
         if (!f[k]->iterate(target, e)) {
             if (f[k]->last_hit() && U != INF) rehit[k]++;
-            const uint64_t plateau = std::max<uint64_t>(UBPRE_PLATEAU_MIN, 4 * last[k]);
-            if (rehit[k] >= UBPRE_HITS || o.iters[k] - last[k] >= plateau) {
+            const uint64_t plateau = std::max<uint64_t>(g_ub_pre_plateau, 4 * last[k]);
+            const bool hits = g_ub_pre_hits > 0 && rehit[k] >= g_ub_pre_hits;
+            if (hits || o.iters[k] - last[k] >= plateau) {
                 conv[k] = true;
                 if (verb > 0)
                     printf("c ub-pre %s: converged (%s) after %llu iterations, wall %.3fs\n", hs[k].tag,
-                           rehit[k] >= UBPRE_HITS ? "re-hits of U without improvement" : "plateau",
+                           hits ? "re-hits of U without improvement" : "plateau",
                            (unsigned long long)o.iters[k], wall_seconds() - t0);
             }
             continue;
@@ -1705,7 +1708,7 @@ static int engine_flag_family(const char* a)
         return ENGFLAG_MAXSAT_FORM;
     if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
         !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") || !strncmp(a, "-oddcap-skip=", 13) ||
-        !strncmp(a, "-ub-pre=", 8))   /* GH-144 */
+        !strncmp(a, "-ub-pre", 7))   /* GH-144: -ub-pre=, -ub-pre-hits=, -ub-pre-plateau= */
         return ENGFLAG_MAXSAT_TUNE;
     if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10) || !strncmp(a, "-ub-search", 10))
         return ENGFLAG_CC;
@@ -2136,6 +2139,14 @@ int main(int argc, char** argv) {
             double v = 0;
             if (!cc_parse_seconds(argv[i] + 8, &v) || v <= 0) die("invalid -ub-pre (off | S seconds > 0)");
             g_ub_pre = v;
+        } else if (!strncmp(argv[i], "-ub-pre-hits=", 13)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 13, &v) || v > 1000000000ULL) die("invalid -ub-pre-hits (0..1000000000)");
+            g_ub_pre_hits = v;
+        } else if (!strncmp(argv[i], "-ub-pre-plateau=", 16)) {
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 16, &v) || v < 1 || v > 1000000000ULL) die("invalid -ub-pre-plateau (1..1000000000)");
+            g_ub_pre_plateau = v;
         } else if (!strncmp(argv[i], "-ub-pre", 7))
             die("invalid -ub-pre (off | S seconds > 0)");
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
@@ -2319,6 +2330,12 @@ int main(int argc, char** argv) {
             msg = fam[ENGFLAG_MAXSAT_TUNE] + ": MaxSAT option(s) have no effect with -engine=cc (use -engine=maxsat or -engine=auto)";
         if (msg.empty() && g_ub_pre >= 0 && (g_css_joint || backend == SOLVER_ROUNDINGSAT))   /* GH-144 */
             msg = "-ub-pre: needs the split MaxSAT path (not -joint or -roundingsat)";
+        if (msg.empty() && g_ub_pre < 0) {   /* GH-144: the pre-pass tuning flags need the pre-pass */
+            std::string t;
+            for (int i = 1; i < argc; i++)
+                if (!strncmp(argv[i], "-ub-pre-", 8)) t += (t.empty() ? "" : " ") + std::string(argv[i]);
+            if (!t.empty()) msg = t + ": need -ub-pre=S";
+        }
         if (msg.empty() && seed_given && backend == SOLVER_ROUNDINGSAT)
             msg = "-seed: no effect with -roundingsat (it seeds MaxCDCL or the CC engine)";
         if (msg.empty() && seed_given && cc_seed_given && g_seed != g_cc_opt.seed)
