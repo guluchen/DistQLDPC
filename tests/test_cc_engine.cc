@@ -43,6 +43,13 @@
 //   must stop the run) and 12 (mutant 11 plus words reported without verification: wrong answers) must fail.
 // Part D (GH-133, MaxSAT path): the production interleaved split driver (min_distance_css_interleaved, -no-card)
 //   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d].
+// Part F (GH-144, -ub-pre on the MaxSAT path): the same driver with the verified finder pre-pass on the Part B codes:
+//   budget 1 s (converged pre-pass, U0 = d on almost every code), and pre-passes cut after 1, 2 or 3 finder iterations
+//   (U0 > d on many codes, so Phase 1 FOUND, Phase 2a FOUND and Phase 2b OPT below a seeded U are exercised), with
+//   -oddcap-skip off, -seed 5, -dualmode off, -dualmode skip, -no-symbreak and -card-mto: RESULT d OPTIMAL = enumeration,
+//   every UB >= d, LBs monotone <= d, and the first UB (the pre-pass U0) >= d. Test mutants: 1 (finder without its
+//   detector check: trivial words must be rejected by the verification; answers stay correct) and 2 (mutant 1 plus
+//   words used without verification: some answer must be wrong, on the codes and on the rotated surface codes).
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -218,7 +225,8 @@ static RunOut run_driver(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
 }
 
 // GH-133 Part D: the production MaxSAT split driver (fresh solver per probe, -no-card) with -oddcap-skip off/on
-static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool oddcap) {
+struct PreCfg { const char* name; double pre; uint64_t iters; bool oddcap; uint64_t seed; int dualmode; bool symbreak; int card; int mutant; };
+static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool oddcap, const PreCfg* pc = NULL) {
     RunOut r; r.ok = false; r.d = -2;
     int fd[2];
     if (pipe(fd) != 0) { perror("pipe"); exit(2); }
@@ -230,6 +238,10 @@ static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
         if (devnull >= 0 && !getenv("CC_TEST_VERBOSE")) { dup2(devnull, 1); dup2(devnull, 2); }
         alarm(120);
         g_oddcap_skip = oddcap;
+        if (pc) {   // GH-144 Part F
+            g_ub_pre = pc->pre; g_ub_pre_max_iters = pc->iters; g_seed = pc->seed; g_ub_pre_mutant = pc->mutant;
+            (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], pc->card, pc->symbreak, pc->dualmode, false);
+        } else
         (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], 0, true, DUALMODE_SHARE, false);
         fflush(stdout);
         _exit(0);
@@ -375,6 +387,7 @@ int main(int argc, char** argv) {
     // ---------------- Part B: driver through the forked pipe ----------------
     long b_inst = 0, b_runs = 0, b_bad = 0, b_dual = 0, b_xorb = 0, b_dxdz = 0, b_odd = 0, b_seqbad4 = 0, b_seq = 0, b_lock4bad = 0, b_lock4 = 0;
     long b_traps = 0, d_runs = 0, d_bad = 0, d_odd = 0;
+    long f_runs = 0, f_bad = 0, f_above = 0, f_exact = 0, f_m1_runs = 0, f_m1_bad = 0, f_m2_runs = 0, f_m2_wrong = 0;
     long e_halves = 0, e_bad = 0, e_reach = 0, e_nondet = 0, e_mut11_unit = 0, e_runs = 0, e_dbad = 0, e_aborted = 0, e_mut12_wrong = 0, e_mut_halves = 0;
     for (int inst = 0; inst < NB; inst++) {
         const int n = 6 + (int)rnd(11);
@@ -576,6 +589,29 @@ int main(int argc, char** argv) {
                 if (!run_ok(r, d)) { d_bad++; fails++; if (d_bad <= 10) fprintf(stderr, "CC_FAIL partD inst=%d oddcap=%d: d=%d got %d\n", inst, oc, d, r.d); }
             }
         }
+        {   // Part F (GH-144): -ub-pre on the MaxSAT split driver
+            static const PreCfg fcfg[] = {
+                {"pre1s", 1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0},
+                {"iter1", 1.0, 1, true, 0, DUALMODE_SHARE, true, 0, 0},
+                {"iter2-oddcap-off", 1.0, 2, false, 0, DUALMODE_SHARE, true, 0, 0},
+                {"iter3-seed5", 1.0, 3, true, 5, DUALMODE_SHARE, true, 0, 0},
+                {"iter1-dual-off", 1.0, 1, true, 0, DUALMODE_OFF, true, 0, 0},
+                {"iter2-dual-skip", 1.0, 2, true, 0, DUALMODE_SKIP, true, 0, 0},
+                {"iter1-nosymbreak-seed2", 1.0, 1, true, 2, DUALMODE_SHARE, false, 0, 0},
+                {"pre1s-mto", 1.0, 0, true, 0, DUALMODE_SHARE, true, 3, 0},
+                {"mutant1", 1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 1},
+                {"mutant2", 1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 2},
+            };
+            for (const PreCfg& c : fcfg) {
+                RunOut r = run_maxsat(mHx, mHz, mGx, mGz, c.oddcap, &c);
+                bool ok = run_ok(r, d) && !r.ubs.empty();
+                if (c.mutant == 2) { f_m2_runs++; if (r.ok && r.d != d) f_m2_wrong++; continue; }
+                if (c.mutant == 1) { f_m1_runs++; if (!run_ok(r, d)) { f_m1_bad++; fails++; fprintf(stderr, "CC_FAIL partF mutant1 inst=%d: d=%d got %d\n", inst, d, r.d); } continue; }
+                f_runs++;
+                if (ok) { if (r.ubs[0] > d) f_above++; else f_exact++; }
+                if (!ok) { f_bad++; fails++; if (f_bad <= 10) fprintf(stderr, "CC_FAIL partF inst=%d n=%d cfg=%s: d=%d got %d (ubs %zu)\n", inst, n, c.name, d, r.d, r.ubs.size()); }
+            }
+        }
     }
     // Part E on rotated surface codes [[d^2, 1, d]] (d = 3, 4; also with X and Z swapped): weight-2 boundary stabilizers
     // are lighter than d, so mutants 11 and 12 must show here; the canonical driver with the finder must stay correct.
@@ -646,6 +682,46 @@ int main(int argc, char** argv) {
             }
         }
     printf("partE (rotated surface codes d = 3, 4, X/Z swapped): %ld canonical checks, %ld bad\n", e_surf, e_surf_bad);
+    long f_surf = 0, f_surf_bad = 0, f_surf_m2 = 0, f_surf_m2_wrong = 0;
+    for (int dd = 3; dd <= 5; dd++) {   // GH-144 Part F on rotated surface codes (weight-2 stabilizers lighter than d)
+        const int n = dd * dd;
+        if (n > 31) break;
+        std::vector<Mask> SX, SZ;
+        for (int a = -1; a <= dd - 1; a++)
+            for (int b = -1; b <= dd - 1; b++) {
+                Mask v = 0;
+                for (int da = 0; da < 2; da++)
+                    for (int db = 0; db < 2; db++) {
+                        const int x = a + da, y = b + db;
+                        if (x >= 0 && x < dd && y >= 0 && y < dd) v |= 1u << (x * dd + y);
+                    }
+                const bool xtype = ((a + b) & 1) == 0;
+                const bool interior = a >= 0 && b >= 0 && a <= dd - 2 && b <= dd - 2;
+                const bool tb = (a == -1 || a == dd - 1) && b >= 0 && b <= dd - 2;
+                const bool lr = (b == -1 || b == dd - 1) && a >= 0 && a <= dd - 2;
+                if (interior) (xtype ? SX : SZ).push_back(v);
+                else if (tb && xtype) SX.push_back(v);
+                else if (lr && !xtype) SZ.push_back(v);
+            }
+        std::vector<Mask> Gx = quotient_basis(SX, SZ, n), Gz = quotient_basis(SZ, SX, n);
+        const int d = std::min(half_opt(SZ, Gx, n), half_opt(SX, Gz, n));
+        if (d != dd || Gx.size() != 1) { fprintf(stderr, "CC_FAIL generator: partF surface d=%d\n", dd); fails++; continue; }
+        Matrix mHx = to_matrix(SX, n), mHz = to_matrix(SZ, n), mGx = to_matrix(Gx, n), mGz = to_matrix(Gz, n);
+        for (int mt = 0; mt <= 2; mt++)
+            for (uint64_t sd = 0; sd < 3; sd++) {
+                PreCfg c = {"surface", 1.0, 0, true, sd, DUALMODE_SHARE, true, 0, mt};
+                RunOut r = run_maxsat(mHx, mHz, mGx, mGz, true, &c);
+                if (mt < 2) { f_surf++; if (!run_ok(r, d)) { f_surf_bad++; fails++; fprintf(stderr, "CC_FAIL partF surface d=%d mutant=%d seed=%llu got %d\n", dd, mt, (unsigned long long)sd, r.d); } }
+                else { f_surf_m2++; if (r.ok && r.d != d) f_surf_m2_wrong++; }
+            }
+    }
+    printf("partF (MaxSAT -ub-pre): %ld runs on %ld codes, %ld bad (first UB = d on %ld runs, > d on %ld runs); "
+           "mutant 1 %ld runs, %ld bad; surface codes d = 3..5: %ld canonical/mutant-1 runs, %ld bad\n",
+           f_runs, b_inst, f_bad, f_exact, f_above, f_m1_runs, f_m1_bad, f_surf, f_surf_bad);
+    printf("partF mutant 2 (finder without detector check, words unverified): %ld/%ld code runs and %ld/%ld surface runs wrong\n",
+           f_m2_wrong, f_m2_runs, f_surf_m2_wrong, f_surf_m2);
+    if (f_above == 0) { fprintf(stderr, "CC_FAIL GH-144 seeded U0 > d never exercised\n"); fails++; }
+    if (f_surf_m2_wrong == 0) { fprintf(stderr, "CC_FAIL GH-144 mutant 2 expectations not met\n"); fails++; }
 
     printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ, %ld with all-odd Hz), %ld driver runs, %ld bad, %ld RESULT -1\n",
            b_inst, b_dual, b_xorb, b_dxdz, b_odd, b_runs, b_bad, b_traps);

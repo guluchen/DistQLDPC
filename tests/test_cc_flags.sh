@@ -104,7 +104,7 @@ done
 reject "cannot be combined with -engine=cc" -engine=cc -dump-only "-dump-wcnf=$tmp/dump.wcnf" $M
 
 # 2. MaxSAT tuning flags with -engine=cc
-for f in -no-card -card-sinz -card-mto -card-both -card-both-force -dualshare-stats -oddcap-skip=on -oddcap-skip=off; do
+for f in -no-card -card-sinz -card-mto -card-both -card-both-force -dualshare-stats -oddcap-skip=on -oddcap-skip=off -ub-pre=off -ub-pre=2; do
     reject "no effect with -engine=cc" -engine=cc "$f" $L $C
 done
 
@@ -250,6 +250,41 @@ runs=$((runs + 1)); run -v -oddcap-skip=off $L $C
 if grep -q "^c oddcap" <<<"$out"; then echo "FAIL (-oddcap-skip=off must not print oddcap lines)" >&2; fails=$((fails + 1)); fi
 runs=$((runs + 1)); run -v $L $C
 if ! grep -q "^c oddcap" <<<"$out"; then echo "FAIL (default is -oddcap-skip=on since 2026-10-21: oddcap lines expected)" >&2; fails=$((fails + 1)); fi
+
+# 7d. GH-144 -ub-pre (split MaxSAT path): values, conflicts, output, default identity
+for f in -ub-pre -ub-pre= -ub-pre=0 -ub-pre=-1 -ub-pre=x -ub-pre=1s -ub-pre=ON -ub-preX -ub-pre=on; do
+    reject "invalid" "$f" $L $M
+done
+reject "needs the split MaxSAT path" -ub-pre=1 -joint $L $M
+reject "needs the split MaxSAT path" -joint -ub-pre=0.5 -card-mto $L $M
+reject "needs the split MaxSAT path" -ub-pre=1 -roundingsat=/nonexistent $L $M
+accept 3 "" -ub-pre=1 $L $M
+accept 3 "" -ub-pre=0.5 -card-mto -seed=3 $L $M
+accept 3 "" -ub-pre=off $L $M
+accept 2 "" -ub-pre=2 -oddcap-skip=off -no-symbreak -dualmode=off $L $C
+accept 2 "" -ub-pre=2 -dualmode=skip $L $C
+accept 10 "" -ub-pre=1 $L BB_90_8_10
+accept 8 "" -ub-pre=1 -card-mto $L TN_72_8_8
+accept 2 "" -engine=auto -ub-pre=1 $L $D1                                                               # auto -> maxsat: applies
+accept 2 "selected cc .*ignoring -ub-pre=1" -engine=auto -ub-pre=1 $L $C
+vgrep 10 "^c ub-pre: U0 after [0-9.]*s (both halves converged; iterations X [0-9]* Z [0-9]*, words X [0-9]* Z [0-9]*): 10 (X " -v -ub-pre=1 $L BB_90_8_10
+vgrep 10 "^c witness X (ub-pre): " -v -ub-pre=1 $L BB_90_8_10
+vgrep 3 "^c ub-pre Z: rank H [0-9]*, information set [0-9]*, seed 4$" -v -ub-pre=1 -seed=4 $L $M
+# default output: the pre-pass bound is the first c d_ub line (before any c d_lb), and the answer follows
+runs=$((runs + 1)); run -ub-pre=1 $L TN_72_8_8
+if [[ $rc -ne 0 ]] || [[ "$(grep -m1 '^c d_' <<<"$out")" != "c d_ub: 8" ]] || ! grep -qx "o 8" <<<"$out"; then
+    echo "FAIL (-ub-pre: expected the first bound line c d_ub: 8 and o 8): rc=$rc stdout: $out" >&2; fails=$((fails + 1))
+fi
+# Phase 1 stops below U0 - 1 and Phase 2a probes U0 - 1 (BB_90_8_10: all-odd columns, U0 = 10 -> even cap 8)
+runs=$((runs + 1)); run -v -ub-pre=1 $L BB_90_8_10
+if grep -Eq "^c CSS interleave: . half cap (9|1[0-9]|[2-9][0-9]) " <<<"$out" || ! grep -q "^c CSS interleave: X half cap 8 lb [0-9]* feasibility -> NONE" <<<"$out"; then
+    echo "FAIL (-ub-pre: expected no probe cap >= U0 - 1 = 9 and the Phase 2a probe at cap 8): $(grep 'CSS interleave' <<<"$out")" >&2; fails=$((fails + 1))
+fi
+# -ub-pre=off and the default print no ub-pre line (main's search)
+for a in -ub-pre=off ""; do
+    runs=$((runs + 1)); run -v $a $L BB_90_8_10
+    if grep -q "ub-pre" <<<"$out" || ! grep -qx "o 10" <<<"$out"; then echo "FAIL (no ub-pre output expected with '$a')" >&2; fails=$((fails + 1)); fi
+done
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)
