@@ -194,7 +194,18 @@ std::string support_string(const std::vector<int>& e) {
     return s;
 }
 
+/* library build / web demo: structured event line (no-op without sink.event, i.e. always in the CLI) */
+void emit_event(const BoundSink& sink, const char* kind, const char* tag, int w, const std::string& rest) {
+    if (!sink.event) return;
+    std::string line = std::string(kind) + " " + tag + " " + std::to_string(w) + (rest.empty() ? "" : " ") + rest;
+    sink.event(sink.ctx, line.c_str());
+}
+
 } /* namespace */
+
+#ifdef DQ_LIBRARY
+extern "C" int dq_poll_stop(void);   /* src/core/dq_api.cc: cancel flag or -cpu-lim deadline (library build only) */
+#endif
 
 bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::vector<int>& e, std::string& why) {
     const int n = Hpar.cols;
@@ -323,7 +334,10 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                                          b.empty() ? "empty" : why.c_str());
                     continue;
                 }
-                if ((int)b.size() < hs[k].ub) hs[k].ub = (int)b.size();
+                if ((int)b.size() < hs[k].ub) {
+                    hs[k].ub = (int)b.size();
+                    if (sink.event) emit_event(sink, "WITNESS", hs[k].tag, (int)b.size(), "cc-basis " + support_string(b));
+                }
             }
         }
         if (dual) hs[0].ub = hs[1].ub = std::min(hs[0].ub, hs[1].ub);
@@ -467,6 +481,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             }
             hs[1].ub = std::min(hs[1].ub, w);
         }
+        if (sink.event && opt.mutant != 12) {
+            std::vector<int> es(e);
+            std::sort(es.begin(), es.end());
+            emit_event(sink, "WITNESS", h.tag, w, "cc-ub-search " + support_string(es));
+        }
         h.ub = std::min(h.ub, w);
         if (w < U) {
             U = w;
@@ -523,9 +542,27 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         sink.result(sink.ctx, -1, false);
         return -1;
     }
+#ifdef DQ_LIBRARY
+    /* library build: every level also polls the cancel flag / deadline (a stop abandons the level, see below) */
+    thunk.f = [&]() -> bool { return dq_poll_stop() != 0 || (ubs && ub_poll()); };
+    for (int k = 0; k < 2; k++)
+        if (hs[k].search) hs[k].search->set_poll([](void* c) { return ((PollThunk*)c)->f(); }, &thunk, opt.ub_poll_mask);
+#else
     if (ubs)
         for (int k = 0; k < 2; k++)
             if (hs[k].search) hs[k].search->set_poll([](void* c) { return ((PollThunk*)c)->f(); }, &thunk, opt.ub_poll_mask);
+#endif
+#ifdef DQ_LIBRARY
+    /* library build: a stop (cancel or -cpu-lim deadline) ends the run without an answer; the bounds already sent stay
+     * valid (like the CLI's timeout), so this is RESULT -1 UNKNOWN, not a trap */
+    auto lib_stop = [&]() -> int {
+        if (verb > 0) printf("c cc: stopped (cancel or deadline): no answer, bounds so far stand\n");
+        fflush(stdout);
+        if (trace) { fprintf(trace, "# STOPPED\n"); fclose(trace); trace = NULL; }
+        sink.result(sink.ctx, -1, false);
+        return -1;
+    };
+#endif
 
     int lastLB = 1, lastTry = 0, d = -1;   /* the trivial bound 1 is not emitted */
     {   /* parity: the certified bound 2 of a qualifying half is emitted before the first level */
@@ -538,6 +575,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         }
     }
     for (;;) {
+#ifdef DQ_LIBRARY
+        if (dq_poll_stop()) return lib_stop();
+#endif
         if (ubs) {   /* GH-140: finder slices due between levels (the pre-pass happens here on the first pass) */
             ub_curw = 0;
             ub_poll();
@@ -582,6 +622,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (verb > 0)
             printf("c cc: %s half level %d %s nodes %llu seeds %llu time %.3fs\n", h.tag, w, vs,
                    (unsigned long long)r.nodes, (unsigned long long)r.seeds, dt);
+        if (sink.event) {
+            char eb[96];
+            snprintf(eb, sizeof(eb), "%s %llu %.6f", vs, (unsigned long long)r.nodes, dt);
+            emit_event(sink, "LEVEL", h.tag, w, eb);
+        }
         if (opt.stats) {
             printf("c cc-stats: %s level %d %s nodes %llu seeds %llu closed %llu nocand %llu packprune %llu parprune %llu "
                    "leaf1 %llu leaf2 %llu ovtight %llu ovforbid %llu time %.6fs\n",
@@ -602,6 +647,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                      h.tag, r.witness.size(), w);
             return fail(buf);
         }
+#ifdef DQ_LIBRARY
+        if (r.verdict == LEVEL_ABORTED && dq_poll_stop()) return lib_stop();
+#endif
         if (r.verdict == LEVEL_ABORTED) {   /* GH-140: U <= w (ub-search); lb unchanged, the stop rule decides next */
             if (verb > 0) printf("c cc: %s half level %d abandoned: ub-search upper bound %d <= %d\n", h.tag, w, U, w);
             fflush(stdout);
@@ -621,6 +669,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             if ((int)r.witness.size() != w || !verify_in_half(h, r.witness, n, why))
                 return fail(std::string(h.tag) + " half witness failed verification: " + why);
             if (verb > 0) printf("c witness %s: %s\n", h.tag, support_string(r.witness).c_str());
+            if (sink.event) emit_event(sink, "WITNESS", h.tag, w, "cc-level " + support_string(r.witness));
             if (dual) {
                 std::vector<int> img;
                 for (size_t t = 0; t < r.witness.size(); t++) img.push_back(in.dual_perm[r.witness[t]]);

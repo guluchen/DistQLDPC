@@ -349,6 +349,15 @@ data/matrices/tierN/    # benchmark codes (Hx, Hz, Gx, Gz) by tier; see data/mat
 
 ---
 
+## Web demo (WebAssembly)
+
+`web/` holds a browser demo that runs DistQLDPC compiled to WebAssembly (both engines, one core, in a Web Worker)
+through the in-process entry point `src/core/dq_api.h` (`dq_solve`: the CLI's flags and output without fork, pipe or
+signals). Build with the Emscripten SDK: `web/build.sh`; details, checks and deployment notes: [web/README.md](web/README.md).
+The CLI build is unaffected (the library hooks compile only with `-DDQ_LIBRARY`).
+
+---
+
 ## License
 
 DistQLDPC is licensed under **GPL-3.0-or-later** — see [LICENSE](LICENSE).

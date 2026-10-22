@@ -65,12 +65,9 @@ static void die(const char* msg) {
     exit(1);
 }
 
-static Matrix load_matrix(const char* path) {
-    FILE* f = fopen(path, "r");
-    if (!f) {
-        fprintf(stderr, "error: cannot open %s\n", path);
-        exit(1);
-    }
+/* Parses the matrix text format (one 0/1 row per line, '#' comments) from an open stream; the caller closes it.
+ * Split out of load_matrix for the library build (src/core/dq_api.cc reads in-memory text through fmemopen). */
+static Matrix parse_matrix_stream(FILE* f) {
     Matrix m;
     m.rows = 0;
     m.cols = -1;
@@ -90,10 +87,47 @@ static Matrix load_matrix(const char* path) {
         m.data.insert(m.data.end(), row.begin(), row.end());
         m.rows++;
     }
+    return m;
+}
+
+static Matrix load_matrix(const char* path) {
+    FILE* f = fopen(path, "r");
+    if (!f) {
+        fprintf(stderr, "error: cannot open %s\n", path);
+        exit(1);
+    }
+    Matrix m = parse_matrix_stream(f);
     fclose(f);
     if (m.rows == 0 || m.cols < 0) die("empty matrix");
     return m;
 }
+
+/* ---- Library build (web demo): src/core/dq_api.cc includes this file with DQ_LIBRARY defined. There the
+ * solver runs in-process (no fork, pipe or signals): every bound line of the pipe protocol below goes through
+ * bounds_write to dq_lib_bounds, and the structured events (dq_event: per-probe / per-level results, verified
+ * witness supports) go to the caller's callback. In the CLI build DQ_LIBRARY is undefined, bounds_write is a
+ * plain write() to the pipe and dq_events_on() is the constant false, so the CLI is unchanged. */
+#ifdef DQ_LIBRARY
+static void dq_lib_bounds(const char* buf, size_t n);              /* defined in dq_api.cc */
+static bool dq_events_on();
+static void dq_event(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
+extern "C" int dq_poll_stop(void);                                  /* cancel flag or -cpu-lim deadline */
+#else
+static inline bool dq_events_on() { return false; }
+static inline void dq_event(const char*, ...) {}
+#endif
+
+static void bounds_write(int fd, const char* buf, size_t n) {
+#ifdef DQ_LIBRARY
+    if (dq_events_on()) { dq_lib_bounds(buf, n); return; }
+#endif
+    (void)write(fd, buf, n);
+}
+
+#ifdef DQ_LIBRARY
+/* MaxCDCL's bound lines (Solver::emitBoundsUpdate / emitTryUpdate) in the library build */
+extern "C" void dq_bounds_write(int fd, const char* buf, size_t n) { bounds_write(fd, buf, n); }
+#endif
 
 static uint8_t getm(const Matrix& m, int r, int c) {
     return m.data[(size_t)r * m.cols + c];
@@ -165,7 +199,7 @@ static void pipe_write_result(int pipe_w, int distance, bool optimal) {
         ? snprintf(buf, sizeof(buf), "RESULT %d OPTIMAL\n", distance)
         : snprintf(buf, sizeof(buf), "RESULT -1 UNKNOWN\n");
     if (n > 0)
-        (void)write(pipe_w, buf, (size_t)n);
+        bounds_write(pipe_w, buf, (size_t)n);
 }
 
 static const char* cardinality_mode_label(int mode) {
@@ -1028,16 +1062,69 @@ struct CssHalf {
     bool pre;             /* GH-144: ub is a verified -ub-pre finder word (not a solver solution); false without -ub-pre */
 };
 
+#ifdef DQ_LIBRARY
+/* Library build only: structured PROBE / WITNESS events of the interleaved MaxSAT search. */
+static distcc::SparseRows cc_rows(const Matrix& M);
+static bool ubpre_verify(const Matrix& H, const Matrix& G, const distcc::SparseRows& Hr, const distcc::SparseRows& Sr,
+                         const std::vector<int>& e, std::string& why);
+static double wall_seconds();
+static const Matrix* g_dq_stab[2] = { NULL, NULL };   /* same-type stabilizers of the X / Z half (set per run) */
+
+/* "WITNESS <half> <weight> <source> <q...>" for a support that passes ubpre_verify (H e = 0, G e != 0, and the
+ * CC engine's independent check e not in rs S); a support that fails is reported as a log event, never as a witness. */
+static void dq_witness_event(const char* tag, const Matrix& H, const Matrix& G, const std::vector<int>& e, const char* src)
+{
+    const Matrix* S = g_dq_stab[tag[0] == 'X' ? 0 : 1];
+    if (!S) return;
+    std::string why;
+    if (!ubpre_verify(H, G, cc_rows(H), cc_rows(*S), e, why)) {
+        dq_event("NOTE %s half %s support of weight %zu not reported as a witness (%s)", tag, src, e.size(), why.c_str());
+        return;
+    }
+    std::string sup;
+    for (size_t t = 0; t < e.size(); t++) sup += " " + std::to_string(e[t]);
+    dq_event("WITNESS %s %zu %s%s", tag, e.size(), src, sup.c_str());
+}
+
+/* "PROBE <half> <cap> <feasibility|optimize> <FOUND|OPT|NONE|UNKNOWN|INFEASIBLE> <value> <conflicts> <seconds>",
+ * then the witness of a FOUND / OPT probe (the solver's last model on the qubit variables 0..n-1). */
+static void dq_probe_event(const char* tag, const Matrix& H, const Matrix& G, SimpSolver& S, int n, uint64_t cap,
+                           bool first_only, int st, uint64_t value, double secs)
+{
+    static const char* names[] = { "FOUND", "NONE", "OPT", "UNKNOWN", "INFEASIBLE" };
+    const bool hit = st == 0 || st == 2;
+    dq_event("PROBE %s %llu %s %s %llu %llu %.6f", tag, (unsigned long long)cap, first_only ? "feasibility" : "optimize",
+             names[st], (unsigned long long)(hit ? value : 0), (unsigned long long)S.conflicts, secs);
+    if (!hit || S.model.size() < n) return;
+    std::vector<int> e;
+    for (int i = 0; i < n; i++)
+        if (S.model[i] == l_True) e.push_back(i);
+    if ((uint64_t)e.size() != value) {
+        dq_event("NOTE %s half probe model has weight %zu, reported value %llu: no witness", tag, e.size(), (unsigned long long)value);
+        return;
+    }
+    dq_witness_event(tag, H, G, e, "maxsat");
+}
+#endif
+
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
  * first_only: stop at the first solution. Emitted bounds are capped/hidden as requested. */
 static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int verb, int card_mode,
                                int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value)
 {
+#ifdef DQ_LIBRARY
+    const double dq_t0 = wall_seconds();
+#endif
     SimpSolver S;
     apply_maxsat_seed(S);   /* GH-124: -seed=N (no-op for N = 0) */
     std::vector<Var> aux;
     int n = 0;
-    if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, h.sb_orbit.empty() ? NULL : &h.sb_orbit)) { h.exists = false; return HALF_INFEASIBLE; }
+    if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, h.sb_orbit.empty() ? NULL : &h.sb_orbit)) {
+#ifdef DQ_LIBRARY
+        if (dq_events_on()) dq_probe_event(h.tag, *h.H, *h.G, S, n, cap, first_only, HALF_INFEASIBLE, 0, wall_seconds() - dq_t0);
+#endif
+        h.exists = false; return HALF_INFEASIBLE;
+    }
     S.setBoundsPipe(pipe_w);
     S.initUB = cap >= (uint64_t)INT32_MAX ? INT32_MAX : cap;
     S.strictUB = cap < (uint64_t)INT32_MAX;
@@ -1073,6 +1160,9 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     if (first_only && ret == l_True) { value = S.getCostUB(); st = HALF_FOUND; }
     else if (!first_only && opt != UINT64_MAX && opt <= (uint64_t)n) { value = opt; st = HALF_OPT; }
     else if (ret == l_False && opt == UINT64_MAX) st = HALF_NONE;      /* nothing of weight <= cap */
+#ifdef DQ_LIBRARY
+    if (dq_events_on()) dq_probe_event(h.tag, *h.H, *h.G, S, n, cap, first_only, st, value, wall_seconds() - dq_t0);
+#endif
     if (verb > 0)
         printf("c CSS interleave: %s half cap %llu lb %llu %s -> %s %llu\n", h.tag,
                (unsigned long long)cap, (unsigned long long)h.lb, first_only ? "feasibility" : "optimize",
@@ -1085,7 +1175,7 @@ static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
     if (pipe_w < 0) return;
     char buf[64];
     int len = snprintf(buf, sizeof(buf), "%s %llu\n", kind, (unsigned long long)v);
-    if (len > 0) (void)write(pipe_w, buf, (size_t)len);
+    if (len > 0) bounds_write(pipe_w, buf, (size_t)len);
 }
 
 /* ---- GH-87: dual-half elimination (extension of GH-73; idea: unselected proposal GH-78-B).
@@ -1265,6 +1355,9 @@ static void ub_prepass(const CssHalf hs[2], const Matrix* Ss[2], int n, double b
     uint64_t U = INF;
     for (;;) {
         if (wall_seconds() - t0 >= budget) { o.stop = "time budget"; break; }
+#ifdef DQ_LIBRARY
+        if (dq_poll_stop()) { o.stop = "stopped (library cancel or deadline)"; break; }
+#endif
         if (g_ub_pre_max_iters && o.iters[0] + o.iters[1] >= g_ub_pre_max_iters) { o.stop = "iteration cap (test)"; break; }
         int k = -1;
         for (int t = 0; t < 2; t++)
@@ -1299,6 +1392,9 @@ static void ub_prepass(const CssHalf hs[2], const Matrix* Ss[2], int n, double b
         U = (uint64_t)e.size();
         o.ub[k] = U;
         o.found[k]++;
+#ifdef DQ_LIBRARY
+        if (dq_events_on() && g_ub_pre_mutant != 2) dq_witness_event(hs[k].tag, *hs[k].H, *hs[k].G, e, "ub-pre");
+#endif
         last[k] = o.iters[k];
         rehit[0] = rehit[1] = 0;   /* re-hits count against the current U */
         if (verb > 0) {
@@ -1320,6 +1416,9 @@ static int min_distance_css_interleaved(
     if (Hx.cols != Hz.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols) die("matrix column mismatch");
     const uint64_t n = (uint64_t)Hx.cols, INF = UINT64_MAX;
     CssHalf hs[2] = { {"X", &Hz, &Gx, Gx.rows > 0, 1, INF}, {"Z", &Hx, &Gz, Gz.rows > 0, 1, INF} };
+#ifdef DQ_LIBRARY
+    g_dq_stab[0] = &Hx; g_dq_stab[1] = &Hz;   /* X half: same-type stabilizers Hx; Z half: Hz */
+#endif
     hs[0].own_lb = hs[1].own_lb = 1;
     for (int k = 0; k < 2; k++) {   /* GH-130: per-half frontier mode (-frontier=auto decides from structure) */
         hs[k].frontier = g_frontier_mode == 4 ? 0 : g_frontier_mode;
@@ -1577,8 +1676,11 @@ static void cc_sink_bound(void* ctx, const char* kind, uint64_t v) { pipe_bound(
 static void cc_sink_result(void* ctx, int d, bool optimal) { pipe_write_result(*(int*)ctx, d, optimal); }
 static void cc_sink_trap(void* ctx) {   /* withdraws the bounds already sent (parent: BoundsBook::trapped) */
     const int pw = *(int*)ctx;
-    if (pw >= 0) (void)write(pw, "RESULT -1 TRAP\n", 15);
+    if (pw >= 0) bounds_write(pw, "RESULT -1 TRAP\n", 15);
 }
+#ifdef DQ_LIBRARY
+static void cc_sink_event(void*, const char* line) { dq_event("%s", line); }   /* LEVEL / WITNESS lines (library) */
+#endif
 
 static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
                                int verb, int pipe_w, const distcc::DriverOptions& opt_in, bool symbreak, bool dual_allowed)
@@ -1622,6 +1724,9 @@ static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix&
     sink.bound = cc_sink_bound;
     sink.result = cc_sink_result;
     sink.trap = cc_sink_trap;
+#ifdef DQ_LIBRARY
+    if (dq_events_on()) sink.event = cc_sink_event;
+#endif
     return distcc::min_distance_cc(in, opt, sink);
 }
 
@@ -1909,6 +2014,45 @@ static void print_bounds(const BoundsBook& b) {
         printf("c d_ub: -\n");
 }
 
+/* The engine dispatch of the solver process (forked child in the CLI, in-process in the library build); every
+ * bound and the final RESULT line go to pipe_w. Returns d >= 0, or < 0 without an answer. */
+static int run_engine(
+    const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+    int cpu_lim, int verb, int card_mode, SolverBackend backend,
+    const char* roundingsat_bin, const char* dump_wcnf_path, int pipe_w)
+{
+    int d;
+    if (g_engine == ENGINE_CC) {   /* GH-124 (experimental); -engine=maxsat (default) takes the paths below */
+        d = min_distance_css_cc(Hx, Hz, Gx, Gz, verb, pipe_w, g_cc_opt, g_half_symbreak, g_dualmode != DUALMODE_OFF);
+    } else if (backend == SOLVER_ROUNDINGSAT) {
+        d = min_distance_stabilizer_roundingsat(
+            Hx, Hz, Gx, Gz, verb, pipe_w, roundingsat_bin, dump_wcnf_path);
+    } else if (!g_css_joint) {
+        d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipe_w, card_mode, g_half_symbreak, g_dualmode, g_dualshare_stats);
+    } else {
+        d = min_distance_stabilizer_maxsat(
+            Hx, Hz, Gx, Gz, cpu_lim, verb, pipe_w, card_mode, dump_wcnf_path);
+    }
+    if (d < 0)
+        pipe_write_result(pipe_w, -1, false);
+    return d;
+}
+
+/* stdout of the solver process is discarded without -v (MaxCDCL prints its search log unconditionally);
+ * -cc-stats lines of the CC engine stay visible (GH-124) */
+static bool quiet_solver_stdout(int verb, SolverBackend backend) {
+    return verb == 0 && backend == SOLVER_MAXCDCL && !(g_engine == ENGINE_CC && g_cc_opt.stats);
+}
+
+#ifdef DQ_LIBRARY
+static int dq_lib_solve(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
+                        int cpu_lim, int verb, int card_mode, SolverBackend backend,
+                        const char* roundingsat_bin, const char* dump_wcnf_path,
+                        BoundsBook& out, bool& timed_out, ProgressState& prog);   /* dq_api.cc */
+static void dq_lib_load(Matrix& Hx, Matrix& Hz, Matrix& Gx, Matrix& Gz);      /* dq_api.cc */
+static void dq_lib_final(const BoundsBook& book, bool timed_out, int d);       /* dq_api.cc */
+static bool dq_lib_cancelled();                                                 /* dq_api.cc */
+#else
 static int solve_in_child_fork(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
     int cpu_lim, int verb, int card_mode, SolverBackend backend,
@@ -1925,28 +2069,14 @@ static int solve_in_child_fork(
 
     if (pid == 0) {
         close(pipefd[0]);
-        /* GH-124: -cc-stats lines of the CC engine stay visible without -v */
-        if (verb == 0 && backend == SOLVER_MAXCDCL && !(g_engine == ENGINE_CC && g_cc_opt.stats)) {
+        if (quiet_solver_stdout(verb, backend)) {
             int devnull = open("/dev/null", O_WRONLY);
             if (devnull >= 0) {
                 dup2(devnull, STDOUT_FILENO);
                 close(devnull);
             }
         }
-        int d;
-        if (g_engine == ENGINE_CC) {   /* GH-124 (experimental); -engine=maxsat (default) takes the paths below */
-            d = min_distance_css_cc(Hx, Hz, Gx, Gz, verb, pipefd[1], g_cc_opt, g_half_symbreak, g_dualmode != DUALMODE_OFF);
-        } else if (backend == SOLVER_ROUNDINGSAT) {
-            d = min_distance_stabilizer_roundingsat(
-                Hx, Hz, Gx, Gz, verb, pipefd[1], roundingsat_bin, dump_wcnf_path);
-        } else if (!g_css_joint) {
-            d = min_distance_css_interleaved(Hx, Hz, Gx, Gz, verb, pipefd[1], card_mode, g_half_symbreak, g_dualmode, g_dualshare_stats);
-        } else {
-            d = min_distance_stabilizer_maxsat(
-                Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
-        }
-        if (d < 0)
-            pipe_write_result(pipefd[1], -1, false);
+        int d = run_engine(Hx, Hz, Gx, Gz, cpu_lim, verb, card_mode, backend, roundingsat_bin, dump_wcnf_path, pipefd[1]);
         close(pipefd[1]);
         fflush(stdout);
         fflush(stderr);
@@ -1994,6 +2124,7 @@ static int solve_in_child_fork(
     out = book;
     return out.distance;
 }
+#endif /* !DQ_LIBRARY */
 
 static bool dump_stabilizer_instance(
     const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz,
@@ -2050,7 +2181,7 @@ static std::string resolve_prefix(const char* prefix) {
     return flat;
 }
 
-int main(int argc, char** argv) {
+static int distqldpc_main(int argc, char** argv) {
     const char* prefix = NULL;
     int cpu_lim = INT32_MAX;
     int verb = 0;
@@ -2374,10 +2505,15 @@ int main(int argc, char** argv) {
     std::string gx_path = p + "_Gx.txt";
     std::string gz_path = p + "_Gz.txt";
 
+#ifdef DQ_LIBRARY
+    Matrix Hx, Hz, Gx, Gz;
+    dq_lib_load(Hx, Hz, Gx, Gz);   /* in-memory text from dq_solve; Gx / Gz computed when not given */
+#else
     Matrix Hx = load_matrix(hx_path.c_str());
     Matrix Hz = load_matrix(hz_path.c_str());
     Matrix Gx = load_matrix(gx_path.c_str());
     Matrix Gz = load_matrix(gz_path.c_str());
+#endif
 
     if (symbreak_report) {   /* GH-85 */
         if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
@@ -2464,20 +2600,36 @@ int main(int argc, char** argv) {
     BoundsBook book;
     bool timed_out = false;
     ProgressState prog(false);
+#ifdef DQ_LIBRARY
+    int d = dq_lib_solve(
+        Hx, Hz, Gx, Gz, cpu_lim, verb, card_mode, backend,
+        roundingsat_bin, dump_wcnf_path, book, timed_out, prog);
+#else
     int d = solve_in_child_fork(
         Hx, Hz, Gx, Gz, cpu_lim, verb, card_mode, backend,
         roundingsat_bin, dump_wcnf_path, book, timed_out, prog);
+#endif
 
     if (verb > 0 || !prog.bounds_printed || timed_out || !book.optimal)
         print_bounds(book);
+#ifdef DQ_LIBRARY
+    dq_lib_final(book, timed_out, d);
+#endif
 
     if (d >= 0 && book.optimal && !timed_out) {
         printf("c d  : %d\n", d);
         printf("o %d\n", d);
         return 0;
     }
+#ifdef DQ_LIBRARY
+    if (timed_out)
+        printf("c status: TIMEOUT (stopped after -cpu-lim)\n");
+    else if (dq_lib_cancelled())
+        printf("c status: CANCELLED\n");
+#else
     if (timed_out)
         printf("c status: TIMEOUT (child killed after -cpu-lim)\n");
+#endif
     else if (book.trapped)   /* GH-124 */
         printf("c status: UNKNOWN (CC engine stopped without an answer: earlier d_lb/d_ub lines withdrawn)\n");
     else
@@ -2486,3 +2638,9 @@ int main(int argc, char** argv) {
     printf("s UNKNOWN\n");
     return 1;
 }
+
+#ifndef DQ_LIBRARY
+int main(int argc, char** argv) {
+    return distqldpc_main(argc, argv);
+}
+#endif

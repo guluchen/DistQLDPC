@@ -1,0 +1,56 @@
+# DRAFT — GitHub Pages deployment of the web demo (web/). NOT ACTIVE: this file is deliberately kept outside
+# .github/workflows/ (the agent token has no `workflow` scope, and the PI reviews the local preview first).
+# To activate: copy it to .github/workflows/pages.yml, enable Pages (Settings -> Pages -> Source: GitHub Actions),
+# then start it by hand (workflow_dispatch). It never runs on push.
+name: Web demo (GitHub Pages)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the Emscripten SDK (official emsdk, pinned version)
+        run: |
+          git clone --depth 1 https://github.com/emscripten-core/emsdk.git "$RUNNER_TEMP/emsdk"
+          "$RUNNER_TEMP/emsdk/emsdk" install 6.0.13
+          "$RUNNER_TEMP/emsdk/emsdk" activate 6.0.13
+
+      - name: Build dq.js / dq.wasm, bundled codes, version.json
+        run: |
+          source "$RUNNER_TEMP/emsdk/emsdk_env.sh"
+          JOBS="$(nproc)" web/build.sh
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp web/index.html web/app.js web/worker.js web/style.css web/dq.js web/dq.wasm web/version.json _site/
+          cp -r web/codes _site/codes
+          cp LICENSE _site/LICENSE.txt
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

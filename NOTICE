@@ -14,7 +14,9 @@ Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
 Includes, without limitation:
 
   src/core/distqldpc.cc
+  src/core/dq_api.h, src/core/dq_api.cc (in-process library entry point, web demo)
   src/cc/ (GH-124 CC level-search engine, experimental)
+  web/ (WebAssembly live demo: page, worker, build script)
   scripts/compute_logicals.py
   scripts/preprocess_matrices.py
   scripts/benchmark_matrices.py
@@ -57,6 +59,8 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
   - Multi-instance search controls and per-instance heuristic state (interleaved CSS split, experimental)
+  - Library build hooks for the web demo, compiled only with -DDQ_LIBRARY (bound lines to an
+    in-process receiver; cancel/deadline poll in withinBudget)
 
 Modified files (partial list): Solver.h, Solver.cc
 

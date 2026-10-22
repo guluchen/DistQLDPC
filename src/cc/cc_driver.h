@@ -97,7 +97,11 @@ struct BoundSink {
     void (*bound)(void* ctx, const char* kind, uint64_t v);
     void (*result)(void* ctx, int d, bool optimal);
     void (*trap)(void* ctx);
-    BoundSink() : ctx(NULL), bound(NULL), result(NULL), trap(NULL) {}
+    /* event (optional, library build / web demo; NULL in the CLI): one structured line per finished level
+     * ("LEVEL <half> <w> <EMPTY|FOUND|ABORTED|INCONSISTENT> <nodes> <seconds>") and per verified witness
+     * ("WITNESS <half> <weight> <cc-level|cc-ub-search|cc-basis> <q...>"). */
+    void (*event)(void* ctx, const char* line);
+    BoundSink() : ctx(NULL), bound(NULL), result(NULL), trap(NULL), event(NULL) {}
 };
 
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */

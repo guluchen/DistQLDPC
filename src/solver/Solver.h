@@ -854,7 +854,15 @@ inline void     Solver::setPropBudget(int64_t x){ propagation_budget = propagati
 inline void     Solver::interrupt(){ asynch_interrupt = true; }
 inline void     Solver::clearInterrupt(){ asynch_interrupt = false; }
 inline void     Solver::budgetOff(){ conflict_budget = propagation_budget = -1; }
+#ifdef DQ_LIBRARY
+/* DistQLDPC library build (web demo, src/core/dq_api.cc) only: cheap, rate-limited poll of the caller's cancel flag
+ * and -cpu-lim deadline; a stop sets asynch_interrupt, which ends the search like MiniSat's interrupt(). */
+extern "C" int dq_poll_stop_fast(void);
+#endif
 inline bool     Solver::withinBudget() const {
+#ifdef DQ_LIBRARY
+    if (!asynch_interrupt && dq_poll_stop_fast()) const_cast<Solver*>(this)->asynch_interrupt = true;
+#endif
     return !asynch_interrupt &&
            (conflict_budget    < 0 || conflicts < (uint64_t)conflict_budget) &&
            (propagation_budget < 0 || propagations < (uint64_t)propagation_budget); }

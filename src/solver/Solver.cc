@@ -5190,6 +5190,14 @@ void Solver::cancelUntilBeginning(int begnning) {
   // unLockedVars_lim.shrink(unLockedVars_lim.size());
 }
 
+/* DistQLDPC library build (web demo): bound lines go to the in-process receiver instead of the pipe. */
+#ifdef DQ_LIBRARY
+extern "C" void dq_bounds_write(int fd, const char* buf, size_t n);
+#define DQ_PIPE_WRITE(fd, buf, n) dq_bounds_write((fd), (buf), (n))
+#else
+#define DQ_PIPE_WRITE(fd, buf, n) (void)write((fd), (buf), (n))
+#endif
+
 void Solver::setBoundsPipe(int write_fd) {
     bounds_pipe_w = write_fd;
 }
@@ -5212,14 +5220,14 @@ void Solver::emitBoundsUpdate() {
         n = snprintf(buf, sizeof(buf), "LB %llu\n",
                      (unsigned long long)lbv);
         if (n > 0)
-            (void)write(bounds_pipe_w, buf, (size_t)n);
+            DQ_PIPE_WRITE(bounds_pipe_w, buf, (size_t)n);
     }
     if (bestSolutionFound) {
         uint64_t ubv = getCostUB(); if (ubv > boundsUbCap) ubv = boundsUbCap;
         n = snprintf(buf, sizeof(buf), "UB %llu\n",
                      (unsigned long long)ubv);
         if (n > 0)
-            (void)write(bounds_pipe_w, buf, (size_t)n);
+            DQ_PIPE_WRITE(bounds_pipe_w, buf, (size_t)n);
     }
 }
 
@@ -5229,7 +5237,7 @@ void Solver::emitTryUpdate(uint64_t try_val) {
     char buf[64];
     int n = snprintf(buf, sizeof(buf), "TRY %llu\n", (unsigned long long)try_val);
     if (n > 0)
-        (void)write(bounds_pipe_w, buf, (size_t)n);
+        DQ_PIPE_WRITE(bounds_pipe_w, buf, (size_t)n);
 }
 
 void Solver::noteBestSolution(uint64_t unsatSoft) {
