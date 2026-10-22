@@ -1193,8 +1193,9 @@ static int g_ub_pre_mutant = 0;            /* test only (no flag): 1 = finder wi
                                               (GH-140 mutant 11; trivial words reach the verification, which must reject
                                               them); 2 = mutant 1 and words used without verification (wrong answers) */
 static uint64_t g_ub_pre_hits = 16;        /* -ub-pre-hits=H: a half stops after H re-hits of U without improvement (0: never) */
-static uint64_t g_ub_pre_plateau = 64;     /* -ub-pre-plateau=P: ... or after max(P, 4 x its iteration count at its last
-                                              improvement) iterations without improvement */
+static uint64_t g_ub_pre_plateau = 1000;   /* -ub-pre-plateau=P: ... or after max(P, 4 x its iteration count at its last
+                                              improvement) iterations without improvement (1000: S0 of GH-144) */
+static const double UBPRE_ON_SECONDS = 60.0;   /* -ub-pre=on: the S recommended by S0 of GH-144 */
 
 static distcc::SparseRows cc_rows(const Matrix& M);   /* GH-124, defined with the CC engine below */
 static double wall_seconds();                          /* defined with the forked driver below */
@@ -2135,9 +2136,11 @@ int main(int argc, char** argv) {
             die("invalid -oddcap-skip (on | off)");
         else if (!strcmp(argv[i], "-ub-pre=off"))   /* GH-144 */
             g_ub_pre = -1.0;
+        else if (!strcmp(argv[i], "-ub-pre=on"))
+            g_ub_pre = UBPRE_ON_SECONDS;
         else if (!strncmp(argv[i], "-ub-pre=", 8)) {
             double v = 0;
-            if (!cc_parse_seconds(argv[i] + 8, &v) || v <= 0) die("invalid -ub-pre (off | S seconds > 0)");
+            if (!cc_parse_seconds(argv[i] + 8, &v) || v <= 0) die("invalid -ub-pre (off | on | S seconds > 0)");
             g_ub_pre = v;
         } else if (!strncmp(argv[i], "-ub-pre-hits=", 13)) {
             unsigned long long v = 0;
@@ -2148,7 +2151,7 @@ int main(int argc, char** argv) {
             if (!cc_parse_uint(argv[i] + 16, &v) || v < 1 || v > 1000000000ULL) die("invalid -ub-pre-plateau (1..1000000000)");
             g_ub_pre_plateau = v;
         } else if (!strncmp(argv[i], "-ub-pre", 7))
-            die("invalid -ub-pre (off | S seconds > 0)");
+            die("invalid -ub-pre (off | on | S seconds > 0)");
         else if (!strcmp(argv[i], "-engine=maxsat"))   /* GH-124 */
             g_engine = ENGINE_MAXSAT;
         else if (!strcmp(argv[i], "-engine=cc"))
@@ -2293,11 +2296,13 @@ int main(int argc, char** argv) {
             printf("  Odd-cap skip (split MaxSAT path only, GH-133): -oddcap-skip=on|off (default on): on a half whose\n");
             printf("            parity matrix has only odd column weights every logical has even weight, so odd probe caps\n");
             printf("            are replaced by the even cap below (NONE at cap 2t certifies 2t+2); off = previous search\n");
-            printf("  Upper-bound pre-pass (split MaxSAT path only, GH-144): -ub-pre=off|S (default off): before the\n");
-            printf("            interleaved search, run the GH-140 randomized low-weight logical finder on both halves for at\n");
-            printf("            most S seconds (each half stops earlier once it re-hits or plateaus); the lightest verified word\n");
-            printf("            weight U0 is the initial upper bound (c d_ub), Phase 1 probes only caps < U0 - 1 and the rest\n");
-            printf("            proves 'no logical of weight <= U - 1' (Phase 2a/2b at U - 1); -seed=N also seeds the finder\n");
+            printf("  Upper-bound pre-pass (split MaxSAT path only, GH-144): -ub-pre=off|on|S (default off; on = 60 s):\n");
+            printf("            before the interleaved search, run the GH-140 randomized low-weight logical finder on both halves\n");
+            printf("            for at most S seconds; a half stops earlier after -ub-pre-hits=H (default 16) re-hits of the bound\n");
+            printf("            or max(-ub-pre-plateau=P (default 1000), 4 x the iteration of its last improvement) iterations\n");
+            printf("            without improvement; the lightest verified word weight U0 is the initial upper bound (c d_ub),\n");
+            printf("            Phase 1 probes only caps < U0 - 1 and the rest proves 'no logical of weight <= U - 1' (Phase\n");
+            printf("            2a/2b at U - 1); -seed=N also seeds the finder\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

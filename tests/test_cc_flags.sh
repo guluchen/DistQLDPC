@@ -252,9 +252,18 @@ runs=$((runs + 1)); run -v $L $C
 if ! grep -q "^c oddcap" <<<"$out"; then echo "FAIL (default is -oddcap-skip=on since 2026-10-21: oddcap lines expected)" >&2; fails=$((fails + 1)); fi
 
 # 7d. GH-144 -ub-pre (split MaxSAT path): values, conflicts, output, default identity
-for f in -ub-pre -ub-pre= -ub-pre=0 -ub-pre=-1 -ub-pre=x -ub-pre=1s -ub-pre=ON -ub-preX -ub-pre=on; do
-    reject "invalid" "$f" $L $M
+for f in -ub-pre -ub-pre= -ub-pre=0 -ub-pre=-1 -ub-pre=x -ub-pre=1s -ub-pre=ON -ub-preX -ub-pre=yes \
+         "-ub-pre=1 -ub-pre-hits=x" "-ub-pre=1 -ub-pre-hits=-1" "-ub-pre=1 -ub-pre-plateau=0" "-ub-pre=1 -ub-pre-plateau=x" \
+         "-ub-pre=1 -ub-pre-bogus=1"; do
+    reject "invalid" $f $L $M
 done
+reject "need -ub-pre=S" -ub-pre-hits=4 $L $M
+reject "need -ub-pre=S" -ub-pre=1 -ub-pre=off -ub-pre-plateau=10 $L $M   # the last -ub-pre wins
+reject "no effect with -engine=cc" -engine=cc -ub-pre=on $L $C
+accept 3 "" -ub-pre=on $L $M
+accept 10 "" -ub-pre=1 -ub-pre-hits=0 -ub-pre-plateau=5 $L BB_90_8_10
+vgrep 10 "^c ub-pre X: converged (plateau) after " -v -ub-pre=1 -ub-pre-hits=0 -ub-pre-plateau=5 $L BB_90_8_10
+vgrep 10 "^c ub-pre: U0 after .*(time budget; " -v -ub-pre=0.2 -ub-pre-hits=0 -ub-pre-plateau=1000000000 $L BB_90_8_10
 reject "needs the split MaxSAT path" -ub-pre=1 -joint $L $M
 reject "needs the split MaxSAT path" -joint -ub-pre=0.5 -card-mto $L $M
 reject "needs the split MaxSAT path" -ub-pre=1 -roundingsat=/nonexistent $L $M
