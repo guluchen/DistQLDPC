@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DistQLDPC live demo</title>
+<meta name="description" content="Exact minimum distance of CSS / QLDPC codes in your browser: DistQLDPC compiled to WebAssembly (MaxSAT and connected-cluster engines).">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>DistQLDPC <span class="sub">live demo</span></h1>
+    <p class="tag">Exact minimum distance of CSS / QLDPC codes, computed in your browser (WebAssembly, one core, nothing is uploaded).</p>
+  </div>
+  <a class="src" id="srcLink" href="https://github.com/guluchen/DistQLDPC" target="_blank" rel="noopener">Source on GitHub</a>
+</header>
+
+<main class="grid">
+  <!-- left: input and options -->
+  <section class="panel" id="left" aria-label="Input and options">
+    <h2>Code</h2>
+    <div class="seg" role="tablist">
+      <button type="button" class="segbtn on" id="modeBundled" role="tab" aria-selected="true">Bundled</button>
+      <button type="button" class="segbtn" id="modeOwn" role="tab" aria-selected="false">Your matrices</button>
+    </div>
+    <div id="bundledBox">
+      <label for="codeSel">Benchmark code</label>
+      <select id="codeSel"></select>
+      <p class="hint" id="codeHint"></p>
+    </div>
+    <div id="ownBox" hidden>
+      <p class="hint">One row per line, entries 0/1 (spaces optional), <code>#</code> comments, the format of
+        <code>data/matrices/*_Hx.txt</code>. Leave Gx / Gz empty to compute them (GF(2) quotient bases).</p>
+      <div class="mat"><label for="txHx">Hx (X stabilizers)</label><input type="file" id="fHx" accept=".txt,text/plain"><textarea id="txHx" rows="4" spellcheck="false"></textarea></div>
+      <div class="mat"><label for="txHz">Hz (Z stabilizers)</label><input type="file" id="fHz" accept=".txt,text/plain"><textarea id="txHz" rows="4" spellcheck="false"></textarea></div>
+      <div class="mat"><label for="txGx">Gx (optional)</label><input type="file" id="fGx" accept=".txt,text/plain"><textarea id="txGx" rows="2" spellcheck="false"></textarea></div>
+      <div class="mat"><label for="txGz">Gz (optional)</label><input type="file" id="fGz" accept=".txt,text/plain"><textarea id="txGz" rows="2" spellcheck="false"></textarea></div>
+      <button type="button" class="small" id="loadExample">Fill with BB_72_12_6</button>
+    </div>
+
+    <h2>Engine</h2>
+    <div class="seg" role="radiogroup" aria-label="Engine">
+      <label class="segbtn on"><input type="radio" name="engine" value="maxsat" checked> MaxSAT (default)</label>
+      <label class="segbtn"><input type="radio" name="engine" value="cc"> Connected cluster</label>
+    </div>
+    <div id="ccOpts" class="opts" hidden>
+      <fieldset>
+        <legend>CC pruning rules (<code>-cc-rules</code>)</legend>
+        <label><input type="checkbox" class="rule" value="excl" checked> excl <span class="hint">sibling exclusion</span></label>
+        <label><input type="checkbox" class="rule" value="pack" checked> pack <span class="hint">odd-check packing bound</span></label>
+        <label><input type="checkbox" class="rule" value="orbf" checked> orbf <span class="hint">orbit seeds</span></label>
+        <label><input type="checkbox" class="rule" value="parity" checked> parity <span class="hint">skip odd levels</span></label>
+        <label><input type="checkbox" class="rule" value="leaf" checked> leaf <span class="hint">leaf hash lookup</span></label>
+        <label><input type="checkbox" class="rule" value="overlap" checked> overlap <span class="hint">stabilizer overlap</span></label>
+        <label><input type="checkbox" class="rule" value="mrv"> mrv <span class="hint">fewest-candidate branching</span></label>
+      </fieldset>
+      <label><input type="checkbox" id="ccDual" checked> single half under a verified XZ-dual map (<code>-cc-dual</code>)</label>
+      <label><input type="checkbox" id="ubSearch" checked> randomized upper-bound finder (<code>-ub-search</code>)</label>
+      <label><input type="checkbox" id="ubBasis" checked> basis-row upper bound (<code>-ub-basis</code>)</label>
+    </div>
+    <div id="msOpts" class="opts">
+      <label><input type="checkbox" id="ubPre" checked> upper-bound pre-pass (<code>-ub-pre</code>)</label>
+    </div>
+    <div class="opts">
+      <label><input type="checkbox" id="symbreak" checked> symmetry breaking / orbit seeds (off: <code>-no-symbreak</code>)</label>
+      <label class="inline">time limit <input type="number" id="timeLim" min="1" max="86400" value="120"> s</label>
+      <label class="inline">seed <input type="number" id="seed" min="0" value="0"></label>
+      <label><input type="checkbox" id="verbose"> full search log (<code>-v</code>)</label>
+    </div>
+    <p class="flags">flags: <code id="flagsPreview"></code></p>
+    <div class="actions">
+      <button type="button" id="runBtn" class="primary">Run</button>
+      <button type="button" id="stopBtn" disabled>Stop</button>
+    </div>
+  </section>
+
+  <!-- center: live bounds -->
+  <section class="panel" id="center" aria-label="Search progress">
+    <div class="row between">
+      <h2>Bounds over time</h2>
+      <div class="legend" aria-hidden="false">
+        <span class="key"><span class="sw lb"></span><span>lower bound d<sub>lb</sub></span></span>
+        <span class="key"><span class="sw ub"></span><span>upper bound d<sub>ub</sub></span></span>
+      </div>
+    </div>
+    <div id="chartWrap"><svg id="chart" role="img" aria-label="Lower and upper bound on the distance versus time"></svg><div id="tip" class="tip" hidden></div></div>
+    <div class="row between"><h2 id="tblTitle">Levels</h2><span class="hint" id="tblHint"></span></div>
+    <div class="tblwrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+    <div class="row between"><h2>Log</h2><label class="hint"><input type="checkbox" id="showEvents"> show events</label></div>
+    <pre id="log" aria-live="off"></pre>
+  </section>
+
+  <!-- right: result -->
+  <section class="panel" id="right" aria-label="Result">
+    <h2>Result</h2>
+    <div class="hero"><span class="hlabel">d =</span> <span id="dVal">–</span></div>
+    <p id="status" class="status idle">idle</p>
+    <dl class="kv">
+      <dt>code</dt><dd id="rCode">–</dd>
+      <dt>n, k</dt><dd id="rNK">–</dd>
+      <dt>d<sub>lb</sub> / d<sub>ub</sub></dt><dd id="rBounds">–</dd>
+      <dt>expected (stem)</dt><dd id="rExp">–</dd>
+      <dt>engine</dt><dd id="rEng">–</dd>
+      <dt>time (browser)</dt><dd id="rTime">–</dd>
+      <dt>reference (native)</dt><dd id="rNative">–</dd>
+      <dt>wasm memory</dt><dd id="rMem">–</dd>
+    </dl>
+    <h2>Witness</h2>
+    <p id="wInfo" class="hint">A minimum-weight logical operator appears here when the search finds one.</p>
+    <button type="button" id="wDl" class="small" disabled>Download witness</button>
+    <div id="torus"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p><b>DistQLDPC</b> <span id="ver">–</span> · flags of the last run: <code id="flagsUsed">–</code></p>
+  <p>DistQLDPC is free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3.0 or later</a>;
+    the complete corresponding source is at <a id="srcLink2" href="https://github.com/guluchen/DistQLDPC" target="_blank" rel="noopener">github.com/guluchen/DistQLDPC</a>
+    (this page: <code>web/</code>, build: <code>web/build.sh</code>). Copyright © 2025-2026 Yu-Fang Chen.</p>
+  <p>The MaxSAT engine is derived from <b>MaxCDCL</b> (Chu-Min Li et al., CP 2021; MiniSat / Maple lineage), MIT License,
+    © 2021 Chu-Min Li and earlier authors: <a href="https://github.com/guluchen/DistQLDPC/blob/main/src/solver/LICENSE" target="_blank" rel="noopener">src/solver/LICENSE</a>.
+    Benchmark matrices partly from <a href="https://github.com/m-webster/codeDistancePYPI" target="_blank" rel="noopener">codeDistancePYPI</a> (MIT).</p>
+  <p>Credits (<a href="https://github.com/guluchen/DistQLDPC/blob/main/NOTICE" target="_blank" rel="noopener">NOTICE</a>): the connected-cluster engine implements
+    I. Dumer, A. A. Kovalev, L. P. Pryadko, <i>Distance verification for classical and quantum LDPC codes</i>, IEEE Trans. Inf. Theory 63(7), 2017;
+    its search skeleton was studied in Quantinuum's Qubitserf (S. Cercelescu, MIT; no code copied).
+    LP_1122_148_20 and LP_2610_744_16 were built from the seed matrices in C. Crocker's Zenodo record
+    (doi:<a href="https://doi.org/10.5281/zenodo.23445463" target="_blank" rel="noopener">10.5281/zenodo.23445463</a>, CC BY 4.0), which first established several of these distances.</p>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>
