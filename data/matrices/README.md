@@ -24,7 +24,7 @@ certified).
 | tier2 | medium filter; main 10–100 s on yfclab2 | TN_108_2_12 [[108,2,12]], BB_144_14_14 [[144,14,14]], GB_144_12_12 [[144,12,12]], TN_200_10_10 [[200,10,10]], BB_288_12_18 [[288,12,18]], LP_544_80_12 [[544,80,12]] |
 | tier3 | decisive set; main 100–2000 s on yfclab2 | TN_144_2_13 [[144,2,13]], LP_714_100_16 [[714,100,16]] |
 | tier4 | hard; main 2000–5000 s on yfclab2; timeout 2000 s Mac / 5000 s yfclab2 | TN_250_10_15 [[250,10,15]] |
-| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_ge9 [[288,2,≥9]], TN_324_4_ge9 [[324,4,≥9]], BB_360_12_24 [[360,12,24]], TN_360_4_ge17 [[360,4,≥17]], TN_396_4_ge17 [[396,4,≥17]], TN_432_8_ge9 [[432,8,≥9]], TN_468_4_ge17 [[468,4,≥17]], TN_496_2_ge17 [[496,2,≥17]], TN_504_2_ge17 [[504,2,≥17]], TN_540_4_ge9 [[540,4,≥9]], TN_576_2_ge9 [[576,2,≥9]], TN_612_2_ge17 [[612,2,≥17]], TN_648_10_9to52 [[648,10,9–52]], TN_648_14_ge9 [[648,14,≥9]], TN_684_2_ge9 [[684,2,≥9]], BB_756_16_ge30 [[756,16,≥30]], BB_864_4_ge30 [[864,4,≥30]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_ge30 [[1080,4,≥30]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_1122_148_20 [[1122,148,20]], LP_2610_744_16 [[2610,744,16]] |
+| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_9to24 [[288,2,9–24]], TN_324_4_9to25 [[324,4,9–25]], BB_360_12_24 [[360,12,24]], TN_360_4_17to24 [[360,4,17–24]], TN_396_4_17to26 [[396,4,17–26]], TN_432_8_9to29 [[432,8,9–29]], TN_468_4_17to29 [[468,4,17–29]], TN_496_2_17to30 [[496,2,17–30]], TN_504_2_17to34 [[504,2,17–34]], TN_540_4_9to34 [[540,4,9–34]], TN_576_2_9to37 [[576,2,9–37]], TN_612_2_17to40 [[612,2,17–40]], TN_648_10_9to32 [[648,10,9–32]], TN_648_14_9to28 [[648,14,9–28]], TN_684_2_9to29 [[684,2,9–29]], BB_756_16_30to34 [[756,16,30–34]], BB_864_4_30to40 [[864,4,30–40]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_30to48 [[1080,4,30–48]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_1122_148_20 [[1122,148,20]], LP_2610_744_16 [[2610,744,16]] |
 
 Counts: tier0 13, tier1 2, tier2 6, tier3 2, tier4 1, tier5 27 (total 51).
 
@@ -49,6 +49,23 @@ section 5.
 
 | Date | Old | New | Note |
 |------|-----|-----|------|
+| 2026-10-23 | BB_1080_4_ge30 | BB_1080_4_30to48 | ub 48: nontrivial logical of weight 48 from the GH-146 finder, independently verified (pure-Python GF(2) check `verify_witnesses.py`: Hz e = 0 / Hx e = 0 and e not in the stabilizer row space); witnesses in `optimization/experiments/GH-146/witnesses/renamed/`; lower bound unchanged (PI 2026-10-23) |
+| 2026-10-23 | BB_756_16_ge30 | BB_756_16_30to34 | ub 34 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | BB_864_4_ge30 | BB_864_4_30to40 | ub 40 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_288_2_ge9 | TN_288_2_9to24 | ub 24 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_324_4_ge9 | TN_324_4_9to25 | ub 25 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_360_4_ge17 | TN_360_4_17to24 | ub 24 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_396_4_ge17 | TN_396_4_17to26 | ub 26 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_432_8_ge9 | TN_432_8_9to29 | ub 29 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_468_4_ge17 | TN_468_4_17to29 | ub 29 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_496_2_ge17 | TN_496_2_17to30 | ub 30 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_504_2_ge17 | TN_504_2_17to34 | ub 34 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_540_4_ge9 | TN_540_4_9to34 | ub 34 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_576_2_ge9 | TN_576_2_9to37 | ub 37 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_612_2_ge17 | TN_612_2_17to40 | ub 40 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_648_10_9to52 | TN_648_10_9to32 | ub 52 -> 32 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_648_14_ge9 | TN_648_14_9to28 | ub 28 (GH-146 verified witness, as above); lb unchanged |
+| 2026-10-23 | TN_684_2_ge9 | TN_684_2_9to29 | ub 29 (GH-146 verified witness, as above); lb unchanged |
 | 2026-10-22 | BB_756_16_ge28 | BB_756_16_ge30 | lb 30: levels 28 and 29 proven empty by the optional CC engine with GH-138's overlap rule (yfclab2, 6 h; reproduced with relabeled seeds 1-3, i.e. different search trees; same algorithm, not a second method; PI 2026-10-22) |
 | 2026-10-22 | BB_864_4_ge28 | BB_864_4_ge30 | lb 30, as above |
 | 2026-10-22 | BB_1080_4_ge28 | BB_1080_4_ge30 | lb 30, as above |
@@ -136,6 +153,11 @@ section 5.
 ## Open items
 
 - **Former numeric tier5 names** (BB_756_16_34, BB_864_4_40, BB_1080_4_54, TN_180_2_17 ... TN_684_2_29): the old third field may be a literature value or an upstream index; it is kept in the rename history but not in the stem until DistQLDPC confirms the distance.
-- **TN_648_10_9to52:** d <= 52 (weight-52 nontrivial logicals in the bundled bases); the
-  exact distance is unknown.
+- **TN_648_10_9to32:** d <= 32 (GH-146 verified witness; the bundled bases contain weight-52
+  nontrivial logicals); the exact distance is unknown.
+- **Upper-bound witnesses (`{lb}to{ub}` stems):** the upper bounds of the tier5 `{lb}to{ub}` stems renamed on
+  2026-10-23 come from the GH-146 finder; one nontrivial logical per stem is stored as
+  `optimization/experiments/GH-146/witnesses/renamed/<stem>.<X|Z>.w<ub>.txt` (0-based qubit indices) and can be
+  re-checked with `python3 optimization/experiments/GH-146/witnesses/verify_witnesses.py data/matrices
+  optimization/experiments/GH-146/witnesses/renamed/*.txt` (pure Python, independent of DistQLDPC's code).
 - **BB_288_12_18 / LP_714_100_16:** distances from main's solver (PI 2026-10-11: no strict cross-verification; partial internal checks agreed so far — `-no-symbreak` reached lb 17 / ub 18 on BB_288 and ub 16 on LP_714; re-check if a later run disagrees).

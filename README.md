@@ -40,7 +40,7 @@ For a code named `<code>`, put four text files in one directory (default: `data/
 
 **File format:** each line is one binary row; entries are `0` or `1` separated by spaces. Lines starting with `#` are comments. All four matrices must have the same number of columns `n` (qubits).
 
-**Stem names** use `{family}_{n}_{k}_{d}` (e.g. `BB_72_12_6`, `LP_34_20_2`), family in `BB`, `GB`, `LP`, `TN`. When the distance is not known, the last field holds the current proven bounds: `{lb}to{ub}` or `ge{lb}` (e.g. `TN_648_10_9to52`, `BB_756_16_ge17`). Upstream `AJ_*` / `xu_*` / `PK_*` ids and renames are recorded in [NOTICE](NOTICE) and [data/matrices/README.md](data/matrices/README.md).
+**Stem names** use `{family}_{n}_{k}_{d}` (e.g. `BB_72_12_6`, `LP_34_20_2`), family in `BB`, `GB`, `LP`, `TN`. When the distance is not known, the last field holds the current proven bounds: `{lb}to{ub}` or `ge{lb}` (e.g. `TN_648_10_9to32`, `BB_756_16_30to34`; upper bounds from verified witnesses, see [data/matrices/README.md](data/matrices/README.md)). Upstream `AJ_*` / `xu_*` / `PK_*` ids and renames are recorded in [NOTICE](NOTICE) and [data/matrices/README.md](data/matrices/README.md).
 
 Example layout:
 
@@ -155,6 +155,7 @@ The distance definition, Pauli weight and output format are unchanged.
 | `-seed=N` | **(timing seeds)** Default 0 = the unchanged search. With MaxSAT, N > 0 sets MaxCDCL's random seed (it only drives the engine's 1% sampling of the lookahead threshold, so the search order changes but never the answer or the bounds' validity); with the CC engine it is `-cc-seed=N`. Used for seed-median timing |
 | `-oddcap-skip=on\|off` | **(GH-133; default `on` since 2026-10-21; `off` reproduces the previous search)** MaxSAT split only: on a CSS half whose parity matrix has only odd column weights every logical has even weight, so the odd probe caps of the bound search are replaced by the even cap below them (cap 1: no probe, lower bound 2; a NONE at cap 2t certifies 2t+2); `-v` prints the decision per half. Applies to all bundled BB and LP codes (column weights 3 / 3,5), not to TN or GB |
 | `-ub-pre=off\|on\|S` | **(GH-144; default `on` = 60 s since 2026-10-23; `-ub-pre=off` restores the previous search)** MaxSAT split only: before the bound search, run the randomized low-weight logical finder of GH-140 on both halves for at most S seconds (each half stops earlier after 16 re-hits of its bound or a plateau of max(1000, 4 x the iteration of its last improvement) iterations; tuning `-ub-pre-hits=H`, `-ub-pre-plateau=P`). The lightest verified word weight U0 is printed as the first `c d_ub`; the doubling probes stop below U0 - 1 and the rest of the search only proves that no logical of weight <= U - 1 exists (probes at U - 1). Every word is checked against the half instance before use; `-seed=N` also seeds the finder. Cost: <= 0.3 s on tiers 1-4, U0 = d on every bundled code with a known distance |
+| `-ub-isd=off\|stern\|dumer[:P,L,W,B,R]` | **(GH-146; default `stern` since 2026-10-23; `-ub-isd=off` restores the previous finder, the GH-140 enumeration)** Collision mode of the randomized finder used by `-ub-search` (CC) and `-ub-pre` (MaxSAT): a Stern step instead of the 1-2-row enumeration. The information set of each random systematic form is split at random into two halves; all subsets of size <= P of each half are bucketed by the sum of their columns on L random redundancy rows, and every colliding pair whose detector parities differ is weighed (words with up to 2P ones on the information set and none on the window). `dumer` also lets the window coordinates take part in the subsets. Between rounds, W Canteaut-Chabaud pivot swaps re-randomise the information set (0: a fresh elimination); B rounds form one finder iteration; R > 0 forces a fresh elimination every R rounds. Defaults P 2, L automatic (about log2 of the list size), W 32, B 1, R 0. Needs `-ub-search=on\|budget:S` or `-ub-pre=S`; every word is still verified before use |
 | `-cc-rules=excl,pack,orbf,parity,leaf,overlap[,mrv]` | **(experimental)** CC pruning rules (default `excl,pack,orbf,parity,leaf,overlap`; `none` = plain CC; `excl,pack,orbf` = the GH-124 engine, `excl,pack,orbf,parity,leaf` = the GH-133 engine): sibling exclusion, disjoint odd-row packing bound, orbit seeds from the verified per-half automorphisms, even-weight parity shortcut (GH-133), leaf hash lookup (GH-133), stabilizer-overlap rule (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; the rest of a row that reaches this limit is forbidden), fewest-candidate branching |
 | `-cc-dual=on\|off` | **(experimental)** With a verified XZ-dual map, CC searches only the X half (default `on`; `-dualmode=off` also disables it) |
 | `-ub-basis[=on\|off]` | **(experimental, CC only)** Emit the minimum weight of the verified logical basis rows as an initial upper bound (default on; `-ub-basis=off` disables it) |
@@ -184,6 +185,7 @@ to the behaviour before GH-124.
 | Single-half search under a verified XZ-dual map (CC only) | `-cc-dual=on` (default) | `-cc-dual=off` or `-dualmode=off` |
 | Initial upper bound from the verified logical basis rows (CC only) | `-ub-basis` / `-ub-basis=on` (default) | `-ub-basis=off` |
 | Randomized upper-bound finder feeding the stop rule (CC only, GH-140) | `-ub-search=on` (default since 2026-10-23; no time cap) or `-ub-search=budget:S` (at most S seconds) | `-ub-search=off` |
+| Stern collision mode of the finder (CC `-ub-search` and MaxSAT `-ub-pre`, GH-146) | `-ub-isd=stern` (default since 2026-10-23; or `dumer`, with `:P,L,W,B,R` tuning) | `-ub-isd=off` (previous finder, GH-140) |
 | Diagnostics (CC only) | `-cc-trace=FILE`, `-cc-stats`, `-v` | omit them |
 
 Examples:
@@ -215,6 +217,10 @@ choices follow `-seed` (deterministic sequence of words per seed; when they arri
 `-cc-ub-only` (with `budget:S`) runs the finder alone and reports only an upper bound (diagnostic, `s UNKNOWN`).
 Clean-room implementation from the published descriptions of random-information-set search (Lee-Brickell style,
 QDistRnd, dist-m4ri "RW"); evidence in `optimization/experiments/GH-140/`.
+`-ub-isd=stern` (GH-146; the default since 2026-10-23, `-ub-isd=off` restores the enumeration) replaces the enumeration by a Stern collision step (pairs of subsets of size <= 2 from the
+two halves of the information set, matched on a window of redundancy rows, re-randomised by Canteaut-Chabaud pivot
+swaps); written from the published algorithms (Stern 1988, Dumer, Canteaut-Chabaud), evidence in
+`optimization/experiments/GH-146/`.
 
 The output lines (`c d_lb`, `c d_ub`, `c d  :`, `o N`), the pipe protocol and the `-cpu-lim` timeout are the
 same as for MaxSAT. With CC, `c d_lb` rises by one per completed weight level (by two on a half with only odd
