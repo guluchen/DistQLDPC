@@ -40,7 +40,7 @@ For a code named `<code>`, put four text files in one directory (default: `data/
 
 **File format:** each line is one binary row; entries are `0` or `1` separated by spaces. Lines starting with `#` are comments. All four matrices must have the same number of columns `n` (qubits).
 
-**Stem names** use `{family}_{n}_{k}_{d}` (e.g. `BB_72_12_6`, `LP_34_20_2`), family in `BB`, `GB`, `LP`, `TN`. When the distance is not known, the last field holds the current proven bounds: `{lb}to{ub}` or `ge{lb}` (e.g. `TN_648_10_9to52`, `BB_756_16_ge17`). Upstream `AJ_*` / `xu_*` / `PK_*` ids and renames are recorded in [NOTICE](NOTICE) and [data/matrices/README.md](data/matrices/README.md).
+**Stem names** use `{family}_{n}_{k}_{d}` (e.g. `BB_72_12_6`, `LP_34_20_2`), family in `BB`, `GB`, `LP`, `TN`. When the distance is not known, the last field holds the current proven bounds: `{lb}to{ub}` or `ge{lb}` (e.g. `TN_648_10_9to32`, `BB_756_16_30to34`; upper bounds from verified witnesses, see [data/matrices/README.md](data/matrices/README.md)). Upstream `AJ_*` / `xu_*` / `PK_*` ids and renames are recorded in [NOTICE](NOTICE) and [data/matrices/README.md](data/matrices/README.md).
 
 Example layout:
 
