@@ -1198,7 +1198,7 @@ static uint64_t g_ub_pre_plateau = 1000;   /* -ub-pre-plateau=P: ... or after ma
                                               improvement) iterations without improvement (1000: S0 of GH-144) */
 static const double UBPRE_ON_SECONDS = 60.0;   /* -ub-pre=on: the S recommended by S0 of GH-144 */
 /* GH-146: -ub-isd=off|stern|dumer[:P,L,W,B,R] collision mode of the shared finder (cc_ubsearch.h), applied to the CC
- * engine's -ub-search finder and to the -ub-pre pre-pass; default off = GH-140's enumeration. Only the isd* fields
+ * engine's -ub-search finder and to the -ub-pre pre-pass; default stern (since 2026-10-23, PI); off = GH-140's enumeration. Only the isd* fields
  * of this struct are used. */
 static distcc::UbParams g_ub_isd;
 static bool g_ub_isd_given = false;
@@ -2318,8 +2318,8 @@ int main(int argc, char** argv) {
             printf("            without improvement; the lightest verified word weight U0 is the initial upper bound (c d_ub),\n");
             printf("            Phase 1 probes only caps < U0 - 1 and the rest proves 'no logical of weight <= U - 1' (Phase\n");
             printf("            2a/2b at U - 1); -seed=N also seeds the finder\n");
-            printf("  Finder collision mode (both finders, GH-146): -ub-isd=off|stern|dumer[:P,L,W,B,R] (default off =\n");
-            printf("            GH-140 enumeration): Stern collision step on two random halves of the information set (subsets\n");
+            printf("  Finder collision mode (both finders, GH-146): -ub-isd=off|stern|dumer[:P,L,W,B,R] (default stern;\n");
+            printf("            off = the GH-140 enumeration): Stern collision step on two random halves of the information set (subsets\n");
             printf("            of size <= P per side matched on L random redundancy rows; dumer: window columns as elements),\n");
             printf("            re-randomised by W Canteaut-Chabaud pivot swaps per round (0 = fresh elimination), B rounds\n");
             printf("            per iteration (default 1), a fresh elimination every R rounds (0 = never); needs\n");

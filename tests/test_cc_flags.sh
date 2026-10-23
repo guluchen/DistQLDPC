@@ -301,9 +301,9 @@ for f in -ub-isd= -ub-isd=bogus -ub-isd=sternx -ub-isd=STERN -ub-isd=stern: -ub-
          -ub-isd=stern:2,,,,,1 -ub-isd=stern:2,1x; do
     reject "invalid -ub-isd" -ub-pre=1 "$f" $L $M
 done
-reject "needs the finder" -ub-isd=stern $L $M
-reject "needs the finder" -ub-isd=off $L $M
-reject "needs the finder" -engine=cc -ub-isd=stern $L $C
+reject "needs the finder" -ub-pre=off -ub-isd=stern $L $M   # -ub-pre / -ub-search are on by default since 2026-10-23
+reject "needs the finder" -ub-pre=off -ub-isd=off $L $M
+reject "needs the finder" -engine=cc -ub-search=off -ub-isd=stern $L $C
 reject "needs the finder" -engine=cc -ub-search=on -ub-search=off -ub-isd=dumer $L $C
 accept 10 "" -ub-pre=1 -ub-isd=stern $L BB_90_8_10
 accept 10 "" -ub-pre=1 -ub-isd=dumer:1 $L BB_90_8_10
@@ -319,6 +319,9 @@ vgrep 10 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triple
 vgrep 10 "^c cc-stats: ub-search X collision: rounds [0-9]*, colliding pairs [0-9]* (nontrivial [0-9]*)" -engine=cc -ub-search=on -ub-isd=dumer -cc-stats $L BB_90_8_10
 vgrep 10 "^c ub-pre X: rank H [0-9]*, information set [0-9]*, seed 0, collision dumer p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v -ub-pre=1 -ub-isd=dumer $L BB_90_8_10
 vgrep 10 "^c ub-pre X: rank H [0-9]*, information set [0-9]*, seed 0$" -v -ub-pre=1 -ub-isd=off $L BB_90_8_10
+# default (since 2026-10-23): stern with the S0 parameters on both finders
+vgrep 10 "^c ub-pre X: rank H [0-9]*, information set [0-9]*, seed 0, collision stern p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v $L BB_90_8_10
+vgrep 10 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triples off, slack 4, li-cap 64, collision stern p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v -engine=cc $L BB_90_8_10
 runs=$((runs + 1)); run -engine=cc -ub-search=budget:0.2 -cc-ub-only -ub-isd=stern $L TN_72_8_8
 if [[ $rc -ne 1 ]] || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: 8" ]] || ! grep -qx "s UNKNOWN" <<<"$out"; then
     echo "FAIL (-cc-ub-only -ub-isd=stern: expected d_ub 8 and s UNKNOWN): rc=$rc stdout: $out" >&2; fails=$((fails + 1))

@@ -518,6 +518,7 @@ int main(int argc, char** argv) {
                 const std::vector<Mask>& S = half ? Hz : Hx;
                 const int dh = half ? dZ : dX;
                 distcc::UbParams up;
+                up.isd = 0;   // Part E tests the GH-140 enumeration (-ub-isd=off); stern is the default since 2026-10-23
                 if (inst & 1) up.triples_max_k = 64;
                 const uint64_t fseed = 1000 + (uint64_t)inst * 2 + (uint64_t)half;
                 distcc::UbFinder f(to_rows(H, n), to_rows(G, n), to_rows(S, n), fseed, up);
@@ -751,7 +752,7 @@ int main(int argc, char** argv) {
                 const std::vector<Mask>& S = half ? Hz : Hx;
                 for (int mi = 0; mi < 6; mi++) {   // GH-146: mi 2..5 = collision mode (Stern, Dumer)
                     const int mt = (mi & 1) ? 11 : 0;
-                    distcc::UbParams up; up.mutant = mt;
+                    distcc::UbParams up; up.mutant = mt; up.isd = 0;   // mi 0..1: GH-140 enumeration (-ub-isd=off)
                     if (mi >= 2) { up.isd = mi < 4 ? 1 : 2; up.isd_p = 2; }
                     distcc::UbFinder f(to_rows(H, n), to_rows(G, n), to_rows(S, n), 77 + (uint64_t)half, up);
                     bool trivial = false, bad = false;
@@ -772,6 +773,7 @@ int main(int argc, char** argv) {
             for (int cfg = 0; cfg < 8; cfg++) {   // canonical, mutant 11, mutant 12, canonical with a late start; 4-7: the same in collision mode (GH-146)
                 distcc::DriverOptions o;
                 o.ub_search = true; o.ub_pre = 1.0; o.ub_cap = 0.01;
+                o.ub.isd = 0;   // cfg 0..3: GH-140 enumeration (-ub-isd=off)
                 if (cfg >= 4) { o.ub.isd = 1 + (cfg & 1); o.ub.isd_p = 2; }
                 const int cb = cfg & 3;
                 if (cb == 1) o.mutant = 11;

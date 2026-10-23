@@ -74,14 +74,14 @@ struct UbParams {
                             lightest nontrivial word of the iteration, then the mean weight of the nontrivial systematic
                             words); 0: a fresh random order every iteration */
     /* GH-146 collision mode */
-    int isd;             /* 0: GH-140 enumeration (default); 1: Stern; 2: Dumer / Finiasz-Sendrier (window columns as elements) */
+    int isd;             /* 0: GH-140 enumeration (-ub-isd=off); 1: Stern (default since 2026-10-23, PI); 2: Dumer / Finiasz-Sendrier (window columns as elements) */
     int isd_p;           /* subsets of size <= p per side (1..3) */
     int isd_l;           /* window rows (< 0: automatic, ~log2 of the list size) */
     int isd_walk;        /* Canteaut-Chabaud pivot swaps per round (0: a fresh random elimination every round) */
     int isd_refresh;     /* a fresh random elimination every this many rounds (0: never after the first) */
     int isd_batch;       /* rounds per iteration (>= 1) */
     UbParams() : triples_max_k(0), slack(4), li_cap(64), mutant(0), evo_mu(0),
-                 isd(0), isd_p(2), isd_l(-1), isd_walk(32), isd_refresh(0), isd_batch(1) {}
+                 isd(1), isd_p(2), isd_l(-1), isd_walk(32), isd_refresh(0), isd_batch(1) {}
 };
 
 /* a kept candidate word: sum of cnt systematic basis words c_j (information indices j[0..cnt-1]) */
