@@ -2365,7 +2365,9 @@ int main(int argc, char** argv) {
                 if (!strncmp(argv[i], "-ub-pre-", 8)) t += (t.empty() ? "" : " ") + std::string(argv[i]);
             if (!t.empty()) msg = t + ": need -ub-pre=S";
         }
-        if (msg.empty() && g_ub_isd_given && !g_cc_opt.ub_search && g_ub_pre < 0)   /* GH-146 */
+        /* GH-146: a finder must run on the engine in use (-ub-search / -ub-pre are both on by default since 2026-10-23,
+         * so only the engine's own finder counts: CC -> -ub-search, MaxSAT -> -ub-pre, auto -> either) */
+        if (msg.empty() && g_ub_isd_given && !((g_engine != ENGINE_MAXSAT && g_cc_opt.ub_search) || (g_engine != ENGINE_CC && g_ub_pre >= 0)))
             msg = "-ub-isd: needs the finder (-ub-search=on|budget:S with -engine=cc|auto, or -ub-pre=S on the MaxSAT path)";
         if (msg.empty() && seed_given && backend == SOLVER_ROUNDINGSAT)
             msg = "-seed: no effect with -roundingsat (it seeds MaxCDCL or the CC engine)";

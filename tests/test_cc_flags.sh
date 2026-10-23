@@ -278,7 +278,7 @@ accept 2 "" -engine=auto -ub-pre=1 $L $D1                                       
 accept 2 "selected cc .*ignoring -ub-pre=1" -engine=auto -ub-pre=1 $L $C
 vgrep 10 "^c ub-pre: U0 after [0-9.]*s (both halves converged; iterations X [0-9]* Z [0-9]*, words X [0-9]* Z [0-9]*): 10 (X " -v -ub-pre=1 $L BB_90_8_10
 vgrep 10 "^c witness X (ub-pre): " -v -ub-pre=1 $L BB_90_8_10
-vgrep 3 "^c ub-pre Z: rank H [0-9]*, information set [0-9]*, seed 4$" -v -ub-pre=1 -seed=4 $L $M
+vgrep 3 "^c ub-pre Z: rank H [0-9]*, information set [0-9]*, seed 4, collision stern p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v -ub-pre=1 -seed=4 $L $M   # -ub-isd=stern by default since 2026-10-23
 # default output: the pre-pass bound is the first c d_ub line (before any c d_lb), and the answer follows
 runs=$((runs + 1)); run -ub-pre=1 $L TN_72_8_8
 if [[ $rc -ne 0 ]] || [[ "$(grep -m1 '^c d_' <<<"$out")" != "c d_ub: 8" ]] || ! grep -qx "o 8" <<<"$out"; then
