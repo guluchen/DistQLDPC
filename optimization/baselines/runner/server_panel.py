@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Baseline re-record (main c914ef5; first used for main cbb0642) on yfclab2: tier0-4 x {no-card, card-mto} x seeds 0-4 (adapted from
+"""Baseline re-record (main 12b3e05; first used for main cbb0642, then c914ef5) on yfclab2: tier0-4 x {no-card, card-mto} x seeds 0-4 (adapted from
 GH-130 S1/runner/s1_panel.py). The 5-seed median per cell is the recorded main reference (seed-median judging,
 PI 2026-10-14). -seed=0 is the default search byte for byte.
 Every process: taskset -c CORE prlimit --as=4294967296 -- BIN -MODE -seed=S -cpu-lim=LIMIT data/matrices/tierT/STEM
@@ -18,9 +18,9 @@ ap.add_argument('--out', required=True)
 a = ap.parse_args()
 os.makedirs(a.out + '/logs', exist_ok=True)
 LIMIT = {'0': 600, '1': 1800, '2': 1800, '3': 1800, '4': 5000}
-# main cbb0642 server medians (slower mode), used only to order the queue
-ORDER = {'TN_250_10_15': 4419, 'LP_714_100_16': 2670, 'TN_144_2_13': 423, 'BB_288_12_18': 245, 'LP_544_80_12': 86,
-         'GB_144_12_12': 61, 'TN_108_2_12': 30, 'TN_200_10_10': 28, 'LP_442_68_10': 25, 'BB_144_14_14': 25}
+# main c914ef5 server medians (slower mode), used only to order the queue
+ORDER = {'TN_250_10_15': 2866, 'LP_714_100_16': 626, 'TN_144_2_13': 515, 'LP_544_80_12': 80, 'GB_144_12_12': 59,
+         'BB_288_12_18': 55, 'TN_200_10_10': 28, 'TN_108_2_12': 27, 'BB_144_14_14': 24, 'LP_442_68_10': 8}
 MODES = ['no-card', 'card-mto']
 cpus = []
 for part in a.cpus.split(','):
@@ -75,12 +75,13 @@ def run(job, cpu):
     if result is not None and result != d: issues.append(f'answer {result} != stem d {d}')
     if any(x > d for _, x in lbs): issues.append('lb above stem d')
     if any(x < d for _, x in ubs): issues.append('ub below stem d')
+    if ubs and ubs[0][1] < d: issues.append('first ub (-ub-pre word) below stem d')   # -ub-pre default (PR #147)
     solved = result is not None and result == d
     timeout = result is None
     rec = dict(tier=int(t), case=s, mode=m, seed=int(seed), cpu=cpu, limit=lim, wall=round(wall, 3),
                utime=round(ru.ru_utime, 3), maxrss_kb=ru.ru_maxrss, rc=rc, result=result, solved=solved,
                timeout=timeout, final_lb=max([x for _, x in lbs], default=None),
-               final_ub=min([x for _, x in ubs], default=None), lb_events=lbs, ub_events=ubs,
+               final_ub=min([x for _, x in ubs], default=None), first_ub=ubs[0] if ubs else None, lb_events=lbs, ub_events=ubs,
                withdrawn=withdrawn, runner_killed=killed[0], science_ok=not issues, issues=issues,
                start=round(start, 3), cmd=' '.join(cmd))
     with lock:

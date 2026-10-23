@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Baseline re-record (main c914ef5): quiet-host gate around mac_serial.py (the Mac may be shared with another session).
+"""Baseline re-record (main 12b3e05; first used for main c914ef5): quiet-host gate around mac_serial.py (the Mac may be shared with another session).
 Before every job it waits until no foreign process uses > 50% CPU in two checks 10 s apart (and logs the wait), then
 runs that single job through mac_serial.py unchanged (timing = monotonic wall around wait4, 2 GB group-RSS watchdog)
 and appends its TSV line to RESULTS. A sampler thread logs every 20 s the foreign processes above 50% CPU
