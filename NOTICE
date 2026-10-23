@@ -57,6 +57,9 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
   - Multi-instance search controls and per-instance heuristic state (interleaved CSS split, experimental)
+  - GH-148 (experimental, inactive unless DistQLDPC passes rows): native "at most k of these
+    variables" propagator for stabilizer-overlap rows in propagate() / propagateForLK(), with
+    lazily allocated, cached reason clauses (relocated in relocAll, skipped by on-the-fly reduction)
 
 Modified files (partial list): Solver.h, Solver.cc
 

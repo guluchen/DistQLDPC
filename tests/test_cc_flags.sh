@@ -297,7 +297,7 @@ runs=$((runs + 1)); run -v $L BB_90_8_10
 if ! grep -q "ub-pre" <<<"$out" || ! grep -qx "o 10" <<<"$out"; then echo "FAIL (default: ub-pre output and o 10 expected)" >&2; fails=$((fails + 1)); fi
 
 # 7e. GH-148 -stab-overlap (split MaxSAT path): values, conflicts, output, default identity
-for f in -stab-overlap -stab-overlap= -stab-overlap=yes -stab-overlap=ON -stab-overlapX "-stab-overlap=on -stab-overlap-enc=x" \
+for f in -stab-overlap -stab-overlap= -stab-overlap=yes -stab-overlap=ON -stab-overlapX "-stab-overlap=on -stab-overlap-enc=x" "-stab-overlap=on -stab-overlap-enc=auto" \
          "-stab-overlap=on -stab-overlap-enc=" "-stab-overlap=on -stab-overlap-ratio=x" "-stab-overlap=on -stab-overlap-ratio=-1" \
          "-stab-overlap=on -stab-overlap-bogus=1"; do
     reject "invalid" $f $L $M
@@ -319,9 +319,17 @@ accept 10 "" -stab-overlap=on $L BB_90_8_10
 accept 10 "" -stab-overlap=auto -stab-overlap-ratio=1.5 $L BB_90_8_10
 accept 8 "" -stab-overlap=on -card-mto $L TN_72_8_8
 accept 8 "" -stab-overlap=on -stab-overlap-enc=seq $L TN_72_8_8
+accept 8 "" -stab-overlap=auto -stab-overlap-enc=native -card-mto -seed=2 $L TN_72_8_8
+accept 10 "" -stab-overlap=on -stab-overlap-enc=clauses -ub-pre=off $L BB_90_8_10
+runs=$((runs + 1)); run -frontier-stats -stab-overlap=on $L BB_90_8_10
+if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP X cap 8: rows 45 props [0-9]* conflicts [0-9]* cached_clauses [0-9]*$" <<<"$err"; then echo "FAIL (-frontier-stats with the native propagator: c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -stab-overlap-enc=bin $L BB_90_8_10
+if grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (no c OVERLAP line with clause encodings)" >&2; fails=$((fails + 1)); fi
 accept 2 "" -engine=auto -stab-overlap=on $L $D1                                                        # auto -> maxsat: applies
 accept 2 "selected cc .*ignoring -stab-overlap=on" -engine=auto -stab-overlap=on $L $C
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); binomial rows 45, counter rows 0; per probe 675 clauses, 0 aux vars$" -v -stab-overlap=on $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); binomial rows 45, counter rows 0; per probe 675 clauses, 0 aux vars$" -v -stab-overlap=on -stab-overlap-enc=clauses $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap=on $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used .* binomial rows 45, counter rows 0" -v -stab-overlap=auto -stab-overlap-enc=bin $L BB_90_8_10
 vgrep 10 "^c stab-overlap Z: 45 of 45 rows used .* binomial rows 0, counter rows 45; per probe 1440 clauses, 675 aux vars$" -v -stab-overlap=on -stab-overlap-enc=seq $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v -stab-overlap=auto $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 4: 0 of 45 rows active (ratio 2.00)$" -v -stab-overlap=auto $L BB_90_8_10

@@ -904,7 +904,10 @@ static double g_stab_overlap_ratio = 0.0;   /* per-probe row activation: row g i
                                                auto = STAB_OVL_AUTO_RATIO; -stab-overlap-ratio=X sets it */
 static const double STAB_OVL_AUTO_RATIO = 2.0;   /* GH-148 S0 cost model: a row pays for its clauses only when the
                                                     probe's weight budget holds two over-limit patterns of it */
-static int g_stab_overlap_enc = 0;       /* -stab-overlap-enc=auto|bin|seq: 0 auto, 1 binomial, 2 sequential counter */
+static int g_stab_overlap_enc = 3;       /* -stab-overlap-enc=native|bin|seq|clauses: 3 native propagator in MaxCDCL
+                                            (Solver::setOverlapRows; no clauses; default, chosen in S0 of GH-148),
+                                            1 binomial clauses, 2 sequential counter, 0 clauses (binomial up to |g| = 9,
+                                            counter above) */
 static int g_stab_overlap_mutant = 0;    /* test only (no flag): 1 = limit floor(|g|/2) - 1 (cuts minimum logicals);
                                             2 = the half's parity rows (Hpar) used as g without the GF(2) check */
 static const double STAB_OVL_BIN_MAX = 126.0;   /* auto: binomial up to |g| = 9 (C(9,5) = 126), counter above */
@@ -917,7 +920,7 @@ struct OvlInfo {
     int rejected;     /* rows failing Hpar g = 0 or Glog g = 0 */
     int duplicates;
     long long clauses, auxvars;   /* per probe */
-    int bin_rows, seq_rows;
+    int bin_rows, seq_rows, native_rows;
     std::map<int, int> weights;   /* |g| -> rows */
 };
 
@@ -944,7 +947,7 @@ static bool ovl_use_binomial(int w, int k) {
 static OvlRows stab_overlap_rows(const Matrix& Hpar, const Matrix& Glog, const Matrix& Smat, OvlInfo& info)
 {
     info = OvlInfo();
-    info.candidates = info.kept = info.rejected = info.duplicates = info.bin_rows = info.seq_rows = 0;
+    info.candidates = info.kept = info.rejected = info.duplicates = info.bin_rows = info.seq_rows = info.native_rows = 0;
     info.clauses = info.auxvars = 0;
     OvlRows out;
     const int n = Hpar.cols;
@@ -978,7 +981,8 @@ static OvlRows stab_overlap_rows(const Matrix& Hpar, const Matrix& Glog, const M
         if (k >= w) continue;   /* no constraint (cannot happen for w >= 1 with the true limit) */
         info.kept++;
         info.weights[w]++;
-        if (k < 0) { info.clauses += w; info.bin_rows++; }      /* mutant 1 on |g| = 1: all of g false */
+        if (g_stab_overlap_enc == 3) { info.native_rows++; }
+        else if (k < 0) { info.clauses += w; info.bin_rows++; }      /* mutant 1 on |g| = 1: all of g false */
         else if (ovl_use_binomial(w, k)) { info.clauses += (long long)binom_d(w, k + 1); info.bin_rows++; }
         else {
             info.seq_rows++;
@@ -1221,8 +1225,14 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
             fflush(stdout);
         }
     }
+    const bool ovl_native = g_stab_overlap_enc == 3 && !ovl_active.empty();
     if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, h.sb_orbit.empty() ? NULL : &h.sb_orbit,
-                        ovl_active.empty() ? NULL : &ovl_active)) { h.exists = false; return HALF_INFEASIBLE; }
+                        ovl_active.empty() || ovl_native ? NULL : &ovl_active)) { h.exists = false; return HALF_INFEASIBLE; }
+    if (ovl_native) {   /* GH-148: the same rows as a native propagator (no clauses) */
+        std::vector<int> lims;
+        for (size_t r = 0; r < ovl_active.size(); r++) lims.push_back(ovl_limit((int)ovl_active[r].size()));
+        S.setOverlapRows(ovl_active, lims, n);
+    }
     S.setBoundsPipe(pipe_w);
     S.initUB = cap >= (uint64_t)INT32_MAX ? INT32_MAX : cap;
     S.strictUB = cap < (uint64_t)INT32_MAX;
@@ -1250,6 +1260,9 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
                 (unsigned long long)S.decisions, (unsigned long long)S.frPicks, (unsigned long long)S.frFallbacks,
                 (unsigned long long)S.frNoEligible, S.frPicks ? (double)S.frOddSum / (double)(S.frPicks + S.frNoEligible) : 0.0,
                 (unsigned long long)S.frCheckFails);
+        if (ovl_native)   /* GH-148: appended only with the native propagator (main's line format otherwise) */
+            fprintf(stderr, "c OVERLAP %s cap %llu: rows %zu props %llu conflicts %llu cached_clauses %zu\n", h.tag, (unsigned long long)cap,
+                    ovl_active.size(), (unsigned long long)S.ovProps, (unsigned long long)S.ovConfls, S.ovCacheList.size());
         fflush(stderr);
     }
     h.probes++; h.conflicts += S.conflicts;   /* GH-107 work counters (fresh solver per probe) */
@@ -1595,8 +1608,9 @@ static int min_distance_css_interleaved(
                    hs[k].tag, oi.kept, oi.candidates, oi.rejected, oi.duplicates);
             for (std::map<int, int>::const_iterator it = oi.weights.begin(); it != oi.weights.end(); ++it)
                 printf(" %d:%d (<= %d)", it->first, it->second, ovl_limit(it->first));
-            printf("; binomial rows %d, counter rows %d; per probe %lld clauses, %lld aux vars%s\n", oi.bin_rows, oi.seq_rows,
-                   oi.clauses, oi.auxvars, g_stab_overlap_mutant ? " [TEST MUTANT]" : "");
+            if (g_stab_overlap_enc == 3) printf("; native propagator rows %d (no clauses)%s\n", oi.native_rows, g_stab_overlap_mutant ? " [TEST MUTANT]" : "");
+            else printf("; binomial rows %d, counter rows %d; per probe %lld clauses, %lld aux vars%s\n", oi.bin_rows, oi.seq_rows,
+                        oi.clauses, oi.auxvars, g_stab_overlap_mutant ? " [TEST MUTANT]" : "");
             fflush(stdout);
         }
     }
@@ -2351,14 +2365,16 @@ int main(int argc, char** argv) {
             if (!cc_parse_seconds(argv[i] + 20, &v) || v < 0 || v > 1000) die("invalid -stab-overlap-ratio (0..1000)");
             g_stab_overlap_ratio = v; stab_ratio_given = true;
         }
-        else if (!strcmp(argv[i], "-stab-overlap-enc=auto"))
+        else if (!strcmp(argv[i], "-stab-overlap-enc=clauses"))
             g_stab_overlap_enc = 0;
         else if (!strcmp(argv[i], "-stab-overlap-enc=bin"))
             g_stab_overlap_enc = 1;
         else if (!strcmp(argv[i], "-stab-overlap-enc=seq"))
             g_stab_overlap_enc = 2;
+        else if (!strcmp(argv[i], "-stab-overlap-enc=native"))
+            g_stab_overlap_enc = 3;
         else if (!strncmp(argv[i], "-stab-overlap-enc", 17))
-            die("invalid -stab-overlap-enc (auto | bin | seq)");
+            die("invalid -stab-overlap-enc (native | clauses | bin | seq)");
         else if (!strncmp(argv[i], "-stab-overlap", 13))
             die("invalid -stab-overlap (on | auto | off)");
         else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */
@@ -2535,7 +2551,8 @@ int main(int argc, char** argv) {
             printf("            probes of a half also require |x & g| <= floor(|g|/2) for same-type stabilizer rows g (verified\n");
             printf("            H g = 0, G g = 0; a minimum-weight logical always satisfies it, else x + g is lighter); on: every\n");
             printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
-            printf("            -stab-overlap-enc=auto|bin|seq (default auto: binomial clauses up to |g| = 9, sequential counter above)\n");
+            printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");
+            printf("            clauses up to |g| = 9, sequential counter above; bin / seq: one of them for every row)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

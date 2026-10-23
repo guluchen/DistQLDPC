@@ -52,9 +52,9 @@
 //   words used without verification: some answer must be wrong, on the codes and on the rotated surface codes).
 // Part G (GH-148, -stab-overlap on the MaxSAT path): (a) encoding check: on one row g of weight w = 1..14 with the
 //   objective "maximize the true qubits" (soft clauses x_i), MaxCDCL's optimum must be w - floor(|g|/2) for the
-//   binomial and the sequential-counter encodings (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
+//   binomial and the sequential-counter encodings and the native MaxCDCL propagator (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
 //   split driver with the overlap constraints on the Part B codes, in configurations without and with -ub-pre (cut
-//   after one finder iteration), the three encodings, the per-probe activation (auto ratio 2, ratio 1), -card-mto, -dualmode off/skip, -seed 3, -no-symbreak,
+//   after one finder iteration), the four encodings (auto, bin, seq, native), the per-probe activation (auto ratio 2, ratio 1), -card-mto, -dualmode off/skip, -seed 3, -no-symbreak,
 //   -oddcap-skip off: RESULT d OPTIMAL = enumeration, every UB >= d, LBs monotone <= d; and on rotated surface codes
 //   d = 3..5 (weight-2 boundary stabilizers, the rule binds hard). Mutants (test-only g_stab_overlap_mutant): 1 = limit
 //   floor(|g|/2) - 1 and 2 = the half's parity rows used as g without the GF(2) check must give wrong answers.
@@ -328,11 +328,12 @@ static long long ovl_encoding_opt(int w, int enc) {
         OvlRows rows(1);
         for (int i = 0; i < w; i++) rows[0].push_back(i);
         long long res = -1;
-        if (add_overlap_constraints(S, aux, rows)) {
+        if (enc == 3 || add_overlap_constraints(S, aux, rows)) {
             bool ok = true;
             for (int i = 0; ok && i < w; i++) { std::vector<Lit> c(1, mkLit(i)); ok = add_clause_soft_fail(S, c, 1); }
             if (ok) {
                 S.parsing = false; S.setFrozenVars(); S.eliminate(true);
+                if (enc == 3) S.setOverlapRows(rows, std::vector<int>(1, w / 2), w);   // GH-148 native propagator
                 if (S.okay()) {
                     vec<Lit> dummy;
                     S.solveLimited(dummy);
@@ -452,7 +453,7 @@ int main(int argc, char** argv) {
     long b_inst = 0, b_runs = 0, b_bad = 0, b_dual = 0, b_xorb = 0, b_dxdz = 0, b_odd = 0, b_seqbad4 = 0, b_seq = 0, b_lock4bad = 0, b_lock4 = 0;
     long b_traps = 0, d_runs = 0, d_bad = 0, d_odd = 0;
     long f_runs = 0, f_bad = 0, f_above = 0, f_exact = 0, f_m1_runs = 0, f_m1_bad = 0, f_m2_runs = 0, f_m2_wrong = 0;
-    long g_runs = 0, g_bad = 0, g_codes_removing = 0, g_m_runs[3] = {0, 0, 0}, g_m_wrong[3] = {0, 0, 0}, g_m_failed[3] = {0, 0, 0};
+    long g_runs = 0, g_bad = 0, g_codes_removing = 0, g_m_runs[3] = {0, 0, 0}, g_m_wrong[3] = {0, 0, 0}, g_m_failed[3] = {0, 0, 0}, g_m_wrong_nat[3] = {0, 0, 0};
     long e_halves = 0, e_bad = 0, e_reach = 0, e_nondet = 0, e_mut11_unit = 0, e_runs = 0, e_dbad = 0, e_aborted = 0, e_mut12_wrong = 0, e_mut_halves = 0;
     for (int inst = 0; inst < NB; inst++) {
         const int n = 6 + (int)rnd(11);
@@ -693,6 +694,13 @@ int main(int argc, char** argv) {
                 {"ovl-pre-iter1", 1.0, 1, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 0},
                 {"ovl-pre1s-seq", 1.0, 0, true, 2, DUALMODE_SHARE, true, 0, 0, 1, 2, 0},
                 {"ovl-auto", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 0, 2.0},
+                {"ovl-native", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 0},
+                {"ovl-native-mto-seed4", -1.0, 0, true, 4, DUALMODE_SHARE, true, 3, 0, 1, 3, 0},
+                {"ovl-native-dual-off-nosymbreak", -1.0, 0, false, 1, DUALMODE_OFF, false, 0, 0, 1, 3, 0},
+                {"ovl-native-auto-pre-iter1", 1.0, 1, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 0, 2.0},
+                {"ovl-native-pre1s-ratio1", 1.0, 0, true, 2, DUALMODE_SKIP, true, 0, 0, 1, 3, 0, 1.0},
+                {"ovl-native-mutant1", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 1},
+                {"ovl-native-mutant2", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 2},
                 {"ovl-ratio1-pre-iter1-mto", 1.0, 1, true, 1, DUALMODE_SHARE, true, 3, 0, 1, 0, 0, 1.0},
                 {"ovl-mutant1", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 1},
                 {"ovl-mutant2", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 2},
@@ -702,7 +710,7 @@ int main(int argc, char** argv) {
                 if (c.ovl_mutant) {
                     g_m_runs[c.ovl_mutant]++;
                     if (!run_ok(r, d)) g_m_failed[c.ovl_mutant]++;
-                    if (r.ok && r.d != d) g_m_wrong[c.ovl_mutant]++;
+                    if (r.ok && r.d != d) { g_m_wrong[c.ovl_mutant]++; if (c.ovl_enc == 3) g_m_wrong_nat[c.ovl_mutant]++; }
                     continue;
                 }
                 g_runs++;
@@ -814,7 +822,7 @@ int main(int argc, char** argv) {
                 else { f_surf_m2++; if (r.ok && r.d != d) f_surf_m2_wrong++; }
             }
         for (int mt = 0; mt <= 2; mt++)   // GH-148 Part G on the same surface codes
-            for (int enc = 0; enc <= 2; enc++)
+            for (int enc = 0; enc <= 3; enc++)
                 for (uint64_t sd = 0; sd < 2; sd++) {
                     PreCfg c = {"surface-ovl", sd ? 1.0 : -1.0, sd ? 1u : 0u, true, sd, DUALMODE_SHARE, true, enc == 2 ? 3 : 0, 0, 1, enc, mt};
                     RunOut r = run_maxsat(mHx, mHz, mGx, mGz, true, &c);
@@ -833,19 +841,19 @@ int main(int argc, char** argv) {
     {   // GH-148 Part G (a): encoding check, and the summary of Part G
         long enc_runs = 0, enc_bad = 0;
         for (int w = 1; w <= 14; w++)
-            for (int enc = 1; enc <= 2; enc++) {
+            for (int enc = 1; enc <= 3; enc++) {
                 long long opt = ovl_encoding_opt(w, enc);
                 enc_runs++;
                 if (opt != w - w / 2) { enc_bad++; fails++; fprintf(stderr, "CC_FAIL partG encoding w=%d enc=%d: optimum %lld, want %d\n", w, enc, opt, w - w / 2); }
             }
-        printf("partG (a) encodings (binomial, sequential counter; w = 1..14): %ld checks, %ld bad\n", enc_runs, enc_bad);
+        printf("partG (a) encodings (binomial, sequential counter, native propagator; w = 1..14): %ld checks, %ld bad\n", enc_runs, enc_bad);
         printf("partG (b) MaxSAT -stab-overlap: %ld runs on %ld codes (%ld codes where the rule removes an element of F of weight <= d + 2), %ld bad; "
                "surface codes d = 3..5: %ld runs, %ld bad\n", g_runs, b_inst, g_codes_removing, g_bad, g_surf, g_surf_bad);
-        printf("partG mutant 1 (limit floor(|g|/2) - 1): %ld/%ld runs failed, %ld with a wrong RESULT d OPTIMAL (%ld on surface codes)\n",
-               g_m_failed[1], g_m_runs[1], g_m_wrong[1], g_surf_mwrong[1]);
+        printf("partG mutant 1 (limit floor(|g|/2) - 1): %ld/%ld runs failed, %ld with a wrong RESULT d OPTIMAL (%ld on surface codes, %ld with the native propagator)\n",
+               g_m_failed[1], g_m_runs[1], g_m_wrong[1], g_surf_mwrong[1], g_m_wrong_nat[1]);
         printf("partG mutant 2 (parity rows of the half as g, unverified): %ld/%ld runs failed, %ld with a wrong RESULT d OPTIMAL (%ld on surface codes)\n",
                g_m_failed[2], g_m_runs[2], g_m_wrong[2], g_surf_mwrong[2]);
-        if (g_codes_removing == 0 || g_m_wrong[1] == 0 || g_m_wrong[2] == 0) { fprintf(stderr, "CC_FAIL GH-148 mutant/coverage expectations not met\n"); fails++; }
+        if (g_codes_removing == 0 || g_m_wrong[1] == 0 || g_m_wrong[2] == 0 || g_m_wrong_nat[1] == 0) { fprintf(stderr, "CC_FAIL GH-148 mutant/coverage expectations not met\n"); fails++; }
     }
     printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ, %ld with all-odd Hz), %ld driver runs, %ld bad, %ld RESULT -1\n",
            b_inst, b_dual, b_xorb, b_dxdz, b_odd, b_runs, b_bad, b_traps);
