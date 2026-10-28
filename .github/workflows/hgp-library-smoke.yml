@@ -36,14 +36,15 @@ jobs:
           python3 scripts/codegen/hgp_repetition.py --ladder --out /tmp/hgp-regenerated
           python3 - <<'PY'
           from pathlib import Path
-          files = list(Path('data/matrices/untiered').glob('HGP_*_*.txt'))
+          stems = [f'HGP_{l*l+(l-1)**2}_1_unknown' for l in (3,5,8,12,16,24)]
+          files = [Path('data/matrices/untiered')/f'{s}_{kind}.txt' for s in stems for kind in ('Hx','Hz','Gx','Gz')]
           assert len(files) == 24
           for path in files:
               assert path.read_bytes() == (Path('/tmp/hgp-regenerated')/path.name).read_bytes(), path
           print('PASS: 24 byte-identical regenerated matrix files')
           PY
       - name: Six serial bounded loading and solver smoke checks
-        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-smoke
+        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-smoke --stems HGP_13_1_unknown HGP_41_1_unknown HGP_113_1_unknown HGP_265_1_unknown HGP_481_1_unknown HGP_1105_1_unknown
       - name: Largest input with explicit short pre-pass and verbose loading evidence
         run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-supplemental --stems HGP_1105_1_unknown --ub-pre 1 --verbose
       - uses: actions/upload-artifact@v4

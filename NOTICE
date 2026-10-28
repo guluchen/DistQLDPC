@@ -211,6 +211,22 @@ are recorded in GH-153: four exact reproductions, one bounded timeout, and
 one default timeout without bounds (supplemental -ub-pre=1 gives 9..26).
 See data/matrices/untiered/MANIFEST.csv and README.md for full provenance.
 
+8. Nonzero-rate cycle-factor HGP matrices (GH-154, untiered)
+----------------------------------------------------------
+
+Original clean-room generator scripts/codegen/hgp_cycle.py and generated
+HGP_{45,106,306,610,1261,2866}_* matrices, GPL-3.0-or-later. No graph data,
+third-party code or source text copied. Uses the Tillich-Zemor HGP theorem
+cited in section 7, with full-row-rank checks of graph cycle codes.
+Graph mathematics is credited to the standard complete graph, Petersen,
+Fano-plane/Heawood, Desargues double and GQ(2,2)/Tutte-Coxeter constructions;
+Andries E. Brouwer's graph descriptions at https://aeb.win.tue.nl/graphs/
+provide construction provenance. See data/matrices/untiered/CYCLE_HGP.md.
+Claimed distances are derived from the theorem and independently checked
+classical girths; solver observations are recorded separately in the manifest.
+scripts/compute_logicals.py gains an original opt-in bitset backend; its
+existing dense default and the solver itself are unchanged.
+
 Renamed 2026-10-16 (PI decision; same matrices): distances confirmed by
 DistQLDPC's experimental connected-cluster engine (GH-124, -engine=cc) and by two
 independent clean-room reimplementations plus a from-scratch prototype, all with

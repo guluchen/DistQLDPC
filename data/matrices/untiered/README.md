@@ -1,5 +1,10 @@
 # Untiered repetition-product HGP library
 
+The untiered library also includes the separate
+[nonzero-rate cycle-factor HGP batch](CYCLE_HGP.md), GH-154. The shared
+MANIFEST.csv and validation.json cover both batches; the table below describes
+the original repetition-factor batch only.
+
 Issue: [GH-153](https://github.com/guluchen/DistQLDPC/issues/153).
 Proposed prefix: **HGP**. All six codes have k=1; stems retain `unknown`
 until DistQLDPC evidence and PI naming approval are available.
