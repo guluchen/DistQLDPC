@@ -56,7 +56,8 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap; GH-157 adds charge, ecover) */
+    int lb_minr;             /* GH-157 -cc-lb-minr=K: charge/ecover evaluated at remaining budget >= K (default 3) */
     bool dual;               /* -cc-dual=on|off (default on) */
     bool ub_basis;           /* -ub-basis (default on; -ub-basis=off): verified basis rows as initial upper bound */
     uint64_t seed;           /* -cc-seed=N (default 0 = identity labels) */
@@ -85,7 +86,7 @@ struct DriverOptions {
     UbParams ub;             /* -cc-ub-triples=K, -cc-ub-slack=L (finder tuning) */
     uint64_t ub_poll_mask;   /* test only: level poll when (nodes & mask) == 0 (default 0x3FFF) */
     uint64_t ub_skip_polls;  /* test only: the first N finder polls do nothing (the finder starts mid-ladder) */
-    DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
+    DriverOptions() : lb_minr(3), dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0) {}
 };
 
@@ -103,7 +104,7 @@ struct BoundSink {
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
-/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv (or "none"); empty values and empty items
+/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge, ecover (or "none"); empty values and empty items
  * are invalid. */
 bool parse_rules(const char* s, Rules& out);
 std::string rules_string(const Rules& r);
