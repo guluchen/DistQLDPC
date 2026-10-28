@@ -40,7 +40,7 @@ Optional engine, off by default (PI 2026-10-16): enable with `-engine=cc` (or `-
 
 | File | Description |
 |------|-------------|
-| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut). |
+| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut); GH-157 (default off): rules `charge` (raised local-degree LP-dual charge node lower bound, exact integers) and `ecover` (Gallai edge-cover bound on a greedy 2-packing of the odd rows, Edmonds matching), `-cc-lb-minr`, mutants 15 (charge inflated) and 16 (ecover without the at-most-2 condition). |
 | `cc_ubsearch.h`, `cc_ubsearch.cc` (GH-140, GH-146) | Randomized low-weight logical finder for one CSS half (`-ub-search`): random information sets (random column order, Gauss-Jordan elimination of H with pivots in that order, systematic kernel basis), words of 1-2 (optionally 3) systematic basis vectors below a weight threshold, detector check (G c != 0), greedy local improvement by same-type stabilizer rows; deterministic per seed; test mutant 11 (no detector check and no improvement). GH-146 collision mode (`-ub-isd`): Stern / Dumer collision step with Canteaut-Chabaud pivot swaps (`cc_swap`, `isd_round`, `iterate_isd`), parser `parse_isd`. |
 | `cc_driver.h`, `cc_driver.cc` | Driver: start-up detector check (rank[H;G] + rank S = n and commutation), both halves interleaved level by level (cheaper half first) or one half under a verified XZ-dual map, stop rule (a hit at level w ends the run once the other half's lower bound is >= w), anytime `TRY`/`LB`/`UB`/`RESULT` lines, witness verification (H e = 0, independent GF(2) rank test against the same-type stabilizers, dual image check), its own check of the XZ-dual map (pi(rs Hz) = rs Hx and pi(rs Hx) = rs Hz), always-on traps (`RESULT -1 TRAP`, never a value; earlier bounds withdrawn), optional `-ub-basis`, `-cc-trace`, `-cc-stats`; test-only sequential schedule (`-cc-schedule=sequential`) and driver mutant 4 (stop rule without the other half's lower bound, run under the sequential schedule). |
 
@@ -151,6 +151,76 @@ the node reduction against `-cc-rules=excl,pack,orbf,parity,leaf` (exact, determ
 *Side note (not adopted).* Lemma 1 holds for every element of rs K, not only for the generator rows; adding the
 pair sums g1 + g2 whose limit is not implied by the rows (e.g. TN rows of weight 9 sharing 2-3 qubits) cut a
 further 0-17 % of the nodes on TN_250 / TN_144 / BB_288 but cost more time than they saved (S0 of GH-138).
+
+GH-157 (`charge`, `ecover`; both off by default, `-cc-rules=...,charge[,ecover]`; `-cc-lb-minr=K`, default 3). Sources,
+used from the published mathematics only: the detector-charge bound of Banfi, Ferrari, Favano, Tarable and Barletta,
+arXiv:2610.28008 (2026); the scaled feasible set-cover dual and the bipartite matching bound a + b - s of Okada and
+Kasai's `cpm-ldpc-distance` (github.com/kasaikenta/cpm-ldpc-distance, verification/README); Gallai's theorem (minimum
+edge cover = |V| - maximum matching); Edmonds' blossom algorithm. No third-party code was read or copied.
+
+*Setting.* A node of the level-w search is a cluster S with odd-row set U (rows of H with odd overlap with S) and
+available set A (qubits neither in S nor forbidden by excl, orbf, overlap). Let r = w - |S|. For u in U write
+N_A(u) = N(u) & A, and tau(U, A) = the minimum size of a set T within A with T & N_A(u) nonempty for every u in U
+(tau = infinity if some N_A(u) is empty).
+
+*Lemma 1 (hitting set).* If e in F, |e| = w, S within e and e avoids every forbidden qubit, then |e \ S| >= tau(U, A).
+Proof: e \ S lies in A (it avoids S and the forbidden set). H(e \ S) = H e + H S = syn(S), so every u in U has odd,
+hence nonzero, overlap with e \ S, i.e. e \ S meets N_A(u). This is the same fact the `pack` rule uses (each selected
+disjoint row needs its own qubit of e \ S).
+
+*Lemma 2 (weak duality, `charge`).* For every y >= 0 on U with sum_{u in U, j in N(u)} y_u <= 1 for each j in A,
+sum_u y_u <= tau(U, A). Proof: for a hitting set T, sum_u y_u <= sum_u y_u |T & N_A(u)| = sum_{j in T}
+sum_{u : j in N_A(u)} y_u <= |T|. (This is the LP dual of the hitting-set relaxation; Banfi et al.'s detector charges
+with unit column costs and Okada-Kasai's scaled set-cover dual are such vectors.)
+- Local-degree charge: c_j = |{u in U : j in N(u)}| for j in A, y_u = 1 / max_{j in N_A(u)} c_j. Feasible: a qubit j
+  lies in c_j rows, each with y_u <= 1/c_j (the max over the row includes c_j), so its load is <= 1.
+- Raise: rows in index order, y_u += min_{j in N_A(u)} (1 - load_j) when positive, loads updated. Every load stays <= 1,
+  so y stays feasible and sum y only grows.
+- Prune iff sum_u y_u > r. Then tau > r, so by Lemma 1 no weight-w element of F extends S while avoiding the forbidden
+  qubits. Integer arithmetic: every value is a multiple of 1/L, L = lcm(1..D) with D the half's maximum column weight
+  (c_j <= column weight of j <= D); the engine stores L y_u and compares L sum y > L r exactly. The rule is idle if
+  D > 32 (L > 1.4e14) or H has >= 2^15 rows (no overflow of int64 sums). The c_j are kept incrementally by `toggle`
+  (for every qubit of every flipped row), the local charge is summed inside the existing pack scan (one extra load
+  and max per candidate), and the raise is a second stage run only when the local charge does not already prune.
+
+*Lemma 3 (Gallai, `ecover`).* Choose U' within U: first the greedy disjoint packing (index order), then the remaining
+rows in index order, a row admitted iff none of its available qubits already lies in 2 admitted rows. Then every
+j in A lies in at most 2 rows of U'. Build the multigraph G on U' with one edge per qubit in 2 rows of U' (a qubit in
+one row is a loop). If every row of U' has an available qubit, tau(U', A) = |U'| - nu(G), nu = maximum matching.
+Proof: a hitting set of U' is a set of edges/loops covering every vertex (qubits outside N(U') are useless), so
+tau(U') is the minimum edge cover with loops allowed. Given a maximum matching M, covering each of the |U'| - 2|M|
+unmatched vertices by any incident edge or loop gives a cover of size |U'| - |M|. Conversely a minimum cover C contains
+no edge whose both ends are covered by other members, so C is a disjoint union of stars and loops; picking one
+non-loop edge per star gives a matching of size >= (number of non-loop stars) = |U'| - |C| (each non-loop star with
+t edges covers t + 1 vertices, each loop covers one). Hence |C| >= |U'| - nu. tau(U, A) >= tau(U', A) because U'
+is within U. Prune iff |U'| - nu > r (Lemma 1). U' contains the packing, so the bound is never below `pack`.
+- When every available qubit lies in at most 2 rows of U (frequent for column weight 3 at depth >= 2), U' = U and
+  the bound is the exact tau (counter `ecexact`).
+- Okada-Kasai's a + b - s is the special case U' = U_a + U_b of two check classes in which every qubit has at most one
+  row per class; here the at-most-2 condition is checked per node, so no per-family structural assertion is needed.
+- Cheap exits: |U'| - floor(|U'|/2) <= |U'| - nu <= |U'|, so |U'| <= r never prunes and |U'| - floor(|U'|/2) > r
+  always prunes; otherwise Edmonds' algorithm runs and stops once nu >= |U'| - r.
+
+*Theorem (exactness with the other rules).* Both bounds are evaluated only after the pack scan found no prune
+(the node is unchanged), only when r >= lb-minr and |U| > r (tau <= |U| always, so nothing is lost), and a prune
+means: no weight-w element of F contains S and avoids the forbidden set. Every other rule's argument (excl, orbf,
+parity, leaf, overlap; see GH-124/133/138) fixes one weight-w element e* with S within e* and e* disjoint from the
+forbidden set, and needs that such a node is not pruned: Lemma 1-3 guarantee exactly that. The rules add no
+forbidden qubits and change no branching order, so the sibling-exclusion and orbit arguments are unchanged; they only
+remove nodes, so node counts can only fall. The parity rule's L+1 strengthening adds nothing (on a qualifying half
+r = |U| mod 2 already). An odd row without an available qubit is a dead end, as for `pack`.
+
+*Tests (`make test-cc`, Part I).* (a) 20 000 random hitting-set instances (<= 10 sets over <= 14 qubits, a third with
+every qubit in <= 2 sets) against brute-force tau: charge <= tau, ecover <= tau, pack <= ecover, ecover = tau whenever
+U' = U, and the early-exit contract for every r; Edmonds' algorithm against brute-force matching on 20 000 random
+multigraphs. (b) On every Part A half, the 128 base rule subsets x {charge, ecover, both} x seeds 0..2 (lb-minr 1, 2,
+3): ladders against enumeration, with every in-search charge evaluation cross-checked against `lb_charge` on an
+explicit copy of the sets. (c) Part B driver configurations with the new rules (minr 1 and 3, with and without pack).
+*Mutants.* 15: charge inflated by 1/D (an extra L/D per row; infeasible) - exceeds tau on random instances and makes
+half ladders wrong. 16: ecover admits every row (no at-most-2 condition; a qubit in 3+ rows of U' becomes several
+edges and |U'| - nu overestimates tau) - likewise. Statistics (`-cc-stats`, printed only with the new rules):
+`lbeval`, `chgprune` (of which `chgraise` needed the raise), `ecprune`, `ecexact`, `lbdead`, and the prunes by
+remaining budget. *Evidence.* `optimization/experiments/GH-157/REPORT.md`.
 
 GH-140 (`-ub-search=off|on|budget:S`; on by default inside CC since 2026-10-23, PI decision). *What it adds.* Per searched half (with a verified
 dual map: the X half only, its words mapped to the Z half and verified there too) a `UbFinder` (cc_ubsearch.h). The

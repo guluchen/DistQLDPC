@@ -88,6 +88,14 @@ Modified files (partial list): Solver.h, Solver.cc
   the GH-87/GH-107 verified XZ-dual maps, the stop rule, independent
   witness verification and the verified basis-row upper bound (see
   README, "Connected-cluster (CC) engine").
+  The optional CC node lower bounds `charge` and `ecover` (GH-157, off by
+  default) were implemented from published mathematics only: the
+  detector-charge bound of F. Banfi, G. Ferrari, A. Favano, A. Tarable,
+  R. Barletta, arXiv:2610.28008 (2026); the scaled feasible set-cover
+  dual and the bipartite matching bound of K. Okada and K. Kasai,
+  cpm-ldpc-distance (https://github.com/kasaikenta/cpm-ldpc-distance);
+  Gallai's theorem (minimum edge cover = |V| - maximum matching); and
+  Edmonds' blossom algorithm. No third-party code was read or copied.
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
