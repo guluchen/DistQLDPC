@@ -1,0 +1,65 @@
+name: Nonzero-rate HGP library smoke
+
+on:
+  push:
+    branches: [codex/hgp-finite-rate-library]
+    paths:
+      - '.github/workflows/hgp-cycle-smoke.yml'
+      - 'scripts/compute_logicals.py'
+      - 'scripts/codegen/**'
+      - 'tests/test_codegen_cycle.py'
+      - 'data/matrices/untiered/HGP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Graph, backend, oracle and CSS checks
+        run: |
+          python3 tests/test_codegen_cycle.py
+          python3 tests/test_codegen_hgp.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_cycle.py --output /tmp/cycle-witnesses.json
+          cmp optimization/experiments/GH-154/raw/construction-witnesses.json /tmp/cycle-witnesses.json
+      - name: Regenerate all six cycle-factor codes
+        run: |
+          python3 scripts/codegen/hgp_cycle.py --ladder --out /tmp/hgp-cycle-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          rebuilt = list(Path('/tmp/hgp-cycle-rebuilt').glob('*.txt'))
+          assert len(rebuilt)==24
+          for p in rebuilt:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: 24 cycle-factor matrix files reproduced byte for byte')
+          PY
+      - name: Six default 60-second serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-cycle-smoke --stems HGP_45_9_unknown HGP_106_16_unknown HGP_306_36_unknown HGP_610_64_unknown HGP_1261_121_unknown HGP_2866_256_unknown
+      - name: Largest input with the finder pre-pass explicitly disabled
+        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-cycle-supplemental --stems HGP_2866_256_unknown --ub-pre-off --verbose
+      - name: Retain all evidence as text even on a failed run
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('hgp-cycle-smoke','hgp-cycle-supplemental'):
+              root=Path('/tmp')/name
+              print('GH154_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh154-cycle-hgp-smoke
+          path: |
+            /tmp/hgp-cycle-smoke/
+            /tmp/hgp-cycle-supplemental/
+          if-no-files-found: warn
+          retention-days: 14

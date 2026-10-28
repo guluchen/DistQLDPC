@@ -279,7 +279,7 @@ accept 2 "" -engine=auto -ub-pre=1 $L $D1                                       
 accept 2 "selected cc .*ignoring -ub-pre=1" -engine=auto -ub-pre=1 $L $C
 vgrep 10 "^c ub-pre: U0 after [0-9.]*s (both halves converged; iterations X [0-9]* Z [0-9]*, words X [0-9]* Z [0-9]*): 10 (X " -v -ub-pre=1 $L BB_90_8_10
 vgrep 10 "^c witness X (ub-pre): " -v -ub-pre=1 $L BB_90_8_10
-vgrep 3 "^c ub-pre Z: rank H [0-9]*, information set [0-9]*, seed 4$" -v -ub-pre=1 -seed=4 $L $M
+vgrep 3 "^c ub-pre Z: rank H [0-9]*, information set [0-9]*, seed 4, collision stern p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v -ub-pre=1 -seed=4 $L $M   # -ub-isd=stern by default since 2026-10-23
 # default output: the pre-pass bound is the first c d_ub line (before any c d_lb), and the answer follows
 runs=$((runs + 1)); run -ub-pre=1 $L TN_72_8_8
 if [[ $rc -ne 0 ]] || [[ "$(grep -m1 '^c d_' <<<"$out")" != "c d_ub: 8" ]] || ! grep -qx "o 8" <<<"$out"; then
@@ -296,7 +296,49 @@ if grep -q "ub-pre" <<<"$out" || ! grep -qx "o 10" <<<"$out"; then echo "FAIL (n
 runs=$((runs + 1)); run -v $L BB_90_8_10
 if ! grep -q "ub-pre" <<<"$out" || ! grep -qx "o 10" <<<"$out"; then echo "FAIL (default: ub-pre output and o 10 expected)" >&2; fails=$((fails + 1)); fi
 
-# 7e. GH-148 -stab-overlap (split MaxSAT path): values, conflicts, output, default identity
+# 7e. GH-146 -ub-isd (collision mode of the shared finder): values, conflicts, output, mutants, off = unchanged
+for f in -ub-isd= -ub-isd=bogus -ub-isd=sternx -ub-isd=STERN -ub-isd=stern: -ub-isd=stern:0 -ub-isd=stern:3 -ub-isd=stern:x \
+         -ub-isd=stern:2,21 -ub-isd=stern:2,-1 -ub-isd=dumer:2,1,100001 -ub-isd=stern:2,1,1,4097 -ub-isd=stern:2,1,1,0 -ub-isd=stern:2,1,1,1,1000000001 \
+         -ub-isd=stern:2,,,,,1 -ub-isd=stern:2,1x; do
+    reject "invalid -ub-isd" -ub-pre=1 "$f" $L $M
+done
+reject "needs the finder" -ub-pre=off -ub-isd=stern $L $M   # -ub-pre / -ub-search are on by default since 2026-10-23
+reject "needs the finder" -ub-pre=off -ub-isd=off $L $M
+reject "needs the finder" -engine=cc -ub-search=off -ub-isd=stern $L $C
+reject "needs the finder" -engine=cc -ub-search=on -ub-search=off -ub-isd=dumer $L $C
+accept 10 "" -ub-pre=1 -ub-isd=stern $L BB_90_8_10
+accept 10 "" -ub-pre=1 -ub-isd=dumer:1 $L BB_90_8_10
+accept 8 "" -ub-pre=1 -ub-isd=stern:2,,0 -card-mto $L TN_72_8_8
+accept 3 "" -ub-pre=0.5 -ub-isd=off $L $M
+accept 10 "" -engine=cc -ub-search=on -ub-isd=stern $L BB_90_8_10
+accept 10 "" -engine=cc -ub-search=budget:0.2 -cc-ub-pre=1 -ub-isd=dumer:2,4,0,2,3 $L BB_90_8_10
+accept 2 "" -engine=auto -ub-search=on -ub-isd=stern $L $C
+accept 2 "" -engine=auto -ub-pre=1 -ub-isd=stern $L $D1
+vgrep 10 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triples off, slack 4, li-cap 64, collision stern p 2 l 6 walk 4 batch 2 refresh 0$" \
+      -v -engine=cc -ub-search=on -ub-isd=stern:2,6,4,2 $L BB_90_8_10
+vgrep 10 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triples off, slack 4, li-cap 64$" -v -engine=cc -ub-search=on -ub-isd=off $L BB_90_8_10
+vgrep 10 "^c cc-stats: ub-search X collision: rounds [0-9]*, colliding pairs [0-9]* (nontrivial [0-9]*)" -engine=cc -ub-search=on -ub-isd=dumer -cc-stats $L BB_90_8_10
+vgrep 10 "^c ub-pre X: rank H [0-9]*, information set [0-9]*, seed 0, collision dumer p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v -ub-pre=1 -ub-isd=dumer $L BB_90_8_10
+vgrep 10 "^c ub-pre X: rank H [0-9]*, information set [0-9]*, seed 0$" -v -ub-pre=1 -ub-isd=off $L BB_90_8_10
+# default (since 2026-10-23): stern with the S0 parameters on both finders
+vgrep 10 "^c ub-pre X: rank H [0-9]*, information set [0-9]*, seed 0, collision stern p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v $L BB_90_8_10
+vgrep 10 "^c cc: X half ub-search: rank H [0-9]*, information set [0-9]*, triples off, slack 4, li-cap 64, collision stern p 2 l [0-9]* walk 32 batch 1 refresh 0$" -v -engine=cc $L BB_90_8_10
+runs=$((runs + 1)); run -engine=cc -ub-search=budget:0.2 -cc-ub-only -ub-isd=stern $L TN_72_8_8
+if [[ $rc -ne 1 ]] || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: 8" ]] || ! grep -qx "s UNKNOWN" <<<"$out"; then
+    echo "FAIL (-cc-ub-only -ub-isd=stern: expected d_ub 8 and s UNKNOWN): rc=$rc stdout: $out" >&2; fails=$((fails + 1))
+fi
+for m in stern dumer; do   # collision mode: mutant 11 must trap, mutant 12 (unverified reporting) must answer wrongly
+    runs=$((runs + 1)); run -engine=cc -ub-search=budget:0.2 -cc-ub-pre=1 -cc-mutant=11 -ub-isd=$m $L BB_90_8_10
+    if [[ $rc -ne 1 ]] || [[ "$(grep '^c d_ub:' <<<"$out" | tail -1)" != "c d_ub: -" ]] || ! grep -q "ub-search word failed verification" <<<"$err"; then
+        echo "FAIL (mutant 11, -ub-isd=$m: expected a verification trap): rc=$rc stdout: $out stderr: $err" >&2; fails=$((fails + 1))
+    fi
+    runs=$((runs + 1)); run -engine=cc -ub-search=budget:0.2 -cc-ub-pre=1 -cc-mutant=12 -ub-isd=$m $L BB_90_8_10
+    if ! grep -Eq '^o [0-9]+$' <<<"$out" || grep -qx "o 10" <<<"$out"; then
+        echo "FAIL (mutant 12, -ub-isd=$m: expected a wrong answer): rc=$rc stdout: $out" >&2; fails=$((fails + 1))
+    fi
+done
+
+# 7f. GH-148 -stab-overlap (split MaxSAT path): values, conflicts, output, default identity
 for f in -stab-overlap -stab-overlap= -stab-overlap=yes -stab-overlap=ON -stab-overlapX "-stab-overlap=on -stab-overlap-enc=x" "-stab-overlap=on -stab-overlap-enc=auto" \
          "-stab-overlap=on -stab-overlap-enc=" "-stab-overlap=on -stab-overlap-ratio=x" "-stab-overlap=on -stab-overlap-ratio=-1" \
          "-stab-overlap=on -stab-overlap-bogus=1"; do

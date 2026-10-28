@@ -19,6 +19,10 @@ Usage:
   python3 scripts/compute_logicals.py MY_CODE
   python3 scripts/compute_logicals.py --dir path/to/matrices MY_CODE
   python3 scripts/compute_logicals.py --dir data/matrices/tier0 --all
+  python3 scripts/compute_logicals.py --method bitset --dir path/to/matrices MY_CODE
+
+The default dense implementation is unchanged. --method bitset uses integer
+row operations with the same pivot order and produces the same logical bases.
 """
 
 from __future__ import annotations
@@ -160,13 +164,80 @@ def css_logical_nbit_rows(
     return bz, bx
 
 
+def css_logical_bitset_rows(
+    Hx: List[List[int]], Hz: List[List[int]]
+) -> Tuple[List[List[int]], List[List[int]]]:
+    """Opt-in integer backend; same pivot order and output basis as the dense path.
+
+    This accelerates matrix generation only. It is not used by the solver.
+    """
+    n = len(Hx[0]) if Hx else len(Hz[0]) if Hz else 0
+    if not n:
+        return [], []
+
+    def pack(rows):
+        return [sum((int(x) % 2) << j for j, x in enumerate(row)) for row in rows]
+
+    def kernel(rows):
+        mat = rows[:]
+        pivots = []
+        r = 0
+        for col in range(n):
+            pivot = next((i for i in range(r, len(mat)) if (mat[i] >> col) & 1), None)
+            if pivot is None:
+                continue
+            mat[r], mat[pivot] = mat[pivot], mat[r]
+            for i in range(len(mat)):
+                if i != r and (mat[i] >> col) & 1:
+                    mat[i] ^= mat[r]
+            pivots.append(col)
+            r += 1
+            if r == len(mat):
+                break
+        pivot_set = set(pivots)
+        return [(1 << col) | sum(((mat[i] >> col) & 1) << p for i, p in enumerate(pivots))
+                for col in range(n) if col not in pivot_set]
+
+    def quotient(parity, mod_rows):
+        span, pivots = [], []
+
+        def reduce(v):
+            for row, p in zip(span, pivots):
+                if (v >> p) & 1:
+                    v ^= row
+            return v
+
+        def add(v):
+            v = reduce(v)
+            if not v:
+                return
+            p = (v & -v).bit_length() - 1
+            for i, row in enumerate(span):
+                if (row >> p) & 1:
+                    span[i] ^= v
+            span.append(v)
+            pivots.append(p)
+
+        for row in mod_rows:
+            add(row)
+        result = []
+        for v in kernel(parity):
+            if reduce(v):
+                result.append([(v >> j) & 1 for j in range(n)])
+                add(v)
+        return result
+
+    xx, zz = pack(Hx), pack(Hz)
+    return quotient(xx, zz), quotient(zz, xx)
+
+
 def discover_codes(mat_dir: Path) -> List[str]:
     stems = sorted(p.name[: -len("_Hx.txt")] for p in mat_dir.glob("*_Hx.txt"))
     return stems
 
 
 def compute_one(
-    mat_dir: Path, stem: str, *, overwrite: bool, dry_run: bool
+    mat_dir: Path, stem: str, *, overwrite: bool, dry_run: bool, method: str = "dense"
 ) -> bool:
     hx_path = mat_dir / f"{stem}_Hx.txt"
     hz_path = mat_dir / f"{stem}_Hz.txt"
@@ -192,7 +263,8 @@ def compute_one(
         return False
 
     n = len(Hx[0])
-    bz, bx = css_logical_nbit_rows(Hx, Hz)
+    builder = css_logical_bitset_rows if method == "bitset" else css_logical_nbit_rows
+    bz, bx = builder(Hx, Hz)
     if not bz and not bx:
         print(f"warning: no logical rows for {stem}", file=sys.stderr)
         return False
@@ -240,6 +312,8 @@ def main() -> int:
         help="replace existing Gx/Gz files",
     )
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--method", choices=("dense", "bitset"), default="dense",
+                    help="logical builder backend (default dense; bitset preserves basis order)")
     args = ap.parse_args()
 
     mat_dir = args.dir.resolve()
@@ -254,7 +328,7 @@ def main() -> int:
             if not hz.is_file():
                 print(f"skip (no Hz): {stem}", file=sys.stderr)
                 continue
-            if compute_one(mat_dir, stem, overwrite=args.overwrite, dry_run=args.dry_run):
+            if compute_one(mat_dir, stem, overwrite=args.overwrite, dry_run=args.dry_run, method=args.method):
                 ok += 1
         print(f"done: {ok} code(s)")
         return 0 if ok else 1
@@ -262,7 +336,7 @@ def main() -> int:
     if not args.stem:
         ap.error("provide STEM or use --all")
 
-    return 0 if compute_one(mat_dir, args.stem, overwrite=args.overwrite, dry_run=args.dry_run) else 1
+    return 0 if compute_one(mat_dir, args.stem, overwrite=args.overwrite, dry_run=args.dry_run, method=args.method) else 1
 
 
 if __name__ == "__main__":
