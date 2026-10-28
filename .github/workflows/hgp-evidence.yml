@@ -1,0 +1,31 @@
+name: Recover HGP smoke evidence
+
+on:
+  push:
+    branches: [codex/hgp-repetition-library]
+    paths: ['.github/workflows/hgp-evidence.yml']
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: gh153-hgp-smoke
+          path: /tmp/hgp-attempt1
+          run-id: 40656041189
+          github-token: ${{ github.token }}
+      - name: Print exact artifact text for durable evidence retention
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          files = {str(p.relative_to('/tmp/hgp-attempt1')):p.read_text()
+                   for p in Path('/tmp/hgp-attempt1').rglob('*') if p.is_file()}
+          print('GH153_EVIDENCE_JSON='+json.dumps(files,separators=(',',':')))
+          PY
