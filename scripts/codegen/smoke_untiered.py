@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Linux-only, serial 60s HGP smoke package.
+"""Linux-only, serial 60s untiered smoke package (HGP by default).
 
 Server mode needs a PI-assigned free core; CI mode uses its ephemeral Actions VM.
 Preserves logs, argv, binary/input hashes and raw bounds.
@@ -55,7 +55,8 @@ def main():
     ap.add_argument('--bin', type=Path, default=ROOT/'bin/distqldpc')
     ap.add_argument('--out', type=Path, required=True, help='new evidence directory')
     ap.add_argument('--dry-run', action='store_true')
-    ap.add_argument('--stems', nargs='+', help='explicit subset of HGP manifest stems')
+    ap.add_argument('--family', default='HGP', choices=('HGP','COLOR'), help='manifest family; default HGP')
+    ap.add_argument('--stems', nargs='+', help='explicit subset of selected-family manifest stems')
     pre = ap.add_mutually_exclusive_group()
     pre.add_argument('--ub-pre', type=float, help='explicit supplemental pre-pass seconds; default unchanged')
     pre.add_argument('--ub-pre-off', action='store_true', help='explicit supplemental -ub-pre=off')
@@ -70,14 +71,14 @@ def main():
     elif args.cpu is None:
         ap.error('server mode requires --cpu with a PI-assigned core')
     rows = list(csv.DictReader((ROOT/'data/matrices/untiered/MANIFEST.csv').open()))
-    available = {r['stem'] for r in rows if r['family']=='HGP'}
+    available = {r['stem'] for r in rows if r['family']==args.family}
     if args.stems and not set(args.stems).issubset(available):
-        ap.error('unknown HGP stem')
+        ap.error('unknown stem in selected family')
     if args.ub_pre is not None and not 0 < args.ub_pre <= 60:
         ap.error('--ub-pre must be > 0 and <= 60 seconds')
     jobs = []
     for row in rows:
-        if row['family'] != 'HGP' or (args.stems and row['stem'] not in args.stems):
+        if row['family'] != args.family or (args.stems and row['stem'] not in args.stems):
             continue
         cmd = ['taskset','-c',str(args.cpu),'prlimit','--as=4294967296','--',
                str(args.bin.resolve()),'-cpu-lim=60']
