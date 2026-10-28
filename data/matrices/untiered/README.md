@@ -65,7 +65,7 @@ uses row spaces in both X/Z orientations for every same-(n,k) filename in
 tier0..tier5 and untiered. There are no such peers in this snapshot (57 codes).
 This is not a general column-permutation equivalence algorithm.
 
-## Pending solver smoke evidence
+## Solver smoke evidence
 
 The branch workflow `HGP library smoke` supplies a bounded GitHub Actions
 environment for these six checks. It builds the unchanged solver, rechecks
@@ -75,10 +75,35 @@ core from that job's allocated affinity; it does not allocate server cores.
 Results are uploaded as `gh153-hgp-smoke` and printed in the job log so they
 can be copied into the durable GH-153 record before the artifact expires.
 
-No solver experiment was run on the PI Mac. The manifest's empty smoke bounds
-mean **NOT_RUN**, not zero or the claimed distances. GF(2) validation does not
-satisfy the solver-loading/smoke gate. This change is not ready for adoption
-until that gate is recorded; do not infer timings or tiers from this work.
+All six default 60-second CLI attempts ran in GitHub Actions, not on the PI
+Mac. Their exact logs, commands and binary/input identities are retained in
+`optimization/experiments/GH-153/raw/actions-attempt1/`.
+
+| n | Default 60-second result | Supplemental result |
+|---|---|---|
+| 13 | d=3 | — |
+| 41 | d=5 | — |
+| 113 | d=8 | — |
+| 265 | d=12 | — |
+| 481 | 9 <= d <= 16; timeout | — |
+| 1105 | UNKNOWN; no numeric bounds before timeout | 9 <= d <= 26 with `-ub-pre=1 -v` |
+
+The default finder pre-pass has a 60-second budget, matching the entire smoke
+limit. On n=1105 the parent timed out before receiving any bound. This is an
+observed limitation of the default short smoke, not a claim that the input is
+invalid. That row's empty default-bound fields mean **unavailable**, not zero
+or claimed_d. Its extra loading/bounds check uses an explicit shorter pre-pass;
+those results are recorded separately in the manifest and `raw/short-prepass/`.
+The weight-26 witness from that check passed independent GF(2) verification.
+The pre-pass budget is checked between iterations, so `-ub-pre=1` need not
+finish within one second; the outer 60-second limit stays in force.
+
+The first Actions job failed because the original collector rejected the
+legitimate no-bound timeout. That failed run remains preserved. The collector
+now distinguishes this UNKNOWN state from missing output, contradictory
+results and withdrawn numeric bounds. The latter still fail validation.
+The CI also performs the explicit short-pre-pass check on the largest input.
+Do not infer dedicated-server timings or tiers from hosted-CI smoke results.
 
 The Linux runner makes six serial jobs, each with 60 CPU seconds, a 90-second
 wall backstop, pinned to one explicitly supplied core and a 4 GiB address-space
@@ -94,7 +119,7 @@ nohup python3 scripts/codegen/smoke_untiered.py --cpu ASSIGNED_CORE --out /tmp/h
 ```
 
 Retain all logs/JSON/CSV (including failed runs) in the issue's evidence record.
-Review actual results before filling `smoke_60s_lb`, `smoke_60s_ub`, and status
-in MANIFEST.csv. For a solved case require d=L; for a timeout require consistent
-bounds containing L. A mismatch is a scientific escalation. The runner does
-not rename codes, modify the manifest, assign tiers or mirror QDistSAT.
+For a solved case require d=L; any numeric bounds must contain L. A missing
+numeric bound remains unknown, and is never filled from the claimed distance.
+A contradiction is a scientific escalation. The runner does not rename codes,
+modify the manifest, assign tiers or mirror QDistSAT.

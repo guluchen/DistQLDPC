@@ -60,6 +60,16 @@ class HGPTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 smoke.parse(text,3)
 
+    def test_legitimate_timeout_without_bounds_stays_unknown(self):
+        text = 'c d_lb: -\nc d_ub: -\nc status: TIMEOUT (child killed after -cpu-lim)\nc d  : UNKNOWN\ns UNKNOWN\n'
+        self.assertEqual(smoke.parse(text,24),dict(lb=None,ub=None,status='TIMEOUT_NO_BOUNDS'))
+        self.assertEqual(smoke.parse('c d_ub: 24\n'+text.replace('c d_ub: -\n',''),24),
+                         dict(lb=None,ub=24,status='TIMEOUT_PARTIAL_BOUNDS'))
+        with self.assertRaises(ValueError):
+            smoke.parse('c d_lb: 2\n'+text,24)
+        with self.assertRaises(ValueError):
+            smoke.parse(text.replace('TIMEOUT (child killed after -cpu-lim)','UNKNOWN'),24)
+
     def test_tiny_exhaustive_distance(self):
         # Exhaust all 2^13 supports in both quotients, no external solver.
         for length in (2,3):

@@ -44,10 +44,14 @@ jobs:
           PY
       - name: Six serial bounded loading and solver smoke checks
         run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-smoke
+      - name: Largest input with explicit short pre-pass and verbose loading evidence
+        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-supplemental --stems HGP_1105_1_unknown --ub-pre 1 --verbose
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: gh153-hgp-smoke
-          path: /tmp/hgp-smoke/
+          path: |
+            /tmp/hgp-smoke/
+            /tmp/hgp-supplemental/
           if-no-files-found: warn
           retention-days: 14

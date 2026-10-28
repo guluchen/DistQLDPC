@@ -29,18 +29,23 @@ def parse(text, expected):
     lbs = re.findall(r'^c d_lb:\s*(\d+)\s*$', text, re.M)
     ubs = re.findall(r'^c d_ub:\s*(\d+)\s*$', text, re.M)
     answers = re.findall(r'^o (\d+)\s*$', text, re.M)
+    timed_out = 'c status: TIMEOUT (child killed after -cpu-lim)' in text and 's UNKNOWN' in text
     for kind in ('lb','ub'):
         events = re.findall(rf'^c d_{kind}:\s*(\d+|-)\s*$',text,re.M)
-        if events and events[-1] == '-':
-            raise ValueError('final bound unavailable/withdrawn; review required')
+        if events and events[-1] == '-' and any(x != '-' for x in events):
+            raise ValueError('previous numeric bound withdrawn; review required')
     if any(int(x)>expected for x in lbs) or any(int(x)<expected for x in ubs):
         raise ValueError('bound contradicts published exact distance')
     if any(int(x)!=expected for x in answers):
         raise ValueError('answer contradicts published exact distance')
-    if not lbs or not ubs:
+    if (not lbs or not ubs) and (not timed_out or answers):
         raise ValueError('missing bounds; inspect load/run failure')
-    return dict(lb=max(map(int,lbs)), ub=min(map(int,ubs)),
-                status='SOLVED' if answers else 'BOUNDED')
+    if not lbs or not ubs:
+        status = 'TIMEOUT_NO_BOUNDS' if not lbs and not ubs else 'TIMEOUT_PARTIAL_BOUNDS'
+    else:
+        status = 'SOLVED' if answers else 'BOUNDED'
+    return dict(lb=max(map(int,lbs)) if lbs else None,
+                ub=min(map(int,ubs)) if ubs else None, status=status)
 
 
 def main():
@@ -50,6 +55,9 @@ def main():
     ap.add_argument('--bin', type=Path, default=ROOT/'bin/distqldpc')
     ap.add_argument('--out', type=Path, required=True, help='new evidence directory')
     ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--stems', nargs='+', help='explicit subset of HGP manifest stems')
+    ap.add_argument('--ub-pre', type=float, help='explicit supplemental pre-pass seconds; default unchanged')
+    ap.add_argument('--verbose', action='store_true')
     args = ap.parse_args()
     if args.ci:
         if os.environ.get('GITHUB_ACTIONS') != 'true' or not sys.platform.startswith('linux'):
@@ -60,12 +68,22 @@ def main():
     elif args.cpu is None:
         ap.error('server mode requires --cpu with a PI-assigned core')
     rows = list(csv.DictReader((ROOT/'data/matrices/untiered/MANIFEST.csv').open()))
+    available = {r['stem'] for r in rows if r['family']=='HGP'}
+    if args.stems and not set(args.stems).issubset(available):
+        ap.error('unknown HGP stem')
+    if args.ub_pre is not None and not 0 < args.ub_pre <= 60:
+        ap.error('--ub-pre must be > 0 and <= 60 seconds')
     jobs = []
     for row in rows:
-        if row['family'] != 'HGP':
+        if row['family'] != 'HGP' or (args.stems and row['stem'] not in args.stems):
             continue
         cmd = ['taskset','-c',str(args.cpu),'prlimit','--as=4294967296','--',
-               str(args.bin.resolve()),'-cpu-lim=60',f'data/matrices/untiered/{row["stem"]}']
+               str(args.bin.resolve()),'-cpu-lim=60']
+        if args.ub_pre is not None:
+            cmd.append(f'-ub-pre={args.ub_pre:g}')
+        if args.verbose:
+            cmd.append('-v')
+        cmd.append(f'data/matrices/untiered/{row["stem"]}')
         jobs.append((row,cmd))
     if args.dry_run:
         print(json.dumps([cmd for _,cmd in jobs],indent=2))
@@ -111,10 +129,14 @@ def main():
                 os.killpg(proc.pid,signal.SIGKILL)
                 proc.wait()
                 raise RuntimeError(f'{stem}: wall backstop hit; inspect raw log')
+        meta.update(rc=rc,wall_seconds=round(time.monotonic()-started,3))
+        (args.out/f'{stem}.json').write_text(json.dumps(meta,indent=2)+'\n')
+        print(f'--- RAW LOG {stem} ---',flush=True)
+        print((args.out/f'{stem}.log').read_text(),end='',flush=True)
         result = parse((args.out/f'{stem}.log').read_text(),int(row['claimed_d'].split()[1]))
         if rc not in (0,1) or (rc == 0) != (result['status']=='SOLVED'):
             raise RuntimeError(f'{stem}: unexpected exit status {rc}')
-        meta.update(rc=rc,wall_seconds=round(time.monotonic()-started,3),**result)
+        meta.update(**result)
         (args.out/f'{stem}.json').write_text(json.dumps(meta,indent=2)+'\n')
         records.append(dict(stem=stem,rc=rc,**result))
         with (args.out/'results.csv').open('w',newline='') as f:
@@ -122,9 +144,8 @@ def main():
             writer.writeheader()
             writer.writerows(records)
         print(stem,result,flush=True)
-        print(f'--- RAW LOG {stem} ---',flush=True)
-        print((args.out/f'{stem}.log').read_text(),end='',flush=True)
     (args.out/'DONE').write_text(f'{len(records)} smoke runs; review before updating manifest\n')
+    print('GH153_EVIDENCE_JSON='+json.dumps({p.name:p.read_text() for p in args.out.iterdir() if p.is_file()},separators=(',',':')),flush=True)
 
 
 if __name__ == '__main__':

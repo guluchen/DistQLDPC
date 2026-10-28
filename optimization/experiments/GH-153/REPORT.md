@@ -2,34 +2,35 @@
 
 Date: 2026-10-28 (Asia/Taipei). Issue: https://github.com/guluchen/DistQLDPC/issues/153.
 Base: `e52d15baa7a430104329d20467c12375fe60f0f2` (main).
-Branch: `codex/hgp-repetition-library`. Status: **GF(2) VALIDATED; SOLVER SMOKE PENDING**.
-This is a library addition, not a solver optimization or performance experiment.
+Branch: `codex/hgp-repetition-library`.
+Status: **GF(2) VALIDATED; SIX DEFAULT SMOKES RECORDED; SUPPLEMENTAL LOADING CHECK PASSED**.
+One default smoke produced no numeric bounds; see the limitation below.
+Final collector/workflow CI recheck is pending at this report revision.
 
 ## What changed
 
-- Original standard-library generator for the repetition-code specialization of
-  the Tillich-Zemor hypergraph product; proposed new family prefix HGP.
-- Six untiered codes, each with k=1: n=13,41,113,265,481,1105.
-  Claimed exact distances 3,5,8,12,16,24 follow from Theorem 1 of
-  arXiv:0903.0566v2, applied to [L,1,L] repetition factors. No new scientific
-  distance is claimed. Stems retain `_unknown`.
-- Manifest, source/license attribution, construction/order documentation,
-  independent bitset verifier, tests, input SHA-256s and Linux smoke package.
+Original standard-library generator for the repetition-code specialization of
+the Tillich-Zemor hypergraph product, with proposed family prefix HGP. Six
+untiered codes have k=1 and n=13,41,113,265,481,1105. Claimed exact distances
+3,5,8,12,16,24 follow from Theorem 1 of arXiv:0903.0566v2 applied to [L,1,L]
+repetition factors. These are ground-truth construction instances, not new
+distance discoveries. All stems retain `_unknown`.
 
-Three proposals were recorded before implementation in #153: repetition-HGP
-(selected: known-distance ladder), cyclic repetition toric (deferred), and
-non-repetition finite-rate HGP (deferred). Existing open issues and remote
-branches were inspected; no library-topic overlap. Hub #15 links #153.
-Read AGENTS.md, optimization policy and the relevant literature context.
-No solver/defaults/tiers or existing matrix bytes changed; no QDistSAT mirror.
+Includes manifest, provenance/NOTICE, tensor-order documentation, independent
+bitset GF(2) verifier, corruption/duplicate tests, matrix hashes and bounded
+Linux/Actions runners. No src/, Makefile, solver default, tier or existing
+matrix bytes changed; untiered codes are not mirrored into QDistSAT.
+
+Three proposals preceded implementation in #153: repetition-HGP (selected:
+known-distance ladder), cyclic repetition toric (deferred), non-repetition
+finite-rate HGP (deferred). Open issues/branches were inspected before claiming
+the topic; hub #15 links it. AGENTS.md, optimization policy and literature
+context were read. This is library engineering, not a performance round.
 
 ## Validation performed
 
-Environment: PI Mac, macOS, system Python 3.9, standard library only.
-Only code generation and deterministic engineering tests were run; no
-DistQLDPC solver process, external solver or timing experiment was started.
-
-Commands from repository root:
+Mac: system Python 3.9.6, standard library only; generation and deterministic
+tests, no solver runs. Exact commands from the repository root:
 
 ```sh
 python3 scripts/codegen/hgp_repetition.py --ladder
@@ -40,62 +41,113 @@ python3 scripts/codegen/smoke_untiered.py --cpu 54 --out /tmp/not-executed --dry
 git diff --check
 ```
 
-The dry-run CPU value is an example only; core 54 was neither requested nor used.
-`raw/smoke-dry-run.json` is a command inventory, not executed solver evidence.
-No binary identity, solver bounds, medians, seed ranges, tier verdicts or
-performance claims exist for these inputs yet (all NOT APPLICABLE / NOT RUN).
+Core 54 in that dry-run is only an example; no server core was allocated or
+used. Initial unit tests exposed unavailable Python `int.bit_count`; portable
+population counting fixed it. Final local suite: 8 tests PASS.
 
-Evidence:
-
-- `raw/unit-tests.log`: unit checks, tiny exhaustive supports for L=2,3 in both
-  CSS quotients, deterministic random relabelings and check-basis changes,
-  strict parsing, and corruption mutants (broken commutation, stabilizer used
-  as logical, dependent logical quotient, invalid logical kernel membership).
-- Duplicate fixtures detect row-equivalent checks after row operations,
-  both directly and with X/Z swapped.
-- Straight weight-L witnesses in both halves of all six bundled codes are
-  independently checked for zero syndrome, non-stabilizer membership and odd
-  mutual pairing. These verify upper witnesses; the cited theorem supplies
-  the matching mathematical lower bound.
-- `data/matrices/untiered/validation.json` and `raw/validation.log`: all six
-  pass commutation, dimension/rank, complete logical-quotient bases and pairing.
-  Inventory is 51 existing + 6 new. No same-(n,k) peers exist, so there are no
+- Tiny exhaustive support enumeration for L=2,3 in both CSS quotients agrees
+  with d=L; no external solver.
+- Deterministic random relabeling/check-basis transformations preserve checks.
+- Mutants are caught: broken commutation, logical replaced by stabilizer,
+  dependent quotient rows, invalid kernel row, direct and swapped duplicate
+  row spaces, contradictory smoke answers/bounds and withdrawn numeric bounds.
+- All six bundled codes pass independent commutation, rank/dimension, complete
+  logical quotient and pairing-rank checks. Straight weight-L logical witnesses
+  in both halves are independently checked for zero syndrome, non-stabilizer
+  membership and odd mutual pairing. The cited theorem supplies the lower bound.
+- Inventory: 51 existing + 6 new codes. No same-(n,k) peers exist, hence no
   candidates for rowspace or column-permutation duplication in this snapshot.
-- `raw/regeneration.log`: every one of 24 regenerated matrix files is byte
-  identical; SHA-256s retained. The validation report also reproduces exactly.
-- Smoke-parser fixtures reject contradictory numeric bounds/answers, withdrawn
-  final bounds and missing output. Linux runner dry-run passes on macOS.
+- All 24 fresh matrix files are byte-identical; the validation JSON also
+  reproduces exactly. See `raw/regeneration.log`, `raw/validation.log`, and
+  `data/matrices/untiered/validation.json` for hashes and full results.
 
-Initial test attempt found a Python compatibility issue (`int.bit_count` is
-unavailable on this host's Python); replaced it by portable population counts.
-The failure did not involve a scientific result or solver execution.
+## Solver smoke evidence
+
+The PI asked to continue. AGENTS.md permits bounded ordinary CI smoke tests,
+so GitHub Actions supplied the execution environment without using the Mac
+or dedicated-server cores. No paid-cloud replacement or long experiment.
+
+Original source: `64586f1c6f2c2613e6e1ef6b9175e1b521eaa912`.
+Run: https://github.com/guluchen/DistQLDPC/actions/runs/40656041189.
+Ubuntu 24.04, GCC 13.3.0, one pinned Actions core; build `make --jobs=2 bin/distqldpc`.
+Binary SHA-256: `13aa8ba74b3960b8767bfda60d10fb09f057e6655f5112c6f3f343dfdee03328`.
+For each stem the exact command was:
+
+```
+taskset -c 0 prlimit --as=4294967296 -- /home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc -cpu-lim=60 data/matrices/untiered/STEM
+```
+
+Six serial jobs; 4 GiB address-space cap, outer 90-second backstop. `-cpu-lim`
+is the solver flag name; its parent wrapper implements a wall deadline.
+
+| n | Default result | Exit | Observed wall seconds |
+|---|---|---|---|
+| 13 | d=3 | 0 | 0.040 |
+| 41 | d=5 | 0 | 0.016 |
+| 113 | d=8 | 0 | 0.164 |
+| 265 | d=12 | 0 | 16.349 |
+| 481 | 9 <= d <= 16; timeout | 1 | 60.060 |
+| 1105 | UNKNOWN; both bounds unavailable; timeout | 1 from CLI; collector failed | approximately 60 (job log) |
+
+This is a single smoke per input, default seed. Wall times are retained only
+as execution evidence; no medians, speedups, seed-range comparisons or tier
+verdicts are claimed. All numeric answers/bounds agree with ground truth.
+
+The first workflow failed because its collector rejected n=1105's legitimate
+no-bound timeout. The CLI supplied `c d_lb: -`, `c d_ub: -`, TIMEOUT and UNKNOWN;
+there was no crash or numeric contradiction. Default `g_ub_pre=60.0` consumes
+the entire smoke allowance in this case; bounds are sent only after that pass
+returns (see `ub_prepass` / `min_distance_css_interleaved`). This is an observed
+default-bound visibility limitation, not a solver semantic change or an exact
+distance claim. The manifest preserves empty default bounds with explicit
+TIMEOUT_NO_BOUNDS; they are not filled from published d or another mode.
+
+All 14 original artifact text files, plus the failed job log, are retained
+under `raw/actions-attempt1/`. Recovery run 40656784722 copied the existing
+artifact as text without rerunning solvers. Artifact ID 12802180334, ZIP
+SHA-256 `e9939b20d66716308edda021d117dc3ede9673956706c092afa2a18dc1ec2d9c`.
+The durable record does not depend on the expiring Actions artifact.
+
+### Supplemental largest-input loading check
+
+Source: `cbf1416906f655e738b063b1732531560074020a` (identical solver sources).
+Run: https://github.com/guluchen/DistQLDPC/actions/runs/40657138146.
+Same binary SHA-256 and input hashes as the original run. Exact command:
+
+```
+timeout --kill-after=5s 90s taskset -c 0 prlimit --as=4294967296 -- ./bin/distqldpc -cpu-lim=60 -ub-pre=1 -v data/matrices/untiered/HGP_1105_1_unknown
+```
+
+PASS: verbose output confirms Hx/Hz 552 by 1105 and both logical bases 1 by
+1105. Result: 9 <= d <= 26, timeout/exit 1, wall 60.027 seconds. The pre-pass
+budget is checked between iterations; its single iteration took 3.261 seconds.
+This explicit tuning is not a new default and is not substituted into the
+default manifest columns. The weight-26 X witness independently passes zero
+Hz syndrome, exclusion from row(Hx) and nonzero Gx detector pairing; evidence
+is `raw/short-prepass/{solver.log,metadata.json,result.json,witness-verification.json}`.
+It is a valid upper bound although the known mathematical distance is 24.
+
+The collector now records a genuine timeout with no/partial numeric bounds
+as UNKNOWN with null fields. Missing output without a timeout, wrong numeric
+answers/bounds and withdrawal of previously numeric bounds still fail. Added
+fixtures cover these distinctions. The permanent library CI checks six
+defaults and the explicitly labeled supplemental short-pre-pass configuration.
+The temporary artifact-recovery workflow is removed after evidence retention.
 
 ## Results and unresolved issues
 
-Follow-up on the PI's instruction to continue: a branch-scoped `HGP library
-smoke` GitHub Actions job is being added to complete short solver validation
-under AGENTS.md's ordinary-CI allowance. It builds the unchanged solver,
-regenerates and checks all matrices, then runs six serial 60-second smoke
-checks. The job has a 15-minute total backstop; each solver process retains
-the existing 4 GiB address-space and 90-second wall limits. This is not a
-benchmark sweep or a tier timing run. Mac/server restrictions are unchanged.
+Generation, GF(2), duplicate inventory, regeneration and short CLI execution
+evidence are complete. Four exact distances were reproduced; both larger
+inputs have observed consistent numeric bounds, with n=1105's numeric bounds
+coming from the separately recorded supplemental setting. Its **default**
+60-second run still has no numeric bounds. Do not label that numeric-bound
+gate as passed or erase the failed attempt. No scientific contradiction was
+found and no solver behavior was changed to obtain a pass.
 
-The matrix/library construction and reproducibility checks pass. The required
-60-second DistQLDPC loading/bound checks are **not yet run** because the handoff
-reserves the PI Mac and no dedicated-server core is allocated to this task.
-Manifest smoke fields are empty with explicit NOT_RUN status. Do not interpret
-claimed_d or GF(2) validation as completed solver validation.
-
-The Linux execution package, exact commands, limits and evidence destinations
-are documented in `data/matrices/untiered/README.md`. After a PI-assigned free
-core is available, run the six jobs serially (at most six 90-second wall
-backstops), retain raw output, check it against the mathematical ground truth,
-then update the manifest with observed bounds. Any contradictory result stops
-the sequence and requires scientific escalation. Tier timing is separate work.
-
-No PR opened: the handoff says to open a PR only when asked. No merge attempted.
+Remaining PI work is review of the proposed HGP prefix/data, deciding whether
+to request a PR, and eventual dedicated-server timing/tier assignment. No PR
+opened (the handoff requires a request); no merge or rename attempted.
 
 - Scientific semantics changed: **no**.
-- PI action required: **yes** — assign an authorized smoke environment/core,
-  then review the proposed HGP prefix and request a PR when ready. Merge of
-  benchmark data requires explicit PI approval.
+- PI action required: **yes** — data/prefix review and explicit merge approval;
+  no compute permission is needed for the already completed smoke checks.
