@@ -215,6 +215,8 @@ public:
 
     /* GH-157: charge/ecover are evaluated at remaining budget >= minr (default 3; tests use 1) */
     void set_lb_minr(int minr) { lbminr_ = minr < 1 ? 1 : minr; }
+    /* GH-157: with pack on, evaluated only where r - p <= gap (p = the node's packing, r = remaining budget; default 0) */
+    void set_lb_gap(int gap) { lbgap_ = gap < 0 ? 0 : gap; }
     /* GH-157 test hook: every charge/ecover evaluation also runs lb_charge / lb_ecover on an explicit copy of the
      * candidate sets and aborts if a prune decision differs (the in-search charge is computed on the search state) */
     void set_lb_check(bool on) { lbcheck_ = on; }
@@ -263,7 +265,7 @@ private:
     std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
     /* GH-157 charge/ecover: minimum remaining budget, candidate CSR of the odd rows, scratch */
-    int lbminr_;
+    int lbminr_, lbgap_;
     bool lbany_, lbcheck_;
     std::vector<uint32_t> lbrs_, lbrq_;
     LbWork lbw_;
@@ -283,7 +285,7 @@ private:
     std::vector<int32_t> e2own_;
     std::vector<int> u2_;
     inline void lb_admit_row(int row, uint64_t st, int& nu2);
-    bool lb_prune(int size, uint64_t st, int nu2, bool scanned);
+    bool lb_prune(int size, uint64_t st);
     void lb_build_sets(int& k);
 
     /* search state */

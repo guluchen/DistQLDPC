@@ -65,7 +65,7 @@
 //   every r, and Edmonds' matching against brute force on random multigraphs; mutants 15 / 16 must exceed tau somewhere.
 //   (b) On every Part A half: all 128 base rule subsets x {charge, ecover, charge+ecover} x seeds 0..2 (lb-minr 1, 2, 3
 //   for seeds 0, 1, 2): the ladder must match enumeration; mutants 15 (charge inflated by 1/D) and 16 (ecover without
-//   the at-most-2 condition) must give wrong half-level verdicts. Every evaluation in (b) (mutant 0) also recomputes the
+//   the at-most-2 condition) must give wrong half-level verdicts. lb-gap: unlimited for seed 0, 0 / 1 for seeds 1 / 2. Every evaluation in (b) (mutant 0) also recomputes the
 //   charge and ecover with lb_charge / lb_ecover on an explicit copy of the sets (set_lb_check). (c) Part B driver configurations with the new rules.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
@@ -180,11 +180,12 @@ static const char* rules_name(int mask) {
 // ladder 1..dh for one configuration; returns true if every verdict matches; nodes summed into *nodes
 static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
                       const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why,
-                      int lbminr = 3, uint64_t* lbprunes = NULL) {
+                      int lbminr = 3, uint64_t* lbprunes = NULL, int lbgap = 1000) {
     distcc::Rules r = rules_of(rmask);
     const distcc::SparseRows Kr = to_rows(K, n);
     distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
     hs.set_lb_minr(lbminr);
+    hs.set_lb_gap(lbgap);
     hs.set_lb_check(mutant == 0);   // GH-157: in-search charge cross-checked against lb_charge (aborts on a mismatch)
     const int top = dh < 0 ? n : dh;
     char buf[160];
@@ -507,7 +508,7 @@ int main(int argc, char** argv) {
                     std::string why;
                     uint64_t pr = 0;
                     ib_runs++;
-                    if (!ladder_ok(H, G, K, n, dh, orb, rmx, seed, 0, NULL, why, 1 + (int)seed, &pr)) {
+                    if (!ladder_ok(H, G, K, n, dh, orb, rmx, seed, 0, NULL, why, 1 + (int)seed, &pr, seed == 0 ? 1000 : (int)seed - 1)) {
                         ib_bad++; fails++;
                         if (ib_bad <= 10) fprintf(stderr, "CC_FAIL partI(b) inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rmx),
                                                   (unsigned long long)seed, why.c_str());
@@ -607,7 +608,7 @@ int main(int argc, char** argv) {
         if (!dm.maps.empty()) b_dual++;
         if (!orbits_of(Hz, Gx, n).empty()) b_xorb++;
         b_inst++;
-        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int lbminr; };
+        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int lbminr; int lbgap; };
         const Cfg cfgs[] = {
             {"default", RM_NEW, true, false, 0, true}, {"dual-off", RM_NEW, false, false, 0, true}, {"ub-basis", RM_NEW, true, true, 0, true},
             {"seed1", RM_NEW, true, false, 1, true}, {"seed2", RM_NEW, false, true, 2, true}, {"none", 0, true, false, 0, true},
@@ -615,15 +616,15 @@ int main(int argc, char** argv) {
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
             {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
-            {"charge-ecover", RM_NEW | RM_CHG | RM_ECV, true, false, 0, true, 3}, {"charge-ecover-minr1", RM_NEW | RM_CHG | RM_ECV, false, true, 1, true, 1},
-            {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1}, {"ecover-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_ECV, true, false, 0, true, 1},
+            {"charge-ecover", RM_NEW | RM_CHG | RM_ECV, true, false, 0, true, 3, 0}, {"charge-ecover-minr1", RM_NEW | RM_CHG | RM_ECV, false, true, 1, true, 1, 1000},
+            {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1, 1}, {"ecover-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_ECV, true, false, 0, true, 1, 0},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
             o.ub_search = false;   // Part B tests the ladder; -ub-search is on by default since 2026-10-23 (Part E/F test it)
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
-            if (c.lbminr) o.lb_minr = c.lbminr;   // GH-157
+            if (c.lbminr) { o.lb_minr = c.lbminr; o.lb_gap = c.lbgap; }   // GH-157
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
             if (r.d == -1) b_traps++;
