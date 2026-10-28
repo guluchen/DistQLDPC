@@ -171,12 +171,13 @@ struct LevelResult {
     uint64_t ecexact;          /* GH-157: ecover evaluations with U' = U (exact tau) */
     uint64_t lbdead;           /* GH-157: odd row without an available qubit found by charge/ecover (pack off) */
     std::vector<uint64_t> lbprune_by_budget;   /* GH-157: charge+ecover prunes by remaining budget (-cc-stats) */
+    bool lbswitchoff;          /* GH-157 -cc-lb-auto: the bounds were switched off for the rest of the half after this level */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
                     leaf1(0), leaf2(0), ovtight(0), ovforbid(0),
-                    lbeval(0), chgprune(0), ecprune(0), ecexact(0), lbdead(0), skipped(false) {}
+                    lbeval(0), chgprune(0), ecprune(0), ecexact(0), lbdead(0), lbswitchoff(false), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -219,6 +220,10 @@ public:
     void set_lb_minr(int minr) { lbminr_ = minr < 1 ? 1 : minr; }
     /* GH-157: with pack on, evaluated only where r - p <= gap (p = the node's packing, r = remaining budget; default 0) */
     void set_lb_gap(int gap) { lbgap_ = gap < 0 ? 0 : gap; }
+    /* GH-157 auto switch-off: after an EMPTY level with >= minevals evaluations of which fewer than pct percent pruned, the
+     * bounds stay off for the rest of the half (pct 0: never; default 45 percent, 1000 evaluations) */
+    void set_lb_auto(int pct, uint64_t minevals = 1000) { lbauto_ = pct < 0 ? 0 : pct; lbautomin_ = minevals; }
+    bool lb_active() const { return lbany_; }
     /* GH-157: charge without the raise step (local-degree charge only; tuning) */
     void set_lb_raise(bool on) { lbraise_ = on; }
 
@@ -266,11 +271,13 @@ private:
     std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
     /* GH-157 charge/ecover: minimum remaining budget, candidate CSR of the odd rows, scratch */
-    int lbminr_, lbgap_;
+    int lbminr_, lbgap_, lbauto_;
+    uint64_t lbautomin_;
     bool lbany_, lbraise_;
     std::vector<uint32_t> lbrs_, lbrq_;     /* candidate sets of the odd rows (CSR) */
     LbWork lbw_;
     bool lb_prune(int size);
+    void lb_auto_update(LevelResult& r);
     void lb_build_sets(int& k);
 
     /* search state */

@@ -67,7 +67,7 @@
 //   for seeds 0, 1, 2): the ladder must match enumeration; mutants 15 (charge inflated by 1/D) and 16 (ecover without
 //   the at-most-2 condition) must give wrong half-level verdicts. lb-gap: unlimited for seed 0, 0 / 1 for seeds 1 / 2.
 //   The search hands a copy of the odd rows' candidate sets to the same lb_charge / lb_ecover tested in (a). Seed 2
-//   runs the charge without the raise step. (c) Part B driver configurations with the new rules.
+//   runs the charge without the raise step; seed 1 uses -cc-lb-auto 60 % after any level (switch-off exercised). (c) Part B driver configurations with the new rules.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -188,6 +188,7 @@ static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, co
     hs.set_lb_minr(lbminr);
     hs.set_lb_gap(lbgap);
     hs.set_lb_raise(seed != 2 || mutant != 0);   // GH-157: seed 2 ladders run the charge without the raise
+    hs.set_lb_auto(seed == 1 && mutant == 0 ? 60 : 0, 1);   // GH-157: seed 1 ladders exercise the auto switch-off (any level)
     const int top = dh < 0 ? n : dh;
     char buf[160];
     for (int w = 1; w <= top; w++) {
