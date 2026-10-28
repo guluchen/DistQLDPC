@@ -5,7 +5,9 @@ Base: `e52d15baa7a430104329d20467c12375fe60f0f2` (main).
 Branch: `codex/hgp-repetition-library`.
 Status: **GF(2) VALIDATED; SIX DEFAULT SMOKES RECORDED; SUPPLEMENTAL LOADING CHECK PASSED**.
 One default smoke produced no numeric bounds; see the limitation below.
-Final collector/workflow CI recheck is pending at this report revision.
+Final collector/workflow CI recheck **PASSED**:
+https://github.com/guluchen/DistQLDPC/actions/runs/40657813330.
+Ordinary CI also passed: run 40657813205.
 
 ## What changed
 
@@ -87,7 +89,7 @@ is the solver flag name; its parent wrapper implements a wall deadline.
 | 113 | d=8 | 0 | 0.164 |
 | 265 | d=12 | 0 | 16.349 |
 | 481 | 9 <= d <= 16; timeout | 1 | 60.060 |
-| 1105 | UNKNOWN; both bounds unavailable; timeout | 1 from CLI; collector failed | approximately 60 (job log) |
+| 1105 | UNKNOWN; both bounds unavailable; timeout | not persisted before collector failure; CLI timeout path returns 1 | approximately 60 (job log) |
 
 This is a single smoke per input, default seed. Wall times are retained only
 as execution evidence; no medians, speedups, seed-range comparisons or tier
@@ -133,6 +135,24 @@ answers/bounds and withdrawal of previously numeric bounds still fail. Added
 fixtures cover these distinctions. The permanent library CI checks six
 defaults and the explicitly labeled supplemental short-pre-pass configuration.
 The temporary artifact-recovery workflow is removed after evidence retention.
+
+### Final CI recheck
+
+Source `ef5b8f6f5f498ee322ce8db18312c4bb8d65b3f6`, run 40657813330, job
+122713040376: build, all 8 tests, independent GF(2), byte-identical regeneration,
+six default smokes and the supplemental smoke all PASS as execution checks.
+Every reported result matches the earlier record: four exact results 3/5/8/12,
+n=481 bounds 9..16, n=1105 default TIMEOUT_NO_BOUNDS and explicit -ub-pre=1
+bounds 9..26. This CI pass does **not** relabel the default no-bound outcome
+as a numeric-bound-gate pass. Both attempts remain discoverable, rather than
+selecting a favorable repeat. No timing-based adoption decision was made.
+
+All logs, JSON identities and CSVs from the recheck are preserved in
+`raw/actions-recheck/default/` and `raw/actions-recheck/supplemental/`, with
+the full job log at `raw/actions-recheck/job.log`. The repetition checked
+the corrected collector/workflow; it did not change solver sources, inputs,
+time limits, default seed, or the primary manifest evidence. Replaying the
+preserved default logs reproduces every manifest bound/status exactly.
 
 ## Results and unresolved issues
 
