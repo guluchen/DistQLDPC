@@ -42,7 +42,9 @@
 //   every UB >= d, LBs monotone <= d. (c) Mutants 11 (finder without the detector check: the driver's verification
 //   must stop the run) and 12 (mutant 11 plus words reported without verification: wrong answers) must fail.
 // Part D (GH-133, MaxSAT path): the production interleaved split driver (min_distance_css_interleaved, -no-card)
-//   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d].
+//   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d]. It runs
+//   with the production defaults of the other flags (so also -stab-overlap=auto, the default since GH-148's adoption;
+//   Parts F and G set -stab-overlap explicitly through PreCfg).
 // Part F (GH-144, -ub-pre on the MaxSAT path): the same driver with the verified finder pre-pass on the Part B codes:
 //   budget 1 s (converged pre-pass, U0 = d on almost every code), and pre-passes cut after 1, 2 or 3 finder iterations
 //   (U0 > d on many codes, so Phase 1 FOUND, Phase 2a FOUND and Phase 2b OPT below a seeded U are exercised), with

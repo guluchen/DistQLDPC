@@ -882,7 +882,8 @@ static bool add_half_orbit_clauses(SimpSolver& S, std::vector<Var>& aux, int n, 
     return true;
 }
 
-/* ---- GH-148: -stab-overlap=on|off (split MaxSAT path; default off = main's search byte for byte), issue #148.
+/* ---- GH-148: -stab-overlap=on|auto|off (split MaxSAT path; default auto since PI adoption, off = the previous search
+ * byte for byte), issue #148.
  * Stabilizer-overlap dominance constraints in every CSS-half probe (the GH-138 CC rule, Lee 2026 rule iv, as
  * cardinality constraints of the MaxSAT half instance). Half instance (build_css_half): F = {x : Hpar x = 0,
  * Glog x != 0}. For a vector g with Hpar g = 0 and Glog g = 0 (each checked over GF(2) on the input matrices; the
@@ -898,12 +899,14 @@ static bool add_half_orbit_clauses(SimpSolver& S, std::vector<Var>& aux, int n, 
  * C(|g|, floor(|g|/2)+1) <= STAB_OVL_BIN_MAX, the binomial clauses (one negative clause per (floor(|g|/2)+1)-subset);
  * otherwise Sinz's sequential counter (auxiliary variables). Both are propagation-complete: once floor(|g|/2) qubits
  * of g are true, unit propagation sets the rest of g false (GH-138's forbidding). */
-static bool g_stab_overlap = false;      /* -stab-overlap=on|auto|off (default off) */
-static double g_stab_overlap_ratio = 0.0;   /* per-probe row activation: row g is used in a probe of cap c iff
-                                               c >= ratio * (floor(|g|/2) + 1); on = 0 (every row in every probe),
-                                               auto = STAB_OVL_AUTO_RATIO; -stab-overlap-ratio=X sets it */
 static const double STAB_OVL_AUTO_RATIO = 2.0;   /* GH-148 S0 cost model: a row pays for its clauses only when the
                                                     probe's weight budget holds two over-limit patterns of it */
+static bool g_stab_overlap = true;       /* -stab-overlap=on|auto|off (default auto; silently off with -joint /
+                                            -roundingsat unless given explicitly) */
+static bool g_stab_overlap_given = false;   /* -stab-overlap=on|auto|off given explicitly */
+static double g_stab_overlap_ratio = STAB_OVL_AUTO_RATIO;   /* per-probe row activation: row g is used in a probe of
+                                               cap c iff c >= ratio * (floor(|g|/2) + 1); on = 0 (every row in every
+                                               probe), auto = STAB_OVL_AUTO_RATIO (default); -stab-overlap-ratio=X sets it */
 static int g_stab_overlap_enc = 3;       /* -stab-overlap-enc=native|bin|seq|clauses: 3 native propagator in MaxCDCL
                                             (Solver::setOverlapRows; no clauses; default, chosen in S0 of GH-148),
                                             1 binomial clauses, 2 sequential counter, 0 clauses (binomial up to |g| = 9,
@@ -2362,11 +2365,12 @@ int main(int argc, char** argv) {
         else if (!strncmp(argv[i], "-oddcap-skip", 12))
             die("invalid -oddcap-skip (on | off)");
         else if (!strcmp(argv[i], "-stab-overlap=on")) {   /* GH-148 */
-            g_stab_overlap = true; g_stab_overlap_ratio = 0.0;
+            g_stab_overlap = true; g_stab_overlap_ratio = 0.0; g_stab_overlap_given = true;
         } else if (!strcmp(argv[i], "-stab-overlap=auto")) {
-            g_stab_overlap = true; g_stab_overlap_ratio = STAB_OVL_AUTO_RATIO;
-        } else if (!strcmp(argv[i], "-stab-overlap=off"))
-            g_stab_overlap = false;
+            g_stab_overlap = true; g_stab_overlap_ratio = STAB_OVL_AUTO_RATIO; g_stab_overlap_given = true;
+        } else if (!strcmp(argv[i], "-stab-overlap=off")) {
+            g_stab_overlap = false; g_stab_overlap_given = true;
+        }
         else if (!strncmp(argv[i], "-stab-overlap-ratio=", 20)) {
             double v = 0;
             if (!cc_parse_seconds(argv[i] + 20, &v) || v < 0 || v > 1000) die("invalid -stab-overlap-ratio (0..1000)");
@@ -2567,7 +2571,8 @@ int main(int argc, char** argv) {
             printf("            per iteration (default 1), a fresh elimination every R rounds (0 = never); needs\n");
             printf("            -ub-search=on|budget:S or -ub-pre=S; defaults P 2, L automatic (~log2 of the list size), W 32,\n");
             printf("            B 1, R 0 (S0 of GH-146); every word is still verified before use\n");
-            printf("  Stabilizer-overlap constraints (split MaxSAT path only, GH-148): -stab-overlap=on|auto|off (default off):\n");
+            printf("  Stabilizer-overlap constraints (split MaxSAT path only, GH-148): -stab-overlap=on|auto|off (default auto;\n");
+            printf("            off restores the previous search):\n");
             printf("            probes of a half also require |x & g| <= floor(|g|/2) for same-type stabilizer rows g (verified\n");
             printf("            H g = 0, G g = 0; a minimum-weight logical always satisfies it, else x + g is lighter); on: every\n");
             printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
@@ -2607,8 +2612,10 @@ int main(int argc, char** argv) {
             if (g_ub_pre_given) msg = "-ub-pre: needs the split MaxSAT path (not -joint or -roundingsat)";
             else g_ub_pre = -1.0;   /* default-on pre-pass silently off on paths it does not apply to */
         }
-        if (msg.empty() && g_stab_overlap && (g_css_joint || backend == SOLVER_ROUNDINGSAT))   /* GH-148 */
-            msg = "-stab-overlap=on: needs the split MaxSAT path (not -joint or -roundingsat)";
+        if (msg.empty() && g_stab_overlap && (g_css_joint || backend == SOLVER_ROUNDINGSAT)) {   /* GH-148 */
+            if (g_stab_overlap_given) msg = "-stab-overlap=on: needs the split MaxSAT path (not -joint or -roundingsat)";
+            else g_stab_overlap = false;   /* default auto: silently off on paths it does not apply to */
+        }
         if (msg.empty() && !g_stab_overlap) {   /* GH-148: the tuning flags need the constraints */
             for (int i = 1; i < argc; i++)
                 if (!strncmp(argv[i], "-stab-overlap-", 14)) { msg = std::string(argv[i]) + ": needs -stab-overlap=on or -stab-overlap=auto"; break; }

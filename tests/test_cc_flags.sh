@@ -338,13 +338,16 @@ for m in stern dumer; do   # collision mode: mutant 11 must trap, mutant 12 (unv
     fi
 done
 
-# 7f. GH-148 -stab-overlap (split MaxSAT path): values, conflicts, output, default identity
+# 7f. GH-148 -stab-overlap (split MaxSAT path): values, conflicts, output; default auto, off = the previous search
 for f in -stab-overlap -stab-overlap= -stab-overlap=yes -stab-overlap=ON -stab-overlapX "-stab-overlap=on -stab-overlap-enc=x" "-stab-overlap=on -stab-overlap-enc=auto" \
          "-stab-overlap=on -stab-overlap-enc=" "-stab-overlap=on -stab-overlap-ratio=x" "-stab-overlap=on -stab-overlap-ratio=-1" \
          "-stab-overlap=on -stab-overlap-bogus=1"; do
     reject "invalid" $f $L $M
 done
-reject "needs -stab-overlap=on or -stab-overlap=auto" -stab-overlap-enc=seq $L $M
+reject "needs -stab-overlap=on or -stab-overlap=auto" -stab-overlap=off -stab-overlap-enc=seq $L $M   # default auto: the tuning flags apply to it
+accept 3 "" -stab-overlap-enc=seq $L $M
+accept 3 "" -stab-overlap-ratio=1 -card-mto $L $M
+accept 3 "" -stab-overlap=off -joint $L $M
 reject "needs -stab-overlap=on or -stab-overlap=auto" -stab-overlap=on -stab-overlap=off -stab-overlap-ratio=1 $L $M   # last wins
 reject "must come after" -stab-overlap-ratio=1 -stab-overlap=on $L $M
 reject "no effect with -engine=cc" -engine=cc -stab-overlap=on $L $C
@@ -378,8 +381,14 @@ vgrep 10 "^c stab-overlap X cap 4: 0 of 45 rows active (ratio 2.00)$" -v -stab-o
 vgrep 10 "^c stab-overlap X cap 4: 45 of 45 rows active (ratio 0.00)$" -v -stab-overlap=on $L BB_90_8_10
 runs=$((runs + 1)); run -v -stab-overlap=off $L BB_90_8_10
 if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (-stab-overlap=off must not print stab-overlap lines)" >&2; fails=$((fails + 1)); fi
-runs=$((runs + 1)); run -v $L BB_90_8_10
-if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (default is -stab-overlap=off: no stab-overlap lines expected)" >&2; fails=$((fails + 1)); fi
+# default (auto since the PI's adoption decision): the same lines as -stab-overlap=auto
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v $L BB_90_8_10
+vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
+vgrep 10 "^c stab-overlap X cap 4: 0 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
+runs=$((runs + 1)); run -frontier-stats $L BB_90_8_10
+if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP X cap 8: rows 45 props [0-9]* conflicts [0-9]* cached_clauses [0-9]*$" <<<"$err"; then echo "FAIL (default: c OVERLAP line expected with -frontier-stats)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -v -joint $L $M
+if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (default auto is silently off with -joint: no stab-overlap lines expected)" >&2; fails=$((fails + 1)); fi
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)
