@@ -328,7 +328,6 @@ int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, i
     }
     const int64_t R = r < 0 ? -1 : (int64_t)r * L;
     if (R >= 0 && Y > R) return (int)((Y + L - 1) / L);
-    { static int nr = -1; if (nr < 0) nr = getenv("DQ_NORAISE") ? 1 : 0; if (nr) return (int)((Y + L - 1) / L); }   /* DEV */
     for (int i = 0; i < k; i++) {   /* raise: y_u += min residual capacity of its qubits (keeps feasibility) */
         int64_t s = L;
         for (uint32_t t = rs[i]; t < rs[i + 1]; t++) { const int64_t res = L - w.load[rq[t]]; if (res < s) s = res; }
