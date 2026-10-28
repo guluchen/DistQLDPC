@@ -58,6 +58,11 @@
 //   finder-only), and mutants 11 / 12 in collision mode (12 = words reported without verification: some answer must be
 //   wrong). Part F: the MaxSAT pre-pass in collision mode (budget 1 s, cut after 2 iterations) and its mutants 1 / 2
 //   (2 must answer wrongly on the codes or on the rotated surface codes).
+// GH-152 (-cc-aut=on, Tanner-graph automorphism candidates): Part G = half level on relabeled planted-shift halves (hidden
+//   symmetry) with orbits from the Tanner generators under the GF(2) checks, all 128 rule subsets x seeds 0..2 vs brute force;
+//   Part H = driver with -cc-aut=on on relabeled hypergraph products (hidden transpose XZ duality) and relabeled random codes;
+//   mutants 13 (candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and 14 (swap map / identity used as dual map
+//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH]]]].
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -852,6 +857,226 @@ int main(int argc, char** argv) {
     printf("GH-146 MaxSAT pre-pass in collision mode: %ld runs, %ld bad; mutant 1 %ld runs, %ld bad; mutant 2 %ld/%ld runs wrong (codes + surface)\n",
            f_isd_runs, f_isd_bad, f_isd_m1_runs, f_isd_m1_bad, f_isd_m2_wrong, f_isd_m2_runs);
     if (i_mut_trivial == 0 || i_m11_bad == 0 || i_m12_wrong == 0 || f_isd_m2_wrong == 0) { fprintf(stderr, "CC_FAIL GH-146 mutant expectations not met\n"); fails++; }
+
+    // ---------------- GH-152 Part G: half level with hidden symmetry (-cc-aut candidates) ----------------
+    // Random halves as in Part A, closed under a planted shift, then RELABELED by a random permutation rho, so that the
+    // planted map rho g rho^-1 is (in general) not in the GH-75 index family. Orbits come from find_half_symmetry with
+    // the Tanner-graph generators of (H, G) (find_row_automorphisms) as extra candidates under the GF(2) checks. Every
+    // generator must map each row class onto itself (independent set check, rows_map_onto); when the planted map
+    // preserves both row sets and the finder reports a complete group, the planted orbits must lie inside the found
+    // ones. Ladders for all 128 rule subsets x seeds 0..2 vs brute force. Mutant 13 at half level: the generators plus
+    // the cyclic shift i -> i+1 mod n, kept without the GF(2) checks, must give wrong ladders on some instance.
+    const int NG = argc > 3 ? atoi(argv[3]) : 300;
+    const int NH = argc > 4 ? atoi(argv[4]) : 150;
+    long g_inst = 0, g_coarser = 0, g_runs = 0, g_bad = 0, g_badgen = 0, g_inv = 0, g_inv_complete = 0, g_miss = 0;
+    long g_m13_runs = 0, g_m13_bad = 0, g_gens = 0, g_complete = 0;
+    const std::vector<int> idmap = {0, 1}, swapmap = {1, 0};
+    for (int inst = 0; inst < NG; inst++) {
+        const int n = 4 + (int)rnd(15);
+        std::vector<std::vector<int> > gens;
+        {
+            std::vector<int> divs;
+            for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+            const int L = divs[rnd((unsigned)divs.size())];
+            gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+        }
+        std::vector<Mask> h0, g0;
+        const int nh = 1 + (int)rnd((unsigned)(n / 2 + 2)), ng = 1 + (int)rnd(3);
+        for (int k = 0; k < nh; k++) h0.push_back(rand_vec(n, 2, 5));
+        for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+        std::vector<Mask> H = closure(h0, gens, 64), G = closure(g0, gens, 32);
+        if (G.empty()) G.push_back(1u << rnd(n));
+        if (inst % 3 == 0) make_columns_odd(H, n);
+        std::vector<int> rho(n);
+        for (int i = 0; i < n; i++) rho[i] = i;
+        for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+        for (Mask& v : H) v = perm_apply(rho, v);
+        for (Mask& v : G) v = perm_apply(rho, v);
+        std::vector<int> plant(n);
+        for (int q = 0; q < n; q++) plant[rho[q]] = rho[gens[0][q]];
+        const int dh = half_opt(H, G, n);
+        std::vector<Mask> K;
+        {
+            Span sp;
+            for (Mask v = 1; v < (1u << n); v++) {
+                if (!in_kernel(H, v) || detected(G, v)) continue;
+                if (inst % 2 == 0) { if (sp.add(v)) K.push_back(v); }
+                else if (popc(v) <= 6 && K.size() < 60) K.push_back(v);
+            }
+        }
+        const distcc::SparseRows Hr = to_rows(H, n), Gr = to_rows(G, n);
+        const std::vector<const distcc::SparseRows*> cls = {&Hr, &Gr};
+        const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, false);
+        g_inst++; g_gens += (long)ar.gens.size(); if (ar.complete) g_complete++;
+        for (const auto& p : ar.gens)
+            if (!distcc::rows_map_onto(n, cls, p, idmap)) {
+                g_badgen++; fails++;
+                if (g_badgen <= 5) fprintf(stderr, "CC_FAIL GH-152 partG inst=%d: a generator does not preserve the row classes\n", inst);
+            }
+        if (distcc::rows_map_onto(n, cls, plant, idmap)) {
+            g_inv++;
+            if (ar.complete) {
+                g_inv_complete++;
+                std::vector<int> par(n);
+                for (int q = 0; q < n; q++) par[q] = q;
+                for (const auto& p : ar.gens)
+                    for (int q = 0; q < n; q++) { int a = uf_find(par, q), b = uf_find(par, p[q]); if (a != b) par[std::max(a, b)] = std::min(a, b); }
+                for (int q = 0; q < n; q++)
+                    if (uf_find(par, q) != uf_find(par, plant[q])) {
+                        g_miss++; fails++;
+                        fprintf(stderr, "CC_FAIL GH-152 partG inst=%d: complete group misses the planted automorphism\n", inst);
+                        break;
+                    }
+            }
+        }
+        const Matrix mH = to_matrix(H, n), mG = to_matrix(G, n);
+        const HalfSymInfo fam = find_half_symmetry(mH, mG);
+        const HalfSymInfo ext = find_half_symmetry(mH, mG, &ar.gens);
+        if (ext.reps.size() < fam.reps.size()) g_coarser++;
+        const std::vector<int> orb = (int)ext.reps.size() < n ? ext.orbit_of : std::vector<int>();
+        for (int rm = 0; rm < RM_NSUB; rm++)
+            for (uint64_t seed = 0; seed < 3; seed++) {
+                std::string why;
+                g_runs++;
+                if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, 0, NULL, why)) {
+                    g_bad++; fails++;
+                    if (g_bad <= 10) fprintf(stderr, "CC_FAIL GH-152 partG inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rm),
+                                             (unsigned long long)seed, why.c_str());
+                }
+            }
+        if (n >= 2) {   // mutant 13 at half level
+            std::vector<std::vector<int> > bad(ar.gens);
+            std::vector<int> t(n);
+            for (int i = 0; i < n; i++) t[i] = (i + 1) % n;
+            bad.push_back(t);
+            const HalfSymInfo m = find_half_symmetry(mH, mG, &bad, true);
+            const std::vector<int> orbm = (int)m.reps.size() < n ? m.orbit_of : std::vector<int>();
+            for (int rm = 0; rm < RM_NSUB; rm++) {
+                if (!(rm & 4)) continue;
+                std::string why;
+                g_m13_runs++;
+                if (!ladder_ok(H, G, K, n, dh, orbm, rm, 0, 0, NULL, why)) g_m13_bad++;
+            }
+        }
+    }
+    printf("GH-152 partG: %ld relabeled half instances, %ld Tanner generators (%ld complete groups), %ld instances with coarser orbits than the GH-75 family, "
+           "%ld ladder runs (128 rule subsets x 3 seeds), %ld bad; generators violating the row classes %ld; planted map preserved the row sets on %ld "
+           "(%ld with a complete group), missed %ld\n", g_inst, g_gens, g_complete, g_coarser, g_runs, g_bad, g_badgen, g_inv, g_inv_complete, g_miss);
+    if (g_coarser == 0) { fprintf(stderr, "CC_FAIL GH-152 partG: no instance with a hidden symmetry recovered\n"); fails++; }
+
+    // ---------------- GH-152 Part H: driver with -cc-aut=on ----------------
+    // Codes: (a) relabeled hypergraph products HGP(M, M) of a random 2x2 .. 3x3 matrix M (n = 8, 13, 18): the transpose
+    // map exchanges Hx and Hz, hidden by the relabeling; (b) relabeled Part-B-style random CSS codes with a planted
+    // shift. Configurations with -cc-aut=on over rule sets, seeds, dual off, index seeds; RESULT d OPTIMAL = enumeration,
+    // LBs monotone <= d <= UBs. Mutants 13 (generators and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and
+    // 14 (swap map, or the identity, used as dual map without the check) must give wrong answers or stop the run.
+    long h_inst = 0, h_hgp = 0, h_newdual = 0, h_coarser = 0, h_runs = 0, h_bad = 0, h_dxdz = 0;
+    long h_m13_runs = 0, h_m13_bad = 0, h_m14_runs = 0, h_m14_bad = 0, h_badswap = 0;
+    for (int inst = 0; inst < NH; inst++) {
+        const bool hgp = inst % 3 != 2;
+        int n = 0;
+        std::vector<Mask> Hx, Hz;
+        if (hgp) {
+            const int a = 2 + (int)rnd(2), b = 2 + (int)rnd(2);
+            int M[3][3];
+            for (int i = 0; i < a; i++) for (int j = 0; j < b; j++) M[i][j] = (int)rnd(2);
+            n = b * b + a * a;
+            for (int k = 0; k < a; k++)
+                for (int j = 0; j < b; j++) {   // Hx row (k, j)
+                    Mask v = 0;
+                    for (int i = 0; i < b; i++) if (M[k][i]) v |= 1u << (i * b + j);
+                    for (int l = 0; l < a; l++) if (M[l][j]) v |= 1u << (b * b + k * a + l);
+                    if (v) Hx.push_back(v);
+                }
+            for (int i = 0; i < b; i++)
+                for (int l = 0; l < a; l++) {   // Hz row (i, l)
+                    Mask v = 0;
+                    for (int j = 0; j < b; j++) if (M[l][j]) v |= 1u << (i * b + j);
+                    for (int k = 0; k < a; k++) if (M[k][i]) v |= 1u << (b * b + k * a + l);
+                    if (v) Hz.push_back(v);
+                }
+        } else {
+            n = 6 + (int)rnd(11);
+            std::vector<std::vector<int> > gens;
+            std::vector<int> divs;
+            for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+            const int L = divs[rnd((unsigned)divs.size())];
+            gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+            std::vector<Mask> z0;
+            const int mz = 1 + (int)rnd((unsigned)(n / 3 + 1));
+            for (int k = 0; k < mz; k++) z0.push_back(rand_vec(n, 2, 5));
+            Hz = closure(z0, gens, 48);
+            std::vector<Mask> ker;
+            for (Mask v = 1; v < (1u << n); v++) if (popc(v) <= 6 && in_kernel(Hz, v)) ker.push_back(v);
+            const int mx = 1 + (int)rnd((unsigned)(n / 3 + 1));
+            std::vector<Mask> x0;
+            for (int k = 0; k < mx && !ker.empty(); k++) x0.push_back(ker[rnd((unsigned)ker.size())]);
+            Hx = closure(x0, gens, 48);
+            std::vector<Mask> keep;
+            for (Mask v : Hx) if (in_kernel(Hz, v)) keep.push_back(v);
+            Hx = keep;
+        }
+        if (Hx.empty() || Hz.empty()) { inst--; continue; }
+        std::vector<int> rho(n);
+        for (int i = 0; i < n; i++) rho[i] = i;
+        for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+        for (Mask& v : Hx) v = perm_apply(rho, v);
+        for (Mask& v : Hz) v = perm_apply(rho, v);
+        std::vector<Mask> Gx = quotient_basis(Hx, Hz, n), Gz = quotient_basis(Hz, Hx, n);
+        if (Gx.empty() || Gz.empty() || Gx.size() != Gz.size()) { inst--; continue; }
+        const int dX = half_opt(Hz, Gx, n), dZ = half_opt(Hx, Gz, n);
+        const int d = std::min(dX, dZ);
+        if (dX != dZ) h_dxdz++;
+        h_inst++; if (hgp) h_hgp++;
+        const Matrix mHx = to_matrix(Hx, n), mHz = to_matrix(Hz, n), mGx = to_matrix(Gx, n), mGz = to_matrix(Gz, n);
+        {   // diagnostics: new dual maps and coarser orbits that -cc-aut brings on this code
+            const distcc::SparseRows rx = to_rows(Hx, n), rz = to_rows(Hz, n);
+            const std::vector<const distcc::SparseRows*> cls = {&rx, &rz};
+            const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, true);
+            if (!ar.swap.empty() && !distcc::rows_map_onto(n, cls, ar.swap, swapmap)) {
+                h_badswap++; fails++; fprintf(stderr, "CC_FAIL GH-152 partH inst=%d: swap map does not exchange the row classes\n", inst);
+            }
+            const DualMapInfo fdm = find_dual_maps(mHx, mHz, mGx, mGz, false);
+            if (fdm.maps.empty() && !ar.swap.empty() && verify_dual_perm(mHx, mHz, mGx, mGz, ar.swap, fdm))
+                h_newdual++;
+            if (find_half_symmetry(mHz, mGx, &ar.gens).reps.size() < find_half_symmetry(mHz, mGx).reps.size()) h_coarser++;
+        }
+        struct HCfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int mutant; };
+        const HCfg cfgs[] = {
+            {"aut", RM_NEW, true, false, 0, true, 0}, {"aut-seed1", RM_NEW, true, false, 1, true, 0},
+            {"aut-dual-off", RM_NEW, false, false, 0, true, 0}, {"aut-no-symbreak", RM_NEW, true, false, 0, false, 0},
+            {"aut-oldrules", RM_OLD, true, false, 0, true, 0}, {"aut-133-seed2", RM_133, false, true, 2, true, 0},
+            {"aut-mrv", RM_ALL, true, false, 0, true, 0}, {"aut-overlap-only", 64, true, false, 0, true, 0},
+            {"aut-orbf-only", 4, true, true, 3, true, 0}, {"aut-excl-orbf", 1 | 4, false, false, 0, true, 0},
+            {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
+            {"mutant14", RM_NEW, true, false, 0, true, 14},
+        };
+        for (const HCfg& c : cfgs) {
+            distcc::DriverOptions o;
+            o.ub_search = false;
+            o.aut = true;
+            o.rules = rules_of(c.rmask);
+            o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed; o.mutant = c.mutant;
+            RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
+            const bool ok = run_ok(r, d);
+            if (c.mutant == 13) { h_m13_runs++; if (!ok) h_m13_bad++; continue; }
+            if (c.mutant == 14) { h_m14_runs++; if (!ok) h_m14_bad++; continue; }
+            h_runs++;
+            if (!ok) {
+                h_bad++; fails++;
+                if (h_bad <= 10) fprintf(stderr, "CC_FAIL GH-152 partH inst=%d n=%d cfg=%s: d=%d (dX %d dZ %d) got %d\n", inst, n, c.name, d, dX, dZ, r.d);
+            }
+        }
+    }
+    printf("GH-152 partH: %ld relabeled codes (%ld hypergraph products, %ld with dX != dZ), %ld gain a verified dual map only through -cc-aut, "
+           "%ld gain coarser X-half orbits; %ld driver runs with -cc-aut=on, %ld bad; swap maps violating the classes %ld\n",
+           h_inst, h_hgp, h_dxdz, h_newdual, h_coarser, h_runs, h_bad, h_badswap);
+    printf("mutant 13 (Tanner candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks): half level %ld/%ld ladders wrong; driver %ld/%ld runs wrong or stopped\n",
+           g_m13_bad, g_m13_runs, h_m13_bad, h_m13_runs);
+    printf("mutant 14 (Tanner swap map, or the identity, used as dual map without the GF(2) check): driver %ld/%ld runs wrong or stopped\n",
+           h_m14_bad, h_m14_runs);
+    if (h_newdual == 0 || h_coarser == 0) { fprintf(stderr, "CC_FAIL GH-152 partH: the new dual-map / orbit paths were not exercised\n"); fails++; }
+    if (g_m13_bad == 0 || h_m13_bad == 0 || h_m14_bad == 0) { fprintf(stderr, "CC_FAIL GH-152 mutant expectations not met\n"); fails++; }
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);
