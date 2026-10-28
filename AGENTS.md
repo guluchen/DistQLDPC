@@ -11,6 +11,7 @@ Minimize PI attention while preserving the scientific correctness of DistQLDPC's
 - `MODIFICATIONS.md` and `NOTICE` for the boundary between DistQLDPC code and the embedded MaxCDCL engine.
 - [Optimization loop policy](docs/OPTIMIZATION_LOOP_POLICY.md) for experiment scope, progressive filtering, evidence retention, and performance claims.
 - GitHub issues and pull requests for task-specific requirements.
+- [Agent handoff](docs/AGENT_HANDOFF.md) for the current project state, PI decisions made in practice (merge approval, seed-median judging, no external solvers, resource limits), coordination with the other agents working on this repository, and Codex's current assignment (growing the matrix library in `data/matrices/untiered/`).
 
 ## Autonomous work
 
