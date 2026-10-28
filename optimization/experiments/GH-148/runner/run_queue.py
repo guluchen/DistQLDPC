@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GH-148 queue runner (GH-144 s1_queue.py; cores restricted to 90-123 for this round; FRONTIER stderr lines kept) for yfclab2 (one process per pinned core, 4 GB cap, jobs from a JSON-lines file).
+"""GH-148 queue runner (GH-144 s1_queue.py; cores 90-123 for the Tier 1-4 panels, cores 0-53 for the final Tier 5 run (54 cells at once, same cores as main 12b3e05's recorded Tier 5); never 54-89 / 64-123 otherwise; FRONTIER stderr lines kept) for yfclab2 (one process per pinned core, 4 GB cap, jobs from a JSON-lines file).
 
 Job: {"id", "bin" (optional, else --bin), "args": [...solver flags...], "code": "data/matrices/tierT/STEM", "stem", "tier", "limit"}.
 Every process: taskset -c CORE prlimit --as=4294967296 -- BIN ARGS -cpu-lim=LIMIT CODE   (stdin /dev/null).
@@ -18,7 +18,7 @@ os.makedirs(a.out + '/logs', exist_ok=True)
 cpus = []
 for part in a.cpus.split(','):
     lo, _, hi = part.partition('-'); cpus += list(range(int(lo), int(hi or lo) + 1))
-assert all(90 <= c <= 123 for c in cpus)   # GH-148: cores 90-123 only (another agent uses 0-89)
+assert all(90 <= c <= 123 for c in cpus) or all(0 <= c <= 53 for c in cpus)   # GH-148: panels 90-123; final Tier 5 0-53 (64-123: another agent)
 jobs = [json.loads(l) for l in open(a.jobs) if l.strip()]
 done_ids = set()
 if os.path.exists(f'{a.out}/results.jsonl'):

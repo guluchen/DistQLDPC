@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""GH-148 Tier 5 table (GH-144 analyzer): candidate runs (run_queue results.jsonl, arm 'cand') vs the recorded Tier 5 of
-the same MaxSAT path (GH-144 S1 tier5.jsonl: 6d2b7a1 -ub-pre=60, log-identical to main 12b3e05 on tier0+1), and the
+"""GH-148 Tier 5 table (GH-144 analyzer): candidate runs (run_queue results.jsonl, arm 'cand') vs main 12b3e05's own Tier 5
+(baselines/main-12b3e05 raw results.json, same server/limits; or GH-144 S1 tier5.jsonl as fallback), and the
 concurrent main-12b3e05 drift controls (arm 'main') where present. usage: analyze_tier5.py CAND.jsonl[,CAND2.jsonl]
 BASE.jsonl > table.md"""
 import json, sys
@@ -14,7 +14,8 @@ def fix(r):   # a timeout prints "c d_ub: -" when no ub exists; the runner then 
     r['final_lb'] = max(lbs) if lbs else None; r['final_ub'] = min(ubs) if ubs else None
     return r
 cand = {(key(r['stem']), r['mode']): fix(r) for r in cand if 'error' not in r}
-base = {(key(r['stem']), r['mode']): fix(r) for r in (json.loads(l) for l in open(sys.argv[2]) if l.strip()) if 'error' not in r}
+_b = json.load(open(sys.argv[2]))['results'] if sys.argv[2].endswith('.json') else [json.loads(l) for l in open(sys.argv[2]) if l.strip()]
+base = {(key(r['stem']), r['mode']): fix(r) for r in _b if 'error' not in r}
 names = {}
 for (k, m), r in cand.items(): names[k] = r['stem']
 def res(r):
