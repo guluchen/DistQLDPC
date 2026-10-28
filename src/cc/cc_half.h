@@ -267,15 +267,23 @@ private:
     bool lbany_, lbcheck_;
     std::vector<uint32_t> lbrs_, lbrq_;
     LbWork lbw_;
-    /* charge: c_j = |N(j) & U| for every qubit, kept incrementally by toggle (only with rule charge); scaled
-     * charges y(d) = L/d with L = lcm(1..max column weight); loads for the raise (valid where lmk_[j] == stamp) */
-    bool chg_, chgok_;
+    /* charge: scaled charges y(d) = L/d, L = lcm(1..max column weight); c_j and loads computed on demand (valid where
+     * lmk_[j] == the node's stamp) */
+    bool chg_;
     int64_t chgL_;
     int64_t chgyv_[33];
-    std::vector<int32_t> oddc_;
+    std::vector<int32_t> lcnt_;
     std::vector<int64_t> lload_;
     std::vector<uint64_t> lmk_;
-    bool lb_prune(int size, uint64_t st, int64_t yloc, bool scanned);
+    /* ecover: U' chosen in the pack scan (count of admitted rows per qubit, valid where e2mk_[j] == stamp), the
+     * admitted rows, and the first admitted row of a qubit while the edges are built (e3mk_) */
+    bool ecv_;
+    std::vector<uint8_t> e2c_;
+    std::vector<uint64_t> e2mk_, e3mk_;
+    std::vector<int32_t> e2own_;
+    std::vector<int> u2_;
+    inline void lb_admit_row(int row, uint64_t st, int& nu2);
+    bool lb_prune(int size, uint64_t st, int nu2, bool scanned);
     void lb_build_sets(int& k);
 
     /* search state */

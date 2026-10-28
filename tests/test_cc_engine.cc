@@ -60,13 +60,13 @@
 //   (2 must answer wrongly on the codes or on the rotated surface codes).
 // GH-157 (rules charge, ecover; default off): Part I (a) the bound functions on random hitting-set instances (k <= 10
 //   candidate sets over <= 14 qubits, a third of them with every qubit in <= 2 sets) against brute-force tau: charge <= tau,
-//   ecover <= tau, ecover = tau whenever U' = U (Gallai), the early-exit contract (bound(r) > r iff exact bound > r, and then
+//   ecover <= tau, pack <= tau, ecover = tau whenever U' = U (Gallai), the early-exit contract (bound(r) > r iff exact bound > r, and then
 //   bound(r) <= exact bound) for
 //   every r, and Edmonds' matching against brute force on random multigraphs; mutants 15 / 16 must exceed tau somewhere.
 //   (b) On every Part A half: all 128 base rule subsets x {charge, ecover, charge+ecover} x seeds 0..2 (lb-minr 1, 2, 3
 //   for seeds 0, 1, 2): the ladder must match enumeration; mutants 15 (charge inflated by 1/D) and 16 (ecover without
 //   the at-most-2 condition) must give wrong half-level verdicts. Every evaluation in (b) (mutant 0) also recomputes the
-//   charge with lb_charge on an explicit copy of the sets (set_lb_check). (c) Part B driver configurations with the new rules.
+//   charge and ecover with lb_charge / lb_ecover on an explicit copy of the sets (set_lb_check). (c) Part B driver configurations with the new rules.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -389,7 +389,7 @@ int main(int argc, char** argv) {
             bool bad = false;
             if (tau < 0) bad = bc != distcc::LB_DEAD || be != distcc::LB_DEAD;
             else {
-                if (bc > tau || be > tau || be < p) bad = true;
+                if (bc > tau || be > tau || p > tau) bad = true;
                 if (ex) { pi_exact++; if (be != tau) bad = true; }
                 if (bc == tau) pi_tight_c++;
                 if (be == tau) pi_tight_e++;
