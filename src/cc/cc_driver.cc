@@ -607,8 +607,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 printf("\n");
             }
             if (opt.rules.charge || opt.rules.ecover) {   /* GH-157: printed only with the new rules (identity otherwise) */
-                printf("c cc-stats: %s level %d lb lbeval %llu chgprune %llu ecprune %llu ecexact %llu lbdead %llu\n", h.tag, w,
-                       (unsigned long long)r.lbeval, (unsigned long long)r.chgprune, (unsigned long long)r.ecprune,
+                printf("c cc-stats: %s level %d lb lbeval %llu chgprune %llu chgraise %llu ecprune %llu ecexact %llu lbdead %llu\n", h.tag, w,
+                       (unsigned long long)r.lbeval, (unsigned long long)r.chgprune, (unsigned long long)r.chgraise, (unsigned long long)r.ecprune,
                        (unsigned long long)r.ecexact, (unsigned long long)r.lbdead);
                 if (!r.lbprune_by_budget.empty()) {
                     printf("c cc-stats: %s level %d lbprune-by-budget", h.tag, w);
