@@ -80,9 +80,39 @@ from this validator. Solver observations are recorded separately below.
 
 ## Linux smoke evidence
 
-PENDING: branch CI has not run at this initial source checkpoint. Do not
-interpret the known-distance claim or passing algebra checks as a solver
-result. Manifest smoke fields remain PENDING until raw logs are reviewed.
+Source checkpoint: `43203da6c17841d1aff229007e755ffaf6fd600f`.
+Tree: `97e485c4875e478cb1652e42a289af74951566c1`.
+[Color-code workflow 40781708080](https://github.com/guluchen/DistQLDPC/actions/runs/40781708080),
+job `123144753288`: **success**. Ordinary CI `40781708143`: **success**.
+The Linux run passed all 25 tests, independent algebra/geometry certificates,
+all 24 regeneration comparisons, and the seven bounded execution checks.
+
+Binary SHA256 (unchanged solver build, same as GH-153/GH-154):
+`13aa8ba74b3960b8767bfda60d10fb09f057e6655f5112c6f3f343dfdee03328`.
+
+| Stem | Published d | Default 60s observed lb | Observed ub | Status |
+|---|---:|---:|---:|---|
+| COLOR_7_1_unknown | 3 | 3 | 3 | SOLVED |
+| COLOR_19_1_unknown | 5 | 5 | 5 | SOLVED |
+| COLOR_127_1_unknown | 13 | 13 | 13 | SOLVED |
+| COLOR_331_1_unknown | 21 | 9 | 21 | BOUNDED, timeout |
+| COLOR_1027_1_unknown | 37 | 9 | 37 | BOUNDED, timeout |
+| COLOR_2791_1_unknown | 61 | unavailable | unavailable | TIMEOUT_NO_BOUNDS |
+
+Largest-code diagnostic `-ub-pre=off -v`: observed lb **5**, ub **unavailable**,
+`TIMEOUT_PARTIAL_BOUNDS`. The verbose log confirms Hx/Hz `1395 x 2791`,
+Gx/Gz `1 x 2791`, and MaxSAT search activity before timeout. This diagnostic
+does not replace the default result and does not close the numeric-bound gap.
+The independently verified boundary witnesses have weight 61, but the missing
+solver-reported upper bound is intentionally left empty in the manifest.
+
+Raw evidence is durable in `raw/actions/color-default/` and
+`raw/actions/color-no-prepass/`, with the complete Actions job log in
+`raw/actions/job.log`. Each configuration includes environment JSON, per-case
+argv/identity/result JSON, raw logs, results CSV and completion marker. All
+seven records were replayed through the collector; JSON/CSV/raw results and
+every input SHA256 match (`raw/actions/replay.txt`). Final report/manifest
+updates do not alter these validated inputs or executable sources.
 
 Exact common resource protocol: Linux GitHub Actions ephemeral VM; serial,
 one pinned available CPU; `prlimit --as=4294967296`; `-cpu-lim=60`; 90-second
@@ -96,15 +126,33 @@ without numeric bounds remains an unmet numeric-bound acceptance requirement.
 Any bound contradicting the published family distance fails collection and
 requires scientific escalation. No missing bound is filled from the paper.
 
+Exact runner commands (as executed inside the ephemeral Linux Actions job):
+
+```sh
+make --jobs=2 bin/distqldpc
+python3 scripts/codegen/smoke_untiered.py --ci --family COLOR --out /tmp/color-default
+python3 scripts/codegen/smoke_untiered.py --ci --family COLOR --stems COLOR_2791_1_unknown --ub-pre-off --verbose --out /tmp/color-no-prepass
+```
+
+No seed-median or performance verdict applies: this is a new-library package,
+not a solver optimization. There is one default-seed smoke per selected cell;
+no timing, tier or baseline claim is made. No scientific contradiction was
+observed. Verdict: **library construction and reproducibility delivered;
+default 60s numeric-bound acceptance remains unmet for COLOR_2791_1_unknown**.
+Longer timing/certification belongs to a separately authorized server task.
+
 ## Completion status
 
 - What changed: six representative color codes and their reproducibility,
   validation and provenance package.
-- Validation: 25 unit tests, all-code algebra, geometric certificates and
-  byte-identical regeneration pass; Linux smoke pending.
-- Results: no new scientific result or performance claim.
-- Unresolved issues: Linux smoke results and final evidence retention pending;
-  later server timing/tiering is a separate task.
+- Validation: 25 unit tests, all-code algebra, geometric certificates,
+  byte-identical regeneration and Linux execution/integrity CI pass; all
+  seven raw executions retained and replayed.
+- Results: three known exact distances reproduced, two consistent bounded
+  timeouts, one default timeout without bounds and a separately labeled
+  diagnostic with lower bound only. No new scientific or performance claim.
+- Unresolved issues: the largest code does not meet the default 60s numeric-
+  bound requirement; later server timing/certification and tiering are separate.
 - Scientific semantics changed: **no**.
 - PI action required: **no** to finish the authorized branch package; any main
   integration or future tier/naming decision remains separate.

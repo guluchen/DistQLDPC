@@ -114,7 +114,15 @@ one runner core with a 4 GiB address-space cap and a 90-second wall backstop.
 One separately labeled largest-code diagnostic uses `-ub-pre=off -v` under
 the same limits. No solver experiment runs on the PI's Mac or server.
 Logs, input/binary hashes, source commit, argv and results are retained under
-`optimization/experiments/GH-156/raw/actions/` once the checks complete.
+`optimization/experiments/GH-156/raw/actions/`.
 The manifest and report record observed bounds separately from claimed d.
 Timeouts without numeric bounds do not satisfy the numeric-bound acceptance
 requirement, even if the execution workflow completes successfully.
+
+The source checkpoint `43203da6` passed Linux workflow `40781708080`:
+default exact distances 3,5,13 for n=7,19,127; bounds [9,21] for n=331;
+bounds [9,37] for n=1027; no numeric bounds for n=2791. The largest-code
+`-ub-pre=off -v` diagnostic reported lb=5 and no ub. Its verified geometric
+weight-61 boundary logicals do not fill the missing solver upper-bound field.
+See [the complete report](../../../optimization/experiments/GH-156/REPORT.md)
+for commands, immutable identities, limitations and raw evidence.
