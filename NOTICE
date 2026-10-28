@@ -192,6 +192,41 @@ When you receive DistQLDPC as a whole (source or binary):
 For questions about upstream MaxCDCL, contact the original authors
 (see src/solver/ file headers).
 
+7. Repetition-product hypergraph-product matrices (GH-153, untiered)
+-----------------------------------------------------------------
+
+Location: data/matrices/untiered/HGP_*; generator scripts/codegen/hgp_repetition.py.
+Original clean-room implementation and generated matrices, GPL-3.0-or-later.
+No third-party code, matrix files, or paper text were copied.
+
+Construction credit: Jean-Pierre Tillich and Gilles Zemor, "Quantum LDPC
+Codes With Positive Rate and Minimum Distance Proportional to the Square
+Root of the Blocklength", arXiv:0903.0566v2 (2013), Theorem 1;
+IEEE Transactions on Information Theory (2014), DOI 10.1109/TIT.2013.2292061.
+The repetition-code specializations have claimed parameters
+[[13,1,3]], [[41,1,5]], [[113,1,8]], [[265,1,12]], [[481,1,16]], [[1105,1,24]].
+These are mathematical ground-truth claims, not DistQLDPC solver results.
+All stems remain _unknown pending PI naming/tier approval. Short smoke runs
+are recorded in GH-153: four exact reproductions, one bounded timeout, and
+one default timeout without bounds (supplemental -ub-pre=1 gives 9..26).
+See data/matrices/untiered/MANIFEST.csv and README.md for full provenance.
+
+8. Nonzero-rate cycle-factor HGP matrices (GH-154, untiered)
+----------------------------------------------------------
+
+Original clean-room generator scripts/codegen/hgp_cycle.py and generated
+HGP_{45,106,306,610,1261,2866}_* matrices, GPL-3.0-or-later. No graph data,
+third-party code or source text copied. Uses the Tillich-Zemor HGP theorem
+cited in section 7, with full-row-rank checks of graph cycle codes.
+Graph mathematics is credited to the standard complete graph, Petersen,
+Fano-plane/Heawood, Desargues double and GQ(2,2)/Tutte-Coxeter constructions;
+Andries E. Brouwer's graph descriptions at https://aeb.win.tue.nl/graphs/
+provide construction provenance. See data/matrices/untiered/CYCLE_HGP.md.
+Claimed distances are derived from the theorem and independently checked
+classical girths; solver observations are recorded separately in the manifest.
+scripts/compute_logicals.py gains an original opt-in bitset backend; its
+existing dense default and the solver itself are unchanged.
+
 Renamed 2026-10-16 (PI decision; same matrices): distances confirmed by
 DistQLDPC's experimental connected-cluster engine (GH-124, -engine=cc) and by two
 independent clean-room reimplementations plus a from-scratch prototype, all with

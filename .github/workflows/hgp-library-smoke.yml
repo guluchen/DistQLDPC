@@ -1,0 +1,58 @@
+name: HGP library smoke
+
+on:
+  push:
+    branches: [codex/hgp-repetition-library]
+    paths:
+      - '.github/workflows/hgp-library-smoke.yml'
+      - 'scripts/codegen/**'
+      - 'tests/test_codegen_hgp.py'
+      - 'data/matrices/untiered/HGP_*.txt'
+  pull_request:
+    paths:
+      - '.github/workflows/hgp-library-smoke.yml'
+      - 'scripts/codegen/**'
+      - 'tests/test_codegen_hgp.py'
+      - 'data/matrices/untiered/HGP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged DistQLDPC
+        run: make --jobs=2 bin/distqldpc
+      - name: Verify GF(2) invariants and corruption mutants
+        run: |
+          python3 tests/test_codegen_hgp.py
+          python3 scripts/codegen/validate_css.py --output /tmp/hgp-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/hgp-validation.json
+      - name: Reproduce every bundled matrix
+        run: |
+          python3 scripts/codegen/hgp_repetition.py --ladder --out /tmp/hgp-regenerated
+          python3 - <<'PY'
+          from pathlib import Path
+          stems = [f'HGP_{l*l+(l-1)**2}_1_unknown' for l in (3,5,8,12,16,24)]
+          files = [Path('data/matrices/untiered')/f'{s}_{kind}.txt' for s in stems for kind in ('Hx','Hz','Gx','Gz')]
+          assert len(files) == 24
+          for path in files:
+              assert path.read_bytes() == (Path('/tmp/hgp-regenerated')/path.name).read_bytes(), path
+          print('PASS: 24 byte-identical regenerated matrix files')
+          PY
+      - name: Six serial bounded loading and solver smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-smoke --stems HGP_13_1_unknown HGP_41_1_unknown HGP_113_1_unknown HGP_265_1_unknown HGP_481_1_unknown HGP_1105_1_unknown
+      - name: Largest input with explicit short pre-pass and verbose loading evidence
+        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-supplemental --stems HGP_1105_1_unknown --ub-pre 1 --verbose
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh153-hgp-smoke
+          path: |
+            /tmp/hgp-smoke/
+            /tmp/hgp-supplemental/
+          if-no-files-found: warn
+          retention-days: 14
