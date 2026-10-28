@@ -58,6 +58,13 @@
 //   finder-only), and mutants 11 / 12 in collision mode (12 = words reported without verification: some answer must be
 //   wrong). Part F: the MaxSAT pre-pass in collision mode (budget 1 s, cut after 2 iterations) and its mutants 1 / 2
 //   (2 must answer wrongly on the codes or on the rotated surface codes).
+// GH-157 (rules charge, ecover; default off): Part I (a) the bound functions on random hitting-set instances (k <= 10
+//   candidate sets over <= 14 qubits, a third of them with every qubit in <= 2 sets) against brute-force tau: charge <= tau,
+//   ecover <= tau, ecover = tau whenever U' = U (Gallai), the early-exit contract (bound(r) > r iff exact bound > r) for
+//   every r, and Edmonds' matching against brute force on random multigraphs; mutants 15 / 16 must exceed tau somewhere.
+//   (b) On every Part A half: all 128 base rule subsets x {charge, ecover, charge+ecover} x seeds 0..2 (lb-minr 1, 2, 3
+//   for seeds 0, 1, 2): the ladder must match enumeration; mutants 15 (charge inflated by 1/D) and 16 (ecover without
+//   the at-most-2 condition) must give wrong half-level verdicts. (c) Part B driver configurations with the new rules.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -156,9 +163,10 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
-    r.overlap = mask & 64;
+    r.overlap = mask & 64; r.charge = mask & 128; r.ecover = mask & 256;   // GH-157
     return r;
 }
+static const int RM_CHG = 128, RM_ECV = 256;   // GH-157
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128;
 static const char* rules_name(int mask) {
     static char buf[64];
@@ -169,15 +177,18 @@ static const char* rules_name(int mask) {
 
 // ladder 1..dh for one configuration; returns true if every verdict matches; nodes summed into *nodes
 static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
-                      const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why) {
+                      const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why,
+                      int lbminr = 3, uint64_t* lbprunes = NULL) {
     distcc::Rules r = rules_of(rmask);
     const distcc::SparseRows Kr = to_rows(K, n);
     distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
+    hs.set_lb_minr(lbminr);
     const int top = dh < 0 ? n : dh;
     char buf[160];
     for (int w = 1; w <= top; w++) {
         distcc::LevelResult res = hs.run_level(w);
         if (nodes) *nodes += res.nodes;
+        if (lbprunes) *lbprunes += res.chgprune + res.ecprune;
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
         if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
@@ -306,10 +317,107 @@ static std::vector<Mask> quotient_basis(const std::vector<Mask>& A, const std::v
     return out;
 }
 
+// GH-157: brute-force minimum hitting set of k sets (bit masks over nq <= 14 qubits); -1 if a set is empty
+static int brute_tau(const std::vector<Mask>& sets, int nq) {
+    for (Mask s : sets) if (!s) return -1;
+    int best = nq + 1;
+    for (Mask x = 0; x < (1u << nq); x++) {
+        if (popc(x) >= best) continue;
+        bool ok = true;
+        for (Mask s : sets) if (!(s & x)) { ok = false; break; }
+        if (ok) best = popc(x);
+    }
+    return best;
+}
+static int brute_matching(int nv, const std::vector<int>& ea, const std::vector<int>& eb) {
+    const int ne = (int)ea.size();
+    int best = 0;
+    for (uint32_t x = 0; x < (1u << ne); x++) {
+        if (popc(x) <= best) continue;
+        Mask usedv = 0; bool ok = true;
+        for (int e = 0; e < ne && ok; e++)
+            if (x >> e & 1) {
+                if (ea[e] == eb[e] || (usedv >> ea[e] & 1) || (usedv >> eb[e] & 1)) ok = false;
+                usedv |= (1u << ea[e]) | (1u << eb[e]);
+            }
+        if (ok) best = popc(x);
+    }
+    (void)nv;
+    return best;
+}
+
 int main(int argc, char** argv) {
     const int NA = argc > 1 ? atoi(argv[1]) : 300;   // part A instances
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
     int fails = 0;
+
+    // ---------------- Part I (a), GH-157: bound functions vs brute force ----------------
+    long pi_inst = 0, pi_bad = 0, pi_exact = 0, pi_tight_c = 0, pi_tight_e = 0, pi_gain_c = 0, pi_gain_e = 0, pi_m15 = 0, pi_m16 = 0, pi_mm = 0, pi_mm_bad = 0;
+    {
+        distcc::LbWork lw;
+        lw.reset(16, 16);
+        for (int inst = 0; inst < 20000; inst++) {
+            const int nq = 3 + (int)rnd(12), k = 1 + (int)rnd(10);
+            const bool deg2 = inst % 3 == 0;
+            std::vector<Mask> sets;
+            std::vector<int> deg((size_t)nq, 0);
+            for (int i = 0; i < k; i++) {
+                Mask s = 0;
+                const int sz = 1 + (int)rnd(5);
+                for (int t = 0; t < 3 * sz && popc(s) < sz; t++) {
+                    const int j = (int)rnd((unsigned)nq);
+                    if (deg2 && !(s >> j & 1) && deg[j] >= 2) continue;
+                    if (!(s >> j & 1)) { s |= 1u << j; deg[j]++; }
+                }
+                if (!s && rnd(8)) { i--; continue; }   // empty sets are rare (dead-node path)
+                sets.push_back(s);
+            }
+            const int kk = (int)sets.size();
+            std::vector<uint32_t> rs(1, 0), rq;
+            for (Mask s : sets) { for (int j = 0; j < nq; j++) if (s >> j & 1) rq.push_back((uint32_t)j); rs.push_back((uint32_t)rq.size()); }
+            rq.push_back(0);
+            const int tau = brute_tau(sets, nq);
+            int p = 0;   // greedy disjoint packing in index order (the pack rule)
+            { Mask m = 0; for (Mask s : sets) if (s && !(s & m)) { p++; m |= s; } }
+            pi_inst++;
+            const int bc = distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 0);
+            bool ex = false; int nsel = 0;
+            const int be = distcc::lb_ecover(&rs[0], &rq[0], kk, -1, lw, 0, &ex, &nsel);
+            bool bad = false;
+            if (tau < 0) bad = bc != distcc::LB_DEAD || be != distcc::LB_DEAD;
+            else {
+                if (bc > tau || be > tau || be < p) bad = true;
+                if (ex) { pi_exact++; if (be != tau) bad = true; }
+                if (bc == tau) pi_tight_c++;
+                if (be == tau) pi_tight_e++;
+                if (bc > p) pi_gain_c++;
+                if (be > p) pi_gain_e++;
+                for (int r = 0; r <= kk + 1; r++) {   // early-exit contract
+                    bool e2 = false; int n2 = 0;
+                    const int c2 = distcc::lb_charge(&rs[0], &rq[0], kk, r, lw, 0);
+                    const int x2 = distcc::lb_ecover(&rs[0], &rq[0], kk, r, lw, 0, &e2, &n2);
+                    if ((c2 > r) != (bc > r) || (x2 > r) != (be > r) || (c2 > r && c2 != bc) || (x2 > r && x2 != be)) bad = true;
+                }
+                if (distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 15) > tau) pi_m15++;
+                bool e3 = false; int n3 = 0;
+                if (distcc::lb_ecover(&rs[0], &rq[0], kk, -1, lw, 16, &e3, &n3) > tau) pi_m16++;
+            }
+            if (bad) { pi_bad++; fails++; if (pi_bad <= 10) fprintf(stderr, "CC_FAIL partI(a) inst=%d nq=%d k=%d tau=%d pack=%d charge=%d ecover=%d exact=%d\n", inst, nq, kk, tau, p, bc, be, (int)ex); }
+        }
+        for (int inst = 0; inst < 20000; inst++) {   // Edmonds vs brute force
+            const int nv = 1 + (int)rnd(10), ne = (int)rnd(15);
+            std::vector<int> ea, eb;
+            for (int e = 0; e < ne; e++) { ea.push_back((int)rnd((unsigned)nv)); eb.push_back((int)rnd((unsigned)nv)); }
+            pi_mm++;
+            const int a = distcc::max_matching(nv, ea, eb, -1, lw), b = brute_matching(nv, ea, eb);
+            if (a != b) { pi_mm_bad++; fails++; if (pi_mm_bad <= 10) fprintf(stderr, "CC_FAIL partI(a) matching inst=%d: %d vs brute %d\n", inst, a, b); }
+        }
+    }
+    printf("partI(a) (GH-157 bounds): %ld hitting-set instances, %ld bad (U' = U on %ld; charge = tau on %ld, ecover = tau on %ld; charge > pack on %ld, ecover > pack on %ld); matching %ld graphs, %ld bad\n",
+           pi_inst, pi_bad, pi_exact, pi_tight_c, pi_tight_e, pi_gain_c, pi_gain_e, pi_mm, pi_mm_bad);
+    printf("partI(a) mutants: 15 (charge + 1/D) exceeds tau on %ld instances, 16 (ecover without the at-most-2 check) on %ld\n", pi_m15, pi_m16);
+    if (pi_m15 == 0 || pi_m16 == 0 || pi_gain_c == 0 || pi_gain_e == 0) { fprintf(stderr, "CC_FAIL GH-157 bound expectations not met\n"); fails++; }
+    long ib_runs = 0, ib_bad = 0, ib_prunes = 0, ib_m15_runs = 0, ib_m15_bad = 0, ib_m16_runs = 0, ib_m16_bad = 0;
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
@@ -388,7 +496,31 @@ int main(int argc, char** argv) {
                 mut_runs[mt]++;
                 if (!ladder_ok(H, G, K, n, dh, orb, rm, 0, mt, NULL, why)) mut_bad[mt]++;
             }
+        // Part I (b), GH-157: the new rules on top of every base subset; mutants 15 / 16
+        for (int rm = 0; rm < RM_NSUB; rm++)
+            for (int lb = 1; lb <= 3; lb++) {
+                const int rmx = rm | (lb & 1 ? RM_CHG : 0) | (lb & 2 ? RM_ECV : 0);
+                for (uint64_t seed = 0; seed < 3; seed++) {
+                    std::string why;
+                    uint64_t pr = 0;
+                    ib_runs++;
+                    if (!ladder_ok(H, G, K, n, dh, orb, rmx, seed, 0, NULL, why, 1 + (int)seed, &pr)) {
+                        ib_bad++; fails++;
+                        if (ib_bad <= 10) fprintf(stderr, "CC_FAIL partI(b) inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rmx),
+                                                  (unsigned long long)seed, why.c_str());
+                    }
+                    ib_prunes += (long)pr;
+                }
+                std::string why;
+                if (lb == 1) { ib_m15_runs++; if (!ladder_ok(H, G, K, n, dh, orb, rmx, 0, 15, NULL, why, 1)) ib_m15_bad++; }
+                if (lb == 2) { ib_m16_runs++; if (!ladder_ok(H, G, K, n, dh, orb, rmx, 0, 16, NULL, why, 1)) ib_m16_bad++; }
+            }
     }
+    printf("partI(b) (GH-157 rules on the Part A halves): %ld ladder runs (128 base subsets x 3 x seeds 0..2), %ld bad, %ld charge/ecover prunes\n",
+           ib_runs, ib_bad, ib_prunes);
+    printf("mutant 15 (charge inflated by 1/D): %ld/%ld half ladders wrong; mutant 16 (ecover without the at-most-2 check): %ld/%ld half ladders wrong\n",
+           ib_m15_bad, ib_m15_runs, ib_m16_bad, ib_m16_runs);
+    if (ib_prunes == 0 || ib_m15_bad == 0 || ib_m16_bad == 0) { fprintf(stderr, "CC_FAIL GH-157 mutant/prune expectations not met\n"); fails++; }
     printf("partA: %ld half instances (%ld with verified orbits, %ld with all column weights odd, %ld without any nontrivial element), %ld ladder runs over %d rule subsets x 3 seeds, %ld bad\n",
            a_inst, a_orb, a_odd, a_none, a_runs, RM_NSUB, a_bad);
     printf("partA K (GH-138): %ld basis, %ld low-weight sets, %ld random sets; %ld instances where a minimum element meets a row of K in floor(|g|/2) qubits\n",
@@ -472,7 +604,7 @@ int main(int argc, char** argv) {
         if (!dm.maps.empty()) b_dual++;
         if (!orbits_of(Hz, Gx, n).empty()) b_xorb++;
         b_inst++;
-        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; };
+        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int lbminr; };
         const Cfg cfgs[] = {
             {"default", RM_NEW, true, false, 0, true}, {"dual-off", RM_NEW, false, false, 0, true}, {"ub-basis", RM_NEW, true, true, 0, true},
             {"seed1", RM_NEW, true, false, 1, true}, {"seed2", RM_NEW, false, true, 2, true}, {"none", 0, true, false, 0, true},
@@ -480,12 +612,15 @@ int main(int argc, char** argv) {
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
             {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
+            {"charge-ecover", RM_NEW | RM_CHG | RM_ECV, true, false, 0, true, 3}, {"charge-ecover-minr1", RM_NEW | RM_CHG | RM_ECV, false, true, 1, true, 1},
+            {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1}, {"ecover-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_ECV, true, false, 0, true, 1},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
             o.ub_search = false;   // Part B tests the ladder; -ub-search is on by default since 2026-10-23 (Part E/F test it)
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
+            if (c.lbminr) o.lb_minr = c.lbminr;   // GH-157
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
             if (r.d == -1) b_traps++;
