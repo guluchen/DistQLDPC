@@ -392,31 +392,35 @@ AutResult find_row_automorphisms(int n, const std::vector<const SparseRows*>& cl
     const uint64_t per_test = std::max<uint64_t>(work_limit / 64, 1000000ULL);
     Graph g;
     g.n = n;
-    std::vector<std::vector<std::vector<int> > > rows(classes.size());
+    std::vector<size_t> nrows(classes.size(), 0);   /* nonempty rows per class */
     g.type.assign((size_t)n, 0);
-    for (size_t c = 0; c < classes.size(); c++) {
-        for (size_t r = 0; r < classes[c]->rows.size(); r++) {
-            std::vector<int> s(classes[c]->rows[r]);
-            std::sort(s.begin(), s.end());
-            s.erase(std::unique(s.begin(), s.end()), s.end());
-            bool okr = !s.empty();
-            for (size_t t = 0; t < s.size(); t++) if (s[t] < 0 || s[t] >= n) okr = false;
-            if (!okr) continue;
-            rows[c].push_back(s);
-            g.type.push_back(1 + (int)c);
-        }
-    }
-    g.V = (int)g.type.size();
-    {   /* CSR adjacency */
-        std::vector<std::vector<int> > adj((size_t)g.V);
-        int v = n;
-        for (size_t c = 0; c < rows.size(); c++)
-            for (size_t r = 0; r < rows[c].size(); r++, v++)
-                for (size_t t = 0; t < rows[c][r].size(); t++) { adj[(size_t)v].push_back(rows[c][r][t]); adj[(size_t)rows[c][r][t]].push_back(v); }
+    {   /* CSR adjacency in two passes (no per-vertex vectors): row vertices n.., then the qubit lists */
+        std::vector<int> rs, qdeg((size_t)n, 0);
+        std::vector<uint32_t> rstart(1, 0), rq;
+        for (size_t c = 0; c < classes.size(); c++)
+            for (size_t r = 0; r < classes[c]->rows.size(); r++) {
+                rs.assign(classes[c]->rows[r].begin(), classes[c]->rows[r].end());
+                std::sort(rs.begin(), rs.end());
+                rs.erase(std::unique(rs.begin(), rs.end()), rs.end());
+                bool okr = !rs.empty();
+                for (size_t t = 0; t < rs.size(); t++) if (rs[t] < 0 || rs[t] >= n) okr = false;
+                if (!okr) continue;
+                for (size_t t = 0; t < rs.size(); t++) { rq.push_back((uint32_t)rs[t]); qdeg[(size_t)rs[t]]++; }
+                rstart.push_back((uint32_t)rq.size());
+                g.type.push_back(1 + (int)c);
+                nrows[c]++;
+            }
+        g.V = (int)g.type.size();
         g.start.assign((size_t)g.V + 1, 0);
-        for (int u = 0; u < g.V; u++) g.start[(size_t)u + 1] = g.start[(size_t)u] + (uint32_t)adj[(size_t)u].size();
-        g.adj.reserve(g.start[(size_t)g.V]);
-        for (int u = 0; u < g.V; u++) for (size_t t = 0; t < adj[(size_t)u].size(); t++) g.adj.push_back((uint32_t)adj[(size_t)u][t]);
+        for (int q = 0; q < n; q++) g.start[(size_t)q + 1] = g.start[(size_t)q] + (uint32_t)qdeg[(size_t)q];
+        for (int v = n; v < g.V; v++) g.start[(size_t)v + 1] = g.start[(size_t)v] + (rstart[(size_t)(v - n) + 1] - rstart[(size_t)(v - n)]);
+        g.adj.assign(g.start[(size_t)g.V], 0);
+        std::vector<uint32_t> fill(g.start.begin(), g.start.begin() + n);
+        for (int v = n; v < g.V; v++)
+            for (uint32_t t = rstart[(size_t)(v - n)], o = g.start[(size_t)v]; t < rstart[(size_t)(v - n) + 1]; t++, o++) {
+                g.adj[o] = rq[t];
+                g.adj[fill[rq[t]]++] = (uint32_t)v;
+            }
     }
     AutSearch S(g);
     Refiner& R = S.refiner();
@@ -531,7 +535,7 @@ AutResult find_row_automorphisms(int n, const std::vector<const SparseRows*>& cl
     for (int q = 0; q < n; q++) if (uf_find_aut(par, q) == q) res.orbits++;
 
     /* class 0 <-> class 1 exchanging map */
-    if (want_swap && classes.size() == 2 && rows[0].size() == rows[1].size() && !rows[0].empty() && R.work() <= work_limit) {
+    if (want_swap && classes.size() == 2 && nrows[0] == nrows[1] && nrows[0] > 0 && R.work() <= work_limit) {
         std::vector<int> sw;
         sw.push_back(0); sw.push_back(2); sw.push_back(1);
         Part B = S.initial(sw);

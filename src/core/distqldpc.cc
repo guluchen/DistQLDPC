@@ -1121,7 +1121,7 @@ static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
 struct DualCache {   /* GH-152: the row supports and target bases of find_dual_maps, kept for verify_dual_perm */
     RowSupports sHz, sHzGx;
     Gf2Basis bHx, bHxGz;
-    DualCache(const RowSupports& a, const RowSupports& b, const Gf2Basis& c, const Gf2Basis& d) : sHz(a), sHzGx(b), bHx(c), bHxGz(d) {}
+    DualCache(RowSupports&& a, RowSupports&& b, const Gf2Basis& c, const Gf2Basis& d) : sHz(std::move(a)), sHzGx(std::move(b)), bHx(c), bHxGz(d) {}
 };
 
 struct DualMapInfo {
@@ -1164,7 +1164,7 @@ static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matr
             if (!all) break;
         }
     }
-    if (keep_cache) info.cache = std::make_shared<DualCache>(sHz, sHzGx, bHx, bHxGz);
+    if (keep_cache) info.cache = std::make_shared<DualCache>(std::move(sHz), std::move(sHzGx), bHx, bHxGz);   /* last use */
     info.seconds = cpuTime() - t0;
     return info;
 }
