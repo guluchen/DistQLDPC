@@ -21,7 +21,7 @@ tests. No external solver.
 | Limits / environment | Tier 1-3 1800 s, Tier 4 5000 s, Tier 5 21600 s; 4 GB address-space cap; Tier 1-4 panels on cores 90-123 (both arms concurrent); Tier 5 on cores 0-53, all 54 cells at once (same cores and protocol as main 12b3e05's recorded Tier 5). Tier 5 peak RSS 478 MB. |
 | Inputs | `data/matrices/tier0..tier5` at `12b3e05` (old stem names; rename map below). |
 | Reached tier | **Tier 5 (all gates passed)** |
-| Status | **PASS Tiers 0-5, adoption-eligible**; not merged, no PR. PI decisions needed (see Recommendation). |
+| Status | **PASS Tiers 0-5**; 5-seed adoption check (2026-10-29): **TN_216 regression confirmed** (seed-median 1.53x no-card, 1.39x card-mto, above the 1.25 cell rule); TN_144 1.09x / 1.08x. Draft adoption PR (default `auto`) open for a PI decision; not merged (see "Adoption check" at the end). |
 
 ## Gate verdicts
 
@@ -163,3 +163,84 @@ GH-148 passed Tiers 0-5 and is eligible for adoption; it is not merged. Adoption
 BB and LP codes the lb-18 probes became cheap, and the open BB codes now stall at the next ladder step (from 18 to the
 stems' 30, i.e. much larger caps), so the Phase 2 step policy (proposal B) is worth revisiting on top of this
 constraint. On TN codes the constraint is close to neutral; the per-probe activation rule of `auto` is where to tune it.
+
+## Adoption check (PI decision 2026-10-28)
+
+The PI asked for a 5-seed confirmation of the two watch cells before an adoption PR, then a merge of current main and
+a PR making `-stab-overlap=auto` the MaxSAT default (draft, PI decides; no merge).
+
+**5-seed runs.** yfclab2, cores 0-39, one process per pinned core (`taskset -c CORE prlimit --as=4294967296 --`,
+stdin `/dev/null`), all 40 processes at once, 2026-10-28 22:47 - 2026-10-29 03:09 CST. Main = `frozen/server-main-12b3e05`
+(sha256 `c1780ce3...`), candidate = `frozen/server-gh148-2b297b5` (sha256 `933ae40b...`) with `-stab-overlap=auto`; both
+arms `{-no-card|-card-mto} -seed=S -frontier-stats`, seeds 0-4, the two arms of a cell concurrently; limits TN_216 21600 s,
+TN_144 1800 s (Tier 3 limit). 40/40 solved (TN_216 d = 18, TN_144 d = 13), 0 runner or science issues, peak RSS 132 MB.
+Raw: `ADOPT/confirm5/` (`results.jsonl`, `logs.tgz`, `jobs_s5.jsonl`); runner `ADOPT/runner/run_queue_confirm5.py`
+(= `runner/run_queue.py` with cores 0-39), table `ADOPT/runner/analyze_confirm5.py`. Median ratio = cand median / main median.
+
+| Code | Mode | seed: main s / cand s (cand/main) | main median (range) | cand median (range) | median ratio | per-seed ratio range |
+|---|---|---|---|---|---:|---|
+| TN_216_4_18 | no-card | s0: 9282 / 13131 (1.41); s1: 8370 / 12519 (1.50); s2: 12897 / 14829 (1.15); s3: 12387 / 15009 (1.21); s4: 8700 / 14191 (1.63) | 9282 (8370-12897) | 14191 (12519-15009) | 1.529 | 1.15-1.63 |
+| TN_216_4_18 | card-mto | s0: 9930 / 10418 (1.05); s1: 10724 / 13065 (1.22); s2: 10217 / 15678 (1.53); s3: 12485 / 15208 (1.22); s4: 8422 / 14220 (1.69) | 10217 (8422-12485) | 14220 (10418-15678) | 1.392 | 1.05-1.69 |
+| TN_144_2_13 | no-card | s0: 70 / 82 (1.16); s1: 72 / 73 (1.02); s2: 75 / 78 (1.04); s3: 78 / 82 (1.05); s4: 88 / 295 (3.34) | 75 (70-88) | 82 (73-295) | 1.093 | 1.02-3.34 |
+| TN_144_2_13 | card-mto | s0: 68 / 78 (1.15); s1: 73 / 77 (1.05); s2: 73 / 86 (1.19); s3: 327 / 81 (0.25); s4: 71 / 79 (1.10) | 73 (68-327) | 79 (77-86) | 1.084 | 0.25-1.19 |
+
+**Verdict.** TN_216 is a confirmed regression, not seed noise: every one of the 10 seed pairs is slower (1.05-1.69x), and
+the seed-median ratios 1.53x (no-card) and 1.39x (card-mto) exceed the 1.25 cell rule. TN_144 stays at 1.08-1.09x
+(Tier 3: 1.10 / 1.07), inside the watch band. The PI's instruction was to stop before a PR in this case; the
+coordinator then asked for a **draft** adoption PR that states the regression, so that the PI can weigh it against the
+Tier 5 gains (MaxSAT solves BB_360 in both modes and LP_1122; BB reaches lb 18 in 15-27 s instead of 696-3028 s).
+
+**Merge with main and Tier 0.** The branch now merges origin/main `123011df` (= e52d15b's solver source plus the HGP
+matrix library and its CI; `git diff e52d15b 123011df -- src` is empty): GH-146's `-ub-isd=stern` default, the 17 tier5
+stem renames, both flag rows kept. Tier 0 on yfclab2 cores 100-107 (`ADOPT/runner/t0.sh`, `t0b.sh`), for the merge
+`bac9d9d` (run on its pre-amend twin `2dc6516`: same source, the amend only removed two stray doc/test lines) and the
+adoption commit `0574792` (tested as `f7ad2e8`, the same tree before a message-only amend): build, `make test-cc` (Part G 3600 runs 0 bad, mutants 1 / 2 caught), `make test-cc-flags`
+(369 / 376 checks, 0 failed), `scripts/smoke_test.sh` pass; tier0 answers with `-stab-overlap=auto|on|off` x both modes
+78/78 equal to the stems; `-v` logs on tier0+1 x both modes vs `frozen/server-main-e52d15b`: merge default and
+`-stab-overlap=off`, and adoption `-stab-overlap=off`, 30/30 identical after sorting the two `c ub-pre X/Z` lines of
+each block (main itself prints them in either order: 4 X-first / 4 Z-first in 8 runs of TN_36_8_3; raw ident.py
+26-28/30, every difference is that order); adoption default = merge `-stab-overlap=auto` 30/30 the same way
+(`ADOPT/ident_mod_summary.txt`, `ADOPT/runner/ident_mod.py`). Evidence: `ADOPT/tier0_merge_bac9d9d/`,
+`ADOPT/tier0_adopt_f7ad2e8/`.
+
+**Diagnosis of TN_216 (existing logs only, no new runs; `ADOPT/runner/diag_tn216.py`).** Both arms run the same probe
+sequence (caps 1, 2, 4, 8, 16, 17 per half; identical up to cap 8, where no TN row is active: |g| = 9, so `auto`
+activates a row only at caps >= 2 (4 + 1) = 10). Per probe of caps 16-17, medians over 5 seeds:
+
+| Mode | probe | conflicts cand/main (median, range) | time cand/main (median) | conflicts/s main -> cand (median) | overlap props per conflict | overlap-row conflicts / all conflicts |
+|---|---|---|---|---|---:|---:|
+| no-card | X cap 16 | 0.94 (0.76-1.18) | 0.95 | 2532 -> 2435 | 0.59 | 0.52 % |
+| no-card | Z cap 16 | 1.10 (0.96-1.39) | 1.31 | 2178 -> 1941 | 0.48 | 0.37 % |
+| no-card | X cap 17 | 1.02 (0.91-1.07) | 1.06 | 2099 -> 2010 | 0.55 | 0.53 % |
+| no-card | Z cap 17 | 1.35 (1.28-1.95) | 1.74 | 1980 -> 1396 | 0.57 | 0.40 % |
+| card-mto | X cap 16 | 0.99 (0.87-1.07) | 1.02 | 2526 -> 2456 | 0.54 | 0.53 % |
+| card-mto | Z cap 16 | 1.03 (0.80-1.68) | 1.12 | 2156 -> 1974 | 0.49 | 0.41 % |
+| card-mto | X cap 17 | 1.05 (0.83-1.10) | 1.16 | 2102 -> 1936 | 0.56 | 0.55 % |
+| card-mto | Z cap 17 | 1.25 (1.03-1.56) | 1.56 | 1842 -> 1385 | 0.53 | 0.42 % |
+
+no-card whole run: conflicts cand/main median 1.19 (1.04-1.30); time cand/main median 1.41 (1.15-1.63); per-conflict time cand/main median 1.18
+
+card-mto whole run: conflicts cand/main median 1.10 (0.97-1.31); time cand/main median 1.22 (1.05-1.69); per-conflict time cand/main median 1.17
+
+Readings. (1) The loss is concentrated in the Z-half refutations, above all the final `Z cap 17` NONE proof (lb 17 -> 18):
+1.25-1.35x the conflicts and 1.56-1.74x the time; X-half probes are neutral (0.94-1.05x conflicts). (2) The
+propagator rarely decides anything: about 0.5 overlap propagations per conflict and 0.4-0.5 % of the conflicts come
+from an overlap row. (3) It still costs about 17 % per conflict (conflicts/s 1980 -> 1396 on `Z cap 17` no-card). The
+cache of lazily built reason clauses saturates: `cached_clauses` 13608 = 108 rows x C(9, 5) = 126, i.e. the native
+propagator ends up carrying the full binomial encoding of every weight-9 row as permanent clauses; on BB_360 (weight 6)
+the cache stays at 2685 <= 180 x C(6, 4). The same saturation occurs on TN_180 (11340 = 90 x 126), which gained
+(0.59-0.94x at Tier 5), and the overlap-conflict share is similar on winners and losers (TN_180 0.40-0.44 %, TN_216
+0.37-0.51 %, BB_360 0.19-0.89 %, from the Tier 5 logs), so neither number alone separates them.
+
+Hypotheses for a gate (next round, not tested):
+- **H1, row-weight / cache budget.** Bound the propagator's overhead on heavy rows: for rows whose binomial size
+  C(|g|, floor(|g|/2) + 1) is large (TN: 126 vs BB: 15), do not cache reason clauses (rebuild them on demand) or cap
+  the cache per row, or raise the `auto` activation ratio for them (e.g. 3 instead of 2 for |g| >= 9: cap >= 15 still
+  covers TN_216's 16-17, so the ratio alone may not suffice). Test on TN_216 / TN_180 / TN_468 / TN_144 first, since
+  TN_180 and TN_468 gained with the same rows.
+- **H2, structural density gate.** Enable the rows per half only when the Tanner 4-cycle density is below the
+  `-frontier=auto` threshold (< 3 per row: all bundled BB/GB/LP halves, no TN half). This keeps every BB/LP gain of Tier
+  2-5 by construction but gives up TN_180 / TN_468 / TN_684's gains; an lb-level gate (switch off above some lb) does
+  not fit the data, since TN_216 loses and TN_180 gains at the same caps (16-17). Logging the time spent in
+  `ovPropagate` per probe (to `-frontier-stats`) would give the cost signal an adaptive gate needs.
+
