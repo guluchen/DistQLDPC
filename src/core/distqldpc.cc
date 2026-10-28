@@ -44,6 +44,7 @@
 #include "utils/System.h"
 #include "SimpSolver.h"
 #include "../cc/cc_driver.h"   /* GH-124: CC level-search engine (-engine=cc, experimental) */
+#include "../cc/cc_aut.h"      /* GH-152: Tanner-graph automorphism candidates (-cc-aut=on, experimental) */
 
 using namespace Minisat;
 
@@ -775,8 +776,12 @@ static int uf_find(std::vector<int>& par, int a) {
     return a;
 }
 
-/* Verified plain automorphisms of one CSS half (Hpar, Glog) and their qubit orbits. */
-static HalfSymInfo find_half_symmetry(const Matrix& Hpar, const Matrix& Glog)
+/* Verified plain automorphisms of one CSS half (Hpar, Glog) and their qubit orbits.
+ * GH-152: extra (optional) = further candidate permutations (the -cc-aut Tanner-graph generators), tried after the
+ * GH-75 family and kept only if they pass the same two GF(2) checks; NULL or empty gives exactly the old result.
+ * trust_extra (TEST ONLY, CC mutant 13) keeps every extra candidate without the checks. */
+static HalfSymInfo find_half_symmetry(const Matrix& Hpar, const Matrix& Glog,
+                                      const std::vector<std::vector<int> >* extra = NULL, bool trust_extra = false)
 {
     const double t0 = cpuTime();
     HalfSymInfo info;
@@ -798,6 +803,21 @@ static HalfSymInfo find_half_symmetry(const Matrix& Hpar, const Matrix& Glog)
         for (int i = 0; i < n; i++) {
             const int a = uf_find(par, i), b = uf_find(par, pi[i]);
             if (a != b) par[a < b ? b : a] = a < b ? a : b;
+        }
+    }
+    if (extra) {   /* GH-152 */
+        info.candidates += (int)extra->size();
+        for (size_t k = 0; k < extra->size(); k++) {
+            const std::vector<int>& pi = (*extra)[k];
+            if ((int)pi.size() != n) continue;
+            if (!trust_extra && (!permuted_rows_in(sH, pi, bH) || !permuted_rows_in(sHG, pi, bHG))) continue;
+            char buf[64];
+            snprintf(buf, sizeof(buf), "plain tanner-aut #%zu", k + 1);
+            info.generators.push_back(buf);
+            for (int i = 0; i < n; i++) {
+                const int a = uf_find(par, i), b = uf_find(par, pi[i]);
+                if (a != b) par[a < b ? b : a] = a < b ? a : b;
+            }
         }
     }
     info.orbit_of.resize((size_t)n);
@@ -1138,6 +1158,29 @@ static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matr
     }
     info.seconds = cpuTime() - t0;
     return info;
+}
+
+/* GH-152: the dual-map check of find_dual_maps (equal ranks; pi(rs Hz) in rs Hx and pi(rs [Hz;Gx]) in rs [Hx;Gz]) for one
+ * candidate pi (the -cc-aut Tanner-graph swap map), with the same shared GF(2) routines. */
+static bool verify_dual_perm(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, const std::vector<int>& pi)
+{
+    const int n = Hx.cols;
+    if ((int)pi.size() != n) return false;
+    std::vector<char> seen((size_t)n, 0);
+    for (int i = 0; i < n; i++) {
+        if (pi[i] < 0 || pi[i] >= n || seen[(size_t)pi[i]]) return false;
+        seen[(size_t)pi[i]] = 1;
+    }
+    RowSupports sHz, sHzGx, sHx, sHxGz;
+    append_supports(sHz, Hz);
+    append_supports(sHzGx, Hz);
+    append_supports(sHzGx, Gx);
+    append_supports(sHx, Hx);
+    append_supports(sHxGz, Hx);
+    append_supports(sHxGz, Gz);
+    const Gf2Basis bHx = basis_of(sHx, n), bHxGz = basis_of(sHxGz, n);
+    if (basis_of(sHz, n).rank() != bHx.rank() || basis_of(sHzGx, n).rank() != bHxGz.rank()) return false;
+    return permuted_rows_in(sHz, pi, bHx) && permuted_rows_in(sHzGx, pi, bHxGz);
 }
 
 /* ---- GH-107: dual-map bound sharing on main's interleaved split (no incremental solver; issue #107).
@@ -1596,7 +1639,32 @@ static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix&
     distcc::DriverInput in;
     in.Hx = cc_rows(Hx); in.Hz = cc_rows(Hz); in.Gx = cc_rows(Gx); in.Gz = cc_rows(Gz);
     bool dual = false;
-    if (opt.dual && dual_allowed && Gx.rows > 0 && Gz.rows > 0) {
+    const bool dual_wanted = opt.dual && dual_allowed && Gx.rows > 0 && Gz.rows > 0;
+    /* GH-152 (-cc-aut=on): candidate automorphisms of the coloured Tanner graph (qubits, Hx rows, Hz rows) and one map
+     * exchanging the Hx and Hz rows. They are only candidates: the swap map is used as the dual map only if the GF(2)
+     * dual check (verify_dual_perm, = find_dual_maps' check) accepts it, and the generators enter find_half_symmetry as
+     * extra candidates under its two GF(2) checks. Off (default): nothing below changes. */
+    distcc::AutResult aut;
+    if (opt.aut) {
+        const double ta = cpuTime();
+        std::vector<const distcc::SparseRows*> cls;
+        cls.push_back(&in.Hx);
+        cls.push_back(&in.Hz);
+        aut = distcc::find_row_automorphisms(Hx.cols, cls, dual_wanted);
+        if (opt.mutant == 13) {   /* TEST MUTANT 13: a non-automorphism (the cyclic shift i -> i + 1 mod n) among the
+                                   * candidates, every candidate kept without the GF(2) checks */
+            std::vector<int> t((size_t)Hx.cols);
+            for (int i = 0; i < Hx.cols; i++) t[(size_t)i] = (i + 1) % Hx.cols;
+            aut.gens.push_back(t);
+        }
+        if (verb > 0)
+            printf("c cc aut: Tanner graph (qubits, Hx rows, Hz rows): %zu generator(s), %d qubit orbit(s), group %s, point stabiliser %s, "
+                   "swap map %s, %d test(s) (%d refuted, %d undecided), work %llu, cpu %.3fs\n",
+                   aut.gens.size(), aut.orbits, aut.complete ? "complete" : "partial", aut.stab_trivial ? "trivial" : "not proved trivial",
+                   aut.swap_state == 1 ? "found" : aut.swap_state == 2 ? "none" : aut.swap_state == 3 ? "undecided" : "not searched",
+                   aut.tests, aut.refuted, aut.undecided, (unsigned long long)aut.work, cpuTime() - ta);
+    }
+    if (dual_wanted) {
         DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, false);
         if (!dm.maps.empty()) {
             in.dual_perm = dm.perms[0];
@@ -1611,13 +1679,30 @@ static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix&
                 printf("c cc: dual map detection: none (ranks Hz %d Hx %d [Hz;Gx] %d [Hx;Gz] %d, %d candidates, cpu %.3fs): both halves\n",
                        dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.seconds);
         }
+        if (!dual && opt.aut) {   /* GH-152: the Tanner swap map, under the same GF(2) dual check */
+            std::vector<int> cand = aut.swap;
+            if (opt.mutant == 14 && cand.empty()) {   /* TEST MUTANT 14: identity, unchecked */
+                cand.resize((size_t)Hx.cols);
+                for (int i = 0; i < Hx.cols; i++) cand[(size_t)i] = i;
+            }
+            const bool ok = !cand.empty() && (opt.mutant == 14 || verify_dual_perm(Hx, Hz, Gx, Gz, cand));
+            if (ok) {
+                in.dual_perm = cand;
+                in.dual_desc = opt.mutant == 14 ? "tanner-swap UNCHECKED (test mutant 14)" : "tanner-swap (cc-aut)";
+                dual = true;
+            }
+            if (verb > 0)
+                printf("c cc aut: Tanner swap map: %s\n", ok ? (opt.mutant == 14 ? "USED WITHOUT CHECK (test mutant 14): X half only"
+                                                                 : "verified as XZ-dual map: X half only")
+                                                       : cand.empty() ? "none" : "rejected by the GF(2) dual check: both halves");
+        }
     }
     if (opt.rules.orbf && symbreak) {
         for (int k = 0; k < 2; k++) {
             const Matrix& H = k == 0 ? Hz : Hx;
             const Matrix& G = k == 0 ? Gx : Gz;
             if (G.rows == 0 || (k == 1 && dual)) continue;   /* seeds only from per-half automorphisms of a searched half */
-            HalfSymInfo info = find_half_symmetry(H, G);
+            HalfSymInfo info = opt.aut ? find_half_symmetry(H, G, &aut.gens, opt.mutant == 13) : find_half_symmetry(H, G);
             if (verb > 0) print_half_symmetry(info, k == 0 ? "c cc symbreak X:" : "c cc symbreak Z:", false);
             if ((int)info.reps.size() < info.n) in.orbit_of[k] = info.orbit_of;
         }
@@ -2184,6 +2269,12 @@ int main(int argc, char** argv) {
             g_cc_opt.dual = false;
         else if (!strncmp(argv[i], "-cc-dual=", 9))
             die("invalid -cc-dual (on | off)");
+        else if (!strcmp(argv[i], "-cc-aut=on"))   /* GH-152 */
+            g_cc_opt.aut = true;
+        else if (!strcmp(argv[i], "-cc-aut=off"))
+            g_cc_opt.aut = false;
+        else if (!strncmp(argv[i], "-cc-aut", 7))
+            die("invalid -cc-aut (on | off)");
         else if (!strcmp(argv[i], "-ub-basis") || !strcmp(argv[i], "-ub-basis=on"))
             g_cc_opt.ub_basis = true;
         else if (!strcmp(argv[i], "-ub-basis=off"))
@@ -2242,7 +2333,7 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || v > 12) die("invalid -cc-mutant (0..12, test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 14) die("invalid -cc-mutant (0..14, test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strncmp(argv[i], "-cc-trace=", 10)) {
             g_cc_opt.trace_path = argv[i] + 10;
@@ -2284,6 +2375,8 @@ int main(int argc, char** argv) {
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
+            printf("            -cc-aut=on|off (default off; GH-152): Tanner-graph automorphism candidates for the orbit\n");
+            printf("            seeds and the dual map (every candidate GF(2)-verified before use)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
             printf("            -ub-search=off|on|budget:S (GH-140, default on): randomized low-weight logical finder per half\n");
@@ -2297,7 +2390,7 @@ int main(int argc, char** argv) {
             printf("            -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..12)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..14)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");
