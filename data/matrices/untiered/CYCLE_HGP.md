@@ -93,3 +93,10 @@ input. Supplemental settings are labeled separately; no unavailable default
 bound is filled from a claim or another setting. Solver runs do not use the
 PI Mac, external distance solvers or dedicated-server cores. Raw logs and
 identities are retained in `optimization/experiments/GH-154/`.
+
+The first default runs reproduced d=3/4/5/6 on n=45/106/306/610 and bounds
+5..6 on n=1261. Both the default and `-ub-pre=1 -v` n=2866 attempts returned
+TIMEOUT_NO_BOUNDS. The verbose run confirms all input dimensions and finishes
+symmetry detection before the timeout, with no finder banner yet. A separately
+labeled `-ub-pre=off -v` 60-second check skips that initialization to check
+search-bound visibility. This is not a default change or a timing comparison.

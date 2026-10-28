@@ -56,7 +56,9 @@ def main():
     ap.add_argument('--out', type=Path, required=True, help='new evidence directory')
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--stems', nargs='+', help='explicit subset of HGP manifest stems')
-    ap.add_argument('--ub-pre', type=float, help='explicit supplemental pre-pass seconds; default unchanged')
+    pre = ap.add_mutually_exclusive_group()
+    pre.add_argument('--ub-pre', type=float, help='explicit supplemental pre-pass seconds; default unchanged')
+    pre.add_argument('--ub-pre-off', action='store_true', help='explicit supplemental -ub-pre=off')
     ap.add_argument('--verbose', action='store_true')
     args = ap.parse_args()
     if args.ci:
@@ -81,6 +83,8 @@ def main():
                str(args.bin.resolve()),'-cpu-lim=60']
         if args.ub_pre is not None:
             cmd.append(f'-ub-pre={args.ub_pre:g}')
+        if args.ub_pre_off:
+            cmd.append('-ub-pre=off')
         if args.verbose:
             cmd.append('-v')
         cmd.append(f'data/matrices/untiered/{row["stem"]}')

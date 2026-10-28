@@ -42,8 +42,8 @@ jobs:
           PY
       - name: Six default 60-second serial smoke checks
         run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-cycle-smoke --stems HGP_45_9_unknown HGP_106_16_unknown HGP_306_36_unknown HGP_610_64_unknown HGP_1261_121_unknown HGP_2866_256_unknown
-      - name: Largest input with an explicit short pre-pass
-        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-cycle-supplemental --stems HGP_2866_256_unknown --ub-pre 1 --verbose
+      - name: Largest input with the finder pre-pass explicitly disabled
+        run: python3 scripts/codegen/smoke_untiered.py --ci --out /tmp/hgp-cycle-supplemental --stems HGP_2866_256_unknown --ub-pre-off --verbose
       - name: Retain all evidence as text even on a failed run
         if: always()
         run: |

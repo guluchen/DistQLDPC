@@ -3,7 +3,9 @@
 Date: 2026-10-28 (Asia/Taipei). Issue: https://github.com/guluchen/DistQLDPC/issues/154.
 Branch: `codex/hgp-finite-rate-library`, stacked on GH-153 commit
 `742eda14c05924a9473eeaaa75368096124f589f`; solver baseline e52d15b.
-Status: **GENERATION / GF(2) / REPRODUCTION PASS; SOLVER SMOKE NOT_RUN**.
+Status: **GENERATION / GF(2) / REPRODUCTION / FIRST CI PASS**.
+Largest-input numeric bounds remain unavailable in the first configurations;
+an explicitly separate no-pre-pass loading/bound check is pending.
 
 ## What changed
 
@@ -73,11 +75,26 @@ git diff --check
 
 ## Solver smoke and results
 
-NOT_RUN at this revision. A branch-scoped ordinary GitHub Actions job builds
+First CI run 40667615158 passed all steps, including the default six smoke
+attempts. Source `a6efadf9fc7024403f2bd5fb5bec62f2c63dea26`, binary SHA-256
+`13aa8ba74b3960b8767bfda60d10fb09f057e6655f5112c6f3f343dfdee03328`.
+Results: n=45/106/306/610 reproduce 3/4/5/6 exactly; n=1261 gives 5..6 at
+timeout; n=2866 gives TIMEOUT_NO_BOUNDS. Its explicit `-ub-pre=1 -v` run
+also returns TIMEOUT_NO_BOUNDS and confirms Hx/Hz 1305x2866 and Gx/Gz 256x2866.
+Symmetry detection completed in this run, with no finder banner before timeout.
+The first run's default and short-pre-pass records are preserved separately
+under `raw/actions/default/` and `raw/actions/short-prepass/`.
+
+To resolve the remaining numeric-bound visibility check, the next revision
+adds one explicitly labeled `-ub-pre=off -v` 60-second setting for n=2866.
+No constructor cost or speedup is claimed from this diagnostic; no solver
+default changes. The first unavailable bounds are retained rather than replaced.
+
+A branch-scoped ordinary GitHub Actions job builds
 the unchanged solver and runs only these six new codes serially with
 `-cpu-lim=60`, one pinned Actions core, a 4 GiB address-space cap and a
 90-second backstop. This flag's parent wrapper implements a wall deadline.
-An explicitly labeled `-ub-pre=1 -v` check on the largest input records loading
+An explicitly labeled supplemental check on the largest input records loading
 and bounds separately from the default. No unavailable bound is replaced by
 the mathematical claim or another configuration.
 
@@ -88,7 +105,7 @@ No medians, seed-range/performance claims or timing-tier decisions are made.
 
 ## Unresolved / PI action
 
-Pending short CI execution and recorded bounds. A new exact-distance discovery
+Pending the no-pre-pass CI check and final manifest backfill. A new exact-distance discovery
 is not claimed: expected values follow from the published construction theorem
 and independently verified classical distances. Stems stay unknown pending PI
 names/tiers. The PI explicitly requested **direct push with no PR** for this
