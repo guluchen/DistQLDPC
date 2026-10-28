@@ -112,7 +112,7 @@ done
 for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-rules=parity,leaf -cc-dual=on -cc-dual=off -cc-seed=1 \
          "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-mutant=10 -cc-schedule=sequential \
          -cc-schedule=lockstep -cc-rules=overlap -ub-search=on -ub-search=off -ub-search=budget:5 -cc-ub-only -cc-ub-pre=1 \
-         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12 -cc-rules=charge -cc-rules=ecover -cc-lb-minr=2 -cc-lb-gap=1 \
+         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12 -cc-rules=charge -cc-rules=ecover -cc-lb-minr=2 -cc-lb-gap=1 -cc-lb-raise=off \
          -cc-mutant=15 -cc-mutant=16; do
     reject "need -engine=cc or -engine=auto" "$f" $L $M
     reject "need -engine=cc or -engine=auto" -engine=maxsat "$f" $L $M
@@ -124,7 +124,7 @@ reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L 
 for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=13 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
          -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
          -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-rules=Charge -cc-rules=charge, \
-         -cc-rules=ecov -cc-lb-minr=0 -cc-lb-minr= -cc-lb-minr=x -cc-lb-minr=1001 -cc-lb-gap= -cc-lb-gap=-1 -cc-lb-gap=x -cc-lb-gap=1001 -cc-mutant=14 -cc-mutant=17 -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
+         -cc-rules=ecov -cc-lb-minr=0 -cc-lb-minr= -cc-lb-minr=x -cc-lb-minr=1001 -cc-lb-gap= -cc-lb-gap=-1 -cc-lb-gap=x -cc-lb-gap=1001 -cc-lb-raise= -cc-lb-raise=no -cc-mutant=14 -cc-mutant=17 -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 # GH-140: -ub-search values and the finder's tuning flags
@@ -166,6 +166,7 @@ accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,ecove
 accept 2 "" -engine=cc -cc-rules=ecover -cc-lb-minr=1 $L $C
 accept 2 "" -engine=cc -cc-rules=charge,mrv -cc-lb-minr=2 -cc-seed=2 $L $C
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-gap=2 -cc-lb-minr=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-raise=off -cc-lb-minr=1 $L $M
 accept 2 "" -oddcap-skip=on $L $C                                                                       # GH-133 MaxSAT flag
 accept 2 "" -oddcap-skip=off -card-mto $L $C
 accept 3 "" -oddcap-skip=on -no-card $L $M
@@ -247,7 +248,7 @@ vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* no
 vgrep 3 "^c cc-stats: X level 2 EMPTY .* ovtight 0 ovforbid 0 time" -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf $L $M
 # 7b'. GH-157: the node-lower-bound line and stats lines appear only with the new rules
 vgrep 3 "^c cc: node lower bounds charge ecover at remaining budget >= 3 and budget - packing <= 0 (GH-157)" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,ecover $L $M
-vgrep 3 "^c cc-stats: X level 2 lb lbeval [0-9]* chgprune [0-9]* chgraise [0-9]* ecprune [0-9]* ecexact [0-9]* lbdead [0-9]*" -engine=cc -cc-stats -cc-rules=charge,ecover -cc-lb-minr=1 -cc-lb-gap=5 $L $M
+vgrep 3 "^c cc-stats: X level 2 lb lbeval [0-9]* chgprune [0-9]* ecprune [0-9]* ecexact [0-9]* lbdead [0-9]*" -engine=cc -cc-stats -cc-rules=charge,ecover -cc-lb-minr=1 -cc-lb-gap=5 $L $M
 vgrep 3 "^c cc-stats: X level 2 lbprune-by-budget" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 $L $M
 runs=$((runs + 1)); run -v -engine=cc -cc-stats $L $M
 if grep -q "node lower bounds\|lbeval\|lbprune" <<<"$out"; then echo "FAIL (GH-157 lines printed without the new rules)" >&2; fails=$((fails + 1)); fi

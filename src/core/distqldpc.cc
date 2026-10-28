@@ -2186,6 +2186,12 @@ int main(int argc, char** argv) {
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 11, &v) || v > 1000) die("invalid -cc-lb-gap (0..1000)");
             g_cc_opt.lb_gap = (int)v;
+        } else if (!strcmp(argv[i], "-cc-lb-raise=on")) {   /* GH-157 */
+            g_cc_opt.lb_raise = true;
+        } else if (!strcmp(argv[i], "-cc-lb-raise=off")) {
+            g_cc_opt.lb_raise = false;
+        } else if (!strncmp(argv[i], "-cc-lb-raise=", 13)) {
+            die("invalid -cc-lb-raise (on | off)");
         } else if (!strcmp(argv[i], "-cc-dual=on"))
             g_cc_opt.dual = true;
         else if (!strcmp(argv[i], "-cc-dual=off"))
@@ -2293,7 +2299,7 @@ int main(int argc, char** argv) {
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden;\n");
             printf("            GH-157, off by default: charge = fractional (LP-dual) charge node lower bound, ecover = Gallai\n");
             printf("            edge-cover node lower bound; evaluated at remaining budget >= -cc-lb-minr=K (default 3) where the\n");
-            printf("            packing is within -cc-lb-gap=G of pruning (default 0))\n");
+            printf("            packing is within -cc-lb-gap=G of pruning (default 0); -cc-lb-raise=off: charge without the raise)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");

@@ -42,7 +42,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
                        const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
-      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), lbminr_(3), lbgap_(0), lbany_(false), lbcheck_(false), chg_(false), chgL_(1), ecv_(false), w_(0), nodd_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), lbminr_(3), lbgap_(0), lbany_(false), lbraise_(true), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -258,25 +258,6 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         lbrq_.assign((size_t)rstart_[m_] + 1, 0);
         lbw_.reset(n_, m_);
         lbany_ = true;
-        /* charge: scaled integers y(d) = L/d, L = lcm(1..max column weight) (every c_j <= the column weight);
-         * idle if the maximum column weight exceeds 32 (L would not fit comfortably) or H has >= 2^15 rows */
-        chg_ = rules_.charge && maxcw_ <= 32 && m_ < (1 << 15);
-        for (int d = 0; d <= 32; d++) chgyv_[d] = 0;
-        if (chg_) {
-            chgL_ = lbw_.lcm[maxcw_ < 1 ? 1 : maxcw_];
-            for (int d = 1; d <= maxcw_; d++) chgyv_[d] = chgL_ / d + (mutant_ == 15 ? chgL_ / maxcw_ : 0);
-            lcnt_.assign((size_t)n_, 0);
-            lload_.assign((size_t)n_, 0);
-            lmk_.assign((size_t)n_, 0);
-        }
-        ecv_ = rules_.ecover;
-        if (ecv_) {
-            e2c_.assign((size_t)n_, 0);
-            e2mk_.assign((size_t)n_, 0);
-            e3mk_.assign((size_t)n_, 0);
-            e2own_.assign((size_t)n_, -1);
-            u2_.assign((size_t)m_ + 1, 0);
-        }
     }
 
     syn_.assign((size_t)mw_, 0);
@@ -318,7 +299,7 @@ void LbWork::reset(int nq, int maxrows) {
 /* Charge (see cc_half.h). Pass 1: c_j = number of the k sets containing j (lazily reset by stamp), D = max c_j.
  * Pass 2: y_u = L / max_{j in u} c_j (scaled by L = lcm(1..D)); loads. Pass 3: raise. Exact integer arithmetic:
  * Y <= k L <= k 2^48, no overflow for k < 2^15 (k is at most the number of rows of H; checked). */
-int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant) {
+int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise) {
     const uint64_t st = ++w.st;
     int D = 0;
     for (int i = 0; i < k; i++) {
@@ -331,18 +312,20 @@ int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, i
     }
     if (D > 32 || k >= (1 << 15)) return 0;   /* idle: denominators too large for the scaled integers */
     const int64_t L = w.lcm[D];
+    const int64_t R = r < 0 ? -1 : (int64_t)r * L;
     int64_t Y = 0;
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i < k; i++) {   /* local-degree charge; stops as soon as the sum exceeds r */
         int dm = 0;
         for (uint32_t t = rs[i]; t < rs[i + 1]; t++) if (w.cnt[rq[t]] > dm) dm = w.cnt[rq[t]];
         int64_t yi = L / dm;
         if (mutant == 15) yi += L / D;   /* mutant: charge inflated by 1/D (infeasible) */
         w.y[i] = yi;
         Y += yi;
-        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) w.load[rq[t]] += yi;
+        if (R >= 0 && Y > R) return (int)((Y + L - 1) / L);
     }
-    const int64_t R = r < 0 ? -1 : (int64_t)r * L;
-    if (R >= 0 && Y > R) return (int)((Y + L - 1) / L);
+    if (!raise) return (int)((Y + L - 1) / L);
+    for (int i = 0; i < k; i++)
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) w.load[rq[t]] += w.y[i];
     for (int i = 0; i < k; i++) {   /* raise: y_u += min residual capacity of its qubits (keeps feasibility) */
         int64_t s = L;
         for (uint32_t t = rs[i]; t < rs[i + 1]; t++) { const int64_t res = L - w.load[rq[t]]; if (res < s) s = res; }
@@ -490,9 +473,14 @@ int lb_ecover(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, i
     return ns - nu;
 }
 
-/* candidate sets of the odd rows (index order) as CSR in lbrs_/lbrq_ (ecover, and the test cross-check) */
-void HalfSearch::lb_build_sets(int& k) {
-    k = 0;
+/* GH-157: evaluate charge, then ecover, at the current node (pack did not prune; the caller checked the budget, |U|
+ * and the gap gate). The candidate sets of the odd rows are copied once (index order) and handed to lb_charge /
+ * lb_ecover, the same functions the tests compare against brute force. Returns true if the node is empty (a bound
+ * exceeds the remaining budget, or an odd row has no available qubit). */
+bool HalfSearch::lb_prune(int size) {
+    const int r = w_ - size;
+    ++res_->lbeval;
+    int k = 0;
     uint32_t nq = 0;
     lbrs_[0] = 0;
     for (int wi = 0; wi < mw_; wi++) {
@@ -504,148 +492,20 @@ void HalfSearch::lb_build_sets(int& k) {
                 const uint32_t qb = rq_[t];
                 if (!blk_[qb]) lbrq_[nq++] = qb;
             }
+            if (lbrs_[k] == nq) { ++res_->lbdead; return true; }   /* odd row without an available qubit */
             lbrs_[++k] = nq;
         }
     }
-}
-
-/* GH-157 ecover: admit one odd row to U' iff none of its free qubits already lies in 2 admitted rows (mutant 16:
- * always); rows are offered in index order */
-inline void HalfSearch::lb_admit_row(int row, uint64_t st, int& nu2) {
-    const uint32_t* a = &rq_[rstart_[row]];
-    const uint32_t* e = &rq_[rstart_[row + 1]];
-    if (mutant_ != 16)
-        for (const uint32_t* t = a; t < e; ++t)
-            if (!blk_[*t] && e2mk_[*t] == st && e2c_[*t] >= 2) return;
-    for (const uint32_t* t = a; t < e; ++t) {
-        const uint32_t j = *t;
-        if (blk_[j]) continue;
-        if (e2mk_[j] != st) { e2mk_[j] = st; e2c_[j] = 0; }
-        if (e2c_[j] < 255) e2c_[j]++;
+    if (rules_.charge) {
+        const int b = lb_charge(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, lbraise_);
+        if (b > r) { ++res_->chgprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
     }
-    u2_[nu2++] = row;
-}
-
-/* GH-157: evaluate charge, then ecover, at the current node (pack did not prune; the caller checked the budget, |U|
- * and the gap gate). Both bounds are computed on the search state exactly as lb_charge / lb_ecover compute them on
- * explicit sets (same row order, same integers); the test hook set_lb_check compares the decisions. Returns true if
- * the node is empty (a bound exceeds the remaining budget, or an odd row has no available qubit). */
-bool HalfSearch::lb_prune(int size, uint64_t st) {
-    const int r = w_ - size;
-    ++res_->lbeval;
-    if (chg_) {
-        bool dead = false;
-        const int64_t L = chgL_, R = (int64_t)r * L;
-        /* c_j for the free qubits of the odd rows (loads reset) */
-        for (int wi = 0; wi < mw_; wi++) {
-            uint64_t x = syn_[wi];
-            while (x) {
-                const int row = wi * 64 + __builtin_ctzll(x);
-                x &= x - 1;
-                for (uint32_t t = rstart_[row], e = rstart_[row + 1]; t < e; t++) {
-                    const uint32_t j = rq_[t];
-                    if (blk_[j]) continue;
-                    if (lmk_[j] != st) { lmk_[j] = st; lcnt_[j] = 0; lload_[j] = 0; }
-                    ++lcnt_[j];
-                }
-            }
-        }
-        /* local-degree charge y_u = L / max_{j in N(u) & A} c_j, and loads */
-        int64_t Y = 0;
-        for (int wi = 0; wi < mw_ && !dead; wi++) {
-            uint64_t x = syn_[wi];
-            while (x) {
-                const int row = wi * 64 + __builtin_ctzll(x);
-                x &= x - 1;
-                const uint32_t* a = &rq_[rstart_[row]];
-                const uint32_t* e = &rq_[rstart_[row + 1]];
-                int dm = 0;
-                for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t] && lcnt_[*t] > dm) dm = lcnt_[*t];
-                if (dm == 0) { dead = true; break; }
-                const int64_t yi = chgyv_[dm];
-                Y += yi;
-                for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t]) lload_[*t] += yi;
-            }
-        }
-        bool raised = false;
-        if (!dead && Y <= R) {   /* raise, row by row in the same order */
-            raised = true;
-            for (int wi = 0; wi < mw_ && Y <= R; wi++) {
-                uint64_t x = syn_[wi];
-                while (x && Y <= R) {
-                    const int row = wi * 64 + __builtin_ctzll(x);
-                    x &= x - 1;
-                    const uint32_t* a = &rq_[rstart_[row]];
-                    const uint32_t* e = &rq_[rstart_[row + 1]];
-                    int64_t sl = L;
-                    for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t] && L - lload_[*t] < sl) sl = L - lload_[*t];
-                    if (sl <= 0) continue;
-                    Y += sl;
-                    for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t]) lload_[*t] += sl;
-                }
-            }
-        }
-        const bool prune = !dead && Y > R;
-        if (lbcheck_) {
-            int k = 0;
-            lb_build_sets(k);
-            const int b = lb_charge(&lbrs_[0], &lbrq_[0], k, r, lbw_, 0);
-            if ((b == LB_DEAD) != dead || (!dead && (b > r) != prune)) fatal("GH-157 check: in-search charge differs from lb_charge");
-        }
-        if (dead) { ++res_->lbdead; return true; }
-        if (prune) { ++res_->chgprune; if (raised) ++res_->chgraise; ++res_->lbprune_by_budget[(size_t)r]; return true; }
-    } else if (rules_.charge && lbcheck_) {   /* charge idle (column weight > 32): lb_charge must be idle too */
-        int k = 0;
-        lb_build_sets(k);
-        const int b = lb_charge(&lbrs_[0], &lbrq_[0], k, r, lbw_, 0);
-        if (b == LB_DEAD || b > r) fatal("GH-157 check: idle in-search charge but lb_charge prunes");
-    }
-    if (ecv_) {
-        int nu2 = 0;
-        {   /* U': greedy in index order */
-            for (int wi = 0; wi < mw_; wi++) {
-                uint64_t x = syn_[wi];
-                while (x) {
-                    const int row = wi * 64 + __builtin_ctzll(x);
-                    x &= x - 1;
-                    bool any = false;
-                    for (uint32_t t = rstart_[row], e = rstart_[row + 1]; t < e && !any; t++) any = !blk_[rq_[t]];
-                    if (!any) { ++res_->lbdead; return true; }
-                    lb_admit_row(row, st, nu2);
-                }
-            }
-        }
-        const int ns = nu2;
-        if (ns == nodd_) ++res_->ecexact;
-        bool prune;
-        if (ns <= r) prune = false;                     /* |U'| - nu <= |U'| */
-        else if (ns - ns / 2 > r) prune = true;         /* |U'| - nu >= |U'| - floor(|U'|/2) */
-        else {   /* edges: qubits in 2 admitted rows (mutant 16: every further row adds an edge to the first) */
-            std::vector<int>& ea = lbw_.ea;
-            std::vector<int>& eb = lbw_.eb;
-            ea.clear();
-            eb.clear();
-            for (int v = 0; v < ns; v++) {
-                const int row = u2_[v];
-                for (uint32_t t = rstart_[row], e = rstart_[row + 1]; t < e; t++) {
-                    const uint32_t j = rq_[t];
-                    if (blk_[j]) continue;
-                    if (e3mk_[j] != st) { e3mk_[j] = st; e2own_[j] = v; }
-                    else { ea.push_back(e2own_[j]); eb.push_back(v); }
-                }
-            }
-            const int nu = max_matching(ns, ea, eb, ns - r, lbw_);
-            prune = ns - nu > r;
-        }
-        if (lbcheck_) {
-            int k = 0;
-            lb_build_sets(k);
-            bool ex = false;
-            int nsel = 0;
-            const int b = lb_ecover(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, &ex, &nsel);
-            if (b == LB_DEAD || (b > r) != prune || nsel != ns) fatal("GH-157 check: in-search ecover differs from lb_ecover");
-        }
-        if (prune) { ++res_->ecprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
+    if (rules_.ecover) {
+        bool exact = false;
+        int nsel = 0;
+        const int b = lb_ecover(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, &exact, &nsel);
+        if (exact) ++res_->ecexact;
+        if (b > r) { ++res_->ecprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
     }
     return false;
 }
@@ -829,7 +689,7 @@ bool HalfSearch::dfs(int size) {
     if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
     /* gap gate: evaluated only when the packing is within lb-gap of pruning (r - p <= gap; prunes concentrate at
      * r = p); without pack always. Skipping an evaluation only skips a sound prune. */
-    if (lbon && (!pack || w_ - size - p <= lbgap_) && lb_prune(size, st)) return false;
+    if (lbon && (!pack || w_ - size - p <= lbgap_) && lb_prune(size)) return false;
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;

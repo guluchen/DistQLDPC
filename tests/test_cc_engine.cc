@@ -65,8 +65,9 @@
 //   every r, and Edmonds' matching against brute force on random multigraphs; mutants 15 / 16 must exceed tau somewhere.
 //   (b) On every Part A half: all 128 base rule subsets x {charge, ecover, charge+ecover} x seeds 0..2 (lb-minr 1, 2, 3
 //   for seeds 0, 1, 2): the ladder must match enumeration; mutants 15 (charge inflated by 1/D) and 16 (ecover without
-//   the at-most-2 condition) must give wrong half-level verdicts. lb-gap: unlimited for seed 0, 0 / 1 for seeds 1 / 2. Every evaluation in (b) (mutant 0) also recomputes the
-//   charge and ecover with lb_charge / lb_ecover on an explicit copy of the sets (set_lb_check). (c) Part B driver configurations with the new rules.
+//   the at-most-2 condition) must give wrong half-level verdicts. lb-gap: unlimited for seed 0, 0 / 1 for seeds 1 / 2.
+//   The search hands a copy of the odd rows' candidate sets to the same lb_charge / lb_ecover tested in (a). Seed 2
+//   runs the charge without the raise step. (c) Part B driver configurations with the new rules.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -186,7 +187,7 @@ static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, co
     distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
     hs.set_lb_minr(lbminr);
     hs.set_lb_gap(lbgap);
-    hs.set_lb_check(mutant == 0);   // GH-157: in-search charge cross-checked against lb_charge (aborts on a mismatch)
+    hs.set_lb_raise(seed != 2 || mutant != 0);   // GH-157: seed 2 ladders run the charge without the raise
     const int top = dh < 0 ? n : dh;
     char buf[160];
     for (int w = 1; w <= top; w++) {
@@ -385,12 +386,13 @@ int main(int argc, char** argv) {
             { Mask m = 0; for (Mask s : sets) if (s && !(s & m)) { p++; m |= s; } }
             pi_inst++;
             const int bc = distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 0);
+            const int bl = distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 0, false);   // local-degree only
             bool ex = false; int nsel = 0;
             const int be = distcc::lb_ecover(&rs[0], &rq[0], kk, -1, lw, 0, &ex, &nsel);
             bool bad = false;
             if (tau < 0) bad = bc != distcc::LB_DEAD || be != distcc::LB_DEAD;
             else {
-                if (bc > tau || be > tau || p > tau) bad = true;
+                if (bc > tau || be > tau || p > tau || bl > bc) bad = true;
                 if (ex) { pi_exact++; if (be != tau) bad = true; }
                 if (bc == tau) pi_tight_c++;
                 if (be == tau) pi_tight_e++;

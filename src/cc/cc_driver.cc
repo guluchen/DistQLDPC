@@ -312,7 +312,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                sequential ? ", schedule sequential (test)" : "");
         if (opt.rules.charge || opt.rules.ecover)   /* GH-157 */
             printf("c cc: node lower bounds%s%s at remaining budget >= %d and budget - packing <= %d (GH-157)\n",
-                   opt.rules.charge ? " charge" : "", opt.rules.ecover ? " ecover" : "", opt.lb_minr, opt.lb_gap);
+                   opt.rules.charge ? (opt.lb_raise ? " charge" : " charge(no raise)") : "", opt.rules.ecover ? " ecover" : "",
+                   opt.lb_minr, opt.lb_gap);
         if (dual)
             printf("c cc: dual map '%s' verified: dX = dZ, searching the X half only (Z bounds mirrored)\n",
                    in.dual_desc.c_str());
@@ -349,6 +350,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S));
         hs[k].search->set_lb_minr(opt.lb_minr);   /* GH-157 */
         hs[k].search->set_lb_gap(opt.lb_gap);
+        hs[k].search->set_lb_raise(opt.lb_raise);
         hs[k].par = hs[k].search->parity_active();
         if (verb > 0) {
             printf("c cc: %s half search: %d seeds (%s)\n", hs[k].tag, hs[k].search->num_seeds(),
@@ -608,8 +610,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 printf("\n");
             }
             if (opt.rules.charge || opt.rules.ecover) {   /* GH-157: printed only with the new rules (identity otherwise) */
-                printf("c cc-stats: %s level %d lb lbeval %llu chgprune %llu chgraise %llu ecprune %llu ecexact %llu lbdead %llu\n", h.tag, w,
-                       (unsigned long long)r.lbeval, (unsigned long long)r.chgprune, (unsigned long long)r.chgraise, (unsigned long long)r.ecprune,
+                printf("c cc-stats: %s level %d lb lbeval %llu chgprune %llu ecprune %llu ecexact %llu lbdead %llu\n", h.tag, w,
+                       (unsigned long long)r.lbeval, (unsigned long long)r.chgprune, (unsigned long long)r.ecprune,
                        (unsigned long long)r.ecexact, (unsigned long long)r.lbdead);
                 if (!r.lbprune_by_budget.empty()) {
                     printf("c cc-stats: %s level %d lbprune-by-budget", h.tag, w);

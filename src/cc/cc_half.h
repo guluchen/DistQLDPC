@@ -139,8 +139,9 @@ struct LbWork {
     LbWork();
     void reset(int nq, int maxrows);
 };
-/* charge: ceil(sum y) of the raised local-degree charge (0 when max c_j > 32); mutant 15 adds L/D to every y_u */
-int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant);
+/* charge: ceil(sum y) of the raised local-degree charge (raise = false: local-degree only; 0 when max c_j > 32); mutant 15
+ * adds L/D to every y_u */
+int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise = true);
 /* ecover: |U'| - nu (Gallai); *exact = (U' = U); *nsel = |U'|. Mutant 16 admits every row (no "at most 2" check). */
 int lb_ecover(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool* exact, int* nsel);
 /* maximum matching size of a simple or multi graph on nv vertices (edges ea[i]-eb[i]), Edmonds' blossom algorithm;
@@ -163,7 +164,6 @@ struct LevelResult {
     uint64_t ovforbid;         /* overlap: qubits turned from free to forbidden by those events */
     uint64_t lbeval;           /* GH-157: nodes where charge/ecover were evaluated */
     uint64_t chgprune;         /* GH-157: charge bound > remaining budget (pack did not prune) */
-    uint64_t chgraise;         /* GH-157: of those, prunes that needed the raise step (local-degree charge alone did not) */
     uint64_t ecprune;          /* GH-157: ecover bound > remaining budget (pack and charge did not prune) */
     uint64_t ecexact;          /* GH-157: ecover evaluations with U' = U (exact tau) */
     uint64_t lbdead;           /* GH-157: odd row without an available qubit found by charge/ecover (pack off) */
@@ -173,7 +173,7 @@ struct LevelResult {
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
                     leaf1(0), leaf2(0), ovtight(0), ovforbid(0),
-                    lbeval(0), chgprune(0), chgraise(0), ecprune(0), ecexact(0), lbdead(0), skipped(false) {}
+                    lbeval(0), chgprune(0), ecprune(0), ecexact(0), lbdead(0), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -187,8 +187,7 @@ struct LevelResult {
  * (rows of H are not in ker H in general), 10 the even-|g| tie cut (limit |g|/2 - 1 for even |g|, which loses
  * both e and e + g when |e & g| = |g|/2). GH-157 (13 and 14 are reserved for GH-152): 15 charge inflated by 1/D (every
  * y_u gets an extra L/D), 16 ecover without the "at most 2 rows of U' per qubit" condition (every odd row admitted; a
- * qubit in 3 or more rows of U' then counts as several edges, which overestimates tau). In the search, mutant 15 adds L/D
- * with D the half's maximum column weight (lb_charge: the node's maximum c_j); both are infeasible charges.
+ * qubit in 3 or more rows of U' then counts as several edges, which overestimates tau).
  * (GH-124 fix round 1: the S0 spec's literal mutant 3, "orbit seeds without forbidding earlier orbits", only
  * drops a restriction and is a sound weakening that can never change a level verdict, so it was replaced by
  * this non-equivalent orbit-rule mutant. GH-133: the spec's literal leaf mutant, "leaf lookup ignoring the
@@ -217,9 +216,8 @@ public:
     void set_lb_minr(int minr) { lbminr_ = minr < 1 ? 1 : minr; }
     /* GH-157: with pack on, evaluated only where r - p <= gap (p = the node's packing, r = remaining budget; default 0) */
     void set_lb_gap(int gap) { lbgap_ = gap < 0 ? 0 : gap; }
-    /* GH-157 test hook: every charge/ecover evaluation also runs lb_charge / lb_ecover on an explicit copy of the
-     * candidate sets and aborts if a prune decision differs (the in-search charge is computed on the search state) */
-    void set_lb_check(bool on) { lbcheck_ = on; }
+    /* GH-157: charge without the raise step (local-degree charge only; tuning) */
+    void set_lb_raise(bool on) { lbraise_ = on; }
 
     int n() const { return n_; }
     bool orbit_seeds() const { return orbit_mode_; }
@@ -266,26 +264,10 @@ private:
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
     /* GH-157 charge/ecover: minimum remaining budget, candidate CSR of the odd rows, scratch */
     int lbminr_, lbgap_;
-    bool lbany_, lbcheck_;
-    std::vector<uint32_t> lbrs_, lbrq_;
+    bool lbany_, lbraise_;
+    std::vector<uint32_t> lbrs_, lbrq_;     /* candidate sets of the odd rows (CSR) */
     LbWork lbw_;
-    /* charge: scaled charges y(d) = L/d, L = lcm(1..max column weight); c_j and loads computed on demand (valid where
-     * lmk_[j] == the node's stamp) */
-    bool chg_;
-    int64_t chgL_;
-    int64_t chgyv_[33];
-    std::vector<int32_t> lcnt_;
-    std::vector<int64_t> lload_;
-    std::vector<uint64_t> lmk_;
-    /* ecover: U' chosen in the pack scan (count of admitted rows per qubit, valid where e2mk_[j] == stamp), the
-     * admitted rows, and the first admitted row of a qubit while the edges are built (e3mk_) */
-    bool ecv_;
-    std::vector<uint8_t> e2c_;
-    std::vector<uint64_t> e2mk_, e3mk_;
-    std::vector<int32_t> e2own_;
-    std::vector<int> u2_;
-    inline void lb_admit_row(int row, uint64_t st, int& nu2);
-    bool lb_prune(int size, uint64_t st);
+    bool lb_prune(int size);
     void lb_build_sets(int& k);
 
     /* search state */
