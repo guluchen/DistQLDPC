@@ -185,8 +185,10 @@ accept 2 "selected maxsat .*ignoring -cc-aut=on" -engine=auto -cc-aut=on $L $D1
 vgrep 2 "^c cc aut: Tanner graph (qubits, Hx rows, Hz rows): [0-9]* generator(s), [0-9]* qubit orbit(s), group" -v -engine=cc -cc-aut=on $L $C
 vgrep 2 "^c cc aut: Tanner swap map: verified as XZ-dual map: X half only" -v -engine=cc -cc-aut=on $L $C
 vgrep 3 "^c cc aut: Tanner swap map: none" -v -engine=cc -cc-aut=on $L $M
-runs=$((runs + 1)); run -v -engine=cc $L $C   # default (off): no -cc-aut output at all
-if [[ $rc -ne 0 ]] || grep -q "cc aut" <<<"$out"; then echo "FAIL (-cc-aut default off printed aut lines): rc=$rc" >&2; fails=$((fails + 1)); fi
+vgrep 2 "^c cc aut: Tanner swap map: verified as XZ-dual map: X half only" -v -engine=cc $L $C   # default on since 2026-10-28
+vgrep 2 "^c cc aut: Tanner graph (qubits, Hx rows, Hz rows): [0-9]* generator(s)" -v -engine=auto $L $C   # auto -> cc: default on
+runs=$((runs + 1)); run -v -engine=cc -cc-aut=off $L $C   # off: no -cc-aut output at all (the search before GH-152)
+if [[ $rc -ne 0 ]] || grep -q "cc aut" <<<"$out"; then echo "FAIL (-cc-aut=off printed aut lines): rc=$rc" >&2; fails=$((fails + 1)); fi
 
 # 5b. GH-140 -ub-search
 accept 3 "" -engine=cc -ub-search=on $L $M

@@ -1657,7 +1657,7 @@ static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix&
     /* GH-152 (-cc-aut=on): candidate automorphisms of the coloured Tanner graph (qubits, Hx rows, Hz rows) and one map
      * exchanging the Hx and Hz rows. They are only candidates: the swap map is used as the dual map only if the GF(2)
      * dual check (verify_dual_perm, = find_dual_maps' check) accepts it, and the generators enter find_half_symmetry as
-     * extra candidates under its two GF(2) checks. Off (default): nothing below changes. */
+     * extra candidates under its two GF(2) checks. On by default since 2026-10-28 (PI); -cc-aut=off: nothing below changes. */
     distcc::AutResult aut;
     DualMapInfo dm = DualMapInfo();
     if (dual_wanted) {
@@ -2391,8 +2391,8 @@ int main(int argc, char** argv) {
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
-            printf("            -cc-aut=on|off (default off; GH-152): Tanner-graph automorphism candidates for the orbit\n");
-            printf("            seeds and the dual map (every candidate GF(2)-verified before use)\n");
+            printf("            -cc-aut=on|off (default on; GH-152; off = the CC search before GH-152): Tanner-graph automorphism\n");
+            printf("            candidates for the orbit seeds and the dual map (every candidate GF(2)-verified before use)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
             printf("            -ub-search=off|on|budget:S (GH-140, default on): randomized low-weight logical finder per half\n");

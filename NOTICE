@@ -89,6 +89,19 @@ Modified files (partial list): Solver.h, Solver.cc
   witness verification and the verified basis-row upper bound (see
   README, "Connected-cluster (CC) engine").
 
+  src/cc/cc_aut.h, src/cc/cc_aut.cc (GH-152, -cc-aut=on, the CC default
+  since 2026-10-28) find candidate automorphisms of the coloured Tanner
+  graph by colour refinement (coarsest equitable partition) and
+  individualisation-refinement with backtracking, in the style of the
+  graph-automorphism tools nauty and Traces (B. D. McKay, "Practical
+  graph isomorphism", Congressus Numerantium 30, 45-87, 1981; B. D.
+  McKay and A. Piperno, "Practical graph isomorphism, II", J. Symbolic
+  Computation 60, 94-112, 2014) and bliss (T. Junttila, P. Kaski,
+  ALENEX 2007). It was implemented from scratch from the published
+  descriptions; no nauty, Traces, bliss or other third-party code was
+  read, copied or linked. Every candidate is accepted only after
+  DistQLDPC's own GF(2) checks (GH-75/GH-85/GH-87).
+
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
 substantial portions, per the MIT license.
