@@ -1,0 +1,38 @@
+partA: 0 half instances (0 with verified orbits, 0 with all column weights odd, 0 without any nontrivial element), 0 ladder runs over 128 rule subsets x 3 seeds, 0 bad
+partA K (GH-138): 0 basis, 0 low-weight sets, 0 random sets; 0 instances where a minimum element meets a row of K in floor(|g|/2) qubits
+partE (rotated surface codes d = 3, 4, X/Z swapped): 40 canonical checks, 0 bad
+CC_FAIL GH-144 seeded U0 > d never exercised
+partF (MaxSAT -ub-pre): 0 runs on 0 codes, 0 bad (first UB = d on 0 runs, > d on 0 runs); mutant 1 0 runs, 0 bad; surface codes d = 3..5: 36 canonical/mutant-1 runs, 0 bad
+partF mutant 2 (finder without detector check, words unverified): 0/0 code runs and 9/9 surface runs wrong
+partB: 0 CSS codes (0 with a verified dual map, 0 with X-half orbits, 0 with dX != dZ, 0 with all-odd Hz), 0 driver runs, 0 bad, 0 RESULT -1
+partD (MaxSAT split, -oddcap-skip off/on): 0 runs on 0 codes (0 with an all-odd half), 0 bad
+partE (ub-search finder): 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+partE (driver with ub-search): 0 runs, 0 bad, 0 levels abandoned (U <= w)
+GH-146 finder stern2              : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder stern1              : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder dumer2              : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder stern2-l0-fresh     : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder dumer1-l2-w1-b3-r5  : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder stern2-l3-w32-b2    : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder mutant 11 (collision mode, no detector check): trivial word returned on 16/16 halves
+GH-146 CC driver in collision mode: 0 runs, 0 bad; mutant 11 4/4 runs stopped or wrong; mutant 12 4/4 failed, 4 with a wrong RESULT d OPTIMAL
+GH-146 MaxSAT pre-pass in collision mode: 0 runs, 0 bad; mutant 1 0 runs, 0 bad; mutant 2 9/9 runs wrong (codes + surface)
+GH-152 partG: 1500 relabeled half instances, 1847 Tanner generators (1137 complete groups), 326 instances with coarser orbits than the GH-75 family, 576000 ladder runs (128 rule subsets x 3 seeds), 0 bad; generators violating the row classes 0; planted map preserved the row sets on 1238 (875 with a complete group), missed 0
+CC_FAIL GH-140 abort path never exercised
+CC_FAIL mutant expectations not met
+GH-152 partH: 600 relabeled codes (400 hypergraph products, 132 with dX != dZ), 401 gain a verified dual map only through -cc-aut, 595 gain coarser X-half orbits; 6000 driver runs with -cc-aut=on, 0 bad; swap maps violating the classes 0
+mutant 13 (Tanner candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks): half level 8320/96000 ladders wrong; driver 752/1200 runs wrong or stopped
+mutant 14 (Tanner swap map, or the identity, used as dual map without the GF(2) check): driver 197/600 runs wrong or stopped
+mutant 1 (forbidden set not restored): 0/0 half ladders wrong
+mutant 2 (packing prune >=): 0/0 half ladders wrong
+mutant 3 (orbit seed rule off by one, instances with orbits): 0/0 half ladders wrong
+mutant 4 (stop rule without other half's lb, forces sequential): schedule requested 0/0 runs wrong; default options 0/0 wrong
+mutant 5 (parity rule forced on halves with an even column weight): 0/0 half ladders wrong
+mutant 6 (leaf budget off by one): 0/0 half ladders wrong
+mutant 7 (leaf closure without the detector check): 0/0 half ladders wrong
+mutant 8 (overlap limit off by one): 0/0 half ladders wrong
+mutant 9 (overlap with the parity checks H as K): 0/0 half ladders wrong
+mutant 10 (overlap even-|g| tie cut): 0/0 half ladders wrong
+mutant 11 (ub-search without the detector check; halves/codes where a trivial word is lighter than d): finder returned a trivial word on 8/8 halves; driver 4/4 runs stopped or wrong
+mutant 12 (mutant 11 + words reported without verification): 4/4 driver runs failed, 4 of them with a wrong RESULT d OPTIMAL
+CC_ENGINE_TESTS FAIL (3)

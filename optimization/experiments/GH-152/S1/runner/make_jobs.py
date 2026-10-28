@@ -7,7 +7,9 @@ default path is byte-identical, S0/identity), new = old + -cc-aut=on. Both arms 
   s0:    node counts per level, -ub-search=off (deterministic ladder), 3600 s, codes given on the command line.
   answers: Tier 0 answer check, every tier0-3 code x 7 -cc-aut=on variants (rule sets, seeds, dual off, index seeds,
          finder off), 600 s each; the runner's science check compares each answer with the stem.
-usage: make_jobs.py panel|tier5|s0|answers OUT.jsonl [STEMS...]"""
+  xcheck: new arm with relabelling seed N (-seed=N) on the given stems, 21600 s (cross-check of new lower bounds);
+         usage make_jobs.py xcheck OUT.jsonl SEED STEMS...
+usage: make_jobs.py panel|tier5|s0|answers|xcheck OUT.jsonl [STEMS...]"""
 import glob, json, os, sys
 kind, out = sys.argv[1], sys.argv[2]
 ARMS = [('old', []), ('new', ['-cc-aut=on'])]
@@ -33,6 +35,11 @@ elif kind == 's0':
         for arm, extra in ARMS:
             jobs.append(dict(id=f's0.{stem}.{arm}', args=['-engine=cc', '-cc-stats', '-ub-search=off', '-v'] + extra, code=code_of(stem),
                              stem=stem, tier=int(code_of(stem).split('tier')[1][0]), arm=arm, seed=0, limit=3600))
+elif kind == 'xcheck':
+    seed = int(sys.argv[3])
+    for stem in sys.argv[4:]:
+        jobs.append(dict(id=f'x5.{stem}.new.s{seed}', args=['-engine=cc', '-cc-stats', '-cc-aut=on', f'-seed={seed}'], code=code_of(stem),
+                         stem=stem, tier=5, arm='new', seed=seed, limit=21600))
 elif kind == 'answers':
     VARS = [('aut', []), ('aut-seed1', ['-seed=1']), ('aut-seed2-dualoff', ['-seed=2', '-cc-dual=off']),
             ('aut-nosymbreak-seed3', ['-no-symbreak', '-seed=3']), ('aut-gh133rules', ['-cc-rules=excl,pack,orbf,parity,leaf']),
