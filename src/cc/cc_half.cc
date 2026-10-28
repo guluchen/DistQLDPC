@@ -42,7 +42,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
                        const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
-      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), w_(0), nodd_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), lbminr_(3), lbgap_(0), lbany_(false), lbraise_(true), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -253,10 +253,270 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         }
     }
 
+    if (rules_.charge || rules_.ecover) {   /* GH-157 scratch */
+        lbrs_.assign((size_t)m_ + 1, 0);
+        lbrq_.assign((size_t)rstart_[m_] + 1, 0);
+        lbw_.reset(n_, m_);
+        lbany_ = true;
+    }
+
     syn_.assign((size_t)mw_, 0);
     gpar_.assign((size_t)kw_, 0);
     blk_.assign((size_t)n_, 0);
     mark_.assign((size_t)n_, 0);
+}
+
+/* ---------------- GH-157: charge / ecover node lower bounds ---------------- */
+
+LbWork::LbWork() : st(0), st2(0) {
+    lcm[0] = 1;
+    for (int d = 1; d <= 32; d++) {
+        int64_t a = lcm[d - 1], b = d;
+        while (b) { const int64_t t = a % b; a = b; b = t; }
+        lcm[d] = lcm[d - 1] / a * d;   /* lcm(1..32) = 144403552893600 < 2^48 */
+    }
+}
+
+void LbWork::reset(int nq, int maxrows) {
+    cnt.assign((size_t)nq, 0);
+    c2.assign((size_t)nq, 0);
+    own.assign((size_t)nq, -1);
+    load.assign((size_t)nq, 0);
+    mk.assign((size_t)nq, 0);
+    mk2.assign((size_t)nq, 0);
+    st = st2 = 0;
+    const size_t m = (size_t)(maxrows > 0 ? maxrows : 1);
+    y.assign(m, 0);
+    match.assign(m, -1);
+    par.assign(m, -1);
+    base.assign(m, 0);
+    q.assign(m, 0);
+    used.assign(m, 0);
+    blos.assign(m, 0);
+    astart.assign(m + 1, 0);
+}
+
+/* Charge (see cc_half.h). Pass 1: c_j = number of the k sets containing j (lazily reset by stamp), D = max c_j.
+ * Pass 2: y_u = L / max_{j in u} c_j (scaled by L = lcm(1..D)); loads. Pass 3: raise. Exact integer arithmetic:
+ * Y <= k L <= k 2^48, no overflow for k < 2^15 (k is at most the number of rows of H; checked). */
+int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise) {
+    const uint64_t st = ++w.st;
+    int D = 0;
+    for (int i = 0; i < k; i++) {
+        if (rs[i] == rs[i + 1]) return LB_DEAD;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) {
+            const uint32_t j = rq[t];
+            if (w.mk[j] != st) { w.mk[j] = st; w.cnt[j] = 0; w.load[j] = 0; }
+            if (++w.cnt[j] > D) D = w.cnt[j];
+        }
+    }
+    return lb_charge_counted(rs, rq, k, r, w, mutant, raise, D);
+}
+
+/* lb_charge after the counting pass: w.cnt[j] = c_j and w.load[j] = 0 for every j in the sets, D = max c_j, no empty set */
+int lb_charge_counted(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise, int D) {
+    if (D > 32 || k >= (1 << 15)) return 0;   /* idle: denominators too large for the scaled integers */
+    const int64_t L = w.lcm[D];
+    const int64_t R = r < 0 ? -1 : (int64_t)r * L;
+    int64_t Y = 0;
+    for (int i = 0; i < k; i++) {   /* local-degree charge; stops as soon as the sum exceeds r */
+        int dm = 0;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) if (w.cnt[rq[t]] > dm) dm = w.cnt[rq[t]];
+        int64_t yi = L / dm;
+        if (mutant == 15) yi += L / D;   /* mutant: charge inflated by 1/D (infeasible) */
+        w.y[i] = yi;
+        Y += yi;
+        if (R >= 0 && Y > R) return (int)((Y + L - 1) / L);
+    }
+    if (!raise) return (int)((Y + L - 1) / L);
+    for (int i = 0; i < k; i++)
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) w.load[rq[t]] += w.y[i];
+    for (int i = 0; i < k; i++) {   /* raise: y_u += min residual capacity of its qubits (keeps feasibility) */
+        int64_t s = L;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) { const int64_t res = L - w.load[rq[t]]; if (res < s) s = res; }
+        if (s <= 0) continue;
+        w.y[i] += s;
+        Y += s;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) w.load[rq[t]] += s;
+        if (R >= 0 && Y > R) break;
+    }
+    return (int)((Y + L - 1) / L);
+}
+
+/* Edmonds' blossom algorithm (BFS from each exposed vertex, blossom contraction by base relabelling), O(V^3);
+ * graphs here have at most a few dozen vertices. Written from the textbook description of the algorithm. */
+namespace {
+struct Blossom {
+    LbWork& w;
+    int n;
+    explicit Blossom(LbWork& ww, int nv) : w(ww), n(nv) {}
+    int lca(int a, int b) {
+        std::fill(w.used.begin(), w.used.begin() + n, 0);
+        for (;;) {
+            a = w.base[a];
+            w.used[a] = 1;
+            if (w.match[a] < 0) break;
+            a = w.par[w.match[a]];
+        }
+        for (;;) {
+            b = w.base[b];
+            if (w.used[b]) return b;
+            b = w.par[w.match[b]];
+        }
+    }
+    void mark_path(int v, int b, int child) {
+        while (w.base[v] != b) {
+            w.blos[w.base[v]] = w.blos[w.base[w.match[v]]] = 1;
+            w.par[v] = child;
+            child = w.match[v];
+            v = w.par[w.match[v]];
+        }
+    }
+    int find_path(int root) {
+        std::fill(w.used.begin(), w.used.begin() + n, 0);
+        std::fill(w.par.begin(), w.par.begin() + n, -1);
+        for (int i = 0; i < n; i++) w.base[i] = i;
+        w.used[root] = 1;
+        int qh = 0, qt = 0;
+        w.q[qt++] = root;
+        while (qh < qt) {
+            const int v = w.q[qh++];
+            for (int t = w.astart[v]; t < w.astart[v + 1]; t++) {
+                const int to = w.adj[t];
+                if (w.base[v] == w.base[to] || w.match[v] == to) continue;
+                if (to == root || (w.match[to] >= 0 && w.par[w.match[to]] >= 0)) {
+                    const int cb = lca(v, to);
+                    std::fill(w.blos.begin(), w.blos.begin() + n, 0);
+                    mark_path(v, cb, to);
+                    mark_path(to, cb, v);
+                    for (int i = 0; i < n; i++)
+                        if (w.blos[w.base[i]]) {
+                            w.base[i] = cb;
+                            if (!w.used[i]) { w.used[i] = 1; w.q[qt++] = i; }
+                        }
+                } else if (w.par[to] < 0) {
+                    w.par[to] = v;
+                    if (w.match[to] < 0) return to;
+                    const int t2 = w.match[to];
+                    w.used[t2] = 1;
+                    w.q[qt++] = t2;
+                }
+            }
+        }
+        return -1;
+    }
+};
+} /* namespace */
+
+int max_matching(int nv, const std::vector<int>& ea, const std::vector<int>& eb, int stop, LbWork& w) {
+    if (nv <= 0) return 0;
+    if ((int)w.match.size() < nv) w.reset((int)w.cnt.size(), nv);
+    /* adjacency (CSR), self-loops dropped */
+    std::fill(w.astart.begin(), w.astart.begin() + nv + 1, 0);
+    const int ne = (int)ea.size();
+    for (int e = 0; e < ne; e++) if (ea[e] != eb[e]) { w.astart[ea[e] + 1]++; w.astart[eb[e] + 1]++; }
+    for (int v = 0; v < nv; v++) w.astart[v + 1] += w.astart[v];
+    w.adj.resize((size_t)w.astart[nv] + 1);
+    {
+        std::vector<int>& fill = w.q;   /* q is free here: reused as the fill pointer */
+        for (int v = 0; v < nv; v++) fill[v] = w.astart[v];
+        for (int e = 0; e < ne; e++) if (ea[e] != eb[e]) { w.adj[fill[ea[e]]++] = eb[e]; w.adj[fill[eb[e]]++] = ea[e]; }
+    }
+    std::fill(w.match.begin(), w.match.begin() + nv, -1);
+    int msz = 0;
+    for (int e = 0; e < ne; e++)   /* greedy start */
+        if (ea[e] != eb[e] && w.match[ea[e]] < 0 && w.match[eb[e]] < 0) { w.match[ea[e]] = eb[e]; w.match[eb[e]] = ea[e]; msz++; }
+    Blossom bl(w, nv);
+    for (int v = 0; v < nv && (stop < 0 || msz < stop); v++) {
+        if (w.match[v] >= 0 || w.astart[v] == w.astart[v + 1]) continue;
+        int u = bl.find_path(v);
+        if (u < 0) continue;
+        msz++;
+        while (u >= 0) {   /* augment along the alternating path */
+            const int pv = w.par[u], ppv = w.match[pv];
+            w.match[u] = pv;
+            w.match[pv] = u;
+            u = ppv;
+        }
+    }
+    return msz;
+}
+
+/* Edge cover (see cc_half.h). U' greedy in index order: a set is admitted iff none of its qubits already lies in 2
+ * admitted sets (mutant 16: every set admitted). A qubit's second admitted set adds the edge (first, second); with
+ * mutant 16 every further set adds an edge to the first one as well. The search selects U' the same way. */
+int lb_ecover(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool* exact, int* nsel) {
+    const uint64_t st = ++w.st2;
+    int ns = 0;
+    w.ea.clear();
+    w.eb.clear();
+    for (int i = 0; i < k; i++)
+        if (rs[i] == rs[i + 1]) { *exact = false; *nsel = 0; return LB_DEAD; }
+    for (int i = 0; i < k; i++) {
+        bool ok = true;
+        if (mutant != 16)
+            for (uint32_t t = rs[i]; t < rs[i + 1]; t++) {
+                const uint32_t j = rq[t];
+                if (w.mk2[j] == st && w.c2[j] >= 2) { ok = false; break; }
+            }
+        if (!ok) continue;
+        const int v = ns++;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) {
+            const uint32_t j = rq[t];
+            if (w.mk2[j] != st) { w.mk2[j] = st; w.c2[j] = 0; w.own[j] = -1; }
+            if (w.c2[j] == 0) w.own[j] = v;
+            else { w.ea.push_back(w.own[j]); w.eb.push_back(v); }
+            w.c2[j]++;
+        }
+    }
+    *exact = ns == k;
+    *nsel = ns;
+    /* |U'| - floor(|U'|/2) <= |U'| - nu <= |U'|: decided without the matching when either end settles it */
+    if (r >= 0 && ns <= r) return ns;
+    if (r >= 0 && ns - ns / 2 > r) return ns - ns / 2;
+    const int nu = max_matching(ns, w.ea, w.eb, r >= 0 ? ns - r : -1, w);
+    return ns - nu;
+}
+
+/* GH-157: evaluate charge, then ecover, at the current node (pack did not prune; the caller checked the budget, |U|
+ * and the gap gate). The candidate sets of the odd rows are copied once (index order) and handed to lb_charge /
+ * lb_ecover, the same functions the tests compare against brute force. Returns true if the node is empty (a bound
+ * exceeds the remaining budget, or an odd row has no available qubit). */
+bool HalfSearch::lb_prune(int size) {
+    const int r = w_ - size;
+    ++res_->lbeval;
+    int k = 0, D = 0;
+    uint32_t nq = 0;
+    const uint64_t st = ++lbw_.st;   /* counting stamp (the copy pass also counts c_j, as lb_charge's first pass) */
+    lbrs_[0] = 0;
+    for (int wi = 0; wi < mw_; wi++) {
+        uint64_t x = syn_[wi];
+        while (x) {
+            const int row = wi * 64 + __builtin_ctzll(x);
+            x &= x - 1;
+            for (uint32_t t = rstart_[row], e = rstart_[row + 1]; t < e; t++) {
+                const uint32_t qb = rq_[t];
+                if (blk_[qb]) continue;
+                lbrq_[nq++] = qb;
+                if (lbw_.mk[qb] != st) { lbw_.mk[qb] = st; lbw_.cnt[qb] = 0; lbw_.load[qb] = 0; }   /* lb_charge's counting */
+                if (++lbw_.cnt[qb] > D) D = lbw_.cnt[qb];
+            }
+            if (lbrs_[k] == nq) { ++res_->lbdead; return true; }   /* odd row without an available qubit */
+            lbrs_[++k] = nq;
+        }
+    }
+    if (rules_.charge) {
+        const int b = lb_charge_counted(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, lbraise_, D);
+        if (b > r) { ++res_->chgprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
+    }
+    if (rules_.ecover) {
+        bool exact = false;
+        int nsel = 0;
+        const int b = lb_ecover(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, &exact, &nsel);
+        if (exact) ++res_->ecexact;
+        if (b > r) { ++res_->ecprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
+    }
+    return false;
 }
 
 inline void HalfSearch::toggle(int q) {
@@ -388,6 +648,9 @@ bool HalfSearch::dfs(int size) {
     const bool pack = rules_.pack, mrv = rules_.mrv;
     const uint64_t st = ++stamp_;
     int p = 0, brow = -1;
+    /* GH-157: charge/ecover only where a hitting-set bound can exceed the remaining budget (tau <= |U| = nodd_) */
+    const bool lbon = lbany_ && w_ - size >= lbminr_ && nodd_ > w_ - size;
+
     uint32_t bcnt = UINT32_MAX;
     for (int wi = 0; wi < mw_ && !(brow >= 0 && !pack && !mrv); wi++) {
         uint64_t x = syn_[wi];
@@ -433,6 +696,9 @@ bool HalfSearch::dfs(int size) {
         }
     }
     if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
+    /* gap gate: evaluated only when the packing is within lb-gap of pruning (r - p <= gap; prunes concentrate at
+     * r = p); without pack always. Skipping an evaluation only skips a sound prune. */
+    if (lbon && (!pack || w_ - size - p <= lbgap_) && lb_prune(size)) return false;
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;
@@ -516,6 +782,7 @@ LevelResult HalfSearch::run_level(int w) {
     cur_.assign((size_t)w, -1);
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
     r.by_budget.assign((size_t)w + 1, 0);
+    if (rules_.charge || rules_.ecover) r.lbprune_by_budget.assign((size_t)w + 1, 0);
     for (size_t i = 0; i < seed_.size(); i++) {
         const int s = seed_[i];
         /* mutant 3 (orbit seed rule off by one): the seed rule's forbidding of O_i is applied BEFORE the

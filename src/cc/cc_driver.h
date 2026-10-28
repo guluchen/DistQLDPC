@@ -56,7 +56,10 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap; GH-157 adds charge, ecover) */
+    int lb_minr;             /* GH-157 -cc-lb-minr=K: charge/ecover evaluated at remaining budget >= K (default 3) */
+    int lb_gap;              /* GH-157 -cc-lb-gap=G: ... and only where remaining budget - packing <= G (default 0) */
+    bool lb_raise;           /* GH-157 -cc-lb-raise=on|off: charge raise step (default on) */
     bool dual;               /* -cc-dual=on|off (default on) */
     bool ub_basis;           /* -ub-basis (default on; -ub-basis=off): verified basis rows as initial upper bound */
     uint64_t seed;           /* -cc-seed=N (default 0 = identity labels) */
@@ -91,7 +94,7 @@ struct DriverOptions {
                                 driver itself does not read it. Test mutants (wrapper): 13 = candidates kept without the
                                 GF(2) checks plus the cyclic shift i -> i+1 mod n (not an automorphism in general); 14 = swap map used without the check, the identity
                                 when none was found. */
-    DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
+    DriverOptions() : lb_minr(3), lb_gap(0), lb_raise(true), dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0),
                       aut(false) {}
 };
@@ -110,7 +113,7 @@ struct BoundSink {
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
-/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv (or "none"); empty values and empty items
+/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge, ecover (or "none"); empty values and empty items
  * are invalid. */
 bool parse_rules(const char* s, Rules& out);
 std::string rules_string(const Rules& r);

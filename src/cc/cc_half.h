@@ -78,6 +78,27 @@
  *         it would drop both e and e + g (mutant 10). With the leaf rule, children of remaining budget 1 or 2
  *         (whose subtrees are lookups only) skip the counter updates: a closure found there is a weight-w element
  *         of F and meets every limit by itself. Full proof: MODIFICATIONS.md (GH-138).
+ *   charge (GH-157, default off; Banfi, Ferrari, Favano, Tarable, Barletta, arXiv:2610.28008, detector charges; Okada-Kasai,
+ *         cpm-ldpc-distance, scaled feasible dual of set cover) node lower bound from a feasible dual of the hitting-set
+ *         LP. At a node with odd rows U and available qubits A (not in S, not forbidden), every extension e of weight w
+ *         that the other rules keep reachable (S a subset of e, no forbidden qubit in e) has e \ S inside A and meets
+ *         every N(u) & A (u in U) by (2), so |e \ S| >= tau(U, A) = min hitting set of {N(u) & A}. For every y >= 0 on U
+ *         with sum_{u ni j} y_u <= 1 for all j in A (dual feasibility), sum_u y_u <= tau* <= tau (weak duality), hence
+ *         ceil(sum y) <= w - |S| or the node is empty. y is the local-degree charge y_u = 1 / max_{j in N(u) & A}
+ *         c_j with c_j = |N(j) & U| (feasible: the c_j rows through j each give at most 1/c_j), then raised row by row
+ *         (index order) by the smallest residual capacity 1 - load(j) of its qubits (stays feasible). All values are
+ *         integers scaled by L = lcm(1..D), D = max c_j <= 32 (rule idle if D > 32); a prune needs sum y > w - |S|,
+ *         i.e. scaled Y > (w - |S|) L, exact integer comparison. An odd row with no available qubit is a dead end.
+ *   ecover (GH-157, default off; Gallai's theorem; Okada-Kasai's bipartite matching bound a + b - s is the special case
+ *         of two check classes) choose U' within U greedily (index order) such that every qubit of A lies in at most 2
+ *         rows of U'. On U' a hitting set is an edge cover of the multigraph on U' whose edges are the qubits in 2 rows
+ *         of U' (qubits in 1 row are loops), so tau(U', A) = |U'| - nu (Gallai; nu = maximum matching of the non-loop
+ *         edges, Edmonds' blossom algorithm; every row of U' must have an available qubit, else the node is dead), and
+ *         tau(U, A) >= tau(U', A). A prune needs |U'| - nu > w - |S|. If every qubit of A meets at most 2 rows of U, U'
+ *         = U and the bound is the exact tau. Both bounds are evaluated only when the packing did not prune, the
+ *         remaining budget is >= lb-minr (default 3) and |U| > w - |S| (tau <= |U| always), so they replace the pack
+ *         test by max(pack, charge, ecover) > w - |S| and leave every other rule's argument unchanged (they only cut
+ *         nodes with no extension of weight w at all). Full proof: MODIFICATIONS.md (GH-157).
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -96,8 +117,39 @@ struct SparseRows {
 
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
-    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true) {}
+    bool charge, ecover;   /* GH-157 node lower bounds, default off */
+    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(false), ecover(false) {}
 };
+
+/* GH-157: node lower bounds on the hitting set tau of the candidate sets of the odd rows, exposed for tests. The k
+ * candidate sets are rows rs[i]..rs[i+1]-1 of rq (distinct qubit ids < the work size per row). Scratch state lives in
+ * LbWork (sized by reset(nq, max rows)). With r >= 0 both return v such that v > r iff the bound exceeds r, and v > r
+ * implies v <= bound (a valid lower bound on tau); the early exits may return other values <= r. r < 0 asks for the
+ * exact bound. LB_DEAD: a set is empty. */
+static const int LB_DEAD = 1 << 30;
+struct LbWork {
+    std::vector<int32_t> cnt, c2, own;
+    std::vector<int64_t> load;
+    std::vector<uint64_t> mk, mk2;
+    uint64_t st, st2;
+    std::vector<int64_t> y;
+    std::vector<int> ea, eb, adj, astart, match, par, base, q;
+    std::vector<uint8_t> used, blos;
+    int64_t lcm[33];
+    LbWork();
+    void reset(int nq, int maxrows);
+};
+/* charge: ceil(sum y) of the raised local-degree charge (raise = false: local-degree only; 0 when max c_j > 32); mutant 15
+ * adds L/D to every y_u */
+int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise = true);
+/* lb_charge after its counting pass (the search counts while it copies the sets): w.cnt[j] = c_j, w.load[j] = 0 for every
+ * j in the sets, D = max c_j, every set nonempty */
+int lb_charge_counted(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise, int D);
+/* ecover: |U'| - nu (Gallai); *exact = (U' = U); *nsel = |U'|. Mutant 16 admits every row (no "at most 2" check). */
+int lb_ecover(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool* exact, int* nsel);
+/* maximum matching size of a simple or multi graph on nv vertices (edges ea[i]-eb[i]), Edmonds' blossom algorithm;
+ * stops once the matching reaches 'stop' (stop < 0: never). Exposed for tests. */
+int max_matching(int nv, const std::vector<int>& ea, const std::vector<int>& eb, int stop, LbWork& w);
 
 /* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */
 enum LevelVerdict { LEVEL_EMPTY = 0, LEVEL_FOUND = 1, LEVEL_INCONSISTENT = 2, LEVEL_ABORTED = 3 };
@@ -113,11 +165,18 @@ struct LevelResult {
     uint64_t leaf1, leaf2;     /* leaf: budget-1 lookups; budget-2 lookups (one per candidate a) */
     uint64_t ovtight;          /* overlap: a stabilizer row reached |S & g| = floor(|g|/2) (rest of g forbidden) */
     uint64_t ovforbid;         /* overlap: qubits turned from free to forbidden by those events */
+    uint64_t lbeval;           /* GH-157: nodes where charge/ecover were evaluated */
+    uint64_t chgprune;         /* GH-157: charge bound > remaining budget (pack did not prune) */
+    uint64_t ecprune;          /* GH-157: ecover bound > remaining budget (pack and charge did not prune) */
+    uint64_t ecexact;          /* GH-157: ecover evaluations with U' = U (exact tau) */
+    uint64_t lbdead;           /* GH-157: odd row without an available qubit found by charge/ecover (pack off) */
+    std::vector<uint64_t> lbprune_by_budget;   /* GH-157: charge+ecover prunes by remaining budget (-cc-stats) */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
-                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0), skipped(false) {}
+                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0),
+                    lbeval(0), chgprune(0), ecprune(0), ecexact(0), lbdead(0), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -129,7 +188,9 @@ struct LevelResult {
  * 7 leaf closures accepted without the detector check (trivial closures reported as found); GH-138 overlap
  * mutants: 8 limit off by one (floor(|g|/2) - 1: a row is tight one qubit early), 9 the parity checks H used as K
  * (rows of H are not in ker H in general), 10 the even-|g| tie cut (limit |g|/2 - 1 for even |g|, which loses
- * both e and e + g when |e & g| = |g|/2).
+ * both e and e + g when |e & g| = |g|/2). GH-157 (13 and 14 are reserved for GH-152): 15 charge inflated by 1/D (every
+ * y_u gets an extra L/D), 16 ecover without the "at most 2 rows of U' per qubit" condition (every odd row admitted; a
+ * qubit in 3 or more rows of U' then counts as several edges, which overestimates tau).
  * (GH-124 fix round 1: the S0 spec's literal mutant 3, "orbit seeds without forbidding earlier orbits", only
  * drops a restriction and is a sound weakening that can never change a level verdict, so it was replaced by
  * this non-equivalent orbit-rule mutant. GH-133: the spec's literal leaf mutant, "leaf lookup ignoring the
@@ -153,6 +214,13 @@ public:
      * (default): never called. The callback must not call back into this object. The search itself (node order,
      * verdicts) does not depend on the callback. */
     void set_poll(bool (*fn)(void*), void* ctx, uint64_t mask = 0x3FFF) { poll_fn_ = fn; poll_ctx_ = ctx; poll_mask_ = mask; }
+
+    /* GH-157: charge/ecover are evaluated at remaining budget >= minr (default 3; tests use 1) */
+    void set_lb_minr(int minr) { lbminr_ = minr < 1 ? 1 : minr; }
+    /* GH-157: with pack on, evaluated only where r - p <= gap (p = the node's packing, r = remaining budget; default 0) */
+    void set_lb_gap(int gap) { lbgap_ = gap < 0 ? 0 : gap; }
+    /* GH-157: charge without the raise step (local-degree charge only; tuning) */
+    void set_lb_raise(bool on) { lbraise_ = on; }
 
     int n() const { return n_; }
     bool orbit_seeds() const { return orbit_mode_; }
@@ -197,6 +265,13 @@ private:
     std::vector<int> klim_;
     std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
+    /* GH-157 charge/ecover: minimum remaining budget, candidate CSR of the odd rows, scratch */
+    int lbminr_, lbgap_;
+    bool lbany_, lbraise_;
+    std::vector<uint32_t> lbrs_, lbrq_;     /* candidate sets of the odd rows (CSR) */
+    LbWork lbw_;
+    bool lb_prune(int size);
+    void lb_build_sets(int& k);
 
     /* search state */
     int w_;
