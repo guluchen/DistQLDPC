@@ -249,7 +249,7 @@ vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* no
 vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 0 ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats $L $M
 vgrep 3 "^c cc-stats: X level 2 EMPTY .* ovtight 0 ovforbid 0 time" -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf $L $M
 # 7b'. GH-157: the node-lower-bound line and stats lines appear only with the new rules
-vgrep 3 "^c cc: node lower bounds charge ecover at remaining budget >= 3 and budget - packing <= 0, auto off below 45 % (GH-157)" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,ecover $L $M
+vgrep 3 "^c cc: node lower bounds charge ecover at remaining budget >= 3 and budget - packing <= 0, auto off below 40 % (GH-157)" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,ecover $L $M
 vgrep 3 "^c cc-stats: X level 2 lb lbeval [0-9]* chgprune [0-9]* ecprune [0-9]* ecexact [0-9]* lbdead [0-9]*" -engine=cc -cc-stats -cc-rules=charge,ecover -cc-lb-minr=1 -cc-lb-gap=5 $L $M
 vgrep 3 "^c cc-stats: X level 2 lbprune-by-budget" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 $L $M
 runs=$((runs + 1)); run -v -engine=cc -cc-stats $L $M

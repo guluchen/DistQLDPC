@@ -2304,8 +2304,8 @@ int main(int argc, char** argv) {
             printf("            GH-157, off by default: charge = fractional (LP-dual) charge node lower bound, ecover = Gallai\n");
             printf("            edge-cover node lower bound; evaluated at remaining budget >= -cc-lb-minr=K (default 3) where the\n");
             printf("            packing is within -cc-lb-gap=G of pruning (default 0); -cc-lb-raise=off: charge without the raise;\n");
-            printf("            -cc-lb-auto=P switches them off for a half after a level where < P %% of >= 1000 evaluations\n");
-            printf("            pruned (default 45; 0 = never))\n");
+            printf("            -cc-lb-auto=P switches them off for a half after a level where < P %% of >= 100000 evaluations\n");
+            printf("            pruned (default 40; 0 = never))\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
             printf("            -cc-seed=N relabel qubits/rows (default 0 = identity); -cc-trace=FILE; -cc-stats\n");
