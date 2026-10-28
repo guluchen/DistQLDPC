@@ -355,6 +355,12 @@ data/matrices/tierN/    # benchmark codes (Hx, Hz, Gx, Gz) by tier; see data/mat
 
 ---
 
+## Authors
+
+DistQLDPC is developed by Yu-Fang Chen in collaboration with Ching-Yi Lai
+(National Yang Ming Chiao Tung University). The project was started at
+Ching-Yi Lai's suggestion, and the work continues through ongoing joint discussion.
+
 ## License
 
 DistQLDPC is licensed under **GPL-3.0-or-later** — see [LICENSE](LICENSE).
