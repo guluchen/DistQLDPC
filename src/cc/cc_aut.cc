@@ -67,6 +67,49 @@ public:
         return ok;
     }
 
+    /* single partition (GH-152 speed-up of the top-level tests): the same splitting as refine(A, B), with one 64-bit
+     * hash per splitter step of its (cell, count) key sequence. rec != NULL records the steps; cmp != NULL replays: a
+     * step whose hash differs from the recorded one, or a different number of steps, ends the refinement (false). Two
+     * partitions related by an automorphism produce identical step sequences, so a mismatch refutes the pair; a hash
+     * collision can only let a non-matching pair continue, and every map is checked explicitly afterwards. */
+    bool refine1(Part& P, std::vector<uint64_t>* rec, const std::vector<uint64_t>* cmp) {
+        size_t head = 0, step = 0;
+        bool ok = true;
+        while (head < q_.size()) {
+            const int s = q_[head++];
+            inq_[(size_t)s] = 0;
+            if (!ok) continue;
+            count(P, s, cntA_, touA_);
+            keys(P, touA_, cntA_, keyA_);
+            uint64_t h = 0x9e3779b97f4a7c15ULL ^ (uint64_t)s ^ ((uint64_t)keyA_.size() << 40);
+            for (size_t i = 0; i < keyA_.size(); i++) {
+                h ^= keyA_[i].first + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+            }
+            if (rec) rec->push_back(h);
+            if (cmp && (step >= cmp->size() || (*cmp)[step] != h)) ok = false;
+            step++;
+            if (ok) {
+                size_t b = 0;
+                while (b < keyA_.size()) {
+                    const int c = (int)(keyA_[b].first >> 32);
+                    size_t e = b;
+                    while (e < keyA_.size() && (int)(keyA_[e].first >> 32) == c) e++;
+                    split_cell(P, c, keyA_, b, e, true);
+                    b = e;
+                }
+            }
+            for (size_t i = 0; i < touA_.size(); i++) cntA_[(size_t)touA_[i]] = 0;
+            if (work_ > limit_) ok = false;
+            if (ok && P.ncells == g_.V) {
+                for (size_t i = head; i < q_.size(); i++) inq_[(size_t)q_[i]] = 0;
+                head = q_.size();
+            }
+        }
+        q_.clear();
+        if (ok && cmp && step != cmp->size()) ok = false;
+        return ok;
+    }
+
 private:
     const Graph& g_;
     std::vector<int> q_;
@@ -184,6 +227,13 @@ void push_individualised(Refiner& R, const Part& P, int s) {
     else R.push(s + 1);
 }
 
+bool same_cells(const Part& A, const Part& B) {
+    if (A.ncells != B.ncells) return false;
+    for (int i = 0; i < (int)A.lab.size(); i += A.len[(size_t)i])
+        if (A.len[(size_t)i] != B.len[(size_t)i] || A.len[(size_t)i] < 1) return false;
+    return true;
+}
+
 int first_nonsingleton(const Part& P) {
     for (int i = 0; i < (int)P.lab.size(); i += P.len[(size_t)i])
         if (P.len[(size_t)i] > 1) return i;
@@ -192,7 +242,8 @@ int first_nonsingleton(const Part& P) {
 
 class AutSearch {
 public:
-    explicit AutSearch(const Graph& g) : g_(g), R_(g), mark_((size_t)g.n, 0), stamp_(0) {}
+    /* the pools are sized once for the depth limit (64) so that references to slots never move */
+    explicit AutSearch(const Graph& g) : g_(g), R_(g), mark_((size_t)g.n, 0), stamp_(0), poolA_(66), poolB_(66) {}
 
     Refiner& refiner() { return R_; }
 
@@ -232,13 +283,47 @@ public:
         return true;
     }
 
-    /* 1: map found (qubit part in pi), 0: refuted, -1: work limit or depth limit */
+    /* reusable partition buffers per search depth (copy assignment keeps the capacity: no allocation per test) */
+    Part& slot(int side, int depth) {
+        return (side ? poolB_ : poolA_)[(size_t)depth];   /* depth <= 64 (search stops at depth 64) */
+    }
+
+    /* test: is there a map with the source vertex a and the target vertex b individualised in the cell starting at s
+     * of the (lockstep-equal) partitions A0 and B0? 1: found (qubit part in pi), 0: refuted, -1: work or depth limit */
+    int test(const Part& A0, const Part& B0, int s, int a, int b, std::vector<int>& pi) {
+        Part& A = slot(0, 0);
+        Part& B = slot(1, 0);
+        A = A0; B = B0;
+        individualise(A, s, a);
+        individualise(B, s, b);
+        push_individualised(R_, A, s);
+        return search(A, B, pi, 1);
+    }
+
+    /* replay test against a recorded source: Aref = A0 with a individualised and refined (trace tr); B0 the target's base
+     * partition; b the target vertex. Same verdicts as test(). */
+    int test_replay(const Part& Aref, const std::vector<uint64_t>& tr, const Part& B0, int s, int b, std::vector<int>& pi) {
+        Part& B = slot(1, 0);
+        B = B0;
+        individualise(B, s, b);
+        push_individualised(R_, B, s);
+        if (!R_.refine1(B, NULL, &tr) || !same_cells(Aref, B)) return R_.out_of_work() ? -1 : 0;
+        if (Aref.ncells == g_.V) {
+            if (!check_discrete(Aref, B, vmap_)) return 0;
+            pi.assign(vmap_.begin(), vmap_.begin() + g_.n);
+            return 1;
+        }
+        Part& A = slot(0, 0);
+        A = Aref;
+        return search(A, B, pi, 1);   /* empty queue: search branches from the refined pair */
+    }
+
+    /* refine the queued splitters, then branch; A and B live in slot(., depth - 1) (or are the caller's) */
     int search(Part& A, Part& B, std::vector<int>& pi, int depth) {
         if (!R_.refine(A, B)) return R_.out_of_work() ? -1 : 0;
         if (A.ncells == g_.V) {
-            std::vector<int> vmap;
-            if (!check_discrete(A, B, vmap)) return 0;
-            pi.assign(vmap.begin(), vmap.begin() + g_.n);
+            if (!check_discrete(A, B, vmap_)) return 0;
+            pi.assign(vmap_.begin(), vmap_.begin() + g_.n);
             return 1;
         }
         if (depth >= 64) return -1;
@@ -246,7 +331,9 @@ public:
         const int a = A.lab[(size_t)s];
         const int L = A.len[(size_t)s];
         for (int j = 0; j < L; j++) {
-            Part A2 = A, B2 = B;
+            Part& A2 = slot(0, depth);
+            Part& B2 = slot(1, depth);
+            A2 = A; B2 = B;
             individualise(A2, s, a);
             individualise(B2, s, B.lab[(size_t)s + j]);
             push_individualised(R_, A2, s);
@@ -261,6 +348,8 @@ private:
     Refiner R_;
     std::vector<uint64_t> mark_;
     uint64_t stamp_;
+    std::vector<Part> poolA_, poolB_;
+    std::vector<int> vmap_;
 };
 
 int uf_find_aut(std::vector<int>& par, int a) {
@@ -337,18 +426,54 @@ AutResult find_row_automorphisms(int n, const std::vector<const SparseRows*>& cl
     /* base: coarsest equitable refinement of the type partition */
     R.set_limit(work_limit);
     Part base = S.initial(order);
+    std::vector<uint64_t> trbase, trv0;
     {
-        Part B = base;
         for (int i = 0; i < g.V; i += base.len[(size_t)i]) R.push(i);
-        if (!R.refine(base, B)) {   /* only the work limit can stop the refinement of a partition against itself */
+        if (!R.refine1(base, &trbase, NULL)) {   /* only the work limit can stop the refinement of one partition */
             res.work = R.work();
             res.orbits = n;
             return res;
         }
     }
 
+    /* Union-find over the qubits for the group generated by the maps found so far. Refutations propagate along its
+     * classes: if no map sends v to w, none sends v to g(w) for a found automorphism g either (else g^-1 composed with it
+     * would send v to w); the same holds for swap maps (an automorphism composed with a swap map is a swap map). So
+     * refuted[root] marks a whole class, and a class merged with a refuted one is refuted. */
     std::vector<int> par((size_t)n);
+    std::vector<char> refuted((size_t)n, 0);
     for (int q = 0; q < n; q++) par[(size_t)q] = q;
+    auto unite = [&](const std::vector<int>& pi) {
+        for (int q = 0; q < n; q++) {
+            const int a = uf_find_aut(par, q), b = uf_find_aut(par, pi[(size_t)q]);
+            if (a != b) {
+                const char r = refuted[(size_t)a] | refuted[(size_t)b];
+                par[(size_t)std::max(a, b)] = std::min(a, b);
+                refuted[(size_t)std::min(a, b)] = r;
+            }
+        }
+    };
+    /* one test v -> w in the base cell starting at s (A0/B0: base partitions); returns the search verdict */
+    auto run_test = [&](const Part& A0, const Part& B0, int s, int v, int w, std::vector<int>& pi) {
+        res.tests++;
+        R.set_limit(std::min(work_limit, R.work() + per_test));
+        const int r = S.test(A0, B0, s, v, w, pi);
+        R.set_limit(work_limit);
+        if (r == 0) res.refuted++;
+        else if (r < 0) res.undecided++;
+        return r;
+    };
+    Part Aref;   /* base with v0 individualised and refined (recorded once, replayed by every test from v0) */
+    bool aref_ok = false;
+    auto run_replay = [&](const Part& B0, int s, int w, std::vector<int>& pi) {
+        res.tests++;
+        R.set_limit(std::min(work_limit, R.work() + per_test));
+        const int r = S.test_replay(Aref, trv0, B0, s, w, pi);
+        R.set_limit(work_limit);
+        if (r == 0) res.refuted++;
+        else if (r < 0) res.undecided++;
+        return r;
+    };
     /* v0 = first vertex of the smallest non-singleton qubit cell */
     int c0 = -1;
     for (int i = 0; i < g.V; i += base.len[(size_t)i])
@@ -358,74 +483,46 @@ AutResult find_row_automorphisms(int n, const std::vector<const SparseRows*>& cl
         res.stab_trivial = true;
     } else {
         const int v0 = base.lab[(size_t)c0];
-        {   /* point stabiliser of v0 trivial iff refinement after individualising v0 is discrete */
-            Part A = base, B = base;
-            individualise(A, c0, v0);
-            individualise(B, c0, v0);
-            push_individualised(R, A, c0);
-            if (R.refine(A, B)) res.stab_trivial = A.ncells == g.V;
-        }
         bool decided = true;
+        {   /* point stabiliser of v0 trivial iff refinement after individualising v0 is discrete (recorded once) */
+            Aref = base;
+            individualise(Aref, c0, v0);
+            push_individualised(R, Aref, c0);
+            if (R.refine1(Aref, &trv0, NULL)) { res.stab_trivial = Aref.ncells == g.V; aref_ok = true; }
+            else decided = false;   /* work limit */
+        }
         const int L0 = base.len[(size_t)c0];
-        for (int j = 0; j < L0 && R.work() <= work_limit; j++) {
+        for (int j = 0; j < L0 && decided && R.work() <= work_limit; j++) {
             const int w = base.lab[(size_t)c0 + j];
-            if (w == v0 || uf_find_aut(par, w) == uf_find_aut(par, v0)) continue;
-            res.tests++;
-            Part A = base, B = base;
-            individualise(A, c0, v0);
-            individualise(B, c0, w);
-            push_individualised(R, A, c0);
-            R.set_limit(std::min(work_limit, R.work() + per_test));
+            const int rw = uf_find_aut(par, w);
+            if (w == v0 || rw == uf_find_aut(par, v0) || refuted[(size_t)rw]) continue;
             std::vector<int> pi;
-            const int r = S.search(A, B, pi, 1);
-            R.set_limit(work_limit);
-            if (r == 1) {
-                res.gens.push_back(pi);
-                for (int q = 0; q < n; q++) {
-                    const int a = uf_find_aut(par, q), b = uf_find_aut(par, pi[(size_t)q]);
-                    if (a != b) par[(size_t)std::max(a, b)] = std::min(a, b);
-                }
-            } else if (r == 0) {
-                res.refuted++;
-            } else {
-                res.undecided++;
-                decided = false;
-            }
+            const int r = run_replay(base, c0, w, pi);
+            if (r == 1) { res.gens.push_back(pi); unite(pi); }
+            else if (r == 0) refuted[(size_t)uf_find_aut(par, w)] = 1;
+            else decided = false;
         }
         if (R.work() > work_limit) decided = false;
         res.complete = decided && res.stab_trivial;
         if (!res.complete) {
             /* nontrivial (or undecided) point stabiliser: look for more generators between pairs of qubits of the
-             * same base cell that are still in different orbits (each test bounded; the result stays a subgroup) */
+             * same base cell that are still in different orbits (each test bounded; the result stays a subgroup).
+             * For a fixed source v the refutation marks propagate as above; they are reset for every v. */
             for (int i = 0; i < g.V && R.work() <= work_limit; i += base.len[(size_t)i]) {
                 if (base.lab[(size_t)i] >= n || base.len[(size_t)i] < 2) continue;
                 const int L = base.len[(size_t)i];
                 for (int a = 0; a < L && R.work() <= work_limit; a++) {
                     const int v = base.lab[(size_t)i + a];
                     if (uf_find_aut(par, v) != v) continue;
+                    std::fill(refuted.begin(), refuted.end(), 0);
                     for (int b = a + 1; b < L && R.work() <= work_limit; b++) {
                         const int w = base.lab[(size_t)i + b];
-                        if (uf_find_aut(par, w) != w || uf_find_aut(par, v) == uf_find_aut(par, w)) continue;
-                        res.tests++;
-                        Part A = base, B = base;
-                        individualise(A, i, v);
-                        individualise(B, i, w);
-                        push_individualised(R, A, i);
-                        R.set_limit(std::min(work_limit, R.work() + per_test));
+                        const int rw = uf_find_aut(par, w);
+                        if (rw != w || uf_find_aut(par, v) == rw || refuted[(size_t)rw]) continue;
                         std::vector<int> pi;
-                        const int r = S.search(A, B, pi, 1);
-                        R.set_limit(work_limit);
-                        if (r == 1) {
-                            res.gens.push_back(pi);
-                            for (int q = 0; q < n; q++) {
-                                const int x = uf_find_aut(par, q), y = uf_find_aut(par, pi[(size_t)q]);
-                                if (x != y) par[(size_t)std::max(x, y)] = std::min(x, y);
-                            }
-                        } else if (r == 0) {
-                            res.refuted++;
-                        } else {
-                            res.undecided++;
-                        }
+                        const int r = run_test(base, base, i, v, w, pi);
+                        if (r == 1) { res.gens.push_back(pi); unite(pi); }
+                        else if (r == 0) refuted[(size_t)uf_find_aut(par, w)] = 1;
                     }
                 }
             }
@@ -437,39 +534,35 @@ AutResult find_row_automorphisms(int n, const std::vector<const SparseRows*>& cl
     if (want_swap && classes.size() == 2 && rows[0].size() == rows[1].size() && !rows[0].empty() && R.work() <= work_limit) {
         std::vector<int> sw;
         sw.push_back(0); sw.push_back(2); sw.push_back(1);
-        Part A = S.initial(order), B = S.initial(sw);
+        Part B = S.initial(sw);
         R.set_limit(work_limit);
-        for (int i = 0; i < g.V; i += A.len[(size_t)i]) R.push(i);
-        bool ok = A.len == B.len && R.refine(A, B);
+        for (int i = 0; i < g.V; i += B.len[(size_t)i]) R.push(i);
+        /* the target base (class colours exchanged) must refine exactly like the source base (replayed trace) */
+        bool ok = S.initial(order).len == B.len && R.refine1(B, NULL, &trbase) && same_cells(base, B);
         if (!ok) {
             res.swap_state = R.out_of_work() ? 3 : 2;
-        } else if (A.ncells == g.V) {
+        } else if (base.ncells == g.V) {
             res.tests++;
-            Part A2 = A, B2 = B;
             std::vector<int> pi;
-            const int r = S.search(A2, B2, pi, 1);
+            Part A = base;
+            const int r = S.search(A, B, pi, 1);
             res.swap_state = r == 1 ? 1 : r == 0 ? 2 : 3;
             if (r == 1) res.swap = pi;
         } else {
-            int c = -1;
-            for (int i = 0; i < g.V; i += A.len[(size_t)i])
-                if (A.lab[(size_t)i] < n && A.len[(size_t)i] > 1 && (c < 0 || A.len[(size_t)i] < A.len[(size_t)c])) c = i;
-            if (c < 0) c = first_nonsingleton(A);
-            const int v0 = A.lab[(size_t)c];
+            const int c = c0 >= 0 ? c0 : first_nonsingleton(base);
+            const bool replay = c == c0 && aref_ok;   /* source side = Aref (v0 individualised in cell c0) */
+            const int v0 = base.lab[(size_t)c];
             bool undecided = false;
             res.swap_state = 2;
-            for (int j = 0; j < A.len[(size_t)c] && R.work() <= work_limit; j++) {
-                res.tests++;
-                Part A2 = A, B2 = B;
-                individualise(A2, c, v0);
-                individualise(B2, c, B.lab[(size_t)c + j]);
-                push_individualised(R, A2, c);
-                R.set_limit(std::min(work_limit, R.work() + per_test));
+            std::fill(refuted.begin(), refuted.end(), 0);
+            for (int j = 0; j < B.len[(size_t)c] && R.work() <= work_limit; j++) {
+                const int w = B.lab[(size_t)c + j];
+                if (w < n && refuted[(size_t)uf_find_aut(par, w)]) continue;
                 std::vector<int> pi;
-                const int r = S.search(A2, B2, pi, 1);
-                R.set_limit(work_limit);
+                const int r = replay ? run_replay(B, c, w, pi) : run_test(base, B, c, v0, w, pi);
                 if (r == 1) { res.swap = pi; res.swap_state = 1; break; }
-                if (r < 0) { undecided = true; res.undecided++; } else res.refuted++;
+                if (r < 0) undecided = true;
+                else if (w < n) refuted[(size_t)uf_find_aut(par, w)] = 1;
             }
             if (res.swap_state != 1 && (undecided || R.work() > work_limit)) res.swap_state = 3;
         }

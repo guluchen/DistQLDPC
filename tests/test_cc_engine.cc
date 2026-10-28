@@ -1036,7 +1036,8 @@ int main(int argc, char** argv) {
             if (!ar.swap.empty() && !distcc::rows_map_onto(n, cls, ar.swap, swapmap)) {
                 h_badswap++; fails++; fprintf(stderr, "CC_FAIL GH-152 partH inst=%d: swap map does not exchange the row classes\n", inst);
             }
-            if (find_dual_maps(mHx, mHz, mGx, mGz, false).maps.empty() && !ar.swap.empty() && verify_dual_perm(mHx, mHz, mGx, mGz, ar.swap))
+            const DualMapInfo fdm = find_dual_maps(mHx, mHz, mGx, mGz, false);
+            if (fdm.maps.empty() && !ar.swap.empty() && verify_dual_perm(mHx, mHz, mGx, mGz, ar.swap, fdm))
                 h_newdual++;
             if (find_half_symmetry(mHz, mGx, &ar.gens).reps.size() < find_half_symmetry(mHz, mGx).reps.size()) h_coarser++;
         }

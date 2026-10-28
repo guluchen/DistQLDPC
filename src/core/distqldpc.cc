@@ -1118,15 +1118,23 @@ static void pipe_bound(int pipe_w, const char* kind, uint64_t v) {
  * then the generic GH-75 family (none assumed, all verified). GH-92: the GF(2) basis, row supports
  * and the candidate family are the single shared copies defined in the GH-85 block above
  * (Gf2Basis, append_supports, basis_of, permuted_rows_in, candidate_family(n, true)). */
+struct DualCache {   /* GH-152: the row supports and target bases of find_dual_maps, kept for verify_dual_perm */
+    RowSupports sHz, sHzGx;
+    Gf2Basis bHx, bHxGz;
+    DualCache(const RowSupports& a, const RowSupports& b, const Gf2Basis& c, const Gf2Basis& d) : sHz(a), sHzGx(b), bHx(c), bHxGz(d) {}
+};
+
 struct DualMapInfo {
     int n, rank_hz, rank_hx, rank_hzgx, rank_hxgz, candidates;
     std::vector<std::string> maps;   /* verified dual maps, in candidate order (first = used) */
     std::vector<std::vector<int> > perms;   /* GH-124: the qubit maps of `maps` (same order) */
     double seconds;
+    std::shared_ptr<DualCache> cache;   /* GH-152: set only when find_dual_maps is asked to keep it */
 };
 
 /* Verified XZ-dual maps of the two CSS half instances. all=false stops at the first one. */
-static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool all)
+static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool all,
+                                  bool keep_cache = false)
 {
     const double t0 = cpuTime();
     DualMapInfo info;
@@ -1156,21 +1164,27 @@ static DualMapInfo find_dual_maps(const Matrix& Hx, const Matrix& Hz, const Matr
             if (!all) break;
         }
     }
+    if (keep_cache) info.cache = std::make_shared<DualCache>(sHz, sHzGx, bHx, bHxGz);
     info.seconds = cpuTime() - t0;
     return info;
 }
 
 /* GH-152: the dual-map check of find_dual_maps (equal ranks; pi(rs Hz) in rs Hx and pi(rs [Hz;Gx]) in rs [Hx;Gz]) for one
  * candidate pi (the -cc-aut Tanner-graph swap map), with the same shared GF(2) routines. */
-static bool verify_dual_perm(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, const std::vector<int>& pi)
+static bool verify_dual_perm(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, const std::vector<int>& pi,
+                             const DualMapInfo& dm)
 {
     const int n = Hx.cols;
-    if ((int)pi.size() != n) return false;
+    if ((int)pi.size() != n || dm.n != n) return false;
     std::vector<char> seen((size_t)n, 0);
     for (int i = 0; i < n; i++) {
         if (pi[i] < 0 || pi[i] >= n || seen[(size_t)pi[i]]) return false;
         seen[(size_t)pi[i]] = 1;
     }
+    /* the four ranks were computed by find_dual_maps on the same matrices (dm); equal ranks + inclusions = equalities */
+    if (dm.rank_hz != dm.rank_hx || dm.rank_hzgx != dm.rank_hxgz) return false;
+    if (dm.cache)   /* find_dual_maps' own supports and bases of the same matrices */
+        return permuted_rows_in(dm.cache->sHz, pi, dm.cache->bHx) && permuted_rows_in(dm.cache->sHzGx, pi, dm.cache->bHxGz);
     RowSupports sHz, sHzGx, sHx, sHxGz;
     append_supports(sHz, Hz);
     append_supports(sHzGx, Hz);
@@ -1179,7 +1193,7 @@ static bool verify_dual_perm(const Matrix& Hx, const Matrix& Hz, const Matrix& G
     append_supports(sHxGz, Hx);
     append_supports(sHxGz, Gz);
     const Gf2Basis bHx = basis_of(sHx, n), bHxGz = basis_of(sHxGz, n);
-    if (basis_of(sHz, n).rank() != bHx.rank() || basis_of(sHzGx, n).rank() != bHxGz.rank()) return false;
+    if (bHx.rank() != dm.rank_hx || bHxGz.rank() != dm.rank_hxgz) return false;   /* defensive: dm belongs to these matrices */
     return permuted_rows_in(sHz, pi, bHx) && permuted_rows_in(sHzGx, pi, bHxGz);
 }
 
@@ -1645,27 +1659,9 @@ static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix&
      * dual check (verify_dual_perm, = find_dual_maps' check) accepts it, and the generators enter find_half_symmetry as
      * extra candidates under its two GF(2) checks. Off (default): nothing below changes. */
     distcc::AutResult aut;
-    if (opt.aut) {
-        const double ta = cpuTime();
-        std::vector<const distcc::SparseRows*> cls;
-        cls.push_back(&in.Hx);
-        cls.push_back(&in.Hz);
-        aut = distcc::find_row_automorphisms(Hx.cols, cls, dual_wanted);
-        if (opt.mutant == 13) {   /* TEST MUTANT 13: a non-automorphism (the cyclic shift i -> i + 1 mod n) among the
-                                   * candidates, every candidate kept without the GF(2) checks */
-            std::vector<int> t((size_t)Hx.cols);
-            for (int i = 0; i < Hx.cols; i++) t[(size_t)i] = (i + 1) % Hx.cols;
-            aut.gens.push_back(t);
-        }
-        if (verb > 0)
-            printf("c cc aut: Tanner graph (qubits, Hx rows, Hz rows): %zu generator(s), %d qubit orbit(s), group %s, point stabiliser %s, "
-                   "swap map %s, %d test(s) (%d refuted, %d undecided), work %llu, cpu %.3fs\n",
-                   aut.gens.size(), aut.orbits, aut.complete ? "complete" : "partial", aut.stab_trivial ? "trivial" : "not proved trivial",
-                   aut.swap_state == 1 ? "found" : aut.swap_state == 2 ? "none" : aut.swap_state == 3 ? "undecided" : "not searched",
-                   aut.tests, aut.refuted, aut.undecided, (unsigned long long)aut.work, cpuTime() - ta);
-    }
+    DualMapInfo dm = DualMapInfo();
     if (dual_wanted) {
-        DualMapInfo dm = find_dual_maps(Hx, Hz, Gx, Gz, false);
+        dm = find_dual_maps(Hx, Hz, Gx, Gz, false, opt.aut);   /* GH-152: keep the bases for verify_dual_perm */
         if (!dm.maps.empty()) {
             in.dual_perm = dm.perms[0];
             in.dual_desc = dm.maps[0];
@@ -1679,13 +1675,33 @@ static int min_distance_css_cc(const Matrix& Hx, const Matrix& Hz, const Matrix&
                 printf("c cc: dual map detection: none (ranks Hz %d Hx %d [Hz;Gx] %d [Hx;Gz] %d, %d candidates, cpu %.3fs): both halves\n",
                        dm.rank_hz, dm.rank_hx, dm.rank_hzgx, dm.rank_hxgz, dm.candidates, dm.seconds);
         }
-        if (!dual && opt.aut) {   /* GH-152: the Tanner swap map, under the same GF(2) dual check */
+    }
+    if (opt.aut) {
+        const double ta = cpuTime();
+        std::vector<const distcc::SparseRows*> cls;
+        cls.push_back(&in.Hx);
+        cls.push_back(&in.Hz);
+        /* the swap map is searched only when it could be used: dual wanted and no GH-75 family map */
+        aut = distcc::find_row_automorphisms(Hx.cols, cls, dual_wanted && !dual);
+        if (opt.mutant == 13) {   /* TEST MUTANT 13: a non-automorphism (the cyclic shift i -> i + 1 mod n) among the
+                                   * candidates, every candidate kept without the GF(2) checks */
+            std::vector<int> t((size_t)Hx.cols);
+            for (int i = 0; i < Hx.cols; i++) t[(size_t)i] = (i + 1) % Hx.cols;
+            aut.gens.push_back(t);
+        }
+        if (verb > 0)
+            printf("c cc aut: Tanner graph (qubits, Hx rows, Hz rows): %zu generator(s), %d qubit orbit(s), group %s, point stabiliser %s, "
+                   "swap map %s, %d test(s) (%d refuted, %d undecided), work %llu, cpu %.3fs\n",
+                   aut.gens.size(), aut.orbits, aut.complete ? "complete" : "partial", aut.stab_trivial ? "trivial" : "not proved trivial",
+                   aut.swap_state == 1 ? "found" : aut.swap_state == 2 ? "none" : aut.swap_state == 3 ? "undecided" : "not searched",
+                   aut.tests, aut.refuted, aut.undecided, (unsigned long long)aut.work, cpuTime() - ta);
+        if (dual_wanted && !dual) {   /* GH-152: the Tanner swap map, under the same GF(2) dual check */
             std::vector<int> cand = aut.swap;
             if (opt.mutant == 14 && cand.empty()) {   /* TEST MUTANT 14: identity, unchecked */
                 cand.resize((size_t)Hx.cols);
                 for (int i = 0; i < Hx.cols; i++) cand[(size_t)i] = i;
             }
-            const bool ok = !cand.empty() && (opt.mutant == 14 || verify_dual_perm(Hx, Hz, Gx, Gz, cand));
+            const bool ok = !cand.empty() && (opt.mutant == 14 || verify_dual_perm(Hx, Hz, Gx, Gz, cand, dm));
             if (ok) {
                 in.dual_perm = cand;
                 in.dual_desc = opt.mutant == 14 ? "tanner-swap UNCHECKED (test mutant 14)" : "tanner-swap (cc-aut)";
