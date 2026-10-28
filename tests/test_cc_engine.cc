@@ -60,11 +60,13 @@
 //   (2 must answer wrongly on the codes or on the rotated surface codes).
 // GH-157 (rules charge, ecover; default off): Part I (a) the bound functions on random hitting-set instances (k <= 10
 //   candidate sets over <= 14 qubits, a third of them with every qubit in <= 2 sets) against brute-force tau: charge <= tau,
-//   ecover <= tau, ecover = tau whenever U' = U (Gallai), the early-exit contract (bound(r) > r iff exact bound > r) for
+//   ecover <= tau, ecover = tau whenever U' = U (Gallai), the early-exit contract (bound(r) > r iff exact bound > r, and then
+//   bound(r) <= exact bound) for
 //   every r, and Edmonds' matching against brute force on random multigraphs; mutants 15 / 16 must exceed tau somewhere.
 //   (b) On every Part A half: all 128 base rule subsets x {charge, ecover, charge+ecover} x seeds 0..2 (lb-minr 1, 2, 3
 //   for seeds 0, 1, 2): the ladder must match enumeration; mutants 15 (charge inflated by 1/D) and 16 (ecover without
-//   the at-most-2 condition) must give wrong half-level verdicts. (c) Part B driver configurations with the new rules.
+//   the at-most-2 condition) must give wrong half-level verdicts. Every evaluation in (b) (mutant 0) also recomputes the
+//   charge with lb_charge on an explicit copy of the sets (set_lb_check). (c) Part B driver configurations with the new rules.
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -183,6 +185,7 @@ static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, co
     const distcc::SparseRows Kr = to_rows(K, n);
     distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
     hs.set_lb_minr(lbminr);
+    hs.set_lb_check(mutant == 0);   // GH-157: in-search charge cross-checked against lb_charge (aborts on a mismatch)
     const int top = dh < 0 ? n : dh;
     char buf[160];
     for (int w = 1; w <= top; w++) {
@@ -396,7 +399,7 @@ int main(int argc, char** argv) {
                     bool e2 = false; int n2 = 0;
                     const int c2 = distcc::lb_charge(&rs[0], &rq[0], kk, r, lw, 0);
                     const int x2 = distcc::lb_ecover(&rs[0], &rq[0], kk, r, lw, 0, &e2, &n2);
-                    if ((c2 > r) != (bc > r) || (x2 > r) != (be > r) || (c2 > r && c2 != bc) || (x2 > r && x2 != be)) bad = true;
+                    if ((c2 > r) != (bc > r) || (x2 > r) != (be > r) || (c2 > r && c2 > bc) || (x2 > r && x2 > be)) bad = true;
                 }
                 if (distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 15) > tau) pi_m15++;
                 bool e3 = false; int n3 = 0;

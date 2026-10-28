@@ -42,7 +42,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
                        const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
-      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), lbminr_(3), w_(0), nodd_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), lbminr_(3), lbany_(false), lbcheck_(false), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -257,6 +257,11 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         lbrs_.assign((size_t)m_ + 1, 0);
         lbrq_.assign((size_t)rstart_[m_] + 1, 0);
         lbw_.reset(n_, m_);
+        lcnt_.assign((size_t)n_, 0);
+        lload_.assign((size_t)n_, 0);
+        lmk_.assign((size_t)n_, 0);
+        lyv_.assign((size_t)m_ + 1, 0);
+        lbany_ = true;
     }
 
     syn_.assign((size_t)mw_, 0);
@@ -323,6 +328,7 @@ int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, i
     }
     const int64_t R = r < 0 ? -1 : (int64_t)r * L;
     if (R >= 0 && Y > R) return (int)((Y + L - 1) / L);
+    { static int nr = -1; if (nr < 0) nr = getenv("DQ_NORAISE") ? 1 : 0; if (nr) return (int)((Y + L - 1) / L); }   /* DEV */
     for (int i = 0; i < k; i++) {   /* raise: y_u += min residual capacity of its qubits (keeps feasibility) */
         int64_t s = L;
         for (uint32_t t = rs[i]; t < rs[i + 1]; t++) { const int64_t res = L - w.load[rq[t]]; if (res < s) s = res; }
@@ -434,45 +440,64 @@ int max_matching(int nv, const std::vector<int>& ea, const std::vector<int>& eb,
     return msz;
 }
 
-/* Edge cover (see cc_half.h). U' greedy in index order: a set is admitted iff none of its qubits already lies in 2
- * admitted sets (mutant 16: always admitted). A qubit's second admitted set adds the edge (first, second); with mutant
- * 16 every further set adds an edge to the first one as well. */
+/* Edge cover (see cc_half.h). U' greedy in two phases: first the greedy disjoint packing (index order; a set joins iff
+ * none of its qubits is in an admitted set), then the other sets in index order, each admitted iff none of its qubits
+ * already lies in 2 admitted sets (mutant 16: every remaining set admitted). So U' contains the packing and the bound
+ * is never below the pack bound. A qubit's second admitted set adds the edge (first, second); with mutant 16 every
+ * further set adds an edge to the first one as well. */
 int lb_ecover(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool* exact, int* nsel) {
     const uint64_t st = ++w.st2;
     int ns = 0;
     w.ea.clear();
     w.eb.clear();
-    for (int i = 0; i < k; i++) {
-        if (rs[i] == rs[i + 1]) { *exact = false; *nsel = ns; return LB_DEAD; }
-        bool ok = true;
-        if (mutant != 16)
+    for (int i = 0; i < k; i++)
+        if (rs[i] == rs[i + 1]) { *exact = false; *nsel = 0; return LB_DEAD; }
+    std::vector<uint8_t>& in = w.blos;   /* per set: admitted (blos is free outside max_matching) */
+    if ((int)in.size() < k) in.resize((size_t)k);
+    for (int phase = 0; phase < 2; phase++)
+        for (int i = 0; i < k; i++) {
+            if (phase == 0) in[i] = 0;
+            else if (in[i]) continue;
+            bool ok = true;
+            if (phase == 1 && mutant == 16) ok = true;
+            else
+                for (uint32_t t = rs[i]; t < rs[i + 1]; t++) {
+                    const uint32_t j = rq[t];
+                    if (w.mk2[j] == st && w.c2[j] >= (phase == 0 ? 1 : 2)) { ok = false; break; }
+                }
+            if (!ok) continue;
+            in[i] = 1;
+            const int v = ns++;
             for (uint32_t t = rs[i]; t < rs[i + 1]; t++) {
                 const uint32_t j = rq[t];
-                if (w.mk2[j] == st && w.c2[j] >= 2) { ok = false; break; }
+                if (w.mk2[j] != st) { w.mk2[j] = st; w.c2[j] = 0; w.own[j] = -1; }
+                if (w.c2[j] == 0) w.own[j] = v;
+                else { w.ea.push_back(w.own[j]); w.eb.push_back(v); }
+                w.c2[j]++;
             }
-        if (!ok) continue;
-        const int v = ns++;
-        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) {
-            const uint32_t j = rq[t];
-            if (w.mk2[j] != st) { w.mk2[j] = st; w.c2[j] = 0; w.own[j] = -1; }
-            if (w.c2[j] == 0) w.own[j] = v;
-            else { w.ea.push_back(w.own[j]); w.eb.push_back(v); }
-            w.c2[j]++;
         }
-    }
     *exact = ns == k;
     *nsel = ns;
-    if (r >= 0 && ns - ns / 2 <= r) return ns - ns / 2;   /* nu <= floor(|U'|/2): no prune possible */
+    /* |U'| - floor(|U'|/2) <= |U'| - nu <= |U'|: decided without the matching when either end settles it */
+    if (r >= 0 && ns <= r) return ns;
+    if (r >= 0 && ns - ns / 2 > r) return ns - ns / 2;
     const int nu = max_matching(ns, w.ea, w.eb, r >= 0 ? ns - r : -1, w);
     return ns - nu;
 }
 
-/* GH-157: evaluate charge / ecover at the current node (pack did not prune; caller checked budget and |U|). Returns
- * true if the node is empty (some bound exceeds the remaining budget, or an odd row has no available qubit). */
-bool HalfSearch::lb_prune(int size) {
-    const int r = w_ - size;
-    /* candidate sets of the odd rows */
-    int k = 0;
+/* GH-157 charge: count c_j over the free qubits of one odd row (stamp st, also resets the load) */
+inline void HalfSearch::lb_count_row(const uint32_t* a, const uint32_t* e, uint64_t st, int& D) {
+    for (const uint32_t* t = a; t < e; ++t) {
+        const uint32_t j = *t;
+        if (blk_[j]) continue;
+        if (lmk_[j] != st) { lmk_[j] = st; lcnt_[j] = 0; lload_[j] = 0; }
+        if (++lcnt_[j] > D) D = lcnt_[j];
+    }
+}
+
+/* candidate sets of the odd rows (index order) as CSR in lbrs_/lbrq_ (ecover, and the test cross-check) */
+void HalfSearch::lb_build_sets(int& k) {
+    k = 0;
     uint32_t nq = 0;
     lbrs_[0] = 0;
     for (int wi = 0; wi < mw_; wi++) {
@@ -487,13 +512,85 @@ bool HalfSearch::lb_prune(int size) {
             lbrs_[++k] = nq;
         }
     }
+}
+
+/* GH-157: evaluate charge / ecover at the current node (pack did not prune; the caller checked the budget and |U|).
+ * counted: the scan already counted c_j for every odd row under stamp st (D = max c_j). The charge is computed on
+ * the search state exactly as lb_charge computes it on the explicit sets (same row order, same integers); the test
+ * hook set_lb_check compares the two. Returns true if the node is empty (a bound exceeds the remaining budget, or an
+ * odd row has no available qubit). */
+bool HalfSearch::lb_prune(int size, uint64_t st, int D, bool counted) {
+    const int r = w_ - size;
     ++res_->lbeval;
+    bool prune = false, dead = false;
     if (rules_.charge) {
-        const int b = lb_charge(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_);
-        if (b == LB_DEAD) { ++res_->lbdead; return true; }
-        if (b > r) { ++res_->chgprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
+        if (!counted) {
+            D = 0;
+            for (int wi = 0; wi < mw_; wi++) {
+                uint64_t x = syn_[wi];
+                while (x) {
+                    const int row = wi * 64 + __builtin_ctzll(x);
+                    x &= x - 1;
+                    lb_count_row(&rq_[rstart_[row]], &rq_[rstart_[row + 1]], st, D);
+                }
+            }
+        }
+        if (D <= 32 && m_ < (1 << 15)) {   /* else idle, as lb_charge */
+            const int64_t L = lbw_.lcm[D], R = (int64_t)r * L;
+            int64_t Y = 0;
+            int i = 0;
+            for (int wi = 0; wi < mw_ && !dead; wi++) {   /* local-degree charge and loads */
+                uint64_t x = syn_[wi];
+                while (x) {
+                    const int row = wi * 64 + __builtin_ctzll(x);
+                    x &= x - 1;
+                    const uint32_t* a = &rq_[rstart_[row]];
+                    const uint32_t* e = &rq_[rstart_[row + 1]];
+                    int dm = 0;
+                    for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t] && lcnt_[*t] > dm) dm = lcnt_[*t];
+                    if (dm == 0) { dead = true; break; }
+                    int64_t yi = L / dm;
+                    if (mutant_ == 15) yi += L / D;
+                    lyv_[i++] = yi;
+                    Y += yi;
+                    for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t]) lload_[*t] += yi;
+                }
+            }
+            if (!dead && Y <= R) {   /* raise, row by row in the same order */
+                for (int wi = 0; wi < mw_ && Y <= R; wi++) {
+                    uint64_t x = syn_[wi];
+                    while (x && Y <= R) {
+                        const int row = wi * 64 + __builtin_ctzll(x);
+                        x &= x - 1;
+                        const uint32_t* a = &rq_[rstart_[row]];
+                        const uint32_t* e = &rq_[rstart_[row + 1]];
+                        int64_t sl = L;
+                        for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t] && L - lload_[*t] < sl) sl = L - lload_[*t];
+                        if (sl <= 0) continue;
+                        Y += sl;
+                        for (const uint32_t* t = a; t < e; ++t) if (!blk_[*t]) lload_[*t] += sl;
+                    }
+                }
+            }
+            if (!dead && Y > R) { prune = true; ++res_->chgprune; }
+            if (lbcheck_) {
+                int k = 0;
+                lb_build_sets(k);
+                const int b = lb_charge(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_);
+                if ((b == LB_DEAD) != dead || (!dead && (b > r) != prune)) fatal("GH-157 check: in-search charge differs from lb_charge");
+            }
+        } else if (lbcheck_) {
+            int k = 0;
+            lb_build_sets(k);
+            const int b = lb_charge(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_);
+            if (b == LB_DEAD || b > r) fatal("GH-157 check: idle in-search charge but lb_charge prunes");
+        }
+        if (dead) { ++res_->lbdead; return true; }
+        if (prune) { ++res_->lbprune_by_budget[(size_t)r]; return true; }
     }
     if (rules_.ecover) {
+        int k = 0;
+        lb_build_sets(k);
         bool exact = false;
         int nsel = 0;
         const int b = lb_ecover(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, &exact, &nsel);
@@ -633,6 +730,11 @@ bool HalfSearch::dfs(int size) {
     const bool pack = rules_.pack, mrv = rules_.mrv;
     const uint64_t st = ++stamp_;
     int p = 0, brow = -1;
+    /* GH-157: charge/ecover only where a hitting-set bound can exceed the remaining budget (tau <= |U| = nodd_); the
+     * charge counts c_j in this scan when the scan visits every odd row (pack or mrv on) */
+    const bool lbon = lbany_ && w_ - size >= lbminr_ && nodd_ > w_ - size;
+    const bool lbcnt = lbon && rules_.charge && (pack || mrv);
+    int lbD = 0;
     uint32_t bcnt = UINT32_MAX;
     for (int wi = 0; wi < mw_ && !(brow >= 0 && !pack && !mrv); wi++) {
         uint64_t x = syn_[wi];
@@ -662,6 +764,7 @@ bool HalfSearch::dfs(int size) {
                     /* marking forbidden qubits too is harmless: only free qubits can clash */
                     for (const uint32_t* t = a; t < e; ++t) mark_[*t] = st;
                 }
+                if (lbcnt) lb_count_row(a, e, st, lbD);
                 if (mrv) {
                     if (cnt < bcnt) { bcnt = cnt; brow = r; }
                 } else if (brow < 0) {
@@ -670,6 +773,7 @@ bool HalfSearch::dfs(int size) {
             } else if (mrv) {
                 uint32_t cnt = 0;
                 for (const uint32_t* t = a; t < e; ++t) cnt += blk_[*t] ? 0u : 1u;
+                if (lbcnt) lb_count_row(a, e, st, lbD);
                 if (cnt < bcnt) { bcnt = cnt; brow = r; }
             } else {
                 brow = r;
@@ -678,8 +782,7 @@ bool HalfSearch::dfs(int size) {
         }
     }
     if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
-    /* GH-157 charge / ecover: only where a hitting-set bound can exceed the remaining budget (tau <= |U| = nodd_) */
-    if ((rules_.charge || rules_.ecover) && w_ - size >= lbminr_ && nodd_ > w_ - size && lb_prune(size)) return false;
+    if (lbon && lb_prune(size, st, lbD, lbcnt)) return false;
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;

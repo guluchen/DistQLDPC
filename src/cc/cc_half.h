@@ -123,8 +123,9 @@ struct Rules {
 
 /* GH-157: node lower bounds on the hitting set tau of the candidate sets of the odd rows, exposed for tests. The k
  * candidate sets are rows rs[i]..rs[i+1]-1 of rq (distinct qubit ids < the work size per row). Scratch state lives in
- * LbWork (sized by reset(nq, max rows)). Both return a value > r iff the bound exceeds r: the exact bound when it
- * exceeds r, otherwise some value <= r (early exit); r < 0 asks for the exact bound. LB_DEAD: a set is empty. */
+ * LbWork (sized by reset(nq, max rows)). With r >= 0 both return v such that v > r iff the bound exceeds r, and v > r
+ * implies v <= bound (a valid lower bound on tau); the early exits may return other values <= r. r < 0 asks for the
+ * exact bound. LB_DEAD: a set is empty. */
 static const int LB_DEAD = 1 << 30;
 struct LbWork {
     std::vector<int32_t> cnt, c2, own;
@@ -212,6 +213,9 @@ public:
 
     /* GH-157: charge/ecover are evaluated at remaining budget >= minr (default 3; tests use 1) */
     void set_lb_minr(int minr) { lbminr_ = minr < 1 ? 1 : minr; }
+    /* GH-157 test hook: every charge/ecover evaluation also runs lb_charge / lb_ecover on an explicit copy of the
+     * candidate sets and aborts if a prune decision differs (the in-search charge is computed on the search state) */
+    void set_lb_check(bool on) { lbcheck_ = on; }
 
     int n() const { return n_; }
     bool orbit_seeds() const { return orbit_mode_; }
@@ -258,9 +262,16 @@ private:
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
     /* GH-157 charge/ecover: minimum remaining budget, candidate CSR of the odd rows, scratch */
     int lbminr_;
+    bool lbany_, lbcheck_;
     std::vector<uint32_t> lbrs_, lbrq_;
     LbWork lbw_;
-    bool lb_prune(int size);
+    std::vector<int32_t> lcnt_;             /* charge: c_j = |N(j) & U| for free j, valid where lmk_[j] == stamp */
+    std::vector<int64_t> lload_;            /* charge: scaled load of free qubit j (same stamp) */
+    std::vector<uint64_t> lmk_;
+    std::vector<int64_t> lyv_;              /* charge: scaled y per odd row (scan order) */
+    inline void lb_count_row(const uint32_t* a, const uint32_t* e, uint64_t st, int& D);
+    bool lb_prune(int size, uint64_t st, int D, bool counted);
+    void lb_build_sets(int& k);
 
     /* search state */
     int w_;
