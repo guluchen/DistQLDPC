@@ -1,0 +1,92 @@
+# Untiered repetition-product HGP library
+
+Issue: [GH-153](https://github.com/guluchen/DistQLDPC/issues/153).
+Proposed prefix: **HGP**. All six codes have k=1; stems retain `unknown`
+until DistQLDPC evidence and PI naming approval are available.
+
+| Factor length L | n | k | Claimed exact d |
+|---|---|---|---|
+| 3 | 13 | 1 | 3 |
+| 5 | 41 | 1 | 5 |
+| 8 | 113 | 1 | 8 |
+| 12 | 265 | 1 | 12 |
+| 16 | 481 | 1 | 16 |
+| 24 | 1105 | 1 | 24 |
+
+The small cases provide correctness anchors; the larger cases form a scaling
+ladder. These are the surface-code specialization of the HGP family, with
+vanishing rate. Non-repetition, finite-rate HGP targets remain future work.
+These files do not enter the existing tier suites or the QDistSAT mirror.
+Run by path, e.g. `./bin/distqldpc -cpu-lim=60 data/matrices/untiered/HGP_13_1_unknown`.
+
+## Construction and distance provenance
+
+Source: J.-P. Tillich and G. Zemor,
+[arXiv:0903.0566v2](https://arxiv.org/abs/0903.0566v2), Theorem 1;
+published DOI [10.1109/TIT.2013.2292061](https://doi.org/10.1109/TIT.2013.2292061).
+The published theorem applied to the full-rank [L,1,L] repetition check
+gives parameters [[L^2+(L-1)^2,1,L]]. The individual ladder entries are our
+specializations of that theorem, not a paper's numerical table or new solver results.
+
+Let R be (L-1) by L, with R[i,i]=R[i,i+1]=1. We generate
+
+```
+Hx = [R tensor I_L | I_(L-1) tensor R^T]
+Hz = [I_L tensor R | R^T tensor I_(L-1)]
+```
+
+Columns are (v1,v2), then (c1,c2), second coordinate fastest.
+The two terms in Hx Hz^T are identical and cancel in GF(2).
+The left blocks give full row rank L(L-1) for each check matrix, so k=1.
+Straight strings on the first block, at fixed v2 for ker(Hx) and fixed v1
+for ker(Hz), supply weight-L logicals with odd mutual pairing. The source
+theorem supplies the matching distance lower bound.
+
+Gx/Gz use DistQLDPC's convention: Gx is ker(Hx)/row(Hz), Gz is
+ker(Hz)/row(Hx). They are computed by `scripts/compute_logicals.py`.
+All code and matrices were generated from mathematics; no third-party code,
+matrix files, or paper text was copied. Distribution: GPL-3.0-or-later; see NOTICE.
+
+## Reproduce and verify
+
+From the repository root (Python standard library only):
+
+```sh
+python3 scripts/codegen/hgp_repetition.py --ladder --out /tmp/hgp-fresh
+python3 tests/test_codegen_hgp.py
+python3 scripts/codegen/validate_css.py --output /tmp/hgp-validation.json
+```
+
+The generator refuses overwrite. Compare the 24 files in the fresh directory
+with this directory byte for byte. `validation.json` records independent bitset
+GF(2) checks and file hashes: commutation, ranks, logical kernel membership,
+quotient independence and full logical-pairing rank. Duplicate comparison
+uses row spaces in both X/Z orientations for every same-(n,k) filename in
+tier0..tier5 and untiered. There are no such peers in this snapshot (57 codes).
+This is not a general column-permutation equivalence algorithm.
+
+## Pending solver smoke evidence
+
+No solver experiment was run on the PI Mac. The manifest's empty smoke bounds
+mean **NOT_RUN**, not zero or the claimed distances. GF(2) validation does not
+satisfy the solver-loading/smoke gate. This change is not ready for adoption
+until that gate is recorded; do not infer timings or tiers from this work.
+
+The Linux runner makes six serial jobs, each with 60 CPU seconds, a 90-second
+wall backstop, pinned to one explicitly supplied core and a 4 GiB address-space
+cap. It stops on contradictory bounds/answers or run failures. No core is
+allocated by this package. Have the PI assign a core and check it is free
+(including `ps -eLo pid,tid,psr,pcpu,comm` and `taskset -pc PID`) before starting.
+Cores 54-63 require PI approval just like any other unassigned core.
+
+```sh
+make
+python3 scripts/codegen/smoke_untiered.py --cpu ASSIGNED_CORE --out /tmp/hgp-smoke --dry-run
+nohup python3 scripts/codegen/smoke_untiered.py --cpu ASSIGNED_CORE --out /tmp/hgp-smoke > /tmp/hgp-smoke-runner.log 2>&1 < /dev/null &
+```
+
+Retain all logs/JSON/CSV (including failed runs) in the issue's evidence record.
+Review actual results before filling `smoke_60s_lb`, `smoke_60s_ub`, and status
+in MANIFEST.csv. For a solved case require d=L; for a timeout require consistent
+bounds containing L. A mismatch is a scientific escalation. The runner does
+not rename codes, modify the manifest, assign tiers or mirror QDistSAT.

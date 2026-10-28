@@ -192,6 +192,23 @@ When you receive DistQLDPC as a whole (source or binary):
 For questions about upstream MaxCDCL, contact the original authors
 (see src/solver/ file headers).
 
+7. Repetition-product hypergraph-product matrices (GH-153, untiered)
+-----------------------------------------------------------------
+
+Location: data/matrices/untiered/HGP_*; generator scripts/codegen/hgp_repetition.py.
+Original clean-room implementation and generated matrices, GPL-3.0-or-later.
+No third-party code, matrix files, or paper text were copied.
+
+Construction credit: Jean-Pierre Tillich and Gilles Zemor, "Quantum LDPC
+Codes With Positive Rate and Minimum Distance Proportional to the Square
+Root of the Blocklength", arXiv:0903.0566v2 (2013), Theorem 1;
+IEEE Transactions on Information Theory (2014), DOI 10.1109/TIT.2013.2292061.
+The repetition-code specializations have claimed parameters
+[[13,1,3]], [[41,1,5]], [[113,1,8]], [[265,1,12]], [[481,1,16]], [[1105,1,24]].
+These are mathematical ground-truth claims, not DistQLDPC solver results.
+All stems remain _unknown; solver smoke runs and tier assignment are pending.
+See data/matrices/untiered/MANIFEST.csv and README.md for full provenance.
+
 Renamed 2026-10-16 (PI decision; same matrices): distances confirmed by
 DistQLDPC's experimental connected-cluster engine (GH-124, -engine=cc) and by two
 independent clean-room reimplementations plus a from-scratch prototype, all with

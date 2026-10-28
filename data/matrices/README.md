@@ -1,5 +1,10 @@
 # Benchmark matrices
 
+New, unmeasured codes live separately in [untiered/](untiered/README.md), with
+reproducible generators, provenance and validation in its MANIFEST.csv. They
+are excluded from the tier sets below and from the QDistSAT mirror until
+PI-approved tier assignment. Use their full path when invoking DistQLDPC.
+
 Each code `<stem>` is four text files `<stem>_Hx.txt`, `<stem>_Hz.txt`, `<stem>_Gx.txt`,
 `<stem>_Gz.txt` (format: [README](../../README.md#input-four-matrix-files)). The 50 bundled
 codes are organized by benchmark tier in `tier0/` … `tier5/` (PI decision 2026-10-11).
