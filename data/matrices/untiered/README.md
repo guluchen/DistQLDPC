@@ -67,6 +67,14 @@ This is not a general column-permutation equivalence algorithm.
 
 ## Pending solver smoke evidence
 
+The branch workflow `HGP library smoke` supplies a bounded GitHub Actions
+environment for these six checks. It builds the unchanged solver, rechecks
+GF(2) invariants and byte-identical regeneration, then runs the six inputs
+serially. `--ci` is restricted to a Linux GitHub Actions VM and selects one
+core from that job's allocated affinity; it does not allocate server cores.
+Results are uploaded as `gh153-hgp-smoke` and printed in the job log so they
+can be copied into the durable GH-153 record before the artifact expires.
+
 No solver experiment was run on the PI Mac. The manifest's empty smoke bounds
 mean **NOT_RUN**, not zero or the claimed distances. GF(2) validation does not
 satisfy the solver-loading/smoke gate. This change is not ready for adoption

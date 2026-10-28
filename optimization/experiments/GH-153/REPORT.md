@@ -72,6 +72,14 @@ The failure did not involve a scientific result or solver execution.
 
 ## Results and unresolved issues
 
+Follow-up on the PI's instruction to continue: a branch-scoped `HGP library
+smoke` GitHub Actions job is being added to complete short solver validation
+under AGENTS.md's ordinary-CI allowance. It builds the unchanged solver,
+regenerates and checks all matrices, then runs six serial 60-second smoke
+checks. The job has a 15-minute total backstop; each solver process retains
+the existing 4 GiB address-space and 90-second wall limits. This is not a
+benchmark sweep or a tier timing run. Mac/server restrictions are unchanged.
+
 The matrix/library construction and reproducibility checks pass. The required
 60-second DistQLDPC loading/bound checks are **not yet run** because the handoff
 reserves the PI Mac and no dedicated-server core is allocated to this task.
