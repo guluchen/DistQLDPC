@@ -23,8 +23,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data" / "matrices"
 
-# tiers 0-3 entirely, plus tier5 codes that the CC engine solves in seconds (GH-140 S1 table: <= 25 s on yfclab2)
-EXTRA_TIER5 = ["LP_1020_136_16", "LP_1054_140_20", "LP_1122_148_20", "LP_2610_744_16"]
+# tiers 0-4 entirely, plus every tier5 code that the CC engine solves within the 6 h Tier 5 limit
+# (GH-146 S1 Tier 5 table, yfclab2, one core: 1 s .. 11141 s)
+EXTRA_TIER5 = ["LP_1020_136_16", "LP_2610_744_16", "LP_1122_148_20", "LP_1054_140_20", "LP_1768_224_22",
+               "TN_180_2_17", "BB_360_12_24", "LP_1428_184_24", "TN_216_4_18", "TN_252_2_21"]
 # known BB (l, m) (Bravyi et al. 2024 and the bundled data); used when several factorizations are consistent
 KNOWN_BB = {72: (6, 6), 90: (15, 3), 108: (9, 6), 144: (12, 6), 288: (12, 12), 360: (30, 6), 756: (21, 18)}
 
@@ -91,7 +93,7 @@ def main() -> int:
     timings = json.loads(args.timings.read_text()) if args.timings.is_file() else {}
     index = []
     picks = []
-    for t in range(4):
+    for t in range(5):
         for hx in sorted((DATA / f"tier{t}").glob("*_Hx.txt")):
             picks.append((t, hx.name[:-7]))
     for stem in EXTRA_TIER5:
