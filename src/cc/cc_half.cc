@@ -310,6 +310,11 @@ int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, i
             if (++w.cnt[j] > D) D = w.cnt[j];
         }
     }
+    return lb_charge_counted(rs, rq, k, r, w, mutant, raise, D);
+}
+
+/* lb_charge after the counting pass: w.cnt[j] = c_j and w.load[j] = 0 for every j in the sets, D = max c_j, no empty set */
+int lb_charge_counted(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise, int D) {
     if (D > 32 || k >= (1 << 15)) return 0;   /* idle: denominators too large for the scaled integers */
     const int64_t L = w.lcm[D];
     const int64_t R = r < 0 ? -1 : (int64_t)r * L;
@@ -480,8 +485,9 @@ int lb_ecover(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, i
 bool HalfSearch::lb_prune(int size) {
     const int r = w_ - size;
     ++res_->lbeval;
-    int k = 0;
+    int k = 0, D = 0;
     uint32_t nq = 0;
+    const uint64_t st = ++lbw_.st;   /* counting stamp (the copy pass also counts c_j, as lb_charge's first pass) */
     lbrs_[0] = 0;
     for (int wi = 0; wi < mw_; wi++) {
         uint64_t x = syn_[wi];
@@ -490,14 +496,17 @@ bool HalfSearch::lb_prune(int size) {
             x &= x - 1;
             for (uint32_t t = rstart_[row], e = rstart_[row + 1]; t < e; t++) {
                 const uint32_t qb = rq_[t];
-                if (!blk_[qb]) lbrq_[nq++] = qb;
+                if (blk_[qb]) continue;
+                lbrq_[nq++] = qb;
+                if (lbw_.mk[qb] != st) { lbw_.mk[qb] = st; lbw_.cnt[qb] = 0; lbw_.load[qb] = 0; }   /* lb_charge's counting */
+                if (++lbw_.cnt[qb] > D) D = lbw_.cnt[qb];
             }
             if (lbrs_[k] == nq) { ++res_->lbdead; return true; }   /* odd row without an available qubit */
             lbrs_[++k] = nq;
         }
     }
     if (rules_.charge) {
-        const int b = lb_charge(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, lbraise_);
+        const int b = lb_charge_counted(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, lbraise_, D);
         if (b > r) { ++res_->chgprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
     }
     if (rules_.ecover) {

@@ -142,6 +142,9 @@ struct LbWork {
 /* charge: ceil(sum y) of the raised local-degree charge (raise = false: local-degree only; 0 when max c_j > 32); mutant 15
  * adds L/D to every y_u */
 int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise = true);
+/* lb_charge after its counting pass (the search counts while it copies the sets): w.cnt[j] = c_j, w.load[j] = 0 for every
+ * j in the sets, D = max c_j, every set nonempty */
+int lb_charge_counted(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise, int D);
 /* ecover: |U'| - nu (Gallai); *exact = (U' = U); *nsel = |U'|. Mutant 16 admits every row (no "at most 2" check). */
 int lb_ecover(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool* exact, int* nsel);
 /* maximum matching size of a simple or multi graph on nv vertices (edges ea[i]-eb[i]), Edmonds' blossom algorithm;
