@@ -110,8 +110,18 @@ function refreshHint() {
     parts.push('native (1 core, yfclab2): ' + [t.maxsat !== undefined ? 'MaxSAT ' + fmtSec(t.maxsat) : null,
       t.cc !== undefined ? 'CC ' + fmtSec(t.cc) : null].filter(Boolean).join(', '));
   }
-  if (c.tier >= 3 && engineValue() === 'maxsat') parts.push('MaxSAT may need minutes to hours here; CC is fast');
+  if (c.tier === 5 && engineValue() === 'maxsat' && t.maxsat === undefined) parts.push('MaxSAT did not solve this code in 6 h natively; use CC');
+  else if (c.tier >= 3 && engineValue() === 'maxsat') parts.push('MaxSAT may need minutes to hours here; CC is much faster');
+  if (engineValue() === 'cc' && t.cc !== undefined && t.cc > 300) parts.push('long run: keep this tab in the foreground');
   $('codeHint').textContent = parts.join(' · ');
+}
+// time limit suggested for the selected code and engine: 3x the native time, at least 120 s (max 24 h)
+function suggestLimit() {
+  const c = S.index.find((x) => x.stem === $('codeSel').value);
+  const t = (c && c.timing) || {};
+  const nat = t[engineValue()];
+  const lim = nat !== undefined ? Math.min(86400, Math.max(120, Math.ceil(nat * 3 / 60) * 60)) : (c && c.tier >= 4 ? 3600 : 120);
+  $('timeLim').value = lim;
 }
 async function loadIndex() {
   try {
@@ -125,7 +135,7 @@ async function loadIndex() {
   const tiers = [...new Set(S.index.map((c) => c.tier))].sort();
   for (const t of tiers) {
     const g = document.createElement('optgroup');
-    g.label = t === 5 ? 'tier 5 (large; CC solves these in seconds)' : `tier ${t}`;
+    g.label = t === 5 ? 'tier 5 (large; solved by CC in seconds to hours)' : `tier ${t}`;
     for (const c of S.index.filter((x) => x.tier === t)) {
       const o = document.createElement('option');
       o.value = c.stem;
@@ -528,7 +538,8 @@ async function init() {
   $('modeBundled').onclick = () => setMode('bundled');
   $('modeOwn').onclick = () => setMode('own');
   document.querySelectorAll('#left input').forEach((x) => x.addEventListener('change', refreshOptions));
-  $('codeSel').onchange = refreshHint;
+  $('codeSel').onchange = () => { suggestLimit(); refreshHint(); };
+  document.querySelectorAll('input[name=engine]').forEach((x) => x.addEventListener('change', suggestLimit));
   $('runBtn').onclick = startRun;
   $('stopBtn').onclick = stopRun;
   $('wDl').onclick = () => S.run && S.run.best && download(`${S.run.label.replace(/\W+/g, '_')}_witness_w${S.run.best.weight}.txt`, witnessText());
@@ -549,6 +560,7 @@ async function init() {
   const h = new URLSearchParams(location.hash.slice(1));
   if (h.get('code') && S.index.find((c) => c.stem === h.get('code'))) $('codeSel').value = h.get('code');
   if (h.get('engine')) { const r = document.querySelector(`input[name=engine][value="${h.get('engine')}"]`); if (r) r.checked = true; }
+  suggestLimit();
   if (h.get('limit')) $('timeLim').value = h.get('limit');
   refreshOptions();
   drawChart();
