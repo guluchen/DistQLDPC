@@ -289,3 +289,26 @@ Serial check of the final default on core 63 (`S1/tier5_serial_results.jsonl`, `
    labelling). Cross-checks would need > 6 h per code (e.g. a 12 h relabelled-seed run, or `charge` plus `-cc-aut` once
    PR #155 is in). No stem was renamed.
 3. **`ecover`.** Keep as an option, or drop it to reduce code (it never helped time).
+
+## 9. Adoption (PI decisions of 2026-10-29)
+
+The PI approved all three recommendations: (1) reproduce the four new lower bounds (`REPRODUCTION.md`), (2) drop
+`ecover`, (3) make `charge` a default CC rule on top of the GH-152 `-cc-aut=on` default.
+
+- `9702dde`: `ecover` removed (rule name, `lb_ecover`, Edmonds matching, mutant 16, `ecprune`/`ecexact` statistics,
+  tests, docs). `-cc-rules=ecover` is now rejected. The sections above keep the `ecover` measurements as the record.
+- `b064034`: merge of main `346d1c6` (PR #158 GH-148 and PR #155 `-cc-aut=on` default).
+- `25030e3`: `charge` in the default `-cc-rules` (`excl,pack,orbf,parity,leaf,overlap,charge`);
+  `-cc-rules=excl,pack,orbf,parity,leaf,overlap` gives the CC search before GH-157. README, `-h`, MODIFICATIONS and
+  NOTICE updated. Tests: Part B and Part H default configurations now include `charge` (Part H with `-cc-aut`).
+- `764b011`: Part I(a) restores the test RNG state, so every other part sees main's instance stream (without it, GH-148's
+  mutant 2 coverage check depended on the shifted stream).
+
+Tier 0 of the adopted default (yfclab2, pinned, 4 GB cap; records in `adopt/`):
+
+| Check | Result |
+|---|---|
+| `make test-cc`, `764b011` (`adopt/tier0_tests_764b011.txt`) | PASS. Part I(a) 20 000 instances, 0 bad; Part I(b) 345 600 ladders, 0 bad; mutant 15 caught (3 408 / 38 400 ladders, 17 240 / 20 000 instances); mutants 1-14 and GH-148's mutants caught exactly as on main `346d1c6` (`adopt/tier0_tests_main_346d1c6.txt`, PASS) |
+| `make test-cc-flags` | 442 / 442 |
+| Answers, tier 0-3 (`adopt/answers_tier0123.jsonl`) | 61 / 61 equal to the stem: CC default (`-cc-aut=on`, `charge`) with seeds 0 and 1 on all 23 tier 0-3 codes, MaxSAT default on tier 0-1; 28 / 28 printed witnesses independently GF(2)-verified |
+| Identity vs main `346d1c6`, tier0+1 `-v` logs (`adopt/identity_default.txt`, `adopt/ident_default.py`) | MaxSAT path: `-ub-pre=off` x 2 modes 30 / 30 identical; MaxSAT default 26 / 30 identical, 4 differ only in the time-sliced `ub-pre` progress line (base vs base differs the same way). Old CC path (`-cc-rules=excl,pack,orbf,parity,leaf,overlap` vs main's default CC): `-ub-search=off` with and without `-cc-stats` 30 / 30 identical, CC default 15 / 15 identical |
