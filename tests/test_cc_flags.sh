@@ -113,7 +113,7 @@ done
 for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-rules=parity,leaf -cc-dual=on -cc-dual=off -cc-seed=1 \
          "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-mutant=10 -cc-schedule=sequential \
          -cc-schedule=lockstep -cc-rules=overlap -ub-search=on -ub-search=off -ub-search=budget:5 -cc-ub-only -cc-ub-pre=1 \
-         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12; do
+         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12 -cc-aut=on -cc-aut=off -cc-mutant=13 -cc-mutant=14; do
     reject "need -engine=cc or -engine=auto" "$f" $L $M
     reject "need -engine=cc or -engine=auto" -engine=maxsat "$f" $L $M
 done
@@ -121,9 +121,9 @@ reject "need -engine=cc or -engine=auto" -cc-rules=mrv -cc-mutant=2 -engine=maxs
 reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L $M   # the last -engine= wins
 
 # 4. invalid values
-for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=13 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
+for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=15 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
          -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
-         -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-dual=maybe -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
+         -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-dual=maybe -cc-aut -cc-aut= -cc-aut=maybe -cc-aut=ON -cc-autx -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 # GH-140: -ub-search values and the finder's tuning flags
@@ -175,6 +175,21 @@ accept 2 "selected cc .*ignoring -card-mto -dualshare-stats" -engine=auto -card-
 accept 2 "selected maxsat .*ignoring -cc-rules=mrv -ub-basis" -engine=auto -cc-rules=mrv -ub-basis $L $D2
 accept 2 "" -engine=cc $L $D1                                    # dense codes still answer when forced
 accept 2 "" -engine=maxsat $L $S4
+
+# 5a. GH-152 -cc-aut (Tanner-graph automorphism candidates; LP_34_20_2 gains a verified swap map, TN_36_8_3 none)
+accept 3 "" -engine=cc -cc-aut=on $L $M
+accept 3 "" -engine=cc -cc-aut=off $L $M
+accept 2 "" -engine=cc -cc-aut=on $L $C
+accept 2 "" -engine=cc -cc-aut=on -cc-dual=off -no-symbreak -seed=2 $L $C
+accept 2 "" -engine=auto -cc-aut=on $L $C                                                            # auto -> cc: applies
+accept 2 "selected maxsat .*ignoring -cc-aut=on" -engine=auto -cc-aut=on $L $D1
+vgrep 2 "^c cc aut: Tanner graph (qubits, Hx rows, Hz rows): [0-9]* generator(s), [0-9]* qubit orbit(s), group" -v -engine=cc -cc-aut=on $L $C
+vgrep 2 "^c cc aut: Tanner swap map: verified as XZ-dual map: X half only" -v -engine=cc -cc-aut=on $L $C
+vgrep 3 "^c cc aut: Tanner swap map: none" -v -engine=cc -cc-aut=on $L $M
+vgrep 2 "^c cc aut: Tanner swap map: verified as XZ-dual map: X half only" -v -engine=cc $L $C   # default on since 2026-10-28
+vgrep 2 "^c cc aut: Tanner graph (qubits, Hx rows, Hz rows): [0-9]* generator(s)" -v -engine=auto $L $C   # auto -> cc: default on
+runs=$((runs + 1)); run -v -engine=cc -cc-aut=off $L $C   # off: no -cc-aut output at all (the search before GH-152)
+if [[ $rc -ne 0 ]] || grep -q "cc aut" <<<"$out"; then echo "FAIL (-cc-aut=off printed aut lines): rc=$rc" >&2; fails=$((fails + 1)); fi
 
 # 5b. GH-140 -ub-search
 accept 3 "" -engine=cc -ub-search=on $L $M

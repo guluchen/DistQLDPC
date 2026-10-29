@@ -1,0 +1,62 @@
+g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -std=c++17 -o build/test_cc_engine tests/test_cc_engine.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o build/cc_half.o build/cc_driver.o build/cc_ubsearch.o build/cc_aut.o -lz
+In file included from src/solver/Solver.h:54,
+                 from src/solver/SimpSolver.h:37,
+                 from tests/../src/core/distqldpc.cc:45,
+                 from tests/test_cc_engine.cc:67:
+src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+      |                             ^
+src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  291 |             fprintf(stderr, "%4"PRIi64, range.end);
+      |                             ^
+src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+  293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+      |                         ^
+tests/../src/core/distqldpc.cc: In function ‘void cc_sink_trap(void*)’:
+tests/../src/core/distqldpc.cc:1644:29: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+ 1644 |     if (pw >= 0) (void)write(pw, "RESULT -1 TRAP\n", 15);
+      |                        ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests/../src/core/distqldpc.cc: In function ‘void pipe_bound(int, const char*, uint64_t)’:
+tests/../src/core/distqldpc.cc:1108:29: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+ 1108 |     if (len > 0) (void)write(pipe_w, buf, (size_t)len);
+      |                        ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+tests/../src/core/distqldpc.cc: In function ‘void pipe_write_result(int, int, bool)’:
+tests/../src/core/distqldpc.cc:169:20: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  169 |         (void)write(pipe_w, buf, (size_t)n);
+      |               ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+./build/test_cc_engine
+partA: 300 half instances (151 with verified orbits, 120 with all column weights odd, 113 without any nontrivial element), 115200 ladder runs over 128 rule subsets x 3 seeds, 0 bad
+partA K (GH-138): 100 basis, 100 low-weight sets, 55 random sets; 80 instances where a minimum element meets a row of K in floor(|g|/2) qubits
+partE (rotated surface codes d = 3, 4, X/Z swapped): 40 canonical checks, 0 bad
+partF (MaxSAT -ub-pre): 1600 runs on 200 codes, 0 bad (first UB = d on 1426 runs, > d on 174 runs); mutant 1 200 runs, 0 bad; surface codes d = 3..5: 36 canonical/mutant-1 runs, 0 bad
+partF mutant 2 (finder without detector check, words unverified): 4/200 code runs and 9/9 surface runs wrong
+partB: 200 CSS codes (52 with a verified dual map, 51 with X-half orbits, 76 with dX != dZ, 54 with all-odd Hz), 2800 driver runs, 0 bad, 0 RESULT -1
+partD (MaxSAT split, -oddcap-skip off/on): 400 runs on 200 codes (56 with an all-odd half), 0 bad
+partE (ub-search finder): 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+partE (driver with ub-search): 1600 runs, 0 bad, 36 levels abandoned (U <= w)
+GH-146 finder stern2              : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder stern1              : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder dumer2              : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder stern2-l0-fresh     : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder dumer1-l2-w1-b3-r5  : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder stern2-l3-w32-b2    : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder mutant 11 (collision mode, no detector check): trivial word returned on 41/41 halves
+GH-146 CC driver in collision mode: 600 runs, 0 bad; mutant 11 8/8 runs stopped or wrong; mutant 12 8/8 failed, 8 with a wrong RESULT d OPTIMAL
+GH-146 MaxSAT pre-pass in collision mode: 400 runs, 0 bad; mutant 1 200 runs, 0 bad; mutant 2 13/209 runs wrong (codes + surface)
+GH-152 partG: 300 relabeled half instances, 365 Tanner generators (235 complete groups), 55 instances with coarser orbits than the GH-75 family, 115200 ladder runs (128 rule subsets x 3 seeds), 0 bad; generators violating the row classes 0; planted map preserved the row sets on 250 (185 with a complete group), missed 0
+GH-152 partH: 150 relabeled codes (100 hypergraph products, 34 with dX != dZ), 100 gain a verified dual map only through -cc-aut, 150 gain coarser X-half orbits; 1500 driver runs with -cc-aut=on, 0 bad; swap maps violating the classes 0
+mutant 13 (Tanner candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks): half level 1408/19200 ladders wrong; driver 182/300 runs wrong or stopped
+mutant 14 (Tanner swap map, or the identity, used as dual map without the GF(2) check): driver 49/150 runs wrong or stopped
+mutant 1 (forbidden set not restored): 988/19200 half ladders wrong
+mutant 2 (packing prune >=): 4112/19200 half ladders wrong
+mutant 3 (orbit seed rule off by one, instances with orbits): 1856/9664 half ladders wrong
+mutant 4 (stop rule without other half's lb, forces sequential): schedule requested 58/200 runs wrong; default options 58/200 wrong
+mutant 5 (parity rule forced on halves with an even column weight): 6976/11520 half ladders wrong
+mutant 6 (leaf budget off by one): 2112/19200 half ladders wrong
+mutant 7 (leaf closure without the detector check): 1760/19200 half ladders wrong
+mutant 8 (overlap limit off by one): 2880/19200 half ladders wrong
+mutant 9 (overlap with the parity checks H as K): 3776/19200 half ladders wrong
+mutant 10 (overlap even-|g| tie cut): 2112/19200 half ladders wrong
+mutant 11 (ub-search without the detector check; halves/codes where a trivial word is lighter than d): finder returned a trivial word on 33/33 halves; driver 8/8 runs stopped or wrong
+mutant 12 (mutant 11 + words reported without verification): 8/8 driver runs failed, 8 of them with a wrong RESULT d OPTIMAL
+CC_ENGINE_TESTS PASS
