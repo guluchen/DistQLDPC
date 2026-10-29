@@ -130,3 +130,8 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+GH-173 adds six first-seed Gallager(3,4) LDPC-factor HGP inputs, N80..2897,
+on its work branch. [GALLAGER_HGP.md](GALLAGER_HGP.md) distinguishes typical
+ensemble growth, unpublished finite cases and computed exact distances.
+Current gate/proof evidence is recorded in GH-173/REPORT.md.
