@@ -1284,6 +1284,7 @@ int main(int argc, char** argv) {
             if ((int)ext.reps.size() < n) { orb = ext.orbit_of; t_hidden++; }
         }
         t_inst++; if (!orb.empty()) t_orb++; if (all_odd(H, n)) t_odd++;
+        if (getenv("CC_TEST_PROGRESS")) fprintf(stderr, "partT inst %d n %d kind %d d_h %d |K| %zu orbits %d\n", inst, n, kind, dh, K.size(), (int)!orb.empty());
         bool bind = false;   // the cut removes a minimum element in the base order
         if (dh > 0)
             for (Mask v = 1; v < (1u << n) && !bind; v++) {

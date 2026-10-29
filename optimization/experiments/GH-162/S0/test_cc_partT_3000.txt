@@ -1,0 +1,10 @@
+partA: 0 half instances (0 with verified orbits, 0 with all column weights odd, 0 without any nontrivial element), 0 ladder runs over 128 rule subsets x 3 seeds, 0 bad
+partA K (GH-138): 0 basis, 0 low-weight sets, 0 random sets; 0 instances where a minimum element meets a row of K in floor(|g|/2) qubits
+partE (rotated surface codes d = 3, 4, X/Z swapped): 40 canonical checks, 0 bad
+CC_FAIL GH-144 seeded U0 > d never exercised
+partF (MaxSAT -ub-pre): 0 runs on 0 codes, 0 bad (first UB = d on 0 runs, > d on 0 runs); mutant 1 0 runs, 0 bad; surface codes d = 3..5: 36 canonical/mutant-1 runs, 0 bad
+partF mutant 2 (finder without detector check, words unverified): 0/0 code runs and 9/9 surface runs wrong
+CC_FAIL GH-148 mutant/coverage expectations not met
+CC_FAIL GH-152 partG: no instance with a hidden symmetry recovered
+CC_FAIL GH-152 partH: the new dual-map / orbit paths were not exercised
+CC_FAIL GH-152 mutant expectations not met
