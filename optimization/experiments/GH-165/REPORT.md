@@ -139,3 +139,9 @@ Run one targeted supplemental MaxSAT 60s check with -ub-pre=off -v to observe
 solver progress separately from the default finder budget. Preserve the
 original default failure-to-produce-bounds and CC partial result. This is a
 short diagnostic, not a longer limit, sweep or performance comparison.
+
+## Supplemental finder-off check
+
+Source 1cd40dcf35841d87c1e810c7bdf71cb3590f94f2; Actions run 40840984912, job 123337013783, SUCCESS. Same binary/input hashes. One n=1800 MaxSAT 60s run with -ub-pre=off -v gives LB=5, no UB, TIMEOUT_PARTIAL_BOUNDS. Full raw output, identities and audit in raw/actions/prepass-off/. This does not pass the single-run numeric interval gate; its lower bound is compatible with CC UB=10 and the independent graph d=10. One final targeted 60s configuration, -ub-pre=1 -v, follows the already documented GH-153 practice to budget the finder and solver within the same limit. No further local/CI extension is planned if this remains incomplete.
+
+An optional yfclab2 package is prepared in runner/: two recorded default-seed internal-engine jobs, one pinned PI-assigned free core, serial, 4 GiB cap, 6h per job and +600s wall backstop; no server job has started. Input/source/binary hashes, plain raw logs, bounds and actual witness checks are retained by the runner. Dry-run commands in raw/server-dry-run.json. No baseline timing, tier assignment or core allocation is claimed.
