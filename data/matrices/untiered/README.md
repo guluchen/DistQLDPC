@@ -130,3 +130,14 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+## Single-sector homological products (GH-179 work branch, proposed HPC)
+
+Six original finite CSS products at n169/361/841/1369/1849/2809, with
+k9/25/49/81/121/169. Nilpotent-factor/conjugacy/actual product checks and
+complete canonical plus computed logical bases pass. Actual canonical tensor
+words give overall uppers16/42/110/168/272/266, not exact distances.
+Checks have growing weight; these are not constant-check modern qLDPC.
+See [HOMOLOGICAL_PRODUCT.md](HOMOLOGICAL_PRODUCT.md) for reproduction,
+proofs and the critical distinction between algebraic similarity and physical
+weight preservation. Unknown stems and untiered only; no QDistSAT mirror.
