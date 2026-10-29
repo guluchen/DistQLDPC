@@ -56,8 +56,8 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap; GH-157 adds charge, ecover) */
-    int lb_minr;             /* GH-157 -cc-lb-minr=K: charge/ecover evaluated at remaining budget >= K (default 3) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap; GH-157 adds charge) */
+    int lb_minr;             /* GH-157 -cc-lb-minr=K: charge evaluated at remaining budget >= K (default 3) */
     int lb_gap;              /* GH-157 -cc-lb-gap=G: ... and only where remaining budget - packing <= G (default 0) */
     bool lb_raise;           /* GH-157 -cc-lb-raise=on|off: charge raise step (default on) */
     int lb_auto;             /* GH-157 -cc-lb-auto=P: switch the bounds off for a half when < P % of the evaluations of a level
@@ -108,7 +108,7 @@ struct BoundSink {
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
-/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge, ecover (or "none"); empty values and empty items
+/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge (or "none"); empty values and empty items
  * are invalid. */
 bool parse_rules(const char* s, Rules& out);
 std::string rules_string(const Rules& r);

@@ -2177,7 +2177,7 @@ int main(int argc, char** argv) {
             die("invalid -engine (maxsat | cc | auto)");
         else if (!strncmp(argv[i], "-cc-rules=", 10)) {
             if (!distcc::parse_rules(argv[i] + 10, g_cc_opt.rules))
-                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge, ecover, or none)");
+                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge, or none)");
         } else if (!strncmp(argv[i], "-cc-lb-minr=", 12)) {   /* GH-157 */
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 12, &v) || v < 1 || v > 1000) die("invalid -cc-lb-minr (1..1000)");
@@ -2260,7 +2260,7 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || v > 16 || v == 13 || v == 14) die("invalid -cc-mutant (0..12, 15, 16; test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || v > 15 || v == 13 || v == 14) die("invalid -cc-mutant (0..12, 15; test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strncmp(argv[i], "-cc-trace=", 10)) {
             g_cc_opt.trace_path = argv[i] + 10;
@@ -2301,10 +2301,10 @@ int main(int argc, char** argv) {
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden;\n");
-            printf("            GH-157, off by default: charge = fractional (LP-dual) charge node lower bound, ecover = Gallai\n");
-            printf("            edge-cover node lower bound; evaluated at remaining budget >= -cc-lb-minr=K (default 3) where the\n");
+            printf("            GH-157, off by default: charge = fractional (LP-dual) charge node lower bound, evaluated at\n");
+            printf("            remaining budget >= -cc-lb-minr=K (default 3) where the\n");
             printf("            packing is within -cc-lb-gap=G of pruning (default 0); -cc-lb-raise=off: charge without the raise;\n");
-            printf("            -cc-lb-auto=P switches them off for a half after a level where < P %% of >= 100000 evaluations\n");
+            printf("            -cc-lb-auto=P switches it off for a half after a level where < P %% of >= 100000 evaluations\n");
             printf("            pruned (default 40; 0 = never))\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -ub-basis[=on|off]  verified logical basis rows as initial upper bound (default on)\n");
@@ -2320,7 +2320,7 @@ int main(int argc, char** argv) {
             printf("            -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..12, 15, 16)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..12, 15)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");

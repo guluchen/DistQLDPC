@@ -58,16 +58,14 @@
 //   finder-only), and mutants 11 / 12 in collision mode (12 = words reported without verification: some answer must be
 //   wrong). Part F: the MaxSAT pre-pass in collision mode (budget 1 s, cut after 2 iterations) and its mutants 1 / 2
 //   (2 must answer wrongly on the codes or on the rotated surface codes).
-// GH-157 (rules charge, ecover; default off): Part I (a) the bound functions on random hitting-set instances (k <= 10
-//   candidate sets over <= 14 qubits, a third of them with every qubit in <= 2 sets) against brute-force tau: charge <= tau,
-//   ecover <= tau, pack <= tau, ecover = tau whenever U' = U (Gallai), the early-exit contract (bound(r) > r iff exact bound > r, and then
-//   bound(r) <= exact bound) for
-//   every r, and Edmonds' matching against brute force on random multigraphs; mutants 15 / 16 must exceed tau somewhere.
-//   (b) On every Part A half: all 128 base rule subsets x {charge, ecover, charge+ecover} x seeds 0..2 (lb-minr 1, 2, 3
-//   for seeds 0, 1, 2): the ladder must match enumeration; mutants 15 (charge inflated by 1/D) and 16 (ecover without
-//   the at-most-2 condition) must give wrong half-level verdicts. lb-gap: unlimited for seed 0, 0 / 1 for seeds 1 / 2.
-//   The search hands a copy of the odd rows' candidate sets to the same lb_charge / lb_ecover tested in (a). Seed 2
-//   runs the charge without the raise step; seed 1 uses -cc-lb-auto 60 % after any level (switch-off exercised). (c) Part B driver configurations with the new rules.
+// GH-157 (rule charge): Part I (a) the bound function on random hitting-set instances (k <= 10 candidate sets over <= 14
+//   qubits, a third of them with every qubit in <= 2 sets) against brute-force tau: charge (with and without the raise)
+//   <= tau, local <= raised, and the early-exit contract (bound(r) > r iff exact bound > r, and then bound(r) <= exact
+//   bound) for every r; mutant 15 must exceed tau somewhere. (b) On every Part A half: all 128 base rule subsets x three
+//   charge configurations (lb-minr 1 / 2 / 3 with lb-gap unlimited / 0 / 1) x seeds 0..2 (seed 1: auto switch-off at
+//   60 % after any level; seed 2: no raise): the ladder must match enumeration; mutant 15 (charge inflated by 1/D) must
+//   give wrong half-level verdicts. The search hands a copy of the odd rows' candidate sets to the lb_charge tested in
+//   (a). (c) Part B driver configurations with charge (minr 1 and 3, gap 0 / 1 / unlimited, with and without pack).
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -166,10 +164,10 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
-    r.overlap = mask & 64; r.charge = mask & 128; r.ecover = mask & 256;   // GH-157
+    r.overlap = mask & 64; r.charge = mask & 128;   // GH-157
     return r;
 }
-static const int RM_CHG = 128, RM_ECV = 256;   // GH-157
+static const int RM_CHG = 128;   // GH-157
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128;
 static const char* rules_name(int mask) {
     static char buf[64];
@@ -194,7 +192,7 @@ static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, co
     for (int w = 1; w <= top; w++) {
         distcc::LevelResult res = hs.run_level(w);
         if (nodes) *nodes += res.nodes;
-        if (lbprunes) *lbprunes += res.chgprune + res.ecprune;
+        if (lbprunes) *lbprunes += res.chgprune;
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
         if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
@@ -335,30 +333,13 @@ static int brute_tau(const std::vector<Mask>& sets, int nq) {
     }
     return best;
 }
-static int brute_matching(int nv, const std::vector<int>& ea, const std::vector<int>& eb) {
-    const int ne = (int)ea.size();
-    int best = 0;
-    for (uint32_t x = 0; x < (1u << ne); x++) {
-        if (popc(x) <= best) continue;
-        Mask usedv = 0; bool ok = true;
-        for (int e = 0; e < ne && ok; e++)
-            if (x >> e & 1) {
-                if (ea[e] == eb[e] || (usedv >> ea[e] & 1) || (usedv >> eb[e] & 1)) ok = false;
-                usedv |= (1u << ea[e]) | (1u << eb[e]);
-            }
-        if (ok) best = popc(x);
-    }
-    (void)nv;
-    return best;
-}
-
 int main(int argc, char** argv) {
     const int NA = argc > 1 ? atoi(argv[1]) : 300;   // part A instances
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
     int fails = 0;
 
     // ---------------- Part I (a), GH-157: bound functions vs brute force ----------------
-    long pi_inst = 0, pi_bad = 0, pi_exact = 0, pi_tight_c = 0, pi_tight_e = 0, pi_gain_c = 0, pi_gain_e = 0, pi_m15 = 0, pi_m16 = 0, pi_mm = 0, pi_mm_bad = 0;
+    long pi_inst = 0, pi_bad = 0, pi_tight_c = 0, pi_gain_c = 0, pi_m15 = 0;
     {
         distcc::LbWork lw;
         lw.reset(16, 16);
@@ -388,43 +369,26 @@ int main(int argc, char** argv) {
             pi_inst++;
             const int bc = distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 0);
             const int bl = distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 0, false);   // local-degree only
-            bool ex = false; int nsel = 0;
-            const int be = distcc::lb_ecover(&rs[0], &rq[0], kk, -1, lw, 0, &ex, &nsel);
             bool bad = false;
-            if (tau < 0) bad = bc != distcc::LB_DEAD || be != distcc::LB_DEAD;
+            if (tau < 0) bad = bc != distcc::LB_DEAD || bl != distcc::LB_DEAD;
             else {
-                if (bc > tau || be > tau || p > tau || bl > bc) bad = true;
-                if (ex) { pi_exact++; if (be != tau) bad = true; }
+                if (bc > tau || p > tau || bl > bc) bad = true;
                 if (bc == tau) pi_tight_c++;
-                if (be == tau) pi_tight_e++;
                 if (bc > p) pi_gain_c++;
-                if (be > p) pi_gain_e++;
                 for (int r = 0; r <= kk + 1; r++) {   // early-exit contract
-                    bool e2 = false; int n2 = 0;
                     const int c2 = distcc::lb_charge(&rs[0], &rq[0], kk, r, lw, 0);
-                    const int x2 = distcc::lb_ecover(&rs[0], &rq[0], kk, r, lw, 0, &e2, &n2);
-                    if ((c2 > r) != (bc > r) || (x2 > r) != (be > r) || (c2 > r && c2 > bc) || (x2 > r && x2 > be)) bad = true;
+                    if ((c2 > r) != (bc > r) || (c2 > r && c2 > bc)) bad = true;
                 }
                 if (distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 15) > tau) pi_m15++;
-                bool e3 = false; int n3 = 0;
-                if (distcc::lb_ecover(&rs[0], &rq[0], kk, -1, lw, 16, &e3, &n3) > tau) pi_m16++;
             }
-            if (bad) { pi_bad++; fails++; if (pi_bad <= 10) fprintf(stderr, "CC_FAIL partI(a) inst=%d nq=%d k=%d tau=%d pack=%d charge=%d ecover=%d exact=%d\n", inst, nq, kk, tau, p, bc, be, (int)ex); }
-        }
-        for (int inst = 0; inst < 20000; inst++) {   // Edmonds vs brute force
-            const int nv = 1 + (int)rnd(10), ne = (int)rnd(15);
-            std::vector<int> ea, eb;
-            for (int e = 0; e < ne; e++) { ea.push_back((int)rnd((unsigned)nv)); eb.push_back((int)rnd((unsigned)nv)); }
-            pi_mm++;
-            const int a = distcc::max_matching(nv, ea, eb, -1, lw), b = brute_matching(nv, ea, eb);
-            if (a != b) { pi_mm_bad++; fails++; if (pi_mm_bad <= 10) fprintf(stderr, "CC_FAIL partI(a) matching inst=%d: %d vs brute %d\n", inst, a, b); }
+            if (bad) { pi_bad++; fails++; if (pi_bad <= 10) fprintf(stderr, "CC_FAIL partI(a) inst=%d nq=%d k=%d tau=%d pack=%d charge=%d local=%d\n", inst, nq, kk, tau, p, bc, bl); }
         }
     }
-    printf("partI(a) (GH-157 bounds): %ld hitting-set instances, %ld bad (U' = U on %ld; charge = tau on %ld, ecover = tau on %ld; charge > pack on %ld, ecover > pack on %ld); matching %ld graphs, %ld bad\n",
-           pi_inst, pi_bad, pi_exact, pi_tight_c, pi_tight_e, pi_gain_c, pi_gain_e, pi_mm, pi_mm_bad);
-    printf("partI(a) mutants: 15 (charge + 1/D) exceeds tau on %ld instances, 16 (ecover without the at-most-2 check) on %ld\n", pi_m15, pi_m16);
-    if (pi_m15 == 0 || pi_m16 == 0 || pi_gain_c == 0 || pi_gain_e == 0) { fprintf(stderr, "CC_FAIL GH-157 bound expectations not met\n"); fails++; }
-    long ib_runs = 0, ib_bad = 0, ib_prunes = 0, ib_m15_runs = 0, ib_m15_bad = 0, ib_m16_runs = 0, ib_m16_bad = 0;
+    printf("partI(a) (GH-157 charge): %ld hitting-set instances, %ld bad (charge = tau on %ld; charge > pack on %ld)\n",
+           pi_inst, pi_bad, pi_tight_c, pi_gain_c);
+    printf("partI(a) mutant 15 (charge + 1/D) exceeds tau on %ld instances\n", pi_m15);
+    if (pi_m15 == 0 || pi_gain_c == 0) { fprintf(stderr, "CC_FAIL GH-157 bound expectations not met\n"); fails++; }
+    long ib_runs = 0, ib_bad = 0, ib_prunes = 0, ib_m15_runs = 0, ib_m15_bad = 0;
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
@@ -503,15 +467,16 @@ int main(int argc, char** argv) {
                 mut_runs[mt]++;
                 if (!ladder_ok(H, G, K, n, dh, orb, rm, 0, mt, NULL, why)) mut_bad[mt]++;
             }
-        // Part I (b), GH-157: the new rules on top of every base subset; mutants 15 / 16
+        // Part I (b), GH-157: charge on top of every base subset, three gate configurations; mutant 15
         for (int rm = 0; rm < RM_NSUB; rm++)
             for (int lb = 1; lb <= 3; lb++) {
-                const int rmx = rm | (lb & 1 ? RM_CHG : 0) | (lb & 2 ? RM_ECV : 0);
+                const int rmx = rm | RM_CHG;
+                static const int gaps[4] = {0, 1000, 0, 1};
                 for (uint64_t seed = 0; seed < 3; seed++) {
                     std::string why;
                     uint64_t pr = 0;
                     ib_runs++;
-                    if (!ladder_ok(H, G, K, n, dh, orb, rmx, seed, 0, NULL, why, 1 + (int)seed, &pr, seed == 0 ? 1000 : (int)seed - 1)) {
+                    if (!ladder_ok(H, G, K, n, dh, orb, rmx, seed, 0, NULL, why, lb, &pr, gaps[lb])) {
                         ib_bad++; fails++;
                         if (ib_bad <= 10) fprintf(stderr, "CC_FAIL partI(b) inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rmx),
                                                   (unsigned long long)seed, why.c_str());
@@ -520,14 +485,12 @@ int main(int argc, char** argv) {
                 }
                 std::string why;
                 if (lb == 1) { ib_m15_runs++; if (!ladder_ok(H, G, K, n, dh, orb, rmx, 0, 15, NULL, why, 1)) ib_m15_bad++; }
-                if (lb == 2) { ib_m16_runs++; if (!ladder_ok(H, G, K, n, dh, orb, rmx, 0, 16, NULL, why, 1)) ib_m16_bad++; }
             }
     }
-    printf("partI(b) (GH-157 rules on the Part A halves): %ld ladder runs (128 base subsets x 3 x seeds 0..2), %ld bad, %ld charge/ecover prunes\n",
+    printf("partI(b) (GH-157 charge on the Part A halves): %ld ladder runs (128 base subsets x 3 configurations x seeds 0..2), %ld bad, %ld charge prunes\n",
            ib_runs, ib_bad, ib_prunes);
-    printf("mutant 15 (charge inflated by 1/D): %ld/%ld half ladders wrong; mutant 16 (ecover without the at-most-2 check): %ld/%ld half ladders wrong\n",
-           ib_m15_bad, ib_m15_runs, ib_m16_bad, ib_m16_runs);
-    if (ib_prunes == 0 || ib_m15_bad == 0 || ib_m16_bad == 0) { fprintf(stderr, "CC_FAIL GH-157 mutant/prune expectations not met\n"); fails++; }
+    printf("mutant 15 (charge inflated by 1/D): %ld/%ld half ladders wrong\n", ib_m15_bad, ib_m15_runs);
+    if (ib_prunes == 0 || ib_m15_bad == 0) { fprintf(stderr, "CC_FAIL GH-157 mutant/prune expectations not met\n"); fails++; }
     printf("partA: %ld half instances (%ld with verified orbits, %ld with all column weights odd, %ld without any nontrivial element), %ld ladder runs over %d rule subsets x 3 seeds, %ld bad\n",
            a_inst, a_orb, a_odd, a_none, a_runs, RM_NSUB, a_bad);
     printf("partA K (GH-138): %ld basis, %ld low-weight sets, %ld random sets; %ld instances where a minimum element meets a row of K in floor(|g|/2) qubits\n",
@@ -619,8 +582,8 @@ int main(int argc, char** argv) {
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
             {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
-            {"charge-ecover", RM_NEW | RM_CHG | RM_ECV, true, false, 0, true, 3, 0}, {"charge-ecover-minr1", RM_NEW | RM_CHG | RM_ECV, false, true, 1, true, 1, 1000},
-            {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1, 1}, {"ecover-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_ECV, true, false, 0, true, 1, 0},
+            {"charge", RM_NEW | RM_CHG, true, false, 0, true, 3, 0}, {"charge-minr1-gapinf", RM_NEW | RM_CHG, false, true, 1, true, 1, 1000},
+            {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1, 1}, {"charge-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_CHG, true, false, 0, true, 1, 0},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
