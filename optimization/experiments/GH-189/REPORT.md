@@ -1,6 +1,6 @@
 # GH-189: general static pin-relation CSS construction
 
-Status: LOCAL_CONSTRUCTION_AND_FINITE_CERTIFICATE_PASS; Linux gates pending.
+Status: LOCAL_AND_LINUX_EVIDENCE_PASS; all six finite distances cross-checked; n2304 MaxSAT numeric INCOMPLETE, one unexecuted completion job.
 Issue https://github.com/guluchen/DistQLDPC/issues/189; hub claim6503336430.
 Branch codex/pin-relation-library from remotely verified main
 6083e662c621f3b66defd434cfae31a028d483c4. No PR/main integration.
@@ -124,18 +124,76 @@ other-engine guards. No allocation/run or paid-cloud substitute. No solver/
 default/name/tier/QDistSAT/main/gh-pages changes, no PR. Integration and
 remaining server/provenance decisions stay with PI.
 
+## Cross-batch coordination snapshot
+
+While this same bounded job ran, a read-only scan of locally pinned work
+refs found18 standard jobs.jsonl packages containing87 recorded jobs with
+aggregate522CPU-hour configured limits. This is neither an ETA nor evidence
+that jobs have/have not executed, and no allocation/schedule/run is created.
+Exact pinned refs/SHAs/job paths/IDs/budgets are retained in
+raw/recorded-library-packages-snapshot.json. Source X-cube incidence and a
+finite disjoint-detector proof are designed in XCUBE_NEXT_DESIGN.md but
+remain unimplemented/uncounted. This preserves genuine remaining work
+without fabricating completion or occupying solver/server rounds.
+
+## Terminal Linux evidence and one remaining numeric job
+
+Source7d51d56fcb4ac49c8bf0bae67e7381966a6c938a; unchanged solver binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Library run40920177770/job123610959471 SUCCESS:50units/full independent
+construction/inventory comparison,24matrix+6complete-certificate byte
+regeneration, all12serial defaultseed60sCPU/90swall/4GiB allocated-runner
+pinned attempts, actual-word/source/binary/input identity audit. Ordinary
+source CI40920177618/job123610958904 SUCCESS.
+
+| stem | MaxSAT60s | CC60s | finite certificate exact | numeric gate |
+|---|---|---|---|---|
+|PIN_160_64_unknown|4|4|4|PASS|
+|PIN_240_142_unknown|4|4|4|PASS|
+|PIN_256_30_unknown|8|8|8|PASS|
+|PIN_1152_60_unknown|4|4|4|PASS|
+|PIN_1728_84_unknown|[3,4]|4|4|PASS|
+|PIN_2304_207_unknown|no numeric fields|4|4|INCOMPLETE|
+
+Every distance has a checked complete pin-kernel lower certificate, actual
+GF2 logical upper word and independent complete CC proof. First4 also
+complete in MaxSAT. The source exact8 anchor is reproduced, no contradiction.
+No PLAUSIBLE-only scientific lower proof remains for these six; the raw
+MaxSAT n2304 numeric gap is separate and is NEVER filled from CC/certificate.
+Small distances4 retained for all5original cases; no growth/open-problem
+claim, case replacement or hidden-equivalent copy.
+
+All30engine files, source/binary/input hashes and full519155-character job
+log retained in raw/actions/default, with actual-word audit. Replay:
+```
+python3 scripts/codegen/audit_pin_relation_smoke.py --maxsat optimization/experiments/GH-189/raw/actions/default/pin_relations-maxsat --cc optimization/experiments/GH-189/raw/actions/default/pin_relations-cc --construction optimization/experiments/GH-189/raw/construction.json --out /tmp/gh189-audit-replay.json
+cmp optimization/experiments/GH-189/raw/actions/default/audit.json /tmp/gh189-audit-replay.json
+```
+Byte-identical PASS. These are finite correctness/bounds observations, not
+controlled timing/seed-median adoption claims. No scientific CI rerun.
+
+One frozen unexecuted MaxSAT n2304 job completes only the missing numeric
+gate. Reference4 is an actual independently GF2-verified upper word.6hCPU+
+600swall/4GiB/defaultseed0/verbose/serial pinned yfclab2 with explicit PI-
+allocated confirmed-free core/nohup/nullstdin.6hCPU/6h10mwall configured
+LIMITS, not ETA. No core allocated/server run or paid-cloud substitute.
+Dry-run CPU54 syntactic only; Mac and altered-argv guards reject without
+solver/output directory. Frozen case/job/argv/matrix/actual-word/other-engine
+checks and unchanged solver/build guard remain. No further scientific lower
+proof job is required here; n1728 has consistent raw numeric bounds already.
+
 ## Completion fields
 
-What changed:6 reproducible static general pin-relation CSS inputs,
-source/chain/complete-flag/pinned-column certificates, independent finite
-support-isolation proof, full logicals/actual words and bounded Linux gates.
-Validation performed:50local units, full independent algebra/physical/logical/
-word/typed-space/inventory/peer checks, first-case byte regeneration; full
-Linux24matrix+6certificate reproduction and engine checks pending.
-Results: finite lower4/8 meets verified upper4/8; retain original small-
-distance controls, no growth/global-open claim or new exact CLI assertion.
-Unresolved: Linux/numeric/scientific gates; prior server jobs/APM source hold;
-remaining mainstream gaps and PI integration/allocation.
+What changed: six reproducible static general pin-relation CSS inputs,
+independent source/chain/full-flag/pinned-column/logical/physical certificates,
+finite support-isolation proof, durable Linux evidence and one numeric job.
+Validation performed:50local+Linux units, full algebra/actual-word/source/
+identity checks,24matrix+6complete-certificate byte regeneration,12bounded
+engine attempts, byte-identical local audit replay and runner guards.
+Results: all six finite distances4/4/8/4/4/4 cross-checked by finite
+certificate+CC+GF2; first4 MaxSAT exact. n2304 MaxSAT numeric INCOMPLETE.
+Unresolved: one numeric completion job; prior recorded jobs/APM source hold;
+X-cube/certified-expander/cosheaf and other remaining coverage/PI integration.
 Scientific semantics changed:no.
 PI action required:yes for integration/names/tiers/server allocation or
-previous held APM interpretation; routine validation continues.
+previous held APM interpretation; routine independent library work continues.

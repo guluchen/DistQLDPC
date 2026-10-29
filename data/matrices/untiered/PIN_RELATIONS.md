@@ -95,7 +95,8 @@ The actual words meet these bounds already. These are useful finite small-
 distance controls, not evidence of distance growth or a set of difficult
 remaining open problems. Original individual source values were absent,
 not globally proven open. Retain these easy/poor outcomes without reselection;
-internal Linux engines will independently cross-check before final reporting.
+internal Linux CC now confirms all six, with MaxSAT exact on the first four
+and[3,4]/no numeric fields on the last two, as recorded below.
 Never substitute this certificate into missing raw CLI numeric fields.
 
 ## Reproduction and gates
@@ -114,11 +115,31 @@ stabilizer words; tiny predetermined support-isolation certificates and
 or scientific support/distance search. Original HGP default12 and triangular
 COLOR6 CLI workloads preserved; PIN explicit selector only.
 
-Full24matrix+6complete-certificate byte reproduction and serial six-case
-MaxSAT/CC Linux60sCPU/90swall/4GiB/defaultseed/pinned allocated CPU checks
-are pending,14min cap. Retain raw/source/binary/input identities and actual
-words. All numeric missing fields remain INCOMPLETE; finite certificate and
-engine results distinguished. Heavy completion becomes unexecuted yfclab2
-packages requiring PI allocation, never long Actions/Mac or paid cloud work.
+Linux source7d51d56fcb4ac49c8bf0bae67e7381966a6c938a, library run40920177770/
+job123610959471 SUCCESS:50units/full independent construction/inventory
+comparison,24matrix+6complete-certificate byte regeneration and all12serial
+60sCPU/90swall/4GiB/defaultseed/pinned allocated runner CPU attempts. Ordinary
+source CI40920177618/job123610958904 SUCCESS. Full raw source/binary/input
+identities, all30engine files and actual-word audit retained in GH-189/raw/
+actions/default; local replay is byte-identical.
+
+| n | MaxSAT60s | CC60s | independent finite certificate | numeric gate |
+|---:|---|---|---|---|
+|160|4|4|4|PASS|
+|240|4|4|4|PASS|
+|256|8|8|8|PASS|
+|1152|4|4|4|PASS|
+|1728|[3,4]|4|4|PASS|
+|2304|no numeric fields|4|4|INCOMPLETE|
+
+Thus every finite distance is cross-checked by an independent mathematical
+certificate, complete CC search and actual GF2 word; first four also have
+complete MaxSAT proof. No PLAUSIBLE-only lower proof remains for these six.
+The last MaxSAT numeric field gap is distinct and remains INCOMPLETE.
+One frozen unexecuted yfclab2 MaxSAT job is packaged for n2304 only, with
+actual upper reference4,6hCPU+600swall/4GiB/defaultseed0/verbose/pinned
+explicitly PI-allocated confirmed-free core.6hCPU/6h10mwall are configured
+limits, not ETA; no allocation/run. No extra scientific Actions/Mac run.
 No solver/default/name/tier/main/gh-pages/QDistSAT change or PR. APM source
-hold, other pending jobs and remaining mainstream gaps remain separate.
+hold, prior recorded server packages and X-cube/other remaining mainstream
+gaps remain separate. All original small-distance results retained.

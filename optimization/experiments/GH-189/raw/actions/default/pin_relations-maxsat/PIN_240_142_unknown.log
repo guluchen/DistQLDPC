@@ -1,0 +1,67 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/PIN_240_142_unknown_Hx.txt
+c Hz: data/matrices/untiered/PIN_240_142_unknown_Hz.txt
+c Gx: data/matrices/untiered/PIN_240_142_unknown_Gx.txt
+c Gz: data/matrices/untiered/PIN_240_142_unknown_Gz.txt
+c Hx: 51 x 240, Hz: 51 x 240, Gx: 142 x 240, Gz: 142 x 240, logicals: 284
+c frontier auto X: 16.24 Tanner 4-cycles per row (threshold 3.00) -> off
+c frontier auto Z: 16.24 Tanner 4-cycles per row (threshold 3.00) -> off
+c dualshare: dual map 'identity' verified (rank Hz=Hx=49, [Hz;Gx]=[Hx;Gz]=191, cpu 0.001s): dX = dZ, both halves kept, lower bounds shared
+c oddcap X: column weights 3..3 all odd (every logical has even weight) -> odd caps skipped
+c oddcap Z: column weights 3..3 all odd (every logical has even weight) -> odd caps skipped
+c symbreak X: n=240 candidates=130 verified_generators=0 orbits=240 detect_cpu=0.001s clause=none
+c symbreak Z: n=240 candidates=130 verified_generators=0 orbits=240 detect_cpu=0.001s clause=none
+c stab-overlap X: 51 of 51 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:27 (<= 4) 14:6 (<= 7) 16:6 (<= 8) 24:11 (<= 12) 60:1 (<= 30); native propagator rows 51 (no clauses)
+c stab-overlap Z: 51 of 51 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:27 (<= 4) 14:6 (<= 7) 16:6 (<= 8) 24:11 (<= 12) 60:1 (<= 30); native propagator rows 51 (no clauses)
+c ub-pre X: rank H 49, information set 191, seed 0, collision stern p 2 l 12 walk 32 batch 1 refresh 0
+c ub-pre Z: rank H 49, information set 191, seed 0, collision stern p 2 l 12 walk 32 batch 1 refresh 0
+c ub-pre X: word of weight 4 (iteration 1, wall 0.005s)
+c witness X (ub-pre): 12 14 156 157
+c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, wall 0.072s
+c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, wall 0.083s
+c ub-pre: U0 after 0.083s (both halves converged; iterations X 17 Z 16, words X 1 Z 0): 4 (X 4, Z -1)
+c oddcap: X half cap 1 skipped (odd cap, no probe): lb 2
+c dualshare: Z half cap 1 skipped (NONE implied, shared lb 2)
+c stab-overlap X cap 2: 0 of 51 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.04 Mb                                      |
+c Reduced to 1022 vars, 5242 cls (c/v ratio==5.1, grow=0)
+c No iterative elimination performed. (vars=1022, c/v ratio=5.1)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 240, of which 240 unit, 0 nonUnit and 0 empty
+c total nb of literals: 19918
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 193
+c 1 conflict sets found with length 191
+c fixedCost 0, nbSatLits 0, totalFixedVars 193, objForSearch: 240
+
+c provided UB: 3
+c provided LB: 2 (search units 2)
+
+c Cardinality: 1544 (Sinz+MTO) for UB 3
+c nbFailedLits 160, nbI 118, fixedVarsByFL 602, totalFixedVars 866, nbTested: 1344, counter 51306
+c ends of initiationization by VSIDS at 1028 conflicts with init 8972
+
+c UB=3 fails, cnfls=1028, hcnfls=679, core 220, tier2 10, local 678, quasiC: 99 (fixed: 3352)
+c prunedLB 2.31, dev 0.46, succRate 0.57, nbSucc 309, nbHardens 62 (fixed 6593), lk: 541, shorten: 0, pureSo 41, nbFlyRd 39, nbFixedLH 11
+c ===============================================================================
+c no feasible solution, hardConflicts: 679
+c nbLK: 541, nbSuccLK: 309(57.12%), nbLKup: 359843(190.90%), hardens 62 (fixed 6593), dynVars 717, shorten: 0
+c CSS interleave: X half cap 2 lb 2 feasibility -> NONE 0
+c dualshare: Z half cap 2 skipped (NONE implied, shared lb 4)
+c dualshare: Z half cap 3 skipped (NONE implied, shared lb 4)
+c CSS interleave: d = 4
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/PIN_240_142_unknown_Hx.txt
+c Hz: data/matrices/untiered/PIN_240_142_unknown_Hz.txt
+c Gx: data/matrices/untiered/PIN_240_142_unknown_Gx.txt
+c Gz: data/matrices/untiered/PIN_240_142_unknown_Gz.txt
+c Hx: 51 x 240, Hz: 51 x 240, Gx: 142 x 240, Gz: 142 x 240, logicals: 284
+c d_lb: 4
+c d_ub: 4
+c d  : 4
+o 4

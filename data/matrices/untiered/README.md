@@ -140,7 +140,11 @@ chain cases; no source individual distance/decoder/gauge claim imputed.
 Independent complete flag/recursive-boundary/endpoint/pinned-column checks,
 full logicals/GF2/actual words and typed physical connectivity pass;50local
 units. Finite support-isolation lower4/8 meets existing upper words; retain
-these as small-distance controls without parameter replacement. Linux full
-24matrix+6certificate reproduction and both-engine short checks pending.
+these as small-distance controls without parameter replacement. Linux run40920177770 passes50units/full construction/24matrix+6certificate
+byte regeneration and actual-word audit. CC+independent finite certificate
+and GF2 confirm all six distances4/4/8/4/4/4; MaxSAT also exact on first4,
+then[3,4]/no numeric fields. Last numeric gate remains INCOMPLETE; one
+unexecuted MaxSAT numeric job packaged. All30engine files/full log and
+byte-identical local audit retained.
 This branch30untiered/81total; prior24rows/96matrices and51tiered preserved.
 Other work branches and held APM source review remain separate.
