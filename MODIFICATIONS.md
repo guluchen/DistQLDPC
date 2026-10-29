@@ -404,13 +404,13 @@ r_i and the exhausted blocks) with the ascending label order; (A)-(C) hold for a
 not restarted, so rows unreachable from the seed are dropped. Both ignore rows of H and are caught by the half-level
 oracle (invalid witnesses or wrong levels) and by the rows-used check. *Evidence.* `optimization/experiments/GH-183/`.
 
-GH-206 (`-cc-roworder=auto`, `-cc-probe=S` default 0.1 s, `-cc-probe-growth=F` default 30; `src/cc/cc_driver.{h,cc}`).
+GH-206 (`-cc-roworder=auto`, `-cc-probe=S` default 0.1 s, `-cc-probe-growth=F` default 0 = one probe per half; `src/cc/cc_driver.{h,cc}`).
 *What it adds.* A per-half choice between two exact level searches of the same half: A (input row order, the given
 `-cc-rules` without `mrv`) and B (GH-183 reversed-BFS row order, the given rules with `mrv`). A searches from level 1. A
 level w that the current search refutes (EMPTY) in a search time t >= T (finder slices excluded) triggers a probe, unless
 the half needs no further level (lb >= U): the other search runs the same level w with an abort through the poll hook once
 it has used t (the finder does not run during the probe); if it ends EMPTY first, it becomes the current search. T starts
-at S and becomes F x t after each probe (F = 0: one probe). *Why every verdict stays the same.* (i) A and B are exact level
+at S and becomes F x t after each probe (F = 0, the default: one probe per half). *Why every verdict stays the same.* (i) A and B are exact level
 searches (cc_half.h; GH-162 and GH-183 proofs): under the level precondition "no element of F of weight < w" each decides
 correctly whether F has an element of weight w. (ii) The precondition of every later level w' > w is established by the
 refutations of the levels < w', whichever exact search produced them, so either search may run level w'. (iii) A probe
@@ -418,7 +418,7 @@ never changes a bound: level w is already refuted; an ABORTED probe is discarded
 INCONSISTENT after an EMPTY contradicts (i) and stops the run as a trap (RESULT -1 TRAP). (iv) The finder, the dual map,
 the stop rule and witness verification are untouched; the poll only gains a deadline test while a probe runs. The time
 measurement only selects which exact search runs, so timing noise can change speed, never answers. *Cost.* A probe costs at
-most the search time t of its level; with F = 30 the probes after the first cost a few percent of the run. A probe is
+most the search time t of its level; re-probes (F >= 1) cost one level each. A probe is
 skipped when the half is finished anyway (lb >= U). *Tests* (`make test-cc`): Part B / H driver runs against enumeration
 with a probe after every refuted level that always switches (A and B alternate) or never switches, and by time
 (threshold 0 s, F = 1 or 0, poll at every node, so the abort path is taken), with the finder on and off and with

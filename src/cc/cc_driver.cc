@@ -391,8 +391,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        hs[k].tag, S.tiebreak_rows(), S.overlap_rows(), opt.tb_asc ? "ascending" : "descending");
             if (opt.roworder == ROWORDER_AUTO)   /* GH-206 */
                 printf("c cc: %s half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, %d rows; "
-                       "probe at a refuted level taking >= %gs, then >= %g x the last probe level%s)%s\n", hs[k].tag, hs[k].alt->rows_used(), opt.probe_sec,
-                       opt.probe_growth,
+                       "probe at the first refuted level taking >= %gs%s%s)%s\n", hs[k].tag, hs[k].alt->rows_used(), opt.probe_sec,
+                       opt.probe_growth > 0 ? (", then >= " + std::to_string((long long)opt.probe_growth) + " x the last probe level").c_str() : " (one probe)",
                        opt.probe_force == 1 ? ", TEST: always switch" : opt.probe_force == 2 ? ", TEST: never switch" : "",
                        opt.mutant == 19 ? " [TEST MUTANT 19: a row dropped]" : opt.mutant == 20 ? " [TEST MUTANT 20: no BFS restart]" :
                        opt.mutant == 21 ? " [TEST MUTANT 21: aborted probe of level w + 1 taken as refuted]" : "");

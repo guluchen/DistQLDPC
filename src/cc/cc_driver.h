@@ -106,11 +106,11 @@ struct DriverOptions {
      * every refuted level the probe runs level w + 1 with a zero time cap and an ABORTED probe is taken as a refuted level
      * (lb raised without proof). */
     double probe_sec;        /* -cc-probe=S (default 0.1 s) */
-    double probe_growth;     /* -cc-probe-growth=F (default 30; 0 = a single probe) */
+    double probe_growth;     /* -cc-probe-growth=F (default 0 = a single probe per half; F >= 1: re-probes at F x the last probe level's time) */
     int probe_force;         /* -cc-probe=switch|stay (test only) */
     DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0),
-                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false), probe_sec(0.1), probe_growth(30), probe_force(0) {}
+                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false), probe_sec(0.1), probe_growth(0), probe_force(0) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).

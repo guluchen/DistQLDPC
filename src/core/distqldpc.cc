@@ -2673,7 +2673,7 @@ int main(int argc, char** argv) {
             printf("            tie-break; bfs = reversed BFS over the Tanner graph from the rows of the first seed (a row relabeling);\n");
             printf("            auto (GH-206) = per half, index order without mrv first; a refuted level taking >= S s (-cc-probe=S,\n");
             printf("            default 0.1) is re-run with the other configuration (bfs + mrv), capped at the first run's time, and\n");
-            printf("            the faster one continues; later probes at -cc-probe-growth=F (default 30; 0 = one probe) x that time\n");
+            printf("            the faster one continues (one probe per half; -cc-probe-growth=F >= 1: re-probes at F x that time)\n");
             printf("            -cc-tbbase=desc|asc (GH-183, default desc): tiebreak base order after the seed (test variant)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -cc-aut=on|off (default on; GH-152; off = the CC search before GH-152): Tanner-graph automorphism\n");

@@ -481,11 +481,13 @@ accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv
 accept 3 "" -engine=cc -cc-roworder=auto -cc-probe=0 -cc-probe-growth=0 $NB $L $M
 accept 3 "" -engine=cc -cc-roworder=auto -cc-probe=0 -cc-probe-growth=1 $NB $L $M
 accept 2 "" -engine=cc -cc-roworder=auto -cc-probe=0.5 -cc-probe-growth=100 $L $C
-vgrep 3 "^c cc: X half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, [0-9]* rows; probe at a refuted level taking >= 0.1s, then >= 30 x the last probe level)$" \
+vgrep 3 "^c cc: X half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, [0-9]* rows; probe at the first refuted level taking >= 0.1s (one probe))$" \
     -v -engine=cc -cc-roworder=auto $L $M
 vgrep 3 "^c cc: X half auto probe at level [0-9]*: current A [0-9.]*s, B [A-Z]* nodes [0-9]* [0-9.]*s -> B (A = index, no mrv; B = bfs, mrv)$" \
     -v -engine=cc -cc-roworder=auto -cc-probe=switch $NB $L $M
 vgrep 3 "^c cc-probe: X level [0-9]* B [A-Z]* nodes [0-9]* time [0-9.]*s A [0-9.]*s -> A$" -cc-stats -engine=cc -cc-roworder=auto -cc-probe=stay $NB $L $M
+vgrep 3 "^c cc: X half row order: auto (.* probe at the first refuted level taking >= 0.5s, then >= 30 x the last probe level)$" \
+    -v -engine=cc -cc-roworder=auto -cc-probe=0.5 -cc-probe-growth=30 $L $M
 runs=$((runs + 1)); run -v -engine=cc -cc-roworder=auto -cc-mutant=21 $L $M
 if ! grep -q "TEST MUTANT 21" <<<"$out" || ! grep -q "^warning: cc: test mutant 21 active" <<<"$err"; then
     echo "FAIL (GH-206: mutant 21 not reported): rc=$rc" >&2; fails=$((fails + 1))
