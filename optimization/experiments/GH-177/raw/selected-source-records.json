@@ -1,0 +1,1481 @@
+[
+  {
+    "campaign": "css-small",
+    "component_certification": null,
+    "connectivity": {
+      "component_code": null,
+      "components_bliss_isomorphic": null,
+      "homogeneous": true,
+      "is_connected": true,
+      "n_components": 1,
+      "presentation_partition_agrees": true,
+      "state": "connected"
+    },
+    "css_low_weight_audit": {
+      "algorithm": "css_weight_le_4_syndrome_quotient_mitm_v1",
+      "audited_class_id": "TC-7e25effbeb",
+      "certified_lower_bound": 5,
+      "exact_distance": null,
+      "representative_id": "CS-0687c929",
+      "result": "excluded_through_weight_4",
+      "transferred_by_tanner_isomorphism": false
+    },
+    "css_upper_bound_witness_correction": null,
+    "css_weight5_witness_certification": null,
+    "distance_class": {
+      "estimated_upper": 10,
+      "evidence": {
+        "decisive_lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-0687c929"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-15fc6460"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-2a6f0d66"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-3de4e929"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-46ee4861"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-681e1b89"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-ad1fea22"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-f7846762"
+          }
+        ],
+        "decisive_upper_bounds": [
+          {
+            "bound": 10,
+            "method": "B",
+            "presentation_id": "CS-0687c929"
+          },
+          {
+            "bound": 10,
+            "method": "B",
+            "presentation_id": "CS-15fc6460"
+          },
+          {
+            "bound": 10,
+            "method": "B",
+            "presentation_id": "CS-2a6f0d66"
+          },
+          {
+            "bound": 10,
+            "method": "B",
+            "presentation_id": "CS-3de4e929"
+          },
+          {
+            "bound": 10,
+            "method": "B",
+            "presentation_id": "CS-46ee4861"
+          },
+          {
+            "bound": 10,
+            "method": "B",
+            "presentation_id": "CS-f7846762"
+          }
+        ],
+        "exact_methods": []
+      },
+      "exact_evidence_member_ids": [],
+      "fom_estimate": 3.3333333333333335,
+      "fom_lower": 0.8333333333333334,
+      "fom_upper": null,
+      "inherited_or_tightened": false,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_lower_with_estimated_upper",
+      "status_code": "C",
+      "upper": 10,
+      "upper_is_supported": false
+    },
+    "distance_direct": {
+      "estimated_upper": 10,
+      "evidence": {
+        "exact_methods": [],
+        "lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4"
+          }
+        ],
+        "upper_bounds": [
+          {
+            "bound": 10,
+            "method": "B"
+          }
+        ]
+      },
+      "fom_estimate": 3.3333333333333335,
+      "fom_lower": 0.8333333333333334,
+      "fom_upper": null,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_lower_with_estimated_upper",
+      "status_code": "C",
+      "upper": 10,
+      "upper_is_supported": false
+    },
+    "equivalence": {
+      "canonical_digest_sha256": "7e25effbeb50a6f8e461d5cc7807378bc1d006fb7a3cf01e25d4ab2e9a8179bb",
+      "canonicalizer": {
+        "name": "python-igraph/BLISS",
+        "version": "1.0.0"
+      },
+      "class_id": "TC-7e25effbeb",
+      "class_label": "C007",
+      "class_size": 8,
+      "member_ids": [
+        "CS-0687c929",
+        "CS-15fc6460",
+        "CS-2a6f0d66",
+        "CS-3de4e929",
+        "CS-46ee4861",
+        "CS-681e1b89",
+        "CS-ad1fea22",
+        "CS-f7846762"
+      ],
+      "relation": "colored_stored_generator_tanner_isomorphism_v1"
+    },
+    "explicit_bb_component_matches": [],
+    "family": "CSS",
+    "generators": {
+      "A_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "B_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      "C_terms": [],
+      "D_terms": []
+    },
+    "parameters": {
+      "ell": 6,
+      "k": 4,
+      "m": 10,
+      "n": 120
+    },
+    "presentation_id": "CS-0687c929",
+    "provenance": {
+      "attribution_status": "native_discovery_events",
+      "event_count": 5,
+      "missing_attribution_reason": null,
+      "model_aliases": [
+        "azure/gpt-5.6-sol"
+      ],
+      "observation_count": 5,
+      "origin": {
+        "fixed_safety_net": false,
+        "model_attributed_observations_present": true
+      },
+      "possible_additional_model_aliases": [],
+      "program_ids": [
+        "55ac9de8-0d6b-47be-b597-d31a3741c197",
+        "6443d9fe-dadc-4ce7-8773-a4ee03ea7615",
+        "67245eeb-6509-497b-bfbb-cb5ccb0d27dc",
+        "d068cb6d-9888-4494-9467-c3ba71df1512",
+        "fafc3263-1c71-4a88-b1aa-d9879cdcc495"
+      ],
+      "program_source_hashes": [
+        "13e8e26f70f5f318c4171669a66b2039b0497266722568685bab8f03d3b4b3f5",
+        "2436c340130b5d0431c633b9e88335ceae3db2d6cb2db711938ce2a10039bd8a",
+        "7459f1e6cb72926c3668c74e2b1b0df1611b6ad9af7f99cd2120afa4c83a3f0c",
+        "e5be0d2929e85df2967fc425321a6ceb457ba95506e8016377eb46f44983a3cc",
+        "ee40946c0a65871b86fdb6c0eedcd1c0fada0db29249c7229d143442e233417d"
+      ],
+      "verification_recorded_at": [],
+      "verification_recorded_at_latest": null,
+      "verification_row_count": 0
+    },
+    "record_type": "weight5_presentation",
+    "schema_version": 2,
+    "source_artifacts": {
+      "css_low_weight_audit": {
+        "bytes": 1026187,
+        "path": "results/weight5_css_low_weight_audit.jsonl",
+        "records": 493,
+        "sha256": "4bde88b41304d532f27a95d5585130ff46516da081c51f26c38f1bf2de349244"
+      },
+      "discovery_events": {
+        "bytes": 7334125,
+        "path": "results/evolution/weight5_css_small_v1/discovery_events.jsonl",
+        "records": 5573,
+        "sha256": "dc3c126d7abded6e040ea80b18528a07b04e9f5dcda0e86d55d59ab53cad223a"
+      },
+      "distance_verification": {
+        "bytes": 8403,
+        "path": "results/weight5_css_small_v1_milp_verified.jsonl",
+        "records": 17,
+        "sha256": "7207983c9b0728679666d5a65519c06c2fd97aee0922b102e16a98d732a235bd"
+      },
+      "raw_log": {
+        "bytes": 1311523,
+        "path": "results/evolution/weight5_css_small_v1/all_codes_weight5_css.jsonl",
+        "records": 5610,
+        "sha256": "ad8348ac6b99698f1ec5ca8c14b062272bf310cc93318444bc557056d34d99cc"
+      }
+    }
+  },
+  {
+    "campaign": "css-small",
+    "component_certification": null,
+    "connectivity": {
+      "component_code": null,
+      "components_bliss_isomorphic": null,
+      "homogeneous": true,
+      "is_connected": true,
+      "n_components": 1,
+      "presentation_partition_agrees": true,
+      "state": "connected"
+    },
+    "css_low_weight_audit": {
+      "algorithm": "css_weight_le_4_syndrome_quotient_mitm_v1",
+      "audited_class_id": "TC-1026f88e35",
+      "certified_lower_bound": 5,
+      "exact_distance": null,
+      "representative_id": "CS-0a81f585",
+      "result": "excluded_through_weight_4",
+      "transferred_by_tanner_isomorphism": false
+    },
+    "css_upper_bound_witness_correction": null,
+    "css_weight5_witness_certification": null,
+    "distance_class": {
+      "estimated_upper": null,
+      "evidence": {
+        "decisive_lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-0a81f585"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-11e3ca37"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-1e458803"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-22b9dba0"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-2a80db64"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-309cdc56"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-40311390"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-4801cd6c"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-5905f6bc"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-591f3cac"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-61693099"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-6550518f"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-69115335"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-6a8640f3"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-9132be59"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-96c9d6be"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-b5817c0a"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-b9115258"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-bac619d7"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-bf90a085"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-e95402fe"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-f288c001"
+          },
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-f58fb478"
+          }
+        ],
+        "decisive_upper_bounds": [
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-0a81f585"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-11e3ca37"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-1e458803"
+          },
+          {
+            "bound": 9,
+            "method": "W",
+            "presentation_id": "CS-22b9dba0"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-2a80db64"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-309cdc56"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-40311390"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-4801cd6c"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-5905f6bc"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-591f3cac"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-61693099"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-6550518f"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-69115335"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-6a8640f3"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-9132be59"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-96c9d6be"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-b5817c0a"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-b9115258"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-bac619d7"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-e95402fe"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-f288c001"
+          },
+          {
+            "bound": 9,
+            "method": "B",
+            "presentation_id": "CS-f58fb478"
+          }
+        ],
+        "exact_methods": []
+      },
+      "exact_evidence_member_ids": [],
+      "fom_estimate": null,
+      "fom_lower": 0.6172839506172839,
+      "fom_upper": 2.0,
+      "inherited_or_tightened": true,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_interval",
+      "status_code": "C",
+      "upper": 9,
+      "upper_is_supported": true
+    },
+    "distance_direct": {
+      "estimated_upper": 9,
+      "evidence": {
+        "exact_methods": [],
+        "lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4"
+          }
+        ],
+        "upper_bounds": [
+          {
+            "bound": 9,
+            "method": "B"
+          }
+        ]
+      },
+      "fom_estimate": 2.0,
+      "fom_lower": 0.6172839506172839,
+      "fom_upper": null,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_lower_with_estimated_upper",
+      "status_code": "C",
+      "upper": 9,
+      "upper_is_supported": false
+    },
+    "equivalence": {
+      "canonical_digest_sha256": "1026f88e3507cb993a22a6863e672b6a2dbb3d504c575e66124518e7c66ab1a7",
+      "canonicalizer": {
+        "name": "python-igraph/BLISS",
+        "version": "1.0.0"
+      },
+      "class_id": "TC-1026f88e35",
+      "class_label": "C041",
+      "class_size": 23,
+      "member_ids": [
+        "CS-0a81f585",
+        "CS-11e3ca37",
+        "CS-1e458803",
+        "CS-22b9dba0",
+        "CS-2a80db64",
+        "CS-309cdc56",
+        "CS-40311390",
+        "CS-4801cd6c",
+        "CS-5905f6bc",
+        "CS-591f3cac",
+        "CS-61693099",
+        "CS-6550518f",
+        "CS-69115335",
+        "CS-6a8640f3",
+        "CS-9132be59",
+        "CS-96c9d6be",
+        "CS-b5817c0a",
+        "CS-b9115258",
+        "CS-bac619d7",
+        "CS-bf90a085",
+        "CS-e95402fe",
+        "CS-f288c001",
+        "CS-f58fb478"
+      ],
+      "relation": "colored_stored_generator_tanner_isomorphism_v1"
+    },
+    "explicit_bb_component_matches": [],
+    "family": "CSS",
+    "generators": {
+      "A_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          8
+        ]
+      ],
+      "B_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      "C_terms": [],
+      "D_terms": []
+    },
+    "parameters": {
+      "ell": 9,
+      "k": 4,
+      "m": 9,
+      "n": 162
+    },
+    "presentation_id": "CS-0a81f585",
+    "provenance": {
+      "attribution_status": "native_discovery_events",
+      "event_count": 1,
+      "missing_attribution_reason": null,
+      "model_aliases": [
+        "azure/gpt-5.6-sol"
+      ],
+      "observation_count": 1,
+      "origin": {
+        "fixed_safety_net": false,
+        "model_attributed_observations_present": true
+      },
+      "possible_additional_model_aliases": [],
+      "program_ids": [
+        "67245eeb-6509-497b-bfbb-cb5ccb0d27dc"
+      ],
+      "program_source_hashes": [
+        "7459f1e6cb72926c3668c74e2b1b0df1611b6ad9af7f99cd2120afa4c83a3f0c"
+      ],
+      "verification_recorded_at": [],
+      "verification_recorded_at_latest": null,
+      "verification_row_count": 0
+    },
+    "record_type": "weight5_presentation",
+    "schema_version": 2,
+    "source_artifacts": {
+      "css_low_weight_audit": {
+        "bytes": 1026187,
+        "path": "results/weight5_css_low_weight_audit.jsonl",
+        "records": 493,
+        "sha256": "4bde88b41304d532f27a95d5585130ff46516da081c51f26c38f1bf2de349244"
+      },
+      "discovery_events": {
+        "bytes": 7334125,
+        "path": "results/evolution/weight5_css_small_v1/discovery_events.jsonl",
+        "records": 5573,
+        "sha256": "dc3c126d7abded6e040ea80b18528a07b04e9f5dcda0e86d55d59ab53cad223a"
+      },
+      "distance_verification": {
+        "bytes": 8403,
+        "path": "results/weight5_css_small_v1_milp_verified.jsonl",
+        "records": 17,
+        "sha256": "7207983c9b0728679666d5a65519c06c2fd97aee0922b102e16a98d732a235bd"
+      },
+      "raw_log": {
+        "bytes": 1311523,
+        "path": "results/evolution/weight5_css_small_v1/all_codes_weight5_css.jsonl",
+        "records": 5610,
+        "sha256": "ad8348ac6b99698f1ec5ca8c14b062272bf310cc93318444bc557056d34d99cc"
+      }
+    }
+  },
+  {
+    "campaign": "css-small",
+    "component_certification": null,
+    "connectivity": {
+      "component_code": null,
+      "components_bliss_isomorphic": null,
+      "homogeneous": true,
+      "is_connected": true,
+      "n_components": 1,
+      "presentation_partition_agrees": true,
+      "state": "connected"
+    },
+    "css_low_weight_audit": {
+      "algorithm": "css_weight_le_4_syndrome_quotient_mitm_v1",
+      "audited_class_id": "TC-dfb9cfae85",
+      "certified_lower_bound": 5,
+      "exact_distance": null,
+      "representative_id": "CS-0d018ae6",
+      "result": "excluded_through_weight_4",
+      "transferred_by_tanner_isomorphism": false
+    },
+    "css_upper_bound_witness_correction": null,
+    "css_weight5_witness_certification": null,
+    "distance_class": {
+      "estimated_upper": 14,
+      "evidence": {
+        "decisive_lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CS-0d018ae6"
+          }
+        ],
+        "decisive_upper_bounds": [
+          {
+            "bound": 14,
+            "method": "B",
+            "presentation_id": "CS-0d018ae6"
+          }
+        ],
+        "exact_methods": []
+      },
+      "exact_evidence_member_ids": [],
+      "fom_estimate": 4.355555555555555,
+      "fom_lower": 0.5555555555555556,
+      "fom_upper": null,
+      "inherited_or_tightened": false,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_lower_with_estimated_upper",
+      "status_code": "C",
+      "upper": 14,
+      "upper_is_supported": false
+    },
+    "distance_direct": {
+      "estimated_upper": 14,
+      "evidence": {
+        "exact_methods": [],
+        "lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4"
+          }
+        ],
+        "upper_bounds": [
+          {
+            "bound": 14,
+            "method": "B"
+          }
+        ]
+      },
+      "fom_estimate": 4.355555555555555,
+      "fom_lower": 0.5555555555555556,
+      "fom_upper": null,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_lower_with_estimated_upper",
+      "status_code": "C",
+      "upper": 14,
+      "upper_is_supported": false
+    },
+    "equivalence": {
+      "canonical_digest_sha256": "dfb9cfae857c4837843a58d38dd9749973edf4d4a3b98ca8b71fb84a2ec53a1b",
+      "canonicalizer": {
+        "name": "python-igraph/BLISS",
+        "version": "1.0.0"
+      },
+      "class_id": "TC-dfb9cfae85",
+      "class_label": "C123",
+      "class_size": 1,
+      "member_ids": [
+        "CS-0d018ae6"
+      ],
+      "relation": "colored_stored_generator_tanner_isomorphism_v1"
+    },
+    "explicit_bb_component_matches": [],
+    "family": "CSS",
+    "generators": {
+      "A_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          3
+        ]
+      ],
+      "B_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          8
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "C_terms": [],
+      "D_terms": []
+    },
+    "parameters": {
+      "ell": 10,
+      "k": 4,
+      "m": 9,
+      "n": 180
+    },
+    "presentation_id": "CS-0d018ae6",
+    "provenance": {
+      "attribution_status": "native_discovery_events",
+      "event_count": 7,
+      "missing_attribution_reason": null,
+      "model_aliases": [
+        "aws/claude-opus-5",
+        "azure/gpt-5.6-sol"
+      ],
+      "observation_count": 7,
+      "origin": {
+        "fixed_safety_net": false,
+        "model_attributed_observations_present": true
+      },
+      "possible_additional_model_aliases": [],
+      "program_ids": [
+        "24fa733d-5acd-4ce7-ab76-953bf9f603cd",
+        "76d06e18-d69c-4dd8-8bd0-8c0ffc162859",
+        "8418144a-37c2-4b6e-882a-f1c3281ec64b",
+        "863b6ddf-c43c-4c8b-85e4-cd7070642cba",
+        "89a14bbf-0de3-4398-87fb-18f89e6629a7",
+        "bdbbffae-77bd-400f-b16c-4f06b764f5d0",
+        "fcf493c0-60ff-42e4-befe-5bee4575698d"
+      ],
+      "program_source_hashes": [
+        "37bc7cb415538e128cc1a536aa5ed9e352d9591860705229fcdf24e693e1f12b",
+        "3c3567ddb4c82fab2c5214dfe188c13c631ea13d31818b2cf24021a0d41b9310",
+        "738853838c8edb56381b3c994a0ba4864c39992231285208ebdc5e696a9c0dec",
+        "a96316018ae39b2fd61f4746db8c975cd910e9239b80490d848d5358c13399dc",
+        "c0e0423502be967c03d97dbfceae74e9a76863a9256cc37169938fda8c33887a",
+        "cce6cb530065ebeff6834c92cace709807465aaa3db33b86fd03bd7f9c7a9da7"
+      ],
+      "verification_recorded_at": [],
+      "verification_recorded_at_latest": null,
+      "verification_row_count": 0
+    },
+    "record_type": "weight5_presentation",
+    "schema_version": 2,
+    "source_artifacts": {
+      "css_low_weight_audit": {
+        "bytes": 1026187,
+        "path": "results/weight5_css_low_weight_audit.jsonl",
+        "records": 493,
+        "sha256": "4bde88b41304d532f27a95d5585130ff46516da081c51f26c38f1bf2de349244"
+      },
+      "discovery_events": {
+        "bytes": 7334125,
+        "path": "results/evolution/weight5_css_small_v1/discovery_events.jsonl",
+        "records": 5573,
+        "sha256": "dc3c126d7abded6e040ea80b18528a07b04e9f5dcda0e86d55d59ab53cad223a"
+      },
+      "distance_verification": {
+        "bytes": 8403,
+        "path": "results/weight5_css_small_v1_milp_verified.jsonl",
+        "records": 17,
+        "sha256": "7207983c9b0728679666d5a65519c06c2fd97aee0922b102e16a98d732a235bd"
+      },
+      "raw_log": {
+        "bytes": 1311523,
+        "path": "results/evolution/weight5_css_small_v1/all_codes_weight5_css.jsonl",
+        "records": 5610,
+        "sha256": "ad8348ac6b99698f1ec5ca8c14b062272bf310cc93318444bc557056d34d99cc"
+      }
+    }
+  },
+  {
+    "campaign": "css-large",
+    "component_certification": null,
+    "connectivity": {
+      "component_code": null,
+      "components_bliss_isomorphic": null,
+      "homogeneous": true,
+      "is_connected": true,
+      "n_components": 1,
+      "presentation_partition_agrees": true,
+      "state": "connected"
+    },
+    "css_low_weight_audit": {
+      "algorithm": "css_weight_le_4_syndrome_quotient_mitm_v1",
+      "audited_class_id": "TC-78449af54a",
+      "certified_lower_bound": 5,
+      "exact_distance": null,
+      "representative_id": "CL-015c0d4f",
+      "result": "excluded_through_weight_4",
+      "transferred_by_tanner_isomorphism": false
+    },
+    "css_upper_bound_witness_correction": null,
+    "css_weight5_witness_certification": null,
+    "distance_class": {
+      "estimated_upper": 16,
+      "evidence": {
+        "decisive_lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CL-015c0d4f"
+          }
+        ],
+        "decisive_upper_bounds": [
+          {
+            "bound": 16,
+            "method": "B",
+            "presentation_id": "CL-015c0d4f"
+          }
+        ],
+        "exact_methods": []
+      },
+      "exact_evidence_member_ids": [],
+      "fom_estimate": 2.6666666666666665,
+      "fom_lower": 0.2604166666666667,
+      "fom_upper": null,
+      "inherited_or_tightened": false,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_lower_with_estimated_upper",
+      "status_code": "C",
+      "upper": 16,
+      "upper_is_supported": false
+    },
+    "distance_direct": {
+      "estimated_upper": 16,
+      "evidence": {
+        "exact_methods": [],
+        "lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4"
+          }
+        ],
+        "upper_bounds": [
+          {
+            "bound": 16,
+            "method": "B"
+          }
+        ]
+      },
+      "fom_estimate": 2.6666666666666665,
+      "fom_lower": 0.2604166666666667,
+      "fom_upper": null,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_lower_with_estimated_upper",
+      "status_code": "C",
+      "upper": 16,
+      "upper_is_supported": false
+    },
+    "equivalence": {
+      "canonical_digest_sha256": "78449af54aa960460be32452fef08f5e2734b10dc83de200d7b931a422946605",
+      "canonicalizer": {
+        "name": "python-igraph/BLISS",
+        "version": "1.0.0"
+      },
+      "class_id": "TC-78449af54a",
+      "class_label": "C183",
+      "class_size": 1,
+      "member_ids": [
+        "CL-015c0d4f"
+      ],
+      "relation": "colored_stored_generator_tanner_isomorphism_v1"
+    },
+    "explicit_bb_component_matches": [],
+    "family": "CSS",
+    "generators": {
+      "A_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          6,
+          4
+        ]
+      ],
+      "B_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          9
+        ]
+      ],
+      "C_terms": [],
+      "D_terms": []
+    },
+    "parameters": {
+      "ell": 16,
+      "k": 4,
+      "m": 12,
+      "n": 384
+    },
+    "presentation_id": "CL-015c0d4f",
+    "provenance": {
+      "attribution_status": "native_discovery_events",
+      "event_count": 1,
+      "missing_attribution_reason": null,
+      "model_aliases": [
+        "azure/gpt-5.6-sol"
+      ],
+      "observation_count": 1,
+      "origin": {
+        "fixed_safety_net": false,
+        "model_attributed_observations_present": true
+      },
+      "possible_additional_model_aliases": [],
+      "program_ids": [],
+      "program_source_hashes": [
+        "d8305e8eaae5f5a259f2b8d178055c511090524ac47a9391c8af4c33c544a715"
+      ],
+      "verification_recorded_at": [],
+      "verification_recorded_at_latest": null,
+      "verification_row_count": 0
+    },
+    "record_type": "weight5_presentation",
+    "schema_version": 2,
+    "source_artifacts": {
+      "css_low_weight_audit": {
+        "bytes": 1026187,
+        "path": "results/weight5_css_low_weight_audit.jsonl",
+        "records": 493,
+        "sha256": "4bde88b41304d532f27a95d5585130ff46516da081c51f26c38f1bf2de349244"
+      },
+      "discovery_events": {
+        "bytes": 993058,
+        "path": "results/evolution/weight5_css_large_v1/discovery_events.jsonl",
+        "records": 760,
+        "sha256": "baf8ceb79318aae7a2cae3a9d2c582eab27d3c9f6a63a4182c0b6fbfebd9fa42"
+      },
+      "distance_verification": {
+        "bytes": 43495,
+        "path": "results/weight5_css_large_v1_milp_verified.jsonl",
+        "records": 79,
+        "sha256": "0f8e18d70eb75438b2608aff0b00582bcb89b97c144d2b0b11ddcdacd8a1923c"
+      },
+      "raw_log": {
+        "bytes": 200219,
+        "path": "results/evolution/weight5_css_large_v1/all_codes_weight5_css.jsonl",
+        "records": 834,
+        "sha256": "9dae8379fd5945c0a37b6ee060528141035f74896cff493a84ebdcb2da88d3a6"
+      }
+    }
+  },
+  {
+    "campaign": "css-large",
+    "component_certification": null,
+    "connectivity": {
+      "component_code": null,
+      "components_bliss_isomorphic": null,
+      "homogeneous": true,
+      "is_connected": true,
+      "n_components": 1,
+      "presentation_partition_agrees": true,
+      "state": "connected"
+    },
+    "css_low_weight_audit": {
+      "algorithm": "css_weight_le_4_syndrome_quotient_mitm_v1",
+      "audited_class_id": "TC-5f95e88575",
+      "certified_lower_bound": 5,
+      "exact_distance": null,
+      "representative_id": "CL-9fbce668",
+      "result": "excluded_through_weight_4",
+      "transferred_by_tanner_isomorphism": false
+    },
+    "css_upper_bound_witness_correction": null,
+    "css_weight5_witness_certification": null,
+    "distance_class": {
+      "estimated_upper": null,
+      "evidence": {
+        "decisive_lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CL-9fbce668"
+          }
+        ],
+        "decisive_upper_bounds": [
+          {
+            "bound": 22,
+            "method": "I",
+            "presentation_id": "CL-9fbce668"
+          }
+        ],
+        "exact_methods": []
+      },
+      "exact_evidence_member_ids": [],
+      "fom_estimate": null,
+      "fom_lower": 0.23809523809523808,
+      "fom_upper": 4.609523809523809,
+      "inherited_or_tightened": false,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_interval",
+      "status_code": "C",
+      "upper": 22,
+      "upper_is_supported": true
+    },
+    "distance_direct": {
+      "estimated_upper": null,
+      "evidence": {
+        "exact_methods": [],
+        "lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4"
+          }
+        ],
+        "upper_bounds": [
+          {
+            "bound": 22,
+            "method": "I"
+          },
+          {
+            "bound": 30,
+            "method": "B"
+          }
+        ]
+      },
+      "fom_estimate": null,
+      "fom_lower": 0.23809523809523808,
+      "fom_upper": 4.609523809523809,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_interval",
+      "status_code": "C",
+      "upper": 22,
+      "upper_is_supported": true
+    },
+    "equivalence": {
+      "canonical_digest_sha256": "5f95e88575c1c180fda4bad02bf42f3bcf3f93055f607dded5afd341da3e4e7c",
+      "canonicalizer": {
+        "name": "python-igraph/BLISS",
+        "version": "1.0.0"
+      },
+      "class_id": "TC-5f95e88575",
+      "class_label": "C290",
+      "class_size": 1,
+      "member_ids": [
+        "CL-9fbce668"
+      ],
+      "relation": "colored_stored_generator_tanner_isomorphism_v1"
+    },
+    "explicit_bb_component_matches": [],
+    "family": "CSS",
+    "generators": {
+      "A_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "B_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          10,
+          6
+        ],
+        [
+          11,
+          2
+        ]
+      ],
+      "C_terms": [],
+      "D_terms": []
+    },
+    "parameters": {
+      "ell": 15,
+      "k": 4,
+      "m": 14,
+      "n": 420
+    },
+    "presentation_id": "CL-9fbce668",
+    "provenance": {
+      "attribution_status": "native_discovery_events",
+      "event_count": 1,
+      "missing_attribution_reason": null,
+      "model_aliases": [
+        "azure/gpt-5.6-sol"
+      ],
+      "observation_count": 1,
+      "origin": {
+        "fixed_safety_net": false,
+        "model_attributed_observations_present": true
+      },
+      "possible_additional_model_aliases": [],
+      "program_ids": [
+        "dc5975ef-b89f-48cf-b0cf-0fba7fd91192"
+      ],
+      "program_source_hashes": [
+        "f9b46368d4d13f74b47d9f7eef590f575ab667b969a53e28afd0969f2f615fdd"
+      ],
+      "verification_recorded_at": [
+        "2026-08-26T18:41:34.688540+00:00"
+      ],
+      "verification_recorded_at_latest": "2026-08-26T18:41:34.688540+00:00",
+      "verification_row_count": 1
+    },
+    "record_type": "weight5_presentation",
+    "schema_version": 2,
+    "source_artifacts": {
+      "css_low_weight_audit": {
+        "bytes": 1026187,
+        "path": "results/weight5_css_low_weight_audit.jsonl",
+        "records": 493,
+        "sha256": "4bde88b41304d532f27a95d5585130ff46516da081c51f26c38f1bf2de349244"
+      },
+      "discovery_events": {
+        "bytes": 993058,
+        "path": "results/evolution/weight5_css_large_v1/discovery_events.jsonl",
+        "records": 760,
+        "sha256": "baf8ceb79318aae7a2cae3a9d2c582eab27d3c9f6a63a4182c0b6fbfebd9fa42"
+      },
+      "distance_verification": {
+        "bytes": 43495,
+        "path": "results/weight5_css_large_v1_milp_verified.jsonl",
+        "records": 79,
+        "sha256": "0f8e18d70eb75438b2608aff0b00582bcb89b97c144d2b0b11ddcdacd8a1923c"
+      },
+      "raw_log": {
+        "bytes": 200219,
+        "path": "results/evolution/weight5_css_large_v1/all_codes_weight5_css.jsonl",
+        "records": 834,
+        "sha256": "9dae8379fd5945c0a37b6ee060528141035f74896cff493a84ebdcb2da88d3a6"
+      }
+    }
+  },
+  {
+    "campaign": "css-large",
+    "component_certification": null,
+    "connectivity": {
+      "component_code": null,
+      "components_bliss_isomorphic": null,
+      "homogeneous": true,
+      "is_connected": true,
+      "n_components": 1,
+      "presentation_partition_agrees": true,
+      "state": "connected"
+    },
+    "css_low_weight_audit": {
+      "algorithm": "css_weight_le_4_syndrome_quotient_mitm_v1",
+      "audited_class_id": "TC-9efa3eab1a",
+      "certified_lower_bound": 5,
+      "exact_distance": null,
+      "representative_id": "CL-f5754da6",
+      "result": "excluded_through_weight_4",
+      "transferred_by_tanner_isomorphism": false
+    },
+    "css_upper_bound_witness_correction": {
+      "algorithm": "randomized_gf2_kernel_permutation_search_v1",
+      "corrected_upper_bound": {
+        "method": "W",
+        "value": 23
+      },
+      "historical_upper_bound": {
+        "matching_scalar_observations": 1,
+        "method": "I",
+        "operator_was_persisted": false,
+        "stages_observed": [
+          "milp_incumbent"
+        ],
+        "value": 24
+      },
+      "sector_weights": {
+        "X": 23,
+        "Z": 23
+      }
+    },
+    "css_weight5_witness_certification": null,
+    "distance_class": {
+      "estimated_upper": null,
+      "evidence": {
+        "decisive_lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4",
+            "presentation_id": "CL-f5754da6"
+          }
+        ],
+        "decisive_upper_bounds": [
+          {
+            "bound": 23,
+            "method": "W",
+            "presentation_id": "CL-f5754da6"
+          }
+        ],
+        "exact_methods": []
+      },
+      "exact_evidence_member_ids": [],
+      "fom_estimate": null,
+      "fom_lower": 0.23148148148148148,
+      "fom_upper": 4.898148148148148,
+      "inherited_or_tightened": false,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_interval",
+      "status_code": "C",
+      "upper": 23,
+      "upper_is_supported": true
+    },
+    "distance_direct": {
+      "estimated_upper": null,
+      "evidence": {
+        "exact_methods": [],
+        "lower_bounds": [
+          {
+            "bound": 5,
+            "method": "L4"
+          }
+        ],
+        "upper_bounds": [
+          {
+            "bound": 23,
+            "method": "W"
+          },
+          {
+            "bound": 24,
+            "method": "I"
+          },
+          {
+            "bound": 29,
+            "method": "B"
+          }
+        ]
+      },
+      "fom_estimate": null,
+      "fom_lower": 0.23148148148148148,
+      "fom_upper": 4.898148148148148,
+      "is_exact": false,
+      "lower": 5,
+      "lower_is_certified": true,
+      "status": "certified_interval",
+      "status_code": "C",
+      "upper": 23,
+      "upper_is_supported": true
+    },
+    "equivalence": {
+      "canonical_digest_sha256": "9efa3eab1aa5de208f3a126c5991ad9662ab7ae0ea642c918b7bc981607355d0",
+      "canonicalizer": {
+        "name": "python-igraph/BLISS",
+        "version": "1.0.0"
+      },
+      "class_id": "TC-9efa3eab1a",
+      "class_label": "C453",
+      "class_size": 1,
+      "member_ids": [
+        "CL-f5754da6"
+      ],
+      "relation": "colored_stored_generator_tanner_isomorphism_v1"
+    },
+    "explicit_bb_component_matches": [],
+    "family": "CSS",
+    "generators": {
+      "A_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "B_terms": [
+        [
+          0,
+          0
+        ],
+        [
+          5,
+          11
+        ],
+        [
+          10,
+          1
+        ]
+      ],
+      "C_terms": [],
+      "D_terms": []
+    },
+    "parameters": {
+      "ell": 18,
+      "k": 4,
+      "m": 12,
+      "n": 432
+    },
+    "presentation_id": "CL-f5754da6",
+    "provenance": {
+      "attribution_status": "native_discovery_events",
+      "event_count": 1,
+      "missing_attribution_reason": null,
+      "model_aliases": [
+        "azure/gpt-5.6-sol"
+      ],
+      "observation_count": 1,
+      "origin": {
+        "fixed_safety_net": false,
+        "model_attributed_observations_present": true
+      },
+      "possible_additional_model_aliases": [],
+      "program_ids": [
+        "dc5975ef-b89f-48cf-b0cf-0fba7fd91192"
+      ],
+      "program_source_hashes": [
+        "f9b46368d4d13f74b47d9f7eef590f575ab667b969a53e28afd0969f2f615fdd"
+      ],
+      "verification_recorded_at": [
+        "2026-08-26T18:41:35.371781+00:00"
+      ],
+      "verification_recorded_at_latest": "2026-08-26T18:41:35.371781+00:00",
+      "verification_row_count": 1
+    },
+    "record_type": "weight5_presentation",
+    "schema_version": 2,
+    "source_artifacts": {
+      "css_low_weight_audit": {
+        "bytes": 1026187,
+        "path": "results/weight5_css_low_weight_audit.jsonl",
+        "records": 493,
+        "sha256": "4bde88b41304d532f27a95d5585130ff46516da081c51f26c38f1bf2de349244"
+      },
+      "css_upper_bound_witnesses": {
+        "bytes": 31978,
+        "path": "results/weight5_css_upper_bound_witnesses.jsonl",
+        "records": 11,
+        "sha256": "2007e82386fa1cb338f153d7455999e66528931765d89cb8ddbe1dcf399f60fc"
+      },
+      "discovery_events": {
+        "bytes": 993058,
+        "path": "results/evolution/weight5_css_large_v1/discovery_events.jsonl",
+        "records": 760,
+        "sha256": "baf8ceb79318aae7a2cae3a9d2c582eab27d3c9f6a63a4182c0b6fbfebd9fa42"
+      },
+      "distance_verification": {
+        "bytes": 43495,
+        "path": "results/weight5_css_large_v1_milp_verified.jsonl",
+        "records": 79,
+        "sha256": "0f8e18d70eb75438b2608aff0b00582bcb89b97c144d2b0b11ddcdacd8a1923c"
+      },
+      "raw_log": {
+        "bytes": 200219,
+        "path": "results/evolution/weight5_css_large_v1/all_codes_weight5_css.jsonl",
+        "records": 834,
+        "sha256": "9dae8379fd5945c0a37b6ee060528141035f74896cff493a84ebdcb2da88d3a6"
+      }
+    }
+  }
+]

@@ -130,3 +130,13 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+## Source-open LLM-discovered weight5 CSS BB targets (GH-177 work branch)
+
+Six source class-nonexact CSS inputs at n120/162/180/384/420/432,k4,
+selected under the PI's unknown-distance priority. Independent physical
+columns, full logicals and basis-independent stabilizer connectivity are
+checked. Three source endpoints are decoder estimates and three supported
+uppers; none substitutes for actual solver output. Reproduction, selection,
+source attribution/licenses and component soundness proof are in
+[OPEN_LLM_BB.md](OPEN_LLM_BB.md). Unknown stems, untiered only, no QDistSAT mirror.
