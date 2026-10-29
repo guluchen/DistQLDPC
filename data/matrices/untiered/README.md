@@ -130,3 +130,19 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Static three-dimensional color/colex inputs (GH-185)
+
+Seven original reproducible cases are described in [COLOR3D.md](COLOR3D.md):
+a published [[8,3,2]] cube anchor and periodic flag-dual T3 cases
+n384/576/864/1296/1728/2304, k9. Independent full local-sphere/manifold,
+primal/colex chain and Betti, actual GF(2), logical, physical row-space and
+actual basis-upper checks pass. No same-(n,k) peers in main or published
+pending-library snapshots. Source papers do not supply an asserted individual
+exact distance for these original finite specializations; absence is not a
+globally open-problem claim. Actual supplied-basis uppers4/4/4/6/6/6 are not
+minima. No assumed identity X/Z metric duality. Fourteen new unit tests and
+28 matrix/seven complete certificate byte reproductions pass. Linux short
+checks are pending at this construction checkpoint; see GH-185/REPORT.md.
+All51 tiered inputs and prior24 untiered inputs remain unchanged; this branch
+has31 untiered inputs. No new code is mirrored or tiered here.
