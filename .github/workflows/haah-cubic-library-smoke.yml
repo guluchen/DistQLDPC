@@ -1,0 +1,81 @@
+name: Haah cubic CSS library smoke
+
+on:
+  push:
+    branches: [codex/haah-cubic-library]
+    paths:
+      - '.github/workflows/haah-cubic-library-smoke.yml'
+      - 'scripts/codegen/haah_cubic*'
+      - 'scripts/codegen/validate_haah_cubic.py'
+      - 'scripts/codegen/audit_haah_cubic_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_haah_cubic.py'
+      - 'data/matrices/untiered/HCC_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_haah_cubic.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_haah_cubic.py --out /tmp/haah_cubic-construction.json
+          cmp optimization/experiments/GH-182/raw/construction.json /tmp/haah_cubic-construction.json
+      - name: Reproduce all24 new matrix files
+        run: |
+          python3 scripts/codegen/haah_cubic.py --all --out /tmp/haah_cubic-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/haah_cubic-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS:24 haah-cubic matrix files reproduced byte for byte')
+          PY
+      - name: Six default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HCC --stems HCC_16_6_unknown HCC_128_14_unknown HCC_432_6_unknown HCC_1024_30_unknown HCC_2000_6_unknown HCC_2662_2_unknown --verbose --out /tmp/haah_cubic-maxsat
+      - name: Six CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HCC --stems HCC_16_6_unknown HCC_128_14_unknown HCC_432_6_unknown HCC_1024_30_unknown HCC_2000_6_unknown HCC_2662_2_unknown --engine cc --verbose --out /tmp/haah_cubic-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_haah_cubic_smoke.py --maxsat /tmp/haah_cubic-maxsat --cc /tmp/haah_cubic-cc --construction optimization/experiments/GH-182/raw/construction.json --out /tmp/haah_cubic-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('haah_cubic-maxsat','haah_cubic-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH182_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/haah_cubic-audit.json')
+          if audit.exists():print('GH182_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh179-haah_cubic-smoke
+          path: |
+            /tmp/haah_cubic-maxsat/
+            /tmp/haah_cubic-cc/
+            /tmp/haah_cubic-audit.json
+          if-no-files-found: warn
+          retention-days: 14
