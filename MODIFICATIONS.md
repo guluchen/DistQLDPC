@@ -438,3 +438,27 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+## GH-200 coupled MM candidate source-dimension hold
+
+No solver modification or library adoption. A generic four-polynomial
+subset-boundary reconstruction of source2601.18879v2 Eq85/86 agrees entrywise
+with a separate literal4x6block implementation and separately transcribed
+numeric supports for the source648k18 row. Commuting regular-representation
+translations make every two-axis deletion cancel twice in GF(2), so the
+actual HxHzT is zero. Hx=source partial2T and Hz=source partial3 each have
+432rows/648columns. Generic integer-bitset elimination and independent dense
+left-pivot bytearray elimination give ranks318/318, hence k12; unchanged
+logical builder produces12independent rows in each complete quotient basis,
+with full pairing verified by the independent generic CSS checker.
+
+The source table/abstract says k18; no parameter, polynomial, dimension,
+source estimate or stem has been repaired to force agreement. Global
+inversion of the regular representation is a simultaneous permutation;
+X/Z swapping or basis/coordinate permutations preserve the ranks and do
+not resolve this rank discrepancy. No claim identifies the intended code,
+proves an erratum, or transfers source distance23 to reconstructed k12.
+All five frozen candidates are quarantined. Normal generation checks k
+before any writes and refuses the mismatch. Independent diagnostic byte
+reproduction emits only to a new explicitly selected quarantine directory.
+No distance search/extra solver/default/build/tier/QDistSAT/main change.
