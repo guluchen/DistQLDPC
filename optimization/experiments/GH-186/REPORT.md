@@ -1,9 +1,12 @@
 # GH-186: original finite DHLV edge-qubit Tanner chains
 
-Status: CONSTRUCTION_AND_LOCAL_BINARY_CHAIN_PASS; Linux gates pending.
+Status: CONSTRUCTION_AND_ACTUAL_WORD_AUDIT_PASS; three distances
+cross-checked; one numeric gate and three independent proofs remain.
 Issue https://github.com/guluchen/DistQLDPC/issues/186; hub claim6501781585.
 Fresh main6083e662c621f3b66defd434cfae31a028d483c4;
-branch codex/dhlv-library. No PR requested; no main integration.
+branch codex/dhlv-library; data5a0107ab404a770b4d481f81ed127be6c96a1746;
+Linux source8fed3cc08dfa82b009701077b774f915282803f2.
+No PR requested; no main integration.
 
 ## Three proposals and choice
 
@@ -117,12 +120,67 @@ main/gh-pages/PR change; independent construction continues meanwhile.
 What changed: six original reproducible finite DHLV edge-qubit inputs,
 complete group/edge/square/local-chain certificates, independent soundness,
 provenance and bounded validation gates.
-Validation performed:49local units, full finite group/action/incidence/
+Validation performed:49local+Linux units, full finite group/action/incidence/
 actual binary-chain/GF2/logicals/upper-word/rowspace/inventory checks,
 24matrix+6complete-certificate byte reproduction.
-Results: construction passes; Linux terminal numeric/actual-result gates pending.
-Unresolved: Linux gates and any proof completion packages, prior jobs,
+Results: both engines exact4/8/6; CC-only exact16/10/14 PLAUSIBLE.
+Largest MaxSAT has no numeric fields, numeric gate INCOMPLETE.
+Unresolved: three frozen unexecuted MaxSAT proof/numeric jobs, prior jobs,
 certified-expander/good-code/cosheaf research gaps and PI integration.
 Scientific semantics changed:no.
 PI action required:yes for integration/final names/tiers/server allocation;
 routine independent construction and validation continue.
+
+
+## Retained terminal Linux evidence and verdict
+
+Library [40908734608](https://github.com/guluchen/DistQLDPC/actions/runs/40908734608),
+job123570558839 SUCCESS; ordinary source CI40908734427/job123570556963 SUCCESS.49units,
+full finite group/edge/square/actual binary-chain and inventory comparisons,
+24matrix+6full-certificate byte regeneration pass. Source8fed3cc08dfa82b009701077b774f915282803f2;
+binarySHA25668f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux7.0.0-1017-azure/glibc2.39,Python3.12.3,c++13.3.0,
+pinnedCPU0,serial defaultseed,60sCPU/90swall/4GiB each call. Full job
+log635364characters and every engine log/JSON/CSV/environment/input identity
+retained in raw/actions/default/. Actual-result audit replay against local
+matrices/full certificates is byte-identical. No repeated/supplemental
+scientific CI, external/Mac solver or timing/adoption claim. A green
+collector does not pass the largest missing numeric gate.
+
+| n | MaxSAT60s | CC60s | Numeric gate | Scientific status |
+|---:|---|---|---|---|
+|108|exact4|exact4|PASS|two engines+actual GF2 word|
+|784|exact8|exact8|PASS|two engines+actual GF2 word|
+|1176|exact6|exact6|PASS|two engines+actual GF2 word|
+|1568|[5,16]|exact16|PASS|PLAUSIBLE, independent lower proof pending|
+|1960|[3,10]|exact10|PASS|PLAUSIBLE, independent lower proof pending|
+|2744|UNKNOWN,no numeric fields|exact14|INCOMPLETE|PLAUSIBLE, independent lower proof pending|
+
+All printed and supplied-basis physical words verify independently overGF2
+for syndrome, stabilizer exclusion and logical detection. Actual minimum
+words accompany every exact answer. CC-only exact16/10/14 remain PLAUSIBLE;
+the stronger actual uppers16/14 improve initial supplied-basis28/34 without
+a false claim of an independently completed lower proof. No engine/word
+contradiction. Raw missing fields remain empty rather than borrowing CC
+results or an actual basis/printed upper. Fixed cases and stems retained.
+
+Three frozen unexecuted yfclab2 MaxSAT jobs at n1568/1960/2744 use actual
+verified upper references16/10/14, not assumed exact answers; each6hCPU+
+600swall/4GiB/serial defaultseed0/verbose/pinned explicitly PI-allocated
+confirmed-free core/nohup/nullstdin.18hCPU/18h30mwall aggregate LIMITS, not
+ETA. Dry-run/Mac/altered-argv guards pass without invoking a solver or
+creating an output directory. Actual-word and retained-other-engine
+contradiction checks plus source/binary/input/case/argv identities apply.
+No core allocated or job executed; no main/default/solver/tier/name/QDistSAT/
+PR change. See runner/README.md.
+
+Next-source notes retain a useful unknown-distance Quantum Margulis/SL2
+lead without copying unlicensed author matrices or silently resolving a
+published length ambiguity. A separate X-cube construction gap is recorded;
+Haah Code1 does not cover it. Neither lead is implemented in this batch.
+
+Verdict: six actual finite DHLV constructions and all actual-word audits
+pass; three exact distances cross-checked. One default numeric gate and
+three independent proof completions remain packaged. Prior jobs, broader
+mainstream construction/certified-expander/cosheaf gaps and PI integration
+remain; the continuous goal is not complete.

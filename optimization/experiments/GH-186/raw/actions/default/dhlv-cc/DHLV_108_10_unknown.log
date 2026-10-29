@@ -1,0 +1,58 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/DHLV_108_10_unknown_Hx.txt
+c Hz: data/matrices/untiered/DHLV_108_10_unknown_Hz.txt
+c Gx: data/matrices/untiered/DHLV_108_10_unknown_Gx.txt
+c Gz: data/matrices/untiered/DHLV_108_10_unknown_Gz.txt
+c Hx: 48 x 108, Hz: 54 x 108, Gx: 10 x 108, Gz: 10 x 108, logicals: 20
+c cc: dual map detection: none (ranks Hz 52 Hx 46 [Hz;Gx] 62 [Hx;Gz] 56, 0 candidates, cpu 0.000s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 4 generator(s), 16 qubit orbit(s), group partial, point stabiliser not proved trivial, swap map not searched, 68 test(s) (64 refuted, 0 undecided), work 33636, cpu 0.001s
+c cc aut: Tanner swap map: none
+c cc symbreak X: n=108 candidates=59 verified_generators=4 orbits=16 detect_cpu=0.000s clause=orbit-chain
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: generator: plain tanner-aut #3
+c cc symbreak X: generator: plain tanner-aut #4
+c cc symbreak X: orbit reps (size): 0(8) 1(16) 2(8) 4(4) 5(4) 12(8) 13(8) 16(4) 17(8) 22(4) 72(8) 73(4) 74(4) 79(8) 80(8) 81(4)
+c cc symbreak Z: n=108 candidates=59 verified_generators=4 orbits=16 detect_cpu=0.000s clause=orbit-chain
+c cc symbreak Z: generator: plain tanner-aut #1
+c cc symbreak Z: generator: plain tanner-aut #2
+c cc symbreak Z: generator: plain tanner-aut #3
+c cc symbreak Z: generator: plain tanner-aut #4
+c cc symbreak Z: orbit reps (size): 0(8) 1(16) 2(8) 4(4) 5(4) 12(8) 13(8) 16(4) 17(8) 22(4) 72(8) 73(4) 74(4) 79(8) 80(8) 81(4)
+c cc: X half: n 108, rank H 52, rank [H;G] 62, rank S 46: detectors complete, 10 logical(s)
+c cc: Z half: n 108, rank H 46, rank [H;G] 56, rank S 52: detectors complete, 10 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 4 (X 6, Z 4)
+c cc: X half search: 16 seeds (orbit representatives)
+c cc: X half parity: off (column weights 2..3, an even weight present)
+c cc: X half overlap: on (48 stabilizer rows of Hx, weights 5..5, 0 forbidden from the start)
+c cc: Z half search: 16 seeds (orbit representatives)
+c cc: Z half parity: off (column weights 2..4, an even weight present)
+c cc: Z half overlap: on (54 stabilizer rows of Hz, weights 4..6, 0 forbidden from the start)
+c cc: X half ub-search: rank H 52, information set 56, triples off, slack 4, li-cap 64, collision stern p 2 l 9 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 46, information set 62, triples off, slack 4, li-cap 64, collision stern p 2 l 9 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 16 seeds 16 time 0.000s
+c cc: Z half level 1 EMPTY nodes 16 seeds 16 time 0.000s
+c cc: X half level 2 EMPTY nodes 16 seeds 16 time 0.000s
+c cc: Z half level 2 EMPTY nodes 16 seeds 16 time 0.000s
+c cc: X half level 3 EMPTY nodes 16 seeds 16 time 0.000s
+c cc: Z half level 3 EMPTY nodes 16 seeds 16 time 0.000s
+c cc: ub-search X: iterations 1, finder time 0.000s, kept 38, nontrivial 32, li-gain 19, improvements 0, rank 52, K 56, ub 6
+c cc: ub-search X collision: rounds 1, colliding pairs 3253 (nontrivial 3051)
+c cc: ub-search Z: iterations 0, finder time 0.000s, kept 0, nontrivial 0, li-gain 0, improvements 0, rank 46, K 62, ub 4
+c cc: ub-search Z collision: rounds 0, colliding pairs 0 (nontrivial 0)
+c cc: total nodes X 48 Z 48, search time X 0.000s Z 0.000s, wall 0.000s
+c cc: d = 4
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/DHLV_108_10_unknown_Hx.txt
+c Hz: data/matrices/untiered/DHLV_108_10_unknown_Hz.txt
+c Gx: data/matrices/untiered/DHLV_108_10_unknown_Gx.txt
+c Gz: data/matrices/untiered/DHLV_108_10_unknown_Gz.txt
+c Hx: 48 x 108, Hz: 54 x 108, Gx: 10 x 108, Gz: 10 x 108, logicals: 20
+c d_lb: 4
+c d_ub: 4
+c d  : 4
+o 4

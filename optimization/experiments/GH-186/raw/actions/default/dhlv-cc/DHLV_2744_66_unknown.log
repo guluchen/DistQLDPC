@@ -1,0 +1,76 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/DHLV_2744_66_unknown_Hx.txt
+c Hz: data/matrices/untiered/DHLV_2744_66_unknown_Hz.txt
+c Gx: data/matrices/untiered/DHLV_2744_66_unknown_Gx.txt
+c Gz: data/matrices/untiered/DHLV_2744_66_unknown_Gz.txt
+c Hx: 1344 x 2744, Hz: 1372 x 2744, Gx: 66 x 2744, Gz: 66 x 2744, logicals: 132
+c cc: dual map detection: none (ranks Hz 1353 Hx 1325 [Hz;Gx] 1419 [Hx;Gz] 1391, 0 candidates, cpu 0.020s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 1 generator(s), 1372 qubit orbit(s), group complete, point stabiliser trivial, swap map not searched, 28 test(s) (27 refuted, 0 undecided), work 216947, cpu 0.008s
+c cc aut: Tanner swap map: none
+c cc symbreak X: n=2744 candidates=96 verified_generators=1 orbits=1372 detect_cpu=0.015s clause=orbit-chain
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: orbit reps (size): 0(2) 1(2) 2(2) 3(2) 4(2) 5(2) 6(2) 7(2) 8(2) 9(2) 10(2) 11(2) 12(2) 13(2) 14(2) 15(2) 16(2) 17(2) 18(2) 19(2) 20(2) 21(2) 22(2) 23(2) 24(2) 25(2) 26(2) 27(2) 28(2) 29(2) 30(2) 31(2) 32(2) 33(2) 34(2) 35(2) 36(2) 37(2) 38(2) 39(2) 40(2) 41(2) 42(2) 43(2) 44(2) 45(2) 46(2) 47(2) 48(2) 49(2) 50(2) 51(2) 52(2) 53(2) 54(2) 55(2) 56(2) 57(2) 58(2) 59(2) 60(2) 61(2) 62(2) 63(2) ...
+c cc symbreak Z: n=2744 candidates=96 verified_generators=1 orbits=1372 detect_cpu=0.016s clause=orbit-chain
+c cc symbreak Z: generator: plain tanner-aut #1
+c cc symbreak Z: orbit reps (size): 0(2) 1(2) 2(2) 3(2) 4(2) 5(2) 6(2) 7(2) 8(2) 9(2) 10(2) 11(2) 12(2) 13(2) 14(2) 15(2) 16(2) 17(2) 18(2) 19(2) 20(2) 21(2) 22(2) 23(2) 24(2) 25(2) 26(2) 27(2) 28(2) 29(2) 30(2) 31(2) 32(2) 33(2) 34(2) 35(2) 36(2) 37(2) 38(2) 39(2) 40(2) 41(2) 42(2) 43(2) 44(2) 45(2) 46(2) 47(2) 48(2) 49(2) 50(2) 51(2) 52(2) 53(2) 54(2) 55(2) 56(2) 57(2) 58(2) 59(2) 60(2) 61(2) 62(2) 63(2) ...
+c cc: X half: n 2744, rank H 1353, rank [H;G] 1419, rank S 1325: detectors complete, 66 logical(s)
+c cc: Z half: n 2744, rank H 1325, rank [H;G] 1391, rank S 1353: detectors complete, 66 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 34 (X 44, Z 34)
+c cc: X half search: 1372 seeds (orbit representatives)
+c cc: X half parity: off (column weights 3..4, an even weight present)
+c cc: X half overlap: on (1344 stabilizer rows of Hx, weights 7..8, 0 forbidden from the start)
+c cc: Z half search: 1372 seeds (orbit representatives)
+c cc: Z half parity: off (column weights 2..6, an even weight present)
+c cc: Z half overlap: on (1372 stabilizer rows of Hz, weights 4..12, 0 forbidden from the start)
+c cc: X half ub-search: rank H 1353, information set 1391, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 1325, information set 1419, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 20 (iteration 1, wall 0.249s)
+c witness X (ub-search): 26 38 166 458 570 598 682 710 878 1006 1186 1298 1410 1438 1538 1550 1577 1598 2207 2228
+c cc: X half level 1 EMPTY nodes 1372 seeds 1372 time 0.000s
+c cc: Z half level 1 EMPTY nodes 1372 seeds 1372 time 0.000s
+c cc: X half level 2 EMPTY nodes 1372 seeds 1372 time 0.000s
+c cc: Z half level 2 EMPTY nodes 1372 seeds 1372 time 0.000s
+c cc: X half level 3 EMPTY nodes 1372 seeds 1372 time 0.000s
+c cc: Z half level 3 EMPTY nodes 1372 seeds 1372 time 0.000s
+c cc: X half level 4 EMPTY nodes 5194 seeds 1372 time 0.001s
+c cc: Z half level 4 EMPTY nodes 4828 seeds 1372 time 0.001s
+c cc: Z half level 5 EMPTY nodes 10501 seeds 1372 time 0.001s
+c cc: X half level 5 EMPTY nodes 11145 seeds 1372 time 0.001s
+c cc: Z half level 6 EMPTY nodes 24787 seeds 1372 time 0.004s
+c cc: X half level 6 EMPTY nodes 24441 seeds 1372 time 0.004s
+c cc: X half level 7 EMPTY nodes 47192 seeds 1372 time 0.008s
+c cc: Z half level 7 EMPTY nodes 47940 seeds 1372 time 0.008s
+c cc: X half level 8 EMPTY nodes 111354 seeds 1372 time 0.021s
+c cc: Z half level 8 EMPTY nodes 104213 seeds 1372 time 0.019s
+c cc: Z half level 9 EMPTY nodes 224998 seeds 1372 time 0.044s
+c cc: X half level 9 EMPTY nodes 233570 seeds 1372 time 0.047s
+c cc: Z half level 10 EMPTY nodes 507691 seeds 1372 time 0.105s
+c cc: X half level 10 EMPTY nodes 530501 seeds 1372 time 0.114s
+c cc: Z half level 11 EMPTY nodes 1155213 seeds 1372 time 0.250s
+c cc: X half level 11 EMPTY nodes 1200678 seeds 1372 time 0.270s
+c cc: Z half level 12 EMPTY nodes 2701106 seeds 1372 time 0.607s
+c cc: X half level 12 EMPTY nodes 2690379 seeds 1372 time 0.633s
+c cc: X half level 13 EMPTY nodes 6169772 seeds 1372 time 1.507s
+c cc: Z half level 13 EMPTY nodes 6333889 seeds 1372 time 1.684s
+c cc: X half level 14 FOUND nodes 36452 seeds 1 time 0.009s
+c witness X: 0 112 224 336 448 560 672 840 952 1064 1176 1288 1400 1512
+c cc: ub-search X: iterations 1, finder time 0.244s, kept 113, nontrivial 6, li-gain 2, improvements 1, rank 1353, K 1391, ub 14
+c cc: ub-search X collision: rounds 1, colliding pairs 9061020 (nontrivial 6549607)
+c cc: ub-search Z: iterations 1, finder time 0.212s, kept 241, nontrivial 0, li-gain 0, improvements 0, rank 1325, K 1419, ub 34
+c cc: ub-search Z collision: rounds 1, colliding pairs 39646683 (nontrivial 1815118)
+c cc: total nodes X 11064794 Z 11119282, search time X 2.615s Z 2.724s, wall 5.588s
+c cc: d = 14
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/DHLV_2744_66_unknown_Hx.txt
+c Hz: data/matrices/untiered/DHLV_2744_66_unknown_Hz.txt
+c Gx: data/matrices/untiered/DHLV_2744_66_unknown_Gx.txt
+c Gz: data/matrices/untiered/DHLV_2744_66_unknown_Gz.txt
+c Hx: 1344 x 2744, Hz: 1372 x 2744, Gx: 66 x 2744, Gz: 66 x 2744, logicals: 132
+c d_lb: 14
+c d_ub: 14
+c d  : 14
+o 14

@@ -123,7 +123,10 @@ stabilizer-as-upper and hidden physical direct-sum mutants are rejected.
 Prior34 unit checks retain their original workloads/default selections.
 
 Explicit six-case default MaxSAT/CC Linux60sCPU/90swall/4GiB serial pinned
-smokes are pending at the construction checkpoint. Actual numeric fields,
+smokes pass construction and actual-word audits; five numeric gates PASS,
+while n2744 default MaxSAT lacks numeric fields (INCOMPLETE). Both engines
+exact4/8/6; remaining CC-only exact16/10/14 stay PLAUSIBLE, with three
+unexecuted MaxSAT proof/numeric jobs packaged. Actual numeric fields,
 source/binary/input identities and raw witnesses will be retained and
 checked independently; missing fields stay INCOMPLETE. New one-engine
 lower/exact results remain PLAUSIBLE until independently completed. Heavy

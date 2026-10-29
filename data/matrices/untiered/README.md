@@ -140,7 +140,10 @@ edge/square/full star, actual binary boundary column and corner tensor
 cancellation, complete logical quotient bases and actual upper word are
 verified independently.15new+34prior units and24matrix+6certificate byte
 reproduction pass. No same(n,k) peers in main/pinned pending-library refs.
-Linux gates pending at construction checkpoint. Supplied-basis uppers
+Linux49units/construction/byte reproduction/actual-word audit replay pass;
+both engines exact4/8/6, remaining CC-only exact16/10/14 PLAUSIBLE. Largest
+default MaxSAT numeric fields missing (INCOMPLETE), three unexecuted jobs
+packaged. Initial supplied-basis uppers
 4/8/6/28/10/34 are not minima. No published individual exact d or globally
 open-problem claim; no unverified asymptotic-good/decoder guarantee.
 All51tiered and prior24untiered inputs preserved; this branch has30untiered.
