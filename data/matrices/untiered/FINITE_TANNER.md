@@ -50,7 +50,9 @@ H0_A G0_A^T=0 or H1_A G1_A^T=0. For Xtop/Zbottom and Xbottom/Ztop,
 it leaves G0_B H0_B^T=0 or G1_B H1_B^T=0. The surviving group action depends
 only on the other coordinate and cannot spoil that sum. Thus Hx Hz^T=0.
 Full binary ranks, k and logical quotient bases are measured, not inferred
-from an asymptotic rate formula. Existing compute_logicals.py --method bitset
+from an asymptotic rate formula. The rank pairs in size order are
+(140,140),(177,177),(236,236),(249,325),(461,285),(428,428).
+The asymmetric pairs are retained with their complete logical quotients. Existing compute_logicals.py --method bitset
 builds full bases; independent checks verify both quotients and full pairing.
 
 The independent validator represents group elements by **inverse point
@@ -117,6 +119,19 @@ outputs and source/binary/input identities, verify every printed word in GF(2),
 and preserve absent bounds. A smaller witness than a heuristic estimate is
 compatible with the source; a lower bound exceeding that upper estimate is a
 scientific escalation. New one-engine stronger lower bounds/exact results are
-PLAUSIBLE until independently checked. Results follow in GH-169/REPORT.md.
+PLAUSIBLE until independently checked. Results are retained in GH-169/REPORT.md.
 Heavy work becomes an unexecuted server package; no Mac solver run. No main
 integration, tier assignment, rename or QDistSAT mirror is part of this round.
+
+## Recorded Linux outcome
+
+Run40854960602, source1ded66162548a3aa627da8f0e26d20d512784ff8 passes execution
+and audit. In size order, MaxSAT bounds are[9,15],[9,18],[9,18],[9,18],[5,9],
+[5,27]; CC gives[13,15],[15,18],[14,18],[14,18],exact9,[15,39]. All12 runs
+print numeric bounds. GF(2)-verified minimum recorded word weights15,18,18,
+18,9,27 reproduce published OVERALL upper estimates, without adopting
+heuristic estimates as lower proofs. All stronger CC-only lower bounds and
+n756 exact9 are PLAUSIBLE until independent lower completion. Common
+two-engine lower bounds are9,9,9,9,5,5. Full durable evidence and separate
+bound-confidence review are in GH-169/raw;11 unresolved engine proof jobs
+are packaged for an explicitly allocated server core and have not been run.
