@@ -1,6 +1,6 @@
 # GH-196: published lower-only GB688 and exact GB180 anchor
 
-Status: LOCAL_PASS; Linux evidence pending. Issue196; hub6506172048.
+Status: LINUX_CONSTRUCTION_AND_NUMERIC_PASS; GB688 exact/source-lower re-certification INCOMPLETE. Issue196; hub6506172048.
 Branch codex/lower-reference-gb-library from remote main6083e662c621f3b66defd434cfae31a028d483c4.
 Previous goal turn PROGRESS: GH194 package1a506bb5 passed library40936889050
 and finalCI40938596129, anchor12 cross-checked, unknown uppers21/41/161;
@@ -77,13 +77,68 @@ timing adoption. Heavy proof/numeric gates become guarded unexecuted
 6hCPU+600swall/4GiB/seed0/verbose/serial pinned explicit PI-allocated/free
 yfclab2/nohup/nullstdin jobs. No allocated core/paid cloud substitution.
 
-## Completion fields (intermediate)
+## Terminal Linux evidence
+
+Dataf82d5b31dd2b8a6664761b10b0f19604916f3bc0;
+sourcefaeb1269d94e362f964e645169b79fbd457b11fd;
+treeef181533f260c75f19b0cf36e2c3e4368d5687b4.
+[Library40939698187](https://github.com/guluchen/DistQLDPC/actions/runs/40939698187),
+job123679495168 SUCCESS, all steps audit/retention/upload complete.
+Ordinary sourceCI40939698025 SUCCESS. Unchanged binarySHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+52units(18/9/10/8/7), full independent source columns/gcd/actual ranks/
+logicals/cyclic-XZ maps/typed spaces/inventory comparisons and8matrix byte
+regeneration PASS. Exact commands in source-pinned workflow. Four single
+serial60CPU/90wall/4GiB/defaultseed/pinned ActionsCPU attempts,15mincap.
+Shared timing not performance/median/tier/adoption evidence; no reruns.
+
+| stem | MaxSAT raw60s | CC raw60s | actual GF2 upper | numeric gate |
+|---|---|---|---:|---|
+|GB_180_26_unknown|exact7|exact7|7|PASS|
+|GB_688_30_unknown|[9,112]|[15,104]|104|PASS|
+
+Published GB180 exact7 reproduced by both engines with actual minimum words.
+GB688 remains unresolved: literature lower19 attributed, own raw lower9/15
+weaker, actual basis upper104 independent GF2 verified. Do not turn this
+into an independently certified[19,104] interval; source19 re-certification
+remains INCOMPLETE. Current own CC15 PLAUSIBLE, no raised lower/new exact
+result. All actual words/history verify against actual kernel/stabilizer/
+logical detectors. Preserve rawMaxSAT112, not merged104. No contradiction.
+Source-upper-word688 NOT_APPLICABLE, no published finite upper inferred.
+
+Durable raw/actions/default/job.log396921characters,14engine files,audit.json;
+byte hashes raw/retained-sha256.json. Original compiler/log whitespace retained;
+authored-file whitespace check passes. Local independent replay byte-identical:
+```
+python3 scripts/codegen/audit_lower_reference_gb_smoke.py --maxsat optimization/experiments/GH-196/raw/actions/default/lower-reference-gb-maxsat --cc optimization/experiments/GH-196/raw/actions/default/lower-reference-gb-cc --construction optimization/experiments/GH-196/raw/construction.json --out /tmp/gh196-audit-replay.json
+cmp /tmp/gh196-audit-replay.json optimization/experiments/GH-196/raw/actions/default/audit.json
+```
+No solver on Mac; retained raw/source/binary/input identities and original
+upper histories intact. Prior24manifest rows/300matrices/src/Makefile preserved.
+
+One default MaxSAT proof/progress job for688, separately one optionalCC exact
+completion job requiring explicit selection; no source-word or numeric job.
+Each queue configured6CPUh/6h10mwall LIMITS, not ETA; both12CPUh/12h20mwall.
+Seed0/verbose/6hCPU+600swall/4GiB/serial pinned explicitly PI-allocated/free
+yfclab2/nohup/nullstdin. Guards case/argv/job/source/build/input/binary,
+actual cap104/source lower19/prior-engine contradictions and exact minimum
+word. Both one-job dry-runs and Mac/altered-argv/altered-target refusals PASS,
+no solver/output directory; CPU54 syntax only, no allocated core/server run.
+New exact results need independent scientific check; no synthetic bounds.
+
+Next source status in NEXT_SOURCE_REVIEW.md: independent trivariate Table1
+labels are source exact, not unknown estimates; CRT examples may be cyclic
+GB presentations. Cubic source prescriptions remain an explicit coverage
+gap requiring visual/source/proof/Haah/GB/BB peer review, not a new completed
+family label. No next issue/code selected; earlier scientific/equivalence/
+numeric/stronger-hypothesis holds remain open.
+
+## Completion fields
 
 What changed:2reproducible published GB inputs, independent checks/proof/
 provenance and explicit lower-only evidence parser with mutants.
 Validation performed:52units/full algebra/34pinned refs/8matrix regeneration.
-Results: local PASS; Linux pending. Source lower19 not independently proved.
-Unresolved: bounded Linux gates and heavy package if needed; prior holds.
+Results: anchor7 cross-checked, all numeric gates PASS;688raw[9,112]/[15,104], actual upper104. Literature19 not independently re-certified, exact unconfirmed.
+Unresolved:GB688 source-lower proof/exact completion;1defaultMaxSAT+1optionalCC job unexecuted; prior holds/missing prescriptions.
 Scientific semantics changed:no.
-PI action required:no for routine steps; yes for integration/resources or
-actual scientific contradiction. No PR/main/tier/name/default/QDistSAT edit.
+PI action required:yes for integration/tier/name/server allocation or prior scientific holds; routine collection continues. No PR/main/tier/name/default/QDistSAT edit.

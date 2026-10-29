@@ -46,4 +46,28 @@ scientific escalation; weaker search lower is allowed. Missing fields stay
 INCOMPLETE; new strongest lower/exact PLAUSIBLE until independently verified.
 No source-upper-word target is invented for GB688. Heavy missing gates become
 unexecuted guarded yfclab2 jobs; no allocated core. All untiered on work branch,
-no solver/default/tier/name/QDistSAT/main/PR change. Terminal results pending.
+no solver/default/tier/name/QDistSAT/main/PR change. Terminal evidence below.
+
+
+## Terminal Linux evidence
+
+[Run40939698187](https://github.com/guluchen/DistQLDPC/actions/runs/40939698187),
+job123679495168 SUCCESS, sourcefaeb1269d94e362f964e645169b79fbd457b11fd.
+All52units/full construction/inventory and8matrix byte regeneration pass.
+Full396921character job log/14engine files/audit and byte hashes retained;
+local actual-word audit replay is byte-identical. No solver run on Mac.
+
+| stem | MaxSAT raw60s | CC raw60s | actual GF2 upper | numeric gate |
+|---|---|---|---:|---|
+|GB_180_26_unknown|exact7|exact7|7|PASS|
+|GB_688_30_unknown|[9,112]|[15,104]|104|PASS|
+
+Source anchor exact7 cross-checked. GB688 retains published lower19, own
+raw lower9/15 and verified upper104 as separate facts; source19 not yet
+independently re-certified. Do not combine them into a supposedly own
+certified[19,104] interval, or replace raw MaxSAT upper112 with104. Exact
+unconfirmed, current own strongest lower15 PLAUSIBLE; no new lower result.
+Source-upper-word NOT_APPLICABLE because no source upper exists. One
+unexecuted defaultMaxSAT proof job plus separately one optionalCC completion
+job frozen; each configured6CPUh/6h10mwall LIMITS, not ETA. No allocated core,
+server execution, repeated scientific CI, integration or renamed stem.

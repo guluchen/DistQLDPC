@@ -1,0 +1,15 @@
+[
+  [
+    "taskset",
+    "-c",
+    "54",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/Users/yfc/Documents/PCM/DistQLDPC/bin/distqldpc",
+    "-seed=0",
+    "-v",
+    "-cpu-lim=21600",
+    "data/matrices/untiered/GB_688_30_unknown"
+  ]
+]

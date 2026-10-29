@@ -176,6 +176,10 @@ math reconstruction/independent actual columns/set-gcd/full logicals/GF2/
 cyclic-XZ maps/typed physical space/actual words PASS;18new+34prior units,
 8matrix byte reproduction and34pinned peer inventories(no same(n,k)peer).
 Actual ranks77/329each half,k26/30; initial verified uppers10/104. Source
-lower19 remains attributed, not our independent proof. Linux gates pending;
-source-upper-word gate for688 is NOT_APPLICABLE. Existing GB family, not an
+lower19 remains attributed, not our independent proof. Linux40939698187 passes52units/full construction/inventory/8matrix byte
+reproduction and actual-word replay. Anchor7 cross-checked both engines;
+GB688 rawMaxSAT[9,112]/CC[15,104], actualupper104, numericPASS. Source lower19
+not independently re-certified; own15 is weaker and PLAUSIBLE, no new lower
+claim. One defaultMaxSAT proof job+one separate optionalCC completion job
+frozen unexecuted; no source-upper-word job (NOT_APPLICABLE). Existing GB family, not an
 extra completed family label; source/semantic holds elsewhere remain open.

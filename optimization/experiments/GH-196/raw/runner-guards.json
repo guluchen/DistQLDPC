@@ -1,0 +1,32 @@
+{
+  "checks": [
+    {
+      "check": "default",
+      "status": "PASS",
+      "jobs": 1
+    },
+    {
+      "check": "optional-cc",
+      "status": "PASS",
+      "jobs": 1
+    },
+    {
+      "check": "Mac refusal",
+      "status": "PASS",
+      "stderr": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: yfclab2 execution only\n"
+    },
+    {
+      "check": "altered-args refusal",
+      "status": "PASS",
+      "stderr": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: job does not match the frozen lower-only GB reference package\n"
+    },
+    {
+      "check": "altered-expected_d refusal",
+      "status": "PASS",
+      "stderr": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: job does not match the frozen lower-only GB reference package\n"
+    }
+  ],
+  "solver_invoked": false,
+  "output_directory_created": false,
+  "cpu54_allocation": false
+}
