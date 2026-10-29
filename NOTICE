@@ -312,3 +312,49 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Pair-partition CPM CSS matrices (GH-167, untiered)
+----------------------------------------------------
+
+Original scripts/codegen/pair_partition.py, independent pairing/source/girth
+validator and PP_{104,276,472,584,1112,1784}_*_unknown_* binary matrices,
+GPL-3.0-or-later. Mathematical construction: Koki Okada and Kenta Kasai,
+"Pair-Partition Constructions for CPM-Based Quantum LDPC Codes",
+arXiv:2607.14091v4, https://arxiv.org/abs/2607.14091v4, CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/), Sec.II/VI and authoritative
+catalogue https://kasai.ict.eng.isct.ac.jp/pair_partition_cpm_css_codes_20260714.html.
+Our changes: original binary CPM expansion of published mathematical exponent
+facts, reconstructed matching certificates, logical bases and validation.
+No paper text, external construction/verifier implementation or original
+website matrix/parameter files redistributed. Website license not inferred
+from the separately maintained software repo. Source distance claims and
+contributor statuses remain distinct from actual internal verification.
+
+n=276 exponent facts derive from MIT-associated data at repository commit
+9c2a6f212025d2dc5decbf264ce2a24ba6924101, path
+data/reconstructed_instances/qc_276_98_14/reconstructed_exponents.json,
+https://github.com/kasaikenta/pair-partition-cpm-css-codes. Required notice:
+
+MIT License
+
+Copyright (c) 2026 Koki Okada and Kenta Kasai
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated data files (the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+See data/matrices/untiered/PAIR_PARTITION.md and optimization/experiments/GH-167/.

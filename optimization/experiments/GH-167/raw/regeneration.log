@@ -1,0 +1,3 @@
+PASS: all 24 matrix files and reconstructed pairing certificates byte-identical between two generator invocations.
+python3 scripts/codegen/pair_partition.py --all --out /tmp/gh167-first --certificates /tmp/gh167-pairings.json
+python3 scripts/codegen/pair_partition.py --all --certificates optimization/experiments/GH-167/raw/pairings.json
