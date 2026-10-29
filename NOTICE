@@ -304,3 +304,14 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Weight-8-check BB matrices (GH-164, untiered)
+----------------------------------------------
+
+Original scripts/codegen/weight8_bb.py and independent Kronecker validator,
+GPL-3.0-or-later. Six generated BB inputs at n=72,144,200 use mathematical
+polynomial parameters from L. Lu, R. Yang, G. Guo, "Quantum bivariate bicycle
+codes with weight-8 checks surpassing the BB benchmark", arXiv:2609.06572v1,
+Tables 1-3. No external source code, matrix files or paper text copied.
+Published distances remain separate from observed DistQLDPC results.
+See data/matrices/untiered/WEIGHT8_BB.md and optimization/experiments/GH-164/.
