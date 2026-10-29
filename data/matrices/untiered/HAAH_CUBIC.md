@@ -39,8 +39,9 @@ memory/self-correction theorem is asserted from absence of string logicals.
 These sizes are fixed before any solver run; no distance/weight-based
 resampling. Proposed HCC prefix records provenance, not disjointness from
 algebraic GB/LP formulations. Unknown stems pending PI naming/tiering.
-The basis upper42 at L8 does NOT reproduce the source upper32; source
-metadata and actual-word evidence are kept separate until a word is found.
+The initial supplied-basis upper42 at L8 did not reproduce source upper32.
+The retained Linux MaxSAT run now emits an actual GF2-verified weight32
+word, reproducing that endpoint without promoting source metadata to proof.
 
 Qubit(x,y,z,s) has index2*((x*L+y)*L+z)+s, s=0,1, coordinates moduloL.
 Use Fig1's B' origin, +x forward,+y right,+z up. Source corner coordinates:
@@ -82,10 +83,11 @@ pending library branches. The pending covering-graph BB_128_14_unknown has
 same dimensions and independently confirmed d12 on its own branch. Its
 literal/direct-swapped spaces differ from HCC_128_14_unknown. Raw peer
 matrices, input hashes and BOTH engine exact proofs/actual words are retained
-under GH-182/raw/peer128. An arbitrary physical-permutation inequivalence
-claim remains pending: the Linux audit requires an actual checked Haah word
-of weight<12 against that peer's exact12. Otherwise this candidate stays
-PENDING equivalence review and is not accepted as additional coverage.
+under GH-182/raw/peer128. The retained Linux run now
+provides a GF2-verified actual Haah word8 against that peer's exact12. Since
+overall distance is invariant under physical column permutations and XZ
+swap, the strict invariant proves inequivalence. Both Haah engines also
+confirm exact8. The peer review gate passes; labels alone were not evidence.
 
 Reproduce:
 
@@ -105,3 +107,12 @@ INCOMPLETE. One-engine exact/raised lower results stay PLAUSIBLE until
 independent completion. Heavy jobs require an unexecuted yfclab2 package and
 explicit PI core allocation. No solver/default/tiered/QDistSAT/final-name/
 main/PR change. See GH-182/REPORT.md for actual current status.
+
+## Retained Linux outcome
+
+Both engines confirm d2/8 at n16/128. CC-only d18 at n432 is PLAUSIBLE;
+open combined intervals[19,32]/[19,50]/[19,121] have provisional lower19
+and actual independently checked upper words. Source upper32 and the n128
+peer inequality are verified. Default MaxSAT n2000/n2662 has no numeric
+fields (INCOMPLETE); seven proof/numeric jobs are packaged unexecuted.
+Raw source/engine identities and current evidence are in GH-182/REPORT.md.

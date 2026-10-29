@@ -1,3 +1,7 @@
+# Archived preconstruction research; superseded by GH-182/REPORT.md
+
+Statements below about work not yet started describe the initial source-research stage, not current matrix/validation status.
+
 # Haah cubic CSS source lead, not constructed/claimed
 
 Primary: Jeongwan Haah, Local stabilizer codes in three dimensions without string logical operators, PRA83,042330(2011), arXiv1101.1962v2 (2011-03-04). Read abstract, TableI, Eq8, Theorem1 and SecVI/TableII. CSS codes1..17 only; exclude non-CSS Code0. Finite periodic two-qubit-per-site N=2L^3. TableI supplies actual local corner operators and Eq8 the opposite-corner dual generator; extract figure coordinate conventions carefully. Independent polynomial and physical-column implementations can verify translation/reflection signs and collision XOR.

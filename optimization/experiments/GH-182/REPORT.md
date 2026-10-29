@@ -1,11 +1,12 @@
 # GH-182: Haah Code1 periodic CSS ladder and published open target
 
-Status: LOCAL_CONSTRUCTION_LOGICALS_DUALITY_AND_BASIS_WORDS_PASS;
-Linux bounds/strict same-dimension peer invariant pending. No independent
-absolute lower or exact result claimed yet.
+Status: CONSTRUCTION_SOURCE_UPPER_WORD_AND_PEER_INVARIANT_PASS;
+two exact distances cross-checked; two numeric smoke gates and seven
+engine-proof completions remain. Stronger open lower results PLAUSIBLE.
 Issue https://github.com/guluchen/DistQLDPC/issues/182; hub15 claim6499357714.
 Fresh main6083e662c621f3b66defd434cfae31a028d483c4;
-branch codex/haah-cubic-library. Source recorded after push.
+branch codex/haah-cubic-library; data3d3b87e7c5a900c27f3c9800de0a35e53c9d778d;
+Linux source743304d1ca72fbeb78c1db96daeadc0e90efc28e.
 No PR requested; no solver/build/default/semantics/tiered/QDistSAT/main change.
 
 ## Proposals and choice
@@ -86,7 +87,7 @@ Prior34 library units, full inventory and all24 new file byte regeneration
 are checked; raw logs retained. Prior24 manifest rows/96 matrix files and
 all51 tiered inputs preserved; branch inventory30untiered/81total.
 
-## Same-dimension pending peer review
+## Preregistered same-dimension peer gate (terminal outcome below)
 
 Fresh all-main/pending-library stem scan raw/cross-branch-peers.json finds
 one same(n,k) peer: covering BB_128_14_unknown from GH176. Its four matrices,
@@ -100,7 +101,7 @@ then this remains PENDING equivalence review, not accepted extra coverage.
 If it cannot establish this gate, retain evidence/prepare follow-up instead
 of silently counting a suspected second copy or substituting another size.
 
-## Linux plan and scientific gates
+## Preregistered Linux plan and scientific gates (completed outcome below)
 
 One unchanged solver build,45total units, full inventory/construction cmp,
 24-file byte reproduction. Six selected default MaxSAT and six CC calls,
@@ -126,13 +127,72 @@ allocation exists and no such job has run.
 
 What changed: six original periodic Code1 candidates, source parameters,
 independent physical-column/logical/duality/basis-word evidence and strict
-same-dimension peer-review gate; unknown-distance selection emphasized.
+same-dimension peer invariant and raw Linux evidence; unknown-distance
+selection emphasized.
 Validation: local construction/full logicals/actual basis words,11new units,
-prior34 units, full inventory and24-file byte regeneration; Linux pending.
-Results: actual finite k and upper words only; no new independent exact d.
-Unresolved: Linux numeric/source-upper/peer invariant gates and scientific
-proofs; broader closed-color/3D-color/explicit-expander/good-qLDPC gaps,
+prior34 units, full inventory and24-file byte regeneration pass locally and
+on Linux; actual-word/source-upper/peer audit replay byte-identical.
+Results: two-engine exact2/8; CC-only exact18 PLAUSIBLE; published L8
+upper32 reproduced with an actual word; provisional open combined intervals
+[19,32]/[19,50]/[19,121] have actual GF2 upper words.
+Unresolved: n2000/n2662 MaxSAT numeric gates and seven engine-proof jobs
+packaged unexecuted; broader closed-color/3D-color/explicit-expander/good-qLDPC gaps,
 prior branch numeric/proof jobs and PI integration remain open.
 Scientific semantics changed: no.
 PI action required: yes for prefix/main integration/final names/tiers and
 any server allocation; independent validation continues meanwhile.
+
+
+## Retained terminal Linux evidence and verdict
+
+Library [40893822272](https://github.com/guluchen/DistQLDPC/actions/runs/40893822272),
+job123517390733 SUCCESS; source CI40893821966/job123517389950 SUCCESS.
+Source743304d1ca72fbeb78c1db96daeadc0e90efc28e; unchanged solver binary
+SHA25668f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux,Python3.12.3,c++13.3.0,pinnedCPU0,serial defaultseed,
+60sCPU/90swall/4GiB per call. Full job log658472 characters plus all raw
+engine logs/JSON/CSV/environment/source/binary/input hashes retained in
+raw/actions/default/. Replay against actual local matrices is byte-identical.
+No repeated/supplemental scientific CI or Mac/external solver execution,
+paid-cloud substitution or timing claim. The green collector does not pass
+the two missing numeric gates. No source/word/engine contradiction observed.
+
+| n | MaxSAT60s | CC60s | Numeric gate | Scientific status |
+|---:|---|---|---|---|
+|16|exact2|exact2|PASS|two engines+actual GF2 word|
+|128|exact8|exact8|PASS|two engines+actual GF2 word; peer invariant PASS|
+|432|[9,18]|exact18|PASS|PLAUSIBLE, independent lower proof pending|
+|1024|[9,32]|[19,42]|PASS|lower19 PLAUSIBLE; actual upper32|
+|2000|UNKNOWN,no numeric fields|[19,50]|INCOMPLETE|lower19 PLAUSIBLE; actual basis upper50|
+|2662|UNKNOWN,no numeric fields|[19,121]|INCOMPLETE|lower19 PLAUSIBLE; actual basis upper121|
+
+Every printed word and supplied-basis upper passes independent GF2 syndrome/
+stabilizer/logical-detector checks. L8 actual weight32 word reproduces the
+published upper endpoint. Source lower13 is preserved separately; CC lower19
+is a new provisional result, not independently certified or used to rename
+the unknown stem. CC-only exact18 at L6 and all stronger open lower19
+results remain PLAUSIBLE until independent completion. Missing MaxSAT fields
+at n2000/n2662 remain empty, not filled by another engine/basis/source bound.
+
+Strict duplicate review now resolves the pending n128 case: an actual
+GF2-verified Haah word8 is lighter than the covering BB peer's independently
+two-engine-confirmed exact12. Overall distance is preserved by all physical
+column permutations and XZ swap, so these two codes are inequivalent under
+those operations. Both raw peer proofs, actual input identities/words and
+the strict invariant receipt are retained; provenance/family names were not
+used as evidence. All same(n,k) direct/swapped spaces also differ.
+
+Seven frozen unexecuted yfclab2 jobs: MaxSAT n432/1024/2000/2662; CC
+n1024/2000/2662. References18/32/50/121 are actual checked physical uppers,
+not asserted exact answers. Each6hCPU+600swall/4GiB,serial seed0,explicit
+PI-allocated confirmed-free core.42hCPU/43h10mwall aggregate LIMITS, not ETA.
+Dry-run/Mac/altered-argv guards pass without solver invocation/output
+directory creation. Case/input/argv/host/allocation/core, actual-upper,
+minimum-word/source-interval and retained-other-engine contradiction guards
+apply. No core allocated/server job run; no final name/tier/QDistSAT/main/PR.
+
+Verdict: all six source constructions, the source upper-word and strict peer
+inequivalence gates pass; two exact distances cross-checked. Four codes'
+independent proof completions and two default numeric gates remain with
+seven jobs. Broader coverage/validation/integration gaps remain; full goal
+not complete. All fixed poor/small results are retained without resampling.
