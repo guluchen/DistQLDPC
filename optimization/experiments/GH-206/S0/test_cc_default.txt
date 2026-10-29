@@ -30,7 +30,7 @@ mutant 18 (tiebreak order without the seed first: orbit-incompatible): 160/76800
 GH-183 partR: 300 half instances (197 with orbits, 89 with rows unreachable from qubit 0), 384000 ladder runs (64 rule subsets x {-, overlap, overlap+tiebreak} x 4 seeds with roworder bfs; tiebreak also tbbase asc under bfs and index), 0 bad; bfs orders not using every row 0; instances where bfs changes the node count 66
 mutant 19 (bfs order drops a row): 9088/28800 half ladders wrong
 mutant 20 (bfs without restart: unreachable rows dropped): 4656/28800 half ladders wrong
-GH-206 auto probe (Part B): 1600 driver runs (forced switch / stay / by time, finder on and off, tbbase asc), 0 bad
+GH-206 auto probe (Part B): 1800 driver runs (forced switch / stay / by time, finder on and off, tbbase asc), 0 bad
 mutant 21 (auto probe of level w + 1, an aborted probe taken as refuted): 18/400 driver runs wrong or stopped
 mutant 1 (forbidden set not restored): 988/19200 half ladders wrong
 mutant 2 (packing prune >=): 4112/19200 half ladders wrong

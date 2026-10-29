@@ -27,7 +27,11 @@ BB_144_12_12     cc-noub-stats-explicit IDENTICAL (63 stdout lines, rc 0/0)
 BB_144_12_12     cc-tbmrvbfs-noub-stats IDENTICAL (66 stdout lines, rc 0/0)
 BB_144_12_12     cc-tbmrvbfs-asc-default IDENTICAL (60 stdout lines, rc 0/0)
 BB_72_12_6       maxsat-no-card       IDENTICAL (114 stdout lines, rc 0/0)
-BB_72_12_6       maxsat-card-mto      IDENTICAL (114 stdout lines, rc 0/0)
+BB_72_12_6       maxsat-card-mto      DIFFERENT-TIMING (114 stdout lines, rc 0/0)
+   first diff line 34:
+   base: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
+   cand: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
+   base-vs-base differs: False
 BB_72_12_6       maxsat-nopre-no-card IDENTICAL (171 stdout lines, rc 0/0)
 BB_72_12_6       maxsat-nopre-card-mto IDENTICAL (171 stdout lines, rc 0/0)
 BB_72_12_6       cc-noub              IDENTICAL (46 stdout lines, rc 0/0)
@@ -41,11 +45,7 @@ BB_72_12_6       cc-noub-stats-explicit IDENTICAL (50 stdout lines, rc 0/0)
 BB_72_12_6       cc-tbmrvbfs-noub-stats IDENTICAL (53 stdout lines, rc 0/0)
 BB_72_12_6       cc-tbmrvbfs-asc-default IDENTICAL (53 stdout lines, rc 0/0)
 BB_90_8_10       maxsat-no-card       IDENTICAL (142 stdout lines, rc 0/0)
-BB_90_8_10       maxsat-card-mto      DIFFERENT-TIMING (142 stdout lines, rc 0/0)
-   first diff line 30:
-   base: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
-   cand: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
-   base-vs-base differs: True
+BB_90_8_10       maxsat-card-mto      IDENTICAL (142 stdout lines, rc 0/0)
 BB_90_8_10       maxsat-nopre-no-card IDENTICAL (199 stdout lines, rc 0/0)
 BB_90_8_10       maxsat-nopre-card-mto IDENTICAL (199 stdout lines, rc 0/0)
 BB_90_8_10       cc-noub              IDENTICAL (47 stdout lines, rc 0/0)
@@ -72,11 +72,7 @@ GB_144_12_8      cc-tbmrv-noub-stats-explicit IDENTICAL (65 stdout lines, rc 0/0
 GB_144_12_8      cc-noub-stats-explicit IDENTICAL (64 stdout lines, rc 0/0)
 GB_144_12_8      cc-tbmrvbfs-noub-stats IDENTICAL (66 stdout lines, rc 0/0)
 GB_144_12_8      cc-tbmrvbfs-asc-default IDENTICAL (56 stdout lines, rc 0/0)
-LP_136_32_4      maxsat-no-card       DIFFERENT-TIMING (98 stdout lines, rc 0/0)
-   first diff line 26:
-   base: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
-   cand: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
-   base-vs-base differs: False
+LP_136_32_4      maxsat-no-card       IDENTICAL (98 stdout lines, rc 0/0)
 LP_136_32_4      maxsat-card-mto      IDENTICAL (97 stdout lines, rc 0/0)
 LP_136_32_4      maxsat-nopre-no-card IDENTICAL (149 stdout lines, rc 0/0)
 LP_136_32_4      maxsat-nopre-card-mto IDENTICAL (148 stdout lines, rc 0/0)
@@ -92,14 +88,10 @@ LP_136_32_4      cc-tbmrvbfs-noub-stats IDENTICAL (48 stdout lines, rc 0/0)
 LP_136_32_4      cc-tbmrvbfs-asc-default IDENTICAL (47 stdout lines, rc 0/0)
 LP_238_44_6      maxsat-no-card       DIFFERENT-TIMING (149 stdout lines, rc 0/0)
    first diff line 24:
-   base: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
-   cand: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
-   base-vs-base differs: False
-LP_238_44_6      maxsat-card-mto      DIFFERENT-TIMING (150 stdout lines, rc 0/0)
-   first diff line 24:
-   base: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
-   cand: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
-   base-vs-base differs: False
+   base: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
+   cand: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
+   base-vs-base differs: True
+LP_238_44_6      maxsat-card-mto      IDENTICAL (150 stdout lines, rc 0/0)
 LP_238_44_6      maxsat-nopre-no-card IDENTICAL (229 stdout lines, rc 0/0)
 LP_238_44_6      maxsat-nopre-card-mto IDENTICAL (230 stdout lines, rc 0/0)
 LP_238_44_6      cc-noub              IDENTICAL (39 stdout lines, rc 0/0)
@@ -130,12 +122,8 @@ TN_36_8_3        maxsat-no-card       DIFFERENT-TIMING (145 stdout lines, rc 0/0
    first diff line 20:
    base: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
    cand: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
-   base-vs-base differs: False
-TN_36_8_3        maxsat-card-mto      DIFFERENT-TIMING (145 stdout lines, rc 0/0)
-   first diff line 20:
-   base: c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, <T>
-   cand: c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, <T>
    base-vs-base differs: True
+TN_36_8_3        maxsat-card-mto      IDENTICAL (145 stdout lines, rc 0/0)
 TN_36_8_3        maxsat-nopre-no-card IDENTICAL (225 stdout lines, rc 0/0)
 TN_36_8_3        maxsat-nopre-card-mto IDENTICAL (196 stdout lines, rc 0/0)
 TN_36_8_3        cc-noub              IDENTICAL (45 stdout lines, rc 0/0)
@@ -232,8 +220,8 @@ LP_442_68_10     cc-tbmrv-noub-stats-explicit IDENTICAL (58 stdout lines, rc 0/0
 LP_442_68_10     cc-noub-stats-explicit IDENTICAL (56 stdout lines, rc 0/0)
 LP_442_68_10     cc-tbmrvbfs-noub-stats IDENTICAL (59 stdout lines, rc 0/0)
 LP_442_68_10     cc-tbmrvbfs-asc-default IDENTICAL (52 stdout lines, rc 0/0)
-maxsat-no-card: DIFFERENT-TIMING 3, IDENTICAL 12
-maxsat-card-mto: DIFFERENT-TIMING 3, IDENTICAL 12
+maxsat-no-card: DIFFERENT-TIMING 2, IDENTICAL 13
+maxsat-card-mto: DIFFERENT-TIMING 1, IDENTICAL 14
 maxsat-nopre-no-card: IDENTICAL 15
 maxsat-nopre-card-mto: IDENTICAL 15
 cc-noub: IDENTICAL 15

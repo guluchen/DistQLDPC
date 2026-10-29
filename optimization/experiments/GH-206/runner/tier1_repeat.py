@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GH-183 Tier 1 re-measurement. The Tier 1 cells (LP_340, LP_442) run in 0.02-0.04 s wall with 0.006-0.014 s user time:
+"""GH-206 Tier 1 re-measurement (from GH-183). The Tier 1 cells (LP_340, LP_442) run in 0.02-0.04 s wall with 0.006-0.014 s user time:
 the wall time is the process floor, and single runs vary 0.025 <-> 0.035 s between runs of the same binary. Here every
 (code, seed, arm) runs REPS times, round-robin over the arms (so that slow phases of the machine hit every arm), on one
 pinned core with the 4 GB cap; the cell value per seed is the median over the repetitions, then the median over seeds 0-4
@@ -8,8 +8,8 @@ usage: tier1_repeat.py MAIN CAND CORE REPS OUT.jsonl   (from a worktree root)"""
 import glob, json, math, os, resource, statistics as st, subprocess, sys, time
 MAIN, CAND, CORE, REPS, OUT = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5]
 TB = '-cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak'
-ARMS = {'main': (MAIN, []), 'tb': (CAND, [TB]), 'tbmrv': (CAND, [TB + ',mrv']), 'tbmrvbfs': (CAND, [TB + ',mrv', '-cc-roworder=bfs']),
-        'tbmrvbfsa': (CAND, [TB + ',mrv', '-cc-roworder=bfs', '-cc-tbbase=asc'])}
+ARMS = {'main': (MAIN, []), 'tb': (CAND, [TB]), 'tbmrvbfs': (CAND, [TB + ',mrv', '-cc-roworder=bfs']),
+        'auto': (CAND, [TB, '-cc-roworder=auto']), 'autoa': (CAND, [TB, '-cc-roworder=auto', '-cc-tbbase=asc'])}   # GH-206 arms
 codes = [f[:-7] for f in sorted(glob.glob('data/matrices/tier1/*_Hx.txt'))]
 recs = []
 with open(OUT, 'w') as fh:
