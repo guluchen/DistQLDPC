@@ -176,3 +176,13 @@ diagnostic authorization, and all remaining adoption/CC/later-case gates.
 Scientific semantics changed:no.
 PI action required:yes before this frozen source-dependent batch proceeds.
 GH200remains separately held; global goal ACTIVE and incomplete.
+
+## Post-hold Linux engineering validation
+
+Hold-only source3fa8f0ac2486f0427fafcfb1720d4ee37b8b8e3f passes unit/retained-
+evidence workflow40958892874/job123746155530 (18hold units and byte-identical
+failure/actual-word audit). Full raw job retained. Ordinary unchanged build/
+baseCI40958893059/job123746155357 SUCCESS. These are engineering guard checks,
+not a scientific retry or replacement for FAILED source-distance gate
+40957668835. No CC/686/original distance run occurred after failure.
+PI decision still pending;0accepted additions, goal ACTIVE and incomplete.

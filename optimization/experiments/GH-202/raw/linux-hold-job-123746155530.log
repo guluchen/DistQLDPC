@@ -1,0 +1,191 @@
+﻿2026-10-29T21:34:15.1563283Z Current runner version: '2.338.0'
+2026-10-29T21:34:15.1589354Z ##[group]Runner Image Provisioner
+2026-10-29T21:34:15.1590237Z Hosted Compute Agent
+2026-10-29T21:34:15.1590875Z Version: 20261021.618
+2026-10-29T21:34:15.1591486Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-29T21:34:15.1592176Z Build Date: 2026-10-21T00:45:21Z
+2026-10-29T21:34:15.1592865Z Worker ID: {4905c1df-a961-4222-b468-abb98c9d5446}
+2026-10-29T21:34:15.1593552Z Region: northcentralus
+2026-10-29T21:34:15.1594091Z Cloud: Azure
+2026-10-29T21:34:15.1594640Z ##[endgroup]
+2026-10-29T21:34:15.1595925Z ##[group]Operating System
+2026-10-29T21:34:15.1596543Z Ubuntu
+2026-10-29T21:34:15.1597061Z 24.04.5
+2026-10-29T21:34:15.1597553Z LTS
+2026-10-29T21:34:15.1598105Z ##[endgroup]
+2026-10-29T21:34:15.1598624Z ##[group]Runner Image
+2026-10-29T21:34:15.1599498Z Image: ubuntu-24.04
+2026-10-29T21:34:15.1600155Z Version: 20261025.353.1
+2026-10-29T21:34:15.1601384Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-29T21:34:15.1602831Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-10-29T21:34:15.1603772Z ##[endgroup]
+2026-10-29T21:34:15.1604820Z ##[group]GITHUB_TOKEN Permissions
+2026-10-29T21:34:15.1607146Z Contents: read
+2026-10-29T21:34:15.1607724Z Metadata: read
+2026-10-29T21:34:15.1608278Z ##[endgroup]
+2026-10-29T21:34:15.1610637Z Secret source: Actions
+2026-10-29T21:34:15.1611535Z Cache mode: write
+2026-10-29T21:34:15.1612589Z Prepare workflow directory
+2026-10-29T21:34:15.1934695Z Prepare all required actions
+2026-10-29T21:34:15.1982207Z Getting action download info
+2026-10-29T21:34:15.4516321Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-29T21:34:15.6543209Z Complete job name: hold-contracts
+2026-10-29T21:34:15.7299924Z ##[group]Run actions/checkout@v7
+2026-10-29T21:34:15.7300805Z with:
+2026-10-29T21:34:15.7301383Z   repository: guluchen/DistQLDPC
+2026-10-29T21:34:15.7305305Z   token: ***
+2026-10-29T21:34:15.7305900Z   ssh-strict: true
+2026-10-29T21:34:15.7306426Z   ssh-user: git
+2026-10-29T21:34:15.7306944Z   persist-credentials: true
+2026-10-29T21:34:15.7307506Z   clean: true
+2026-10-29T21:34:15.7308021Z   sparse-checkout-cone-mode: true
+2026-10-29T21:34:15.7308617Z   fetch-depth: 1
+2026-10-29T21:34:15.7309380Z   fetch-tags: false
+2026-10-29T21:34:15.7310062Z   show-progress: true
+2026-10-29T21:34:15.7310742Z   lfs: false
+2026-10-29T21:34:15.7311417Z   submodules: false
+2026-10-29T21:34:15.7311982Z   set-safe-directory: true
+2026-10-29T21:34:15.7312591Z   allow-unsafe-pr-checkout: false
+2026-10-29T21:34:15.7313433Z ##[endgroup]
+2026-10-29T21:34:15.9773847Z Syncing repository: guluchen/DistQLDPC
+2026-10-29T21:34:15.9776761Z ##[group]Getting Git version info
+2026-10-29T21:34:15.9778238Z Working directory is '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-29T21:34:15.9780151Z [command]/usr/bin/git version
+2026-10-29T21:34:15.9830654Z git version 2.56.0
+2026-10-29T21:34:15.9851579Z ##[endgroup]
+2026-10-29T21:34:15.9859716Z Temporarily overriding HOME='/home/runner/work/_temp/15840acb-8d81-4109-97e5-78bc38879c5b' before making global git config changes
+2026-10-29T21:34:15.9861883Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-29T21:34:15.9864289Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-29T21:34:15.9910379Z Deleting the contents of '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-29T21:34:15.9913264Z ##[group]Determining repository object format
+2026-10-29T21:34:15.9914616Z ##[endgroup]
+2026-10-29T21:34:15.9915769Z ##[group]Initializing the repository
+2026-10-29T21:34:15.9919091Z [command]/usr/bin/git init /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-29T21:34:16.0033645Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-29T21:34:16.0035149Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-29T21:34:16.0036945Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-29T21:34:16.0038056Z hint: call:
+2026-10-29T21:34:16.0038730Z hint:
+2026-10-29T21:34:16.0039717Z hint: 	git config --global init.defaultBranch <name>
+2026-10-29T21:34:16.0040704Z hint:
+2026-10-29T21:34:16.0041620Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-29T21:34:16.0043091Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-29T21:34:16.0044202Z hint:
+2026-10-29T21:34:16.0044857Z hint: 	git branch -m <name>
+2026-10-29T21:34:16.0045638Z hint:
+2026-10-29T21:34:16.0046557Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-29T21:34:16.0048078Z Initialized empty Git repository in /home/runner/work/DistQLDPC/DistQLDPC/.git/
+2026-10-29T21:34:16.0053047Z [command]/usr/bin/git remote add origin https://github.com/guluchen/DistQLDPC
+2026-10-29T21:34:16.0100020Z ##[endgroup]
+2026-10-29T21:34:16.0101356Z ##[group]Disabling automatic garbage collection
+2026-10-29T21:34:16.0103212Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-29T21:34:16.0137334Z ##[endgroup]
+2026-10-29T21:34:16.0138884Z ##[group]Setting up auth
+2026-10-29T21:34:16.0140350Z Removing SSH command configuration
+2026-10-29T21:34:16.0143304Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-29T21:34:16.0180100Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-29T21:34:16.0514273Z Removing HTTP extra header
+2026-10-29T21:34:16.0521150Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-29T21:34:16.0555837Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-29T21:34:16.0769128Z Removing includeIf entries pointing to credentials config files
+2026-10-29T21:34:16.0775301Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-29T21:34:16.0815096Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-29T21:34:16.1008474Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-29T21:34:16.1046132Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path /home/runner/work/_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:16.1078699Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:16.1113367Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:16.1148399Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:16.1179275Z ##[endgroup]
+2026-10-29T21:34:16.1180193Z ##[group]Fetching the repository
+2026-10-29T21:34:16.1185464Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3fa8f0ac2486f0427fafcfb1720d4ee37b8b8e3f:refs/remotes/origin/codex/schreier-tanner-library
+2026-10-29T21:34:18.2672134Z From https://github.com/guluchen/DistQLDPC
+2026-10-29T21:34:18.2674106Z  * [new ref]         3fa8f0ac2486f0427fafcfb1720d4ee37b8b8e3f -> origin/codex/schreier-tanner-library
+2026-10-29T21:34:18.2680915Z [command]/usr/bin/git branch --list --remote origin/codex/schreier-tanner-library
+2026-10-29T21:34:18.2708067Z   origin/codex/schreier-tanner-library
+2026-10-29T21:34:18.2714410Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/schreier-tanner-library
+2026-10-29T21:34:18.2739037Z 3fa8f0ac2486f0427fafcfb1720d4ee37b8b8e3f
+2026-10-29T21:34:18.2742633Z ##[endgroup]
+2026-10-29T21:34:18.2744432Z ##[group]Determining the checkout info
+2026-10-29T21:34:18.2746474Z ##[endgroup]
+2026-10-29T21:34:18.2749505Z [command]/usr/bin/git sparse-checkout disable
+2026-10-29T21:34:18.2803583Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-29T21:34:18.2836947Z ##[group]Checking out the ref
+2026-10-29T21:34:18.2840927Z [command]/usr/bin/git checkout --progress --force -B codex/schreier-tanner-library refs/remotes/origin/codex/schreier-tanner-library
+2026-10-29T21:34:18.5605355Z Switched to a new branch 'codex/schreier-tanner-library'
+2026-10-29T21:34:18.5609602Z branch 'codex/schreier-tanner-library' set up to track 'origin/codex/schreier-tanner-library'.
+2026-10-29T21:34:18.5648417Z ##[endgroup]
+2026-10-29T21:34:18.5689854Z [command]/usr/bin/git log -1 --format=%H
+2026-10-29T21:34:18.5716238Z 3fa8f0ac2486f0427fafcfb1720d4ee37b8b8e3f
+2026-10-29T21:34:18.5983594Z ##[group]Run python3 tests/test_codegen_schreier.py
+2026-10-29T21:34:18.5985685Z [36;1mpython3 tests/test_codegen_schreier.py[0m
+2026-10-29T21:34:18.6006102Z shell: /usr/bin/bash -e {0}
+2026-10-29T21:34:18.6007552Z ##[endgroup]
+2026-10-29T21:34:18.7551851Z test_cli_selection_and_unknown_claim_ceiling (__main__.Schreier.test_cli_selection_and_unknown_claim_ceiling) ... ok
+2026-10-29T21:34:18.7672685Z test_entry_and_logical_mutants (__main__.Schreier.test_entry_and_logical_mutants) ... ok
+2026-10-29T21:34:23.1341707Z test_every_actual_code_against_independent_geometry (__main__.Schreier.test_every_actual_code_against_independent_geometry) ... ok
+2026-10-29T21:34:23.1351294Z test_frozen_selection_and_claims (__main__.Schreier.test_frozen_selection_and_claims) ... ok
+2026-10-29T21:34:23.1370113Z test_hold_refuses_accepted_flat_diagnostic (__main__.Schreier.test_hold_refuses_accepted_flat_diagnostic) ... ok
+2026-10-29T21:34:23.1397920Z test_hold_refuses_normal_generation (__main__.Schreier.test_hold_refuses_normal_generation) ... ok
+2026-10-29T21:34:23.1402310Z test_invalid_graph_and_degree (__main__.Schreier.test_invalid_graph_and_degree) ... ok
+2026-10-29T21:34:23.3308751Z test_invalid_word_and_cross_engine_bound_mutants (__main__.Schreier.test_invalid_word_and_cross_engine_bound_mutants) ... ok
+2026-10-29T21:34:23.3320427Z test_local_kernel_is_complete_by_enumeration (__main__.Schreier.test_local_kernel_is_complete_by_enumeration) ... ok
+2026-10-29T21:34:23.3322160Z test_local_parity_bad_syntax (__main__.Schreier.test_local_parity_bad_syntax) ... ok
+2026-10-29T21:34:23.5219817Z test_missing_numeric_not_filled (__main__.Schreier.test_missing_numeric_not_filled) ... ok
+2026-10-29T21:34:23.5222601Z test_petersen_factor_is_exact_literal_graph (__main__.Schreier.test_petersen_factor_is_exact_literal_graph) ... ok
+2026-10-29T21:34:23.7177506Z test_source_exact_and_missing_minimum_mutants (__main__.Schreier.test_source_exact_and_missing_minimum_mutants) ... ok
+2026-10-29T21:34:23.7178922Z test_source_inverse_pair_order (__main__.Schreier.test_source_inverse_pair_order) ... ok
+2026-10-29T21:34:23.7204944Z test_source_k_mismatch_refused (__main__.Schreier.test_source_k_mismatch_refused) ... ok
+2026-10-29T21:34:23.8223394Z test_thirty_tiny_random_commuting_cases (__main__.Schreier.test_thirty_tiny_random_commuting_cases) ... ok
+2026-10-29T21:34:23.8722389Z wrote /tmp/tmphojz__6d/TN_180_26_unknown_Gx.txt (26 rows), /tmp/tmphojz__6d/TN_180_26_unknown_Gz.txt (26 rows)
+2026-10-29T21:34:24.0487042Z wrote /tmp/tmphojz__6d/TN_500_42_unknown_Gx.txt (42 rows), /tmp/tmphojz__6d/TN_500_42_unknown_Gz.txt (42 rows)
+2026-10-29T21:34:24.3670383Z wrote /tmp/tmphojz__6d/TN_686_28_unknown_Gx.txt (28 rows), /tmp/tmphojz__6d/TN_686_28_unknown_Gz.txt (28 rows)
+2026-10-29T21:34:25.1360311Z wrote /tmp/tmphojz__6d/TN_1100_66_unknown_Gx.txt (66 rows), /tmp/tmphojz__6d/TN_1100_66_unknown_Gz.txt (66 rows)
+2026-10-29T21:34:27.4613412Z wrote /tmp/tmphojz__6d/TN_1900_98_unknown_Gx.txt (98 rows), /tmp/tmphojz__6d/TN_1900_98_unknown_Gz.txt (98 rows)
+2026-10-29T21:34:33.2747337Z wrote /tmp/tmphojz__6d/TN_2900_138_unknown_Gx.txt (138 rows), /tmp/tmphojz__6d/TN_2900_138_unknown_Gz.txt (138 rows)
+2026-10-29T21:34:33.9748326Z test_twenty_four_bytes_and_refuse_overwrite (__main__.Schreier.test_twenty_four_bytes_and_refuse_overwrite) ... ok
+2026-10-29T21:34:34.1639907Z test_unknown_original_not_given_source_distance (__main__.Schreier.test_unknown_original_not_given_source_distance) ... ok
+2026-10-29T21:34:34.1640888Z 
+2026-10-29T21:34:34.1641244Z ----------------------------------------------------------------------
+2026-10-29T21:34:34.1641933Z Ran 18 tests in 15.491s
+2026-10-29T21:34:34.1642252Z 
+2026-10-29T21:34:34.1642497Z OK
+2026-10-29T21:34:34.1784079Z ##[group]Run cp optimization/experiments/GH-202/raw/source-distance-hold.json /tmp/expected-hold.json
+2026-10-29T21:34:34.1784933Z [36;1mcp optimization/experiments/GH-202/raw/source-distance-hold.json /tmp/expected-hold.json[0m
+2026-10-29T21:34:34.1785607Z [36;1mpython3 optimization/experiments/GH-202/raw/audit_failed_smoke.py[0m
+2026-10-29T21:34:34.1786282Z [36;1mcmp optimization/experiments/GH-202/raw/source-distance-hold.json /tmp/expected-hold.json[0m
+2026-10-29T21:34:34.1801921Z shell: /usr/bin/bash -e {0}
+2026-10-29T21:34:34.1802351Z ##[endgroup]
+2026-10-29T21:34:34.2842093Z PASS retained source6 versus raw8 hold, actual GF2 words, no extra runs
+2026-10-29T21:34:34.3041828Z Post job cleanup.
+2026-10-29T21:34:34.3915804Z [command]/usr/bin/git version
+2026-10-29T21:34:34.3965913Z git version 2.56.0
+2026-10-29T21:34:34.3997913Z Temporarily overriding HOME='/home/runner/work/_temp/eceef174-b0ad-44dd-a8e8-ac5667935a5f' before making global git config changes
+2026-10-29T21:34:34.3999736Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-29T21:34:34.4001686Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-29T21:34:34.4041537Z Removing SSH command configuration
+2026-10-29T21:34:34.4048182Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-29T21:34:34.4082657Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-29T21:34:34.4313148Z Removing HTTP extra header
+2026-10-29T21:34:34.4319742Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-29T21:34:34.4352972Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-29T21:34:34.4567711Z Removing includeIf entries pointing to credentials config files
+2026-10-29T21:34:34.4573655Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-29T21:34:34.4602560Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-29T21:34:34.4603934Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-29T21:34:34.4605137Z includeif.gitdir:/github/workspace/.git.path
+2026-10-29T21:34:34.4606169Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-29T21:34:34.4610632Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-29T21:34:34.4632249Z /home/runner/work/_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:34.4641412Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-8c9e97e1\-7d03\-4b41\-aef7\-de8e07a48525\.config
+2026-10-29T21:34:34.4677794Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-29T21:34:34.4718770Z /home/runner/work/_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:34.4728817Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-8c9e97e1\-7d03\-4b41\-aef7\-de8e07a48525\.config
+2026-10-29T21:34:34.4767624Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-29T21:34:34.4789433Z /github/runner_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:34.4800147Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-8c9e97e1\-7d03\-4b41\-aef7\-de8e07a48525\.config
+2026-10-29T21:34:34.4835443Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-29T21:34:34.4858489Z /github/runner_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config
+2026-10-29T21:34:34.4865940Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-8c9e97e1\-7d03\-4b41\-aef7\-de8e07a48525\.config
+2026-10-29T21:34:34.4900123Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-29T21:34:34.5086152Z Removing credentials config '/home/runner/work/_temp/git-credentials-8c9e97e1-7d03-4b41-aef7-de8e07a48525.config'
+2026-10-29T21:34:34.5228896Z Cleaning up orphan processes
