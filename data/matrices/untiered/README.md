@@ -130,3 +130,13 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+## Haah cubic CSS ladder (GH-182, validation in progress)
+
+Six original Code1 periodic cases L2/4/6/8/10/11, n16..2662, proposed HCC
+prefix. Source [[1024,30,13<=d<=32]] is an explicit published open target,
+not an independently reproduced interval yet. Independent physical columns,
+GF2/logicals/physical XZ involution and actual supplied-basis upper words
+pass locally. Linux bounds and strict distance-based inequivalence to the
+pending same-(128,14) covering BB peer remain pending. See HAAH_CUBIC.md
+and optimization/experiments/GH-182/REPORT.md. No default/solver/tier change.
