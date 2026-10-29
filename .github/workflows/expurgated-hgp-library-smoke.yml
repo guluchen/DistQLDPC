@@ -1,0 +1,87 @@
+name: Expurgated Gallager HGP library smoke
+
+on:
+  push:
+    branches: [codex/expurgated-hgp-library]
+    paths:
+      - '.github/workflows/expurgated-hgp-library-smoke.yml'
+      - 'scripts/codegen/expurgated_hgp*'
+      - 'scripts/codegen/validate_expurgated_hgp.py'
+      - 'scripts/codegen/audit_expurgated_hgp_smoke.py'
+      - 'scripts/codegen/certify_expurgated_hgp.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_expurgated_hgp.py'
+      - 'data/matrices/untiered/HGP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_expurgated_hgp.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_expurgated_hgp.py --output /tmp/expurgated-construction.json
+          cmp optimization/experiments/GH-174/raw/construction.json /tmp/expurgated-construction.json
+      - name: Reproduce all16 new matrix files
+        run: |
+          python3 scripts/codegen/expurgated_hgp.py --all --out /tmp/expurgated-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/expurgated-rebuilt').glob('*.txt'))
+          assert len(files)==16
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS:16 HGP matrix files reproduced byte for byte')
+          PY
+      - name: Independent bounded classical enumeration and HGP theorem certificate
+        run: python3 scripts/codegen/certify_expurgated_hgp.py --ci --out /tmp/expurgated-classical.json
+      - name: Four default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HGP --stems HGP_356_36_unknown HGP_832_64_unknown HGP_1508_100_unknown HGP_2384_144_unknown --verbose --out /tmp/expurgated-maxsat
+      - name: Four CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HGP --stems HGP_356_36_unknown HGP_832_64_unknown HGP_1508_100_unknown HGP_2384_144_unknown --engine cc --verbose --out /tmp/expurgated-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_expurgated_hgp_smoke.py --maxsat /tmp/expurgated-maxsat --cc /tmp/expurgated-cc --classical /tmp/expurgated-classical.json --out /tmp/expurgated-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('expurgated-maxsat','expurgated-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH174_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/expurgated-audit.json')
+          if audit.exists():print('GH174_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          classical=Path('/tmp/expurgated-classical.json')
+          if classical.exists():print('GH174_CLASSICAL_JSON='+json.dumps(json.loads(classical.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh174-gallager-hgp-smoke
+          path: |
+            /tmp/expurgated-maxsat/
+            /tmp/expurgated-cc/
+            /tmp/expurgated-audit.json
+            /tmp/expurgated-classical.json
+          if-no-files-found: warn
+          retention-days: 14
