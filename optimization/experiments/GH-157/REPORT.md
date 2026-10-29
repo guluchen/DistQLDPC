@@ -301,6 +301,7 @@ The PI approved all three recommendations: (1) reproduce the four new lower boun
 - `25030e3`: `charge` in the default `-cc-rules` (`excl,pack,orbf,parity,leaf,overlap,charge`);
   `-cc-rules=excl,pack,orbf,parity,leaf,overlap` gives the CC search before GH-157. README, `-h`, MODIFICATIONS and
   NOTICE updated. Tests: Part B and Part H default configurations now include `charge` (Part H with `-cc-aut`).
+- Merge of main `6083e662` (PR #163 renamed six tier5 stems to the reproduced GH-152 bounds, e.g. TN_288_2_22to24; the Tier 5 tables above use the stem names of their run date). Source unchanged by that merge.
 - `764b011`: Part I(a) restores the test RNG state, so every other part sees main's instance stream (without it, GH-148's
   mutant 2 coverage check depended on the shifted stream).
 
