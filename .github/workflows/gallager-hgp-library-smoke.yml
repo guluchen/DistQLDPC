@@ -1,0 +1,87 @@
+name: Gallager LDPC-factor HGP library smoke
+
+on:
+  push:
+    branches: [codex/gallager-hgp-library]
+    paths:
+      - '.github/workflows/gallager-hgp-library-smoke.yml'
+      - 'scripts/codegen/gallager_hgp*'
+      - 'scripts/codegen/validate_gallager_hgp.py'
+      - 'scripts/codegen/audit_gallager_hgp_smoke.py'
+      - 'scripts/codegen/certify_gallager_hgp.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_gallager_hgp.py'
+      - 'data/matrices/untiered/HGP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_gallager_hgp.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_gallager_hgp.py --output /tmp/gallager-construction.json
+          cmp optimization/experiments/GH-173/raw/construction.json /tmp/gallager-construction.json
+      - name: Reproduce all24 new matrix files
+        run: |
+          python3 scripts/codegen/gallager_hgp.py --all --out /tmp/gallager-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/gallager-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS:24 HGP matrix files reproduced byte for byte')
+          PY
+      - name: Independent bounded classical enumeration and HGP theorem certificate
+        run: python3 scripts/codegen/certify_gallager_hgp.py --ci --out /tmp/gallager-classical.json
+      - name: Six default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HGP --stems HGP_80_16_unknown HGP_193_25_unknown HGP_569_49_unknown HGP_1145_81_unknown HGP_1921_121_unknown HGP_2897_169_unknown --verbose --out /tmp/gallager-maxsat
+      - name: Six CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HGP --stems HGP_80_16_unknown HGP_193_25_unknown HGP_569_49_unknown HGP_1145_81_unknown HGP_1921_121_unknown HGP_2897_169_unknown --engine cc --verbose --out /tmp/gallager-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_gallager_hgp_smoke.py --maxsat /tmp/gallager-maxsat --cc /tmp/gallager-cc --classical /tmp/gallager-classical.json --out /tmp/gallager-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('gallager-maxsat','gallager-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH173_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/gallager-audit.json')
+          if audit.exists():print('GH173_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          classical=Path('/tmp/gallager-classical.json')
+          if classical.exists():print('GH173_CLASSICAL_JSON='+json.dumps(json.loads(classical.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh173-gallager-hgp-smoke
+          path: |
+            /tmp/gallager-maxsat/
+            /tmp/gallager-cc/
+            /tmp/gallager-audit.json
+            /tmp/gallager-classical.json
+          if-no-files-found: warn
+          retention-days: 14
