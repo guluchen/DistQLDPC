@@ -116,7 +116,7 @@
  *         and a map F with F H_R = G_R (full-width labels); then for every v: phi.Hv != 0 implies H v outside colspace(H_R),
  *         and H v = H_R y implies G(v + y) = G v + F H v. The node is pruned iff every z has phi.H(S + z) != 0 or
  *         G(S + z) + F H(S + z) = 0 (singles through the leaf hash table, pairs through a pair table keyed by XOR of column
- *         keys; qubits on a pivot row are projected explicitly). A fingerprint collision only makes the rule give up.
+ *         keys, built lazily; qubits on a pivot row are projected explicitly). A fingerprint collision only makes the rule give up.
  *         The rule never prunes a node that is a subset of a kept target, so every other rule's argument (and tiebreak's
  *         Lemmas A-C) is unchanged. Gate (cost only): extra <= 2 and |R| <= 128 (Qubitserf also requires 2|S| + 2 <= w; that
  *         size gate was measured as slower on every Tier 2-5 code tried, optimization/experiments/GH-195). Full proof: MODIFICATIONS.md
@@ -225,9 +225,9 @@ public:
     int overlap_zero_rows() const { return kzero_; }
     /* tiebreak (GH-162): even rows replaced by g \ {first(g)} (before deduplication) */
     int tiebreak_rows() const { return ktie_; }
-    /* erasure (GH-195): in force (rule and pack on); pair table built (n <= 2048; otherwise pairs by a scan) */
+    /* erasure (GH-195): in force (rule and pack on); a pair table may be built (n <= 2048, lazily; otherwise pairs by a scan) */
     bool erasure_active() const { return er_; }
-    bool erasure_pair_table() const { return !phead_.empty(); }
+    bool erasure_pair_table() const { return n_ >= 2 && n_ <= 2048; }
     /* test hooks: sizegate = run the test only when also 2|S| + 2 <= w (a cost gate; fewer prunes, still sound);
      * verify = check phi H_R = 0 and F H_R = G_R on every region column (fatal on failure) */
     void set_erasure_test(bool sizegate, bool verify) { er_sizegate_ = sizegate; er_verify_ = verify; }
@@ -288,7 +288,7 @@ private:
     std::vector<uint64_t> etl_;             /* target label (kw_ words) */
     std::vector<int32_t> phead_, pnext_;    /* pair table: bucket by (colkey a ^ colkey b) -> pairs (a < b) */
     std::vector<uint32_t> pa_, pb_;
-    uint64_t pmask_;
+    uint64_t pmask_, epscan_;               /* epscan_: tests that reached the pair stage without the table */
 
     /* search state */
     int w_;
@@ -322,6 +322,7 @@ private:
     int closing_qubit() const;              /* free qubit whose column equals syn_ with a nontrivial closure, or -1 */
     int key_head(uint64_t key) const;       /* first qubit of the leaf hash chain with colkey_ == key, or -1 */
     bool erasure_excludes(int extra, uint64_t st);
+    void erasure_pair_table_build();
     template <int KW> bool erasure_test(int extra, uint64_t st);
     bool dfs(int size);
     void record_witness(int size);

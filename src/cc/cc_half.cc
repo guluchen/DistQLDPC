@@ -43,7 +43,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ktie_(0), tb_(false), ovtight_(0), ovforbid_(0),
-      er_(false), er_sizegate_(false), er_verify_(false), np_(0), estamp_(0), pmask_(0), w_(0), nodd_(0),
+      er_(false), er_sizegate_(false), er_verify_(false), np_(0), estamp_(0), pmask_(0), epscan_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -284,8 +284,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     blk_.assign((size_t)n_, 0);
     mark_.assign((size_t)n_, 0);
 
-    /* erasure (GH-195): scratch, and the pair table of all qubit pairs keyed by the XOR of their column keys (n <= 2048,
-     * at most ~2.1M pairs; larger halves enumerate unchanged pairs by a scan with the leaf hash table) */
+    /* erasure (GH-195): scratch (the pair table is built lazily, erasure_pair_table_build) */
     er_ = rules_.erasure && rules_.pack;
     if (er_) {
         prow_.assign((size_t)m_ + 1, 0);
@@ -313,25 +312,29 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         eaff_.assign((size_t)n_ + 1, 0);
         eah_.assign((size_t)n_ + 1, 0);
         eal_.assign(((size_t)n_ + 1) * kw_, 0);
-        if (n_ <= 2048 && n_ >= 2) {
-            const size_t np = (size_t)n_ * (size_t)(n_ - 1) / 2;
-            size_t sz = 4;
-            while (sz < 2 * np) sz <<= 1;
-            pmask_ = (uint64_t)sz - 1;
-            phead_.assign(sz, -1);
-            pnext_.reserve(np);
-            pa_.reserve(np);
-            pb_.reserve(np);
-            for (int a = 0; a < n_; a++)
-                for (int b = a + 1; b < n_; b++) {
-                    const uint64_t slot = (colkey_[a] ^ colkey_[b]) & pmask_;
-                    pa_.push_back((uint32_t)a);
-                    pb_.push_back((uint32_t)b);
-                    pnext_.push_back(phead_[slot]);
-                    phead_[slot] = (int32_t)(pa_.size() - 1);
-                }
-        }
     }
+}
+
+/* erasure (GH-195): the table of all qubit pairs keyed by the XOR of their column keys (n <= 2048: at most ~2.1M pairs). It
+ * is built after n/2 tests have reached the pair stage with the scan (whose work, n lookups per test, then equals the
+ * build cost), so short runs never pay for it; larger halves always scan. */
+void HalfSearch::erasure_pair_table_build() {
+    const size_t np = (size_t)n_ * (size_t)(n_ - 1) / 2;
+    size_t sz = 4;
+    while (sz < 2 * np) sz <<= 1;
+    pmask_ = (uint64_t)sz - 1;
+    phead_.assign(sz, -1);
+    pnext_.reserve(np);
+    pa_.reserve(np);
+    pb_.reserve(np);
+    for (int a = 0; a < n_; a++)
+        for (int b = a + 1; b < n_; b++) {
+            const uint64_t slot = (colkey_[a] ^ colkey_[b]) & pmask_;
+            pa_.push_back((uint32_t)a);
+            pb_.push_back((uint32_t)b);
+            pnext_.push_back(phead_[slot]);
+            phead_[slot] = (int32_t)(pa_.size() - 1);
+        }
 }
 
 inline void HalfSearch::toggle(int q) {
@@ -736,6 +739,7 @@ bool HalfSearch::erasure_test(int extra, uint64_t st) {
         }
     }
     /* unchanged + unchanged */
+    if (phead_.empty() && n_ >= 2 && n_ <= 2048 && ++epscan_ > (uint64_t)n_ / 2) erasure_pair_table_build();
     if (!phead_.empty()) {
         for (int32_t pi = phead_[th & pmask_]; pi >= 0; pi = pnext_[pi]) {
             const uint32_t a = pa_[pi], b = pb_[pi];

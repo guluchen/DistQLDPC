@@ -380,7 +380,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             if (opt.rules.erasure)   /* GH-195 (no line without the token: byte identity) */
                 printf("c cc: %s half erasure: %s%s%s\n", hs[k].tag,
                        !S.erasure_active() ? "idle (needs pack)" : "on (extra <= 2, region <= 128)",
-                       S.erasure_active() ? (S.erasure_pair_table() ? ", pair table" : ", pairs by scan") : "",
+                       S.erasure_active() ? (S.erasure_pair_table() ? ", pair table (lazy)" : ", pairs by scan") : "",
                        opt.mutant == 22 ? " [TEST MUTANT 22: bound weakened by one]" :
                        opt.mutant == 23 ? " [TEST MUTANT 23: fixed support ignored]" : "");
         }

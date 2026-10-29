@@ -446,7 +446,7 @@ accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure -cc-seed=2 -cc-dual=off $L $M
 accept 3 "" -engine=cc -cc-rules=pack,erasure,mrv -cc-aut=off -no-symbreak $L $M
 vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure $L $M
-vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128), pair table$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128), pair table (lazy)$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
 vgrep 3 "^c cc: X half erasure: idle (needs pack)$" -v -engine=cc -cc-rules=excl,orbf,erasure $L $M
 vgrep 3 "^c cc-stats: X level [0-9]* erasure calls [0-9]* prune [0-9]* giveup [0-9]*$" -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
 vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 22: bound weakened by one\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure -cc-mutant=22 $L $M
