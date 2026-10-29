@@ -115,6 +115,8 @@ Modified files (partial list): Solver.h, Solver.cc
   per-seed qubit orders that make it compatible with DistQLDPC's orbit
   seeds, and the proof, are DistQLDPC's (MODIFICATIONS.md, GH-162).
 
+  The CC option -cc-roworder=bfs (GH-183) uses the reversed-BFS row ordering idea of Qubitserf 04b9349 (S. Cercelescu, MIT); re-implemented from scratch, no code copied.
+
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
 substantial portions, per the MIT license.

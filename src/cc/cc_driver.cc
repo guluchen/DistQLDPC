@@ -341,7 +341,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
     for (int k = 0; k < 2; k++) {
         if (!hs[k].searched) continue;
         /* GH-138: the half's stabilizer rows S (X half Hx, Z half Hz; verified by detector_check) feed rule overlap */
-        hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S));
+        hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S,
+                                          opt.roworder, opt.tb_asc));
         hs[k].par = hs[k].search->parity_active();
         if (verb > 0) {
             printf("c cc: %s half search: %d seeds (%s)\n", hs[k].tag, hs[k].search->num_seeds(),
@@ -373,8 +374,12 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        S.tiebreak_rows() > 0 ? "on" : "idle (no even-weight row)",
                        opt.mutant == 17 ? " [TEST MUTANT 17: naive tie cut]" : opt.mutant == 18 ? " [TEST MUTANT 18: seed not first]" : "");
             if (opt.rules.tiebreak && S.overlap_active() && S.tiebreak_rows() > 0)
-                printf("c cc: %s half tiebreak: %d of %d rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then descending label)\n",
-                       hs[k].tag, S.tiebreak_rows(), S.overlap_rows());
+                printf("c cc: %s half tiebreak: %d of %d rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then %s label)\n",
+                       hs[k].tag, S.tiebreak_rows(), S.overlap_rows(), opt.tb_asc ? "ascending" : "descending");
+            if (opt.roworder == ROWORDER_BFS)   /* GH-183 (no line with the default order: byte identity) */
+                printf("c cc: %s half row order: reversed BFS from the rows of the first seed (%d rows; packing scan and mrv ties)%s\n",
+                       hs[k].tag, S.rows_used(),
+                       opt.mutant == 19 ? " [TEST MUTANT 19: a row dropped]" : opt.mutant == 20 ? " [TEST MUTANT 20: no BFS restart]" : "");
         }
     }
     /* GH-133 parity: level 1 of a qualifying half is empty (every element has even weight) */
@@ -389,6 +394,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         fprintf(trace, "# n %d rules %s cc-seed %llu dual %s mutant %d parity X %s Z %s\n", n, rules_string(opt.rules).c_str(),
                 (unsigned long long)opt.seed, dual ? in.dual_desc.c_str() : "off", opt.mutant,
                 hs[0].searched ? (hs[0].par ? "on" : "off") : "-", hs[1].searched ? (hs[1].par ? "on" : "off") : "-");
+        if (opt.roworder != ROWORDER_INDEX || opt.tb_asc)   /* GH-183 (no line with the defaults) */
+            fprintf(trace, "# roworder %s tbbase %s\n", opt.roworder == ROWORDER_BFS ? "bfs" : "index", opt.tb_asc ? "asc" : "desc");
         fflush(trace);
     }
 

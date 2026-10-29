@@ -102,6 +102,22 @@
  *         (one global order is not needed); the relabeling (-cc-seed) only changes the labels. The dual map and the stop
  *         rule act between halves and are unaffected. An order that does not put r_i first breaks (B) (mutant 18).
  *         Full proof: MODIFICATIONS.md (GH-162).
+ *  Row order (GH-183, -cc-roworder=index|bfs, default index; the seed-anchored reversed-BFS row ordering idea of Qubitserf
+ *         04b9349, S. Cercelescu, MIT, re-derived here). The rows of H get internal indices; the index is the order of the
+ *         packing scan (pack) and the tie-break among rows of equal candidate count (mrv: the lowest index wins). index =
+ *         the input order (after the -cc-seed relabeling). bfs = a breadth-first search over the Tanner graph started from
+ *         the rows of the qubit with relabeled label 0 (the first seed in both seed modes: the smallest member of the first
+ *         orbit, or qubit 0 under the index rule) in index order, expanding each row through its qubits (ascending label)
+ *         to their rows (ascending index), restarted from the lowest unreached row while rows remain; the order is then
+ *         REVERSED (rows far from the seed first, the seed's rows last). Exactness: a permutation of the rows changes no
+ *         syndrome, candidate set, column, detector or stabilizer row; the packing bound holds for any scan order (any
+ *         family of odd rows with pairwise-disjoint candidate sets is a valid lower bound), the branching odd row is free
+ *         in (2) and in every rule's argument (each keeps an arbitrary fixed weight-w target reachable whichever odd row is
+ *         branched on; tiebreak's (A)-(C) do not mention rows of H), and the leaf keys are a filter before an exact test.
+ *         It is the same kind of change as the row relabeling of -cc-seed. Test mutants: 19 the bfs order drops its last row
+ *         (one row of H is ignored), 20 the bfs is not restarted (rows unreachable from the seed are dropped).
+ *  Tie-break base order (GH-183, -cc-tbbase=desc|asc, default desc; test variant): the base order of pi_i (after r_i and
+ *         the exhausted blocks) is the descending or the ascending relabeled label. Any total order is valid in (A)-(C).
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -123,6 +139,9 @@ struct Rules {
     bool tiebreak;   /* GH-162 (default off; acts only with overlap) */
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), tiebreak(false) {}
 };
+
+/* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment) */
+enum RowOrder { ROWORDER_INDEX = 0, ROWORDER_BFS = 1 };
 
 /* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */
 enum LevelVerdict { LEVEL_EMPTY = 0, LEVEL_FOUND = 1, LEVEL_INCONSISTENT = 2, LEVEL_ABORTED = 3 };
@@ -157,7 +176,8 @@ struct LevelResult {
  * both e and e + g when |e & g| = |g|/2). GH-162 tiebreak (13 and 14 are GH-152's, 15 and 16 are reserved for GH-157):
  * 17 the naive tie cut through the tiebreak rule (every even row keeps first(g) and gets the limit |g|/2 - 1), 18
  * the seed is not put first in the tie-break order (first(g) is taken in the base order also on the rows through the
- * seed, where the seed comes last: an orbit-incompatible order).
+ * seed, where the seed comes last: an orbit-incompatible order). GH-183 row order (act only with -cc-roworder=bfs): 19 the
+ * order drops its last row, 20 the BFS is not restarted for rows unreachable from the seed (both ignore rows of H).
  * (GH-124 fix round 1: the S0 spec's literal mutant 3, "orbit seeds without forbidding earlier orbits", only
  * drops a restriction and is a sound weakening that can never change a level verdict, so it was replaced by
  * this non-equivalent orbit-rule mutant. GH-133: the spec's literal leaf mutant, "leaf lookup ignoring the
@@ -171,7 +191,8 @@ public:
      * relabels qubits and rows deterministically (testing hook -cc-seed). K (GH-138, rule overlap): rows of
      * the half's stabilizer generators, each with H g = 0 and G g = 0 (checked; NULL or no rows: rule idle). */
     HalfSearch(const SparseRows& H, const SparseRows& G, const std::vector<int>& orbit_of,
-               const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K = NULL);
+               const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K = NULL,
+               int roworder = ROWORDER_INDEX, bool tb_asc = false);
 
     /* Level w >= 1 (precondition: no element of F of weight < w). */
     LevelResult run_level(int w);
@@ -200,11 +221,15 @@ public:
     int overlap_zero_rows() const { return kzero_; }
     /* tiebreak (GH-162): even rows replaced by g \ {first(g)} (before deduplication) */
     int tiebreak_rows() const { return ktie_; }
+    /* GH-183: internal row order in force, and rows of H used (nonempty; under mutants 19/20 fewer than the nonempty rows) */
+    int row_order() const { return roworder_; }
+    int rows_used() const { return m_; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
     Rules rules_;
     int mutant_;
+    int roworder_;                          /* GH-183 */
     bool orbit_mode_;
     bool allodd_, par_;
     int mincw_, maxcw_;

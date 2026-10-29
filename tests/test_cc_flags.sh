@@ -418,7 +418,7 @@ fi
 
 # 7g. GH-162 tiebreak (opt-in -cc-rules token; needs overlap): values, -v lines, mutants 17/18 accepted, no line without it
 reject "need -engine=cc or -engine=auto" -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
-for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=19; do
+for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=21; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
@@ -435,6 +435,35 @@ runs=$((runs + 1)); run -v -cc-stats -engine=cc $L $M
 if [[ $rc -ne 0 ]] || grep -q "tiebreak" <<<"$out"; then
     echo "FAIL (GH-162: a tiebreak line without the token): rc=$rc" >&2; fails=$((fails + 1))
 fi
+
+# 7h. GH-183 -cc-roworder=index|bfs and -cc-tbbase=desc|asc: values, -v lines, mutants 19/20 accepted, no line with the defaults
+reject "need -engine=cc or -engine=auto" -cc-roworder=bfs $L $M
+reject "need -engine=cc or -engine=auto" -cc-tbbase=asc $L $M
+for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=21; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-roworder=bfs $L $M
+accept 3 "" -engine=cc -cc-roworder=index -cc-tbbase=desc $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs -cc-tbbase=asc -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,mrv -cc-roworder=bfs -cc-aut=off -no-symbreak $L $M
+accept 2 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs $L $C
+vgrep 3 "^c cc: X half row order: reversed BFS from the rows of the first seed ([0-9]* rows; packing scan and mrv ties)$" \
+    -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs $L $M
+vgrep 3 "^c cc: X half tiebreak: [0-9]* of [0-9]* rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then ascending label)" \
+    -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-tbbase=asc $L $M
+for mt in 19 20; do
+    runs=$((runs + 1)); run -v -engine=cc -cc-roworder=bfs -cc-mutant=$mt $L $M
+    if ! grep -q "^c cc: X half row order: .*\[TEST MUTANT $mt" <<<"$out" || ! grep -q "^warning: cc: test mutant $mt active" <<<"$err"; then
+        echo "FAIL (GH-183: mutant $mt not reported): rc=$rc" >&2; fails=$((fails + 1))
+    fi
+done
+for a in "" "-cc-roworder=index" "-cc-tbbase=desc" "-cc-roworder=index -cc-tbbase=desc"; do
+    runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $a $L $M
+    if [[ $rc -ne 0 ]] || grep -q "row order\|ascending" <<<"$out"; then
+        echo "FAIL (GH-183: a row-order line with the defaults: $a): rc=$rc" >&2; fails=$((fails + 1))
+    fi
+done
 
 echo "test_cc_flags: $runs checks, $fails failed"
 [[ $fails -eq 0 ]] && echo "CC_FLAG_TESTS PASS" || echo "CC_FLAG_TESTS FAIL"
