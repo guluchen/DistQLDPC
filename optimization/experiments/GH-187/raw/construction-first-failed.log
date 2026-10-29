@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/validate_quantum_margulis.py", line 144, in <module>
+    if __name__=='__main__':main()
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/validate_quantum_margulis.py", line 140, in main
+    stem=f'QMC_{c["n"]}_{c["k"]}_unknown';cert=json.loads((args.certificates/f'{stem}.json').read_text());n,m=read_code(args.dir,stem);results.append(certify(c,cert,n,m))
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/validate_quantum_margulis.py", line 122, in certify
+    require(rowspace_components(n,hx+hz)==1,'physical stabilizer space splits into coordinate blocks')
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/validate_quantum_margulis.py", line 18, in require
+    if not value:raise ValueError(message)
+ValueError: physical stabilizer space splits into coordinate blocks

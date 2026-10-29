@@ -130,3 +130,20 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Original finite quantum Margulis / SL2 inputs (GH-187)
+
+Three [QMC](QUANTUM_MARGULIS.md) inputs n240/672/2640,k4/20/58 are rebuilt
+from published2BGA/conjugation mathematics with original frozen supports.
+Author matrices are not copied, and source ambiguous length642 is not
+identified with our original672 instance. No individual published exact d
+or globally-open-problem claim; actual basis uppers52/26/12 are not minima.
+Independent complete SL2/nonprojective vector action, every regular/inverse
+map/commuting square/binary column, full logical/GF2/actual words and typed
+physical stabilizer-space connectivity pass.15new+34prior units and
+12matrix+3complete-certificate byte reproduction pass, with no same(n,k)
+peers across pinned main/library refs. Initial scalar-merging diagnostic
+false split retained and corrected without changing matrices/parameters.
+Linux gates pending at construction checkpoint. This branch27untiered+
+51tiered; prior24rows/96files and51tiered unchanged. No solver/default/
+name/tier/main/QDistSAT change.
