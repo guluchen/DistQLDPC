@@ -42,7 +42,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
                        const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
-      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), w_(0), nodd_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ktie_(0), tb_(false), ovtight_(0), ovforbid_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -142,6 +142,47 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         }
     }
 
+    /* seeds: orbit representatives (orbf with nontrivial verified orbits) or every qubit (index rule) */
+    bstart_.clear();
+    block_.clear();
+    bstart_.push_back(0);
+    int norb = 0;
+    std::vector<int> oid;
+    if (rules_.orbf && (int)orbit_of.size() == n_) {
+        oid.assign((size_t)n_, -1);
+        std::vector<int> id_of((size_t)n_, -1);
+        for (int q = 0; q < n_; q++) {
+            const int o = orbit_of[q];
+            if (o < 0 || o >= n_) fatal("orbit id out of range");
+            if (id_of[o] < 0) id_of[o] = norb++;
+            oid[q] = id_of[o];
+        }
+    }
+    if (norb > 0 && norb < n_) {
+        orbit_mode_ = true;
+        std::vector<std::vector<uint32_t> > members((size_t)norb);
+        for (int q = 0; q < n_; q++) members[oid[q]].push_back((uint32_t)new_of[q]);
+        for (int o = 0; o < norb; o++) std::sort(members[o].begin(), members[o].end());
+        /* orbit order: by representative = smallest relabeled member (orbits are forbidden by
+         * their index in this order, never by comparing labels) */
+        std::vector<int> order((size_t)norb);
+        for (int o = 0; o < norb; o++) order[o] = o;
+        std::sort(order.begin(), order.end(),
+                  [&members](int a, int b) { return members[a][0] < members[b][0]; });
+        for (int i = 0; i < norb; i++) {
+            const std::vector<uint32_t>& mem = members[order[i]];
+            seed_.push_back((int)mem[0]);
+            block_.insert(block_.end(), mem.begin(), mem.end());
+            bstart_.push_back((uint32_t)block_.size());
+        }
+    } else {
+        for (int q = 0; q < n_; q++) {
+            seed_.push_back(q);
+            block_.push_back((uint32_t)q);
+            bstart_.push_back((uint32_t)block_.size());
+        }
+    }
+
     /* overlap (GH-138): stabilizer rows K (mutant 9: the parity checks H instead), deduplicated; each row must
      * satisfy H g = 0 and G g = 0 (then e + g is in F for every e in F), otherwise the input is rejected */
     if (rules_.overlap) {
@@ -189,11 +230,36 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         ovr_ = nk_ > 0;
         kstart_.assign((size_t)nk_ + 1, 0);
         klim_.assign((size_t)nk_, 0);
+        /* tiebreak (GH-162; the first(g) tie-break idea of Qubitserf 04b9349, S. Cercelescu, MIT): a row g of even weight
+         * gets the limit |g|/2 - 1 on g' = g \ {f_g}, f_g = first(g) in the order pi_i of the current seed r_i: r_i first,
+         * then the qubits of the exhausted blocks O_1..O_{i-1} (block order), then the base order (descending relabeled
+         * label, tbrank_). In run_level: f_g = r_i on the rows through r_i (tb_seed), else the first qubit of g in an
+         * exhausted block (kexfb_, tb_block_done), else the base-first member (kexbase_). Sound by the per-seed lex-min
+         * argument (cc_half.h). Mutant 17: the tie is cut on the full row (limit |g|/2 - 1, no exempt qubit); mutant 18:
+         * the base order alone for every row, also through the seed (the seed comes last: an orbit-incompatible order). */
+        tb_ = rules_.tiebreak && mutant_ != 17;
+        if (tb_) {
+            tbrank_.assign((size_t)n_, 0);
+            for (int q = 0; q < n_; q++) tbrank_[q] = (uint32_t)(n_ - 1 - q);
+        }
+        kex_.assign((size_t)nk_, -1);
+        kexbase_.assign((size_t)nk_, -1);
+        kexfb_.assign((size_t)nk_, -1);
         for (int i = 0; i < nk_; i++) {
             const int wt = (int)kr[i].size();
             int lim = wt / 2;
             if (mutant_ == 8) lim = wt / 2 - 1;                       /* off by one */
             if (mutant_ == 10 && !(wt & 1)) lim = wt / 2 - 1;         /* even-weight tie cut */
+            if (rules_.tiebreak && !(wt & 1)) {                       /* GH-162 (mutant 17: no exempt qubit) */
+                lim = wt / 2 - 1;
+                if (tb_) {
+                    uint32_t f = kr[i][0];
+                    for (size_t t = 1; t < kr[i].size(); t++)
+                        if (tbrank_[kr[i][t]] < tbrank_[f]) f = kr[i][t];
+                    kex_[i] = kexbase_[i] = (int32_t)f;
+                }
+                ktie_++;
+            }
             if (lim < 0) lim = 0;
             klim_[i] = lim;
             if (lim == 0) kzero_++;
@@ -210,47 +276,6 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         for (int i = 0; i < nk_; i++)
             for (uint32_t t = kstart_[i]; t < kstart_[i + 1]; t++) kcr_[fill[kq_[t]]++] = (uint32_t)i;
         slack_.assign((size_t)nk_, 0);
-    }
-
-    /* seeds: orbit representatives (orbf with nontrivial verified orbits) or every qubit (index rule) */
-    bstart_.clear();
-    block_.clear();
-    bstart_.push_back(0);
-    int norb = 0;
-    std::vector<int> oid;
-    if (rules_.orbf && (int)orbit_of.size() == n_) {
-        oid.assign((size_t)n_, -1);
-        std::vector<int> id_of((size_t)n_, -1);
-        for (int q = 0; q < n_; q++) {
-            const int o = orbit_of[q];
-            if (o < 0 || o >= n_) fatal("orbit id out of range");
-            if (id_of[o] < 0) id_of[o] = norb++;
-            oid[q] = id_of[o];
-        }
-    }
-    if (norb > 0 && norb < n_) {
-        orbit_mode_ = true;
-        std::vector<std::vector<uint32_t> > members((size_t)norb);
-        for (int q = 0; q < n_; q++) members[oid[q]].push_back((uint32_t)new_of[q]);
-        for (int o = 0; o < norb; o++) std::sort(members[o].begin(), members[o].end());
-        /* orbit order: by representative = smallest relabeled member (orbits are forbidden by
-         * their index in this order, never by comparing labels) */
-        std::vector<int> order((size_t)norb);
-        for (int o = 0; o < norb; o++) order[o] = o;
-        std::sort(order.begin(), order.end(),
-                  [&members](int a, int b) { return members[a][0] < members[b][0]; });
-        for (int i = 0; i < norb; i++) {
-            const std::vector<uint32_t>& mem = members[order[i]];
-            seed_.push_back((int)mem[0]);
-            block_.insert(block_.end(), mem.begin(), mem.end());
-            bstart_.push_back((uint32_t)block_.size());
-        }
-    } else {
-        for (int q = 0; q < n_; q++) {
-            seed_.push_back(q);
-            block_.push_back((uint32_t)q);
-            bstart_.push_back((uint32_t)block_.size());
-        }
     }
 
     syn_.assign((size_t)mw_, 0);
@@ -275,6 +300,7 @@ inline void HalfSearch::toggle(int q) {
 /* overlap (GH-138): q joins S. A row g that reaches its limit (|S & g| = floor(|g|/2)) forbids all its qubits
  * (those in S are blocked anyway; the count is undone symmetrically by ov_del). */
 inline void HalfSearch::ov_add(int q) {
+    if (tb_) { ov_add_tb(q); return; }
     for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
         const uint32_t g = kcr_[i];
         if (--slack_[g] == 0) {
@@ -288,10 +314,76 @@ inline void HalfSearch::ov_add(int q) {
 
 /* overlap: q leaves S (exact inverse of ov_add) */
 inline void HalfSearch::ov_del(int q) {
+    if (tb_) { ov_del_tb(q); return; }
     for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
         const uint32_t g = kcr_[i];
         if (slack_[g]++ == 0)
             for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t) blk_[*t]--;
+    }
+}
+
+/* tiebreak (GH-162): as ov_add/ov_del on g' = g \ {kex_[g]} (kex_ = -1: the whole row). The exempt qubit is neither
+ * counted nor forbidden: when g' is tight, the tie |S & g| = |g|/2 is still allowed through first(g). */
+inline void HalfSearch::ov_add_tb(int q) {
+    for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
+        const uint32_t g = kcr_[i];
+        const int32_t x = kex_[g];
+        if (x == q) continue;
+        if (--slack_[g] == 0) {
+            ++ovtight_;
+            uint64_t nf = 0;
+            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t)
+                if ((int32_t)*t != x) nf += blk_[*t]++ == 0;
+            ovforbid_ += nf;
+        }
+    }
+}
+
+inline void HalfSearch::ov_del_tb(int q) {
+    for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
+        const uint32_t g = kcr_[i];
+        const int32_t x = kex_[g];
+        if (x == q) continue;
+        if (slack_[g]++ == 0)
+            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t)
+                if ((int32_t)*t != x) blk_[*t]--;
+    }
+}
+
+/* tiebreak (GH-162): set the exempt qubit of row g to x with S empty. Only rows of limit 0 (|g| = 2) hold forbids at S
+ * empty (g minus its exempt qubit); they are moved with the exemption. */
+inline void HalfSearch::tb_set(uint32_t g, int32_t x) {
+    const int32_t old = kex_[g];
+    if (old == x) return;
+    if (klim_[g] == 0) {   /* forbidden set g \ {old} becomes g \ {x} */
+        blk_[x]--;
+        ovforbid_ += blk_[old]++ == 0;
+    }
+    kex_[g] = x;
+}
+
+/* tiebreak: exempt qubits for the order pi_i of seed s = r_i (on) -- r_i first, then the qubits of the earlier orbits
+ * O_1..O_{i-1} (in seed-block order), then the base order. Rows through r_i get r_i; the others keep their exemption
+ * between seeds (kexfb_: first qubit of the row in an exhausted orbit, else kexbase_). off: undo the rows through r_i. */
+void HalfSearch::tb_seed(int s, bool on) {
+    for (uint32_t i = kcstart_[s], e = kcstart_[s + 1]; i < e; i++) {
+        const uint32_t g = kcr_[i];
+        if (kexbase_[g] < 0) continue;
+        tb_set(g, on ? (int32_t)s : kexfb_[g] >= 0 ? kexfb_[g] : kexbase_[g]);
+    }
+}
+
+/* tiebreak: orbit/seed block i is exhausted (it is forbidden for the later seeds); every row meeting it that has no
+ * exempt qubit in an earlier block takes its first qubit in block i (mutant 18 keeps the base order) */
+void HalfSearch::tb_block_done(size_t bi) {
+    for (uint32_t t = bstart_[bi]; t < bstart_[bi + 1]; t++) {
+        const uint32_t q = block_[t];
+        for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
+            const uint32_t g = kcr_[i];
+            if (kexbase_[g] < 0 || kexfb_[g] >= 0) continue;
+            kexfb_[g] = (int32_t)q;
+            tb_set(g, (int32_t)q);
+        }
     }
 }
 
@@ -506,8 +598,10 @@ LevelResult HalfSearch::run_level(int w) {
     if (ovr_) {   /* overlap: counters reset; rows with limit 0 (|g| = 1) forbid their qubits for the whole level */
         for (int g = 0; g < nk_; g++) {
             slack_[g] = klim_[g];
+            if (tb_) { kex_[g] = kexbase_[g]; kexfb_[g] = -1; }
             if (klim_[g] == 0)
                 for (uint32_t t = kstart_[g]; t < kstart_[g + 1]; t++) {
+                    if (tb_ && (int32_t)kq_[t] == kex_[g]) continue;   /* tiebreak: |g| = 2, first(g) stays free */
                     ovforbid_ += blk_[kq_[t]] == 0;
                     blk_[kq_[t]]++;
                 }
@@ -524,6 +618,10 @@ LevelResult HalfSearch::run_level(int w) {
         const bool m3 = orbit_mode_ && mutant_ == 3;
         if (m3)
             for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_[block_[t]]++;
+        /* tiebreak (GH-162): pi_i puts r_i first (mutant 18: not done); before the seed check, since a row {r_i, x} of
+         * the base order may forbid r_i */
+        const bool tbs = tb_ && mutant_ != 18;
+        if (tbs) tb_seed(s, true);
         /* a seed is never forbidden by an earlier seed, except through mutant 1's leak */
         if (blk_[s] == (m3 ? 1u : 0u)) {
             r.seeds++;
@@ -536,6 +634,7 @@ LevelResult HalfSearch::run_level(int w) {
             toggle(s);
             if (!m3) blk_[s]--;
             if (hit) {
+                if (tbs) tb_seed(s, false);
                 r.verdict = abort_ ? LEVEL_ABORTED : incons_ ? LEVEL_INCONSISTENT : LEVEL_FOUND;
                 if (abort_) r.witness.clear();
                 r.ovtight = ovtight_;
@@ -544,9 +643,11 @@ LevelResult HalfSearch::run_level(int w) {
                 return r;
             }
         }
+        if (tbs) tb_seed(s, false);
         /* seed rule: index rule forbids the seed; orbit rule forbids its whole orbit (mutant 3: done above) */
         if (!m3)
             for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_[block_[t]]++;
+        if (tbs) tb_block_done(i);
     }
     r.ovtight = ovtight_;
     r.ovforbid = ovforbid_;

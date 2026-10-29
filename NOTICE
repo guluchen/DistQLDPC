@@ -105,6 +105,16 @@ Modified files (partial list): Solver.h, Solver.cc
   read, copied or linked. Every candidate is accepted only after
   DistQLDPC's own GF(2) checks (GH-75/GH-85/GH-87).
 
+  The CC rule "tiebreak" (GH-162, -cc-rules=...,overlap,tiebreak,
+  opt-in) cuts the even-weight stabilizer-overlap tie |e & g| = |g|/2
+  unless the first qubit of g lies in e. The first(g) tie-break idea
+  is from Qubitserf (https://github.com/Quantinuum/Qubitserf, commit
+  04b9349, Copyright (c) 2026 Serban Cercelescu and the qubitserf
+  contributors, MIT License). It was re-derived from the mathematics
+  and implemented from scratch; no Qubitserf code was copied. The
+  per-seed qubit orders that make it compatible with DistQLDPC's orbit
+  seeds, and the proof, are DistQLDPC's (MODIFICATIONS.md, GH-162).
+
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
 substantial portions, per the MIT license.

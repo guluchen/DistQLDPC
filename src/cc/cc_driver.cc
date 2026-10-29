@@ -217,7 +217,7 @@ bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::
 
 bool parse_rules(const char* s, Rules& out) {
     Rules r;
-    r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = false;
+    r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = r.tiebreak = false;
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -231,6 +231,7 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "parity") r.parity = true;
         else if (tok == "leaf") r.leaf = true;
         else if (tok == "overlap") r.overlap = true;
+        else if (tok == "tiebreak") r.tiebreak = true;   /* GH-162 */
         else if (tok == "none") { /* nothing */ }
         else return false;
         pos = e + 1;
@@ -247,6 +248,7 @@ std::string rules_string(const Rules& r) {
     if (r.parity) s += ",parity";
     if (r.leaf) s += ",leaf";
     if (r.overlap) s += ",overlap";
+    if (r.tiebreak) s += ",tiebreak";
     if (r.mrv) s += ",mrv";
     return s.empty() ? std::string("none") : s.substr(1);
 }
@@ -365,6 +367,14 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        S.overlap_max_weight(), S.overlap_zero_rows());
             else
                 printf("c cc: %s half overlap: idle (no stabilizer row)\n", hs[k].tag);
+            if (opt.rules.tiebreak)   /* GH-162 (no line without the token: byte identity) */
+                printf("c cc: %s half tiebreak: %s%s\n", hs[k].tag,
+                       !opt.rules.overlap || !S.overlap_active() ? "idle (needs overlap rows)" :
+                       S.tiebreak_rows() > 0 ? "on" : "idle (no even-weight row)",
+                       opt.mutant == 17 ? " [TEST MUTANT 17: naive tie cut]" : opt.mutant == 18 ? " [TEST MUTANT 18: seed not first]" : "");
+            if (opt.rules.tiebreak && S.overlap_active() && S.tiebreak_rows() > 0)
+                printf("c cc: %s half tiebreak: %d of %d rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then descending label)\n",
+                       hs[k].tag, S.tiebreak_rows(), S.overlap_rows());
         }
     }
     /* GH-133 parity: level 1 of a qualifying half is empty (every element has even weight) */

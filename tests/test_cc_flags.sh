@@ -416,6 +416,26 @@ if [[ $rc -ne 1 ]] || ! grep -q "^c d_lb: [0-9]" <<<"$out" || [[ "$(grep '^c d_l
     fails=$((fails + 1))
 fi
 
+# 7g. GH-162 tiebreak (opt-in -cc-rules token; needs overlap): values, -v lines, mutants 17/18 accepted, no line without it
+reject "need -engine=cc or -engine=auto" -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=19; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+accept 3 "" -engine=cc -cc-rules=overlap,tiebreak -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-aut=off -no-symbreak $L $M
+vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: on$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: [0-9]* of [0-9]* rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then descending label)" \
+    -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: idle (needs overlap rows)" -v -engine=cc -cc-rules=excl,pack,orbf,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: on \[TEST MUTANT 17: naive tie cut\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-mutant=17 $L $M
+vgrep 3 "^c cc: X half tiebreak: on \[TEST MUTANT 18: seed not first\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-mutant=18 $L $M
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $L $M
+if [[ $rc -ne 0 ]] || grep -q "tiebreak" <<<"$out"; then
+    echo "FAIL (GH-162: a tiebreak line without the token): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
 echo "test_cc_flags: $runs checks, $fails failed"
 [[ $fails -eq 0 ]] && echo "CC_FLAG_TESTS PASS" || echo "CC_FLAG_TESTS FAIL"
 exit $((fails > 0))

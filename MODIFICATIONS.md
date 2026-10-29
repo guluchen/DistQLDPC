@@ -42,7 +42,7 @@ Optional engine, off by default (PI 2026-10-16): enable with `-engine=cc` (or `-
 
 | File | Description |
 |------|-------------|
-| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut). |
+| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut); `tiebreak` (GH-162, opt-in, needs `overlap`: the even-weight tie \|e & g\| = \|g\|/2 is cut unless first(g) is in e, in a per-seed qubit order that puts the seed first; the first(g) tie-break idea of Qubitserf 04b9349, S. Cercelescu, MIT, re-derived from the mathematics, no code copied) with test-only mutants 17 (naive tie cut through the tiebreak path) and 18 (order without the seed first). |
 | `cc_ubsearch.h`, `cc_ubsearch.cc` (GH-140, GH-146) | Randomized low-weight logical finder for one CSS half (`-ub-search`): random information sets (random column order, Gauss-Jordan elimination of H with pivots in that order, systematic kernel basis), words of 1-2 (optionally 3) systematic basis vectors below a weight threshold, detector check (G c != 0), greedy local improvement by same-type stabilizer rows; deterministic per seed; test mutant 11 (no detector check and no improvement). GH-146 collision mode (`-ub-isd`): Stern / Dumer collision step with Canteaut-Chabaud pivot swaps (`cc_swap`, `isd_round`, `iterate_isd`), parser `parse_isd`. |
 | `cc_aut.h`, `cc_aut.cc` (GH-152) | Candidate automorphisms for `-cc-aut=on`: colour refinement to the coarsest equitable partition of the coloured Tanner graph (qubits, rows of each class), individualisation of one vertex and lockstep refinement of a source and a target partition (McKay 1981, written from the published description), backtracking over the first non-singleton cell, edge-checked vertex maps; orbit computation by union-find from the first vertex of the smallest qubit cell (complete when that vertex's point stabiliser is trivial), one class-exchanging (swap) map; deterministic work counters. Candidates only: every map is GF(2)-verified by the wrapper before use. |
 | `cc_driver.h`, `cc_driver.cc` | Driver: start-up detector check (rank[H;G] + rank S = n and commutation), both halves interleaved level by level (cheaper half first) or one half under a verified XZ-dual map, stop rule (a hit at level w ends the run once the other half's lower bound is >= w), anytime `TRY`/`LB`/`UB`/`RESULT` lines, witness verification (H e = 0, independent GF(2) rank test against the same-type stabilizers, dual image check), its own check of the XZ-dual map (pi(rs Hz) = rs Hx and pi(rs Hx) = rs Hz), always-on traps (`RESULT -1 TRAP`, never a value; earlier bounds withdrawn), optional `-ub-basis`, `-cc-trace`, `-cc-stats`; test-only sequential schedule (`-cc-schedule=sequential`) and driver mutant 4 (stop rule without the other half's lower bound, run under the sequential schedule). |
@@ -301,6 +301,83 @@ candidates plus the cyclic shift i -> i+1 mod n kept without the GF(2) checks) m
 stopped driver runs. Mutant 14 (the swap map, or the identity when none was found, used as dual map without the check)
 must give wrong or stopped driver runs. `make test-cc-flags`: values, conflicts, `-v` lines (also without the flag, the default), no output with `-cc-aut=off`.
 *Evidence.* `optimization/experiments/GH-152/REPORT.md`.
+
+GH-162 (`tiebreak` in `-cc-rules`, default off; acts only together with `overlap`; `src/cc/cc_half.{h,cc}`, token
+parsing in `cc_driver.cc`). *Credit.* The first(g) tie-break idea (cut the tie |e & g| = |g|/2 unless the first qubit
+of g lies in e, justified by a lexicographically least minimum element) is from Qubitserf (github.com/Quantinuum/Qubitserf,
+commit 04b9349, S. Cercelescu, MIT). Implemented from the mathematics below; no Qubitserf code was copied. The per-seed
+orders and the compatibility argument with the orbit seed rule are DistQLDPC's.
+
+*Setting.* As in GH-138: a half with F = {v : H v = 0, G v != 0}, stabilizer rows K (H g = 0, G g = 0 for every g), level
+w with the precondition that F has no element of weight < w, so every weight-w element of F has minimum weight and
+satisfies |e & g| <= floor(|g|/2) (GH-138 Lemmas 1-2). Seeds r_1, r_2, ... in run order with blocks O_1, O_2, ...: the
+verified orbits in seed order with r_i the smallest relabeled member of O_i (`orbf`), or the single qubits 0, 1, ...
+(index rule). While r_i is searched, O_1..O_{i-1} are forbidden; afterwards O_i is forbidden too.
+
+*Orders.* For seed r_i fix a total order pi_i of the qubits whose first element is r_i. The implementation uses: r_i,
+then the qubits of O_1..O_{i-1} in block order, then the remaining qubits in descending relabeled label (any order
+with r_i first would do; this one was the best of five measured, `optimization/experiments/GH-162/pre/`). For two
+different supports e, e' write e <_i e' iff the pi_i-first qubit of the symmetric difference e (+) e' lies in e; <_i is
+a total order on supports. first_i(g) is the pi_i-first qubit of g.
+
+*Rule.* While r_i is searched, every even row g of K is counted on g'_i = g \ {first_i(g)} with the limit |g|/2 - 1
+(= floor(|g'_i|/2)), with the GH-138 mechanics: when |S & g'_i| reaches the limit, g'_i \ S is forbidden for the subtree
+(first_i(g) stays free); rows with |g| = 2 (limit 0) forbid their non-first qubit from the start of the seed. Odd rows
+keep floor(|g|/2) on the whole row. Equivalently: a node S with |S & g| = |g|/2 and first_i(g) not in S is cut, and once
+first_i(g) is forbidden the row's limit drops to |g|/2 - 1. The exemptions are switched only between seeds, with S empty
+(no row is tight then; the |g| = 2 forbids move with the exemption).
+
+*Lemma A (first useful seed).* Let j be the smallest index such that some weight-w element of F contains r_j and avoids
+O_1..O_{j-1}. If F has a weight-w element, j exists, and every weight-w element of F avoids O_1..O_{j-1}.
+Proof: take any weight-w e, let O_i be the first block it meets and q in e & O_i. A verified automorphism s with
+s(q) = r_i (orbit seeds; the identity under the index rule) maps e to s(e), a weight-w element of F (GH-152 (1): verified
+automorphisms preserve F and weights), which contains r_i and avoids O_1..O_{i-1} because blocks are unions of orbits.
+So index i qualifies and j exists. If some weight-w e met O_i with i < j, the same construction for its first met block
+O_{i0} (i0 <= i < j) would make i0 qualify, contradicting the minimality of j.
+
+*Lemma B (lex-least target).* Let e* be the <_j-least weight-w element of F. Then r_j is in e* and e* avoids
+O_1..O_{j-1}. Proof: some weight-w element e' contains r_j (choice of j); if r_j were not in e*, then r_j would be the
+pi_j-first qubit of e' (+) e* (it is the first qubit of pi_j) and lie in e', so e' <_j e*. The avoidance is Lemma A.
+
+*Lemma C (no forbidden tie).* For every even row g of K: |e* & g'_j| <= |g|/2 - 1. Proof: |e* & g| <= |g|/2 (GH-138).
+If |e* & g| <= |g|/2 - 1 the claim follows. If |e* & g| = |g|/2 and first_j(g) is not in e*, then e* + g is in F
+(H g = 0, G g = 0), has weight w + |g| - 2|g|/2 = w, and differs from e* exactly on g; the pi_j-first qubit of that
+difference is first_j(g), which lies in e* + g, so e* + g <_j e*, a contradiction. So first_j(g) is in e*, and
+|e* & g'_j| = |g|/2 - 1. (If first_j(g) is in O_1..O_{j-1}, Lemma B already excludes it from e*, so such a row never
+has a tie at e*.)
+
+*Theorem (exactness).* The level verdict with `tiebreak` equals the verdict without it. A FOUND is always a genuine
+weight-w element (closures are checked against H and G, and the witness is re-verified independently in GF(2) by the
+driver), so only EMPTY needs an argument. Suppose F has a weight-w element and no seed before r_j returns FOUND. While
+r_j is searched, the forbidden set at the root consists of O_1..O_{j-1} (disjoint from e* by Lemma B), the GH-138
+limit-0 rows (|g| = 1: disjoint from every minimum element) and the tiebreak limit-0 rows (non-first qubit of a
+|g| = 2 row: not in e* by Lemma C with |g|/2 - 1 = 0), and r_j itself is free (Lemma B and Lemma C: a row {r_j, x} has
+first_j = r_j). Every other rule is exact by an argument that fixes ONE weight-w target and keeps a node S subset of it
+with forbidden set disjoint from it (cc_half.h, GH-124/133/138): excl (only earlier siblings, which are outside the
+target, are forbidden), pack and the no-candidate dead end (counting over free qubits; every odd row of S needs its own
+free qubit of the target), parity (|e| and syn(S) only), leaf (lookups among free qubits; the counter-update shortcut for
+children of budget <= 2 is a sound weakening), mrv (branch row choice only), overlap (GH-138 Lemma 3: its forbids are
+disjoint from every weight-w element containing S). None of these needs anything of the target beyond being a weight-w
+element of F, except the seed rule, which needs Lemma B. Take the target e*. For a node S subset of e*, the tiebreak
+forbids g'_j \ S only when |S & g'_j| = |g|/2 - 1, and then |e* & g'_j| <= |g|/2 - 1 (Lemma C) gives e* & g'_j = S & g'_j,
+so the forbidden qubits are outside e*; it prunes no subset of e*. Hence seed r_j reaches e* or returns another genuine
+element earlier: FOUND. Seeds other than r_j may use their own orders and prune anything: they can only miss elements,
+never invent one, and the level is decided by r_j. With no weight-w element every seed returns EMPTY with or without the
+rule. The dual map (single-half search) and the stop rule act between halves on verified level verdicts and are
+unaffected; `-cc-seed` relabels qubits before the orders are formed.
+
+*Why the seed must come first (mutant 18).* Lemma B needs r_j to be pi_j-first: with an order in which r_j comes
+later (mutant 18 uses descending label for every row, so r_j, the smallest member of its orbit, comes last in O_j), the
+lex-least element can avoid r_j, the elements that contain r_j can all have a tie whose first qubit they miss, and seed
+r_j then refutes a nonempty level. A single global order is compatible exactly when, for every j, r_j precedes every
+qubit outside O_1..O_{j-1}; e.g. the plain ascending label order (orbits are ordered by their smallest member) or the
+seed-block order (orbits contiguous, representative first). The per-seed orders above are a superset of these.
+
+*Mutants (must fail; `make test-cc` Part T).* 17: the naive tie cut through the tiebreak path (limit |g|/2 - 1 on the
+whole even row, no exemption; it removes both e and e + g). 18: no seed-first exemption (the base order for every row).
+*Statistics.* The `-v` line `c cc: X half tiebreak: N of M rows even` gives the rows whose tie is cut; the effect shows in
+the `-cc-stats` node counts per level (and `ovtight`/`ovforbid`) against the same run without the token.
+*Evidence.* `optimization/experiments/GH-162/REPORT.md`.
 
 GH-148 (`-stab-overlap=off|on|auto`, split MaxSAT path, `src/core/distqldpc.cc`; default `auto` since the PI's adoption decision, `off` = the previous search). *What it adds.* Extra
 hard constraints in the half instance of `build_css_half`: for each verified row g, |x & g| <= floor(|g|/2). *Why every
