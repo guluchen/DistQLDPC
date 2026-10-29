@@ -140,3 +140,10 @@ checked. Three source endpoints are decoder estimates and three supported
 uppers; none substitutes for actual solver output. Reproduction, selection,
 source attribution/licenses and component soundness proof are in
 [OPEN_LLM_BB.md](OPEN_LLM_BB.md). Unknown stems, untiered only, no QDistSAT mirror.
+
+Linux GH-177: both internal engines complete all six initially source-open
+cases at d10/9/12/16/22/23, with independently GF(2)-verified actual words.
+CS-0d018ae6 (n180,k4) has d12 versus its original decoder estimate14;
+this is a different presentation from the paper's headline exact180,4,14
+code. Source labels remain unchanged in claimed_d, own results are separate.
+All numeric gates pass; no unresolved engine/server job for this batch.

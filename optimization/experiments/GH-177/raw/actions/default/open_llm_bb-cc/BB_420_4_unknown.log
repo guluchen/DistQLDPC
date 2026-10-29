@@ -1,0 +1,68 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BB_420_4_unknown_Hx.txt
+c Hz: data/matrices/untiered/BB_420_4_unknown_Hz.txt
+c Gx: data/matrices/untiered/BB_420_4_unknown_Gx.txt
+c Gz: data/matrices/untiered/BB_420_4_unknown_Gz.txt
+c Hx: 210 x 420, Hz: 210 x 420, Gx: 4 x 420, Gz: 4 x 420, logicals: 8
+c cc: dual map detection: 'halfswap-inverse Z_15 x Z_14' verified (rank Hz=Hx=208, [Hz;Gx]=[Hx;Gz]=212, cpu 0.001s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 2 generator(s), 2 qubit orbit(s), group complete, point stabiliser trivial, swap map not searched, 2 test(s) (0 refuted, 0 undecided), work 28230, cpu 0.001s
+c cc symbreak X: n=420 candidates=155 verified_generators=8 orbits=2 detect_cpu=0.001s clause=orbit-chain
+c cc symbreak X: generator: plain blockshift L=14
+c cc symbreak X: generator: plain 2dshift-a L=14 (2x7)
+c cc symbreak X: generator: plain 2dshift-a L=14 (7x2)
+c cc symbreak X: generator: plain 2dshift-a L=210 (3x70)
+c cc symbreak X: generator: plain 2dshift-a L=210 (5x42)
+c cc symbreak X: generator: plain 2dshift-a L=210 (15x14)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: orbit reps (size): 0(210) 210(210)
+c cc: X half: n 420, rank H 208, rank [H;G] 212, rank S 208: detectors complete, 4 logical(s)
+c cc: Z half: n 420, rank H 208, rank [H;G] 212, rank S 208: detectors complete, 4 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'halfswap-inverse Z_15 x Z_14' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 50 (X 50, Z 50)
+c cc: X half search: 2 seeds (orbit representatives)
+c cc: X half parity: off (column weights 2..3, an even weight present)
+c cc: X half overlap: on (210 stabilizer rows of Hx, weights 5..5, 0 forbidden from the start)
+c cc: X half ub-search: rank H 208, information set 212, triples off, slack 4, li-cap 64, collision stern p 2 l 12 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 22 (iteration 1, wall 0.004s)
+c witness X (ub-search): 1 35 79 89 103 113 137 143 147 157 191 197 219 249 262 292 305 335 343 348 364 386
+c cc: X half level 1 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 2 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 3 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 4 EMPTY nodes 7 seeds 2 time 0.000s
+c cc: X half level 5 EMPTY nodes 22 seeds 2 time 0.000s
+c cc: X half level 6 EMPTY nodes 43 seeds 2 time 0.000s
+c cc: X half level 7 EMPTY nodes 96 seeds 2 time 0.000s
+c cc: X half level 8 EMPTY nodes 228 seeds 2 time 0.000s
+c cc: X half level 9 EMPTY nodes 564 seeds 2 time 0.000s
+c cc: X half level 10 EMPTY nodes 1295 seeds 2 time 0.000s
+c cc: X half level 11 EMPTY nodes 3071 seeds 2 time 0.000s
+c cc: X half level 12 EMPTY nodes 7427 seeds 2 time 0.001s
+c cc: X half level 13 EMPTY nodes 17635 seeds 2 time 0.002s
+c cc: X half level 14 EMPTY nodes 41509 seeds 2 time 0.004s
+c cc: X half level 15 EMPTY nodes 98167 seeds 2 time 0.010s
+c cc: X half level 16 EMPTY nodes 230646 seeds 2 time 0.025s
+c cc: X half level 17 EMPTY nodes 541493 seeds 2 time 0.068s
+c cc: X half level 18 EMPTY nodes 1272976 seeds 2 time 0.147s
+c cc: X half level 19 EMPTY nodes 2989148 seeds 2 time 0.354s
+c cc: ub-search: U 22 re-hit without improvement: finder share 0.0031 from now on (iteration 39, wall 1.422s)
+c cc: X half level 20 EMPTY nodes 7022735 seeds 2 time 0.851s
+c cc: X half level 21 EMPTY nodes 16511985 seeds 2 time 1.921s
+c cc: ub-search X: iterations 39, finder time 0.075s, kept 2704, nontrivial 335, li-gain 133, improvements 1, rank 208, K 212, ub 22
+c cc: ub-search X collision: rounds 39, colliding pairs 12888251 (nontrivial 7550587)
+c cc: total nodes X 28739053 Z 0, search time X 3.384s Z 0.000s, wall 3.388s
+c cc: d = 22
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BB_420_4_unknown_Hx.txt
+c Hz: data/matrices/untiered/BB_420_4_unknown_Hz.txt
+c Gx: data/matrices/untiered/BB_420_4_unknown_Gx.txt
+c Gz: data/matrices/untiered/BB_420_4_unknown_Gz.txt
+c Hx: 210 x 420, Hz: 210 x 420, Gx: 4 x 420, Gz: 4 x 420, logicals: 8
+c d_lb: 22
+c d_ub: 22
+c d  : 22
+o 22

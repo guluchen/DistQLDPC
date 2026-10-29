@@ -1,9 +1,10 @@
 # GH-177: source-open LLM-discovered weight5 CSS BB targets
 
-Status: CONSTRUCTION_PASS; Linux selected smoke pending.
+Status: CONSTRUCTION_ALL_NUMERIC_AND_TWO_ENGINE_EXACT_GATES_PASS.
 Issue https://github.com/guluchen/DistQLDPC/issues/177; hub15 claim6497563591.
 Fresh main6083e662c621f3b66defd434cfae31a028d483c4;
-branch codex/open-llm-bb-library; source commit recorded after push.
+branch codex/open-llm-bb-library; source ff8f73e1156b84ea5f52ceaa7a3f9246d80a6c2e
+(tree b45fe138de411d7f2bb1b9ae311c0b36204d44ca; data3a91c089fd2175d61ca91c0b6d72662fda7b1f2c).
 No PR requested; main integration remains a PI decision.
 
 ## Proposals, scope and source
@@ -84,9 +85,65 @@ PI-allocated free core. No renaming/tiering/QDistSAT/main integration.
 
 What changed: six initially source-open weight5 CSS BB targets, reproducible
 selection/generator, source attribution and independent algebra/components.
-Validation: local45units/construction/regeneration pass; Linux pending.
-Results: own solver results pending, source distances all nonexact at selection.
-Unresolved: Linux numeric/word gates; broader coverage gaps still open.
+Validation: local+Linux45units/construction/regeneration, all numeric/actual-word
+and source/binary/input audits PASS; retained audit replays byte-identically.
+Results: both-engine exact10/9/12/16/22/23 with GF2 words; all source
+classes were nonexact at selection, source estimates/uppers remain separate.
+Unresolved: none for this batch's engine proofs; broader coverage gaps,
+main integration/tiering and other branches' heavy jobs remain open.
 Scientific semantics changed: no.
 PI action required: yes for integration, naming/tiering and server allocation
 if needed; independent library work continues meanwhile.
+
+
+## Retained Linux results and verdict
+
+Library [40880415723](https://github.com/guluchen/DistQLDPC/actions/runs/40880415723),
+job123470111730 SUCCESS; source CI40880415568 job123470111054 SUCCESS.
+Source ff8f73e1156b84ea5f52ceaa7a3f9246d80a6c2e; unchanged solver binary
+SHA25668f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux, Python3.12.3,c++13.3.0,pinnedCPU0,serial,default
+seed,60sCPU/90swall/4GiB per call. Complete raw log600902 characters and
+all engine logs/JSON/CSV/environment identities retained under
+raw/actions/default/. Audit replay is byte-identical using actual local files.
+No supplemental/repeated CI solver call, Mac solver, external solver or
+performance claim. All12 calls complete and all numeric gates pass.
+
+| n | Source endpoint (class nonexact at selection) | MaxSAT | CC | Independent conclusion |
+|---:|---|---:|---:|---|
+|120|estimate10|10|10|exact10 with GF2 words|
+|162|supported upper9|9|9|exact9 with GF2 words|
+|180|estimate14|12|12|exact12 with GF2 words|
+|384|estimate16|16|16|exact16 with GF2 words|
+|420|supported upper22|22|22|exact22 with GF2 words|
+|432|supported upper23|23|23|exact23 with GF2 words|
+
+All observed exact answers/bounds and actual minimum-weight logicals agree
+between two independently implemented internal searches and Python GF2
+verification. The newly exact results therefore have independent completion,
+not a one-engine PLAUSIBLE claim. No supported source bound or published
+positive lower is contradicted. Every source endpoint has an own word at
+that value or better. CS-0d018ae6 (n180,k4,classTC-dfb9cfae85) improves its
+historical decoder estimate14 to exact12; do not confuse this selected
+polynomial pair with the paper's DIFFERENT headline exact180,4,14 code.
+Source metadata remains untouched in the manifest/case/extract; numeric
+fields record actual solver output only. Unknown stems still await PI naming.
+
+No heavier completion package is needed here: zero unresolved engine proofs
+and no server resources allocated/executed. Existing other-branch heavy jobs
+and incomplete numeric gates remain open; do not claim full goal completion.
+Verdict: six source-open targets collected AND all six exact distances
+cross-checked within selected short checks. Next genuine family research:
+finite circle-fiber bundles under2009.03921v2 Definition2.11, original small
+full-rank sparse bases and nonremovable twists, with no asymptotic-good-code
+claim. The general homological-product/explicit-expander/closed-color/good-
+qLDPC ledger gaps remain active under the unknown-distance priority.
+
+
+Explicit headline distinction: both presentations use lattice(10,9), but the
+selected pair is A=1+xy^3, B=1+x^2y^8+x^3y. The headline pair is
+A=1+x^2y^2+x^5y, B=1+x^3y^3. Their source colored-Tanner class IDs differ;
+the pinned numeric source marks the selected class nonexact and headline
+class exact14. raw/headline-distinction.json records IDs and polynomials.
+Headline14 remains an attributed source claim, not an external solver run
+or a newly audited exact distance in this batch. No claim that it changed.
