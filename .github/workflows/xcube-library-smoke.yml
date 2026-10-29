@@ -1,0 +1,86 @@
+name: Static X-cube CSS library smoke
+
+on:
+  push:
+    branches: [codex/xcube-library]
+    paths:
+      - '.github/workflows/xcube-library-smoke.yml'
+      - 'scripts/codegen/xcube*'
+      - 'scripts/codegen/validate_xcube.py'
+      - 'scripts/codegen/audit_xcube_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_xcube.py'
+      - 'tests/test_codegen_color666.py'
+      - 'data/matrices/untiered/XCB_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_xcube.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_xcube.py --out /tmp/xcube-construction.json
+          cmp optimization/experiments/GH-190/raw/construction.json /tmp/xcube-construction.json
+      - name: Reproduce all16 new matrix files
+        run: |
+          python3 scripts/codegen/xcube.py --all --out /tmp/xcube-rebuilt --certificates /tmp/xcube-certificates
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/xcube-rebuilt').glob('*.txt'))
+          assert len(files)==16
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          certs=list(Path('/tmp/xcube-certificates').glob('*.json'))
+          assert len(certs)==4
+          for p in certs:
+              assert p.read_bytes()==(Path('optimization/experiments/GH-190/raw/certificates')/p.name).read_bytes(),p
+          print('PASS:16 matrices and4 full certificates reproduced byte for byte')
+          PY
+      - name: Four default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family XCB --stems XCB_81_15_unknown XCB_375_27_unknown XCB_1029_39_unknown XCB_2187_51_unknown --verbose --out /tmp/xcube-maxsat
+      - name: Four CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family XCB --stems XCB_81_15_unknown XCB_375_27_unknown XCB_1029_39_unknown XCB_2187_51_unknown --engine cc --verbose --out /tmp/xcube-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_xcube_smoke.py --maxsat /tmp/xcube-maxsat --cc /tmp/xcube-cc --construction optimization/experiments/GH-190/raw/construction.json --out /tmp/xcube-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('xcube-maxsat','xcube-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH190_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/xcube-audit.json')
+          if audit.exists():print('GH190_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh190-xcube-smoke
+          path: |
+            /tmp/xcube-maxsat/
+            /tmp/xcube-cc/
+            /tmp/xcube-audit.json
+          if-no-files-found: warn
+          retention-days: 14
