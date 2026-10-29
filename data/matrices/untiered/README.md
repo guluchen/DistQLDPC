@@ -130,3 +130,6 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+Periodic square toric references (GH-168, work branch): see [TORIC.md](TORIC.md).
+Construction coverage and remaining gaps: [coverage ledger](../../../docs/CSS_LIBRARY_COVERAGE.md).
