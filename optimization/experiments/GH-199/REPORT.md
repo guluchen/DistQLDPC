@@ -1,6 +1,6 @@
 # GH-199: collapsed 4D AMC source-estimate ladder
 
-Status: LOCAL_CONSTRUCTION_PASS; bounded Linux/actual source-word gates pending.
+Status: BOUNDED_LINUX_PASS; all numeric/source-word/exact cross-check gates PASS.
 Issue199; hub6507510785. Branch codex/collapsed-amc-library from current remote
 main6083e662c621f3b66defd434cfae31a028d483c4. Previous goal turn PROGRESS:
 GH19811de7bac retained all numeric/source-global-word PASS; global6/14/14/14
@@ -65,6 +65,7 @@ Heavy missing gates become guarded unexecuted6CPUh/4GiB/seed0/yfclab2
 packages after results, explicit PI allocation/free pinned cores/nohup with
 nullstdin. Limits not ETA. No server allocation/execution.
 
+Initial local checkpoint (superseded below):
 What changed:5reproducible AMC inputs, full source provenance, independent
 boundary/block/logical/map/metacheck/word checks and mutants.
 Validation performed:58local units/20matrix bytes/37refs/full GF2/logicals.
@@ -73,3 +74,50 @@ Unresolved:bounded Linux and heavy packages if needed; earlier gaps/holds.
 Scientific semantics changed:no.
 PI action required:no for routine steps;yes for actual scientific ambiguity,
 server allocation or main/tier/name integration. No PR/main change.
+
+## Terminal Linux evidence
+
+Library40949847060/job123714741574 SUCCESS; ordinary sourceCI40949846901/
+job123714740883 SUCCESS. Source1f3b536c2b7be977933e7a482ec9cad6a21cff13,
+tree90e9a0eb11c0307e5c34c8127b33e2675c5877e5, data7a9ab6a4527791acce401a95e82bcf67803567d2.
+58units/full independent construction/inventory/20matrix byte reproduction PASS.
+All5numeric and all5source-estimate-word gates PASS. No scientific reruns.
+
+| n,k | source | MaxSAT raw | CC raw | actual GF(2) minimum |
+|---|---|---|---|---|
+|108,6|exact9|[9,9] SOLVED|[9,9] SOLVED|9|
+|216,6|estimate12|[12,12] SOLVED|[12,12] SOLVED|12|
+|330,6|estimate14|[14,14] SOLVED|[14,14] SOLVED|14|
+|438,6|estimate17|[17,17] SOLVED|[17,17] SOLVED|17|
+|522,6|estimate20|[20,20] SOLVED|[20,20] SOLVED|20|
+
+Published exact9 control reproduced. Four source-estimate cases now have
+complete MaxSAT and independent CC exact12/14/17/20 plus actual GF2 minimum
+words; these are cross-checked finite results, not PLAUSIBLE-only bounds.
+No claim of global novelty or exhaustive literature proof of openness.
+Source estimate labels/methods remain unchanged; raw results separate.
+All frozen outcomes retained despite completing quickly. No distance-growth
+fit, timing/adoption inference, stem/tier/QDistSAT/main integration.
+
+Full683756-character job log,26engine files and audit are versioned under
+raw/actions/ with28fileSHA256receipt raw/retained-sha256.json. Local audit
+replay byte-identical; expiring artifact not sole evidence. Prior24manifest
+rows and300matrices/src/Makefile preserved. No missing proof/numeric/source-
+word gates: zero server jobs required; unused untracked runner template
+removed without execution. No resource allocation or paid cloud substitution.
+
+What changed:5reproducible collapsed4D AMC inputs, source/license documentation,
+independent construction/logicals/metacheck/physical maps/actual-word checks,
+mutants and durable evidence.
+Validation performed:58units/30tiny random cases/20matrix bytes/37refs/
+10bounded Linux runs/fullGF2 witness audit and byte-identical replay.
+Results:all gates PASS; exact9/12/14/17/20 cross-checked two engines+GF2.
+Unresolved:larger/higher-rate MM and Schreier finite prescriptions, certified
+expander hypotheses, prior scientific holds and PI integration remain open.
+Scientific semantics changed:no.
+PI action required:no for routine next batch;yes for actual scientific
+ambiguity/integration/server allocation. Goal ACTIVE, no PR/main change.
+
+Final actual materialized X/Z word uppers:9/9,12/25,14/15,17/51,20/20.
+The checked physical XZ permutation relates the half minima; unprinted
+mapped supports are not inserted into raw witness records.

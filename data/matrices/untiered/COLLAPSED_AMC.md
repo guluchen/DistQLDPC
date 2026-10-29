@@ -32,3 +32,24 @@ Initial independently verified basis-word X/Z uppers18/9,12/25,30/15,49/51,
 37pinned-ref inventory checks pass. 24new+34prior units including30tiny random cases, mutants and20matrix
 byte reproduction PASS. Linux/actual source-estimate-word gates are
 pending; no solver execution on the PI's Mac. No tier/name/main changes.
+
+## Retained Linux results
+
+| n,k | source | MaxSAT raw | CC raw | actual GF(2) minimum |
+|---|---|---|---|---|
+|108,6|exact9|[9,9] SOLVED|[9,9] SOLVED|9|
+|216,6|estimate12|[12,12] SOLVED|[12,12] SOLVED|12|
+|330,6|estimate14|[14,14] SOLVED|[14,14] SOLVED|14|
+|438,6|estimate17|[17,17] SOLVED|[17,17] SOLVED|17|
+|522,6|estimate20|[20,20] SOLVED|[20,20] SOLVED|20|
+
+Library40949847060/job123714741574 and ordinary sourceCI40949846901
+SUCCESS. All58units/20matrix bytes/numeric and actual source-word gates PASS.
+All five exact results independently cross-checked by complete MaxSAT, CC
+and actual GF2 minimum words. Source estimate labels remain historical
+source facts. Full raw evidence/audit replay GH-199/raw/actions/default/.
+No unresolved per-case heavy job; no global novelty/timing/growth claim.
+
+Final actual materialized X/Z word uppers:9/9,12/25,14/15,17/51,20/20.
+The checked physical XZ permutation relates the half minima; unprinted
+mapped supports are not inserted into raw witness records.

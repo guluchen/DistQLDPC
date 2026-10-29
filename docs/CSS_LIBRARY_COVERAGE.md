@@ -251,7 +251,10 @@ prescriptions; not a disjoint-family increment over TOR4D/QHP/MM. Full GF2/
 complete logicals/literal source R2,R3T/metachecks/actual cyclic and XZ maps
 PASS;24new+34prior units,30tiny random/mutants,20matrix byte reproduction,
 37pinned refs no same(n,k)peer. Initial basis-word X/Z upper18/9,12/25,
-30/15,49/51,29/30; actual source-estimate word and Linux gates pending.
+30/15,49/51,29/30 before search. Linux40949847060/job123714741574
+passes58units/20matrix bytes/all numeric and actual-word gates; both complete
+engines+GF2 confirm exact9/12/14/17/20. Full raw retained/audit replay;
+zero unresolved heavy jobs. Source estimate labels retained; no novelty claim.
 Longer/asymmetric MM, Schreier, certified expander hypotheses and earlier
 scientific/integration holds remain open. No source single-shot/threshold/
 confinement or asymptotic guarantee imported.
