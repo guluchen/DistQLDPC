@@ -135,3 +135,8 @@ GH-173 adds six first-seed Gallager(3,4) LDPC-factor HGP inputs, N80..2897,
 on its work branch. [GALLAGER_HGP.md](GALLAGER_HGP.md) distinguishes typical
 ensemble growth, unpublished finite cases and computed exact distances.
 Current gate/proof evidence is recorded in GH-173/REPORT.md.
+
+GH-173 outcome: all three internal methods confirm2,2,2,4,2,2. These are
+valid unexpurgated controls, not a growing-distance ladder; that quality goal
+remains open. Full factor column-collision evidence and the neutral verdict
+are in its report. All six proofs complete; no long server job is needed.

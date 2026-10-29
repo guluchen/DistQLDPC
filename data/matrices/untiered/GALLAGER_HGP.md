@@ -97,3 +97,21 @@ python3 scripts/codegen/gallager_hgp.py --all --out /tmp/gallager-fresh
 Generation refuses overwrite and uses the unchanged bitset logical builder.
 Linux proof/smoke evidence, provisional results and any server jobs are in
 GH-173. No tier assignment, renaming or QDistSAT mirroring is implied.
+
+## Observed finite results and quality verdict
+
+Independent classical enumeration/product theorem, MaxSAT and CC agree on
+d=2,2,2,4,2,2. Every numeric smoke gate and actual-word GF(2) check passes.
+Five factors contain identical nonzero parity-check columns, exactly explaining
+their weight-two codewords; complete duplicate groups/counts are retained in
+GH-173/raw/structural-review.json. The unexpurgated controls are valid and
+reproducible, but do NOT supply a growing-distance finite ladder. Do not mark
+that coverage gap complete or use these samples to assert poor asymptotic
+ensemble behavior. No seed was replaced after observing distances.
+
+Verdict: VALID_UNEXPURGATED_CONTROLS / NEUTRAL_FOR_GROWING_DISTANCE_COVERAGE.
+These work-branch inputs await PI integration/utility review. The next design
+may explicitly condition the source ensemble on distinct columns, with a new
+preregistered construction and its conditioning proof, rather than retroactively
+selecting more favorable seeds for this batch. No unresolved distance proof
+or heavy server job is needed for these six controls.

@@ -1,0 +1,89 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/HGP_1921_121_unknown_Hx.txt
+c Hz: data/matrices/untiered/HGP_1921_121_unknown_Hz.txt
+c Gx: data/matrices/untiered/HGP_1921_121_unknown_Gx.txt
+c Gz: data/matrices/untiered/HGP_1921_121_unknown_Gz.txt
+c Hx: 900 x 1921, Hz: 900 x 1921, Gx: 121 x 1921, Gz: 121 x 1921, logicals: 242
+c frontier auto X: 0.95 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.95 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: no dual map (ranks Hz 900 Hx 900 [Hz;Gx] 1021 [Hx;Gz] 1021, 6 candidates, cpu 0.008s): both halves, no sharing
+c oddcap X: column weights 1..4 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 1..4 (an even weight present) -> odd caps kept
+c symbreak X: n=1921 candidates=5 verified_generators=0 orbits=1921 detect_cpu=0.004s clause=none
+c symbreak Z: n=1921 candidates=5 verified_generators=0 orbits=1921 detect_cpu=0.004s clause=none
+c stab-overlap X: 900 of 900 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 5:25 (<= 2) 6:150 (<= 3) 7:725 (<= 3); native propagator rows 900 (no clauses)
+c stab-overlap Z: 900 of 900 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 5:25 (<= 2) 6:150 (<= 3) 7:725 (<= 3); native propagator rows 900 (no clauses)
+c ub-pre X: rank H 900, information set 1021, seed 0, collision stern p 2 l 17 walk 32 batch 1 refresh 0
+c ub-pre Z: rank H 900, information set 1021, seed 0, collision stern p 2 l 17 walk 32 batch 1 refresh 0
+c ub-pre X: word of weight 2 (iteration 1, wall 0.103s)
+c witness X (ub-pre): 204 206
+c ub-pre X: converged (re-hits of U without improvement) after 17 iterations, wall 2.814s
+c ub-pre Z: converged (re-hits of U without improvement) after 16 iterations, wall 3.073s
+c ub-pre: U0 after 3.073s (both halves converged; iterations X 17 Z 16, words X 1 Z 0): 2 (X 2, Z -1)
+c stab-overlap X cap 1: 0 of 900 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.18 Mb                                      |
+c Reduced to 4567 vars, 21558 cls (c/v ratio==4.7, grow=0)
+c No iterative elimination performed. (vars=4567, c/v ratio=4.7)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 1921, of which 1921 unit, 0 nonUnit and 0 empty
+c total nb of literals: 81454
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 1021
+c 1 conflict sets found with length 396
+c fixedCost 0, nbSatLits 0, totalFixedVars 1021, objForSearch: 1921
+
+c provided UB: 2
+c provided LB: 1 (search units 1)
+
+c Cardinality: 5760 (Sinz+MTO) for UB 2
+c ends of initiationization by VSIDS at 1 conflicts with init 9999
+
+c UB=2 fails, cnfls=1, hcnfls=1, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 2.00, dev 0.00, succRate 0.50, nbSucc 1, nbHardens 0 (fixed 0), lk: 2, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+c ===============================================================================
+c no feasible solution, hardConflicts: 1
+c nbLK: 2, nbSuccLK: 1(50.00%), nbLKup: 14730(1442.70%), hardens 0 (fixed 0), dynVars 1920, shorten: 0
+c CSS interleave: X half cap 1 lb 1 feasibility -> NONE 0
+c stab-overlap Z cap 1: 0 of 900 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.18 Mb                                      |
+c Reduced to 4575 vars, 21558 cls (c/v ratio==4.7, grow=0)
+c No iterative elimination performed. (vars=4575, c/v ratio=4.7)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 1921, of which 1921 unit, 0 nonUnit and 0 empty
+c total nb of literals: 81390
+c conflLits 0, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 1021
+c 1 conflict sets found with length 396
+c fixedCost 0, nbSatLits 0, totalFixedVars 1021, objForSearch: 1921
+
+c provided UB: 2
+c provided LB: 1 (search units 1)
+
+c Cardinality: 5760 (Sinz+MTO) for UB 2
+c ends of initiationization by VSIDS at 1 conflicts with init 9999
+
+c UB=2 fails, cnfls=1, hcnfls=1, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 2.00, dev 0.00, succRate 0.50, nbSucc 1, nbHardens 0 (fixed 0), lk: 2, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+c ===============================================================================
+c no feasible solution, hardConflicts: 1
+c nbLK: 2, nbSuccLK: 1(50.00%), nbLKup: 14880(1457.39%), hardens 0 (fixed 0), dynVars 1920, shorten: 0
+c CSS interleave: Z half cap 1 lb 1 feasibility -> NONE 0
+c CSS interleave: d = 2
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/HGP_1921_121_unknown_Hx.txt
+c Hz: data/matrices/untiered/HGP_1921_121_unknown_Hz.txt
+c Gx: data/matrices/untiered/HGP_1921_121_unknown_Gx.txt
+c Gz: data/matrices/untiered/HGP_1921_121_unknown_Gz.txt
+c Hx: 900 x 1921, Hz: 900 x 1921, Gx: 121 x 1921, Gz: 121 x 1921, logicals: 242
+c d_lb: 2
+c d_ub: 2
+c d  : 2
+o 2
