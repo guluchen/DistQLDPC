@@ -34,12 +34,14 @@ elif kind == 'tier5':
                                  arm=arm, seed=0, limit=21600))
 elif kind == 'answers':
     E, T = f'{D},erasure', f'{D},tiebreak,erasure'
-    VARS = [('er', [f'-cc-rules={E}']), ('tber', [f'-cc-rules={T}']), ('tber-seed1', [f'-cc-rules={T}', '-seed=1']),
-            ('tber-seed2-dualoff', [f'-cc-rules={T}', '-seed=2', '-cc-dual=off']),
-            ('er-autoff-seed3', [f'-cc-rules={E}', '-cc-aut=off', '-seed=3']),
-            ('tber-index-seed4', [f'-cc-rules={T}', '-no-symbreak', '-seed=4']),
-            ('tber-mrv', [f'-cc-rules={T},mrv']), ('tber-noub', [f'-cc-rules={T}', '-ub-search=off', '-ub-basis=off']),
-            ('er-pack-excl', ['-cc-rules=excl,pack,erasure', '-seed=5', '-ub-search=off'])]
+    Z = '-cc-erasure-start=0'   # tests from the first level (the default start, 16384 nodes, leaves most Tier 0 codes untouched)
+    VARS = [('er', [f'-cc-rules={E}', Z]), ('tber', [f'-cc-rules={T}', Z]), ('tber-defstart', [f'-cc-rules={T}']),
+            ('tber-seed1', [f'-cc-rules={T}', Z, '-seed=1']),
+            ('tber-seed2-dualoff', [f'-cc-rules={T}', Z, '-seed=2', '-cc-dual=off']),
+            ('er-autoff-seed3', [f'-cc-rules={E}', Z, '-cc-aut=off', '-seed=3']),
+            ('tber-index-seed4', [f'-cc-rules={T}', Z, '-no-symbreak', '-seed=4']),
+            ('tber-mrv', [f'-cc-rules={T},mrv', Z]), ('tber-noub', [f'-cc-rules={T}', Z, '-ub-search=off', '-ub-basis=off']),
+            ('er-pack-excl', ['-cc-rules=excl,pack,erasure', Z, '-seed=5', '-ub-search=off'])]
     for tier in (0, 1, 2, 3):
         for f in sorted(glob.glob(f'data/matrices/tier{tier}/*_Hx.txt')):
             stem = os.path.basename(f)[:-7]
