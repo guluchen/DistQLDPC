@@ -1,0 +1,20 @@
+.wrote /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpm_izxi17/PP_256_64_unknown_Gx.txt (64 rows), /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpm_izxi17/PP_256_64_unknown_Gz.txt (64 rows)
+....F......
+======================================================================
+FAIL: test_global_sign_is_coordinate_relabeling (__main__.QuaternaryPPTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/yfc/Documents/PCM/DistQLDPC/tests/test_codegen_quaternary_pp.py", line 108, in test_global_sign_is_coordinate_relabeling
+    self.assertEqual([independent.permute(r,mapping) for r in x],xx);self.assertEqual([independent.permute(r,mapping) for r in z],zz)
+AssertionError: Lists differ: [5789[70 chars]753, 28948464024465236785369019941366213938595[7035 chars]9632] != [5789[70 chars]753, 17668875046983850555429924243580266878734[7035 chars]8288]
+
+First differing element 1:
+28948464024465236785369019941366213938595931696705172822178482910928018898944
+1766887504698385055542992424358026687873453410984386140059123957694070786
+
+Diff is 13956 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.647s
+
+FAILED (failures=1)

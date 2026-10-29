@@ -312,3 +312,28 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Quaternary group-valued pair-partition inputs (GH-170, untiered)
+----------------------------------------------------------------
+
+Original scripts/codegen/quaternary_pp.py, independent polynomial-field/
+physical-column validator, numeric source audit and generated
+PP_{256,512,768,1024}_*_unknown_* binary matrices, GPL-3.0-or-later.
+Mathematical construction and numeric facts: Jong Yeon Lee,
+"Designing Group-Valued Codes with Full Regular Low-Weight Bases",
+arXiv:2610.06820v1, Sec.V Eq.(21), App.B.3 Eq.(35), App.D.2.
+Numeric facts pinned to yeon-lee/public-regular-logical-frames commit
+04ad4795ad15cb89ee47b7868ff925c30b2fc731, catalogue.json and
+proofs/noncyclic_pp.json mathematical records. See source blob/projection
+identities in optimization/experiments/GH-170/raw/source-identities.json.
+
+The source repository has no LICENSE and the paper uses arXiv's perpetual
+nonexclusive distribution license. The library independently reconstructs
+binary CSS matrices from published mathematics, following handoff7.2. No
+original JSON/parameter, matrix, frame or proof-program file is redistributed;
+no MIT/CC BY permission is imputed to those original files. The numeric facts
+and independently GF(2)-checked word coordinates are credited as source facts.
+No external constructor/search/verifier implementation was read, copied or
+executed; no external distance solver or lower-proof receipt is adopted as
+internal evidence. Source exact labels and our bounds stay separate.
+See data/matrices/untiered/QUATERNARY_PP.md for proof, conventions and scope.
