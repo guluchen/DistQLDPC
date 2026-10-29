@@ -10,6 +10,7 @@ from validate_css import basis,contains,dot,read_code
 
 
 def verify_witness(n,matrices,half,support):
+    if half not in ('X','Z'):raise ValueError('unknown witness half')
     if not support or len(set(support))!=len(support) or min(support)<0 or max(support)>=n:
         raise ValueError('invalid witness support')
     hx,hz,gx,gz=matrices
@@ -29,13 +30,14 @@ def main():
     ap.add_argument('--certificates',type=Path,default=Path('optimization/experiments/GH-160/raw/construction-witnesses.json'))
     args=ap.parse_args();results=[]
     for cert in json.loads(args.certificates.read_text()):
-        stem=cert['stem'];n,m=read_code(args.matrices,stem);engines={};witnesses=[];source=set();binaries=set()
+        stem=cert['stem'];n,m=read_code(args.matrices,stem);engines={};witnesses=[];source=set();binaries=set();exacts=[]
         verify_witness(n,m,'X',cert['cycle_witness']['support'])
         witnesses.append(dict(origin='independent cycle',**cert['cycle_witness']))
         for engine,directory in (('maxsat',args.maxsat),('cc',args.cc)):
             meta=json.loads((directory/f'{stem}.json').read_text())
             raw=(directory/f'{stem}.log').read_text()
             result=parse(raw,cert['verified_cycle_ub'],exact=False)
+            if result['status']=='SOLVED':exacts.append(int(re.findall(r'^o (\d+)\s*$',raw,re.M)[-1]))
             if result!={k:meta[k] for k in ('lb','ub','status')}:raise ValueError('raw/JSON result mismatch')
             if ('-engine=cc' in meta['cmd']) != (engine=='cc'):raise ValueError('wrong engine argv')
             for kind,digest in meta['input_sha256'].items():
@@ -51,7 +53,6 @@ def main():
         lower=max(r['lb'] or 1 for r in engines.values())
         upper=min([w['weight'] for w in witnesses]+[r['ub'] for r in engines.values() if r['ub'] is not None])
         if lower>upper:raise ValueError('engine bounds contradict verified witnesses')
-        exacts=[r['lb'] for r in engines.values() if r['status']=='SOLVED']
         if exacts and (min(exacts)!=max(exacts) or not lower<=exacts[0]<=upper):
             raise ValueError('engine exact result contradiction')
         scientific_status='PLAUSIBLE_PENDING_INDEPENDENT_COMPLETION'

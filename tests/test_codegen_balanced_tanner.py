@@ -89,8 +89,9 @@ class BalancedTests(unittest.TestCase):
         self.assertEqual(smoke.parse(s,7,exact=False)['status'],'SOLVED')
         with self.assertRaises(ValueError):smoke.parse(s,7)
         self.assertEqual(smoke.parse('c d_lb: 3\nc d_ub: 10\ns UNKNOWN\n',7,exact=False)['ub'],10)
+        self.assertEqual(smoke.parse('c d_lb: 0\nc d_ub: 3\ns UNKNOWN\n',7,exact=False)['lb'],0)
         for text in ('c d_lb: 8\nc d_ub: 9\n','c d_lb: 2\nc d_ub: 8\no 8\n',
-                     'c d_lb: 4\nc d_ub: 3\n','c d_lb: 0\nc d_ub: 3\n',
+                     'c d_lb: 4\nc d_ub: 3\n','c d_lb: 0\nc d_ub: 0\n',
                      'c d_lb: 4\nc d_ub: 7\no 3\n'):
             with self.assertRaises(ValueError):smoke.parse(text,7,exact=False)
 

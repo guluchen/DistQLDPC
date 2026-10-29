@@ -38,8 +38,10 @@ def parse(text, expected, exact=True):
         raise ValueError('bound contradicts reference distance claim')
     if any((int(x)!=expected if exact else int(x)>expected) for x in answers):
         raise ValueError('answer contradicts reference distance claim')
-    if any(int(x)<1 for x in lbs+ubs+answers):
-        raise ValueError('nonpositive distance/bound')
+    # Zero is a weak but valid lower bound. A nonpositive upper bound or
+    # exact answer is impossible for a nontrivial logical of these CSS codes.
+    if any(int(x)<1 for x in ubs+answers):
+        raise ValueError('nonpositive upper bound or exact distance')
     if lbs and ubs and max(map(int,lbs))>min(map(int,ubs)):
         raise ValueError('lower bound exceeds upper bound')
     if answers and (len(set(answers))!=1 or any(int(x)>int(answers[0]) for x in lbs)
