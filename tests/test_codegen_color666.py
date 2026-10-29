@@ -118,7 +118,9 @@ class ColorTests(unittest.TestCase):
                   '--cpu','0','--dry-run','--out','/tmp/not-created-color-smoke']
         default = json.loads(subprocess.check_output(runner,cwd=ROOT,text=True))
         selected = json.loads(subprocess.check_output(runner+['--family','COLOR'],cwd=ROOT,text=True))
-        self.assertEqual(len(default),12)
+        import csv
+        manifest=list(csv.DictReader((ROOT/'data/matrices/untiered/MANIFEST.csv').open()))
+        self.assertEqual({argv[-1].split('/')[-1] for argv in default},{r['stem'] for r in manifest if r['family']=='HGP'})
         self.assertTrue(all('HGP_' in argv[-1] for argv in default))
         self.assertEqual(len(selected),6)
         self.assertTrue(all('COLOR_' in argv[-1] for argv in selected))
