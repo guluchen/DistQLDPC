@@ -130,3 +130,17 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### General static pin-relation CSS inputs (GH-189)
+
+Six [PIN](PIN_RELATIONS.md) cases n160/240/256/1152/1728/2304,k64/142/30/
+60/84/207 add general non-thin even relations beyond existing color/colex
+specializations. One source exact8 anchor and five original fixed tensor-
+chain cases; no source individual distance/decoder/gauge claim imputed.
+Independent complete flag/recursive-boundary/endpoint/pinned-column checks,
+full logicals/GF2/actual words and typed physical connectivity pass;50local
+units. Finite support-isolation lower4/8 meets existing upper words; retain
+these as small-distance controls without parameter replacement. Linux full
+24matrix+6certificate reproduction and both-engine short checks pending.
+This branch30untiered/81total; prior24rows/96matrices and51tiered preserved.
+Other work branches and held APM source review remain separate.

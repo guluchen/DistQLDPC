@@ -438,3 +438,48 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+---
+
+## Library-only pin-kernel certificates (GH-189; no solver patch)
+
+The new pin-relation library validator is outside MaxCDCL and does not change
+solver encoding, pruning, defaults, printed bounds or timeout semantics.
+Source: Christophe Vuillot and Nikolas P. Breuckmann, *Quantum Pin Codes*,
+arXiv:1906.11394v3, Definitions1–4/Propositions3/11, IEEE TIT68,5955–5974
+(2022), DOI10.1109/TIT.2022.3170846. Original mathematics-only implementation.
+
+Soundness of CSS construction: flags are distinct tuples of D+1 pins. All
+D-pin fibers are checked even. An x-pin row intersected with a z-pin row is
+empty or a union of D-pin fibers when x+z<=D, so every X/Z overlap is even.
+For the chain construction, the original boundary products are zero overGF2;
+adding an endpoint parity pin adds a sum of rows/columns and preserves those
+products. Independent direct flag-fiber completion and every actual pinned
+check/physical column are verified, rather than trusting an abstract complex.
+
+Finite kernel bound: suppose a matrix contains every nonempty t-pin fiber
+of a set F of DISTINCT flags, with t<=D. Any nonempty support S of size
+<2^(t+1) has odd overlap with one such row. While S has more than one flag,
+choose a previously unpinned coordinate that differs on S; its smallest
+nonempty pin class has at most floor(|S|/2) members. Restrict to that class
+and repeat. Distinctness ensures a splitting coordinate exists; a chosen
+coordinate is constant thereafter and cannot be chosen again. Within at most
+t choices the remaining support is a singleton, since repeated halving of
+an initial size<2^(t+1) gives size<=1. If it stops earlier, pad with unused
+coordinates of that flag to get exactly t pins. The corresponding FULL
+pinned row meets the ORIGINAL support on exactly that one flag. Therefore
+no nonzero vector of weight<2^(t+1) lies in the matrix kernel. Applying this
+to Hz (t=z) gives dX>=2^(z+1); Hx (t=x) gives dZ>=2^(x+1). An actual checked
+logical word supplies an upper bound separately. This proof is stronger than
+the source's combined min(x,z) statement only by retaining the two halves;
+it follows directly from the same support-isolation argument.
+
+Acceptance requires independent complete flags/row labels/columns, no missing
+pinned classes or repeated physical flags, full logical quotient bases and
+GF2-checked actual words. Random tiny support-isolation certificates and
+omitted-check/duplicate-flag/odd-fiber/endpoint/boundary/logical/stabilizer-word
+mutants exercise these hypotheses. These are unit checks, not a distance
+search on the PI Mac. Independent internal engine checks are recorded before
+claiming new finite exact results cross-checked. Raw CLI lower/upper fields
+are NEVER filled from this certificate. No external distance solver or
+third-party constructor is used; no embedded-engine file is modified.
