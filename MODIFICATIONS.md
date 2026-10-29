@@ -438,3 +438,13 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+GH-205: original repeated-cyclic CSS hyperbicycle generator and independent
+physical incidence/finite Theorem9 hypothesis audits (arXiv1212.6703v2).
+Only chi1/even-c finite inputs; all solver sources/build/defaults unchanged.
+Source stabilizer G_X/G_Z are distinguished from repository logical Gx/Gz.
+The generic untiered smoke parser adds explicit interval-reference validation,
+without filling missing/weaker raw bounds; previous parser/harness extensions
+are reused from the project's GH202 branch. Default HGP selection unchanged.
+No pruning, solver bounds, distance definition, performance claim or scientific
+semantics changed. Full source/coordinate/correctness evidence in
+scripts/codegen/HYPERBICYCLE.md and optimization/experiments/GH-205/REPORT.md.
