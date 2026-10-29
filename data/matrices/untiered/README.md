@@ -2,7 +2,8 @@
 
 The library contains [repetition-factor HGP codes](#construction-and-distance-provenance) (GH-153),
 [nonzero-rate cycle-factor HGP codes](CYCLE_HGP.md) (GH-154), and
-[triangular 6.6.6 color codes](COLOR666.md) (GH-156). The shared MANIFEST.csv
+[triangular 6.6.6 color codes](COLOR666.md) (GH-156), and
+[twisted-torus generalized toric/BB codes](TWISTED_TORUS.md) (GH-159). The shared MANIFEST.csv
 and validation.json cover all batches. The table below describes the original
 repetition-factor HGP batch only.
 

@@ -55,7 +55,7 @@ def main():
     ap.add_argument('--bin', type=Path, default=ROOT/'bin/distqldpc')
     ap.add_argument('--out', type=Path, required=True, help='new evidence directory')
     ap.add_argument('--dry-run', action='store_true')
-    ap.add_argument('--family', default='HGP', choices=('HGP','COLOR'), help='manifest family; default HGP')
+    ap.add_argument('--family', default='HGP', choices=('HGP','COLOR','BB'), help='manifest family; default HGP')
     ap.add_argument('--stems', nargs='+', help='explicit subset of selected-family manifest stems')
     pre = ap.add_mutually_exclusive_group()
     pre.add_argument('--ub-pre', type=float, help='explicit supplemental pre-pass seconds; default unchanged')
