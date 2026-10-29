@@ -115,6 +115,18 @@ Modified files (partial list): Solver.h, Solver.cc
   per-seed qubit orders that make it compatible with DistQLDPC's orbit
   seeds, and the proof, are DistQLDPC's (MODIFICATIONS.md, GH-162).
 
+  The CC rule "erasure" (GH-195, -cc-rules=...,erasure, opt-in) cuts a
+  node when no logical extends it inside the free candidates of the
+  packed odd rows plus at most two further qubits. The erasure bound
+  idea (the packing-charged region and its elimination with a random
+  linear fingerprint) is from Qubitserf (https://github.com/Quantinuum/
+  Qubitserf, commit 04b9349, Copyright (c) 2026 Serban Cercelescu and
+  the qubitserf contributors, MIT License). It was re-derived from the
+  mathematics and implemented from scratch; no Qubitserf code was
+  copied. The soundness argument for DistQLDPC's search state
+  (forbidden sets, orbit seeds, overlap, tiebreak) and the cost gate
+  are DistQLDPC's (MODIFICATIONS.md, GH-195).
+
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
 substantial portions, per the MIT license.

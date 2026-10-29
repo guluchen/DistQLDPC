@@ -42,7 +42,7 @@ Optional engine, off by default (PI 2026-10-16): enable with `-engine=cc` (or `-
 
 | File | Description |
 |------|-------------|
-| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut); `tiebreak` (GH-162, opt-in, needs `overlap`: the even-weight tie \|e & g\| = \|g\|/2 is cut unless first(g) is in e, in a per-seed qubit order that puts the seed first; the first(g) tie-break idea of Qubitserf 04b9349, S. Cercelescu, MIT, re-derived from the mathematics, no code copied) with test-only mutants 17 (naive tie cut through the tiebreak path) and 18 (order without the seed first). |
+| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut); `tiebreak` (GH-162, opt-in, needs `overlap`: the even-weight tie \|e & g\| = \|g\|/2 is cut unless first(g) is in e, in a per-seed qubit order that puts the seed first; the first(g) tie-break idea of Qubitserf 04b9349, S. Cercelescu, MIT, re-derived from the mathematics, no code copied) with test-only mutants 17 (naive tie cut through the tiebreak path) and 18 (order without the seed first); `erasure` (GH-195, opt-in, needs `pack`: with extra = (w - \|S\|) - p <= 2 a node is cut when no syndrome-free detected completion lies in the packed rows' free candidates plus at most extra further free qubits; peeling + dense elimination with exact back-substitution, single/pair lookups; the erasure bound idea of Qubitserf 04b9349, S. Cercelescu, MIT, re-derived, no code copied) with test-only mutants 22 (bound weakened by one) and 23 (fixed support ignored). |
 | `cc_ubsearch.h`, `cc_ubsearch.cc` (GH-140, GH-146) | Randomized low-weight logical finder for one CSS half (`-ub-search`): random information sets (random column order, Gauss-Jordan elimination of H with pivots in that order, systematic kernel basis), words of 1-2 (optionally 3) systematic basis vectors below a weight threshold, detector check (G c != 0), greedy local improvement by same-type stabilizer rows; deterministic per seed; test mutant 11 (no detector check and no improvement). GH-146 collision mode (`-ub-isd`): Stern / Dumer collision step with Canteaut-Chabaud pivot swaps (`cc_swap`, `isd_round`, `iterate_isd`), parser `parse_isd`. |
 | `cc_aut.h`, `cc_aut.cc` (GH-152) | Candidate automorphisms for `-cc-aut=on`: colour refinement to the coarsest equitable partition of the coloured Tanner graph (qubits, rows of each class), individualisation of one vertex and lockstep refinement of a source and a target partition (McKay 1981, written from the published description), backtracking over the first non-singleton cell, edge-checked vertex maps; orbit computation by union-find from the first vertex of the smallest qubit cell (complete when that vertex's point stabiliser is trivial), one class-exchanging (swap) map; deterministic work counters. Candidates only: every map is GF(2)-verified by the wrapper before use. |
 | `cc_driver.h`, `cc_driver.cc` | Driver: start-up detector check (rank[H;G] + rank S = n and commutation), both halves interleaved level by level (cheaper half first) or one half under a verified XZ-dual map, stop rule (a hit at level w ends the run once the other half's lower bound is >= w), anytime `TRY`/`LB`/`UB`/`RESULT` lines, witness verification (H e = 0, independent GF(2) rank test against the same-type stabilizers, dual image check), its own check of the XZ-dual map (pi(rs Hz) = rs Hx and pi(rs Hx) = rs Hz), always-on traps (`RESULT -1 TRAP`, never a value; earlier bounds withdrawn), optional `-ub-basis`, `-cc-trace`, `-cc-stats`; test-only sequential schedule (`-cc-schedule=sequential`) and driver mutant 4 (stop rule without the other half's lower bound, run under the sequential schedule). |
@@ -378,6 +378,61 @@ whole even row, no exemption; it removes both e and e + g). 18: no seed-first ex
 *Statistics.* The `-v` line `c cc: X half tiebreak: N of M rows even` gives the rows whose tie is cut; the effect shows in
 the `-cc-stats` node counts per level (and `ovtight`/`ovforbid`) against the same run without the token.
 *Evidence.* `optimization/experiments/GH-162/REPORT.md`.
+
+GH-195 (`erasure` in `-cc-rules`, default off; acts only together with `pack`; `src/cc/cc_half.{h,cc}`, token parsing in
+`cc_driver.cc`). *Credit.* The erasure bound idea (at most two qubits of a minimum logical lie outside the candidates of
+the packed odd rows, and the region is eliminated with a random linear fingerprint to refute every such completion) is
+from Qubitserf (github.com/Quantinuum/Qubitserf, commit 04b9349, S. Cercelescu, MIT). Implemented from the mathematics
+below; no Qubitserf code was copied. The argument for DistQLDPC's search state and the cost gate are DistQLDPC's.
+
+*Setting.* Half F = {v : H v = 0, G v != 0}, level w with the precondition that F has no element of weight < w. A node is
+a cluster S with forbidden set B (sibling exclusion, seed blocks of the orbit or index rule, overlap and tiebreak forbids);
+free = not in S and not in B. The packing scan of the node selected odd rows j_1..j_p with pairwise-disjoint free
+candidate sets R_1..R_p and did not prune (|S| + p <= w). R = R_1 u ... u R_p, E = free qubits outside R, extra =
+(w - |S|) - p.
+
+*Lemma 1 (target).* Every other rule is exact by an argument that fixes one weight-w target e* of F and keeps it
+reachable: S subset of e*, e* disjoint from B (GH-124/133/138; with `tiebreak`, the <_j-least weight-w element for the
+first useful seed r_j, GH-162 Lemmas A-C). Nothing about e* beyond e* in F, |e*| = w, S subset of e*, e* disjoint from B is
+used below.
+
+*Lemma 2 (counting).* |(e* \ S) \ R| <= extra. Proof: row j_i is odd in syn(S) and even in syn(e*) = 0, so e* \ S has
+an odd number >= 1 of qubits in row j_i; they are not in S and not in B, so they lie in R_i. The R_i are disjoint, so
+|(e* \ S) & R| >= p and |(e* \ S) \ R| <= |e* \ S| - p = extra.
+
+*Lemma 3 (relaxation).* Write e* = S + y + z with y = e* & R and z = e* \ (S u R), a subset of E with |z| <= extra. Then
+H_R y = H(S + z) and G(S + z + y) != 0. So if no pair (y, z) with y any subset of R, z subset of E, |z| <= extra satisfies
+these two conditions, no target lies under S and the node can be cut. (The weight of y is not constrained: a relaxation.)
+
+*Lemma 4 (decision).* Peel the region (a row with exactly one unpeeled region qubit makes that qubit a pivot on that row;
+such a qubit is zero in every vector of ker H_R) and eliminate the remaining stopping-set columns densely, carrying the
+labels G q. (a) If a stopping-set column reduces to zero H-part with a nonzero label, ker H_R holds a y0 with G y0 != 0;
+then for any feasible (y, z) also (y + y0, z) is feasible with the other label, so the relaxation cannot be refuted from
+labels: the rule gives up (no cut). (b) Otherwise ker H_R is inside ker G_R. Back-substitution on the pivot rows (dense
+pivots in reverse order, then peeled qubits in reverse peel order; each assignment only reads rows that are non-pivot or
+already assigned) gives exactly, over GF(2), a 64-lane vector phi with phi H_R = 0 (non-pivot rows keep independent
+random keys) and a map F with F H_R = G_R (non-pivot rows 0). For every v: if phi . H v != 0 then H v is not in
+colspace(H_R); if H v = H_R y then G(v + y) = G v + F H_R y = G v + F H v, independent of the choice of y (by (b)). Hence
+(y, z) exists iff some z (|z| <= extra, z subset of E) has H(S + z) in colspace(H_R) and G(S + z) + F H(S + z) != 0, and a
+necessary condition for that is phi . H(S + z) = 0 and G(S + z) + F H(S + z) != 0. The rule cuts only if no z meets this
+necessary condition; z is enumerated completely (z empty; singles and pairs through hash tables keyed by the exact
+64-bit value phi . H q, which equals the leaf rule's column key for qubits on no pivot row; qubits on a pivot row are
+projected explicitly). A fingerprint collision (phi . H(S + z) = 0 with H(S + z) outside the column space) can only stop
+a cut. Labels are compared on all detector rows (no compression).
+
+*Theorem (exactness).* The level verdict with `erasure` equals the verdict without it: by Lemmas 2-4 the rule never cuts a
+node S subset of e* with e* disjoint from B, so every other rule's argument (Lemma 1) still reaches e* or returns another
+genuine element first. A FOUND is always a genuine element (closures are checked against H and G, and the driver
+re-verifies witnesses in GF(2)). The rule adds no forbidden qubit and does not interact with the dual map or the stop rule.
+
+*Gate (cost only).* The test runs at every node with extra <= 2 whose region has at most 128 qubits. Qubitserf also asks
+2|S| + 2 <= w; that size gate prunes far fewer nodes and was slower on every Tier 2-5 code tried
+(`optimization/experiments/GH-195/explore`).
+
+*Mutants (must fail; `make test-cc` Part R).* 22: the bound weakened by one (at most extra - 1 outside qubits are
+enumerated, with the gate admitting extra <= 3). 23: the fixed support S ignored (a completion is sought without S).
+*Statistics.* With the token, `-v` prints `c cc: X half erasure: on (...)` and `-cc-stats` prints per level
+`erasure calls C prune P giveup G`. *Evidence.* `optimization/experiments/GH-195/REPORT.md`.
 
 GH-148 (`-stab-overlap=off|on|auto`, split MaxSAT path, `src/core/distqldpc.cc`; default `auto` since the PI's adoption decision, `off` = the previous search). *What it adds.* Extra
 hard constraints in the half instance of `build_css_half`: for each verified row g, |x & g| <= floor(|g|/2). *Why every
