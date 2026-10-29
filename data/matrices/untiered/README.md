@@ -130,3 +130,14 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+## Periodic4D toric extension (GH-175 work branch)
+
+Six original cell-complex inputs at n=96,324,486,1152,1536,3000,k=6.
+The published cubic family and original unequal-side extensions are recorded
+separately. Two independent finite-matrix certificate implementations verify
+both-half distances4,6,9,12,16,20, with GF(2)-checked upper words.
+See [TORIC4D.md](TORIC4D.md) for provenance, coordinate conventions and the
+lower-bound soundness proof. CLI short-run bounds remain separate evidence;
+missing numeric fields are not filled from mathematical certificates.
+No solver changes, tier assignments, final stem renames or QDistSAT mirror.
