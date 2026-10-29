@@ -1,0 +1,82 @@
+name: Open-distance LLM CSS BB library smoke
+
+on:
+  push:
+    branches: [codex/open-llm-bb-library]
+    paths:
+      - '.github/workflows/open-llm-bb-library-smoke.yml'
+      - 'scripts/codegen/open_llm_bb*'
+      - 'scripts/codegen/validate_open_llm_bb.py'
+      - 'scripts/codegen/select_open_llm_bb.py'
+      - 'scripts/codegen/audit_open_llm_bb_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_open_llm_bb.py'
+      - 'data/matrices/untiered/BB_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_open_llm_bb.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_open_llm_bb.py --out /tmp/open_llm_bb-construction.json
+          cmp optimization/experiments/GH-177/raw/construction.json /tmp/open_llm_bb-construction.json
+      - name: Reproduce all24 new matrix files
+        run: |
+          python3 scripts/codegen/open_llm_bb.py --all --out /tmp/open_llm_bb-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/open_llm_bb-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS:24 covering BB matrix files reproduced byte for byte')
+          PY
+      - name: Six default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family BB --stems BB_120_4_unknown BB_162_4_unknown BB_180_4_unknown BB_384_4_unknown BB_420_4_unknown BB_432_4_unknown --verbose --out /tmp/open_llm_bb-maxsat
+      - name: Six CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family BB --stems BB_120_4_unknown BB_162_4_unknown BB_180_4_unknown BB_384_4_unknown BB_420_4_unknown BB_432_4_unknown --engine cc --verbose --out /tmp/open_llm_bb-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_open_llm_bb_smoke.py --maxsat /tmp/open_llm_bb-maxsat --cc /tmp/open_llm_bb-cc --out /tmp/open_llm_bb-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('open_llm_bb-maxsat','open_llm_bb-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH177_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/open_llm_bb-audit.json')
+          if audit.exists():print('GH177_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh177-open_llm_bb-smoke
+          path: |
+            /tmp/open_llm_bb-maxsat/
+            /tmp/open_llm_bb-cc/
+            /tmp/open_llm_bb-audit.json
+          if-no-files-found: warn
+          retention-days: 14
