@@ -1,0 +1,84 @@
+name: Quantum radial LP library smoke
+
+on:
+  push:
+    branches: [codex/radial-library]
+    paths:
+      - '.github/workflows/radial-library-smoke.yml'
+      - 'scripts/codegen/radial*'
+      - 'scripts/codegen/validate_radial.py'
+      - 'scripts/codegen/audit_radial_smoke.py'
+      - 'scripts/codegen/review_radial_peer.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_radial.py'
+      - 'data/matrices/untiered/LP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Full independent columns and logicals, tiny units and inventory
+        run: |
+          python3 tests/test_codegen_radial.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_radial.py --out /tmp/radial-construction.json
+          cmp optimization/experiments/GH-193/raw/construction.json /tmp/radial-construction.json
+          python3 scripts/codegen/review_radial_peer.py --out /tmp/radial-peer90.json
+          cmp optimization/experiments/GH-193/raw/peer90-review.json /tmp/radial-peer90.json
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+      - name: Reproduce all sixteen matrices
+        run: |
+          python3 scripts/codegen/radial.py --all --out /tmp/radial-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/radial-rebuilt').glob('*.txt'))
+          assert len(files)==16
+          for p in files: assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS all sixteen matrices byte-identical')
+          PY
+      - name: Four default serial bounded MaxSAT checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family LP --verbose --out /tmp/radial-maxsat
+      - name: Four independent serial bounded CC checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family LP --verbose --engine cc --out /tmp/radial-cc
+      - name: Actual words, source intervals and independent-engine audit
+        run: |
+          python3 scripts/codegen/audit_radial_smoke.py --maxsat /tmp/radial-maxsat --cc /tmp/radial-cc --construction /tmp/radial-construction.json --out /tmp/radial-audit.json
+          python3 - <<'PY'
+          from pathlib import Path
+          print('GH193_AUDIT_JSON='+Path('/tmp/radial-audit.json').read_text().replace('\n',''))
+          PY
+      - name: Retain all evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ['radial-maxsat','radial-cc']:
+              result[label]={p.name:p.read_text() for p in Path('/tmp',label).glob('*') if p.is_file()}
+          print('GH193_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh193-radial-smoke
+          path: |
+            /tmp/radial-maxsat/
+            /tmp/radial-cc/
+            /tmp/radial-construction.json
+            /tmp/radial-audit.json
+          if-no-files-found: warn
+          retention-days: 14
