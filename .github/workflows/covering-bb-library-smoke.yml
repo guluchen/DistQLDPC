@@ -1,0 +1,81 @@
+name: Covering-graph BB library smoke
+
+on:
+  push:
+    branches: [codex/covering-bb-library]
+    paths:
+      - '.github/workflows/covering-bb-library-smoke.yml'
+      - 'scripts/codegen/covering_bb*'
+      - 'scripts/codegen/validate_covering_bb.py'
+      - 'scripts/codegen/audit_covering_bb_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_covering_bb.py'
+      - 'data/matrices/untiered/BB_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_covering_bb.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_covering_bb.py --output /tmp/covering_bb-construction.json
+          cmp optimization/experiments/GH-176/raw/construction.json /tmp/covering_bb-construction.json
+      - name: Reproduce all24 new matrix files
+        run: |
+          python3 scripts/codegen/covering_bb.py --all --out /tmp/covering_bb-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/covering_bb-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS:24 covering BB matrix files reproduced byte for byte')
+          PY
+      - name: Six default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family BB --stems BB_64_14_unknown BB_128_14_unknown BB_192_14_unknown BB_216_14_unknown BB_256_14_unknown BB_288_14_unknown --verbose --out /tmp/covering_bb-maxsat
+      - name: Six CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family BB --stems BB_64_14_unknown BB_128_14_unknown BB_192_14_unknown BB_216_14_unknown BB_256_14_unknown BB_288_14_unknown --engine cc --verbose --out /tmp/covering_bb-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_covering_bb_smoke.py --maxsat /tmp/covering_bb-maxsat --cc /tmp/covering_bb-cc --out /tmp/covering_bb-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('covering_bb-maxsat','covering_bb-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH176_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/covering_bb-audit.json')
+          if audit.exists():print('GH176_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh176-covering_bb-smoke
+          path: |
+            /tmp/covering_bb-maxsat/
+            /tmp/covering_bb-cc/
+            /tmp/covering_bb-audit.json
+          if-no-files-found: warn
+          retention-days: 14
