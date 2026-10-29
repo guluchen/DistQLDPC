@@ -130,3 +130,13 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+## Finite twisted circle bundles (GH-178 work branch, proposed FBC prefix)
+
+Six original finite fiber-bundle inputs n252/378/1400/1750/2100/2800, with
+full-rank sparse bases and independently verified nonremovable twists.
+Complete logicals, actual chain/GF2 identities and raw/row-space connectivity
+pass. Verified X words give overall uppers9/9/25/25/25/25; these are not exact
+or individually published finite distances. See [FIBER_BUNDLE.md](FIBER_BUNDLE.md)
+for reproduction, structural proofs and source license boundary. The paper's
+asymptotic theorem is not asserted for these finite constant-degree bases.
