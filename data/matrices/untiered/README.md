@@ -140,3 +140,9 @@ pass. Verified X words give overall uppers9/9/25/25/25/25; these are not exact
 or individually published finite distances. See [FIBER_BUNDLE.md](FIBER_BUNDLE.md)
 for reproduction, structural proofs and source license boundary. The paper's
 asymptotic theorem is not asserted for these finite constant-degree bases.
+
+Linux GH-178: both engines exact9 at n252/378. CC-only exact13 (n1400)
+and18 (n2100) are PLAUSIBLE until independent completion. n1750/n2800
+have provisional CC[20,23]/[20,25]. Default MaxSAT n1750/2100/2800 has no
+numeric fields, so those numeric smoke gates remain INCOMPLETE. All actual
+words pass GF(2) verification; six unexecuted server jobs are packaged.

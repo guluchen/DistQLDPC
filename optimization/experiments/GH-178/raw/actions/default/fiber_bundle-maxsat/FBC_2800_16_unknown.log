@@ -1,0 +1,34 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/FBC_2800_16_unknown_Hx.txt
+c Hz: data/matrices/untiered/FBC_2800_16_unknown_Hz.txt
+c Gx: data/matrices/untiered/FBC_2800_16_unknown_Gx.txt
+c Gz: data/matrices/untiered/FBC_2800_16_unknown_Gz.txt
+c Hx: 1200 x 2800, Hz: 1600 x 2800, Gx: 16 x 2800, Gz: 16 x 2800, logicals: 32
+c frontier auto X: 0.05 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.06 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: no dual map (ranks Hz 1584 Hx 1200 [Hz;Gx] 1600 [Hx;Gz] 1216, 0 candidates, cpu 0.019s): both halves, no sharing
+c oddcap X: column weights 2..4 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 2..3 (an even weight present) -> odd caps kept
+c symbreak X: n=2800 candidates=263 verified_generators=2 orbits=112 detect_cpu=0.027s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=25
+c symbreak X: generator: plain 2dshift-a L=25 (5x5)
+c symbreak X: orbit reps (size): 0(25) 25(25) 50(25) 75(25) 100(25) 125(25) 150(25) 175(25) 200(25) 225(25) 250(25) 275(25) 300(25) 325(25) 350(25) 375(25) 400(25) 425(25) 450(25) 475(25) 500(25) 525(25) 550(25) 575(25) 600(25) 625(25) 650(25) 675(25) 700(25) 725(25) 750(25) 775(25) 800(25) 825(25) 850(25) 875(25) 900(25) 925(25) 950(25) 975(25) 1000(25) 1025(25) 1050(25) 1075(25) 1100(25) 1125(25) 1150(25) 1175(25) 1200(25) 1225(25) 1250(25) 1275(25) 1300(25) 1325(25) 1350(25) 1375(25) 1400(25) 1425(25) 1450(25) 1475(25) 1500(25) 1525(25) 1550(25) 1575(25) ...
+c symbreak Z: n=2800 candidates=263 verified_generators=2 orbits=112 detect_cpu=0.021s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=25
+c symbreak Z: generator: plain 2dshift-a L=25 (5x5)
+c symbreak Z: orbit reps (size): 0(25) 25(25) 50(25) 75(25) 100(25) 125(25) 150(25) 175(25) 200(25) 225(25) 250(25) 275(25) 300(25) 325(25) 350(25) 375(25) 400(25) 425(25) 450(25) 475(25) 500(25) 525(25) 550(25) 575(25) 600(25) 625(25) 650(25) 675(25) 700(25) 725(25) 750(25) 775(25) 800(25) 825(25) 850(25) 875(25) 900(25) 925(25) 950(25) 975(25) 1000(25) 1025(25) 1050(25) 1075(25) 1100(25) 1125(25) 1150(25) 1175(25) 1200(25) 1225(25) 1250(25) 1275(25) 1300(25) 1325(25) 1350(25) 1375(25) 1400(25) 1425(25) 1450(25) 1475(25) 1500(25) 1525(25) 1550(25) 1575(25) ...
+c stab-overlap X: 1200 of 1200 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:1200 (<= 3); native propagator rows 1200 (no clauses)
+c stab-overlap Z: 1600 of 1600 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 5:1600 (<= 2); native propagator rows 1600 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/FBC_2800_16_unknown_Hx.txt
+c Hz: data/matrices/untiered/FBC_2800_16_unknown_Hz.txt
+c Gx: data/matrices/untiered/FBC_2800_16_unknown_Gx.txt
+c Gz: data/matrices/untiered/FBC_2800_16_unknown_Gz.txt
+c Hx: 1200 x 2800, Hz: 1600 x 2800, Gx: 16 x 2800, Gz: 16 x 2800, logicals: 32
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

@@ -1,9 +1,10 @@
 # GH-178: finite twisted circle-bundle open-distance representatives
 
-Status: CONSTRUCTION_AND_VERIFIED_UPPER_PASS; Linux short checks pending.
+Status: CONSTRUCTION_AND_WORD_AUDIT_PASS;3default MaxSAT numeric gates INCOMPLETE.
 Issue https://github.com/guluchen/DistQLDPC/issues/178, hub15 claim6497953233.
 Fresh main6083e662c621f3b66defd434cfae31a028d483c4;
-branch codex/fiber-bundle-library, source recorded after push.
+branch codex/fiber-bundle-library, source dd5570775658292091a9ea86dc10e5c7907a81dd
+(tree d2c033b987e2b446b7f0910b11640acd69dffce3; data eb85ca14ad99066f88c4a9f78dafaefcc9d73a91).
 No PR requested; FBC prefix/naming/tiering/main integration need PI review.
 
 ## Three proposals, choice and literature boundary
@@ -88,9 +89,66 @@ frozen yfclab2 package requiring an explicitly PI-allocated free core.
 
 What changed: six reproducible finite fiber-bundle representatives with
 nonremovable twists and verified upper witnesses, proposed FBC prefix.
-Validation: local45units/construction/regeneration pass; Linux pending.
-Results: independent overall uppers9/9/25/25/25/25, exact distances unknown.
-Unresolved: Linux numeric/scientific proof gates and other coverage gaps.
+Validation: local+Linux45units/construction/inventory/regeneration pass; all actual
+words/identities/bounds audited; retained audit replays byte-identically.
+Results: both-engine exact9/9; CC-only13/18 PLAUSIBLE; two remaining CC
+intervals[20,23]/[20,25] with provisional lower20; verified actual upper words.
+Unresolved:3default MaxSAT numeric gates and6engine proofs packaged
+unexecuted; other coverage gaps remain.
 Scientific semantics changed: no.
 PI action required: yes for prefix/main integration/final names/tiers and any
 server allocation; independent library construction can continue meanwhile.
+
+
+## Next-family research (not implemented in this batch)
+
+The primary Bravyi-Hastings1311.0885v1 PDF was inspected (onlyv1 exists;
+an attemptedv2 HTML returned404). SecII/III, Eq13 and Lemmas1/2/3 define
+a distinct single-sector product of nilpotent differentials. A finite seeded
+GL-conjugated ensemble would give unknown-distance CSS targets over roughly
+169..2809 qubits with algebraic full logicals. Checks can grow asO(sqrtN),
+so these cannot be advertised as constant-check modern qLDPC or as a proof
+of finite linear distance. This is future source research, not extra matrices,
+solver work, an issue claim or a narrowed completion of all good-code gaps.
+
+
+## Retained Linux evidence and verdict
+
+Library [40883387357](https://github.com/guluchen/DistQLDPC/actions/runs/40883387357),
+job123480561025 SUCCESS; source CI40883387059/job123480558722 SUCCESS.
+Source dd5570775658292091a9ea86dc10e5c7907a81dd, unchanged solver binary
+SHA25668f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux,Python3.12.3,c++13.3.0,pinnedCPU0,serial,default
+seed,60sCPU/90swall/4GiB per call. Complete raw log617658 characters and
+all engine logs/JSON/CSV/environment/argv/source/input identities retained
+under raw/actions/default/. Audit replay is byte-identical on actual local
+files. No repeated/supplemental CI, Mac solver, external solver or performance
+claim. A green collection job does not certify the three missing numeric gates.
+
+| n | MaxSAT60s | CC60s | Numeric smoke gate | Scientific status |
+|---:|---|---|---|---|
+|252|exact9|exact9|PASS|two engines+GF2 words|
+|378|exact9|exact9|PASS|two engines+GF2 words|
+|1400|[9,13]|exact13|PASS|PLAUSIBLE, independent lower proof pending|
+|1750|UNKNOWN,no numeric fields|[20,23]|INCOMPLETE|lower20 PLAUSIBLE, verified upper23|
+|2100|UNKNOWN,no numeric fields|exact18|INCOMPLETE|PLAUSIBLE, independent lower proof pending|
+|2800|UNKNOWN,no numeric fields|[20,25]|INCOMPLETE|lower20 PLAUSIBLE, verified upper25|
+
+No observed bound/word contradicts another or the independently verified
+algebraic upperL. Every emitted physical word passes syndrome/stabilizer/
+logical-detector checks. Exact9 at n252/378 has independent two-engine
+completion. CC-only exact13/18 and stronger open lower20 remain PLAUSIBLE;
+no name or source-distance claim changes. Missing raw MaxSAT fields are
+empty, not filled by a CC result, an algebraic upper or a source formula.
+
+Six frozen unexecuted yfclab2 jobs: MaxSAT n1400/1750/2100/2800, CC n1750/
+2800.6hCPU+600swall/4GiB each,serial,seed0,explicit PI-allocated free core;
+36hCPU/37hwall configured aggregate limits, not a runtime prediction. Default
+dry-run and Mac/altered-argv guards pass; case/input/argv/host/allocation/core
+and retained-other-engine contradiction checks included. No core allocated
+or server job executed. Prior incomplete gates on other branches remain open.
+
+Verdict: finite Definition2.11 bundle structure and reproducibility pass,
+two exact global distances cross-checked, four scientific proof completions/
+three missing MaxSAT numeric gates remain with six engine jobs. This is not
+an asymptotic distance theorem, a tier/adoption decision or full goal completion.
