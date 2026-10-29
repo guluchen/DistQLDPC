@@ -2,7 +2,7 @@
 
 The library contains [repetition-factor HGP codes](#construction-and-distance-provenance) (GH-153),
 [nonzero-rate cycle-factor HGP codes](CYCLE_HGP.md) (GH-154),
-[triangular 6.6.6 color codes](COLOR666.md) (GH-156), and
+[triangular 6.6.6 color codes](COLOR666.md) (GH-156),
 [twisted-torus generalized toric/BB codes](TWISTED_TORUS.md) (GH-159), and
 [weight-8-check BB examples](WEIGHT8_BB.md) (GH-164). See [construction coverage and remaining work](../../../docs/CSS_LIBRARY_COVERAGE.md).
 The shared MANIFEST.csv

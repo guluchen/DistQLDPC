@@ -3,8 +3,8 @@
 Continuous library goal, started 2026-10-29. This is a working acceptance
 ledger, not a claim that all CSS codes or all papers have been covered.
 The goal remains open until each applicable missing construction below has
-representative reproducible inputs and completed validation, or a documented
-scientific/availability limitation requiring a PI decision. Discovering another
+representative reproducible inputs and completed validation. A documented
+scientific/availability limitation requiring a PI decision remains an open item. Discovering another
 major omission adds a row; it does not silently shrink the goal.
 
 ## Acceptance criteria
@@ -51,7 +51,7 @@ branch, taking its untiered inventory to 30. Counts measure files, not families.
 | Color codes, 4.8.8 / closed higher-genus variants | Missing structural variants; do not count as new independent family | Published explicit incidence/parameter source to resolve |
 | BB on twisted quotient tori | Six published inputs n=30..340 on main, all numeric smoke gates passed | GH-159, `TWISTED_TORUS.md`, [2503.03827v3](https://arxiv.org/abs/2503.03827v3) |
 | Tanner-cycle balanced product, cyclic action | Six inputs n=78..962 on `codex/balanced-tanner-library`; five distances cross-checked, largest CC-only exact pending independent completion | GH-160, [2012.09271v3](https://arxiv.org/abs/2012.09271v3) |
-| Weight-8-check BB | GH-164 current batch: six published examples at n=72,144,200; Linux evidence pending until report updated | `WEIGHT8_BB.md`, [2609.06572v1](https://arxiv.org/abs/2609.06572v1) |
+| Weight-8-check BB | GH-164: six published examples at n=72,144,200; all exact claims reproduced by both engines, GF(2) witness audit passes; work branch only | `WEIGHT8_BB.md`, [2609.06572v1](https://arxiv.org/abs/2609.06572v1) |
 | Periodic toric codes | Missing explicit closed-boundary ladder. Planar repetition-HGP does not provide k=2 toric topology | Kitaev [quant-ph/9707021](https://arxiv.org/abs/quant-ph/9707021) |
 | Closed hyperbolic surface codes | Missing; next geometric priority. Need explicit finite quotients and independently checked cell incidence | Breuckmann-Terhal [1506.04029v2](https://arxiv.org/abs/1506.04029v2) |
 | Nonabelian balanced / lifted products and ZSZ-LP | Missing nonabelian structure; cyclic GH-160 does not complete it | Hong [2607.27644v1](https://arxiv.org/abs/2607.27644v1) |
@@ -70,7 +70,7 @@ converted into inputs for this CSS stabilizer-distance solver.
 
 ## Execution order and durable state
 
-1. Finish GH-164 and preserve independent witness audits and raw Linux logs.
+1. GH-164 package complete on its work branch: independent witness audits and raw Linux logs retained. Main integration remains pending PI approval.
 2. Reconstruct closed hyperbolic surface / explicit toric references, selecting
    a finite quotient ladder with justified topology and distances.
 3. Nonabelian ZSZ-LP and finite-group Tanner cases, then pair-partition/group

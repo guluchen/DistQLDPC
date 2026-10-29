@@ -46,5 +46,17 @@ provided by `.github/workflows/weight8-bb-library-smoke.yml`. Default MaxSAT
 argv remains implicit; `--engine cc` selects independent CC search. Each run
 is pinned to one allocated Actions core with a 4 GiB address-space cap and
 90-second wall backstop. Source, binary and all input hashes and exact raw
-logs are retained. No solver runs execute on the PI Mac. Results remain
-NOT_RUN until the GH-164 report and manifest contain actual evidence.
+logs are retained. No solver runs execute on the PI Mac. All six cases reproduce the published exact d with both engines: 8, 10,
+10, 12, 9, 10 in the order listed above. The audit independently verifies
+all emitted logical supports and at least one minimum-weight logical per
+case. A verified witness from either engine supplies the common upper bound;
+both engines independently prove the matching lower bound on identical hashed
+inputs. CC does not always print a witness found by its exact search.
+
+Fixed workflow run [40838302967](https://github.com/guluchen/DistQLDPC/actions/runs/40838302967)
+passed; all raw evidence, identities and audit are retained in
+`optimization/experiments/GH-164/raw/actions/recheck/`. The initial run also
+solved all six cases with both engines, but its audit incorrectly required
+each engine to print its own minimum witness; it is retained unmodified in
+`raw/actions/attempt1/` with a successful corrected offline audit replay.
+No stem renames, tier assignments or scientific-semantic changes.
