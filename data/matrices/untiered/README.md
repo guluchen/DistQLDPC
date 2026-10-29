@@ -130,3 +130,13 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Published interval-valued GB references (GH-191)
+
+Two [PK2021 GB references](REFERENCE_GB.md), n254k28 and n180k10, have
+published distance intervals14..20 and15..18. Original first-column
+circulant reconstruction, independent physical columns/polynomial gcd,
+full GF2/logicals/typed physical rowspace/XZ map and no-peer checks pass.
+13new units/full8matrix byte regeneration pass; Linux/actual low upper-word
+gates pending. Source claims are not filled into raw solver fields.
+This branch26untiered/77total; prior24rows/300matrix files preserved.

@@ -312,3 +312,19 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Published interval-valued GB reference matrices (GH-191, untiered)
+------------------------------------------------------------------
+
+Original scripts/codegen/reference_gb.py, independent validator/audit/tests
+and generated GB_254_28_unknown and GB_180_10_unknown matrices are
+GPL-3.0-or-later. Mathematical construction and numerical parameters:
+Pavel Panteleev and Gleb Kalachev, "Degenerate Quantum LDPC Codes With Good
+Finite Length Performance", arXiv:1904.02703v3, Quantum5,585(2021),
+DOI:10.22331/q-2021-11-22-585, Sec4.2/AppendixB sectionA itemsA1/A5/Table1,
+licensed CC BY4.0 (https://creativecommons.org/licenses/by/4.0/).
+Changes: original executable mathematical reconstruction, independent
+physical-column/GF2 checks and newly computed logical bases; no author code,
+matrix files, paper prose or images copied. Published intervals14..20 and
+15..18 are source claims, not DistQLDPC-certified bounds. No third-party
+distance tools executed. See data/matrices/untiered/REFERENCE_GB.md.
