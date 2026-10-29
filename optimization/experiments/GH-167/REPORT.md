@@ -3,7 +3,7 @@
 Issue: https://github.com/guluchen/DistQLDPC/issues/167
 Branch: codex/pair-partition-library
 Base main: 6083e662c621f3b66defd434cfae31a028d483c4.
-Status: six original reconstructions locally validated; Linux evidence pending.
+Status: construction and five numeric smoke gates pass; n=1784 default numeric gate incomplete. Work branch only; seven unresolved engine proofs packaged, not executed.
 
 ## Proposal and source scope
 
@@ -78,7 +78,7 @@ valid pairings compare orbit-root girth with all-root BFS. n=104 both-half
 support oracle excludes all nontrivial words of weight<=4 (each decomposes
 into two subsets <=2), giving independent lower5, not claimed exact d8.
 
-## Linux plan
+## Linux execution and evidence
 
 Workflow pair-partition-library-smoke.yml: build unchanged solver, 46 units,
 algebra/source/pairing/incidence/girth checks, byte-identical regeneration,
@@ -91,17 +91,54 @@ word substituted for absent output. Missing numeric gates remain open.
 No increased limits or broad parameter sweep; heavy work becomes a prepared
 server package, never a Mac solver experiment. No server core assigned.
 
-Source/run/job/binary IDs, actual bounds and durable outputs follow execution.
-Any genuine result/source mismatch stops and escalates under AGENTS.md.
+Source `c34927d327270c0bb5a5c1bd2b954838bac24cbe`.
+Library run [40848460222](https://github.com/guluchen/DistQLDPC/actions/runs/40848460222),
+job 123361681405: SUCCESS. Generic CI 40848460051: SUCCESS.
+Binary SHA256 `68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a`.
+Complete 637642-character job log, 12 raw engine logs, JSON/CSV, DONE and
+environments are committed under `raw/actions/default/`; no reliance on
+expiring artifacts. Audit replay is byte-identical. All CSV/JSON/raw results
+and all input hashes agree; the previous 24 manifest rows remain unchanged.
+
+| n | MaxSAT 60s | CC 60s | interpretation |
+|---|---|---|---|
+| 104 | exact 8 | exact 8 | two-engine cross-check plus weight-8 GF(2) word |
+| 276 | [9,14] | [13,14] | stronger CC lower13 PLAUSIBLE; common lower9 |
+| 472 | [10,16] | exact16 | CC exact PLAUSIBLE until other engine completes |
+| 584 | [10,18] | exact18 | CC exact PLAUSIBLE until other engine completes |
+| 1112 | [10,20] | exact20 | CC exact PLAUSIBLE until other engine completes |
+| 1784 | no numeric bounds | [22,126] | numeric gate INCOMPLETE; CC lower22 PLAUSIBLE |
+
+Every printed logical word passes independent GF(2) syndrome, stabilizer
+exclusion and detector checks. Source-weight upper words 8,14,16,18,20 are
+verified; the largest actual word is126, not the source's24. Do not substitute
+the published24 into our solver result. No contradictory source/engine result.
+The successful workflow is an execution/audit result, not a pass for missing
+numeric bounds. No more CI diagnostics or increased limits in this round.
+`runner/review_bounds.py` preserves strongest vs common lower bounds and
+one-engine exact provisional status separately from unchanged raw evidence;
+`raw/bounds-review.json` binds this review to the audit SHA256.
+
+## Prepared server continuation (not executed)
+
+`runner/jobs.jsonl`: seven default-seed engine proofs, generated only for
+unresolved results: both engines n276/1784; MaxSAT n472/584/1112. Each job has
+6h CPU plus600s wall backstop. Serial aggregate CPU limit42h, wall43h10m;
+4GiB cap, explicit free pinned core, stdin /dev/null. No server core assigned.
+This is a reproducible continuation package, not an estimate of solve times.
+`runner/run_serial.py` defaults to dry-run and execution requires yfclab2,
+clean frozen checkout, explicit PI allocation reference and free-core check.
+It records commands, source/binary/case/job/input identities and rechecks
+inputs/binary around every run, retaining logs before any failed review.
+Dry-run and syntax checks pass; no solver was executed on the Mac.
+See runner/README.md for exact commands. Source exact claims remain distinct
+from our own proof status, no stems/tier assignments changed.
 
 ## Completion fields
 
 What changed: six fixed PP inputs, generator/cases, pairing/source identity,
 independent incidence/girth/GF(2) checks, manifest/provenance, tests and Linux
 smoke package. Validation performed: local algebra, source pins, pairings,
-logicals, girth, duplicate review, 46 tests and regeneration. Results: pass
-local gates; actual CLI evidence pending. Unresolved: Linux smoke gates,
-any independent exact completion, prior pending scientific items and PI main
-integration approval. Scientific semantics changed: no. PI action required:
+logicals, girth, duplicate review, 46 tests and regeneration. Results: all local gates pass, n104 independently exact8, five numeric smoke gates pass. Unresolved: n1784 default numeric bounds, seven unresolved engine proofs, prior pending scientific items and PI main integration approval. Scientific semantics changed: no. PI action required:
 no to continue; yes before main integration or server execution; existing
 hyperbolic n=1920 interpretation question remains pending.

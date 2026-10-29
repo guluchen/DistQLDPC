@@ -1,0 +1,32 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/PP_1784_450_unknown_Hx.txt
+c Hz: data/matrices/untiered/PP_1784_450_unknown_Hz.txt
+c Gx: data/matrices/untiered/PP_1784_450_unknown_Gx.txt
+c Gz: data/matrices/untiered/PP_1784_450_unknown_Gz.txt
+c Hx: 669 x 1784, Hz: 669 x 1784, Gx: 450 x 1784, Gz: 450 x 1784, logicals: 900
+c frontier auto X: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: no dual map (ranks Hz 667 Hx 667 [Hz;Gx] 1117 [Hx;Gz] 1117, 28 candidates, cpu 0.024s): both halves, no sharing
+c oddcap X: column weights 3..3 all odd (every logical has even weight) -> odd caps skipped
+c oddcap Z: column weights 3..3 all odd (every logical has even weight) -> odd caps skipped
+c symbreak X: n=1784 candidates=27 verified_generators=1 orbits=8 detect_cpu=0.015s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=223
+c symbreak X: orbit reps (size): 0(223) 223(223) 446(223) 669(223) 892(223) 1115(223) 1338(223) 1561(223)
+c symbreak Z: n=1784 candidates=27 verified_generators=1 orbits=8 detect_cpu=0.016s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=223
+c symbreak Z: orbit reps (size): 0(223) 223(223) 446(223) 669(223) 892(223) 1115(223) 1338(223) 1561(223)
+c stab-overlap X: 669 of 669 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:669 (<= 4); native propagator rows 669 (no clauses)
+c stab-overlap Z: 669 of 669 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:669 (<= 4); native propagator rows 669 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/PP_1784_450_unknown_Hx.txt
+c Hz: data/matrices/untiered/PP_1784_450_unknown_Hz.txt
+c Gx: data/matrices/untiered/PP_1784_450_unknown_Gx.txt
+c Gz: data/matrices/untiered/PP_1784_450_unknown_Gz.txt
+c Hx: 669 x 1784, Hz: 669 x 1784, Gx: 450 x 1784, Gz: 450 x 1784, logicals: 900
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

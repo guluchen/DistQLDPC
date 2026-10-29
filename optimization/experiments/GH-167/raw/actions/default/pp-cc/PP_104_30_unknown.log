@@ -1,0 +1,48 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/PP_104_30_unknown_Hx.txt
+c Hz: data/matrices/untiered/PP_104_30_unknown_Hz.txt
+c Gx: data/matrices/untiered/PP_104_30_unknown_Gx.txt
+c Gz: data/matrices/untiered/PP_104_30_unknown_Gz.txt
+c Hx: 39 x 104, Hz: 39 x 104, Gx: 30 x 104, Gz: 30 x 104, logicals: 60
+c cc: dual map detection: none (ranks Hz 37 Hx 37 [Hz;Gx] 67 [Hx;Gz] 67, 28 candidates, cpu 0.000s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 2 generator(s), 4 qubit orbit(s), group complete, point stabiliser trivial, swap map found, 10 test(s) (7 refuted, 0 undecided), work 8890, cpu 0.000s
+c cc aut: Tanner swap map: verified as XZ-dual map: X half only
+c cc symbreak X: n=104 candidates=29 verified_generators=3 orbits=4 detect_cpu=0.000s clause=orbit-chain
+c cc symbreak X: generator: plain blockshift L=13
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: orbit reps (size): 0(26) 13(26) 52(26) 65(26)
+c cc: X half: n 104, rank H 37, rank [H;G] 67, rank S 37: detectors complete, 30 logical(s)
+c cc: Z half: n 104, rank H 37, rank [H;G] 67, rank S 37: detectors complete, 30 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'tanner-swap (cc-aut)' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 14 (X 14, Z 14)
+c cc: X half search: 4 seeds (orbit representatives)
+c cc: X half parity: on (column weights 3..3, all odd): every logical has even weight, odd levels skipped
+c cc: X half overlap: on (39 stabilizer rows of Hx, weights 8..8, 0 forbidden from the start)
+c cc: X half ub-search: rank H 37, information set 67, triples off, slack 4, li-cap 64, collision stern p 2 l 9 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 8 (iteration 1, wall 0.000s)
+c witness X (ub-search): 9 29 41 54 83 87 91 93
+c cc: X half level 2 EMPTY nodes 4 seeds 4 time 0.000s
+c cc: X half level 3 skipped (parity: every logical has even weight)
+c cc: X half level 4 EMPTY nodes 20 seeds 4 time 0.000s
+c cc: X half level 5 skipped (parity: every logical has even weight)
+c cc: X half level 6 EMPTY nodes 458 seeds 4 time 0.000s
+c cc: X half level 7 skipped (parity: every logical has even weight)
+c cc: ub-search X: iterations 1, finder time 0.000s, kept 276, nontrivial 276, li-gain 2, improvements 1, rank 37, K 67, ub 8
+c cc: ub-search X collision: rounds 1, colliding pairs 1039 (nontrivial 1038)
+c cc: total nodes X 482 Z 0, search time X 0.000s Z 0.000s, wall 0.000s
+c cc: d = 8
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/PP_104_30_unknown_Hx.txt
+c Hz: data/matrices/untiered/PP_104_30_unknown_Hz.txt
+c Gx: data/matrices/untiered/PP_104_30_unknown_Gx.txt
+c Gz: data/matrices/untiered/PP_104_30_unknown_Gz.txt
+c Hx: 39 x 104, Hz: 39 x 104, Gx: 30 x 104, Gz: 30 x 104, logicals: 60
+c d_lb: 8
+c d_ub: 8
+c d  : 8
+o 8

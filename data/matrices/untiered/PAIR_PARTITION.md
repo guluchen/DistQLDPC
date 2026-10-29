@@ -100,8 +100,17 @@ syndrome, stabilizer exclusion and logical-detector pairing. Exact source
 claims must remain compatible with bounds/answers. Missing numeric bounds
 remain incomplete gates, even if the workflow executes successfully.
 
-Run IDs and actual observations are recorded in GH-167/REPORT.md and the
-manifest after execution. New exact results or stronger one-engine bounds
+Run 40848460222 passes execution/audit. MaxSAT / CC observations:
+104: exact8 / exact8; 276: [9,14] / [13,14]; 472: [10,16] / exact16;
+584: [10,18] / exact18; 1112: [10,20] / exact20;
+1784: no numeric bounds / [22,126]. All actual printed words pass GF(2).
+Only n104 is independently exact by both engines. Stronger CC-only lower
+bounds and exact results remain PLAUSIBLE; source d24 at n1784 is not an
+internally verified upper bound. Its default numeric gate remains INCOMPLETE.
+Full durable logs, source/binary/input identities and audit are in GH-167/raw.
+Seven unresolved engine proofs have an unexecuted serial server package.
+Run details and actual observations are recorded in GH-167/REPORT.md and the
+manifest. New exact results or stronger one-engine bounds
 remain PLAUSIBLE until independent completion and GF(2) witness checks.
 Heavy work becomes an explicit server package, never longer CI limits or
 Mac solver experiments. No main integration, stem rename or tiering occurs.

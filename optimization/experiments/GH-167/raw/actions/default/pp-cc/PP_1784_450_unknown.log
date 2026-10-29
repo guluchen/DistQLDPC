@@ -1,0 +1,59 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/PP_1784_450_unknown_Hx.txt
+c Hz: data/matrices/untiered/PP_1784_450_unknown_Hz.txt
+c Gx: data/matrices/untiered/PP_1784_450_unknown_Gx.txt
+c Gz: data/matrices/untiered/PP_1784_450_unknown_Gz.txt
+c Hx: 669 x 1784, Hz: 669 x 1784, Gx: 450 x 1784, Gz: 450 x 1784, logicals: 900
+c cc: dual map detection: none (ranks Hz 667 Hx 667 [Hz;Gx] 1117 [Hx;Gz] 1117, 28 candidates, cpu 0.025s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 1 generator(s), 8 qubit orbit(s), group complete, point stabiliser trivial, swap map found, 11 test(s) (9 refuted, 0 undecided), work 127860, cpu 0.004s
+c cc aut: Tanner swap map: verified as XZ-dual map: X half only
+c cc symbreak X: n=1784 candidates=28 verified_generators=2 orbits=8 detect_cpu=0.019s clause=orbit-chain
+c cc symbreak X: generator: plain blockshift L=223
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: orbit reps (size): 0(223) 223(223) 446(223) 669(223) 892(223) 1115(223) 1338(223) 1561(223)
+c cc: X half: n 1784, rank H 667, rank [H;G] 1117, rank S 667: detectors complete, 450 logical(s)
+c cc: Z half: n 1784, rank H 667, rank [H;G] 1117, rank S 667: detectors complete, 450 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'tanner-swap (cc-aut)' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 302 (X 302, Z 302)
+c cc: X half search: 8 seeds (orbit representatives)
+c cc: X half parity: on (column weights 3..3, all odd): every logical has even weight, odd levels skipped
+c cc: X half overlap: on (669 stabilizer rows of Hx, weights 8..8, 0 forbidden from the start)
+c cc: X half ub-search: rank H 667, information set 1117, triples off, slack 4, li-cap 64, collision stern p 2 l 17 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 140 (iteration 1, wall 0.107s)
+c witness X (ub-search): 5 43 46 47 62 71 82 118 119 123 127 138 160 168 188 205 209 224 226 228 243 259 299 300 315 321 324 335 339 353 401 404 424 427 435 436 438 439 441 445 454 487 502 503 535 539 583 591 603 608 614 615 629 640 641 645 652 669 671 676 680 703 713 717 775 790 799 809 813 814 837 843 854 866 894 919 920 930 938 941 946 948 952 970 999 1026 1051 1057 1072 1074 1079 1103 1135 1174 1222 1228 1229 1254 1257 1266 1286 1287 1291 1295 1298 1309 1338 1360 1364 1394 1409 1420 1423 1435 1448 1455 1470 1477 1485 1506 1512 1514 1527 1546 1557 1567 1570 1577 1599 1611 1618 1638 1644 1650 1673 1681 1700 1719 1739 1778
+c cc: X half level 2 EMPTY nodes 8 seeds 8 time 0.000s
+c cc: X half level 3 skipped (parity: every logical has even weight)
+c cc: X half level 4 EMPTY nodes 36 seeds 8 time 0.000s
+c cc: X half level 5 skipped (parity: every logical has even weight)
+c cc: X half level 6 EMPTY nodes 176 seeds 8 time 0.000s
+c cc: X half level 7 skipped (parity: every logical has even weight)
+c cc: X half level 8 EMPTY nodes 1130 seeds 8 time 0.000s
+c cc: X half level 9 skipped (parity: every logical has even weight)
+c cc: X half level 10 EMPTY nodes 6903 seeds 8 time 0.001s
+c cc: X half level 11 skipped (parity: every logical has even weight)
+c cc: X half level 12 EMPTY nodes 50383 seeds 8 time 0.008s
+c cc: X half level 13 skipped (parity: every logical has even weight)
+c cc: X half level 14 EMPTY nodes 384938 seeds 8 time 0.063s
+c cc: X half level 15 skipped (parity: every logical has even weight)
+c cc: X half level 16 EMPTY nodes 3112777 seeds 8 time 0.541s
+c cc: X half level 17 skipped (parity: every logical has even weight)
+c cc: ub-search: X half word of weight 126 (iteration 2, wall 2.435s)
+c witness X (ub-search): 3 9 20 34 37 44 70 75 86 89 116 123 138 154 156 188 194 243 270 314 328 344 359 374 409 416 421 438 439 441 459 477 519 527 538 555 613 614 659 671 703 717 725 733 738 740 753 763 769 772 775 799 811 827 852 875 878 887 894 911 917 919 934 950 956 965 970 989 997 1016 1059 1072 1092 1095 1096 1103 1111 1115 1120 1138 1172 1205 1226 1229 1250 1251 1271 1291 1294 1295 1305 1323 1327 1328 1332 1344 1351 1372 1394 1416 1420 1434 1444 1527 1546 1552 1557 1566 1567 1576 1604 1608 1611 1641 1644 1670 1673 1674 1676 1681 1700 1719 1727 1728 1771 1775
+c cc: X half level 18 EMPTY nodes 25877249 seeds 8 time 5.100s
+c cc: X half level 19 skipped (parity: every logical has even weight)
+c cc: X half level 20 EMPTY nodes 224873234 seeds 8 time 46.114s
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/PP_1784_450_unknown_Hx.txt
+c Hz: data/matrices/untiered/PP_1784_450_unknown_Hz.txt
+c Gx: data/matrices/untiered/PP_1784_450_unknown_Gx.txt
+c Gz: data/matrices/untiered/PP_1784_450_unknown_Gz.txt
+c Hx: 669 x 1784, Hz: 669 x 1784, Gx: 450 x 1784, Gz: 450 x 1784, logicals: 900
+c d_lb: 22
+c d_ub: 126
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN
