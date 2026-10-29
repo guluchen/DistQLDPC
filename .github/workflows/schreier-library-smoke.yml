@@ -1,0 +1,70 @@
+name: Generalized Schreier Tanner library smoke
+
+on:
+  push:
+    branches: [codex/schreier-tanner-library]
+    paths:
+      - '.github/workflows/schreier-library-smoke.yml'
+      - 'scripts/codegen/schreier*'
+      - 'scripts/codegen/validate_schreier.py'
+      - 'scripts/codegen/audit_schreier_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_schreier.py'
+      - 'data/matrices/untiered/TN_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Fifty units, full independent geometry and twenty-four matrix bytes
+        run: |
+          python3 tests/test_codegen_schreier.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          cp optimization/experiments/GH-202/raw/construction.json /tmp/schreier-construction.json
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+      - name: Six default serial bounded MaxSAT checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TN --verbose --out /tmp/schreier-maxsat
+      - name: Six independent serial bounded CC checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TN --verbose --engine cc --out /tmp/schreier-cc
+      - name: Actual words, source exact controls and independent-engine audit
+        run: |
+          python3 scripts/codegen/audit_schreier_smoke.py --maxsat /tmp/schreier-maxsat --cc /tmp/schreier-cc --construction /tmp/schreier-construction.json --out /tmp/schreier-audit.json
+          python3 - <<'PY'
+          from pathlib import Path
+          print('GH202_AUDIT_JSON='+Path('/tmp/schreier-audit.json').read_text().replace('\n',''))
+          PY
+      - name: Retain all evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ['schreier-maxsat','schreier-cc']:
+              result[label]={p.name:p.read_text() for p in Path('/tmp',label).glob('*') if p.is_file()}
+          print('GH202_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh202-schreier-smoke
+          path: |
+            /tmp/schreier-maxsat/
+            /tmp/schreier-cc/
+            /tmp/schreier-construction.json
+            /tmp/schreier-audit.json
+          if-no-files-found: warn
+          retention-days: 14

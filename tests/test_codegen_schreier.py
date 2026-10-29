@@ -128,4 +128,4 @@ class Schreier(unittest.TestCase):
         self.assertFalse(Path('/tmp/gh202-never-executed').exists())
 
 
-if __name__=='__main__':unittest.main()
+if __name__=='__main__':unittest.main(verbosity=2)
