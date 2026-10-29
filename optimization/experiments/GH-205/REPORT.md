@@ -1,6 +1,6 @@
 # GH-205 repeated-cyclic CSS hyperbicycle targets
 
-Status: LOCAL_CONSTRUCTION_PASS; LINUX_SHORT_GATES_PENDING. Goal ACTIVE.
+Status: CONSTRUCTION_AND_NUMERIC_PASS; THREE_MAXSAT_PROOF_COMPLETIONS_PENDING. Goal ACTIVE.
 Issue https://github.com/guluchen/DistQLDPC/issues/205; hub comment6509055409.
 Branch codex/hyperbicycle-library from main6083e662c621f3b66defd434cfae31a028d483c4.
 Previous goal turn was NO_PROGRESS (priority acknowledgement only); this turn
@@ -98,3 +98,57 @@ words and raw engine results remain separate fields and never fill each other.
 
 Scientific semantics changed: no. PI action required: existing GH200/GH202
 source decisions; later main integration and any server core allocation.
+
+## Terminal short results and retained evidence
+
+Data70c268bb38f866bb7d6cac4bf50b371a30039d98, scientific source
+361f399d15801ffc2d68e9a6375ef46b03efb5e4, tree
+2d05c543c527d0a3edb33725fe64ec8821cc2a72. Linux library run40961747658,
+job123756014938 SUCCESS. Original53units/full geometry/classical hypotheses/
+GF2/logicals/24matrix byte reproduction and all12numeric short gates PASS.
+All12runs have the same source and binary SHA
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Source ordinary CI40961747630/job123756015467 SUCCESS. No scientific rerun.
+
+| N,K | Original MaxSAT | Original CC | Actual X/Z upper words | Interpretation |
+|---|---|---|---|---|
+| 900,50 | [9,14] | exact14 | 14/14 | published exact14 control reproduced by CC |
+| 1800,50 | [9,14] | exact14 | 14/28 | new finite search exact14 PLAUSIBLE |
+| 2700,50 | [9,14] | exact14 | 14/42 | new finite search exact14 PLAUSIBLE |
+| 420,30 | exact8 | exact8 | 8/8 | cross-checked both engines+actual GF2 minimum word |
+| 840,30 | exact11 | exact11 | 11/16 | cross-checked both engines+actual GF2 minimum word |
+| 1260,30 | exact11 | exact11 | 11/24 | cross-checked both engines+actual GF2 minimum word |
+
+These are global distances/bounds; unequal half word weights do not supply
+half minima. Source900 remains published exact14 rather than an open target.
+N840/1260 finite11 confirms the initially unconfirmed cases without any global
+novelty claim. Two larger symmetric easy14 outcomes and all original parameters
+remain; no replacement or reclassification as distance-growth evidence.
+
+Full764184-character job retained in raw/library-job-123756014938.log;
+72nested engine files, original full construction and original audit in
+raw/actions/default. No raw metadata overwritten or bounds filled. Local
+replay of every log/input identity/source interval/actual word is byte-identical
+to original audit.json. Source endpoint bounds, observed search bounds and
+actual verified words remain separate fields in manifest and reports.
+
+After the single scientific run, workflow-only2c66a9a2ab530ebd19904c3644adbb8fd897f03e
+replaces solver execution with unit/construction/retained-log replay contracts.
+General validator hardening fixes XOR cancellation for an unfrozen tiny
+h=1+x^7 alias test; none of six frozen factors has such an alias, every frozen
+construction JSON/matrix stays byte-identical. New regression plus prior53
+tests gives local54 PASS; no renewed scientific search is needed or run.
+Latest Linux contract status is recorded separately when available.
+
+Three guarded default MaxSAT jobs are packaged; zero optionalCC, missingnumeric
+or source-word jobs. Limits18CPUh/18h30wall total, not ETA. Dry-run3/default and
+0/optional and Mac execution refusal pass; no allocation or execution.
+README gives reproducible pinned-core/prlimit/nohup/nullstdin commands and
+explicit PI execution guards. These jobs independently reproduce finite14;
+they are not a claimed new unresolved global distance interval.
+
+raw/next-source-review.json retains preliminary nonprimitive BCH root-set
+checks N341/819/1365. No matrix, frozen batch or globally-open assertion:
+additional recent primary-theorem review remains. This source review does not
+complete the missing mainstream BCH coverage or waive outstanding family/
+scientific/server/integration gates. Goal remains ACTIVE.

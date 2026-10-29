@@ -1,0 +1,94 @@
+{
+  "stem": "LP_1260_30_unknown",
+  "reference_construction_interval": [
+    8,
+    24
+  ],
+  "published_named_exact": null,
+  "original_finite_theorem_target": null,
+  "engines": {
+    "maxsat": {
+      "lb": 11,
+      "ub": 11,
+      "status": "SOLVED"
+    }
+  },
+  "actual_verified_upper": 11,
+  "actual_verified_half_uppers": {
+    "X": 11,
+    "Z": 24
+  },
+  "witnesses": [
+    {
+      "half": "Z",
+      "origin": "actual logical basis",
+      "weight": 24,
+      "support": [
+        0,
+        2,
+        3,
+        4,
+        7,
+        9,
+        10,
+        11,
+        14,
+        16,
+        17,
+        18,
+        21,
+        23,
+        24,
+        25,
+        28,
+        30,
+        31,
+        32,
+        35,
+        37,
+        38,
+        39
+      ]
+    },
+    {
+      "half": "X",
+      "origin": "actual logical basis",
+      "weight": 11,
+      "support": [
+        0,
+        42,
+        84,
+        168,
+        210,
+        336,
+        420,
+        630,
+        631,
+        632,
+        634
+      ]
+    },
+    {
+      "half": "X",
+      "origin": "maxsat",
+      "support": [
+        196,
+        238,
+        280,
+        364,
+        406,
+        532,
+        616,
+        826,
+        827,
+        828,
+        830
+      ],
+      "weight": 11
+    }
+  ],
+  "source_construction_upper_word_gate": "PASS",
+  "numeric_smoke_gate": "INCOMPLETE",
+  "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; construction theorem hypotheses independently audited",
+  "independent_search_lower_corrob": null
+}

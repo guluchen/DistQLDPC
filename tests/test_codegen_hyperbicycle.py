@@ -86,6 +86,13 @@ class HyperbicycleTests(unittest.TestCase):
     def test_too_large_classical_enumeration_refused(self):
         with self.assertRaises(ValueError):audit.words([1 << j for j in range(13)])
 
+    def test_sum_block_aliases_cancel_in_GF2(self):
+        # On the small blocks h=1+x^7 cancels, so its rowspace is zero,
+        # excluding all weight-one words. Integer addition would invent them.
+        result=audit.classical(7,2,[0,7])
+        self.assertEqual(result['original_and_transpose'][0]['distance'],2)
+        self.assertTrue(result['sum_block_and_transpose_minimum_at_least2'])
+
     def test_dependent_classical_basis_refused(self):
         with self.assertRaises(ValueError):audit.words([1,1])
 

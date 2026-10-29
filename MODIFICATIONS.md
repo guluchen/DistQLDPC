@@ -438,6 +438,7 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
 GH-205: original repeated-cyclic CSS hyperbicycle generator and independent
 physical incidence/finite Theorem9 hypothesis audits (arXiv1212.6703v2).
 Only chi1/even-c finite inputs; all solver sources/build/defaults unchanged.

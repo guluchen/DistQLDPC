@@ -1,0 +1,16 @@
+{
+  "cmd": [
+    "python3",
+    "optimization/experiments/GH-205/runner/run_serial.py",
+    "--cpu",
+    "54",
+    "--out",
+    "/tmp/gh205-mac-guard-never-run",
+    "--execute"
+  ],
+  "rc": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"/Users/yfc/Documents/PCM/DistQLDPC/optimization/experiments/GH-205/runner/run_serial.py\", line 138, in <module>\n    if __name__=='__main__':main()\n  File \"/Users/yfc/Documents/PCM/DistQLDPC/optimization/experiments/GH-205/runner/run_serial.py\", line 96, in main\n    require(sys.platform.startswith('linux') and platform.node().split('.')[0]=='yfclab2','yfclab2 execution only')\n  File \"/Users/yfc/Documents/PCM/DistQLDPC/optimization/experiments/GH-205/runner/run_serial.py\", line 27, in require\n    if not ok:raise ValueError(message)\nValueError: yfclab2 execution only\n",
+  "out_created": false,
+  "execution": false,
+  "allocation": false
+}

@@ -59,7 +59,7 @@ GH-167 has six pair-partition CPM inputs on its separate work branch. GH-168 has
 
 | Construction class / specialization | Coverage and remaining work | Evidence |
 |---|---|---|
-| Repeated-cyclic multi-block CSS hyperbicycle | GH205 six fixed inputs N420..2700,K30/50; local full GF2/logicals/independent physical incidence/complete small classical kernels/source hypotheses/connected stabilizer support and24-file reproduction pass. Source900 exact14 control; five original finite specializations retain theorem intervals and actual words separately. Initial words already match lower14 on two larger symmetric cases; do not replace these easy outcomes. Linux short numeric/proof gates PENDING. This is a lifted-product specialization, not a disjoint-family increment | Kovalev–Pryadko [1212.6703v2](https://arxiv.org/abs/1212.6703v2), Eq19/Theorem9/Examples5–6; scripts/codegen/HYPERBICYCLE.md, GH205 report |
+| Repeated-cyclic multi-block CSS hyperbicycle | GH205 six fixed inputs N420..2700,K30/50; local full GF2/logicals/independent physical incidence/complete small classical kernels/source hypotheses/connected stabilizer support and24-file reproduction pass. Source900 exact14 control; five original finite specializations retain theorem intervals and actual words separately. Linux40961747658 passes53units/24-file byte reproduction and all12numeric gates; both engines+GF2 confirm global8/11/11 at N420/840/1260. Source900 CC14 reproduces known exact14; N1800/2700 CC14 remains PLAUSIBLE with MaxSAT[9,14]. Three unexecuted MaxSAT proof completions packaged, zero optionalCC/numeric/source-word jobs. Preserve easy symmetric outcomes; no distance-growth or global novelty assertion. This is a lifted-product specialization, not a disjoint-family increment | Kovalev–Pryadko [1212.6703v2](https://arxiv.org/abs/1212.6703v2), Eq19/Theorem9/Examples5–6; scripts/codegen/HYPERBICYCLE.md, GH205 report |
 | Dual-containing quantum BCH, generally non-LDPC CSS | Genuine mainstream CSS coverage gap. Six initial primitive binary choices n31/127/255/511/1023/2047 with designed delta5/7/9/15/31/63 are already literature-known exact after the CSS purity condition; defer these as open-distance targets. No BCH input/generator added yet, and no claim that every practical BCH distance is known | Aly–Klappenecker–Sarvepalli [quant-ph/0604102v1](https://arxiv.org/abs/quant-ph/0604102v1), Lemmas12/17(b)/Theorem19; Ding–Du–Zhou2015 DOI[10.1109/TIT.2015.2409838](https://doi.org/10.1109/TIT.2015.2409838) Theorems4/8; GH205 raw/bch-triage.json |
 | Bivariate bicycle (BB), ordinary weight-6 | Existing tiered family | `NOTICE` section 5, tier0..tier5 |
 | Generalized bicycle (GB), cyclic two-block | Existing tiered family; GH-171 adds four fixed divisor-driven cyclic examples n46/66/90/170, independent source/algebra/logical/duplicate checks and all numeric Linux smoke gates pass; both engines reproduce exact8/7/10/8 with GF(2) words; separate work branch only | `NOTICE` section 5; Lu et al. [2608.09115](https://arxiv.org/abs/2608.09115) supplies these fixed cases (v3) |
@@ -318,3 +318,15 @@ generation refuses;18hold units/retained-failure replay validate only hold
 evidence and guards. No reorder/reselection/renaming/rerun/server package.
 PI source interpretation/diagnostic authorization needed; this finite
 Schreier ladder remains an incomplete coverage item. GH200still separately held.
+
+
+GH205 terminal construction/numeric gates PASS on its separate work branch.
+Six fixed LP inputs are retained, not a family-count increment. Both engines
+confirm8/11/11 atN420/840/1260 with actual GF2 minimum words. Three retained
+CC14 results and original MaxSAT[9,14] remain distinct from source-construction
+bounds; published900exact14 is a control, new1800/2700 search exact14 PLAUSIBLE.
+Three guarded MaxSAT jobs remain unexecuted.54local contracts after one tiny
+alias hardening leave every frozen matrix/construction receipt byte-identical;
+follow-up CI replays original logs without renewed scientific search. GH200/
+GH202 remain held. Mainstream BCH remains uncovered; preliminary nonprimitive
+source-root review is not a globally-open assertion or accepted input.

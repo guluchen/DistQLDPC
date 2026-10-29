@@ -1,0 +1,118 @@
+{
+  "stem": "LP_2700_50_unknown",
+  "reference_construction_interval": [
+    14,
+    42
+  ],
+  "published_named_exact": null,
+  "original_finite_theorem_target": null,
+  "engines": {
+    "maxsat": {
+      "lb": 9,
+      "ub": 14,
+      "status": "BOUNDED"
+    }
+  },
+  "actual_verified_upper": 14,
+  "actual_verified_half_uppers": {
+    "X": 14,
+    "Z": 42
+  },
+  "witnesses": [
+    {
+      "half": "Z",
+      "origin": "actual logical basis",
+      "weight": 42,
+      "support": [
+        0,
+        2,
+        5,
+        6,
+        8,
+        9,
+        10,
+        15,
+        17,
+        20,
+        21,
+        23,
+        24,
+        25,
+        30,
+        32,
+        35,
+        36,
+        38,
+        39,
+        40,
+        45,
+        47,
+        50,
+        51,
+        53,
+        54,
+        55,
+        60,
+        62,
+        65,
+        66,
+        68,
+        69,
+        70,
+        75,
+        77,
+        80,
+        81,
+        83,
+        84,
+        85
+      ]
+    },
+    {
+      "half": "X",
+      "origin": "actual logical basis",
+      "weight": 14,
+      "support": [
+        0,
+        90,
+        180,
+        360,
+        450,
+        720,
+        900,
+        1350,
+        1351,
+        1352,
+        1354,
+        1355,
+        1358,
+        1360
+      ]
+    },
+    {
+      "half": "X",
+      "origin": "maxsat",
+      "support": [
+        86,
+        266,
+        701,
+        791,
+        881,
+        1061,
+        1151,
+        2051,
+        2052,
+        2053,
+        2055,
+        2056,
+        2059,
+        2061
+      ],
+      "weight": 14
+    }
+  ],
+  "source_construction_upper_word_gate": "PASS",
+  "numeric_smoke_gate": "INCOMPLETE",
+  "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; construction theorem hypotheses independently audited",
+  "independent_search_lower_corrob": null
+}

@@ -1,0 +1,80 @@
+{
+  "status": "NEXT_SOURCE_REVIEW_ONLY",
+  "source": "https://arxiv.org/abs/quant-ph/0604102v1",
+  "theorem": 19,
+  "description": "Nonprimitive binary dual-containing CSS BCH; generally dense, not qLDPC. Finite root-set arithmetic only, no matrix or distance experiment.",
+  "candidates": [
+    {
+      "n": 341,
+      "m": 10,
+      "designed_delta": 9,
+      "source_lower": 9,
+      "delta_max": 10,
+      "defining_set_size": 40,
+      "predicted_quantum_k": 261,
+      "negative_defining_sets_disjoint": true,
+      "matrix_generated": false,
+      "exact_distance_status": "unconfirmed in reviewed sources, not a global openness claim",
+      "selection_status": "tentative; no batch or solver selected"
+    },
+    {
+      "n": 819,
+      "m": 12,
+      "designed_delta": 11,
+      "source_lower": 11,
+      "delta_max": 12,
+      "defining_set_size": 60,
+      "predicted_quantum_k": 699,
+      "negative_defining_sets_disjoint": true,
+      "matrix_generated": false,
+      "exact_distance_status": "unconfirmed in reviewed sources, not a global openness claim",
+      "selection_status": "tentative; no batch or solver selected"
+    },
+    {
+      "n": 1365,
+      "m": 12,
+      "designed_delta": 17,
+      "source_lower": 17,
+      "delta_max": 21,
+      "defining_set_size": 96,
+      "predicted_quantum_k": 1173,
+      "negative_defining_sets_disjoint": true,
+      "matrix_generated": false,
+      "exact_distance_status": "unconfirmed in reviewed sources, not a global openness claim",
+      "selection_status": "tentative; no batch or solver selected"
+    },
+    {
+      "n": 1365,
+      "m": 12,
+      "designed_delta": 19,
+      "source_lower": 19,
+      "delta_max": 21,
+      "defining_set_size": 108,
+      "predicted_quantum_k": 1149,
+      "negative_defining_sets_disjoint": true,
+      "matrix_generated": false,
+      "exact_distance_status": "unconfirmed in reviewed sources, not a global openness claim",
+      "selection_status": "tentative; no batch or solver selected"
+    }
+  ],
+  "recent_source_screen": [
+    {
+      "source": "https://arxiv.org/html/2604.23594v1",
+      "finding": "Section5 nonprimitive exact family assumes odd prime characteristic; not applicable to these binary choices."
+    },
+    {
+      "source": "https://arxiv.org/html/2607.28741v3",
+      "finding": "Theorem1 primitive counterexample family starts m13 and is binary exact, not an unresolved finite binary target."
+    },
+    {
+      "source": "https://arxiv.org/html/2609.00532v2",
+      "finding": "Recent primitive exact-family closure preprint found; complete theorem intersection review still required."
+    }
+  ],
+  "remaining": [
+    "Review additional primary nonprimitive distance results before freezing candidates.",
+    "Find a suitable known-distance control without duplicate Steane/color-code input.",
+    "Rebuild independently via finite field roots and generator/check-polynomial duality; verify source hypotheses and all peers.",
+    "No source lower may be imported into observed solver output."
+  ]
+}

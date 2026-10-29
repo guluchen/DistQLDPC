@@ -82,7 +82,15 @@ def words(generators):
 
 def classical(n,c,h):
     length=n*c
-    rows=[sum(1 << ((r+e)%length) for e in h) for r in range(length)]
+    def cyclic_rows(size):
+        rows=[]
+        for r in range(size):
+            word=0
+            for e in h:
+                word ^= 1 << ((r+e)%size)
+            rows.append(word)
+        return rows
+    rows=cyclic_rows(length)
     transposed=[sum(((r >> j)&1) << i for i,r in enumerate(rows)) for j in range(length)]
     summaries=[]
     for matrix in (rows,transposed):
@@ -99,7 +107,7 @@ def classical(n,c,h):
                           'distance':min(bin(w).count('1') for w in all_words)})
     # Sum_j a_j is exactly the small circulant. Its rowspace and transpose
     # must exclude every weight-one word (Theorem9 hypothesis, not distance search).
-    small=[sum(1 << ((r+e)%n) for e in h) for r in range(n)]
+    small=cyclic_rows(n)
     smallt=[sum(((r >> j)&1) << i for i,r in enumerate(small)) for j in range(n)]
     if any(contains(basis(m),1 << j) for m in (small,smallt) for j in range(n)):
         raise ValueError('weight-one word in the required classical generator space')

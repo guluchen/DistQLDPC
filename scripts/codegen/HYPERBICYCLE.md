@@ -55,5 +55,11 @@ Its default HGP selection, scientific solver and solver defaults are unchanged.
 The paper's arXiv perpetual distribution license is not reused as a software
 or matrix license. Original scripts and generated matrices are GPL3+;
 no author implementation/matrix or paper text/images are redistributed.
-All cases are untiered on a work branch; Linux gates and unresolved proof jobs
-are tracked in optimization/experiments/GH-205/REPORT.md. GH200/GH202 stay held.
+All cases are untiered on a work branch. Linux run40961747658 passes53units,
+all24byte reproductions and all12numeric smokes. N420/840/1260 both-engine
+global distances8/11/11 have GF2 minimum words. N900/1800/2700 CC14 and MaxSAT
+[9,14] retain provisional new search results and3unexecuted MaxSAT jobs;
+published source900exact14 remains a known control. A general tiny-alias XOR
+regression subsequently raises unit coverage to54 without changing frozen
+matrices or construction evidence. Full report and server package live in
+optimization/experiments/GH-205/. GH200/GH202 stay held.

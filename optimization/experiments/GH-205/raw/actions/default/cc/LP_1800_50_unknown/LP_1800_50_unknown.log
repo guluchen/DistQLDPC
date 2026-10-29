@@ -1,0 +1,64 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/LP_1800_50_unknown_Hx.txt
+c Hz: data/matrices/untiered/LP_1800_50_unknown_Hz.txt
+c Gx: data/matrices/untiered/LP_1800_50_unknown_Gx.txt
+c Gz: data/matrices/untiered/LP_1800_50_unknown_Gz.txt
+c Hx: 900 x 1800, Hz: 900 x 1800, Gx: 50 x 1800, Gz: 50 x 1800, logicals: 100
+c cc: dual map detection: none (ranks Hz 875 Hx 875 [Hz;Gx] 925 [Hx;Gz] 925, 351 candidates, cpu 0.017s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 3 generator(s), 1 qubit orbit(s), group complete, point stabiliser trivial, swap map found, 4 test(s) (0 refuted, 0 undecided), work 248520, cpu 0.008s
+c cc aut: Tanner swap map: verified as XZ-dual map: X half only
+c cc symbreak X: n=1800 candidates=353 verified_generators=14 orbits=1 detect_cpu=0.028s clause=unit
+c cc symbreak X: generator: plain blockshift L=60
+c cc symbreak X: generator: plain 2dshift-a L=60 (2x30)
+c cc symbreak X: generator: plain 2dshift-a L=60 (3x20)
+c cc symbreak X: generator: plain 2dshift-a L=60 (4x15)
+c cc symbreak X: generator: plain 2dshift-a L=60 (5x12)
+c cc symbreak X: generator: plain 2dshift-a L=60 (6x10)
+c cc symbreak X: generator: plain 2dshift-a L=60 (10x6)
+c cc symbreak X: generator: plain 2dshift-a L=60 (12x5)
+c cc symbreak X: generator: plain 2dshift-a L=60 (15x4)
+c cc symbreak X: generator: plain 2dshift-a L=60 (20x3)
+c cc symbreak X: generator: plain 2dshift-a L=60 (30x2)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: generator: plain tanner-aut #3
+c cc symbreak X: orbit reps (size): 0(1800)
+c cc: X half: n 1800, rank H 875, rank [H;G] 925, rank S 875: detectors complete, 50 logical(s)
+c cc: Z half: n 1800, rank H 875, rank [H;G] 925, rank S 875: detectors complete, 50 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'tanner-swap (cc-aut)' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 14 (X 14, Z 14)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 4..4, an even weight present)
+c cc: X half overlap: on (900 stabilizer rows of Hx, weights 8..8, 0 forbidden from the start)
+c cc: X half ub-search: rank H 875, information set 925, triples off, slack 4, li-cap 64, collision stern p 2 l 17 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 3 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 4 EMPTY nodes 8 seeds 1 time 0.000s
+c cc: X half level 5 EMPTY nodes 29 seeds 1 time 0.000s
+c cc: X half level 6 EMPTY nodes 94 seeds 1 time 0.000s
+c cc: X half level 7 EMPTY nodes 235 seeds 1 time 0.000s
+c cc: X half level 8 EMPTY nodes 572 seeds 1 time 0.000s
+c cc: X half level 9 EMPTY nodes 1610 seeds 1 time 0.000s
+c cc: X half level 10 EMPTY nodes 4638 seeds 1 time 0.001s
+c cc: X half level 11 EMPTY nodes 12952 seeds 1 time 0.003s
+c cc: X half level 12 EMPTY nodes 38857 seeds 1 time 0.009s
+c cc: X half level 13 EMPTY nodes 110289 seeds 1 time 0.026s
+c cc: ub-search X: iterations 1, finder time 0.030s, kept 61, nontrivial 23, li-gain 0, improvements 0, rank 875, K 925, ub 14
+c cc: ub-search X collision: rounds 1, colliding pairs 242386 (nontrivial 184747)
+c cc: total nodes X 169287 Z 0, search time X 0.039s Z 0.000s, wall 0.070s
+c cc: d = 14
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/LP_1800_50_unknown_Hx.txt
+c Hz: data/matrices/untiered/LP_1800_50_unknown_Hz.txt
+c Gx: data/matrices/untiered/LP_1800_50_unknown_Gx.txt
+c Gz: data/matrices/untiered/LP_1800_50_unknown_Gz.txt
+c Hx: 900 x 1800, Hz: 900 x 1800, Gx: 50 x 1800, Gz: 50 x 1800, logicals: 100
+c d_lb: 14
+c d_ub: 14
+c d  : 14
+o 14
