@@ -1,0 +1,367 @@
+[
+  {
+    "stem": "HGP_356_36_unknown",
+    "individually_published_distance": null,
+    "algebraic_upper_claim": 16,
+    "derived_quantum_d": 4,
+    "classical_proof": {
+      "n": 16,
+      "rank": 10,
+      "dimension": 6,
+      "enumerated_codewords": 64,
+      "weight_enumerator": {
+        "0": 1,
+        "4": 3,
+        "6": 8,
+        "8": 40,
+        "10": 8,
+        "12": 3,
+        "16": 1
+      },
+      "distance": 4,
+      "support": [
+        2,
+        3,
+        4,
+        7
+      ]
+    },
+    "engines": {
+      "maxsat": {
+        "lb": 4,
+        "ub": 4,
+        "status": "SOLVED"
+      },
+      "cc": {
+        "lb": 4,
+        "ub": 4,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-classical-product",
+        "half": "Z",
+        "support": [
+          32,
+          48,
+          64,
+          112
+        ],
+        "weight": 4
+      },
+      {
+        "engine": "independent-classical-product",
+        "half": "X",
+        "support": [
+          2,
+          3,
+          4,
+          7
+        ],
+        "weight": 4
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          34,
+          35,
+          36,
+          39
+        ],
+        "weight": 4
+      }
+    ],
+    "scientific_status": "CROSS_CHECKED_CLASSICAL_PRODUCT_AND_TWO_ENGINES",
+    "numeric_smoke_gate": "PASS",
+    "source_head": "3760adceb0a3938b3091f8053923b294ecceb251",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "HGP_832_64_unknown",
+    "individually_published_distance": null,
+    "algebraic_upper_claim": 24,
+    "derived_quantum_d": 4,
+    "classical_proof": {
+      "n": 24,
+      "rank": 16,
+      "dimension": 8,
+      "enumerated_codewords": 256,
+      "weight_enumerator": {
+        "0": 1,
+        "4": 1,
+        "6": 2,
+        "8": 21,
+        "10": 54,
+        "12": 98,
+        "14": 54,
+        "16": 21,
+        "18": 2,
+        "20": 1,
+        "24": 1
+      },
+      "distance": 4,
+      "support": [
+        0,
+        3,
+        4,
+        5
+      ]
+    },
+    "engines": {
+      "maxsat": {
+        "lb": 4,
+        "ub": 4,
+        "status": "SOLVED"
+      },
+      "cc": {
+        "lb": 4,
+        "ub": 4,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-classical-product",
+        "half": "Z",
+        "support": [
+          0,
+          72,
+          96,
+          120
+        ],
+        "weight": 4
+      },
+      {
+        "engine": "independent-classical-product",
+        "half": "X",
+        "support": [
+          0,
+          3,
+          4,
+          5
+        ],
+        "weight": 4
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          192,
+          195,
+          196,
+          197
+        ],
+        "weight": 4
+      }
+    ],
+    "scientific_status": "CROSS_CHECKED_CLASSICAL_PRODUCT_AND_TWO_ENGINES",
+    "numeric_smoke_gate": "PASS",
+    "source_head": "3760adceb0a3938b3091f8053923b294ecceb251",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "HGP_1508_100_unknown",
+    "individually_published_distance": null,
+    "algebraic_upper_claim": 32,
+    "derived_quantum_d": 6,
+    "classical_proof": {
+      "n": 32,
+      "rank": 22,
+      "dimension": 10,
+      "enumerated_codewords": 1024,
+      "weight_enumerator": {
+        "0": 1,
+        "6": 1,
+        "8": 12,
+        "10": 32,
+        "12": 86,
+        "14": 239,
+        "16": 282,
+        "18": 239,
+        "20": 86,
+        "22": 32,
+        "24": 12,
+        "26": 1,
+        "32": 1
+      },
+      "distance": 6,
+      "support": [
+        0,
+        3,
+        8,
+        11,
+        21,
+        22
+      ]
+    },
+    "engines": {
+      "maxsat": {
+        "lb": 5,
+        "ub": 6,
+        "status": "BOUNDED"
+      },
+      "cc": {
+        "lb": 6,
+        "ub": 6,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-classical-product",
+        "half": "Z",
+        "support": [
+          0,
+          96,
+          256,
+          352,
+          672,
+          704
+        ],
+        "weight": 6
+      },
+      {
+        "engine": "independent-classical-product",
+        "half": "X",
+        "support": [
+          0,
+          3,
+          8,
+          11,
+          21,
+          22
+        ],
+        "weight": 6
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          704,
+          707,
+          712,
+          715,
+          725,
+          726
+        ],
+        "weight": 6
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          704,
+          707,
+          712,
+          715,
+          725,
+          726
+        ],
+        "weight": 6
+      }
+    ],
+    "scientific_status": "CROSS_CHECKED_CLASSICAL_PRODUCT_AND_ONE_ENGINE",
+    "numeric_smoke_gate": "PASS",
+    "source_head": "3760adceb0a3938b3091f8053923b294ecceb251",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "HGP_2384_144_unknown",
+    "individually_published_distance": null,
+    "algebraic_upper_claim": 40,
+    "derived_quantum_d": 6,
+    "classical_proof": {
+      "n": 40,
+      "rank": 28,
+      "dimension": 12,
+      "enumerated_codewords": 4096,
+      "weight_enumerator": {
+        "0": 1,
+        "6": 1,
+        "8": 6,
+        "10": 15,
+        "12": 35,
+        "14": 157,
+        "16": 389,
+        "18": 851,
+        "20": 1186,
+        "22": 851,
+        "24": 389,
+        "26": 157,
+        "28": 35,
+        "30": 15,
+        "32": 6,
+        "34": 1,
+        "40": 1
+      },
+      "distance": 6,
+      "support": [
+        0,
+        2,
+        8,
+        10,
+        18,
+        19
+      ]
+    },
+    "engines": {
+      "maxsat": {
+        "lb": 5,
+        "ub": 6,
+        "status": "BOUNDED"
+      },
+      "cc": {
+        "lb": 6,
+        "ub": 6,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-classical-product",
+        "half": "Z",
+        "support": [
+          0,
+          80,
+          320,
+          400,
+          720,
+          760
+        ],
+        "weight": 6
+      },
+      {
+        "engine": "independent-classical-product",
+        "half": "X",
+        "support": [
+          0,
+          2,
+          8,
+          10,
+          18,
+          19
+        ],
+        "weight": 6
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          1200,
+          1202,
+          1208,
+          1210,
+          1218,
+          1219
+        ],
+        "weight": 6
+      }
+    ],
+    "scientific_status": "CROSS_CHECKED_CLASSICAL_PRODUCT_AND_ONE_ENGINE",
+    "numeric_smoke_gate": "PASS",
+    "source_head": "3760adceb0a3938b3091f8053923b294ecceb251",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  }
+]

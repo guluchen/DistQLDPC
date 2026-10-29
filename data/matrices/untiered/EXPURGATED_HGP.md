@@ -104,3 +104,18 @@ enumeration refuses Mac execution, apart from <=8-bit tiny units. Both quantum
 engines get separate serial60s checks and actual words are verified in GF(2).
 All16 new files must reproduce byte for byte. Results, limits, failures and
 any unfinished proof jobs belong in GH-174, not source-distance claims.
+
+## Verified finite results
+
+Independent complete classical enumeration/HGP Theorem1 and CC agree on
+exact distances4,4,6,6. MaxSAT also proves4,4 on the first two; its last two
+60s outputs remain[5,6]. All actual engine numeric fields are preserved.
+All numeric smoke gates pass; each exact distance has independent proof
+routes and actual quantum words verified in GF(2). No distance remains a
+one-implementation-only PLAUSIBLE result. Two optional unexecuted MaxSAT
+completion jobs are supplied, but distance certification itself is complete.
+
+This is a modest finite distance step, not an asymptotic scaling experiment
+or proof for a deterministic expander-factor sequence. No sample was changed
+after seeing the exact distances. The explicit certified-expander-family
+coverage gap remains open. All stems remain unknown and work-branch only.

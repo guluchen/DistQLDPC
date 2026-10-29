@@ -1,0 +1,270 @@
+{
+  "source_head": "3760adceb0a3938b3091f8053923b294ecceb251",
+  "method": "original independent classical exhaustive search and published HGP mathematics",
+  "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "cpu": 0,
+  "address_space_limit": 4294967296,
+  "cpu_limit": 60,
+  "wall_backstop": 90,
+  "script_sha256": "c5b8b394206cbeb3cd299ad6c4d06bea9221742d1313ccdca80a7c5f6fb40e67",
+  "cases_sha256": "86b63df79bccffa2fa5b9e400cf97c28d503e4a10a6dd79bd47f2a132ab031b9",
+  "results": [
+    {
+      "stem": "HGP_356_36_unknown",
+      "classical_proof": {
+        "n": 16,
+        "rank": 10,
+        "dimension": 6,
+        "enumerated_codewords": 64,
+        "weight_enumerator": {
+          "0": 1,
+          "4": 3,
+          "6": 8,
+          "8": 40,
+          "10": 8,
+          "12": 3,
+          "16": 1
+        },
+        "distance": 4,
+        "support": [
+          2,
+          3,
+          4,
+          7
+        ]
+      },
+      "derived_quantum_d": 4,
+      "structural_lower_bound": 4,
+      "method": "exhaustive classical kernel + full-row-rank same-factor HGP Theorem1",
+      "independently_checked_quantum_words": [
+        {
+          "half": "Z",
+          "support": [
+            32,
+            48,
+            64,
+            112
+          ],
+          "weight": 4
+        },
+        {
+          "half": "X",
+          "support": [
+            2,
+            3,
+            4,
+            7
+          ],
+          "weight": 4
+        }
+      ],
+      "input_sha256": {
+        "Hx": "82310b9eb23e14128a9825703c9f2045f7f5a36640ea4c51d6e23b0c5d409134",
+        "Hz": "e77a99604c9493f778a3a40bf5b11b11c7d0eba23cdb48c7df811836a2d1f680",
+        "Gx": "cac39a0794bf2f2088be9f737d213f80d8e9a447823be72d8f2002f115c08556",
+        "Gz": "fd4ce8a5d70427141881358f763dfad656698e79f2d52628766294c4a2efd997"
+      }
+    },
+    {
+      "stem": "HGP_832_64_unknown",
+      "classical_proof": {
+        "n": 24,
+        "rank": 16,
+        "dimension": 8,
+        "enumerated_codewords": 256,
+        "weight_enumerator": {
+          "0": 1,
+          "4": 1,
+          "6": 2,
+          "8": 21,
+          "10": 54,
+          "12": 98,
+          "14": 54,
+          "16": 21,
+          "18": 2,
+          "20": 1,
+          "24": 1
+        },
+        "distance": 4,
+        "support": [
+          0,
+          3,
+          4,
+          5
+        ]
+      },
+      "derived_quantum_d": 4,
+      "structural_lower_bound": 4,
+      "method": "exhaustive classical kernel + full-row-rank same-factor HGP Theorem1",
+      "independently_checked_quantum_words": [
+        {
+          "half": "Z",
+          "support": [
+            0,
+            72,
+            96,
+            120
+          ],
+          "weight": 4
+        },
+        {
+          "half": "X",
+          "support": [
+            0,
+            3,
+            4,
+            5
+          ],
+          "weight": 4
+        }
+      ],
+      "input_sha256": {
+        "Hx": "348fada046ee248f1f7e51718d69ff802f6e954767c4fa30d68db85626a774eb",
+        "Hz": "136b2dfbed1b75254793f6f9a5db8aca3ed2b5f6901eb4a1815499a0bca7285f",
+        "Gx": "9b9ccf48d1ca19194eca78b72d90302cce0abb8863e368716e3d89747bacfc14",
+        "Gz": "107abc84d3a047243a3174c8d889d9d4e49269b3400c26cc64614fb4095fde88"
+      }
+    },
+    {
+      "stem": "HGP_1508_100_unknown",
+      "classical_proof": {
+        "n": 32,
+        "rank": 22,
+        "dimension": 10,
+        "enumerated_codewords": 1024,
+        "weight_enumerator": {
+          "0": 1,
+          "6": 1,
+          "8": 12,
+          "10": 32,
+          "12": 86,
+          "14": 239,
+          "16": 282,
+          "18": 239,
+          "20": 86,
+          "22": 32,
+          "24": 12,
+          "26": 1,
+          "32": 1
+        },
+        "distance": 6,
+        "support": [
+          0,
+          3,
+          8,
+          11,
+          21,
+          22
+        ]
+      },
+      "derived_quantum_d": 6,
+      "structural_lower_bound": 4,
+      "method": "exhaustive classical kernel + full-row-rank same-factor HGP Theorem1",
+      "independently_checked_quantum_words": [
+        {
+          "half": "Z",
+          "support": [
+            0,
+            96,
+            256,
+            352,
+            672,
+            704
+          ],
+          "weight": 6
+        },
+        {
+          "half": "X",
+          "support": [
+            0,
+            3,
+            8,
+            11,
+            21,
+            22
+          ],
+          "weight": 6
+        }
+      ],
+      "input_sha256": {
+        "Hx": "138cf7f6849ae649d275a323e41c974d86eb98472ffe696dc9bc8f105387a795",
+        "Hz": "ba5ee46ffa976e1539c54df87e6fc9e1a51d13a2d700eaddfba2d88db83e850f",
+        "Gx": "ffcc4ae82a07d6d550a90468d69503f25623bf30144149554dfd5252e3f5592a",
+        "Gz": "a7e30955a5c1ad8e5079de788ab1f43b655b20324f9d3913bdba7016b330156a"
+      }
+    },
+    {
+      "stem": "HGP_2384_144_unknown",
+      "classical_proof": {
+        "n": 40,
+        "rank": 28,
+        "dimension": 12,
+        "enumerated_codewords": 4096,
+        "weight_enumerator": {
+          "0": 1,
+          "6": 1,
+          "8": 6,
+          "10": 15,
+          "12": 35,
+          "14": 157,
+          "16": 389,
+          "18": 851,
+          "20": 1186,
+          "22": 851,
+          "24": 389,
+          "26": 157,
+          "28": 35,
+          "30": 15,
+          "32": 6,
+          "34": 1,
+          "40": 1
+        },
+        "distance": 6,
+        "support": [
+          0,
+          2,
+          8,
+          10,
+          18,
+          19
+        ]
+      },
+      "derived_quantum_d": 6,
+      "structural_lower_bound": 4,
+      "method": "exhaustive classical kernel + full-row-rank same-factor HGP Theorem1",
+      "independently_checked_quantum_words": [
+        {
+          "half": "Z",
+          "support": [
+            0,
+            80,
+            320,
+            400,
+            720,
+            760
+          ],
+          "weight": 6
+        },
+        {
+          "half": "X",
+          "support": [
+            0,
+            2,
+            8,
+            10,
+            18,
+            19
+          ],
+          "weight": 6
+        }
+      ],
+      "input_sha256": {
+        "Hx": "4d88191bf43f27a1bca68ad345b75fbd038c27ce0f626576266b588851a11570",
+        "Hz": "eff475c7be6628eacbccaadd7b07494916adb1e13f01c2c37aa4dc5e08ff37f1",
+        "Gx": "23264c82ebf5d4200b2e0806f76515666fef4b0ddb0b71227f7caf4a9765c213",
+        "Gz": "d4d166771bc9cf57c6efca843124a81a9511eaa5753edded831a466e3d5885b3"
+      }
+    }
+  ]
+}

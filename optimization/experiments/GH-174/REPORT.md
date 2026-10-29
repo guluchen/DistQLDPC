@@ -2,7 +2,8 @@
 
 Date: 2026-10-29. [Issue174](https://github.com/guluchen/DistQLDPC/issues/174).
 Base main: 6083e662c621f3b66defd434cfae31a028d483c4.
-Branch: codex/expurgated-hgp-library. Local algebra PASS; Linux pending.
+Branch: codex/expurgated-hgp-library. Local and Linux validation PASS; exact distances independently
+certified as4/4/6/6. Two optional MaxSAT-only reproduction jobs are unexecuted.
 
 Selected proposal: first distinct-column realization of a clearly specified
 conditional Gallager(3,4) ensemble. Deferred: periodic4D homological CSS and
@@ -52,3 +53,81 @@ record that result without changing selection or claiming distance growth.
 Scientific semantics changed: no.
 PI action required: main integration and any dedicated-server allocation.
 No PR/main/gh-pages push, solver/default/Makefile/tier/QDistSAT changes.
+
+## Linux results and independent certification
+
+Validated source:3760adceb0a3938b3091f8053923b294ecceb251;
+data commit:dd8ee91da6fdb1bba98411fec5d2a0ef430835aa;
+source tree:20e86a8b3e4aa61bba840556728b590595872020.
+[Library run40870513980](https://github.com/guluchen/DistQLDPC/actions/runs/40870513980),
+job123436049124 SUCCESS; source ordinaryCI40870513883, job123436048790 SUCCESS.
+All44 tests,28 untiered/79 inventory cases, independent construction and16
+new-file comparisons passed. Complete classical certificates enumerate only
+64/256/1024/4096 words, within the single bounded one-core4GiB/60sCPU/90swall
+classical check. No Mac source-distance search or external solver was used.
+
+| Stem | Independently derived d | MaxSAT lb/ub | CC lb/ub | Numeric gate |
+|---|---:|---|---|---|
+| HGP_356_36_unknown | 4 | 4/4 SOLVED | 4/4 SOLVED | PASS |
+| HGP_832_64_unknown | 4 | 4/4 SOLVED | 4/4 SOLVED | PASS |
+| HGP_1508_100_unknown | 6 | 5/6 | 6/6 SOLVED | PASS |
+| HGP_2384_144_unknown | 6 | 5/6 | 6/6 SOLVED | PASS |
+
+All four finite exact distances have independent complete classical-kernel/
+HGP-theorem proofs plus completed CC searches and physical quantum words
+verified in GF(2). Thus they satisfy independent implementation/search and
+witness checks; none is an unconfirmed one-route PLAUSIBLE result. MaxSAT
+also completes the first two. For the last two, the raw weaker[5,6] output
+remains unchanged, despite independent certification of exact6. The common
+two-C++-engine lower bounds are4/4/5/5; certified independent lower bounds
+are4/4/6/6, explicitly distinguished in raw/bounds-review.json. No mathematical
+result is inserted into a CLI field, and no computed d is called individually
+published. No scientific contradiction or unfinished distance certification
+remains. No solver pruning/bound rule was introduced; the structural proof
+and standalone input certificates are documented in EXPURGATED_HGP.md.
+
+Verdict: four validated conditional-ensemble HGP representatives, with a
+modest finite step from d4 to6. This addresses the trivial-column-collision
+problem without a retrospective seed/size change. It is not a timing/scaling
+experiment, asymptotic guarantee, or explicit deterministic expander-factor
+family. The latter coverage gap remains open in the ledger. GH-173 negative
+records/controls remain untouched. No extra sample was generated after seeing
+these results, and the claim is not enlarged beyond the observed finite cases.
+
+Binary SHA256:68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+The full534838-character job log,8 raw quantum runs, complete classical weight
+enumerators/minimum supports, argv/environment/source/input/script/binary
+identities, CSV/DONE receipts and audit are versioned in raw/actions/default/.
+Local audit replay from retained artifacts is byte-identical. Every actual
+printed support and independent product word is GF(2)-verified. Generator,
+solver, matrices, tests and workflow are unchanged after the validated source;
+subsequent changes retain metadata and the separate optional server package.
+All prior24 parsed manifest rows and96 matrix files remain unchanged.
+
+## Optional internal-engine completion package
+
+Distances are already independently certified. runner/jobs.jsonl merely
+provides two optional default-seed MaxSAT-only jobs for N1508/2384 to finish
+that C++ engine's own proof. No core is allocated or process launched. Limits
+6h CPU plus600s wall backstop per job, serial on one explicitly PI-assigned
+free yfclab2 core,4GiB/null stdin. Aggregate12h CPU/12h20m wall are configured
+limits, not a forecast. No longer/repeated CI diagnostics substitute for this.
+
+Runner defaults to dry-run, requires clean checkout/hostname/allocation/free
+core, validates cases and actual input hashes against the retained independent
+certificate, freezes the jobs and records source/binary/input/proof hashes.
+It checks exact6 from the independent proof, not the original larger algebraic
+upper claim. Dry-run retained in raw/server-dryrun.json; details in runner/README.md.
+It never renames, assigns tiers, mirrors QDistSAT or merges.
+
+Replay, without new search:
+
+```sh
+python3 scripts/codegen/audit_expurgated_hgp_smoke.py --maxsat optimization/experiments/GH-174/raw/actions/default/expurgated-maxsat --cc optimization/experiments/GH-174/raw/actions/default/expurgated-cc --classical optimization/experiments/GH-174/raw/actions/default/classical.json --out /tmp/expurgated-audit.json
+python3 scripts/codegen/validate_expurgated_hgp.py --output /tmp/expurgated-construction.json
+python3 scripts/codegen/validate_css.py --output /tmp/expurgated-inventory.json
+```
+
+Scientific semantics changed: no. PI action required: main integration and
+any optional server allocation. No PR/main/gh-pages push. The broader library
+goal remains active; next independent work targets periodic4D homological CSS.
