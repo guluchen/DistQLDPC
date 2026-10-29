@@ -60,10 +60,22 @@ python3 scripts/library_inventory.py --check
 What changed: deterministic pinned-input/metadata/queue/quarantine index,
 reproducer, tests and readable branch-package links. New scientific inputs:0.
 Validation performed:19units/real main inventory; full39ref local snapshot
-byte replay and preservation check. Ordinary CI to be recorded on issue201.
+byte replay and preservation check. Linux contract and ordinary CI terminal SUCCESS, exact scope below.
 Results:192stored stems from1068memberships;5held candidates excluded.
 Unresolved:GH200PI source decision, original proof/numeric/server/equivalence/
 integration holds and remaining genuine construction gaps. Goal ACTIVE.
 Scientific semantics changed:no.
 PI action required:no for this metadata engineering;yes for GH200source
 handling/integration/resources. No PR/main/QDistSAT/solver changes.
+
+## Terminal Linux contract validation
+
+Source/workflow38954311a4d830648c54ff0d439e4800d071c1b0,
+tree3c4f59a7c8a422c62e8bb79513553d988f7f7bd8, data6aa4c771461a03984ee6e6349fd37b820857cb1a.
+Linux metadata contracts40954290453/job123730222023 SUCCESS; full raw job
+log retained in raw/linux-contracts-job-123730222023.log. Ordinary unchanged
+build/base-smoke CI40954290324/job123730220643 SUCCESS. Linux19tests cover
+fixtures and actual pinned-main object metadata only; full39ref snapshot
+replay was local and is not misrepresented as a Linux algebra/scientific
+validation. No matrix generation or quantum-distance solver test was added.
+No matrix/manifest/solver/build/main/source-hold change. Goal remains ACTIVE.
