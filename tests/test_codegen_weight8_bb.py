@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Independent incidence, short-word oracle, mutation and reproduction tests."""
 from itertools import combinations
+import hashlib
 import json
 from pathlib import Path
 import random
@@ -18,6 +19,30 @@ import audit_exact_smoke as audit
 
 
 class Weight8Tests(unittest.TestCase):
+    def test_two_engine_audit_accepts_one_shared_verified_witness(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);mat=root/'matrices';mat.mkdir();stem='BB_3_1_unknown'
+            for kind,text in (('Hx','1 1 0\n'),('Hz','1 1 0\n'),('Gx','0 0 1\n'),('Gz','0 0 1\n')):
+                (mat/f'{stem}_{kind}.txt').write_text(text)
+            hashes={kind:hashlib.sha256((mat/f'{stem}_{kind}.txt').read_bytes()).hexdigest()
+                    for kind in ('Hx','Hz','Gx','Gz')}
+            for engine in ('maxsat','cc'):
+                d=root/engine;d.mkdir()
+                raw=('c witness X (ub-pre): 2\n' if engine=='maxsat' else '')+'c d_lb: 1\nc d_ub: 1\no 1\n'
+                (d/f'{stem}.log').write_text(raw)
+                (d/f'{stem}.json').write_text(json.dumps(dict(lb=1,ub=1,status='SOLVED',
+                    cmd=['-engine=cc'] if engine=='cc' else [],input_sha256=hashes,
+                    source_head='fixture-source',binary_sha256='fixture-binary')))
+            (root/'cases.json').write_text(json.dumps([dict(n=3,k=1,d=1)]))
+            argv=[sys.executable,str(ROOT/'scripts/codegen/audit_exact_smoke.py'),
+                  '--maxsat',str(root/'maxsat'),'--cc',str(root/'cc'),'--matrices',str(mat),
+                  '--cases',str(root/'cases.json'),'--out',str(root/'audit.json')]
+            subprocess.run(argv,check=True,capture_output=True)
+            self.assertEqual(json.loads((root/'audit.json').read_text())[0]['verification'],
+                             'CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS')
+            p=root/'maxsat'/f'{stem}.log';p.write_text('c d_lb: 1\nc d_ub: 1\no 1\n')
+            self.assertNotEqual(subprocess.run(argv,capture_output=True).returncode,0)
+
     def test_witness_audit_rejects_stabilizer_and_bad_syndrome(self):
         matrices=[[3],[],[3],[1]]
         audit.verify_witness(2,matrices,'X',[0])

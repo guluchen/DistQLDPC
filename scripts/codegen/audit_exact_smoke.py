@@ -49,14 +49,17 @@ def main():
             answers=list(map(int,re.findall(r'^o (\d+)\s*$',raw,re.M)))
             if result['status']=='SOLVED':
                 if not answers or set(answers)!={case['d']}:raise ValueError('exact answer mismatch')
-                if not any(w['engine']==engine and w['weight']==case['d'] for w in witnesses):
-                    raise ValueError('exact result lacks minimum-weight witness')
                 exacts.append(engine)
             engines[engine]=result
         if len(sources)!=1 or len(binaries)!=1:raise ValueError('source/binary mismatch between engines')
         lower=max([r['lb'] for r in engines.values() if r['lb'] is not None]+[1])
         upper=min([r['ub'] for r in engines.values() if r['ub'] is not None]+[w['weight'] for w in witnesses]+[n])
         if lower>upper:raise ValueError('contradictory engine intervals')
+        # A checked logical of weight d is an engine-independent upper bound.
+        # Each engine independently certifies its lower bound on identical inputs;
+        # the current CLI need not re-emit a witness found by exact CC search.
+        if exacts and not any(w['weight']==case['d'] for w in witnesses):
+            raise ValueError('exact result lacks a GF(2)-verified minimum-weight witness')
         results.append(dict(stem=stem,published_exact_d=case['d'],engines=engines,witnesses=witnesses,
                             verification='CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS' if len(exacts)==2 else 'INCOMPLETE_INDEPENDENT_REPRODUCTION',
                             source_head=next(iter(sources)),binary_sha256=next(iter(binaries))))

@@ -57,10 +57,10 @@ branch, taking its untiered inventory to 30. Counts measure files, not families.
 | Nonabelian balanced / lifted products and ZSZ-LP | Missing nonabelian structure; cyclic GH-160 does not complete it | Hong [2607.27644v1](https://arxiv.org/abs/2607.27644v1) |
 | Moderate-blocklength Quantum Tanner from new finite groups | Missing explicit new-group examples; retain heuristic d as upper estimates | Mian et al. [2608.12509](https://arxiv.org/abs/2608.12509); resolve group/local-code provenance |
 | Pair-partition / group-valued constructions | Missing; check overlap with LP/BB before adding | Okada-Kasai [2607.14091](https://arxiv.org/abs/2607.14091); Lee group-valued paper/source to resolve |
-| BB from covering graphs | Missing provenance/cover structure specialization | Symons-Rajput-Browne 2025: exact paper and cover parameters to resolve |
+| BB from covering graphs | Missing provenance/cover structure specialization | Symons-Rajput-Browne [2511.13560](https://arxiv.org/abs/2511.13560): cover parameters to resolve |
 | LLM/evolution-discovered BB | Missing discovery-provenance targets, not new mathematical families | Cruz-Benito et al. [2610.06623](https://arxiv.org/abs/2610.06623); further evolution source to resolve |
-| Homological products / higher-dimensional homological CSS | Missing explicit practical instances; investigate before claiming mainstream coverage complete | [1401.3916](https://arxiv.org/abs/1401.3916), source/size ladder to verify |
-| Fiber-bundle and asymptotically good qLDPC constructions | Research gap: resolve explicit reproducible practical finite instances; do not replace with a cyclic toy and mark complete | Primary construction/finite parameter availability still to investigate |
+| Homological products / higher-dimensional homological CSS | Missing explicit practical instances; investigate before claiming mainstream coverage complete | [1311.0885](https://arxiv.org/abs/1311.0885), source/size ladder to verify |
+| Fiber-bundle and asymptotically good qLDPC constructions | Research gap: resolve explicit reproducible practical finite instances; do not replace with a cyclic toy and mark complete | Fiber bundles [2009.03921](https://arxiv.org/abs/2009.03921); good-code finite parameter availability still to investigate |
 
 Research-target links do not imply parameter extraction or license review has
 passed. The broad literature backlog intentionally remains visible, including

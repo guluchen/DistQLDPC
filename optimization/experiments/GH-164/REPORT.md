@@ -48,7 +48,7 @@ search is not claimed.
 - `python3 scripts/codegen/validate_css.py --output data/matrices/untiered/validation.json`
 - `python3 scripts/codegen/validate_weight8_bb.py --output optimization/experiments/GH-164/raw/construction.json`
 - `python3 tests/test_codegen_{weight8_bb,twisted_torus,color666,hgp,cycle}.py`
-  (execute each command separately; 9+9+10+8+7=43 tests).
+  (execute each command separately; 10+9+10+8+7=44 tests).
 - All 24 regenerated matrix files byte-identical; `git diff --check` passes.
 
 Evidence in raw/: test outputs, algebra inventory (30 untiered, 81 total on
@@ -86,9 +86,15 @@ belongs in a reproducible dedicated-server package, never a longer CI sweep.
 
 What changed: coverage ledger, six inputs, original generators/validators,
 manifest/provenance, tests and bounded Linux smoke/audit workflow.
-Validation performed: local algebra, equivalence proof, 43 units, regeneration.
+Validation performed: local algebra, equivalence proof, 44 units, regeneration.
 Results: local checks pass; solver evidence pending.
 Unresolved issues: Linux smoke pending; main integration requires PI approval;
 continuous construction-coverage goal remains incomplete.
 Scientific semantics changed: no.
 PI action required: no for continued work; yes before main integration.
+
+## First Linux execution and audit repair
+
+Source 11f776e1a0aeab005e614d9f71c1ef8b40fdff8a, tree e35bbe82abaeac7d13d37b1a94929fdf983015f7. Library Actions run 40838015242, job 123327302617. All twelve engine solves matched the six literature distances: 8,10,10,12,9,10. Build, units, algebra, equivalence and regeneration passed. Audit step failed because it unnecessarily required each engine to emit its own minimum witness; CC did not emit one for BB_144_10 although MaxSAT emitted a weight-12 Z logical. No engine/claim disagreement. Raw unmodified job and all twelve logs/identities are durably retained in raw/actions/attempt1/.
+
+The corrected audit validates all actual witnesses and requires at least one minimum-weight GF(2)-verified logical on the common hashed input, together with both engines independently proving the matching lower bound. One verified word is an engine-independent upper bound; requiring a second printed copy is unnecessary. The replay passes all six cases. A fixture regression test accepts one shared verified witness and rejects the case with neither engine supplying a witness. Full fixed-workflow recheck follows.
