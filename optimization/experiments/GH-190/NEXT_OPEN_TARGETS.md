@@ -11,14 +11,16 @@ Retain frozen easy/poor cases; do not replace them after observing results.
 Panteleev–Kalachev, *Degenerate Quantum LDPC Codes With Good Finite Length
 Performance*, [1904.02703v3](https://arxiv.org/html/1904.02703v3),
 Quantum5,585(2021), DOI10.22331/q-2021-11-22-585, CC BY4.0.
-AppendixA/Table1 report GB A1 [[254,28,14<=d<=20]] and A5
+AppendixB sectionA/Table1 report GB A1 [[254,28,14<=d<=20]] and A5
 [[180,10,15<=d<=18]]. A1 has circulant length127 and supports
 a=[0,15,20,28,66], b=[0,58,59,100,121] in the main-body example.
-A5 length90 coefficients still need extraction from the primary PDF/TeX;
-HTML loses its displayed equation. No guessed polynomial or author code.
+A5 length90 has a=[0,28,80,89], b=[0,2,21,25], extracted from
+the primary PDF p20 (zero-based19); HTML loses the displayed equation.
+The PDF places all code lists in AppendixB; A/B are subsections, not
+appendix letters. No guessed polynomial or author code.
 Published intervals are source claims, not our independent verification.
 
-The same source AppendixB supplies GHP [[882,24,18<=d<=24]] and
+The same source AppendixB sectionB supplies GHP [[882,24,18<=d<=24]] and
 [[1270,28,16<=d<=46]]; explicit matrix data still require primary-equation
 extraction. A later separate GHP/LP-specialization batch is possible.
 
