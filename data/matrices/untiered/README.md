@@ -134,4 +134,4 @@ modify the manifest, assign tiers or mirror QDistSAT.
 GH-171 adds four cyclic divisor-driven GB references (n46/66/90/170) on
 its work branch. See [DIVISOR_GB.md](DIVISOR_GB.md) for parameters, source
 CC BY4.0 attribution, original coordinate construction and independent checks.
-Published distances and incomplete internal verification are kept separate.
+Both internal engines reproduce all four published distances8/7/10/8, with actual words independently GF(2)-verified. No tier assignment or main integration is implied.

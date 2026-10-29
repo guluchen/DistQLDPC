@@ -43,7 +43,7 @@ GH-167 has six pair-partition CPM inputs on its separate work branch. GH-168 has
 | Construction class / specialization | Coverage and remaining work | Evidence |
 |---|---|---|
 | Bivariate bicycle (BB), ordinary weight-6 | Existing tiered family | `NOTICE` section 5, tier0..tier5 |
-| Generalized bicycle (GB), cyclic two-block | Existing tiered family; GH-171 adds four fixed divisor-driven cyclic examples n46/66/90/170, independent algebra/source reconstruction complete, Linux validation pending | `NOTICE` section 5; Lu et al. [2608.09115](https://arxiv.org/abs/2608.09115) supplies these fixed cases (v3) |
+| Generalized bicycle (GB), cyclic two-block | Existing tiered family; GH-171 adds four fixed divisor-driven cyclic examples n46/66/90/170, independent source/algebra/logical/duplicate checks and all numeric Linux smoke gates pass; both engines reproduce exact8/7/10/8 with GF(2) words; separate work branch only | `NOTICE` section 5; Lu et al. [2608.09115](https://arxiv.org/abs/2608.09115) supplies these fixed cases (v3) |
 | Lifted products (LP), existing cyclic lifts | Existing tiered family; not a substitute for nonabelian group examples | `NOTICE` section 5 |
 | Quantum Tanner codes | Existing TN family; must not describe it as absent | `NOTICE` section 5 |
 | HGP, repetition factors / planar surface specialization | Six inputs n=13..1105 on main; largest default smoke lacks numeric bounds, supplemental [9,26] | GH-153, `untiered/README.md` |
