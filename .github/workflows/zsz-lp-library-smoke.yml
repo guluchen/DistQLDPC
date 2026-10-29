@@ -1,0 +1,73 @@
+name: Nonabelian ZSZ-LP library smoke
+
+on:
+  push:
+    branches: [codex/zsz-lp-library]
+    paths:
+      - '.github/workflows/zsz-lp-library-smoke.yml'
+      - 'scripts/codegen/zsz_lp*'
+      - 'scripts/codegen/validate_zsz_lp.py'
+      - 'scripts/codegen/audit_zsz_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_zsz_lp.py'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units, independent algebra and permutation reconstruction
+        run: |
+          python3 tests/test_codegen_zsz_lp.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/zsz-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/zsz-validation.json
+          python3 scripts/codegen/validate_zsz_lp.py --output /tmp/zsz-construction.json
+          cmp optimization/experiments/GH-166/raw/construction.json /tmp/zsz-construction.json
+      - name: Byte-identical regeneration
+        run: |
+          python3 scripts/codegen/zsz_lp.py --all --out /tmp/zsz-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/zsz-rebuilt').glob('*.txt'));assert len(files)==24
+          for p in files:assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: all 24 nonabelian ZSZ-LP matrices reproduced')
+          PY
+      - name: Six default MaxSAT 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family LP --verbose --out /tmp/zsz-maxsat
+      - name: Six independent CC 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family LP --engine cc --verbose --out /tmp/zsz-cc
+      - name: Audit actual witnesses, claims, source and binary identity
+        run: python3 scripts/codegen/audit_zsz_smoke.py --maxsat /tmp/zsz-maxsat --cc /tmp/zsz-cc --out /tmp/zsz-audit.json
+      - name: Retain raw evidence on failure too
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('zsz-maxsat','zsz-cc'):
+              root=Path('/tmp')/name
+              print('GH166_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          p=Path('/tmp/zsz-audit.json')
+          if p.exists():print('GH166_AUDIT_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh166-zsz-lp-smoke
+          path: |
+            /tmp/zsz-maxsat/
+            /tmp/zsz-cc/
+            /tmp/zsz-audit.json
+          if-no-files-found: warn
+          retention-days: 14
