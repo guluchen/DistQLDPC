@@ -1,0 +1,87 @@
+name: Periodic 4D toric library smoke
+
+on:
+  push:
+    branches: [codex/toric4d-library]
+    paths:
+      - '.github/workflows/toric4d-library-smoke.yml'
+      - 'scripts/codegen/toric4d*'
+      - 'scripts/codegen/validate_toric4d.py'
+      - 'scripts/codegen/audit_toric4d_smoke.py'
+      - 'scripts/codegen/verify_toric4d_certificate.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_toric4d.py'
+      - 'data/matrices/untiered/TOR_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_toric4d.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_toric4d.py --output /tmp/toric4d-construction.json
+          cmp optimization/experiments/GH-175/raw/construction.json /tmp/toric4d-construction.json
+      - name: Reproduce all24 new matrix files
+        run: |
+          python3 scripts/codegen/toric4d.py --all --out /tmp/toric4d-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/toric4d-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS:24 TOR matrix files reproduced byte for byte')
+          PY
+      - name: Standalone certificate verification with independent GF2 implementation
+        run: |
+          python3 scripts/codegen/verify_toric4d_certificate.py --out /tmp/toric4d-independent.json
+          cmp optimization/experiments/GH-175/raw/independent-receipt-check.json /tmp/toric4d-independent.json
+      - name: Six default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TOR --stems TOR_96_6_unknown TOR_324_6_unknown TOR_486_6_unknown TOR_1152_6_unknown TOR_1536_6_unknown TOR_3000_6_unknown --verbose --out /tmp/toric4d-maxsat
+      - name: Six CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TOR --stems TOR_96_6_unknown TOR_324_6_unknown TOR_486_6_unknown TOR_1152_6_unknown TOR_1536_6_unknown TOR_3000_6_unknown --engine cc --verbose --out /tmp/toric4d-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_toric4d_smoke.py --maxsat /tmp/toric4d-maxsat --cc /tmp/toric4d-cc --construction optimization/experiments/GH-175/raw/construction.json --independent /tmp/toric4d-independent.json --out /tmp/toric4d-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('toric4d-maxsat','toric4d-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH175_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/toric4d-audit.json')
+          if audit.exists():print('GH175_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh175-toric4d-smoke
+          path: |
+            /tmp/toric4d-maxsat/
+            /tmp/toric4d-cc/
+            /tmp/toric4d-audit.json
+            /tmp/toric4d-independent.json
+          if-no-files-found: warn
+          retention-days: 14
