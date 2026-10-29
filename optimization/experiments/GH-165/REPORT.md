@@ -3,7 +3,7 @@
 Issue: https://github.com/guluchen/DistQLDPC/issues/165
 Branch: codex/hyperbolic-surface-library
 Base main: 6083e662c621f3b66defd434cfae31a028d483c4.
-Status: four unambiguous cases locally validated; Linux evidence pending;
+Status: three cases fully pass short gates; four constructions and independent graph distances pass. n=1800 numeric short gate remains incomplete; server package prepared;
 Table I n=1920 construction interpretation awaits PI decision.
 
 ## Selection and scope
@@ -105,9 +105,9 @@ must become server packages, never increased local/CI limits.
 What changed: four hyperbolic inputs, reproducible generator, quotient and
 independent manifold/oracle checks, source/manifest, units and Linux package.
 Validation performed: local algebra/manifold/duplicate checks, 46 units and
-byte-identical regeneration; Linux distance and smoke pending.
+byte-identical regeneration; all Linux graph distances pass, both engines solve first three; n=1800 numeric smoke incomplete.
 Results: four correct parameter/topology reconstructions; n=1920 held explicitly.
-Unresolved issues: n=1920 PI interpretation decision; Linux gates pending;
+Unresolved issues: n=1920 PI interpretation decision; n=1800 numeric smoke gate pending server reproduction;
 main integration requires explicit approval. Continuous goal remains active.
 Scientific semantics changed: no.
 PI action required: yes for n=1920 interpretation and later main integration;
@@ -145,3 +145,40 @@ short diagnostic, not a longer limit, sweep or performance comparison.
 Source 1cd40dcf35841d87c1e810c7bdf71cb3590f94f2; Actions run 40840984912, job 123337013783, SUCCESS. Same binary/input hashes. One n=1800 MaxSAT 60s run with -ub-pre=off -v gives LB=5, no UB, TIMEOUT_PARTIAL_BOUNDS. Full raw output, identities and audit in raw/actions/prepass-off/. This does not pass the single-run numeric interval gate; its lower bound is compatible with CC UB=10 and the independent graph d=10. One final targeted 60s configuration, -ub-pre=1 -v, follows the already documented GH-153 practice to budget the finder and solver within the same limit. No further local/CI extension is planned if this remains incomplete.
 
 An optional yfclab2 package is prepared in runner/: two recorded default-seed internal-engine jobs, one pinned PI-assigned free core, serial, 4 GiB cap, 6h per job and +600s wall backstop; no server job has started. Input/source/binary hashes, plain raw logs, bounds and actual witness checks are retained by the runner. Dry-run commands in raw/server-dry-run.json. No baseline timing, tier assignment or core allocation is claimed.
+
+## Final bounded check and current verdict
+
+One-second pre-pass source 3f71eeb12b54147ec13abe7c067f27e878b6cea0,
+Actions run 40841546761, job 123338862392, SUCCESS; generic CI 40841546756,
+SUCCESS. Exact argv includes -ub-pre=1 -v and -cpu-lim=60. Result:
+TIMEOUT_NO_BOUNDS. All raw output/identity/audit in raw/actions/prepass-one/.
+No actual engine witness was emitted in this check. Same binary and inputs
+as all preceding runs. Numeric-bound acceptance remains INCOMPLETE; a green
+workflow means the recorded timeout was processed correctly, not that the
+scientific gate passed. No additional CI duration/configuration sweep follows.
+
+Three cases n=60,160,360 are accepted as fully verified untiered inputs:
+reproducible quotient/incidence, independent manifold/GF(2)/logicals, both
+engine exact reproduction and independent graph witnesses. n=1800 matrices
+and independent exact graph distance are correct, but its default and
+supplemental CLI observations do not form a complete per-run numeric interval.
+The explicit pending gate and optional serial yfclab2 reproduction package
+remain. This batch is PARTIAL rather than blanket accepted. n=1920 has no
+matrices and awaits PI's choice of normal-closure interpretation.
+
+No solver semantics, defaults, stem names, tiers or existing matrices changed.
+All 24 prior manifest records remain unchanged as parsed fields, all eight
+original CSV/JSON/raw records and hashes agree, and the original witness audit
+replays byte-identically. Pending GH-160 and GH-164 branches have no same-(n,k)
+peers with the new HYP cases. Runner command dry run produces exactly two
+recorded 6h jobs; no long process has been started or core assigned. Its
+execution guards require a clean yfclab2 checkout, explicit PI allocation
+reference/free-core confirmation, allowed affinity and no existing pinned
+userspace process; frozen source/binary/input identities and raw evidence are
+retained. This package is a deliverable, not a claim that a long gate passed.
+
+Continuous goal remains active. Next independent family is nonabelian ZSZ-LP;
+retain both hyperbolic open items in the coverage ledger. Scientific semantics
+changed: no. PI action required: yes for n=1920 interpretation, optional
+server-core assignment to execute prepared jobs, and any main integration;
+no for independent continued library work.

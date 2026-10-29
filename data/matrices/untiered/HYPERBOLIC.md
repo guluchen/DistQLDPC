@@ -69,7 +69,17 @@ budget failure becomes a server package, not an unbounded run. The solver
 smoke uses MaxSAT and CC independently, serial 60 seconds per input, one
 allocated core and 4 GiB cap. Raw source/binary/input hashes, bounds, witnesses
 and independent-oracle outputs are retained. See GH-165/REPORT.md for actual
-execution status; an unexecuted workflow is not validation evidence.
+execution status. Actual Linux graph results exactly reproduce primal/dual
+(6,4), (8,6), (8,8), (10,10). Both internal engines solve the first three
+cases exactly at 4,6,8. n=1800 remains an incomplete numeric smoke gate:
+default MaxSAT produces no bounds; CC produces UB=10 only; finder-off
+MaxSAT gives LB=5 only; a one-second pre-pass attempt produces no bounds.
+These compatible observations are retained as missing/partial, not promoted
+to a complete solver result. No further CI extensions are attempted.
+Optional two-engine long reproduction jobs are prepared, not executed, in
+GH-165/runner/ for a PI-assigned server core. The n=1800 matrix construction
+and independent exact graph proof pass, but its DistQLDPC numeric smoke
+acceptance remains open. Main integration is not performed.
 
 ## Unresolved source issue: Table I row n=1920
 

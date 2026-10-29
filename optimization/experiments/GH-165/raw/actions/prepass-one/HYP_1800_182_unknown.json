@@ -1,0 +1,28 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-cpu-lim=60",
+    "-ub-pre=1",
+    "-v",
+    "data/matrices/untiered/HYP_1800_182_unknown"
+  ],
+  "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "input_sha256": {
+    "Hx": "069d2cc1ff19516982993c874fd238b31262d63d52b3b8c1a6843588487b907b",
+    "Hz": "4c9542f5314451671a68354252ebc5cbea2096c833b27a122e5f96cf118f9d08",
+    "Gx": "c8418a80f5e53b05e05103cdd5be2810487b15b0ccd2dd4566c0bfb78d95caff",
+    "Gz": "d9d47991431064330cc805483eee02fd61d102d5a7690690ca534cd2b7daf6b4"
+  },
+  "source_head": "3f71eeb12b54147ec13abe7c067f27e878b6cea0",
+  "rc": 1,
+  "wall_seconds": 60.09,
+  "lb": null,
+  "ub": null,
+  "status": "TIMEOUT_NO_BOUNDS"
+}

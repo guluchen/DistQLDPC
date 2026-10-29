@@ -48,6 +48,8 @@ def main():
     ap.add_argument('--allocation-ref',help='PI approval/date for this specific core')
     ap.add_argument('--core-confirmed-free',action='store_true')
     args=ap.parse_args();jobs=[json.loads(line) for line in args.jobs.read_text().splitlines() if line.strip()]
+    if len(jobs)!=2 or {j['engine'] for j in jobs}!={'maxsat','cc'} or len({j['id'] for j in jobs})!=2:
+        ap.error('exactly the two distinct engine jobs are required')
     commands=[]
     for j in jobs:
         expected_args=['-seed=0','-v'] if j['engine']=='maxsat' else ['-engine=cc','-seed=0','-v']
@@ -66,13 +68,16 @@ def main():
     core_free(args.cpu);args.out.mkdir(parents=True,exist_ok=False)
     source=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     binary=sha(args.bin);results=[]
+    frozen_inputs={kind:sha(ROOT/f'data/matrices/untiered/HYP_1800_182_unknown_{kind}.txt') for kind in ('Hx','Hz','Gx','Gz')}
     (args.out/'config.json').write_text(json.dumps(dict(source_head=source,binary_sha256=binary,
+        input_sha256=frozen_inputs,
         jobs_sha256=sha(args.jobs),cpu=args.cpu,allocation_ref=args.allocation_ref,address_space_limit=4294967296,
         serial=True,jobs=jobs,commands=commands,hostname=platform.node()),indent=2)+'\n')
     for j,cmd in zip(jobs,commands):
         core_free(args.cpu)
         n,m=read_code(ROOT/'data/matrices/untiered',j['stem'])
         inputs={kind:sha(ROOT/f'{j["code"]}_{kind}.txt') for kind in ('Hx','Hz','Gx','Gz')}
+        if inputs!=frozen_inputs or sha(args.bin)!=binary:raise ValueError('frozen input or binary changed')
         log_path=args.out/(j['id']+'.log');start=time.monotonic();killed=False
         with log_path.open('w') as log:
             proc=subprocess.Popen(cmd,cwd=ROOT,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
@@ -83,6 +88,8 @@ def main():
         identity=dict(id=j['id'],cmd=cmd,source_head=source,binary_sha256=binary,input_sha256=inputs,
                       rc=rc,wall_seconds=time.monotonic()-start,runner_backstop=killed)
         (args.out/(j['id']+'.json')).write_text(json.dumps(identity,indent=2)+'\n')
+        if any(sha(ROOT/f'{j["code"]}_{kind}.txt')!=digest for kind,digest in inputs.items()) or sha(args.bin)!=binary:
+            raise ValueError('input or binary changed during run; evidence saved')
         if killed:raise RuntimeError('wall backstop; raw evidence saved; stop and review')
         result=parse(raw,j['expected_d'])
         if rc not in (0,1) or (rc==0)!=(result['status']=='SOLVED'):raise RuntimeError('exit status mismatch')
