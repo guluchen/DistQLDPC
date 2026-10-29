@@ -141,3 +141,11 @@ Checks have growing weight; these are not constant-check modern qLDPC.
 See [HOMOLOGICAL_PRODUCT.md](HOMOLOGICAL_PRODUCT.md) for reproduction,
 proofs and the critical distinction between algebraic similarity and physical
 weight preservation. Unknown stems and untiered only; no QDistSAT mirror.
+
+GH-179 Linux evidence: local+Linux45units, full algebra/inventory and24-file
+regeneration pass. Both engines confirm d2/4 at n169/361; CC-only d6 at
+n841 remains PLAUSIBLE. Other combined intervals[10,12]/[9,16]/[8,49] have
+provisional lower bounds and actual GF2-verified upper words. n2809 default
+MaxSAT has no numeric fields (INCOMPLETE); seven proof/numeric jobs are
+packaged unexecuted. The n2809 basis49 word is materialized separately from
+the unchanged raw stdout/audit; see GH-179/REPORT.md and raw/basis_words.json.

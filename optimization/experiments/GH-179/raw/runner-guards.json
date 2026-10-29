@@ -1,0 +1,12 @@
+[
+  {
+    "check": "Mac execution refusal",
+    "rc": 2,
+    "output": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: yfclab2 execution only\n"
+  },
+  {
+    "check": "altered argv refusal",
+    "rc": 2,
+    "output": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: job does not match the frozen finite homological-product reference package\n"
+  }
+]
