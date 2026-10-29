@@ -92,6 +92,10 @@
  *         overlap (rows of H are stabilizers of the other type, not elements of ker H: test mutant 9). Credit:
  *         Qubitserf 04b9349 augment_sparse_checks (S. Cercelescu, MIT; idea only, no code), Puchert and Tillmann,
  *         arXiv:2004.03387 (forbidden-set cuts from redundant parity checks).
+ *   sparsemrv (GH-181, opt-in; needs sparse) on a half where sparse added rows, branch as mrv does over the odd rows
+ *         of H and R (fewest free qubits, first in the weight-class scan order); halves without added rows keep the
+ *         lowest-index rule (the existing token mrv applies mrv everywhere). Complete by (2): every odd row, of H or
+ *         of R, has a qubit of e \ S.
  *   sparseov (GH-181, opt-in) redundant stabilizer rows for overlap: the distinct pair sums g = g1 + g2 of rows of K
  *         with 0 < |g| <= max(|g1|, |g2|), not equal to a row of K (at most 4 |K| rows, same order rule). Each satisfies
  *         H g = 0 and G g = 0 (checked with K's rows), so e + g is in F and the GH-138 argument applies with g's own
@@ -123,9 +127,9 @@ struct SparseRows {
 
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
-    bool sparse, sparseov, xorunit;   /* GH-181 (default off) */
+    bool sparse, sparseov, sparsemrv, xorunit;   /* GH-181 (default off) */
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true),
-              sparse(false), sparseov(false), xorunit(false) {}
+              sparse(false), sparseov(false), sparsemrv(false), xorunit(false) {}
 };
 
 /* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */

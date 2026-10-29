@@ -620,7 +620,7 @@ bool HalfSearch::expand(int size, int forced) {
     const bool meet = leaf && size == w_ - (mutant_ == 6 ? 3 : 2);   /* budget 2: lookup instead of recursion */
 
     /* scan the odd rows in index order: packing bound, no-candidate dead end, branching row */
-    const bool pack = rules_.pack, mrv = rules_.mrv;
+    const bool pack = rules_.pack, mrv = rules_.mrv || (rules_.sparsemrv && mx_ > 0);   /* GH-181 sparsemrv */
     const uint64_t st = ++stamp_;
     int p = 0, brow = -1;
     uint32_t bcnt = UINT32_MAX;

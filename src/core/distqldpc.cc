@@ -2524,7 +2524,7 @@ int main(int argc, char** argv) {
             die("invalid -engine (maxsat | cc | auto)");
         else if (!strncmp(argv[i], "-cc-rules=", 10)) {
             if (!distcc::parse_rules(argv[i] + 10, g_cc_opt.rules))
-                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, sparse, sparseov, xorunit, mrv, or none)");
+                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, sparse, sparseov, sparsemrv, xorunit, mrv, or none)");
         } else if (!strcmp(argv[i], "-cc-dual=on"))
             g_cc_opt.dual = true;
         else if (!strcmp(argv[i], "-cc-dual=off"))
@@ -2632,11 +2632,12 @@ int main(int argc, char** argv) {
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
-            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap[,sparse,sparseov,xorunit][,mrv] (default excl,pack,orbf,parity,leaf,overlap;\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap[,sparse,sparseov,sparsemrv,xorunit][,mrv] (default excl,pack,orbf,parity,leaf,overlap;\n");
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden;\n");
             printf("            GH-181, opt-in: sparse = redundant parity rows (sparse pair sums of the half's rows) in pack and mrv;\n");
+            printf("            sparsemrv = fewest-candidate branching over the parity and redundant rows on halves with redundant rows;\n");
             printf("            sparseov = sparse pair sums of the stabilizer rows as extra overlap rows; xorunit = an even row with\n");
             printf("            one free qubit forbids it, an odd row with one free qubit is branched on first)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");

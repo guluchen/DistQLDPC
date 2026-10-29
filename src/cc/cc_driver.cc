@@ -218,7 +218,7 @@ bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::
 bool parse_rules(const char* s, Rules& out) {
     Rules r;
     r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = false;
-    r.sparse = r.sparseov = r.xorunit = false;
+    r.sparse = r.sparseov = r.sparsemrv = r.xorunit = false;
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -234,6 +234,7 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "overlap") r.overlap = true;
         else if (tok == "sparse") r.sparse = true;     /* GH-181 */
         else if (tok == "sparseov") r.sparseov = true; /* GH-181 */
+        else if (tok == "sparsemrv") r.sparsemrv = true; /* GH-181 */
         else if (tok == "xorunit") r.xorunit = true;   /* GH-181 */
         else if (tok == "none") { /* nothing */ }
         else return false;
@@ -253,6 +254,7 @@ std::string rules_string(const Rules& r) {
     if (r.overlap) s += ",overlap";
     if (r.sparse) s += ",sparse";
     if (r.sparseov) s += ",sparseov";
+    if (r.sparsemrv) s += ",sparsemrv";
     if (r.xorunit) s += ",xorunit";
     if (r.mrv) s += ",mrv";
     return s.empty() ? std::string("none") : s.substr(1);
@@ -382,6 +384,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        opt.rules.overlap ? "" : "idle (needs overlap), ", S.sparseov_rows(),
                        opt.mutant == 21 ? (k == 0 ? "Hz" : "Hx") : (k == 0 ? "Hx" : "Hz"), S.sparseov_min_weight(),
                        S.sparseov_max_weight(), opt.mutant == 21 ? " [TEST MUTANT 21: parity-check pair sums]" : "");
+            if (opt.rules.sparsemrv)
+                printf("c cc: %s half sparsemrv: %s\n", hs[k].tag, opt.rules.mrv ? "on (mrv is on everywhere)" :
+                       S.sparse_rows() > 0 ? "on (fewest-candidate branching over H and the redundant rows)" : "idle (no redundant rows)");
             if (opt.rules.xorunit)
                 printf("c cc: %s half xorunit: on (%s)%s\n", hs[k].tag, opt.rules.sparse ? "rows of H and the redundant rows" : "rows of H",
                        opt.mutant == 20 ? " [TEST MUTANT 20: even unit rows branched on]" : "");
@@ -613,7 +618,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                    (unsigned long long)r.closed, (unsigned long long)r.nocand, (unsigned long long)r.packprune,
                    (unsigned long long)r.parprune, (unsigned long long)r.leaf1, (unsigned long long)r.leaf2,
                    (unsigned long long)r.ovtight, (unsigned long long)r.ovforbid, dt);
-            if (opt.rules.sparse || opt.rules.sparseov || opt.rules.xorunit)   /* GH-181 counters (only with the tokens) */
+            if (opt.rules.sparse || opt.rules.sparseov || opt.rules.sparsemrv || opt.rules.xorunit)   /* GH-181 counters (only with the tokens) */
                 printf("c cc-stats: %s level %d gh181 spack %llu sprune %llu snocand %llu ovtightx %llu xuforbid %llu xuforced %llu xudead %llu\n",
                        h.tag, w, (unsigned long long)r.spack, (unsigned long long)r.sprune, (unsigned long long)r.snocand,
                        (unsigned long long)r.ovtightx, (unsigned long long)r.xuforbid, (unsigned long long)r.xuforced,

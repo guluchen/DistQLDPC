@@ -173,7 +173,7 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
     r.overlap = mask & 64;
-    r.sparse = mask & 128; r.sparseov = mask & 256; r.xorunit = mask & 512;   // GH-181
+    r.sparse = mask & 128; r.sparseov = mask & 256; r.xorunit = mask & 512; r.sparsemrv = mask & 1024;   // GH-181
     return r;
 }
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128;
@@ -589,6 +589,7 @@ int main(int argc, char** argv) {
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
             {"gh181", RM_NEW | 128 | 256 | 512, true, false, 0, true}, {"gh181-mrv-seed1", RM_ALL | 128 | 256 | 512, false, false, 1, true},
             {"gh181-xorunit-plain", 512, true, true, 2, false}, {"gh181-sparse-pack", 2 | 128, false, false, 0, true},
+            {"gh181-sparsemrv", RM_NEW | 128 | 256 | 1024, true, false, 0, true}, {"gh181-sparsemrv-seed2", RM_NEW | 128 | 1024, false, true, 2, true},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
@@ -1250,7 +1251,7 @@ int main(int argc, char** argv) {
     // ---------------- GH-181 Part X: sparse / sparseov / xorunit vs brute force ----------------
     // Half instances as in Part A (planted shifts, a third all-odd, K inside ker [H; G] by the same three kinds), plus a
     // TN-like third whose rows overlap heavily (pairs h, h + small) so that sparse pair sums exist. For every subset of the
-    // 7 base rules and every nonzero subset of {sparse, sparseov, xorunit} (896 configurations, seed (subset + combo) mod 3)
+    // 7 base rules and every nonzero subset of {sparse, sparseov, xorunit, sparsemrv} (1920 configurations, seed (subset + combo) mod 3)
     // the ladder must match enumeration. Mutants 19 (redundant row with a flipped qubit), 20 (xorunit branches on an even
     // unit row) and 21 (sparseov pair sums from H) must produce wrong ladders.
     {
@@ -1299,9 +1300,9 @@ int main(int argc, char** argv) {
             std::vector<int> orb = orbits_of(H, G, n);
             x_inst++;
             bool counted = false;
-            for (int combo = 1; combo < 8; combo++)
+            for (int combo = 1; combo < 16; combo++)
                 for (int base = 0; base < 128; base++) {
-                    const int rm = base | (combo << 7);
+                    const int rm = base | ((combo & 7) << 7) | ((combo & 8) ? 1024 : 0);
                     const uint64_t seed = (uint64_t)((base + combo) % 3);
                     distcc::LevelResult acc; int xr[2] = {0, 0};
                     std::string why;
@@ -1311,7 +1312,7 @@ int main(int argc, char** argv) {
                         if (x_bad <= 10) fprintf(stderr, "CC_FAIL GH-181 partX inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rm),
                                                  (unsigned long long)seed, why.c_str());
                     }
-                    if (!counted && combo == 7) { counted = true; if (xr[0] > 0) x_rows++; if (xr[1] > 0) x_ovrows++; }
+                    if (!counted && combo == 15 && base == 127) { counted = true; if (xr[0] > 0) x_rows++; if (xr[1] > 0) x_ovrows++; }
                     x_spack += acc.spack > 0; x_sprune += acc.sprune > 0; x_forbid += acc.xuforbid > 0; x_forced += acc.xuforced > 0;
                     x_dead += acc.xudead > 0; x_ovtx += acc.ovtightx > 0;
                     // mutants on the configurations where they apply
@@ -1326,7 +1327,7 @@ int main(int argc, char** argv) {
                     }
                 }
         }
-        printf("GH-181 partX: %ld half instances (%ld with sparse rows, %ld with sparseov rows), %ld ladder runs (128 base subsets x 7 token subsets), %ld bad; "
+        printf("GH-181 partX: %ld half instances (%ld with sparse rows, %ld with sparseov rows), %ld ladder runs (128 base subsets x 15 token subsets), %ld bad; "
                "runs where the rule acted: spack %ld, sprune %ld, ovtightx %ld, xuforbid %ld, xuforced %ld, xudead %ld\n",
                x_inst, x_rows, x_ovrows, x_runs, x_bad, x_spack, x_sprune, x_ovtx, x_forbid, x_forced, x_dead);
         printf("mutant 19 (sparse redundant row with one qubit flipped): %ld/%ld half ladders wrong\n", xm_bad[0], xm_runs[0]);

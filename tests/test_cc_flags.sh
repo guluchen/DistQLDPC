@@ -416,6 +416,36 @@ if [[ $rc -ne 1 ]] || ! grep -q "^c d_lb: [0-9]" <<<"$out" || [[ "$(grep '^c d_l
     fails=$((fails + 1))
 fi
 
+# 7h. GH-181 sparse / sparseov / sparsemrv / xorunit (opt-in -cc-rules tokens): values, -v lines, mutants 19-21, no line without them
+G=excl,pack,orbf,parity,leaf,overlap
+reject "need -engine=cc or -engine=auto" -cc-rules=$G,sparse $L $M
+for f in -cc-rules=Sparse -cc-rules=sparse, -cc-rules=sparseOV -cc-rules=xor -cc-rules=sparse-mrv -cc-mutant=22 -cc-mutant=18; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-rules=$G,sparse $L $M
+accept 3 "" -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv,xorunit -cc-aut=off -no-symbreak $L $M
+accept 3 "" -engine=cc -cc-rules=xorunit,sparse $L $M
+accept 2 "" -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv,xorunit,mrv $L $C
+vgrep 3 "^c cc: rules $G,sparse,sparseov,sparsemrv,xorunit, " -v -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv,xorunit $L $M
+vgrep 3 "^c cc: X half sparse: [1-9][0-9]* redundant rows (pair sums of Hz rows, weights [0-9]*\.\.[0-9]*)$" -v -engine=cc -cc-rules=$G,sparse $L $M
+vgrep 3 "^c cc: X half sparseov: [0-9]* redundant stabilizer rows (pair sums of Hx rows" -v -engine=cc -cc-rules=$G,sparseov $L $M
+vgrep 3 "^c cc: X half sparseov: idle (needs overlap)" -v -engine=cc -cc-rules=excl,pack,sparseov $L $M
+vgrep 3 "^c cc: X half sparsemrv: on (fewest-candidate branching" -v -engine=cc -cc-rules=$G,sparse,sparsemrv $L $M
+vgrep 3 "^c cc: X half sparsemrv: idle (no redundant rows)" -v -engine=cc -cc-rules=$G,sparsemrv $L $M
+vgrep 3 "^c cc: X half xorunit: on (rows of H and the redundant rows)" -v -engine=cc -cc-rules=$G,sparse,xorunit $L $M
+vgrep 3 "^c cc-stats: X level 2 gh181 spack " -cc-stats -engine=cc -cc-rules=$G,sparse $L $M
+for mt in 19 20 21; do   # mutants are accepted values (answers may be wrong by design): the -v line names them
+    runs=$((runs + 1)); run -v -engine=cc -cc-rules=$G,sparse,sparseov,xorunit -cc-mutant=$mt -ub-search=off $L $M
+    if ! grep -q "TEST MUTANT $mt" <<<"$out" || ! grep -q "^warning: cc: test mutant $mt" <<<"$err"; then
+        echo "FAIL (GH-181: mutant $mt not reported)" >&2; fails=$((fails + 1))
+    fi
+done
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $L $M
+if [[ $rc -ne 0 ]] || grep -q "sparse\|xorunit\|gh181" <<<"$out"; then
+    echo "FAIL (GH-181: a sparse/xorunit line without the tokens): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
 echo "test_cc_flags: $runs checks, $fails failed"
 [[ $fails -eq 0 ]] && echo "CC_FLAG_TESTS PASS" || echo "CC_FLAG_TESTS FAIL"
 exit $((fails > 0))
