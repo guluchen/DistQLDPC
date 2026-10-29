@@ -312,3 +312,17 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Nonabelian ZSZ lifted-product matrices (GH-166, untiered)
+----------------------------------------------------------
+
+Original scripts/codegen/zsz_lp.py, independent elementary-permutation
+validator and LP_{160,240,320,390,550,775}_*_unknown_* matrices,
+GPL-3.0-or-later. Published mathematical parameters: Y. Hong, "Quantum LDPC
+codes with design rate 1/5 and good performance below 1000 physical qubits",
+arXiv:2607.27644v1, Eqs.1,5-10,13, Tables 1 and 3. No third-party
+implementation, matrix data, paper text or distance solver copied/used.
+Full CSS data-code logical spaces retained; no surgery or gauge projections.
+Published exact claims and heuristic upper estimates remain distinct from
+observed DistQLDPC bounds and independent witness certificates. See
+data/matrices/untiered/ZSZ_LP.md and optimization/experiments/GH-166/.
