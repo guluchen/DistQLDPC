@@ -1,0 +1,64 @@
+name: Twisted-torus BB library smoke
+
+on:
+  push:
+    branches: [codex/twisted-torus-library]
+    paths:
+      - '.github/workflows/twisted-torus-library-smoke.yml'
+      - 'scripts/codegen/twisted_torus*'
+      - 'scripts/codegen/validate_twisted_torus.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_twisted_torus.py'
+      - 'data/matrices/untiered/BB_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent geometry, CSS and exact tiny checks
+        run: |
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_twisted_torus.py --output /tmp/twisted-certificates.json
+          cmp optimization/experiments/GH-159/raw/construction-witnesses.json /tmp/twisted-certificates.json
+      - name: Reproduce all 24 new matrix files
+        run: |
+          python3 scripts/codegen/twisted_torus.py --all --out /tmp/twisted-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/twisted-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: all 24 twisted-torus matrix files reproduced byte for byte')
+          PY
+      - name: Six default 60-second serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family BB --stems BB_30_4_unknown BB_120_8_unknown BB_186_10_unknown BB_248_10_unknown BB_294_10_unknown BB_340_16_unknown --out /tmp/twisted-default
+      - name: Retain all evidence in logs even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/twisted-default')
+          print('GH159_EVIDENCE_JSON='+json.dumps({p.name:p.read_text() for p in root.glob('*') if p.is_file()},separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh159-twisted-torus-smoke
+          path: /tmp/twisted-default/
+          if-no-files-found: warn
+          retention-days: 14

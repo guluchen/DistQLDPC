@@ -104,7 +104,8 @@ done
 reject "cannot be combined with -engine=cc" -engine=cc -dump-only "-dump-wcnf=$tmp/dump.wcnf" $M
 
 # 2. MaxSAT tuning flags with -engine=cc
-for f in -no-card -card-sinz -card-mto -card-both -card-both-force -dualshare-stats -oddcap-skip=on -oddcap-skip=off -ub-pre=off -ub-pre=2; do
+for f in -no-card -card-sinz -card-mto -card-both -card-both-force -dualshare-stats -oddcap-skip=on -oddcap-skip=off -ub-pre=off -ub-pre=2 \
+         -stab-overlap=on -stab-overlap=auto -stab-overlap=off; do
     reject "no effect with -engine=cc" -engine=cc "$f" $L $C
 done
 
@@ -351,6 +352,58 @@ for m in stern dumer; do   # collision mode: mutant 11 must trap, mutant 12 (unv
         echo "FAIL (mutant 12, -ub-isd=$m: expected a wrong answer): rc=$rc stdout: $out" >&2; fails=$((fails + 1))
     fi
 done
+
+# 7f. GH-148 -stab-overlap (split MaxSAT path): values, conflicts, output; default auto, off = the previous search
+for f in -stab-overlap -stab-overlap= -stab-overlap=yes -stab-overlap=ON -stab-overlapX "-stab-overlap=on -stab-overlap-enc=x" "-stab-overlap=on -stab-overlap-enc=auto" \
+         "-stab-overlap=on -stab-overlap-enc=" "-stab-overlap=on -stab-overlap-ratio=x" "-stab-overlap=on -stab-overlap-ratio=-1" \
+         "-stab-overlap=on -stab-overlap-bogus=1"; do
+    reject "invalid" $f $L $M
+done
+reject "needs -stab-overlap=on or -stab-overlap=auto" -stab-overlap=off -stab-overlap-enc=seq $L $M   # default auto: the tuning flags apply to it
+accept 3 "" -stab-overlap-enc=seq $L $M
+accept 3 "" -stab-overlap-ratio=1 -card-mto $L $M
+accept 3 "" -stab-overlap=off -joint $L $M
+reject "needs -stab-overlap=on or -stab-overlap=auto" -stab-overlap=on -stab-overlap=off -stab-overlap-ratio=1 $L $M   # last wins
+reject "must come after" -stab-overlap-ratio=1 -stab-overlap=on $L $M
+reject "no effect with -engine=cc" -engine=cc -stab-overlap=on $L $C
+reject "no effect with -engine=cc" -engine=cc -stab-overlap=auto $L $C
+reject "needs the split MaxSAT path" -stab-overlap=on -joint $L $M
+reject "needs the split MaxSAT path" -joint -stab-overlap=auto -card-mto $L $M
+reject "needs the split MaxSAT path" -stab-overlap=on -roundingsat=/nonexistent $L $M
+accept 3 "" -stab-overlap=on $L $M
+accept 3 "" -stab-overlap=auto -card-mto -seed=3 $L $M
+accept 3 "" -stab-overlap=off $L $M
+accept 2 "" -stab-overlap=on -stab-overlap-enc=seq -oddcap-skip=off -no-symbreak -dualmode=off $L $C
+accept 2 "" -stab-overlap=on -stab-overlap-enc=bin -dualmode=skip -ub-pre=off $L $C
+accept 10 "" -stab-overlap=on $L BB_90_8_10
+accept 10 "" -stab-overlap=auto -stab-overlap-ratio=1.5 $L BB_90_8_10
+accept 8 "" -stab-overlap=on -card-mto $L TN_72_8_8
+accept 8 "" -stab-overlap=on -stab-overlap-enc=seq $L TN_72_8_8
+accept 8 "" -stab-overlap=auto -stab-overlap-enc=native -card-mto -seed=2 $L TN_72_8_8
+accept 10 "" -stab-overlap=on -stab-overlap-enc=clauses -ub-pre=off $L BB_90_8_10
+runs=$((runs + 1)); run -frontier-stats -stab-overlap=on $L BB_90_8_10
+if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP X cap 8: rows 45 props [0-9]* conflicts [0-9]* cached_clauses [0-9]*$" <<<"$err"; then echo "FAIL (-frontier-stats with the native propagator: c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -stab-overlap-enc=bin $L BB_90_8_10
+if grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (no c OVERLAP line with clause encodings)" >&2; fails=$((fails + 1)); fi
+accept 2 "" -engine=auto -stab-overlap=on $L $D1                                                        # auto -> maxsat: applies
+accept 2 "selected cc .*ignoring -stab-overlap=on" -engine=auto -stab-overlap=on $L $C
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); binomial rows 45, counter rows 0; per probe 675 clauses, 0 aux vars$" -v -stab-overlap=on -stab-overlap-enc=clauses $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap=on $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used .* binomial rows 45, counter rows 0" -v -stab-overlap=auto -stab-overlap-enc=bin $L BB_90_8_10
+vgrep 10 "^c stab-overlap Z: 45 of 45 rows used .* binomial rows 0, counter rows 45; per probe 1440 clauses, 675 aux vars$" -v -stab-overlap=on -stab-overlap-enc=seq $L BB_90_8_10
+vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v -stab-overlap=auto $L BB_90_8_10
+vgrep 10 "^c stab-overlap X cap 4: 0 of 45 rows active (ratio 2.00)$" -v -stab-overlap=auto $L BB_90_8_10
+vgrep 10 "^c stab-overlap X cap 4: 45 of 45 rows active (ratio 0.00)$" -v -stab-overlap=on $L BB_90_8_10
+runs=$((runs + 1)); run -v -stab-overlap=off $L BB_90_8_10
+if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (-stab-overlap=off must not print stab-overlap lines)" >&2; fails=$((fails + 1)); fi
+# default (auto since the PI's adoption decision): the same lines as -stab-overlap=auto
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v $L BB_90_8_10
+vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
+vgrep 10 "^c stab-overlap X cap 4: 0 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
+runs=$((runs + 1)); run -frontier-stats $L BB_90_8_10
+if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP X cap 8: rows 45 props [0-9]* conflicts [0-9]* cached_clauses [0-9]*$" <<<"$err"; then echo "FAIL (default: c OVERLAP line expected with -frontier-stats)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -v -joint $L $M
+if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (default auto is silently off with -joint: no stab-overlap lines expected)" >&2; fails=$((fails + 1)); fi
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)

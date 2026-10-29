@@ -1,0 +1,26 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-cpu-lim=60",
+    "data/matrices/untiered/COLOR_19_1_unknown"
+  ],
+  "binary_sha256": "13aa8ba74b3960b8767bfda60d10fb09f057e6655f5112c6f3f343dfdee03328",
+  "input_sha256": {
+    "Hx": "8d786bb60aad6f2c4b65fe792a6fe2374b803cc27068ab69e3b16c310e7a638e",
+    "Hz": "9a6464db11a025eea60e410e139078c604a56e9b35ed14cbe22712e0d0505660",
+    "Gx": "7091e60c8138c61e745568e9dc792ea1b6cdd7ea2e936cb3816e767ac6b95dcc",
+    "Gz": "fdcc171fbe6709eba530533064732075f6cef72212cb125749eb2aff4450b897"
+  },
+  "source_head": "43203da6c17841d1aff229007e755ffaf6fd600f",
+  "rc": 0,
+  "wall_seconds": 0.016,
+  "lb": 5,
+  "ub": 5,
+  "status": "SOLVED"
+}

@@ -456,6 +456,7 @@ bool Solver::removed(CRef cr) {
 }
 
 void Solver::simplereduceClause(CRef cr, int pathC) {
+  if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
   nbFlyReduced++;
   Clause& c=ca[cr];
   assert(value(c[0]) == l_True);
@@ -1581,6 +1582,7 @@ Lit Solver::pickBranchLit()
 }
 
 void Solver::reduceClause(CRef cr, int pathC) {
+  if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
   nbFlyReduced++;
   Clause& c=ca[cr];
   assert(value(c[0]) == l_True);
@@ -2065,6 +2067,10 @@ CRef Solver::propagate()
 NextClause:;
         }
         ws.shrink(i - j);
+        if (!ovRows.empty() && confl == CRef_Undef) {   // GH-148 native overlap rows (inactive when empty)
+            CRef oc = ovPropagate(p, false);
+            if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
+        }
 	// if (confl == CRef_Undef)
 	//   if (shortenSoftClauses(p))
 	//     break;
@@ -4047,6 +4053,11 @@ CRef Solver::propagateForLK() {
     NextClause:;
     }
     ws.shrink(i - j);
+    if (!ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef) {   // GH-148 (inactive when empty)
+      CRef oc = ovPropagate(p, true);
+      if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
+      else if (falseVar != var_Undef) qhead = trail.size();
+    }
     // if (confl == CRef_Undef)
     // 	if (shortenSoftClauses(p))
     // 	  break;
@@ -7126,6 +7137,15 @@ void Solver::relocAll(ClauseAllocator& to)
             ca.reloc(vardata[v].reason, to);
     }
     
+    // GH-148: cached overlap reason clauses
+    if (!ovCacheList.empty()) {
+        ovCrefs.clear();
+        for (size_t i = 0; i < ovCacheList.size(); i++) {
+            ca.reloc(ovCacheList[i].second, to);
+            ovCrefs.insert((uint32_t)ovCacheList[i].second);
+        }
+    }
+
     // All learnt:
     //
     for (int i = 0; i < learnts_core.size(); i++)
@@ -7345,4 +7365,91 @@ Lit Solver::pickFrontierLit()
     if (bv == var_Undef) { frNoEligible++; return lit_Undef; }
     frPicks++;
     return mkLit(bv, false);
+}
+
+// ---- DistQLDPC GH-148: native stabilizer-overlap rows (see Solver.h) ----
+void Solver::setOverlapRows(const std::vector<std::vector<int> >& rows, const std::vector<int>& lims, int nQubits)
+{
+    ovRows.clear(); ovLim.clear(); ovCacheList.clear(); ovCrefs.clear();
+    ovColRows.assign((size_t)nQubits, std::vector<int>());
+    for (size_t r = 0; r < rows.size(); r++) {
+        if (rows[r].empty() || rows[r].size() > 32 || lims[r] >= (int)rows[r].size()) continue;
+        const int id = (int)ovRows.size();
+        ovRows.push_back(rows[r]);
+        ovLim.push_back(lims[r] < 0 ? 0 : lims[r]);
+        for (size_t t = 0; t < rows[r].size(); t++) ovColRows[(size_t)rows[r][t]].push_back(id);
+    }
+    ovCacheIdx.assign(1024, -1);
+}
+
+static inline uint64_t ov_hash(uint64_t k) { k ^= k >> 33; k *= 0xff51afd7ed558ccdULL; k ^= k >> 33; k *= 0xc4ceb9fe1a85ec53ULL; k ^= k >> 33; return k; }
+
+/* The clause OR_{t in mask} ~x_{ovRows[r][t]}; with impliedPos >= 0 its literal is moved to position 0. */
+CRef Solver::ovClause(int r, uint32_t mask, int impliedPos)
+{
+    const uint64_t key = ((uint64_t)(uint32_t)r << 32) | mask;
+    size_t cap = ovCacheIdx.size(), h = (size_t)(ov_hash(key) & (cap - 1));
+    while (ovCacheIdx[h] >= 0 && ovCacheList[(size_t)ovCacheIdx[h]].first != key) h = (h + 1) & (cap - 1);
+    CRef cr;
+    if (ovCacheIdx[h] >= 0) cr = ovCacheList[(size_t)ovCacheIdx[h]].second;
+    else {
+        vec<Lit> lits;
+        const std::vector<int>& row = ovRows[(size_t)r];
+        for (size_t t = 0; t < row.size(); t++) if ((mask >> t) & 1) lits.push(~mkLit(row[t]));
+        cr = ca.alloc(lits, false);
+        ovCrefs.insert((uint32_t)cr);
+        ovCacheIdx[h] = (int)ovCacheList.size();
+        ovCacheList.push_back(std::make_pair(key, cr));
+        if (2 * ovCacheList.size() > cap) {   // grow and rehash
+            ovCacheIdx.assign(2 * cap, -1); cap *= 2;
+            for (size_t i = 0; i < ovCacheList.size(); i++) {
+                size_t g = (size_t)(ov_hash(ovCacheList[i].first) & (cap - 1));
+                while (ovCacheIdx[g] >= 0) g = (g + 1) & (cap - 1);
+                ovCacheIdx[g] = (int)i;
+            }
+        }
+    }
+    if (impliedPos >= 0) {
+        Clause& c = ca[cr];
+        const Lit imp = ~mkLit(ovRows[(size_t)r][(size_t)impliedPos]);
+        for (int t = 0; t < c.size(); t++) if (c[t] == imp) { c[t] = c[0]; c[0] = imp; break; }
+    }
+    return cr;
+}
+
+/* Called after the watches of p were processed. Only a qubit var becoming true can tighten a row. */
+CRef Solver::ovPropagate(Lit p, bool lk)
+{
+    if (sign(p)) return CRef_Undef;
+    const Var v = var(p);
+    if ((size_t)v >= ovColRows.size()) return CRef_Undef;
+    const std::vector<int>& rs = ovColRows[(size_t)v];
+    for (size_t a = 0; a < rs.size(); a++) {
+        const int r = rs[a];
+        const std::vector<int>& row = ovRows[(size_t)r];
+        const int lim = ovLim[(size_t)r];
+        uint32_t tmask = 0, umask = 0; int cnt = 0;
+        for (size_t t = 0; t < row.size(); t++) {
+            const lbool val = value(row[t]);
+            if (val == l_True) { tmask |= 1u << t; cnt++; }
+            else if (val == l_Undef) umask |= 1u << t;
+        }
+        if (cnt > lim) {   // conflict: v (assigned at the current level) and lim other true qubits of the row
+            uint32_t m = 0; int c = 1;
+            for (size_t t = 0; t < row.size(); t++) if (row[t] == v) m |= 1u << t;
+            for (size_t t = 0; t < row.size() && c <= lim; t++) if (((tmask & ~m) >> t) & 1) { m |= 1u << t; c++; }
+            ovConfls++;
+            return ovClause(r, m, -1);
+        }
+        if (cnt == lim && umask) {
+            for (size_t t = 0; t < row.size(); t++) {
+                if (!((umask >> t) & 1) || value(row[t]) != l_Undef) continue;
+                CRef cr = ovClause(r, tmask | (1u << t), (int)t);
+                ovProps++;
+                if (lk) { if (!uncheckedEnqueueForLK(~mkLit(row[t]), cr)) { falseVar = row[t]; return CRef_Undef; } }
+                else uncheckedEnqueue(~mkLit(row[t]), cr);
+            }
+        }
+    }
+    return CRef_Undef;
 }
