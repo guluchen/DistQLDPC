@@ -236,7 +236,7 @@ Against the same-session main controls: TN_216 0.80, TN_252 0.72, TN_360 (lb 22)
 The BB codes run with a prune rate of 15-22 % (always-on in this run); with the final default `-cc-lb-auto=40` the BB
 halves switch the bounds off after level 18 (BB_360 serial check below), so they behave like main.
 
-**New certified CC lower bounds (PLAUSIBLE: one run each, default labelling; not reproduced; stems not renamed):**
+**New certified CC lower bounds (stems not renamed). Reproduced on 2026-10-30 by a second run with a different search order (`mrv`, original labels; `REPRODUCTION.md`):**
 
 | Code | CC lb before (GH-152 main arm / same-session main control) | GH-157 `cand` lb events from 19 (value@s) | verified ub (stem) |
 |---|---:|---|---:|
@@ -313,3 +313,5 @@ Tier 0 of the adopted default (yfclab2, pinned, 4 GB cap; records in `adopt/`):
 | `make test-cc-flags` | 442 / 442 |
 | Answers, tier 0-3 (`adopt/answers_tier0123.jsonl`) | 61 / 61 equal to the stem: CC default (`-cc-aut=on`, `charge`) with seeds 0 and 1 on all 23 tier 0-3 codes, MaxSAT default on tier 0-1; 28 / 28 printed witnesses independently GF(2)-verified |
 | Identity vs main `346d1c6`, tier0+1 `-v` logs (`adopt/identity_default.txt`, `adopt/ident_default.py`) | MaxSAT path: `-ub-pre=off` x 2 modes 30 / 30 identical; MaxSAT default 26 / 30 identical, 4 differ only in the time-sliced `ub-pre` progress line (base vs base differs the same way). Old CC path (`-cc-rules=excl,pack,orbf,parity,leaf,overlap` vs main's default CC): `-ub-search=off` with and without `-cc-stats` 30 / 30 identical, CC default 15 / 15 identical |
+
+- Reproduction (`REPRODUCTION.md`): all four new bounds reproduced with `mrv` and the original labels within 12 h: TN_360 23 (41 464 s), TN_396 23 (35 297 s), TN_504 24 (41 050 s), TN_648_10 22 (31 744 s); every level EMPTY, node counts 1.1-2.0x the original run's at the deciding levels.
