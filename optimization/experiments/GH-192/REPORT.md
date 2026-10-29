@@ -1,6 +1,6 @@
 # GH-192: interval-valued QC GHP/LP references
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux/B3 source-upper word pending.
+Status: LINUX_NUMERIC_GATES_PASS; B3 source-upper word and independent proofs INCOMPLETE.
 Issue https://github.com/guluchen/DistQLDPC/issues/192; hub6504505186.
 Branch codex/open-reference-ghp-library from remotely verified main
 6083e662c621f3b66defd434cfae31a028d483c4. No PR/main integration.
@@ -82,16 +82,76 @@ tiers/seed sweeps/shared timing adoption. Heavy proof/numeric work freezes
 confirmed-free yfclab2 jobs/nohup/nullstdin with actual upper references.
 Configured limits are not ETA; no allocated cores/server execution/paid cloud.
 
+## Terminal Linux evidence
+
+Data742c6f14efb41f595f19fb8bfd75d0d5000ba432;
+source5827c8900c2da6f1d575a4ef0a6bffb2c2c86247,
+treef85a86c5240356f32afed05a39bd603ed79a33ca.
+[Library40927713672](https://github.com/guluchen/DistQLDPC/actions/runs/40927713672),
+job123637551888 completed SUCCESS, including audit/retention/upload. Ordinary
+sourceCI40927713604 also SUCCESS. Unchanged solver binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+All48units/full independent source-column/layer-pullback/ranks/logicals/
+inventory comparisons and8matrix byte regeneration PASS. Exact commands in
+source-pinned workflow. Four one-time defaultseed serial60sCPU/90swall/4GiB/
+pinned allocated runner CPU attempts,10min cap. Shared timing is not a
+performance/median/tier adoption claim. No repeat scientific CI for timeout.
+
+| stem | MaxSAT raw60s | CC raw60s | actual verified upper | numeric gate | source upper-word gate |
+|---|---|---|---:|---|---|
+|LP_882_24_unknown|[18,24]|exact24 PLAUSIBLE|24|PASS|PASS|
+|LP_1270_28_unknown|[18,48]|[24,64]|48|PASS|INCOMPLETE (source46)|
+
+B1 actual basis Z24 and printed MaxSAT X24 verify independently. B3 printed
+MaxSAT X48 verifies; full history92/64/48 retained along with basis64/256.
+No actual word<=46 yet; do not substitute source46 for verified48, or
+combined48 for raw CC64. A weaker found upper than a published upper is not
+itself a contradiction. Published lower18/16 remains a source claim; raw
+common search lower18 is reproduced by both engines. Strongest CC exact24
+(B1) and lower24(B3) remain PLAUSIBLE pending independent proof/search;
+no rename or certified-improvement headline. No observed contradiction.
+A green collection workflow does not complete these remaining science gates.
+
+Durable raw/actions/default/job.log has366565characters;14engine files
+(two logs/two metadata/environment/results/DONE per engine) and audit.json.
+Local actual-word replay is byte-identical, no solver invocation on Mac:
+```
+python3 scripts/codegen/audit_reference_ghp_smoke.py --maxsat optimization/experiments/GH-192/raw/actions/default/reference-ghp-maxsat --cc optimization/experiments/GH-192/raw/actions/default/reference-ghp-cc --construction optimization/experiments/GH-192/raw/construction.json --out /tmp/gh192-audit-replay.json
+cmp /tmp/gh192-audit-replay.json optimization/experiments/GH-192/raw/actions/default/audit.json
+```
+Three default proof jobs frozen in runner/jobs.jsonl: MaxSAT B1/B3 and CC
+B3, seed0/verbose. One explicit supplemental B3 MaxSAT -ub-pre=3600 job
+addresses the unmaterialized source46 upper word, separately labelled.
+References24/48 are actual GF2 upper words;46 remains a separate source
+target. All6hCPU+600swall/4GiB/serial pinned explicit PI-allocated confirmed-
+free yfclab2/nohup/nullstdin; configured total24hCPU/24h40mwall LIMITS,
+not ETA. No allocated core/server execution/paid cloud. Case/input/argv/
+source/source-target/actual-word/other-engine contradiction guards; dry-run,
+Mac, altered-argv and altered-source-target refusals PASS with no solver/
+output directory. CPU54 is syntactic only, not allocated.
+
+Independent next-source review adds explicit open ledger rows for radial
+LP, planar tile CSS and multivariate/trivariate bicycle prescriptions;
+existing generic LP/BB/surface labels do not establish their specific input
+coverage. Radial2406.14445v2 AppendixC/D supplies actual estimate-status
+and exponent pairs; tile boundaries/proof-status and Voss z=xy versus
+independent three-factor/CRT/Haah/GB equivalences need checking. No new
+inputs/issues selected by these notes; no extra completed family count.
+
 ## Completion fields
 
-What changed:2original reproducible interval-valued QC GHP/LP references,
-independent physical/tensor-order/GF2/full logicals checks and provenance.
-Validation performed:14newunits/full columns/pullback/actual ranks/logicals/
-physical rowspace/cyclic map,31pinned peer inventories/8matrix reproduction.
-Results: k24/28 and both-half ranks429/621 agree with source; actual basis
-uppers24/64, B1 source-upper word PASS. Linux/B3word still pending.
-Unresolved: Linux/numeric/scientific/B3source-upper gates, earlier proof
-packages/APM interpretation hold/stronger finite-expander/cosheaf hypotheses.
+What changed:2reproducible QC GHP/LP interval references with independent
+source/coordinate/GF2/full logical checks/provenance and durable Linux
+results;3proof+1supplemental source-word jobs; updated missing prescriptions.
+Validation performed:48units/full actual columns/layer-pullback/ranks/
+logicals/typed space/cyclic map/31pinned peers;8matrix byte reproduction;
+4bounded Linux attempts and byte-identical actual-word audit replay.
+Prior24rows/300matrix files and solver/build preserved.
+Results: B1 MaxSAT[18,24], CC-only24 PLAUSIBLE, actual word24; B3 MaxSAT
+[18,48], CC[24,64], actual48. Numeric gates PASS; B3source46 word INCOMPLETE.
+Unresolved: strongest CC exact/lower24 independent proof and B3source-upper
+word,4unexecuted jobs; earlier packages/APM/stronger finite-expander/cosheaf
+hypotheses/PI integration; newly explicit radial/tile/MB coverage items.
 Scientific semantics changed:no.
 PI action required:yes for integration/tier/name/server allocation or prior
-scientific hold; routine safe validation/research continues.
+scientific hold; routine safe collection/research continues.

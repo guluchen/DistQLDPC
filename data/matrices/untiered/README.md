@@ -138,5 +138,9 @@ published intervals18..24/16..46. Original block-circulant row construction,
 independent physical columns/layer-major pullback/full GF2/logicals/typed
 physical rowspace and cyclic lift automorphism pass; no presumed XZ map.
 14new units/full8matrix byte reproduction and31pinned peer inventories pass.
-Initial actual basis uppers24/64; B3 source46 word and Linux still pending.
+Linux40927713672 passes48units/full8matrix byte reproduction/actual-word
+audit replay. MaxSAT[18,24]/[18,48], CC exact24/[24,64]; actual words24/48.
+Numeric gates PASS, B3 source46 word INCOMPLETE. CC strongest exact/lower24
+PLAUSIBLE pending independent proof. Three proof+one supplemental source-word
+jobs frozen unexecuted; source claims do not fill raw bound fields.
 This branch26untiered/77total; prior24rows/300matrix files preserved.

@@ -61,8 +61,17 @@ python3 scripts/codegen/validate_css.py --output /absolute/new/validation.json
 checks, source zero/constant/transpose/commuting-wrong-matrix/logical/entry/
 shape/support mutants,8matrix byte reproduction and overwrite/CLI/audit
 raw-number/actual-word guards. Mac algebra/construction/tiny tests only.
-Linux MaxSAT+CC serial60sCPU/90swall/4GiB/defaultseed/pinned allocated CPU
-pending. Preserve raw missing fields as INCOMPLETE; no source-filled bounds.
+Linux40927713672/job123637551888 passes all48units, full construction/
+inventory comparisons,8matrix byte regeneration and four serial60sCPU/
+90swall/4GiB/defaultseed/pinned allocated CPU attempts. MaxSAT raw[18,24]/
+[18,48], CC exact24/[24,64]. Actual verified upper words24/48. Numeric gates
+PASS; strongest CC exact/lower24 PLAUSIBLE pending independent proof.
+B1 source24 actual-word PASS, B3 source46 INCOMPLETE: the found48 word is
+weaker, not a contradiction. Do not replace raw CC64 with48 or verified48
+with source46. Full366565-character job log/14engine files/audit retained;
+local actual-word replay byte-identical. Three default proof jobs and one
+explicit supplemental B3 -ub-pre=3600 actual source-upper-word job are
+frozen unexecuted in GH192/runner. Preserve raw missing fields as INCOMPLETE; no source-filled bounds.
 New exact/lower results PLAUSIBLE until independent proof plus actual GF2
 minimum words. Heavy unresolved work becomes frozen unexecuted yfclab2
 packages requiring explicit PI allocation. No solver/default/tier/name/

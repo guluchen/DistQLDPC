@@ -126,6 +126,22 @@ claim to a verified bound without an actual checked word or search proof.
 This priority supplements the full coverage goal; it does not remove open
 families or waive validation, licenses, resource limits or PI decisions.
 
+## Additional practical prescriptions requiring source reconstruction
+
+These are open coverage items, not extra completed family counts. Primary
+source review during GH192 identified specific prescriptions not established
+by the existing generic LP/BB/surface labels:
+
+| Prescription | Current evidence and next gate | Primary source |
+|---|---|---|
+| Quantum radial lifted products | Missing explicit representatives. AppD supplies n90k8/n352k18 exponent pairs; AppC calls numerical distances estimates. Verify actual girth/rank/hypotheses, lift transpose/tensor ordering, words and peers; no inherited single-shot/asymptotic theorem | Scruby–Hillmann–Roffe [2406.14445v2](https://arxiv.org/abs/2406.14445v2), PRX Quantum7,020310(2026), DOI10.1103/67xf-zdjb |
+| Planar tile CSS codes with boundary | Missing explicit tile/boundary representatives. Source labels n288k8/n512k18; exact-versus-estimated status and full boundaries still need review. Periodic BB is not evidence of this finite boundary prescription | Steffan et al. [2504.09171v1](https://arxiv.org/abs/2504.09171v1) |
+| Published multivariate/trivariate bicycle prescriptions | Under source/equivalence review, not an automatically missing disjoint family. Voss third variable z=xy leaves two independent factors; independent three-factor prescriptions require CRT/Haah/GB/BB peer checks and source proof-status review | Voss et al. [2406.19151v4](https://arxiv.org/abs/2406.19151v4); Galimova [2603.17703v1](https://arxiv.org/abs/2603.17703v1) |
+
+Details and unselected source parameters in GH192/NEXT_SOURCE_REVIEW.md.
+Existing unresolved scientific/numeric gates remain; these additions keep
+the original family-coverage goal visible while prioritizing unknown distance.
+
 ## Published interval targets after initial family coverage
 
 GH191 adds PK2021 GB A1/A5 n254k28/n180k10 on a separate workbranch,
@@ -142,5 +158,9 @@ GH192 adds PK2021 QC GHP/LP B1/B3 n882k24/n1270k28, published18..24/16..46,
 original scalar-B/square-A lifted construction. Independent actual columns/
 layer-major pullback/full logicals/GF2/typed physical space/cyclic map pass;
 14new units/8matrix byte reproduction/31pinned peer refs. Actual basis
-uppers24/64; B1source24 word PASS, B3source46/Linux pending. No presumed
+uppers initially24/64. Linux40927713672 passes48units/full8matrix byte
+reproduction/actual-word audit replay. MaxSAT[18,24]/[18,48], CC exact24/
+[24,64], actual words24/48. Numeric PASS; B3source46 word INCOMPLETE;
+strongest CC lower/exact24 PLAUSIBLE pending independent proof. Three proof+
+one supplemental source-word jobs frozen unexecuted. No presumed
 XZ metric map or new disjoint family claim. NOTICE/REFERENCE_GHP.md/GH192.
