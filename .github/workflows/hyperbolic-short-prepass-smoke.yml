@@ -16,10 +16,10 @@ jobs:
       - uses: actions/checkout@v7
       - name: Build unchanged solver
         run: make --jobs=2 bin/distqldpc
-      - name: Targeted 60s MaxSAT without finder pre-pass
+      - name: Targeted 60s MaxSAT with one-second finder pre-pass
         run: >-
           python3 scripts/codegen/smoke_untiered.py --ci --family HYP --stems HYP_1800_182_unknown
-          --ub-pre-off --verbose --out /tmp/hyp-short-prepass
+          --ub-pre 1 --verbose --out /tmp/hyp-short-prepass
       - name: Independently check raw bounds and all actual witnesses
         run: |
           python3 - <<'PY'
@@ -33,7 +33,7 @@ jobs:
           stem='HYP_1800_182_unknown';root=Path('/tmp/hyp-short-prepass')
           meta=json.loads((root/(stem+'.json')).read_text());raw=(root/(stem+'.log')).read_text()
           assert parse(raw,10)=={k:meta[k] for k in ('lb','ub','status')}
-          assert '-ub-pre=off' in meta['cmd']
+          assert '-ub-pre=1' in meta['cmd']
           n,m=read_code(Path('data/matrices/untiered'),stem)
           assert set(meta['input_sha256'])=={'Hx','Hz','Gx','Gz'}
           for kind,digest in meta['input_sha256'].items():
