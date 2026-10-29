@@ -1,0 +1,62 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/TILE_2592_18_unknown_Hx.txt
+c Hz: data/matrices/untiered/TILE_2592_18_unknown_Hz.txt
+c Gx: data/matrices/untiered/TILE_2592_18_unknown_Gx.txt
+c Gz: data/matrices/untiered/TILE_2592_18_unknown_Gz.txt
+c Hx: 1287 x 2592, Hz: 1287 x 2592, Gx: 18 x 2592, Gz: 18 x 2592, logicals: 36
+c cc: dual map detection: none (ranks Hz 1287 Hx 1287 [Hz;Gx] 1305 [Hx;Gz] 1305, 310 candidates, cpu 0.045s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 0 generator(s), 2592 qubit orbit(s), group complete, point stabiliser trivial, swap map none, 0 test(s) (0 refuted, 0 undecided), work 153576, cpu 0.004s
+c cc aut: Tanner swap map: none
+c cc symbreak X: n=2592 candidates=309 verified_generators=0 orbits=2592 detect_cpu=0.033s clause=none
+c cc symbreak Z: n=2592 candidates=309 verified_generators=0 orbits=2592 detect_cpu=0.046s clause=none
+c cc: X half: n 2592, rank H 1287, rank [H;G] 1305, rank S 1287: detectors complete, 18 logical(s)
+c cc: Z half: n 2592, rank H 1287, rank [H;G] 1305, rank S 1287: detectors complete, 18 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 292 (X 351, Z 292)
+c cc: X half search: 2592 seeds (index rule)
+c cc: X half parity: off (column weights 1..5, an even weight present)
+c cc: X half overlap: on (1287 stabilizer rows of Hx, weights 3..10, 0 forbidden from the start)
+c cc: Z half search: 2592 seeds (index rule)
+c cc: Z half parity: off (column weights 1..5, an even weight present)
+c cc: Z half overlap: on (1287 stabilizer rows of Hz, weights 2..10, 0 forbidden from the start)
+c cc: X half ub-search: rank H 1287, information set 1305, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 1287, information set 1305, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 161 (iteration 1, wall 0.210s)
+c witness X (ub-search): 721 745 753 780 786 792 819 827 857 867 868 870 894 896 923 928 929 935 943 952 966 975 976 986 988 989 999 1010 1027 1028 1037 1050 1084 1087 1091 1092 1097 1098 1107 1108 1109 1110 1116 1125 1128 1129 1130 1137 1139 1146 1147 1150 1151 1154 1155 1156 1157 1160 1173 1174 1178 1179 1187 1192 1193 1223 1945 1980 2044 2055 2077 2079 2080 2112 2113 2115 2116 2117 2119 2127 2130 2148 2149 2151 2152 2154 2156 2158 2160 2167 2169 2184 2190 2195 2197 2225 2231 2238 2240 2242 2244 2251 2255 2256 2266 2269 2275 2278 2280 2284 2285 2288 2291 2299 2304 2307 2308 2309 2314 2316 2318 2319 2335 2343 2345 2346 2348 2351 2354 2361 2366 2369 2373 2388 2392 2394 2396 2399 2402 2404 2410 2414 2415 2420 2422 2424 2427 2429 2434 2442 2445 2446 2449 2458 2470 2473 2475 2478 2486 2489 2492
+c cc: X half level 1 EMPTY nodes 2592 seeds 2592 time 0.000s
+c cc: Z half level 1 EMPTY nodes 2592 seeds 2592 time 0.000s
+c cc: X half level 2 EMPTY nodes 2592 seeds 2592 time 0.000s
+c cc: Z half level 2 EMPTY nodes 2592 seeds 2592 time 0.000s
+c cc: X half level 3 EMPTY nodes 2592 seeds 2592 time 0.000s
+c cc: Z half level 3 EMPTY nodes 2592 seeds 2592 time 0.000s
+c cc: X half level 4 EMPTY nodes 9144 seeds 2592 time 0.001s
+c cc: Z half level 4 EMPTY nodes 9337 seeds 2592 time 0.001s
+c cc: X half level 5 EMPTY nodes 12313 seeds 2592 time 0.001s
+c cc: Z half level 5 EMPTY nodes 21371 seeds 2592 time 0.003s
+c cc: X half level 6 EMPTY nodes 28822 seeds 2592 time 0.004s
+c cc: Z half level 6 EMPTY nodes 75784 seeds 2592 time 0.011s
+c cc: X half level 7 EMPTY nodes 86267 seeds 2592 time 0.014s
+c cc: Z half level 7 EMPTY nodes 309209 seeds 2592 time 0.051s
+c cc: X half level 8 EMPTY nodes 247702 seeds 2592 time 0.042s
+c cc: Z half level 8 EMPTY nodes 1335152 seeds 2592 time 0.226s
+c cc: X half level 9 EMPTY nodes 721916 seeds 2592 time 0.130s
+c cc: Z half level 9 EMPTY nodes 5873184 seeds 2592 time 0.987s
+c cc: X half level 10 EMPTY nodes 2037463 seeds 2592 time 0.373s
+c cc: Z half level 10 EMPTY nodes 26546838 seeds 2592 time 5.552s
+c cc: X half level 11 EMPTY nodes 5941526 seeds 2592 time 1.109s
+c cc: Z half level 11 EMPTY nodes 117712437 seeds 2592 time 19.934s
+c cc: X half level 12 EMPTY nodes 17406259 seeds 2592 time 3.433s
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/TILE_2592_18_unknown_Hx.txt
+c Hz: data/matrices/untiered/TILE_2592_18_unknown_Hz.txt
+c Gx: data/matrices/untiered/TILE_2592_18_unknown_Gx.txt
+c Gz: data/matrices/untiered/TILE_2592_18_unknown_Gz.txt
+c Hx: 1287 x 2592, Hz: 1287 x 2592, Gx: 18 x 2592, Gz: 18 x 2592, logicals: 36
+c d_lb: 12
+c d_ub: 161
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

@@ -1,0 +1,32 @@
+{
+  "checks": [
+    {
+      "check": "default",
+      "commands": 3,
+      "status": "PASS"
+    },
+    {
+      "check": "optional-cc",
+      "commands": 3,
+      "status": "PASS"
+    },
+    {
+      "check": "Mac execution refusal",
+      "status": "PASS",
+      "stderr": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: yfclab2 execution only\n"
+    },
+    {
+      "check": "altered-argv refusal",
+      "status": "PASS",
+      "stderr": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: job does not match the frozen tile reference package\n"
+    },
+    {
+      "check": "altered-target refusal",
+      "status": "PASS",
+      "stderr": "usage: run_serial.py [-h] --cpu CPU --out OUT [--bin BIN] [--jobs JOBS]\n                     [--execute] [--allocation-ref ALLOCATION_REF]\n                     [--core-confirmed-free]\nrun_serial.py: error: job does not match the frozen tile reference package\n"
+    }
+  ],
+  "solver_invoked": false,
+  "output_directory_created": false,
+  "cpu54_allocation": false
+}

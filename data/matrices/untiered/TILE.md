@@ -7,7 +7,7 @@ Proposed prefix TILE identifies provenance, not a disjoint mathematical family.
 
 | stem | box B | bulk L | actual ranks Hx/Hz | published distance status |
 |---|---:|---:|---|---|
-| TILE_288_8_unknown | 3 | 10 | 140/140 | Table I exact12; reproduction pending |
+| TILE_288_8_unknown | 3 | 10 | 140/140 | Table I exact12; reproduced both engines+GF2 |
 | TILE_512_18_unknown | 4 | 13 | 247/247 | separate weight10 example upper23; exact unconfirmed |
 | TILE_1152_18_unknown | 4 | 21 | 567/567 | original finite size, no inherited source distance |
 | TILE_2592_18_unknown | 4 | 33 | 1287/1287 | original finite size, no inherited source distance |
@@ -68,5 +68,30 @@ new stronger search bounds remain PLAUSIBLE until independent confirmation.
 No scientific rerun to complete timeouts. Heavy proof/numeric/source-word
 work becomes explicit unexecuted yfclab2 jobs; no server core is allocated.
 All additions remain untiered on the work branch, with no solver/default/
-tier/name/QDistSAT/main changes. Terminal evidence will be recorded in the
-manifest and GH-194/REPORT.md without source-filled raw bounds.
+tier/name/QDistSAT/main changes. Terminal evidence is recorded below and in the manifest/GH-194 report. No
+source-filled raw bounds.
+
+
+## Terminal Linux evidence
+
+[Run40936889050](https://github.com/guluchen/DistQLDPC/actions/runs/40936889050),
+job123669679137 SUCCESS, source54ebd9f1878d7a5a6bfe0fb6a61e666c82f86cb0.
+All52units/full construction+peer+inventory and16matrix+4certificate byte
+reproduction PASS; full job log,22engine files and audit retained durably.
+Local actual-word replay is byte-identical; no Mac solver runs.
+
+| stem | MaxSAT raw60s | CC raw60s | actual verified upper | numeric gate |
+|---|---|---|---:|---|
+|TILE_288_8_unknown|exact12|exact12|12|PASS|
+|TILE_512_18_unknown|[9,21]|[13,21]|21|PASS|
+|TILE_1152_18_unknown|[5,41]|[12,46]|41|PASS|
+|TILE_2592_18_unknown|no numeric fields|[12,161]|161|INCOMPLETE|
+
+Anchor12 is cross-checked. Source512 upper23 has actual X21 words; exact
+is unconfirmed. Strongest new CC lower13/12/12 remains PLAUSIBLE pending
+independent search/proof. Preserve CC1152 raw46 and empty MaxSAT2592 fields.
+No inference of growing distance from these finite upper bounds. Three
+unexecuted default MaxSAT proof/numeric jobs and separately three optional
+CC exact-completion jobs are in GH-194/runner. Each queue is configured for
+18CPUhours/18h30mwall LIMITS, not ETA; no core allocation/server execution.
+No further scientific CI run to complete timeouts. Work branch only.
