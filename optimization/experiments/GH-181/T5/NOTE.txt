@@ -1,0 +1,8 @@
+GH-181 Tier 5 (yfclab2 cores 20-23, concurrent, 21600 s each, 4 GB cap): TN_496_2_23to30 only (the only tier5 code
+where sparse / sparseov add rows: 372 rows each; dual map -> X half only).
+  t5.*.main  frozen server-main-6083e66, CC defaults
+  t5.*.sp    frozen server-gh181-07b5e3d (tree of 091c1056), -cc-rules=excl,pack,orbf,parity,leaf,overlap,sparse,sparseov,sparsemrv
+  x5.*.s1/s2 same binary and rules, relabelled seeds 1 and 2 (cross-check of the search order). The s2 job carries
+             "-seed=1 -seed=2" (job-file slip); the last -seed wins (checked: -v prints cc-seed 2), so it ran seed 2.
+Result: lb 27 in all three candidate runs (main: lb 23). PLAUSIBLE (same implementation, three search orders); no stem
+renamed. Table: tier5_table.md (analyze_tier5.py with t5.* / x5.* split).
