@@ -130,3 +130,17 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Finite DHLV edge-qubit inputs (GH-186)
+
+Six original [DHLV](DHLV.md) chain representatives at n108/784/1176/1568/
+1960/2744, k10/40/50/48/58/66. Physical binary qubits are components on
+edges, unlike the face-qubit Tanner inputs. Every faithful group action,
+edge/square/full star, actual binary boundary column and corner tensor
+cancellation, complete logical quotient bases and actual upper word are
+verified independently.15new+34prior units and24matrix+6certificate byte
+reproduction pass. No same(n,k) peers in main/pinned pending-library refs.
+Linux gates pending at construction checkpoint. Supplied-basis uppers
+4/8/6/28/10/34 are not minima. No published individual exact d or globally
+open-problem claim; no unverified asymptotic-good/decoder guarantee.
+All51tiered and prior24untiered inputs preserved; this branch has30untiered.

@@ -312,3 +312,21 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Finite DHLV edge-qubit CSS matrices (GH-186, untiered)
+--------------------------------------------------------
+
+Original scripts/codegen/dhlv.py and independent group/edge/square/binary-
+chain validator; generated DHLV_{108,784,1176,1568,1960,2744}_*_unknown
+matrices, GPL-3.0-or-later. No author implementation, matrix file, paper
+prose or image copied; no external distance/group solver used.
+Mathematical source (CC BY4.0, https://creativecommons.org/licenses/by/4.0/):
+Irit Dinur, Min-Hsiu Hsieh, Ting-Chun Lin and Thomas Vidick,
+"Good Quantum LDPC Codes with Linear Time Decoders",
+arXiv:2206.07750v1 (2022), https://arxiv.org/abs/2206.07750v1,
+Sec.2.4/2.7/3.1 Eq.(6), Lemma3.1. Original finite group/local-code
+specializations and independent implementation; no author endorsement
+claimed. Actual weight counts binary edge components. Individual finite
+exact distances and the asymptotic-good/decoder hypotheses are not supplied
+by the source for these original choices. See data/matrices/untiered/DHLV.md
+and optimization/experiments/GH-186/ for proof, provenance and validation.
