@@ -1,6 +1,6 @@
 # GH-198: upper-only trivariate tricycle targets
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux/global source-word gates pending.
+Status: BOUNDED_LINUX_PASS; all numeric/global source-word gates PASS; two independent proof jobs unexecuted.
 Issue198; hub6506964201. Branch codex/tricycle-library from remote
 main6083e662c621f3b66defd434cfae31a028d483c4. No PR/main integration.
 Previous goal turn PROGRESS: GH197package7a796bcc passed52units/library
@@ -85,7 +85,7 @@ Heavy required proof/numeric/global-source-word gates freeze guarded
 Limits not ETA, no core allocated/server execution/paid cloud substitution.
 No solver/default/tier/name/QDistSAT/main change.
 
-## Completion fields (intermediate)
+## Initial local checkpoint (superseded by terminal evidence below)
 
 What changed:6reproducible source TT inputs, independent chain/column/tensor/
 logical/map/actual-word checks, provenance/soundness and mutants.
@@ -95,3 +95,55 @@ Unresolved: bounded Linux and heavy package if needed; prior holds/gaps.
 Scientific semantics changed:no.
 PI action required:no for routine steps; yes for integration/resources or
 actual scientific contradiction.
+
+## Terminal Linux evidence and remaining work
+
+Library run40946335182/job123702566399 SUCCESS, source ordinaryCI40946335166/
+job123702565195 SUCCESS, source55d5b01a04ae37e493bd5f1cc306d8783d3f81b1,
+tree1ea38c296569c31a015d07f65eab8fab64dde17d.
+Unchanged binary SHA256 68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+52units/full construction/30untiered81total inventory/24matrix bytes PASS.
+All six numeric and all six source-global-upper-word gates PASS.
+One attempt per case/engine; no science rerun. Full job log and all30engine
+files + audit retained under raw/actions/, SHA256receipt raw/retained-sha256.json;
+local audit replay byte-identical. Expiring artifact is not sole evidence.
+
+| n,k | MaxSAT raw [lb,ub] | CC raw [lb,ub] | actual GF(2) upper | status |
+|---|---|---|---|---|
+|72,6|[6, 6] SOLVED|[6, 6] SOLVED|6|cross-checked two engines + GF(2)|
+|588,9|[14, 14] SOLVED|[14, 14] SOLVED|14|cross-checked two engines + GF(2)|
+|648,12|[14, 14] SOLVED|[14, 14] SOLVED|14|cross-checked two engines + GF(2)|
+|735,18|[14, 14] SOLVED|[14, 14] SOLVED|14|cross-checked two engines + GF(2)|
+|840,9|[10, 16] BOUNDED|[16, 16] SOLVED|16|CC exact16 PLAUSIBLE; independent lower10|
+|1029,18|[10, 16] BOUNDED|[16, 16] SOLVED|16|CC exact16 PLAUSIBLE; independent lower10|
+
+72 reproduces the published global6 anchor. 588/648/735 global14 independently
+cross-checked by complete MaxSAT and CC and materialized GF(2) minimum words;
+no claim that this is novel across all literature. Do not downgrade these
+completed cross-checks to PLAUSIBLE. 840/1029 CC16 remain PLAUSIBLE until
+independent proof; MaxSAT certifies10 and verifies16, not an exact16 result.
+Raw results remain separate. Actual per-half X/Z word uppers12/6,110/14,
+108/14,72/14,156/16,96/16. Source X<=73/72/80 remain literature claims,
+not imported actual X words. Global proofs do not prove the larger X half.
+No scientific contradiction; no stem rename/tier/QDistSAT/main integration.
+
+Guarded server package runner/:2 default MaxSAT proof jobs (840/1029),0optional
+CC completion jobs,0source-global-word jobs. Each6CPUh/6h10wall/4GiB/seed0;
+total12CPUh/12h20wall LIMITS, not ETA. Retained own cap16 is separate from
+source claim. Exact-half/actualword/source/other-engine contradiction guards,
+source/build/case/matrix hashes, PI allocation/free pinned core, yfclab2-only,
+clean-checkout and default dry-run. All3queues dry-run; Mac execution and
+altered args/cap/purpose refused. No output dir/server execution/allocation.
+
+What changed:6source TT inputs, reproducible mathematical generator,
+independent tensor/column/logicals/metacheck checks, provenance, retained
+Linux evidence and2unexecuted independent proof jobs.
+Validation performed:52units/30tiny random cases+mutants/24matrix bytes/
+36pinned refs/fullGF2/logicals/12bounded runs/audit replay/runner guards.
+Results: all numeric/source global word gates PASS; exact6/14/14/14
+cross-checked, twoCC16 PLAUSIBLE. No timing or asymptotic claim.
+Unresolved: twoindependent proof jobs, source-half-only literature targets,
+AMC/MM/Schreier/MB physical prescriptions and all prior holds/integration.
+Scientific semantics changed:no.
+PI action required:no for next source review; yes for server allocation,
+integration or actual scientific ambiguity. Goal remains ACTIVE.

@@ -52,4 +52,26 @@ escalates. Missing raw numeric/source-word gates stay INCOMPLETE; never
 source-filled. New lower/exact PLAUSIBLE until independent confirmation.
 Heavy proof/numeric/source-overall-word work becomes unexecuted guarded
 yfclab2 jobs. All untiered/work branch; no core allocation/solver/default/
-tier/name/QDistSAT/main/PR change. Linux/source-word gates pending.
+tier/name/QDistSAT/main/PR change. Linux and all numeric/source-global-word gates PASS.
+
+## Retained Linux results
+
+| n,k | MaxSAT raw [lb,ub] | CC raw [lb,ub] | actual GF(2) upper | status |
+|---|---|---|---|---|
+|72,6|[6, 6] SOLVED|[6, 6] SOLVED|6|cross-checked two engines + GF(2)|
+|588,9|[14, 14] SOLVED|[14, 14] SOLVED|14|cross-checked two engines + GF(2)|
+|648,12|[14, 14] SOLVED|[14, 14] SOLVED|14|cross-checked two engines + GF(2)|
+|735,18|[14, 14] SOLVED|[14, 14] SOLVED|14|cross-checked two engines + GF(2)|
+|840,9|[10, 16] BOUNDED|[16, 16] SOLVED|16|CC exact16 PLAUSIBLE; independent lower10|
+|1029,18|[10, 16] BOUNDED|[16, 16] SOLVED|16|CC exact16 PLAUSIBLE; independent lower10|
+
+52units and24matrix byte reproduction PASS. Complete evidence and byte-identical
+audit replay in GH-198/raw/actions/default/. Source55d5b01a; library run40946335182
+job123702566399 and ordinaryCI40946335166 SUCCESS. Three source-upper-only
+cases now have global14 cross-checked by two complete engines plus actual
+GF(2) minimum words. Two CC16 results remain PLAUSIBLE with independent
+MaxSAT lower10. Separate actual X/Z upper words12/6,110/14,108/14,72/14,
+156/16,96/16; source larger X claims remain literature references.
+Two unexecuted MaxSAT proof jobs, total12CPUh/12h20wall limits, not ETA.
+No source-word or CC completion jobs needed. All stems stay unknown/untiered
+until PI approves integration/tiering.

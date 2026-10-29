@@ -234,7 +234,10 @@ ranks/logicals/pairing/metacheck redundancy/physical maps/typed spaces/actual
 words PASS;18new+34prior units/24matrix byte reproduction/36pinned refs no
 same(n,k)peer. Source half/global endpoints and absentXvalues separate.
 Initial actual overall uppers8/70/18/20/128/24, not published targets or minima.
-Linux/global source-word gates pending. No presumed XZ map or imported
+Linux numeric/global source-word gates PASS (run40946335182/job123702566399).
+Two engines+GF2 confirm global6/14/14/14; larger840/1029CC16 remain
+PLAUSIBLE with independent MaxSAT lower10. Full raw retained;2unexecuted
+MaxSAT proof jobs; source-half uppers kept separate. No presumed XZ map or imported
 single-shot/gate/layout/asymptotic guarantee; no disjoint-family count.
 AMC/MM/Schreier/MB explicit-prescription and prior proof/numeric/equivalence
 holds remain visible. Source2508.08191v3 Eq5-14/TableV, CC BY4.0 attributed.
