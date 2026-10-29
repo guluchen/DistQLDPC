@@ -264,6 +264,14 @@ Renamed 2026-10-23 (PI decision; same matrices, lower bounds unchanged): upper b
 nontrivial logical operators found by DistQLDPC's GH-146 finder and independently verified
 (optimization/experiments/GH-146/witnesses/): BB_1080_4_30to48 (was BB_1080_4_ge30), BB_756_16_30to34 (was BB_756_16_ge30), BB_864_4_30to40 (was BB_864_4_ge30), TN_288_2_9to24 (was TN_288_2_ge9), TN_324_4_9to25 (was TN_324_4_ge9), TN_360_4_17to24 (was TN_360_4_ge17), TN_396_4_17to26 (was TN_396_4_ge17), TN_432_8_9to29 (was TN_432_8_ge9), TN_468_4_17to29 (was TN_468_4_ge17), TN_496_2_17to30 (was TN_496_2_ge17), TN_504_2_17to34 (was TN_504_2_ge17), TN_540_4_9to34 (was TN_540_4_ge9), TN_576_2_9to37 (was TN_576_2_ge9), TN_612_2_17to40 (was TN_612_2_ge17), TN_648_10_9to32 (was TN_648_10_9to52), TN_648_14_9to28 (was TN_648_14_ge9), TN_684_2_9to29 (was TN_684_2_ge9).
 
+Renamed 2026-10-29 (PI decision; same matrices, upper bounds unchanged): lower bounds raised by
+DistQLDPC's optional CC engine with -cc-aut=on (GH-152, issue #152: Tanner-graph automorphism
+candidates, GF(2)-verified before use), reproduced with a different search order (mrv) on the same
+labels (optimization/experiments/GH-152/REPRODUCTION.md, branch experiment/gh-152-tanner-aut):
+TN_288_2_22to24 (was TN_288_2_9to24), TN_324_4_22to25 (was TN_324_4_9to25), TN_432_8_23to29 (was
+TN_432_8_9to29), TN_496_2_23to30 (was TN_496_2_17to30), TN_540_4_23to34 (was TN_540_4_9to34),
+TN_576_2_24to37 (was TN_576_2_9to37).
+
 9. Triangular 6.6.6 color-code matrices (GH-156, untiered)
 --------------------------------------------------------
 
