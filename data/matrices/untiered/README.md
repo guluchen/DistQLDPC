@@ -130,3 +130,13 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Interval-valued QC GHP references (GH-192)
+
+Two [PK2021 GHP/LP references](REFERENCE_GHP.md), n882k24/n1270k28, have
+published intervals18..24/16..46. Original block-circulant row construction,
+independent physical columns/layer-major pullback/full GF2/logicals/typed
+physical rowspace and cyclic lift automorphism pass; no presumed XZ map.
+14new units/full8matrix byte reproduction and31pinned peer inventories pass.
+Initial actual basis uppers24/64; B3 source46 word and Linux still pending.
+This branch26untiered/77total; prior24rows/300matrix files preserved.

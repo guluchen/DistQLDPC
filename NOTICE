@@ -312,3 +312,20 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Interval-valued QC GHP reference matrices (GH-192, untiered)
+-------------------------------------------------------------
+
+Original scripts/codegen/reference_ghp.py, independent coordinate/physical
+validator, audit/tests and generated LP_882_24_unknown/LP_1270_28_unknown
+matrices, GPL-3.0-or-later. Construction and numerical parameters:
+Pavel Panteleev and Gleb Kalachev, "Degenerate Quantum LDPC Codes With Good
+Finite Length Performance", arXiv:1904.02703v3, Quantum5,585(2021),
+DOI:10.22331/q-2021-11-22-585, Sec4.2/AppendixB sectionB itemsB1/B3/Table1,
+source CC BY4.0 (https://creativecommons.org/licenses/by/4.0/).
+Changes: original mathematical reconstruction and independent physical/
+coordinate checks, newly computed logical bases. No author implementation,
+matrix files, paper prose/images or third-party distance tools used.
+Published18..24/16..46 intervals are source claims, not DistQLDPC-certified
+bounds. GHP is a lifted-product specialization under LP prefix, not a new
+disjoint family. See data/matrices/untiered/REFERENCE_GHP.md.
