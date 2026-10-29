@@ -130,3 +130,13 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Static periodic X-cube (GH-190)
+
+Four [XCB](XCUBE.md) inputs n81/375/1029/2187,k15/27/39/51 add the
+missing type-I fracton prescription. Independent source columns, full
+logicals/GF2/typed physical connectivity and complete disjoint logical-coset
+certificates give both-half lower/upper3/5/7/9.50local units and first-case
+byte regeneration pass; no same(n,k) peer across29 pinned refs. Linux
+full16matrix+4certificate reproduction and both-engine checks pending.
+This branch28untiered/79total; prior24rows/96matrices and51tiered preserved.

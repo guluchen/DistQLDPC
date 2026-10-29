@@ -438,3 +438,46 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+---
+
+## Library-only X-cube disjoint-detector certificates (GH-190)
+
+No MaxCDCL/solver/encoding/default/printed-bound change. Original static
+link-qubit construction from Vijay–Haah–Fu1603.04442v1, TableI/main
+Hamiltonian and AppendixB odd-L degeneracy formula; original finite proof.
+
+Hx contains the twelve edges of each periodic cube; Hz the four incident
+links in each of three coordinate planes at every vertex. A cube/planar-star
+overlap is zero or two, so Hx Hz^T=0. Independent edge columns check all
+four incident cubes and both endpoints/two containing planes. Full GF2
+ranks and logical bases are verified on the actual matrices.
+
+Let D be a complete opposite logical detector basis. Suppose each detector
+has L representatives in its own stabilizer coset, with pairwise disjoint
+PHYSICAL supports. A nontrivial tested kernel word has odd pairing with some
+detector because the full quotient pairing is nonsingular. Its pairing with
+every stabilizer is zero, so it has odd pairing with all L equivalent
+representatives. Hence it must occupy at least one qubit of each disjoint
+support, giving weight>=L. Actual logical words of weightL supply uppers.
+The validator checks every kernel/coset/disjointness/quotient/pairing fact;
+a drawing, incomplete detector set or disjoint words from different cosets
+is insufficient. Raw CLI bounds are never filled from this certificate.
+
+For X-cube, per orientation choose X lines at transverse(0,b) for all b and
+(a,0) for a>0, and Z ribbons at longitudinal layer0: all fixed-b/vary-a
+ribbons plus fixed-a/vary-b ribbons with a>0. The pairing is triangular with
+identity diagonal. Verify3(2L-1)=k, complete quotient ranks and actual pairing.
+For each Z ribbon, longitudinal translations give L disjoint representatives;
+adjacent layers differ by a product of coplanar Z stars. For each X line at
+(a,b), use that line and the L-1 three-line supports(a',b)+(a,b')+(a',b'),
+where other a' and b' are paired bijectively. All supports are disjoint, and
+each difference from the original is the four-corner line rectangle obtained
+by multiplying cube X checks throughout the transverse rectangle and full
+longitudinal cycle. Actual GF2 stabilizer membership is checked directly.
+Thus both dX,dZ>=L; line/ribbon upper wordsL complete the finite certificate.
+Only fixed oddL3/5/7/9/source parameters are asserted here. No boundary,
+energy-barrier/decoder/self-correcting or subsystem distance claim imported.
+Random physical relabels and missing-detector/quotient/representative/coset/
+overlap/edge/logical mutants test the necessary hypotheses without distance
+or support enumeration on the Mac. Internal engine evidence retained.
