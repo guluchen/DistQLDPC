@@ -1,0 +1,81 @@
+name: Published interval QC GHP library smoke
+
+on:
+  push:
+    branches: [codex/open-reference-ghp-library]
+    paths:
+      - '.github/workflows/reference-ghp-library-smoke.yml'
+      - 'scripts/codegen/reference_ghp*'
+      - 'scripts/codegen/validate_reference_ghp.py'
+      - 'scripts/codegen/audit_reference_ghp_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_reference_ghp.py'
+      - 'data/matrices/untiered/LP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Full independent columns and logicals, tiny units and inventory
+        run: |
+          python3 tests/test_codegen_reference_ghp.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_reference_ghp.py --out /tmp/ghp-construction.json
+          cmp optimization/experiments/GH-192/raw/construction.json /tmp/ghp-construction.json
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+      - name: Reproduce all eight matrices
+        run: |
+          python3 scripts/codegen/reference_ghp.py --all --out /tmp/ghp-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/ghp-rebuilt').glob('*.txt'))
+          assert len(files)==8
+          for p in files: assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS all eight matrices byte-identical')
+          PY
+      - name: Two default serial bounded MaxSAT checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family LP --verbose --out /tmp/reference-ghp-maxsat
+      - name: Two independent serial bounded CC checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family LP --verbose --engine cc --out /tmp/reference-ghp-cc
+      - name: Actual words, source intervals and independent-engine audit
+        run: |
+          python3 scripts/codegen/audit_reference_ghp_smoke.py --maxsat /tmp/reference-ghp-maxsat --cc /tmp/reference-ghp-cc --construction /tmp/ghp-construction.json --out /tmp/ghp-audit.json
+          python3 - <<'PY'
+          from pathlib import Path
+          print('GH192_AUDIT_JSON='+Path('/tmp/ghp-audit.json').read_text().replace('\n',''))
+          PY
+      - name: Retain all evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ['reference-ghp-maxsat','reference-ghp-cc']:
+              result[label]={p.name:p.read_text() for p in Path('/tmp',label).glob('*') if p.is_file()}
+          print('GH192_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh192-reference-ghp-smoke
+          path: |
+            /tmp/reference-ghp-maxsat/
+            /tmp/reference-ghp-cc/
+            /tmp/ghp-construction.json
+            /tmp/ghp-audit.json
+          if-no-files-found: warn
+          retention-days: 14
