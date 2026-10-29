@@ -473,3 +473,9 @@ inequivalence using verified words/proofs, not a paper label or row-weight
 heuristic. Independent peer-log/input identities are retained in GH202.
 No new pruning or solver bound; unknown-claim smoke parsing uses only the
 physical n ceiling and generic consistency checks, never fills missing bounds.
+GH-202 subsequent source-distance hold: one MaxSAT result8/actual GF2word8
+for reconstructed source500does not reproduce published6. All six candidates
+are held; independent algebraic checks do not rule out local-coordinate/
+solver discrepancy. No further scientific search. Normal generation refuses;
+explicit diagnostic mode reproduces quarantined bytes only, never adopted
+flat/tier roots. Source6 remains unchanged and one-engine8 is PLAUSIBLE.

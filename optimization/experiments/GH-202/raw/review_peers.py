@@ -49,7 +49,7 @@ def main():
             if result!=dict(lb=7,ub=7,status='SOLVED') or audit['engines'][engine]!=result:raise ValueError('retained peer exact proof changed')
             engine_results[engine]=dict(result=result,path=log_path,sha256=hashlib.sha256(text.encode()).hexdigest(),source_head=meta['source_head'],binary_sha256=meta['binary_sha256'])
         if len({(r['source_head'],r['binary_sha256']) for r in engine_results.values()})!=1:raise ValueError('retained peer engines used different sources/binaries')
-        nn,mm=read_code(ROOT/'data/matrices/untiered','TN_180_26_unknown');validate(nn,mm)
+        nn,mm=read_code(ROOT/'data/matrices/untiered/quarantine/GH-202','TN_180_26_unknown');validate(nn,mm)
         if (equal_space(m[0],mm[0]) and equal_space(m[1],mm[1])) or (equal_space(m[0],mm[1]) and equal_space(m[1],mm[0])):raise ValueError('duplicate peer rowspaces')
         construction=json.loads((raw/'construction.json').read_text());own=next(r for r in construction if r['stem']=='TN_180_26_unknown')
         word=min(own['independently_checked_uppers'],key=lambda w:w['weight']);verify_witness(nn,mm,word['half'],word['support'])

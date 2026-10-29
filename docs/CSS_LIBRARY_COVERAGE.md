@@ -304,3 +304,15 @@ inequivalence; TN lower6/source6/6/14 reproduction and Linux gates pending.
 No disjoint family count or automatic asymptotically-good claim. GH200source
 hold remains untouched; full remaining construction/integration/proof backlog
 is not waived by this new independent source.
+
+
+GH-202 terminal SOURCE_DISTANCE_REPRODUCTION_HOLD: Linux40957668835/
+job123741864532 passed50units/geometry/24bytes, reproduced180distance6 in
+one MaxSAT run, then source500reported8 against published6 and stopped.
+Actual word8 GF2verified; one-engine8 remains PLAUSIBLE, no paper-erratum
+claim or resolved local label mapping. CC and later four cases unrun. All24
+files quarantined, main24row manifest restored,0accepted additions. Normal
+generation refuses;18hold units/retained-failure replay validate only hold
+evidence and guards. No reorder/reselection/renaming/rerun/server package.
+PI source interpretation/diagnostic authorization needed; this finite
+Schreier ladder remains an incomplete coverage item. GH200still separately held.

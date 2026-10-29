@@ -123,7 +123,7 @@ def audit(c,generated,directory):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--dir',type=Path,default=ROOT/'data/matrices/untiered');p.add_argument('--out',type=Path)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--dir',type=Path,default=ROOT/'data/matrices/untiered/quarantine/GH-202');p.add_argument('--out',type=Path)
     p.add_argument('--generated',type=Path,default=ROOT/'optimization/experiments/GH-202/raw/generation.json');a=p.parse_args()
     generated={r['case_id']:r for r in json.loads(a.generated.read_text())}
     results=[audit(c,generated[c['id']],a.dir) for c in json.loads(Path(__file__).with_name('schreier_cases.json').read_text())]

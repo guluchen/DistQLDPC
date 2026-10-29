@@ -1,0 +1,24 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-cpu-lim=60",
+    "-v",
+    "data/matrices/untiered/TN_500_42_unknown"
+  ],
+  "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "input_sha256": {
+    "Hx": "a350fdef721ff6accf99369d0cb36e141edeb7445168fe17baa8be03f06f9041",
+    "Hz": "f6c1c9afff5b15f7ca0de889390b0e1cf989162a9e1959ddc6b7f6523c191b7c",
+    "Gx": "d83b9967c4acfa18d95ffddf0e90f7c28a2136621e10abf4b9b24b8865e03507",
+    "Gz": "57e7c8941ee472f65953af26802abedc40633b40d3689cc32e9e371558e0c61f"
+  },
+  "source_head": "e41bff4c327fa60a3467be5552509ea9ec9e496c",
+  "rc": 0,
+  "wall_seconds": 4.722
+}

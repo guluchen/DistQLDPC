@@ -1,6 +1,6 @@
 # GH-202: generalized Schreier Tanner finite prescriptions
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux/source minimum-word gates pending.
+Status: SOURCE_DISTANCE_REPRODUCTION_HOLD; Linux source500 exact reference not reproduced; zero accepted additions.
 Issue202;hub6508497825. Branch codex/schreier-tanner-library from main
 6083e662c621f3b66defd434cfae31a028d483c4. Previous goal turn PROGRESS:
 GH201bbb684ea indexed39refs/192stored stems without876repeated memberships;
@@ -100,7 +100,7 @@ paid cloud. Required incomplete proof/numeric gates freeze guarded unexecuted
 6CPUh+600wall/4GiB/seed0/serial pinnedyfclab2 packages; explicit PI allocation,
 free core, nohup/nullstdin. Limits not ETA; no core assigned/server execution.
 
-## Completion fields (local checkpoint)
+## Initial local checkpoint (superseded by failed source gate below)
 
 What changed:6reproducible Schreier Tanner source/original inputs, full
 mathematical provenance, independent graph/tensor/logicals/peer checks/mutants.
@@ -113,3 +113,66 @@ Scientific semantics changed:no.
 PI action required:no for this independent routine batch;yes for actual new
 scientific ambiguity/resources/integration. GH200PI question remains pending.
 No PR/main/tier/stem/QDistSAT/default/solver change.
+
+## Terminal scientific source-control failure
+
+Library run40957668835/job123741864532 FAILED, attempt1. Source/workflow
+e41bff4c327fa60a3467be5552509ea9ec9e496c, treee817eac43276a09c8dc41a7eccbe869a880de35f,
+data9d4e049ac65c88cbd02915c97765957153afe78b. Ordinary sourceCI40957668836/
+job123741864900 SUCCESS establishes unchanged build/base smoke, not this
+failed scientific gate. All50units/full geometry/24byte reproductions passed
+in Linux, then one source180MaxSAT raw[6,6]SOLVED/actualGF2Xword6 and one
+source500MaxSAT raw[8,8]SOLVED/actualGF2Xword8 were observed. Exact6 source
+reference guard raised and stopped immediately. CC step and686/original
+cases were skipped, not timed out or silently considered passed. No more
+scientific runs were started.
+
+Full268051-character job log and every retained engine file saved under
+raw/actions/failed-source-smoke and raw/actions/library-job-123741864532.log;
+empty CC evidence retained as empty, not synthesized. Original metadata for
+500has no parsed lb/ub/status because its strict source guard failed; do not
+rewrite it. Separate audit_failed_smoke.py extracts observed raw8 using only
+physicaln consistency, verifies actual matrix/source/binary/word identities
+and confirms that strict exact6 raises. Source-distance-hold receipt keeps
+source6 and actual8 separate. Source180is source exact reproduced in ONE
+engine+GF2, not two-engine confirmation. Source500exact8 remains PLAUSIBLE
+until independently checked; a word8 alone does not disprove source6.
+
+Reasonable static review: sourceTableI lists generator sets/local matrices
+and the formal construction permits chosen local-view orderings. Our
+internal-first/cross-next and displayed inverse-pair ordering was explicitly
+frozen before generation; source graph block adjacencies, locally invertible
+labels, every corner/shared strip, full actual stabilizer tensor rowspaces
+and logical bases pass independent mathematical checks. Complete n/k also
+match. That does not establish the intended source label-coordinate mapping
+or rule out a solver error. No alternate ordering or parameter was tried to
+force the reference6. This is a SOURCE REPRODUCTION MISMATCH, not a paper
+erratum claim or a conclusion that6is false. PI interpretation/diagnostic
+authorization required; external author communication remains PI-only.
+
+All24initial PCMfiles for ALL six frozen cases now in
+data/matrices/untiered/quarantine/GH-202, outside flat manifest/smoke selection.
+Original main24row manifest and validation JSON restored byte-identically.
+No case replaced/dropped/renamed or recast as an original solely to pass.
+The unexecuted runner template removed: failed source adoption is not an
+ordinary timeout completion, so no server queue or allocation is prepared.
+Normal generation refuses while held; explicit --diagnostic-quarantine can
+reproduce the same bytes in a separate directory, cannot write accepted flat
+or tier roots. Future workflow is unit/hold-only, never retries the stopped
+scientific smoke. New18hold units PASS, including no-write/default refusal
+and accepted-root protection; static geometry/byte checks remain valid but
+do not promote the failed scientific gate.
+
+What changed: retained source500reproduction failure, verified raw words/
+identities, quarantined six-case batch, deterministic failure replay and
+pre-write diagnostic guards; source params/claims unchanged. Accepted inputs:0.
+Validation performed: initial50Linux units/geometry/24bytes; twoMaxSAT runs
+only; direct GF2raw-word and retained-failure replay;18hold units; prior data
+preservation. No CC or later scientific attempts.
+Results: source1806 reproduced one engine+GF2; source500reported8 versus
+reference6 unresolved, PLAUSIBLE one-engine8. Full failure retained.
+Unresolved: PI source/local-coordinate interpretation or independent
+diagnostic authorization, and all remaining adoption/CC/later-case gates.
+Scientific semantics changed:no.
+PI action required:yes before this frozen source-dependent batch proceeds.
+GH200remains separately held; global goal ACTIVE and incomplete.

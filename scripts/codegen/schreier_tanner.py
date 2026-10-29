@@ -3,6 +3,8 @@
 
 Published graph blocks, Def10/AppendixB; GPL-3.0-or-later. No author code.
 Source and original cases fixed in GH202 before generation. No distance search.
+SOURCE_DISTANCE_HOLD: source500 reconstructed MaxSAT8 versus published6.
+Only explicit quarantined diagnostic generation is supported pending PI.
 """
 import argparse
 from itertools import product
@@ -113,8 +115,11 @@ def construction(case):
     return dict(n=n,k=k,rank_Hx=rx,rank_Hz=rz,degree=d,base_vertices=M,local_dimensions=[len(ga),len(gb)]),hx,hz,stars
 
 
-def generate(case,out):
+def generate(case,out,diagnostic=False):
     result,hx,hz,stars=construction(case);n=result['n'];stem='TN_%d_%d_unknown'%(n,result['k'])
+    if not diagnostic:raise ValueError('SOURCE_DISTANCE_HOLD: explicit diagnostic quarantine required; no adoption')
+    if out.resolve()==(ROOT/'data/matrices/untiered').resolve() or out.resolve().parent==(ROOT/'data/matrices').resolve():
+        raise ValueError('SOURCE_DISTANCE_HOLD: diagnostic output cannot enter the accepted flat/tier library')
     if any((out/(stem+'_'+k+'.txt')).exists() for k in ('Hx','Hz','Gx','Gz')):raise FileExistsError('refusing to overwrite '+stem)
     out.mkdir(parents=True,exist_ok=True)
     for kind,matrix in [('Hx',hx),('Hz',hz)]:
@@ -128,12 +133,14 @@ def generate(case,out):
 def main():
     p=argparse.ArgumentParser(description=__doc__);g=p.add_mutually_exclusive_group(required=True)
     g.add_argument('--all',action='store_true');g.add_argument('--case')
-    p.add_argument('--out',type=Path,default=ROOT/'data/matrices/untiered');p.add_argument('--receipt',type=Path);a=p.parse_args()
+    p.add_argument('--out',type=Path,default=ROOT/'data/matrices/untiered/quarantine/GH-202');p.add_argument('--receipt',type=Path)
+    p.add_argument('--diagnostic-quarantine',action='store_true');a=p.parse_args()
+    if not a.diagnostic_quarantine:p.error('SOURCE_DISTANCE_HOLD: only explicit --diagnostic-quarantine; no source-dependent distance runs')
     selected=[c for c in json.loads(CASES.read_text()) if a.all or c['id']==a.case]
     if not selected:p.error('only frozen source/original cases supported')
     results=[]
     for c in selected:
-        r=generate(c,a.out);results.append(r);print(json.dumps(r),flush=True)
+        r=generate(c,a.out,diagnostic=True);results.append(r);print(json.dumps(r),flush=True)
     if a.receipt:a.receipt.write_text(json.dumps(results,indent=2)+'\n')
 
 

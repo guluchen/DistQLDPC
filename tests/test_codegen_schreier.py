@@ -10,6 +10,7 @@ import tempfile
 import unittest
 
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'scripts/codegen'))
+DATA=ROOT/'data/matrices/untiered/quarantine/GH-202'
 import schreier_tanner as gen
 import validate_schreier as audit
 import audit_schreier_smoke as evidence
@@ -35,7 +36,7 @@ class Schreier(unittest.TestCase):
 
     def test_every_actual_code_against_independent_geometry(self):
         for c in self.cases:
-            r=audit.audit(c,self.made[c['id']],ROOT/'data/matrices/untiered')
+            r=audit.audit(c,self.made[c['id']],DATA)
             self.assertEqual(r,self.checked[c['id']]);self.assertEqual(r['stabilizer_support_components'],[c['n']])
 
     def test_petersen_factor_is_exact_literal_graph(self):
@@ -80,32 +81,32 @@ class Schreier(unittest.TestCase):
                 self.assertEqual(span,set(audit.codewords(c[key])))
 
     def test_entry_and_logical_mutants(self):
-        stem=self.made['source180']['stem'];n,m=read_code(ROOT/'data/matrices/untiered',stem)
+        stem=self.made['source180']['stem'];n,m=read_code(DATA,stem)
         m[0][0]^=1
         with self.assertRaises(ValueError):validate(n,m)
-        n,m=read_code(ROOT/'data/matrices/untiered',stem);m[2][0]=0
+        n,m=read_code(DATA,stem);m[2][0]=0
         with self.assertRaises(ValueError):validate(n,m)
 
     def test_unknown_original_not_given_source_distance(self):
-        c=self.cases[3];r=self.made[c['id']];n,m=read_code(ROOT/'data/matrices/untiered',r['stem'])
+        c=self.cases[3];r=self.made[c['id']];n,m=read_code(DATA,r['stem'])
         out=evidence.assess(c,n,m,self.checked[c['id']],{'maxsat':'c d_lb: 3\nc d_ub: 20\n','cc':'c d_lb: 4\nc d_ub: 10\n'})
         self.assertEqual(out['source_upper_word_gate'],'NOT_APPLICABLE');self.assertEqual(out['reference_range'],[None,None])
         self.assertEqual(out['engines']['maxsat']['ub'],20);self.assertEqual(out['actual_verified_upper'],10)
 
     def test_missing_numeric_not_filled(self):
-        c=self.cases[3];r=self.made[c['id']];n,m=read_code(ROOT/'data/matrices/untiered',r['stem'])
+        c=self.cases[3];r=self.made[c['id']];n,m=read_code(DATA,r['stem'])
         out=evidence.assess(c,n,m,self.checked[c['id']],{'maxsat':'c status: TIMEOUT (child killed after -cpu-lim)\ns UNKNOWN\n'})
         self.assertIsNone(out['engines']['maxsat']['lb']);self.assertIsNone(out['engines']['maxsat']['ub'])
         self.assertEqual(out['numeric_smoke_gate'],'INCOMPLETE')
 
     def test_source_exact_and_missing_minimum_mutants(self):
-        c=self.cases[0];r=self.made[c['id']];n,m=read_code(ROOT/'data/matrices/untiered',r['stem'])
+        c=self.cases[0];r=self.made[c['id']];n,m=read_code(DATA,r['stem'])
         with self.assertRaises(ValueError):evidence.assess(c,n,m,self.checked[c['id']],{'maxsat':'c d_lb: 5\nc d_ub: 5\no 5\n'})
-        c=self.cases[3];r=self.made[c['id']];n,m=read_code(ROOT/'data/matrices/untiered',r['stem'])
+        c=self.cases[3];r=self.made[c['id']];n,m=read_code(DATA,r['stem'])
         with self.assertRaisesRegex(ValueError,'lacks actual minimum word'):evidence.assess(c,n,m,self.checked[c['id']],{'maxsat':'c d_lb: 2\nc d_ub: 2\no 2\n'})
 
     def test_invalid_word_and_cross_engine_bound_mutants(self):
-        c=self.cases[3];r=self.made[c['id']];n,m=read_code(ROOT/'data/matrices/untiered',r['stem'])
+        c=self.cases[3];r=self.made[c['id']];n,m=read_code(DATA,r['stem'])
         with self.assertRaises(ValueError):evidence.assess(c,n,m,self.checked[c['id']],{'maxsat':'c d_lb: 2\nc d_ub: 10\nc witness X: 0\n'})
         with self.assertRaises(ValueError):evidence.assess(c,n,m,self.checked[c['id']],{'maxsat':'c d_lb: 11\nc d_ub: 12\n'})
 
@@ -113,19 +114,27 @@ class Schreier(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             out=Path(temp)
             for c in self.cases:
-                r=gen.generate(c,out)
+                r=gen.generate(c,out,diagnostic=True)
                 for kind in ['Hx','Hz','Gx','Gz']:
-                    name=r['stem']+'_'+kind+'.txt';self.assertEqual((out/name).read_bytes(),(ROOT/'data/matrices/untiered'/name).read_bytes())
-                with self.assertRaises(FileExistsError):gen.generate(c,out)
+                    name=r['stem']+'_'+kind+'.txt';self.assertEqual((out/name).read_bytes(),(DATA/name).read_bytes())
+                with self.assertRaises(FileExistsError):gen.generate(c,out,diagnostic=True)
 
     def test_cli_selection_and_unknown_claim_ceiling(self):
         base=[sys.executable,str(ROOT/'scripts/codegen/smoke_untiered.py'),'--cpu','54','--out','/tmp/gh202-never-executed','--dry-run']
         self.assertEqual(len(json.loads(subprocess.check_output(base,text=True))),12)
-        self.assertEqual(len(json.loads(subprocess.check_output(base+['--family','TN'],text=True))),6)
+        self.assertEqual(len(json.loads(subprocess.check_output(base+['--family','TN'],text=True))),0)
         r=parse_claim('c d_lb: 3\nc d_ub: 9\n','unknown (original finite code)',100)
         self.assertEqual(r,dict(lb=3,ub=9,status='BOUNDED'))
         with self.assertRaises(ValueError):parse_claim('c d_lb: 101\nc d_ub: 102\n','unknown',100)
         self.assertFalse(Path('/tmp/gh202-never-executed').exists())
+
+    def test_hold_refuses_normal_generation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with self.assertRaisesRegex(ValueError,'SOURCE_DISTANCE_HOLD'):gen.generate(self.cases[0],Path(temp))
+            self.assertEqual(list(Path(temp).iterdir()),[])
+
+    def test_hold_refuses_accepted_flat_diagnostic(self):
+        with self.assertRaisesRegex(ValueError,'cannot enter'):gen.generate(self.cases[0],ROOT/'data/matrices/untiered',diagnostic=True)
 
 
 if __name__=='__main__':unittest.main(verbosity=2)

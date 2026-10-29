@@ -182,6 +182,7 @@ section 5.
   `optimization/experiments/GH-152/REPRODUCTION.md` (branch `experiment/gh-152-tanner-aut`).
 - **BB_288_12_18 / LP_714_100_16:** distances from main's solver (PI 2026-10-11: no strict cross-verification; partial internal checks agreed so far — `-no-symbreak` reached lb 17 / ub 18 on BB_288 and ub 16 on LP_714; re-check if a later run disagrees).
 
-GH-202 generalized Schreier Tanner work-branch inputs: see
+GH-202 generalized Schreier Tanner candidates are on a source-distance hold; see
 [SCHREIER_TANNER.md](untiered/SCHREIER_TANNER.md). Published exact controls
-and original finite unknown-distance cases remain separate; untiered only.
+and original finite unknown-distance cases remain separate and quarantined,
+not registered as accepted flat untiered entries.

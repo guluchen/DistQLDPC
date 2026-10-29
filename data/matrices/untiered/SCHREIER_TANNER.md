@@ -1,4 +1,10 @@
-# Generalized Schreier Tanner finite prescriptions (GH-202)
+# Generalized Schreier Tanner finite prescriptions (GH-202, HELD)
+
+**SOURCE_DISTANCE_REPRODUCTION_HOLD:** Linux source500MaxSAT8 does not
+reproduce published6. All six cases are quarantined, not accepted entries;
+see [quarantine notice](quarantine/GH-202/README.md). No parameter/order
+repair or additional scientific run follows without PI review.
+
 
 Original mathematical reconstruction of Mostad-Rosnes-Lin, IEEEJSAIT6,
 367-382(2025), DOI10.1109/JSAIT.2025.3594310, Def10/SecV/TableI/AppB.
@@ -56,3 +62,19 @@ inventory; prior24manifest rows/300matrices/src/Makefile unchanged. Linux
 short runs/actual source6/6/14 minimum-word reproduction pending. No Mac
 quantum-distance experiments. Missing gates become unexecuted server packages.
 GH200 remains independently on source hold; no decision or parameter changed.
+
+## Failed Linux source-control gate
+
+Library40957668835/job123741864532 FAILED at default MaxSAT source control.
+Source/workflowe41bff4c327fa60a3467be5552509ea9ec9e496c;50units/full actual
+geometry/24matrix bytes passed first. Source180raw[6,6]SOLVED and actualXword6;
+source500raw[8,8]SOLVED and actualXword8, independently checked inGF2.
+Source500reference6 retained unchanged. Its one-engine exact8 is PLAUSIBLE,
+not independently confirmed or identified as the paper's intended code.
+CC and later686/original cases skipped, not filled from source/basis words.
+No result-based label-order exploration, rerun, source-label repair or
+server package. Full raw and independent failure audit retainedGH202/raw.
+Normal generation now refuses; explicit diagnostic mode only to separate
+quarantine. Main24row manifest and300priorfiles byte-preserved.18hold
+units pass; they confirm algebra/retention/guard behavior, not source-distance
+reproduction. PI decision required; broader goal remains incomplete.
