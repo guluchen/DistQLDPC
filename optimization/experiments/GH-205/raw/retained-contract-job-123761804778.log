@@ -1,0 +1,939 @@
+﻿2026-10-29T22:07:57.5917729Z Current runner version: '2.338.0'
+2026-10-29T22:07:57.5944338Z ##[group]Runner Image Provisioner
+2026-10-29T22:07:57.5945222Z Hosted Compute Agent
+2026-10-29T22:07:57.5945789Z Version: 20261021.618
+2026-10-29T22:07:57.5946506Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-29T22:07:57.5947265Z Build Date: 2026-10-21T00:45:21Z
+2026-10-29T22:07:57.5947982Z Worker ID: {1c8f0730-f515-438a-ab7f-79ed5c07c504}
+2026-10-29T22:07:57.5948723Z Region: westcentralus
+2026-10-29T22:07:57.5949297Z Cloud: Azure
+2026-10-29T22:07:57.5949888Z ##[endgroup]
+2026-10-29T22:07:57.5951513Z ##[group]Operating System
+2026-10-29T22:07:57.5952268Z Ubuntu
+2026-10-29T22:07:57.5952813Z 24.04.5
+2026-10-29T22:07:57.5953576Z LTS
+2026-10-29T22:07:57.5954215Z ##[endgroup]
+2026-10-29T22:07:57.5954808Z ##[group]Runner Image
+2026-10-29T22:07:57.5955393Z Image: ubuntu-24.04
+2026-10-29T22:07:57.5956020Z Version: 20261025.353.1
+2026-10-29T22:07:57.5957264Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-29T22:07:57.5958900Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-10-29T22:07:57.5959843Z ##[endgroup]
+2026-10-29T22:07:57.5961024Z ##[group]GITHUB_TOKEN Permissions
+2026-10-29T22:07:57.5963139Z Contents: read
+2026-10-29T22:07:57.5964082Z Metadata: read
+2026-10-29T22:07:57.5964680Z ##[endgroup]
+2026-10-29T22:07:57.5967305Z Secret source: Actions
+2026-10-29T22:07:57.5968247Z Cache mode: write
+2026-10-29T22:07:57.5968971Z Prepare workflow directory
+2026-10-29T22:07:57.6312227Z Prepare all required actions
+2026-10-29T22:07:57.6361109Z Getting action download info
+2026-10-29T22:07:57.9482381Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-29T22:07:58.1702576Z Complete job name: validate
+2026-10-29T22:07:58.2674264Z ##[group]Run actions/checkout@v7
+2026-10-29T22:07:58.2675187Z with:
+2026-10-29T22:07:58.2675647Z   repository: guluchen/DistQLDPC
+2026-10-29T22:07:58.2679410Z   token: ***
+2026-10-29T22:07:58.2679843Z   ssh-strict: true
+2026-10-29T22:07:58.2680282Z   ssh-user: git
+2026-10-29T22:07:58.2680734Z   persist-credentials: true
+2026-10-29T22:07:58.2681228Z   clean: true
+2026-10-29T22:07:58.2681677Z   sparse-checkout-cone-mode: true
+2026-10-29T22:07:58.2682212Z   fetch-depth: 1
+2026-10-29T22:07:58.2682647Z   fetch-tags: false
+2026-10-29T22:07:58.2683099Z   show-progress: true
+2026-10-29T22:07:58.2683751Z   lfs: false
+2026-10-29T22:07:58.2684173Z   submodules: false
+2026-10-29T22:07:58.2684636Z   set-safe-directory: true
+2026-10-29T22:07:58.2685148Z   allow-unsafe-pr-checkout: false
+2026-10-29T22:07:58.2685931Z ##[endgroup]
+2026-10-29T22:07:58.5654540Z Syncing repository: guluchen/DistQLDPC
+2026-10-29T22:07:58.5656754Z ##[group]Getting Git version info
+2026-10-29T22:07:58.5657937Z Working directory is '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-29T22:07:58.5659641Z [command]/usr/bin/git version
+2026-10-29T22:07:58.5785037Z git version 2.56.0
+2026-10-29T22:07:58.5814056Z ##[endgroup]
+2026-10-29T22:07:58.5838573Z Temporarily overriding HOME='/home/runner/work/_temp/25449ecb-8ad8-4477-8569-ae56bdf18b23' before making global git config changes
+2026-10-29T22:07:58.5840949Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-29T22:07:58.5845364Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-29T22:07:58.5905929Z Deleting the contents of '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-29T22:07:58.5916668Z ##[group]Determining repository object format
+2026-10-29T22:07:58.5917735Z ##[endgroup]
+2026-10-29T22:07:58.5918473Z ##[group]Initializing the repository
+2026-10-29T22:07:58.5921259Z [command]/usr/bin/git init /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-29T22:07:58.6038613Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-29T22:07:58.6039993Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-29T22:07:58.6042015Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-29T22:07:58.6043105Z hint: call:
+2026-10-29T22:07:58.6044269Z hint:
+2026-10-29T22:07:58.6044992Z hint: 	git config --global init.defaultBranch <name>
+2026-10-29T22:07:58.6045763Z hint:
+2026-10-29T22:07:58.6047254Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-29T22:07:58.6049139Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-29T22:07:58.6050586Z hint:
+2026-10-29T22:07:58.6051529Z hint: 	git branch -m <name>
+2026-10-29T22:07:58.6052380Z hint:
+2026-10-29T22:07:58.6053083Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-29T22:07:58.6054397Z Initialized empty Git repository in /home/runner/work/DistQLDPC/DistQLDPC/.git/
+2026-10-29T22:07:58.6063536Z [command]/usr/bin/git remote add origin https://github.com/guluchen/DistQLDPC
+2026-10-29T22:07:58.6136156Z ##[endgroup]
+2026-10-29T22:07:58.6136971Z ##[group]Disabling automatic garbage collection
+2026-10-29T22:07:58.6140715Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-29T22:07:58.6180775Z ##[endgroup]
+2026-10-29T22:07:58.6182441Z ##[group]Setting up auth
+2026-10-29T22:07:58.6183754Z Removing SSH command configuration
+2026-10-29T22:07:58.6192359Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-29T22:07:58.6243967Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-29T22:07:58.6669173Z Removing HTTP extra header
+2026-10-29T22:07:58.6675973Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-29T22:07:58.6732622Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-29T22:07:58.7003903Z Removing includeIf entries pointing to credentials config files
+2026-10-29T22:07:58.7010034Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-29T22:07:58.7079924Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-29T22:07:58.7362656Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-29T22:07:58.7415890Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path /home/runner/work/_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:07:58.7460368Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:07:58.7504194Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:07:58.7549423Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:07:58.7590252Z ##[endgroup]
+2026-10-29T22:07:58.7591011Z ##[group]Fetching the repository
+2026-10-29T22:07:58.7597513Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f42389b6d30817e9527b394010879f5291ff1cb9:refs/remotes/origin/codex/hyperbicycle-library
+2026-10-29T22:08:01.4811660Z From https://github.com/guluchen/DistQLDPC
+2026-10-29T22:08:01.4814469Z  * [new ref]         f42389b6d30817e9527b394010879f5291ff1cb9 -> origin/codex/hyperbicycle-library
+2026-10-29T22:08:01.4837961Z [command]/usr/bin/git branch --list --remote origin/codex/hyperbicycle-library
+2026-10-29T22:08:01.4866462Z   origin/codex/hyperbicycle-library
+2026-10-29T22:08:01.4877526Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/hyperbicycle-library
+2026-10-29T22:08:01.4918186Z f42389b6d30817e9527b394010879f5291ff1cb9
+2026-10-29T22:08:01.4928542Z ##[endgroup]
+2026-10-29T22:08:01.4930142Z ##[group]Determining the checkout info
+2026-10-29T22:08:01.4931841Z ##[endgroup]
+2026-10-29T22:08:01.4933011Z [command]/usr/bin/git sparse-checkout disable
+2026-10-29T22:08:01.5020496Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-29T22:08:01.5097139Z ##[group]Checking out the ref
+2026-10-29T22:08:01.5102091Z [command]/usr/bin/git checkout --progress --force -B codex/hyperbicycle-library refs/remotes/origin/codex/hyperbicycle-library
+2026-10-29T22:08:01.8265210Z Switched to a new branch 'codex/hyperbicycle-library'
+2026-10-29T22:08:01.8274769Z branch 'codex/hyperbicycle-library' set up to track 'origin/codex/hyperbicycle-library'.
+2026-10-29T22:08:01.8337323Z ##[endgroup]
+2026-10-29T22:08:01.8396792Z [command]/usr/bin/git log -1 --format=%H
+2026-10-29T22:08:01.8437097Z f42389b6d30817e9527b394010879f5291ff1cb9
+2026-10-29T22:08:01.8708854Z ##[group]Run python3 -m unittest discover -s tests -p 'test_codegen_*.py'
+2026-10-29T22:08:01.8710399Z [36;1mpython3 -m unittest discover -s tests -p 'test_codegen_*.py'[0m
+2026-10-29T22:08:01.8711823Z [36;1mpython3 scripts/codegen/validate_css.py --output /tmp/gh205-css.json[0m
+2026-10-29T22:08:01.8713684Z [36;1mcmp data/matrices/untiered/validation.json /tmp/gh205-css.json[0m
+2026-10-29T22:08:01.8715295Z [36;1mpython3 scripts/codegen/validate_hyperbicycle.py --out /tmp/gh205-construction.json[0m
+2026-10-29T22:08:01.8716915Z [36;1mcmp optimization/experiments/GH-205/raw/construction.json /tmp/gh205-construction.json[0m
+2026-10-29T22:08:01.8743609Z shell: /usr/bin/bash -e {0}
+2026-10-29T22:08:01.8744632Z ##[endgroup]
+2026-10-29T22:08:02.2300038Z wrote /tmp/tmp17dk3pv7/COLOR_19_1_unknown_Gx.txt (1 rows), /tmp/tmp17dk3pv7/COLOR_19_1_unknown_Gz.txt (1 rows)
+2026-10-29T22:08:02.2723077Z wrote /tmp/tmpdzzqp_eh/COLOR_19_1_unknown_Gx.txt (1 rows), /tmp/tmpdzzqp_eh/COLOR_19_1_unknown_Gz.txt (1 rows)
+2026-10-29T22:08:03.0131097Z wrote /tmp/tmpfvf5c11i/LP_36_2_unknown_Gx.txt (2 rows), /tmp/tmpfvf5c11i/LP_36_2_unknown_Gz.txt (2 rows)
+2026-10-29T22:08:03.3681531Z wrote /tmp/tmp_gks6owq/BB_30_4_unknown_Gx.txt (4 rows), /tmp/tmp_gks6owq/BB_30_4_unknown_Gz.txt (4 rows)
+2026-10-29T22:08:03.4159381Z wrote /tmp/tmp6vxafjcr/BB_30_4_unknown_Gx.txt (4 rows), /tmp/tmp6vxafjcr/BB_30_4_unknown_Gz.txt (4 rows)
+2026-10-29T22:08:03.6069260Z ......................................................
+2026-10-29T22:08:03.6069873Z ----------------------------------------------------------------------
+2026-10-29T22:08:13.0554942Z Ran 54 tests in 1.599s
+2026-10-29T22:08:13.0555362Z 
+2026-10-29T22:08:13.0555528Z OK
+2026-10-29T22:08:13.0555847Z {
+2026-10-29T22:08:13.0556544Z   "codes_checked": 30,
+2026-10-29T22:08:13.0556998Z   "inventory_codes": 81,
+2026-10-29T22:08:13.0557468Z   "results": [
+2026-10-29T22:08:13.0557822Z     {
+2026-10-29T22:08:13.0558188Z       "n": 13,
+2026-10-29T22:08:13.0558675Z       "k": 1,
+2026-10-29T22:08:13.0559079Z       "rank_Hx": 6,
+2026-10-29T22:08:13.0559524Z       "rank_Hz": 6,
+2026-10-29T22:08:13.0559968Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0560409Z       "checks": "PASS",
+2026-10-29T22:08:13.0560949Z       "stem": "HGP_13_1_unknown",
+2026-10-29T22:08:13.0561449Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0561927Z       "duplicates": [],
+2026-10-29T22:08:13.0562577Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0563513Z       "sha256": {
+2026-10-29T22:08:13.0564193Z         "Hx": "0cb58ca3272ec7044292e6d4cf13b96a7778c2ee36f162a31a00a94cec190a59",
+2026-10-29T22:08:13.0565163Z         "Hz": "57cc48638fa610ed719caa050089772c471c7b830f96095314a00bd049ce32f9",
+2026-10-29T22:08:13.0566110Z         "Gx": "788801efbe7285e805f402b475a13ade78f25ed6d469368e645856628da4b6d9",
+2026-10-29T22:08:13.0567536Z         "Gz": "7e004ea9c8a1f3d4315db7ab930c72a1a61bcad776af64ad258f1cb06303c1b6"
+2026-10-29T22:08:13.0568304Z       }
+2026-10-29T22:08:13.0568666Z     },
+2026-10-29T22:08:13.0569004Z     {
+2026-10-29T22:08:13.0569387Z       "n": 41,
+2026-10-29T22:08:13.0569630Z       "k": 1,
+2026-10-29T22:08:13.0569881Z       "rank_Hx": 20,
+2026-10-29T22:08:13.0570135Z       "rank_Hz": 20,
+2026-10-29T22:08:13.0570387Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0570662Z       "checks": "PASS",
+2026-10-29T22:08:13.0570932Z       "stem": "HGP_41_1_unknown",
+2026-10-29T22:08:13.0571241Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0571546Z       "duplicates": [],
+2026-10-29T22:08:13.0571943Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0572401Z       "sha256": {
+2026-10-29T22:08:13.0572760Z         "Hx": "fff0bbddda67fe0967ccaac7f3e2874459d5d6e3564418664732adc9ceac7c98",
+2026-10-29T22:08:13.0573622Z         "Hz": "49fe498adf5b42c61533a8366f829c3f6b3b6603a2ddcfe0e3c098a7c701304b",
+2026-10-29T22:08:13.0574301Z         "Gx": "6773ce6433d9e181dc1e56e1c1f1d4119e62d88e83024c7eb9803352623d555e",
+2026-10-29T22:08:13.0575112Z         "Gz": "3101aa3784cd8cd80e0547bc934b91e9e2e27b26e17dc1c645ea5566dda0d818"
+2026-10-29T22:08:13.0575525Z       }
+2026-10-29T22:08:13.0575714Z     },
+2026-10-29T22:08:13.0575893Z     {
+2026-10-29T22:08:13.0576085Z       "n": 113,
+2026-10-29T22:08:13.0576284Z       "k": 1,
+2026-10-29T22:08:13.0576484Z       "rank_Hx": 56,
+2026-10-29T22:08:13.0576701Z       "rank_Hz": 56,
+2026-10-29T22:08:13.0576921Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0577164Z       "checks": "PASS",
+2026-10-29T22:08:13.0577401Z       "stem": "HGP_113_1_unknown",
+2026-10-29T22:08:13.0577668Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0577921Z       "duplicates": [],
+2026-10-29T22:08:13.0578255Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0578644Z       "sha256": {
+2026-10-29T22:08:13.0579038Z         "Hx": "3a4bc166306ce7b3cc3a3eb7f1ff345bc9c9875b89cb32304c55d5e9871b1d1f",
+2026-10-29T22:08:13.0579578Z         "Hz": "ae2ebfc6b0ab71be7fdb1ddd3334f1d63f185159392d26ac31a2106ae91b924b",
+2026-10-29T22:08:13.0580096Z         "Gx": "a5289983a87c8d21bab42c8a2bdf379e77e7891afe72695c6079fc4f0eac48ba",
+2026-10-29T22:08:13.0580597Z         "Gz": "9c97633ee16c9cf045698c9fa24079713eda0c28c23b0820112644b3d8fab27b"
+2026-10-29T22:08:13.0580978Z       }
+2026-10-29T22:08:13.0581160Z     },
+2026-10-29T22:08:13.0581340Z     {
+2026-10-29T22:08:13.0581519Z       "n": 265,
+2026-10-29T22:08:13.0581716Z       "k": 1,
+2026-10-29T22:08:13.0581914Z       "rank_Hx": 132,
+2026-10-29T22:08:13.0582132Z       "rank_Hz": 132,
+2026-10-29T22:08:13.0582376Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0582690Z       "checks": "PASS",
+2026-10-29T22:08:13.0582922Z       "stem": "HGP_265_1_unknown",
+2026-10-29T22:08:13.0583484Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0583784Z       "duplicates": [],
+2026-10-29T22:08:13.0584145Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0584532Z       "sha256": {
+2026-10-29T22:08:13.0584882Z         "Hx": "f851afe742a6a5e6031675ed628ead46ea9b9ecdb55ac9adbade2dd0a98ccbae",
+2026-10-29T22:08:13.0585400Z         "Hz": "b443d8671803271ac1a14bcd4c5a34eba2b586c205ebcb345694b42b99ac002a",
+2026-10-29T22:08:13.0585930Z         "Gx": "65fe0419f4a5682571a697df9b17061986b1dcdc38e6ebd54d560eadb347afdd",
+2026-10-29T22:08:13.0586440Z         "Gz": "0ca8b17c5e13a62a1172eb2700b32b0f9107aeb9e090a49f837001167d48be0f"
+2026-10-29T22:08:13.0586830Z       }
+2026-10-29T22:08:13.0587013Z     },
+2026-10-29T22:08:13.0587194Z     {
+2026-10-29T22:08:13.0587383Z       "n": 481,
+2026-10-29T22:08:13.0587597Z       "k": 1,
+2026-10-29T22:08:13.0587797Z       "rank_Hx": 240,
+2026-10-29T22:08:13.0588013Z       "rank_Hz": 240,
+2026-10-29T22:08:13.0588242Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0588477Z       "checks": "PASS",
+2026-10-29T22:08:13.0588712Z       "stem": "HGP_481_1_unknown",
+2026-10-29T22:08:13.0589334Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0589600Z       "duplicates": [],
+2026-10-29T22:08:13.0589962Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0590353Z       "sha256": {
+2026-10-29T22:08:13.0590681Z         "Hx": "8cc83621ce5be83f462710a87f44ea914f239b8ec3a0d862774eec21a0e34278",
+2026-10-29T22:08:13.0591198Z         "Hz": "8ce8ed5a18653ba73a3d09a758b47c2698df2b37af31c5f269a389ac16f86f6e",
+2026-10-29T22:08:13.0591718Z         "Gx": "35bdb8aa7d8233ab5c2bd867916c3b707be65751f0c89a508233628ee6fbd0e8",
+2026-10-29T22:08:13.0592243Z         "Gz": "5492575abe42ba18100fcf2f4f733c67b67d6457c15ec228c80a47a96de9c007"
+2026-10-29T22:08:13.0592631Z       }
+2026-10-29T22:08:13.0592812Z     },
+2026-10-29T22:08:13.0592991Z     {
+2026-10-29T22:08:13.0593175Z       "n": 1105,
+2026-10-29T22:08:13.0593849Z       "k": 1,
+2026-10-29T22:08:13.0594064Z       "rank_Hx": 552,
+2026-10-29T22:08:13.0594281Z       "rank_Hz": 552,
+2026-10-29T22:08:13.0594520Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0594761Z       "checks": "PASS",
+2026-10-29T22:08:13.0595234Z       "stem": "HGP_1105_1_unknown",
+2026-10-29T22:08:13.0595545Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0595796Z       "duplicates": [],
+2026-10-29T22:08:13.0596137Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0596557Z       "sha256": {
+2026-10-29T22:08:13.0596889Z         "Hx": "547ef907e916658c4b9dbbae787706ae7a8cac62320ef6eeb5f8cea50e3c68db",
+2026-10-29T22:08:13.0597406Z         "Hz": "d7ffe62bd3ae8644a1f45025ae23470d9c59528b32f26779c2a0a0be78d63897",
+2026-10-29T22:08:13.0597912Z         "Gx": "4fee3ed02aef2291c5959540d6c5f1fa23ac7e632502543342724a00b0a53f89",
+2026-10-29T22:08:13.0598413Z         "Gz": "390b41f95173d76ab483a26dc011979af31099214952d3de0b4d7d9e3b11f772"
+2026-10-29T22:08:13.0598789Z       }
+2026-10-29T22:08:13.0598974Z     },
+2026-10-29T22:08:13.0599154Z     {
+2026-10-29T22:08:13.0599332Z       "n": 45,
+2026-10-29T22:08:13.0599550Z       "k": 9,
+2026-10-29T22:08:13.0599748Z       "rank_Hx": 18,
+2026-10-29T22:08:13.0599961Z       "rank_Hz": 18,
+2026-10-29T22:08:13.0600187Z       "rank_pairing": 9,
+2026-10-29T22:08:13.0600415Z       "checks": "PASS",
+2026-10-29T22:08:13.0600643Z       "stem": "HGP_45_9_unknown",
+2026-10-29T22:08:13.0600900Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0601142Z       "duplicates": [],
+2026-10-29T22:08:13.0601478Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0601860Z       "sha256": {
+2026-10-29T22:08:13.0602175Z         "Hx": "3d97766a8b5ef89850847ee994202a70e51b68076e0f7327b6c5da06548e0ebc",
+2026-10-29T22:08:13.0602669Z         "Hz": "06f713d5e98dc403febd00f6b981a26447c7fa151577cac0ac96e85f8d83f86a",
+2026-10-29T22:08:13.0603169Z         "Gx": "396bac0b1785d50fb631aeac369fa69199782700000973469a1f2dd0443c58f5",
+2026-10-29T22:08:13.0603918Z         "Gz": "2af13f46eb441c5955f5f28780ff306950e987c42778fc79490422d98598e326"
+2026-10-29T22:08:13.0604312Z       }
+2026-10-29T22:08:13.0604488Z     },
+2026-10-29T22:08:13.0604662Z     {
+2026-10-29T22:08:13.0604839Z       "n": 106,
+2026-10-29T22:08:13.0605039Z       "k": 16,
+2026-10-29T22:08:13.0605241Z       "rank_Hx": 45,
+2026-10-29T22:08:13.0605451Z       "rank_Hz": 45,
+2026-10-29T22:08:13.0605665Z       "rank_pairing": 16,
+2026-10-29T22:08:13.0605897Z       "checks": "PASS",
+2026-10-29T22:08:13.0606125Z       "stem": "HGP_106_16_unknown",
+2026-10-29T22:08:13.0606393Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0606636Z       "duplicates": [],
+2026-10-29T22:08:13.0606961Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0607341Z       "sha256": {
+2026-10-29T22:08:13.0607661Z         "Hx": "eb12dfd59b2809867488319673737f440b1a6335d4eb55e7f8318d4d55aab769",
+2026-10-29T22:08:13.0608171Z         "Hz": "a6ec477e82f857793aa9ea888d26465c605ee4ccce7a94ca1976e1411a97a6bc",
+2026-10-29T22:08:13.0608681Z         "Gx": "ccc9bab994812bcd2bdb9142ee08e588b8ccdce451ce2ffaa750a359c2a91b99",
+2026-10-29T22:08:13.0609368Z         "Gz": "eca06fb6cf533f142d0bdc8a2b05f13ac4be82f4d298092377125fe0e74d63af"
+2026-10-29T22:08:13.0609758Z       }
+2026-10-29T22:08:13.0609938Z     },
+2026-10-29T22:08:13.0694569Z     {
+2026-10-29T22:08:13.0695176Z       "n": 306,
+2026-10-29T22:08:13.0695621Z       "k": 36,
+2026-10-29T22:08:13.0696038Z       "rank_Hx": 135,
+2026-10-29T22:08:13.0696511Z       "rank_Hz": 135,
+2026-10-29T22:08:13.0696901Z       "rank_pairing": 36,
+2026-10-29T22:08:13.0697286Z       "checks": "PASS",
+2026-10-29T22:08:13.0697721Z       "stem": "HGP_306_36_unknown",
+2026-10-29T22:08:13.0698182Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0698578Z       "duplicates": [],
+2026-10-29T22:08:13.0699135Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0699765Z       "sha256": {
+2026-10-29T22:08:13.0700296Z         "Hx": "728c72f3ce9c491d496d37077ffd68cf2569422c35f52480ac3cdcb76cf79395",
+2026-10-29T22:08:13.0701296Z         "Hz": "59cd8c430c89071053679380b6bc2f37347bcdf51a927fbd1fdaffdd039ab8ca",
+2026-10-29T22:08:13.0702587Z         "Gx": "23a87c33f38a8a289ccf30ddb158daca4225db4e7220c26969b417fba45dfe59",
+2026-10-29T22:08:13.0703968Z         "Gz": "ac415e21e958c224deb269f0b71508096bf43caf3f597a196c044ade5d5029e8"
+2026-10-29T22:08:13.0704672Z       }
+2026-10-29T22:08:13.0704991Z     },
+2026-10-29T22:08:13.0705303Z     {
+2026-10-29T22:08:13.0705615Z       "n": 610,
+2026-10-29T22:08:13.0705963Z       "k": 64,
+2026-10-29T22:08:13.0706313Z       "rank_Hx": 273,
+2026-10-29T22:08:13.0706696Z       "rank_Hz": 273,
+2026-10-29T22:08:13.0707079Z       "rank_pairing": 64,
+2026-10-29T22:08:13.0707488Z       "checks": "PASS",
+2026-10-29T22:08:13.0707890Z       "stem": "HGP_610_64_unknown",
+2026-10-29T22:08:13.0708355Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0708798Z       "duplicates": [],
+2026-10-29T22:08:13.0709386Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0710084Z       "sha256": {
+2026-10-29T22:08:13.0710694Z         "Hx": "b5441af8f9308d8992e71e802a60ce93fe3b722e4230b4e0270d6c89ee5ad2ec",
+2026-10-29T22:08:13.0711607Z         "Hz": "11cbb0b14d50ef7e9434ba905056b699322ed5085b17db9259eb872be306aa87",
+2026-10-29T22:08:13.0712529Z         "Gx": "217074a250e1c2e1d769161fae2919874ecb9648cb403b7172f90dca9ad04e42",
+2026-10-29T22:08:13.0713689Z         "Gz": "420f6609942f7ee1809053309a4ca0577f2a083a9bca67587a717e9e6e2542e7"
+2026-10-29T22:08:13.0714432Z       }
+2026-10-29T22:08:13.0714761Z     },
+2026-10-29T22:08:13.0715129Z     {
+2026-10-29T22:08:13.0715503Z       "n": 1261,
+2026-10-29T22:08:13.0715862Z       "k": 121,
+2026-10-29T22:08:13.0716224Z       "rank_Hx": 570,
+2026-10-29T22:08:13.0716573Z       "rank_Hz": 570,
+2026-10-29T22:08:13.0717008Z       "rank_pairing": 121,
+2026-10-29T22:08:13.0717322Z       "checks": "PASS",
+2026-10-29T22:08:13.0717602Z       "stem": "HGP_1261_121_unknown",
+2026-10-29T22:08:13.0717899Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0718179Z       "duplicates": [],
+2026-10-29T22:08:13.0718521Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0718923Z       "sha256": {
+2026-10-29T22:08:13.0719258Z         "Hx": "91b8ea2747183a9fa6d3531ea72c0e73c71cd5762dcf8429894dcd23ee57c4d2",
+2026-10-29T22:08:13.0719773Z         "Hz": "894e7dce8df14ca46b677898246092a5b106c98476f3357475aad0fdad0a5239",
+2026-10-29T22:08:13.0720299Z         "Gx": "a8185dd6fea1e2d0ad2acc1d12eba2fdc9d863ab5d63c8659e9052270b00b612",
+2026-10-29T22:08:13.0720823Z         "Gz": "70b5756dba0d1595117fac1a9cca22db00af1fc914280deb47cf354b8ebe3009"
+2026-10-29T22:08:13.0721226Z       }
+2026-10-29T22:08:13.0721408Z     },
+2026-10-29T22:08:13.0721600Z     {
+2026-10-29T22:08:13.0721783Z       "n": 2866,
+2026-10-29T22:08:13.0721986Z       "k": 256,
+2026-10-29T22:08:13.0722189Z       "rank_Hx": 1305,
+2026-10-29T22:08:13.0722414Z       "rank_Hz": 1305,
+2026-10-29T22:08:13.0722636Z       "rank_pairing": 256,
+2026-10-29T22:08:13.0722873Z       "checks": "PASS",
+2026-10-29T22:08:13.0723663Z       "stem": "HGP_2866_256_unknown",
+2026-10-29T22:08:13.0723958Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0724220Z       "duplicates": [],
+2026-10-29T22:08:13.0724563Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0724970Z       "sha256": {
+2026-10-29T22:08:13.0725312Z         "Hx": "a6bce48f3f27a34e16a2bc84caf227850619ff7337c427acde99d090673becdb",
+2026-10-29T22:08:13.0725851Z         "Hz": "1029bbf8bb1a4551f0aaededcf30c2612b8d0083c0d53d8f0c4e1d29d23f392c",
+2026-10-29T22:08:13.0726365Z         "Gx": "28b26d4096e881be18a56f2a8cbf07b313b5405b5e42a476d1d77b8a73a6ffea",
+2026-10-29T22:08:13.0726865Z         "Gz": "ac1818a79e71454c01321651131b5997b746b96f58630726e986890f8debd5b9"
+2026-10-29T22:08:13.0727231Z       }
+2026-10-29T22:08:13.0727414Z     },
+2026-10-29T22:08:13.0727598Z     {
+2026-10-29T22:08:13.0727777Z       "n": 7,
+2026-10-29T22:08:13.0727973Z       "k": 1,
+2026-10-29T22:08:13.0728171Z       "rank_Hx": 3,
+2026-10-29T22:08:13.0728388Z       "rank_Hz": 3,
+2026-10-29T22:08:13.0728602Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0728844Z       "checks": "PASS",
+2026-10-29T22:08:13.0729234Z       "stem": "COLOR_7_1_unknown",
+2026-10-29T22:08:13.0729516Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0729767Z       "duplicates": [],
+2026-10-29T22:08:13.0730107Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0730501Z       "sha256": {
+2026-10-29T22:08:13.0730839Z         "Hx": "50a1337bcf05108a3c4f74f11f2075813ccb3da4e8155f46ad0a0bbbe06c58d7",
+2026-10-29T22:08:13.0731362Z         "Hz": "5eb1ad5b5e44de8417caaa7fa2775cc6b7300b2cbd59698a37e36b142010062e",
+2026-10-29T22:08:13.0731895Z         "Gx": "350841e3e975ace8d5bbd8aa525b71bb27f204a841b8ca5587188300ff1992c3",
+2026-10-29T22:08:13.0732407Z         "Gz": "a23c23dc5a089264be793f1ab3e4a62abbd2c866474ed5d1a79370a7b9d4fc74"
+2026-10-29T22:08:13.0732794Z       }
+2026-10-29T22:08:13.0732981Z     },
+2026-10-29T22:08:13.0733174Z     {
+2026-10-29T22:08:13.0733629Z       "n": 19,
+2026-10-29T22:08:13.0733835Z       "k": 1,
+2026-10-29T22:08:13.0734032Z       "rank_Hx": 9,
+2026-10-29T22:08:13.0734247Z       "rank_Hz": 9,
+2026-10-29T22:08:13.0734458Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0734691Z       "checks": "PASS",
+2026-10-29T22:08:13.0734930Z       "stem": "COLOR_19_1_unknown",
+2026-10-29T22:08:13.0735194Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0735446Z       "duplicates": [],
+2026-10-29T22:08:13.0735781Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0736171Z       "sha256": {
+2026-10-29T22:08:13.0736500Z         "Hx": "8d786bb60aad6f2c4b65fe792a6fe2374b803cc27068ab69e3b16c310e7a638e",
+2026-10-29T22:08:13.0737007Z         "Hz": "9a6464db11a025eea60e410e139078c604a56e9b35ed14cbe22712e0d0505660",
+2026-10-29T22:08:13.0737507Z         "Gx": "7091e60c8138c61e745568e9dc792ea1b6cdd7ea2e936cb3816e767ac6b95dcc",
+2026-10-29T22:08:13.0738010Z         "Gz": "fdcc171fbe6709eba530533064732075f6cef72212cb125749eb2aff4450b897"
+2026-10-29T22:08:13.0738408Z       }
+2026-10-29T22:08:13.0738586Z     },
+2026-10-29T22:08:13.0738766Z     {
+2026-10-29T22:08:13.0738960Z       "n": 127,
+2026-10-29T22:08:13.0739157Z       "k": 1,
+2026-10-29T22:08:13.0739354Z       "rank_Hx": 63,
+2026-10-29T22:08:13.0739569Z       "rank_Hz": 63,
+2026-10-29T22:08:13.0739783Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0740010Z       "checks": "PASS",
+2026-10-29T22:08:13.0740247Z       "stem": "COLOR_127_1_unknown",
+2026-10-29T22:08:13.0740516Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0740764Z       "duplicates": [],
+2026-10-29T22:08:13.0741101Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0741483Z       "sha256": {
+2026-10-29T22:08:13.0741809Z         "Hx": "315bf73c786416e6edb0c5cc90b82c7730be81391a0f49545babd4e1f342ae9c",
+2026-10-29T22:08:13.0742315Z         "Hz": "2dab6c9fd153101482facd22ecd26334fadbc51f96d2198a36f41393146ee192",
+2026-10-29T22:08:13.0743053Z         "Gx": "49c8bc90f7b52dfc33b325b855f884fa619d7ab2483de7e52e26e33e5f24369f",
+2026-10-29T22:08:13.0744109Z         "Gz": "14b75d75537cf4c4c7586e4f73a241b988ef7ddb92f2fffca31b05487ca6914c"
+2026-10-29T22:08:13.0744534Z       }
+2026-10-29T22:08:13.0744727Z     },
+2026-10-29T22:08:13.0744910Z     {
+2026-10-29T22:08:13.0745098Z       "n": 331,
+2026-10-29T22:08:13.0745306Z       "k": 1,
+2026-10-29T22:08:13.0745512Z       "rank_Hx": 165,
+2026-10-29T22:08:13.0745731Z       "rank_Hz": 165,
+2026-10-29T22:08:13.0745948Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0746186Z       "checks": "PASS",
+2026-10-29T22:08:13.0746428Z       "stem": "COLOR_331_1_unknown",
+2026-10-29T22:08:13.0746707Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0746963Z       "duplicates": [],
+2026-10-29T22:08:13.0747310Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0747702Z       "sha256": {
+2026-10-29T22:08:13.0748040Z         "Hx": "5f3daca3228be9a4e732595c7cea1d4f798ec6bab398f11662251e87e7b369fe",
+2026-10-29T22:08:13.0748584Z         "Hz": "6f1ea0881d43136d3b3c9fd8a7c6acee2ec0593fcc801c5badc26584b7441349",
+2026-10-29T22:08:13.0749269Z         "Gx": "1c179130c6dca3ada978530db3f0824932c12a90471a01f40b632defa16f468c",
+2026-10-29T22:08:13.0749791Z         "Gz": "811e3409aa85bcb8c252d490e1fa6cfb5b44bcc7e5602bfec51f25388bf4a6aa"
+2026-10-29T22:08:13.0750193Z       }
+2026-10-29T22:08:13.0750374Z     },
+2026-10-29T22:08:13.0750562Z     {
+2026-10-29T22:08:13.0750740Z       "n": 1027,
+2026-10-29T22:08:13.0750936Z       "k": 1,
+2026-10-29T22:08:13.0751131Z       "rank_Hx": 513,
+2026-10-29T22:08:13.0751348Z       "rank_Hz": 513,
+2026-10-29T22:08:13.0751567Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0751800Z       "checks": "PASS",
+2026-10-29T22:08:13.0752035Z       "stem": "COLOR_1027_1_unknown",
+2026-10-29T22:08:13.0752307Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0752557Z       "duplicates": [],
+2026-10-29T22:08:13.0752891Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0753707Z       "sha256": {
+2026-10-29T22:08:13.0754076Z         "Hx": "9905d528d233a8773dacf71ef0b4758bd36b9a6133ae318892989234bcc5dbea",
+2026-10-29T22:08:13.0754604Z         "Hz": "1601cb663e79ed6a00e3a80c8d7c5edf1ae6e62d2ed96f0a4dac38a7799887d6",
+2026-10-29T22:08:13.0755112Z         "Gx": "b6830920e2c172989591a2817ce56b693d3130353467386eb6c72ef834b1c12e",
+2026-10-29T22:08:13.0755613Z         "Gz": "fbf3b453a89d4811540951f704ea53c34cd35a0efedcfa2db9653ddced749797"
+2026-10-29T22:08:13.0756001Z       }
+2026-10-29T22:08:13.0756179Z     },
+2026-10-29T22:08:13.0756358Z     {
+2026-10-29T22:08:13.0756533Z       "n": 2791,
+2026-10-29T22:08:13.0756733Z       "k": 1,
+2026-10-29T22:08:13.0756938Z       "rank_Hx": 1395,
+2026-10-29T22:08:13.0757153Z       "rank_Hz": 1395,
+2026-10-29T22:08:13.0757376Z       "rank_pairing": 1,
+2026-10-29T22:08:13.0757604Z       "checks": "PASS",
+2026-10-29T22:08:13.0757835Z       "stem": "COLOR_2791_1_unknown",
+2026-10-29T22:08:13.0758108Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0758365Z       "duplicates": [],
+2026-10-29T22:08:13.0758706Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0759088Z       "sha256": {
+2026-10-29T22:08:13.0759415Z         "Hx": "20a4eac60254e3703e75c05ac26a137199eae0f0d85aaf53ad29defc1a5df1c0",
+2026-10-29T22:08:13.0759923Z         "Hz": "4b537908c20851e9addd0d14ae593e6f3b01c024cae692743dc4a77e0f56795a",
+2026-10-29T22:08:13.0760480Z         "Gx": "6799ddbf13742363cdee4512f65b8edfed497ba8855821cc121245095fd896ca",
+2026-10-29T22:08:13.0760990Z         "Gz": "49e0ef25b2ade849312cd7d2e1d7aefea2bd60abb1af6f8a241c1e528a7e47d7"
+2026-10-29T22:08:13.0761376Z       }
+2026-10-29T22:08:13.0761553Z     },
+2026-10-29T22:08:13.0761742Z     {
+2026-10-29T22:08:13.0761922Z       "n": 30,
+2026-10-29T22:08:13.0762115Z       "k": 4,
+2026-10-29T22:08:13.0762312Z       "rank_Hx": 13,
+2026-10-29T22:08:13.0762521Z       "rank_Hz": 13,
+2026-10-29T22:08:13.0762737Z       "rank_pairing": 4,
+2026-10-29T22:08:13.0763172Z       "checks": "PASS",
+2026-10-29T22:08:13.0763768Z       "stem": "BB_30_4_unknown",
+2026-10-29T22:08:13.0764049Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0764292Z       "duplicates": [],
+2026-10-29T22:08:13.0764620Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0765003Z       "sha256": {
+2026-10-29T22:08:13.0765322Z         "Hx": "32629bd267b1102b4d932b9df45524c7e2e4fde02db0b82d0eb19b89fcba679c",
+2026-10-29T22:08:13.0765825Z         "Hz": "6974cff8b469d5ea212dc268311a3745d17e6c9d712bbc32237a2dfda143e85d",
+2026-10-29T22:08:13.0766320Z         "Gx": "4e22e180d2988a96e4320312fdab4d187e561103902f13cd149f2e732a2b6e99",
+2026-10-29T22:08:13.0766813Z         "Gz": "ff37d36be834fcce33fdd67a2760f749da4297c5920f63c3e79875c23e376bd6"
+2026-10-29T22:08:13.0767199Z       }
+2026-10-29T22:08:13.0767378Z     },
+2026-10-29T22:08:13.0767551Z     {
+2026-10-29T22:08:13.0767726Z       "n": 120,
+2026-10-29T22:08:13.0767918Z       "k": 8,
+2026-10-29T22:08:13.0768119Z       "rank_Hx": 56,
+2026-10-29T22:08:13.0768323Z       "rank_Hz": 56,
+2026-10-29T22:08:13.0768535Z       "rank_pairing": 8,
+2026-10-29T22:08:13.0768983Z       "checks": "PASS",
+2026-10-29T22:08:13.0769222Z       "stem": "BB_120_8_unknown",
+2026-10-29T22:08:13.0769485Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0769728Z       "duplicates": [],
+2026-10-29T22:08:13.0770060Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0770439Z       "sha256": {
+2026-10-29T22:08:13.0770762Z         "Hx": "db433f1dd394e45eb1b8da5e23582f3f275b296f9c290e8ebe95e5c28560a6ac",
+2026-10-29T22:08:13.0771276Z         "Hz": "5a0d048a5b773ac45c38e42c15cff04633459cc1f99a4b5662a6c9da6add70db",
+2026-10-29T22:08:13.0771773Z         "Gx": "b1148471740843b796aacb73c0941d9e38395742652cae5fd308635dfeb9faf2",
+2026-10-29T22:08:13.0772260Z         "Gz": "f857a2561ccc80873710f161a147393ea336aad5e5f122b327d570dfe22a8c86"
+2026-10-29T22:08:13.0772635Z       }
+2026-10-29T22:08:13.0772825Z     },
+2026-10-29T22:08:13.0773006Z     {
+2026-10-29T22:08:13.0773181Z       "n": 186,
+2026-10-29T22:08:13.0773668Z       "k": 10,
+2026-10-29T22:08:13.0773876Z       "rank_Hx": 88,
+2026-10-29T22:08:13.0774087Z       "rank_Hz": 88,
+2026-10-29T22:08:13.0774303Z       "rank_pairing": 10,
+2026-10-29T22:08:13.0774542Z       "checks": "PASS",
+2026-10-29T22:08:13.0774769Z       "stem": "BB_186_10_unknown",
+2026-10-29T22:08:13.0775029Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0775276Z       "duplicates": [],
+2026-10-29T22:08:13.0775605Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0775987Z       "sha256": {
+2026-10-29T22:08:13.0776314Z         "Hx": "8d92ee8af1fa64737ec4efa52c082c752feb6b8418a9c8a52d70febb5a8d5b9f",
+2026-10-29T22:08:13.0776833Z         "Hz": "ed74b08b38d9421a41546c8d3194c53a10d348970fb9bf71a3e6fbbbe471335a",
+2026-10-29T22:08:13.0777328Z         "Gx": "53ebac85b8438d0019f71490d4b52e77385deb24b4ddedd26158985b305cda06",
+2026-10-29T22:08:13.0777826Z         "Gz": "47843578d13e2e50618c3b2f5529564d36f1cdb5d79c73cb5d50e62b1a242290"
+2026-10-29T22:08:13.0778197Z       }
+2026-10-29T22:08:13.0778378Z     },
+2026-10-29T22:08:13.0778557Z     {
+2026-10-29T22:08:13.0778734Z       "n": 248,
+2026-10-29T22:08:13.0778927Z       "k": 10,
+2026-10-29T22:08:13.0779125Z       "rank_Hx": 119,
+2026-10-29T22:08:13.0779339Z       "rank_Hz": 119,
+2026-10-29T22:08:13.0779561Z       "rank_pairing": 10,
+2026-10-29T22:08:13.0779789Z       "checks": "PASS",
+2026-10-29T22:08:13.0780019Z       "stem": "BB_248_10_unknown",
+2026-10-29T22:08:13.0780274Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0780516Z       "duplicates": [],
+2026-10-29T22:08:13.0780850Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0781243Z       "sha256": {
+2026-10-29T22:08:13.0781572Z         "Hx": "8df252a3360e15cb16ab8244d4e0940e9e9e0e1fc300f922b4c20e4cc7858e24",
+2026-10-29T22:08:13.0782097Z         "Hz": "1ddc39cfdb866fcfe4346aaabf58e3d7218d6f6f3432c69e16e54b429c45ca40",
+2026-10-29T22:08:13.0782782Z         "Gx": "e32a4fea9bae2158b66ad476d358497004ac7b390ade25f52801e916e62f87cc",
+2026-10-29T22:08:13.0783563Z         "Gz": "a718eeda232e656b9c08aebfbaebdb743d4cfdb78ab94a20eeffac1338bdb4e4"
+2026-10-29T22:08:13.0783971Z       }
+2026-10-29T22:08:13.0784146Z     },
+2026-10-29T22:08:13.0784321Z     {
+2026-10-29T22:08:13.0784499Z       "n": 294,
+2026-10-29T22:08:13.0784695Z       "k": 10,
+2026-10-29T22:08:13.0784891Z       "rank_Hx": 142,
+2026-10-29T22:08:13.0785104Z       "rank_Hz": 142,
+2026-10-29T22:08:13.0785316Z       "rank_pairing": 10,
+2026-10-29T22:08:13.0785546Z       "checks": "PASS",
+2026-10-29T22:08:13.0785775Z       "stem": "BB_294_10_unknown",
+2026-10-29T22:08:13.0786035Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0786279Z       "duplicates": [],
+2026-10-29T22:08:13.0786603Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0786979Z       "sha256": {
+2026-10-29T22:08:13.0787290Z         "Hx": "7718661737a9ac0d846691b8cb4a170840e04b1d20976a2564edfe6e956b0327",
+2026-10-29T22:08:13.0787942Z         "Hz": "e194d205f8bb439c878ff4fbf4e35cdc16a7afa145a9158f982900d461dae02b",
+2026-10-29T22:08:13.0788459Z         "Gx": "1dac92a1a0a153b17be9eba3947f5be59521a77d33113f6277d0b6d5b3bc3e2b",
+2026-10-29T22:08:13.0788962Z         "Gz": "a49ea5c20df940d5003b22c5a686674a3879a08f0652d93c9e479d256f438453"
+2026-10-29T22:08:13.0789341Z       }
+2026-10-29T22:08:13.0789526Z     },
+2026-10-29T22:08:13.0789706Z     {
+2026-10-29T22:08:13.0789882Z       "n": 340,
+2026-10-29T22:08:13.0790073Z       "k": 16,
+2026-10-29T22:08:13.0790266Z       "rank_Hx": 162,
+2026-10-29T22:08:13.0790474Z       "rank_Hz": 162,
+2026-10-29T22:08:13.0790695Z       "rank_pairing": 16,
+2026-10-29T22:08:13.0790922Z       "checks": "PASS",
+2026-10-29T22:08:13.0791140Z       "stem": "BB_340_16_unknown",
+2026-10-29T22:08:13.0791399Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0791641Z       "duplicates": [],
+2026-10-29T22:08:13.0791964Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0792353Z       "sha256": {
+2026-10-29T22:08:13.0792680Z         "Hx": "3c487b46bd6e25d747b873eb9c0363b34c458b481bd50efd0159b4a577c3556d",
+2026-10-29T22:08:13.0793396Z         "Hz": "b54b64abfe59767a8dda1c625c7279de2eacda688174f421b04f6976db31f5c1",
+2026-10-29T22:08:13.0793962Z         "Gx": "1a3a81fbf4d3d3fe8818c1dacbb144c79c5da0161f29472b0b8ecbd6362ab9b2",
+2026-10-29T22:08:13.0794469Z         "Gz": "386901bb918f130b175a4da82b5200bec2c3a1ea208b91fb6dde7bcaadc98031"
+2026-10-29T22:08:13.0794851Z       }
+2026-10-29T22:08:13.0795027Z     },
+2026-10-29T22:08:13.0795202Z     {
+2026-10-29T22:08:13.0795378Z       "n": 900,
+2026-10-29T22:08:13.0795572Z       "k": 50,
+2026-10-29T22:08:13.0795774Z       "rank_Hx": 425,
+2026-10-29T22:08:13.0795983Z       "rank_Hz": 425,
+2026-10-29T22:08:13.0796197Z       "rank_pairing": 50,
+2026-10-29T22:08:13.0796428Z       "checks": "PASS",
+2026-10-29T22:08:13.0796651Z       "stem": "LP_900_50_unknown",
+2026-10-29T22:08:13.0796925Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0797169Z       "duplicates": [],
+2026-10-29T22:08:13.0797499Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0797911Z       "sha256": {
+2026-10-29T22:08:13.0798240Z         "Hx": "833f253a689479fd24f5317e842e19dce39a247fd98f5aa26a30f53d2e31ae37",
+2026-10-29T22:08:13.0798769Z         "Hz": "9f85937a93b4d5d8e6951a37ef45a8228682b4f1af92214ec7c82464be326057",
+2026-10-29T22:08:13.0799270Z         "Gx": "fc59c232efa4fc3e03865d2610809380585ea6a85d0e7af9046cbc0e89226425",
+2026-10-29T22:08:13.0799777Z         "Gz": "a46ebf63a14f3d461bf9676e34d710920eda5401f6627c66ef6efb8f56bdc8a8"
+2026-10-29T22:08:13.0800161Z       }
+2026-10-29T22:08:13.0800344Z     },
+2026-10-29T22:08:13.0800527Z     {
+2026-10-29T22:08:13.0800708Z       "n": 1800,
+2026-10-29T22:08:13.0800908Z       "k": 50,
+2026-10-29T22:08:13.0801106Z       "rank_Hx": 875,
+2026-10-29T22:08:13.0801321Z       "rank_Hz": 875,
+2026-10-29T22:08:13.0801699Z       "rank_pairing": 50,
+2026-10-29T22:08:13.0801943Z       "checks": "PASS",
+2026-10-29T22:08:13.0802170Z       "stem": "LP_1800_50_unknown",
+2026-10-29T22:08:13.0802449Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0802700Z       "duplicates": [],
+2026-10-29T22:08:13.0803031Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0803762Z       "sha256": {
+2026-10-29T22:08:13.0804102Z         "Hx": "4c998a0a5889d81fc058d7fe2cc4511a138ab144eedbecdc5501a3b19bb97375",
+2026-10-29T22:08:13.0804615Z         "Hz": "a60f99e0b52dc9d9deb4a53ea11e7617f71e6646d687663e83a60cfa2eca47ed",
+2026-10-29T22:08:13.0805126Z         "Gx": "6f1a24f3efa07527587f8690872cebf080445b7fadd583a52ff9ca563fa3a6ce",
+2026-10-29T22:08:13.0805647Z         "Gz": "433eaf32f1d5a762227680568a4ec957e473a1ecfa5e1ef5baa0999a4ff6b963"
+2026-10-29T22:08:13.0806034Z       }
+2026-10-29T22:08:13.0806217Z     },
+2026-10-29T22:08:13.0806398Z     {
+2026-10-29T22:08:13.0806583Z       "n": 2700,
+2026-10-29T22:08:13.0806796Z       "k": 50,
+2026-10-29T22:08:13.0806995Z       "rank_Hx": 1325,
+2026-10-29T22:08:13.0807228Z       "rank_Hz": 1325,
+2026-10-29T22:08:13.0807686Z       "rank_pairing": 50,
+2026-10-29T22:08:13.0807939Z       "checks": "PASS",
+2026-10-29T22:08:13.0808169Z       "stem": "LP_2700_50_unknown",
+2026-10-29T22:08:13.0808436Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0808688Z       "duplicates": [],
+2026-10-29T22:08:13.0809016Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0809396Z       "sha256": {
+2026-10-29T22:08:13.0809725Z         "Hx": "3bf2c5fc275b7c9771ee462c2fe1d65728f87eb5e0090e75536e0dcd0649214c",
+2026-10-29T22:08:13.0810250Z         "Hz": "70ac23eac40b9e2b3cbdb82802ac8fcb2bb5964e00a3ac03dda59f8b2fa43173",
+2026-10-29T22:08:13.0810765Z         "Gx": "d5712b2dc9cd857956b24a4866cb5a03290475caa2d89f599c69bfe1bcd3521e",
+2026-10-29T22:08:13.0811269Z         "Gz": "6fac5c98ca328ebc6998c934b32156b3492f69f2c477768b7301605d4efe0475"
+2026-10-29T22:08:13.0811657Z       }
+2026-10-29T22:08:13.0811836Z     },
+2026-10-29T22:08:13.0812013Z     {
+2026-10-29T22:08:13.0812189Z       "n": 420,
+2026-10-29T22:08:13.0812389Z       "k": 30,
+2026-10-29T22:08:13.0812586Z       "rank_Hx": 195,
+2026-10-29T22:08:13.0812801Z       "rank_Hz": 195,
+2026-10-29T22:08:13.0813024Z       "rank_pairing": 30,
+2026-10-29T22:08:13.0813437Z       "checks": "PASS",
+2026-10-29T22:08:13.0813671Z       "stem": "LP_420_30_unknown",
+2026-10-29T22:08:13.0813993Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0814242Z       "duplicates": [],
+2026-10-29T22:08:13.0814695Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0815082Z       "sha256": {
+2026-10-29T22:08:13.0815409Z         "Hx": "d2de646c9d9db722011d5b918b70e30ef922cb99f640b0b24e87fdc0c83039f4",
+2026-10-29T22:08:13.0815924Z         "Hz": "f3d756088bdc79abf8d84d930d3d46ac5f517e5cab4a4ffeade9a66e2fe8cd34",
+2026-10-29T22:08:13.0816457Z         "Gx": "075fcdb9bb3e2e6f04ca802abf27a0c6682ecc5e6b3466ecc8d4afbda2206814",
+2026-10-29T22:08:13.0816987Z         "Gz": "0220e2afbb4771c8886fdded0ded0201286f4f1a5bd9ae857a23a66c66e2b6d1"
+2026-10-29T22:08:13.0817378Z       }
+2026-10-29T22:08:13.0817559Z     },
+2026-10-29T22:08:13.0817741Z     {
+2026-10-29T22:08:13.0817918Z       "n": 840,
+2026-10-29T22:08:13.0818114Z       "k": 30,
+2026-10-29T22:08:13.0818313Z       "rank_Hx": 405,
+2026-10-29T22:08:13.0818531Z       "rank_Hz": 405,
+2026-10-29T22:08:13.0818753Z       "rank_pairing": 30,
+2026-10-29T22:08:13.0818983Z       "checks": "PASS",
+2026-10-29T22:08:13.0819215Z       "stem": "LP_840_30_unknown",
+2026-10-29T22:08:13.0819472Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0819719Z       "duplicates": [],
+2026-10-29T22:08:13.0820044Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0820424Z       "sha256": {
+2026-10-29T22:08:13.0820743Z         "Hx": "e4b777143fd35ad67c8f90d16786c764582d95fcdff9b12635683f6510f0c79b",
+2026-10-29T22:08:13.0821431Z         "Hz": "afbb822dc9affe34a21bc5559ec3ee5d8c3e96b9aefe714fabed64c81c1dac55",
+2026-10-29T22:08:13.0821952Z         "Gx": "19eaf35513d006de973c70d492c86b85162f0246dc0b16e60b1895f3aeb8abc2",
+2026-10-29T22:08:13.0822450Z         "Gz": "5cc5c2c951566e2c74600c03f96957010e5a100a44a5ca99793ecddc6c7f98d4"
+2026-10-29T22:08:13.0822843Z       }
+2026-10-29T22:08:13.0823026Z     },
+2026-10-29T22:08:13.0823390Z     {
+2026-10-29T22:08:13.0823592Z       "n": 1260,
+2026-10-29T22:08:13.0823791Z       "k": 30,
+2026-10-29T22:08:13.0823989Z       "rank_Hx": 615,
+2026-10-29T22:08:13.0824204Z       "rank_Hz": 615,
+2026-10-29T22:08:13.0824419Z       "rank_pairing": 30,
+2026-10-29T22:08:13.0824647Z       "checks": "PASS",
+2026-10-29T22:08:13.0824869Z       "stem": "LP_1260_30_unknown",
+2026-10-29T22:08:13.0825132Z       "same_n_k_compared": [],
+2026-10-29T22:08:13.0825371Z       "duplicates": [],
+2026-10-29T22:08:13.0825703Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-29T22:08:13.0826085Z       "sha256": {
+2026-10-29T22:08:13.0826399Z         "Hx": "0da5775e7b125e7ea3fca6866bc286a59f94734851ab8c2272854182171bee12",
+2026-10-29T22:08:13.0827046Z         "Hz": "d7e852ca490ac70929c6ec8c5727bb391521ed8abede60f8212ffa4d7c1b94f1",
+2026-10-29T22:08:13.0827550Z         "Gx": "fc88232316aa902c93338090be939a44b0fd7e88b0ca4185610e37cdd594e7bf",
+2026-10-29T22:08:13.0828046Z         "Gz": "d376d50337f3d946fe1dc349d8d873d4c95a606f2f9c91b7472386680333d70f"
+2026-10-29T22:08:13.0828422Z       }
+2026-10-29T22:08:13.0828601Z     }
+2026-10-29T22:08:13.0828779Z   ]
+2026-10-29T22:08:13.0828956Z }
+2026-10-29T22:08:18.4126475Z ##[group]Run python3 scripts/codegen/hyperbicycle.py --all --out /tmp/gh205-rebuilt
+2026-10-29T22:08:18.4127176Z [36;1mpython3 scripts/codegen/hyperbicycle.py --all --out /tmp/gh205-rebuilt[0m
+2026-10-29T22:08:18.4127611Z [36;1mpython3 - <<'PY'[0m
+2026-10-29T22:08:18.4127866Z [36;1mfrom pathlib import Path[0m
+2026-10-29T22:08:18.4128214Z [36;1mfiles=list(Path('/tmp/gh205-rebuilt').glob('*.txt'))[0m
+2026-10-29T22:08:18.4128581Z [36;1massert len(files)==24[0m
+2026-10-29T22:08:18.4128831Z [36;1mfor p in files:[0m
+2026-10-29T22:08:18.4129240Z [36;1m    assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p[0m
+2026-10-29T22:08:18.4129723Z [36;1mprint('PASS24matrixbyteidentical')[0m
+2026-10-29T22:08:18.4130018Z [36;1mPY[0m
+2026-10-29T22:08:18.4151230Z shell: /usr/bin/bash -e {0}
+2026-10-29T22:08:18.4151509Z ##[endgroup]
+2026-10-29T22:08:19.0485003Z wrote /tmp/gh205-rebuilt/LP_900_50_unknown_Gx.txt (50 rows), /tmp/gh205-rebuilt/LP_900_50_unknown_Gz.txt (50 rows)
+2026-10-29T22:08:19.0562015Z LP_900_50_unknown
+2026-10-29T22:08:21.3571514Z wrote /tmp/gh205-rebuilt/LP_1800_50_unknown_Gx.txt (50 rows), /tmp/gh205-rebuilt/LP_1800_50_unknown_Gz.txt (50 rows)
+2026-10-29T22:08:21.3647199Z LP_1800_50_unknown
+2026-10-29T22:08:26.8585852Z wrote /tmp/gh205-rebuilt/LP_2700_50_unknown_Gx.txt (50 rows), /tmp/gh205-rebuilt/LP_2700_50_unknown_Gz.txt (50 rows)
+2026-10-29T22:08:26.8683460Z LP_2700_50_unknown
+2026-10-29T22:08:27.0195669Z wrote /tmp/gh205-rebuilt/LP_420_30_unknown_Gx.txt (30 rows), /tmp/gh205-rebuilt/LP_420_30_unknown_Gz.txt (30 rows)
+2026-10-29T22:08:27.0255135Z LP_420_30_unknown
+2026-10-29T22:08:27.5259325Z wrote /tmp/gh205-rebuilt/LP_840_30_unknown_Gx.txt (30 rows), /tmp/gh205-rebuilt/LP_840_30_unknown_Gz.txt (30 rows)
+2026-10-29T22:08:27.5328210Z LP_840_30_unknown
+2026-10-29T22:08:28.6436539Z wrote /tmp/gh205-rebuilt/LP_1260_30_unknown_Gx.txt (30 rows), /tmp/gh205-rebuilt/LP_1260_30_unknown_Gz.txt (30 rows)
+2026-10-29T22:08:28.6513588Z LP_1260_30_unknown
+2026-10-29T22:08:28.7105783Z PASS24matrixbyteidentical
+2026-10-29T22:08:28.7193825Z ##[group]Run python3 scripts/codegen/audit_hyperbicycle_smoke.py --maxsat optimization/experiments/GH-205/raw/actions/default/maxsat --cc optimization/experiments/GH-205/raw/actions/default/cc --construction optimization/experiments/GH-205/raw/construction.json --out /tmp/gh205-replayed.json
+2026-10-29T22:08:28.7196142Z [36;1mpython3 scripts/codegen/audit_hyperbicycle_smoke.py --maxsat optimization/experiments/GH-205/raw/actions/default/maxsat --cc optimization/experiments/GH-205/raw/actions/default/cc --construction optimization/experiments/GH-205/raw/construction.json --out /tmp/gh205-replayed.json[0m
+2026-10-29T22:08:28.7197757Z [36;1mcmp optimization/experiments/GH-205/raw/actions/default/audit.json /tmp/gh205-replayed.json[0m
+2026-10-29T22:08:28.7218158Z shell: /usr/bin/bash -e {0}
+2026-10-29T22:08:28.7218431Z ##[endgroup]
+2026-10-29T22:08:31.6391229Z [
+2026-10-29T22:08:31.6391815Z   {
+2026-10-29T22:08:31.6394227Z     "stem": "LP_900_50_unknown",
+2026-10-29T22:08:31.6394891Z     "reference_construction_interval": [
+2026-10-29T22:08:31.6395381Z       14,
+2026-10-29T22:08:31.6395696Z       14
+2026-10-29T22:08:31.6396007Z     ],
+2026-10-29T22:08:31.6396352Z     "published_named_exact": 14,
+2026-10-29T22:08:31.6396835Z     "original_finite_theorem_target": null,
+2026-10-29T22:08:31.6397330Z     "engines": {
+2026-10-29T22:08:31.6397692Z       "maxsat": {
+2026-10-29T22:08:31.6398047Z         "lb": 9,
+2026-10-29T22:08:31.6398375Z         "ub": 14,
+2026-10-29T22:08:31.6398617Z         "status": "BOUNDED"
+2026-10-29T22:08:31.6398959Z       },
+2026-10-29T22:08:31.6399165Z       "cc": {
+2026-10-29T22:08:31.6399379Z         "lb": 14,
+2026-10-29T22:08:31.6399596Z         "ub": 14,
+2026-10-29T22:08:31.6399823Z         "status": "SOLVED"
+2026-10-29T22:08:31.6400081Z       }
+2026-10-29T22:08:31.6400283Z     },
+2026-10-29T22:08:31.6400505Z     "actual_verified_upper": 14,
+2026-10-29T22:08:31.6400810Z     "actual_verified_half_uppers": {
+2026-10-29T22:08:31.6401112Z       "X": 14,
+2026-10-29T22:08:31.6401334Z       "Z": 14
+2026-10-29T22:08:31.6401530Z     },
+2026-10-29T22:08:31.6401769Z     "source_construction_upper_word_gate": "PASS",
+2026-10-29T22:08:31.6402114Z     "numeric_smoke_gate": "PASS",
+2026-10-29T22:08:31.6402667Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; construction theorem hypotheses independently audited",
+2026-10-29T22:08:31.6403547Z     "independent_search_lower_corrob": 9,
+2026-10-29T22:08:31.6403932Z     "source_head": "361f399d15801ffc2d68e9a6375ef46b03efb5e4",
+2026-10-29T22:08:31.6404466Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-29T22:08:31.6404925Z   },
+2026-10-29T22:08:31.6405119Z   {
+2026-10-29T22:08:31.6405318Z     "stem": "LP_1800_50_unknown",
+2026-10-29T22:08:31.6405608Z     "reference_construction_interval": [
+2026-10-29T22:08:31.6405898Z       14,
+2026-10-29T22:08:31.6406090Z       28
+2026-10-29T22:08:31.6406274Z     ],
+2026-10-29T22:08:31.6406486Z     "published_named_exact": null,
+2026-10-29T22:08:31.6406794Z     "original_finite_theorem_target": null,
+2026-10-29T22:08:31.6407095Z     "engines": {
+2026-10-29T22:08:31.6407309Z       "maxsat": {
+2026-10-29T22:08:31.6407515Z         "lb": 9,
+2026-10-29T22:08:31.6407718Z         "ub": 14,
+2026-10-29T22:08:31.6407938Z         "status": "BOUNDED"
+2026-10-29T22:08:31.6408178Z       },
+2026-10-29T22:08:31.6408369Z       "cc": {
+2026-10-29T22:08:31.6408574Z         "lb": 14,
+2026-10-29T22:08:31.6408779Z         "ub": 14,
+2026-10-29T22:08:31.6408994Z         "status": "SOLVED"
+2026-10-29T22:08:31.6409373Z       }
+2026-10-29T22:08:31.6427735Z     },
+2026-10-29T22:08:31.6428027Z     "actual_verified_upper": 14,
+2026-10-29T22:08:31.6428371Z     "actual_verified_half_uppers": {
+2026-10-29T22:08:31.6428643Z       "X": 14,
+2026-10-29T22:08:31.6428840Z       "Z": 28
+2026-10-29T22:08:31.6429105Z     },
+2026-10-29T22:08:31.6429342Z     "source_construction_upper_word_gate": "PASS",
+2026-10-29T22:08:31.6429679Z     "numeric_smoke_gate": "PASS",
+2026-10-29T22:08:31.6430476Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; construction theorem hypotheses independently audited",
+2026-10-29T22:08:31.6431016Z     "independent_search_lower_corrob": 9,
+2026-10-29T22:08:31.6431359Z     "source_head": "361f399d15801ffc2d68e9a6375ef46b03efb5e4",
+2026-10-29T22:08:31.6431836Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-29T22:08:31.6432409Z   },
+2026-10-29T22:08:31.6432581Z   {
+2026-10-29T22:08:31.6432766Z     "stem": "LP_2700_50_unknown",
+2026-10-29T22:08:31.6433034Z     "reference_construction_interval": [
+2026-10-29T22:08:31.6433639Z       14,
+2026-10-29T22:08:31.6433830Z       42
+2026-10-29T22:08:31.6434005Z     ],
+2026-10-29T22:08:31.6434202Z     "published_named_exact": null,
+2026-10-29T22:08:31.6434490Z     "original_finite_theorem_target": null,
+2026-10-29T22:08:31.6434783Z     "engines": {
+2026-10-29T22:08:31.6434987Z       "maxsat": {
+2026-10-29T22:08:31.6435181Z         "lb": 9,
+2026-10-29T22:08:31.6435368Z         "ub": 14,
+2026-10-29T22:08:31.6435575Z         "status": "BOUNDED"
+2026-10-29T22:08:31.6435805Z       },
+2026-10-29T22:08:31.6435986Z       "cc": {
+2026-10-29T22:08:31.6436170Z         "lb": 14,
+2026-10-29T22:08:31.6436355Z         "ub": 14,
+2026-10-29T22:08:31.6436550Z         "status": "SOLVED"
+2026-10-29T22:08:31.6436765Z       }
+2026-10-29T22:08:31.6436936Z     },
+2026-10-29T22:08:31.6437136Z     "actual_verified_upper": 14,
+2026-10-29T22:08:31.6437399Z     "actual_verified_half_uppers": {
+2026-10-29T22:08:31.6437651Z       "X": 14,
+2026-10-29T22:08:31.6437836Z       "Z": 42
+2026-10-29T22:08:31.6438015Z     },
+2026-10-29T22:08:31.6438239Z     "source_construction_upper_word_gate": "PASS",
+2026-10-29T22:08:31.6438560Z     "numeric_smoke_gate": "PASS",
+2026-10-29T22:08:31.6439048Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; construction theorem hypotheses independently audited",
+2026-10-29T22:08:31.6439569Z     "independent_search_lower_corrob": 9,
+2026-10-29T22:08:31.6439909Z     "source_head": "361f399d15801ffc2d68e9a6375ef46b03efb5e4",
+2026-10-29T22:08:31.6440380Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-29T22:08:31.6440791Z   },
+2026-10-29T22:08:31.6440962Z   {
+2026-10-29T22:08:31.6441147Z     "stem": "LP_420_30_unknown",
+2026-10-29T22:08:31.6441406Z     "reference_construction_interval": [
+2026-10-29T22:08:31.6441675Z       8,
+2026-10-29T22:08:31.6441854Z       8
+2026-10-29T22:08:31.6442026Z     ],
+2026-10-29T22:08:31.6442223Z     "published_named_exact": null,
+2026-10-29T22:08:31.6442498Z     "original_finite_theorem_target": 8,
+2026-10-29T22:08:31.6442768Z     "engines": {
+2026-10-29T22:08:31.6442963Z       "maxsat": {
+2026-10-29T22:08:31.6443150Z         "lb": 8,
+2026-10-29T22:08:31.6443482Z         "ub": 8,
+2026-10-29T22:08:31.6443679Z         "status": "SOLVED"
+2026-10-29T22:08:31.6443897Z       },
+2026-10-29T22:08:31.6444070Z       "cc": {
+2026-10-29T22:08:31.6444249Z         "lb": 8,
+2026-10-29T22:08:31.6444470Z         "ub": 8,
+2026-10-29T22:08:31.6444671Z         "status": "SOLVED"
+2026-10-29T22:08:31.6444885Z       }
+2026-10-29T22:08:31.6445056Z     },
+2026-10-29T22:08:31.6445247Z     "actual_verified_upper": 8,
+2026-10-29T22:08:31.6445509Z     "actual_verified_half_uppers": {
+2026-10-29T22:08:31.6445765Z       "X": 8,
+2026-10-29T22:08:31.6445946Z       "Z": 8
+2026-10-29T22:08:31.6446125Z     },
+2026-10-29T22:08:31.6446378Z     "source_construction_upper_word_gate": "PASS",
+2026-10-29T22:08:31.6446690Z     "numeric_smoke_gate": "PASS",
+2026-10-29T22:08:31.6447031Z     "scientific_status": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+2026-10-29T22:08:31.6447417Z     "independent_search_lower_corrob": 8,
+2026-10-29T22:08:31.6447764Z     "source_head": "361f399d15801ffc2d68e9a6375ef46b03efb5e4",
+2026-10-29T22:08:31.6448242Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-29T22:08:31.6448652Z   },
+2026-10-29T22:08:31.6448821Z   {
+2026-10-29T22:08:31.6449008Z     "stem": "LP_840_30_unknown",
+2026-10-29T22:08:31.6449438Z     "reference_construction_interval": [
+2026-10-29T22:08:31.6449714Z       8,
+2026-10-29T22:08:31.6449887Z       16
+2026-10-29T22:08:31.6450055Z     ],
+2026-10-29T22:08:31.6450250Z     "published_named_exact": null,
+2026-10-29T22:08:31.6450536Z     "original_finite_theorem_target": null,
+2026-10-29T22:08:31.6450817Z     "engines": {
+2026-10-29T22:08:31.6451163Z       "maxsat": {
+2026-10-29T22:08:31.6451360Z         "lb": 11,
+2026-10-29T22:08:31.6451547Z         "ub": 11,
+2026-10-29T22:08:31.6451740Z         "status": "SOLVED"
+2026-10-29T22:08:31.6451956Z       },
+2026-10-29T22:08:31.6452131Z       "cc": {
+2026-10-29T22:08:31.6452306Z         "lb": 11,
+2026-10-29T22:08:31.6452486Z         "ub": 11,
+2026-10-29T22:08:31.6452681Z         "status": "SOLVED"
+2026-10-29T22:08:31.6452893Z       }
+2026-10-29T22:08:31.6453065Z     },
+2026-10-29T22:08:31.6453401Z     "actual_verified_upper": 11,
+2026-10-29T22:08:31.6453665Z     "actual_verified_half_uppers": {
+2026-10-29T22:08:31.6453924Z       "X": 11,
+2026-10-29T22:08:31.6454111Z       "Z": 16
+2026-10-29T22:08:31.6454283Z     },
+2026-10-29T22:08:31.6454501Z     "source_construction_upper_word_gate": "PASS",
+2026-10-29T22:08:31.6454807Z     "numeric_smoke_gate": "PASS",
+2026-10-29T22:08:31.6455141Z     "scientific_status": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+2026-10-29T22:08:31.6455513Z     "independent_search_lower_corrob": 11,
+2026-10-29T22:08:31.6455856Z     "source_head": "361f399d15801ffc2d68e9a6375ef46b03efb5e4",
+2026-10-29T22:08:31.6456322Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-29T22:08:31.6456729Z   },
+2026-10-29T22:08:31.6456900Z   {
+2026-10-29T22:08:31.6457083Z     "stem": "LP_1260_30_unknown",
+2026-10-29T22:08:31.6457336Z     "reference_construction_interval": [
+2026-10-29T22:08:31.6457594Z       8,
+2026-10-29T22:08:31.6457765Z       24
+2026-10-29T22:08:31.6457931Z     ],
+2026-10-29T22:08:31.6458120Z     "published_named_exact": null,
+2026-10-29T22:08:31.6458390Z     "original_finite_theorem_target": null,
+2026-10-29T22:08:31.6458666Z     "engines": {
+2026-10-29T22:08:31.6458859Z       "maxsat": {
+2026-10-29T22:08:31.6459046Z         "lb": 11,
+2026-10-29T22:08:31.6459230Z         "ub": 11,
+2026-10-29T22:08:31.6459427Z         "status": "SOLVED"
+2026-10-29T22:08:31.6459639Z       },
+2026-10-29T22:08:31.6459810Z       "cc": {
+2026-10-29T22:08:31.6459993Z         "lb": 11,
+2026-10-29T22:08:31.6460180Z         "ub": 11,
+2026-10-29T22:08:31.6460376Z         "status": "SOLVED"
+2026-10-29T22:08:31.6460596Z       }
+2026-10-29T22:08:31.6460764Z     },
+2026-10-29T22:08:31.6460955Z     "actual_verified_upper": 11,
+2026-10-29T22:08:31.6461214Z     "actual_verified_half_uppers": {
+2026-10-29T22:08:31.6461465Z       "X": 11,
+2026-10-29T22:08:31.6461649Z       "Z": 24
+2026-10-29T22:08:31.6461831Z     },
+2026-10-29T22:08:31.6462049Z     "source_construction_upper_word_gate": "PASS",
+2026-10-29T22:08:31.6462356Z     "numeric_smoke_gate": "PASS",
+2026-10-29T22:08:31.6462709Z     "scientific_status": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+2026-10-29T22:08:31.6463094Z     "independent_search_lower_corrob": 11,
+2026-10-29T22:08:31.6463568Z     "source_head": "361f399d15801ffc2d68e9a6375ef46b03efb5e4",
+2026-10-29T22:08:31.6464084Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-29T22:08:31.6464496Z   }
+2026-10-29T22:08:31.6464667Z ]
+2026-10-29T22:08:31.6609588Z Post job cleanup.
+2026-10-29T22:08:31.7519446Z [command]/usr/bin/git version
+2026-10-29T22:08:31.7578159Z git version 2.56.0
+2026-10-29T22:08:31.7629126Z Temporarily overriding HOME='/home/runner/work/_temp/59b967b2-b5c9-484d-a3e2-c9e3eac5fa3a' before making global git config changes
+2026-10-29T22:08:31.7630563Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-29T22:08:31.7635108Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-29T22:08:31.7672535Z Removing SSH command configuration
+2026-10-29T22:08:31.7680081Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-29T22:08:31.7721507Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-29T22:08:31.8025867Z Removing HTTP extra header
+2026-10-29T22:08:31.8029799Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-29T22:08:31.8075399Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-29T22:08:31.8399159Z Removing includeIf entries pointing to credentials config files
+2026-10-29T22:08:31.8406790Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-29T22:08:31.8457964Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-29T22:08:31.8461064Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-29T22:08:31.8461882Z includeif.gitdir:/github/workspace/.git.path
+2026-10-29T22:08:31.8462509Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-29T22:08:31.8470423Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-29T22:08:31.8510641Z /home/runner/work/_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:08:31.8521878Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-94ac4cc7\-4f36\-4cbc\-982b\-7270e9947f3e\.config
+2026-10-29T22:08:31.8574526Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-29T22:08:31.8610852Z /home/runner/work/_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:08:31.8621005Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-94ac4cc7\-4f36\-4cbc\-982b\-7270e9947f3e\.config
+2026-10-29T22:08:31.8674091Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-29T22:08:31.8708001Z /github/runner_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:08:31.8717879Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-94ac4cc7\-4f36\-4cbc\-982b\-7270e9947f3e\.config
+2026-10-29T22:08:31.8762270Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-29T22:08:31.8795560Z /github/runner_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config
+2026-10-29T22:08:31.8803159Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-94ac4cc7\-4f36\-4cbc\-982b\-7270e9947f3e\.config
+2026-10-29T22:08:31.8856967Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-29T22:08:31.9107591Z Removing credentials config '/home/runner/work/_temp/git-credentials-94ac4cc7-4f36-4cbc-982b-7270e9947f3e.config'
+2026-10-29T22:08:31.9276111Z Cleaning up orphan processes

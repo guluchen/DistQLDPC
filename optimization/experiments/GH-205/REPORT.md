@@ -152,3 +152,13 @@ checks N341/819/1365. No matrix, frozen batch or globally-open assertion:
 additional recent primary-theorem review remains. This source review does not
 complete the missing mainstream BCH coverage or waive outstanding family/
 scientific/server/integration gates. Goal remains ACTIVE.
+
+
+Final retained-only Linux contracts40963444598/job123761804778 SUCCESS at
+f42389b6d30817e9527b394010879f5291ff1cb9:54units/full construction and24matrix
+regeneration plus byte-identical original12-run audit replay; no solver
+execution. Full contract job retained, all98raw files have SHA256 identities.
+Ordinary CI40963444483/job123761804749 SUCCESS. Work branch ready for PI
+review;3MaxSAT jobs remain unexecuted, no main/tier/default/stem/QDistSAT/PR
+changes. Scientific semantics changed:no. PI action required:server execution
+allocation/main integration and existing GH200/GH202 source holds.
