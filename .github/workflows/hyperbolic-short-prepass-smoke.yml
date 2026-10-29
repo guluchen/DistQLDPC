@@ -1,0 +1,66 @@
+name: Hyperbolic 1800 short-prepass check
+
+on:
+  push:
+    branches: [codex/hyperbolic-surface-library]
+    paths: ['.github/workflows/hyperbolic-short-prepass-smoke.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Targeted 60s MaxSAT without finder pre-pass
+        run: >-
+          python3 scripts/codegen/smoke_untiered.py --ci --family HYP --stems HYP_1800_182_unknown
+          --ub-pre-off --verbose --out /tmp/hyp-short-prepass
+      - name: Independently check raw bounds and all actual witnesses
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,re
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,'scripts/codegen')
+          from audit_exact_smoke import verify_witness
+          from smoke_untiered import parse
+          from validate_css import read_code
+          stem='HYP_1800_182_unknown';root=Path('/tmp/hyp-short-prepass')
+          meta=json.loads((root/(stem+'.json')).read_text());raw=(root/(stem+'.log')).read_text()
+          assert parse(raw,10)=={k:meta[k] for k in ('lb','ub','status')}
+          assert '-ub-pre=off' in meta['cmd']
+          n,m=read_code(Path('data/matrices/untiered'),stem)
+          assert set(meta['input_sha256'])=={'Hx','Hz','Gx','Gz'}
+          for kind,digest in meta['input_sha256'].items():
+              assert hashlib.sha256(Path(f'data/matrices/untiered/{stem}_{kind}.txt').read_bytes()).hexdigest()==digest
+          witnesses=[]
+          for match in re.finditer(r'^c witness ([XZ])(?: \([^)]*\))?:\s*([0-9 ]+)\s*$',raw,re.M):
+              support=list(map(int,match.group(2).split()));half=match.group(1)
+              verify_witness(n,m,half,support);assert len(support)>=10
+              witnesses.append(dict(half=half,support=support))
+          report=dict(stem=stem,source_head=meta['source_head'],binary_sha256=meta['binary_sha256'],
+                      result=parse(raw,10),actual_engine_witnesses=witnesses,
+                      numeric_bound_gate='PASS' if meta['lb'] is not None and meta['ub'] is not None else 'INCOMPLETE')
+          (root/'audit.json').write_text(json.dumps(report,indent=2)+'\n')
+          print('GH165_SHORT_AUDIT_JSON='+json.dumps(report,separators=(',',':')))
+          PY
+      - name: Preserve raw evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/hyp-short-prepass')
+          print('GH165_SHORT_EVIDENCE_JSON='+json.dumps({p.name:p.read_text() for p in root.glob('*') if p.is_file()},separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh165-hyp-short-prepass
+          path: /tmp/hyp-short-prepass/
+          retention-days: 14
