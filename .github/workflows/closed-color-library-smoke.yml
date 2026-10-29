@@ -1,0 +1,86 @@
+name: Closed static color CSS library smoke
+
+on:
+  push:
+    branches: [codex/closed-color-library]
+    paths:
+      - '.github/workflows/closed-color-library-smoke.yml'
+      - 'scripts/codegen/closed_color*'
+      - 'scripts/codegen/validate_closed_color.py'
+      - 'scripts/codegen/audit_closed_color_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_closed_color.py'
+      - 'tests/test_codegen_color666.py'
+      - 'data/matrices/untiered/COLOR_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_closed_color.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_closed_color.py --out /tmp/closed_color-construction.json
+          cmp optimization/experiments/GH-184/raw/construction.json /tmp/closed_color-construction.json
+      - name: Reproduce all24 new matrix files
+        run: |
+          python3 scripts/codegen/closed_color.py --all --out /tmp/closed_color-rebuilt --certificates /tmp/closed_color-certificates
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/closed_color-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          certs=list(Path('/tmp/closed_color-certificates').glob('*.json'))
+          assert len(certs)==6
+          for p in certs:
+              assert p.read_bytes()==(Path('optimization/experiments/GH-184/raw/certificates')/p.name).read_bytes(),p
+          print('PASS:24 matrices and6 full certificates reproduced byte for byte')
+          PY
+      - name: Six default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family COLOR --stems COLOR_240_16_unknown COLOR_480_28_unknown COLOR_640_36_unknown COLOR_1200_64_unknown COLOR_1440_76_unknown COLOR_2400_124_unknown --verbose --out /tmp/closed_color-maxsat
+      - name: Six CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family COLOR --stems COLOR_240_16_unknown COLOR_480_28_unknown COLOR_640_36_unknown COLOR_1200_64_unknown COLOR_1440_76_unknown COLOR_2400_124_unknown --engine cc --verbose --out /tmp/closed_color-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_closed_color_smoke.py --maxsat /tmp/closed_color-maxsat --cc /tmp/closed_color-cc --construction optimization/experiments/GH-184/raw/construction.json --out /tmp/closed_color-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('closed_color-maxsat','closed_color-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH184_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/closed_color-audit.json')
+          if audit.exists():print('GH184_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh184-closed-color-smoke
+          path: |
+            /tmp/closed_color-maxsat/
+            /tmp/closed_color-cc/
+            /tmp/closed_color-audit.json
+          if-no-files-found: warn
+          retention-days: 14
