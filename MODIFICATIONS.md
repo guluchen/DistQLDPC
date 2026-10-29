@@ -438,3 +438,50 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+
+## GH-197 library-only independent three-cycle bicycle reconstruction
+
+No solver or pruning changes. Mathematical source Galimova2603.17703v1 Eq5,
+self-dual specialization and Table1, credited in NOTICE. Source row shift S
+sends row i to column i+1. On G=Z_L^3 define commuting permutation matrices
+x=S tensor I tensor I, y=I tensor S tensor I, z=I tensor I tensor S,
+A=I+x+y+z and B=A^T=I+x^-1+y^-1+z^-1. Source Eq5 prescribes
+Hx=[A B],Hz=[B^T A^T], so the actual product is AB+BA=0 in GF(2). The
+following source prose erroneously expands it with extra transposes; we
+record that caveat and follow Eq5, rather than treating that expansion as
+correct. In the selected case Hx=Hz=[A A^T], and AA^T+A^TA=0 because all
+factors are polynomials in commuting shifts/inverses. There is no ambiguous
+choice of input matrix after Eq5 and the explicit source self-dual table.
+
+Constructor enumerates translated ROW supports; independent verifier
+enumerates each physical COLUMN's inverse-offset incident roots. A second
+source reconstruction uses separate explicit Kronecker factors and actual
+binary transpose, not the constructor or column lookup. All actual entries
+must agree. Ranks/k are computed on actual binary matrices, including even
+L with repeated roots. Source anchor k14/20 is enforced; original k26/38/
+50/62 is observed finite algebra, never an extrapolated dimension/distance
+theorem. Complete actual commutation/kernel/quotient ranks/full logical
+pairing and typed physical stabilizer rowspace connectivity are checked.
+
+All3independent coordinate shifts are checked as actual physical typed-
+rowspace automorphisms, commuting with orderL and fullL^3 vertex action.
+This proves the stated translation representation, not inequivalence of CSS
+codes under arbitrary physical coordinate permutations. Hx=Hz verifies the
+actual X/Z identity map. Every computed-basis upper word is separately
+verified against actual parity/stabilizer quotient/detectors. Such a word
+is only an upper bound. No source5/8 distance transfer to larger periods,
+no scaling/expander/good-code theorem, no assumption that3coordinates imply
+3new families. Pairwise-coprime asymmetric tori can reduce to cyclic GB by
+CRT; those source examples are not being added for family-count inflation.
+
+Tests cover30tiny random general three-cycle polynomial pairs(including
+zero-k rejection), separate tensor reconstruction atL2/3/4/5, exact literal
+source row/column signs, all6actual full validations, source/entry/logical/
+wrong-but-commuting/expected-k/inverse-partner/support mutants,24matrix
+byte regeneration/overwrite/CLI selection and missing-field/source exact/
+invalid-word/missing-minimum audit mutants. Source known exact mismatch is
+a scientific escalation. New lower/exact PLAUSIBLE until independently
+cross-checked with actual GF(2) words. Unreported original source endpoints
+remain absent; physical n ceiling is not a published upper. No solver
+experiment or quantum logical-distance search is run on the PI's Mac.
