@@ -1,0 +1,15 @@
+.wrote /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmp8ytkqjpr/COLOR_240_16_unknown_Gx.txt (16 rows), /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmp8ytkqjpr/COLOR_240_16_unknown_Gz.txt (16 rows)
+F.........
+======================================================================
+FAIL: test_byte_regeneration_and_overwrite_refusal (__main__.ClosedColorTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/yfc/Documents/PCM/DistQLDPC/tests/test_codegen_closed_color.py", line 71, in test_byte_regeneration_and_overwrite_refusal
+    self.assertEqual(cert,self.cert[240])
+AssertionError: {'cas[34566 chars]s': [(277, 105, 100), (314, 100, 53), (210, 53[30712 chars]2}]}} != {'cas[34566 chars]s': [[277, 105, 100], [314, 100, 53], [210, 53[30712 chars]2}]}}
+Diff is 189378 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.553s
+
+FAILED (failures=1)
