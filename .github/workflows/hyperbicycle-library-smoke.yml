@@ -1,0 +1,77 @@
+name: Hyperbicycle library short gates
+
+on:
+  push:
+    branches: [codex/hyperbicycle-library]
+    paths:
+      - '.github/workflows/hyperbicycle-library-smoke.yml'
+      - 'scripts/codegen/hyperbicycle*'
+      - 'scripts/codegen/validate_hyperbicycle.py'
+      - 'scripts/codegen/audit_hyperbicycle_smoke.py'
+      - 'scripts/codegen/smoke_hyperbicycle.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'tests/test_codegen_hyperbicycle.py'
+      - 'data/matrices/untiered/LP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent construction, complete logicals and unit contracts
+        run: |
+          python3 -m unittest discover -s tests -p 'test_codegen_*.py'
+          python3 scripts/codegen/validate_css.py --output /tmp/gh205-css.json
+          cmp data/matrices/untiered/validation.json /tmp/gh205-css.json
+          python3 scripts/codegen/validate_hyperbicycle.py --out /tmp/gh205-construction.json
+          cmp optimization/experiments/GH-205/raw/construction.json /tmp/gh205-construction.json
+      - name: Reproduce all24 matrix files byte for byte
+        run: |
+          python3 scripts/codegen/hyperbicycle.py --all --out /tmp/gh205-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/gh205-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS24matrixbyteidentical')
+          PY
+      - name: Six serial default MaxSAT 60CPU-second checks
+        run: python3 scripts/codegen/smoke_hyperbicycle.py --ci --engine maxsat --out /tmp/gh205-maxsat
+      - name: Six serial explicit CC 60CPU-second checks
+        run: python3 scripts/codegen/smoke_hyperbicycle.py --ci --engine cc --out /tmp/gh205-cc
+      - name: Cross-engine source bounds and actual GF2 minimum-word audit
+        run: python3 scripts/codegen/audit_hyperbicycle_smoke.py --maxsat /tmp/gh205-maxsat --cc /tmp/gh205-cc --construction /tmp/gh205-construction.json --out /tmp/gh205-smoke-audit.json
+      - name: Retain complete evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          evidence={}
+          for label in ('maxsat','cc'):
+              root=Path('/tmp/gh205-'+label)
+              evidence[label]={str(p.relative_to(root)):p.read_text() for p in root.rglob('*') if p.is_file()}
+          for name in ('construction','smoke-audit'):
+              p=Path('/tmp/gh205-'+name+'.json')
+              if p.exists():evidence[name]=p.read_text()
+          print('GH205_EVIDENCE_JSON='+json.dumps(evidence,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh205-hyperbicycle-short-gates
+          path: |
+            /tmp/gh205-maxsat/
+            /tmp/gh205-cc/
+            /tmp/gh205-construction.json
+            /tmp/gh205-smoke-audit.json
+          if-no-files-found: warn
+          retention-days: 14
