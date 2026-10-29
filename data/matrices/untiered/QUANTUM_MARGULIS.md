@@ -116,9 +116,23 @@ selection. Prior34units retain their original workloads/default selection.
 No same(n,k) peers found across main/pinned published library branches;
 direct/swapped rowspace checks and full inventory still run.
 
-Three-case serial default MaxSAT and CC Linux60sCPU/90swall/4GiB pinned
-smokes are pending at the construction checkpoint. Retain raw/source/binary/
-input identities and independently check actual words and result consistency.
-Missing numeric fields stay INCOMPLETE, new one-engine lower/exact values
-PLAUSIBLE until independent completion. Heavy work becomes an unexecuted
-server package. No stem/tier/solver/default/QDistSAT/main/gh-pages changes.
+Three-case serial default MaxSAT and CC Linux checks completed in run
+40912242015/job123583000824, source ddace037c6027edee05b105a8c35224114d1fdbf.
+Each call used60sCPU/90swall/4GiB/pinned allocated runner CPU/defaultseed.
+Ordinary source CI40912241813/job123583000629 also passed. Full raw logs,
+all engine metadata and audit are retained in GH-187/raw/actions/default;
+local actual-word audit replay is byte-identical.
+
+| n | MaxSAT60s | CC60s | Scientific / numeric status |
+|---:|---|---|---|
+|240|[9,17]|17|CC-only exact17 PLAUSIBLE; numeric PASS|
+|672|8|8|cross-checked exact8 with actual GF2 word; numeric PASS|
+|2640|no numeric bounds|10|CC-only exact10 PLAUSIBLE; numeric INCOMPLETE|
+
+Every printed and supplied-basis witness passes independent GF2 checking.
+Initial basis upper52/26/12 remains a separate construction record, not a
+minimum. New actual upper words17/8/10 are retained. Two frozen unexecuted
+MaxSAT jobs target n240/2640, with actual upper references17/10,6hCPU plus
+600swall each and4GiB, requiring a PI-allocated confirmed-free yfclab2 core.
+Aggregate12hCPU/12h20mwall are configured limits, not an ETA. No server
+job or Mac solver run. No stem/tier/solver/default/QDistSAT/main change.

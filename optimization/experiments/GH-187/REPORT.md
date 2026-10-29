@@ -1,6 +1,6 @@
 # GH-187: original SL2 quantum Margulis finite targets
 
-Status: CONSTRUCTION_AND_LOCAL_ACTUAL_WORD_PASS; Linux gates pending.
+Status: LOCAL_AND_LINUX_EVIDENCE_PASS; n2640 numeric gate INCOMPLETE; two independent-proof jobs unexecuted.
 Issue https://github.com/guluchen/DistQLDPC/issues/187; hub claim6502254099.
 Fresh main6083e662c621f3b66defd434cfae31a028d483c4;
 branch codex/quantum-margulis-library. No PR requested/main integration.
@@ -117,17 +117,60 @@ core/nohup/nullstdin, actual-word/other-engine contradiction and full identity
 guards. No core allocated/job run. No solver/build/default/tier/name/
 QDistSAT/main/gh-pages/PR change. Independent work continues meanwhile.
 
+## Terminal Linux evidence and frozen server package
+
+Source ddace037c6027edee05b105a8c35224114d1fdbf, unchanged solver binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Library run40912242015/job123583000824 SUCCESS:49units, independent full
+construction/inventory comparison,12matrix+3fullcert byte reproduction,
+all six serial60s engine attempts, actual-word and interval-consistency audit.
+Ordinary source CI40912241813/job123583000629 SUCCESS.
+
+| stem | default MaxSAT60s | CC60s | numerical gate | scientific status |
+|---|---|---|---|---|
+|QMC_240_4_unknown|[9,17]|17|PASS|CC-only17 PLAUSIBLE pending independent lower proof|
+|QMC_672_20_unknown|8|8|PASS|exact8 cross-checked both engines and actual GF2 word|
+|QMC_2640_58_unknown|no numeric fields|10|INCOMPLETE|CC-only10 PLAUSIBLE pending independent lower proof|
+
+All actual supplied/printed words are independently verified. Initial basis
+uppers52/26/12 are not confused with lighter observed physical upper words
+17/8/10. Neither source absence nor one-engine completion proves a global
+open-problem claim. No disagreement between available bounds/actual words.
+
+Full job.log, all18 collected engine files, source/binary/input hashes and
+actual-word audit are retained under raw/actions/default. Local replay:
+```
+python3 scripts/codegen/audit_quantum_margulis_smoke.py --maxsat optimization/experiments/GH-187/raw/actions/default/quantum_margulis-maxsat --cc optimization/experiments/GH-187/raw/actions/default/quantum_margulis-cc --construction optimization/experiments/GH-187/raw/construction.json --out /tmp/gh187-audit-replay.json
+cmp optimization/experiments/GH-187/raw/actions/default/audit.json /tmp/gh187-audit-replay.json
+```
+Byte-identical PASS; full evidence is durable rather than artifact-only.
+No timed-out field filled from CC, a source claim or a logical basis word.
+
+runner/jobs.jsonl freezes two MaxSAT jobs n240/2640, actual verified upper
+references17/10,6hCPU+600swall/4GiB each, seed0/verbose/serial pinned yfclab2.
+Aggregate12hCPU/12h20mwall are configured LIMITS, not timing predictions.
+No server allocation/run. Dry-run CPU54 is syntactic only; Mac execution
+and altered -ub-pre=off argv tests reject without solver/output directory.
+Raw guard logs retained; source/input/cases/job/argv/actual-word/other-engine
+contradiction guards and materialized minimum-word requirement remain.
+
+PI steering2026-10-30 recorded in CSS_LIBRARY_COVERAGE.md: after this batch,
+prioritize reproducible individual codes with published intervals or only
+heuristic estimates and genuine structural/size gaps. Known-distance X-cube
+notes are deferred, not counted as an implemented/selected next batch.
+
 ## Completion fields
 
-What changed: three original reproducible SL2 quantum Margulis2BGA inputs,
-complete source/group/regular-action certificates, typed physical-space
-validator, soundness/provenance and bounded gates.
-Validation performed:49local units, all integral/group/action/inverse/
-commuting-square/actual-column/GF2/logicals/upper-word/typed-rowspace/
-inventory checks,12matrix+3certificate byte reproduction.
-Results: local construction passes; Linux numeric/actual-result gates pending.
-Unresolved: Linux gates and any independent proof jobs; prior jobs, X-cube/
-certified-expander/cosheaf coverage and PI integration.
+What changed: three reproducible original SL2 quantum Margulis2BGA inputs,
+independent construction/logical/typed physical-space certificates, retained
+Linux actual evidence, manifest/coverage and two frozen unexecuted proof jobs.
+Validation performed:49local+Linux units, full source/group/action/column/
+GF2/logical/actual-word checks,12matrix+3certificate byte reproduction,
+six bounded Linux attempts, byte-identical local audit replay, runner guards.
+Results: n672 cross-checked exact8; n240 CC-only17 and n2640 CC-only10
+PLAUSIBLE. n2640 MaxSAT numeric INCOMPLETE; no contradictions observed.
+Unresolved: two independent proof/numeric jobs; prior jobs and remaining
+library coverage/unknown-distance targets; PI integration/allocation.
 Scientific semantics changed:no.
 PI action required:yes for integration/final names/tiers or server allocation;
 routine construction/independent validation continue.

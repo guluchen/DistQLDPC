@@ -144,6 +144,11 @@ physical stabilizer-space connectivity pass.15new+34prior units and
 12matrix+3complete-certificate byte reproduction pass, with no same(n,k)
 peers across pinned main/library refs. Initial scalar-merging diagnostic
 false split retained and corrected without changing matrices/parameters.
-Linux gates pending at construction checkpoint. This branch27untiered+
+Linux run40912242015 passes all checks: n672 exact8 cross-checked by both
+engines; n240 CC-only17 and n2640 CC-only10 remain PLAUSIBLE. Default
+MaxSAT n240[9,17]; n2640 no numeric bounds, so its numeric gate remains
+INCOMPLETE. Actual upper words17/8/10 GF2-verified. Two unexecuted MaxSAT
+proof/numeric jobs prepared; full raw logs and byte-identical audit replay
+retained. This branch27untiered+
 51tiered; prior24rows/96files and51tiered unchanged. No solver/default/
 name/tier/main/QDistSAT change.

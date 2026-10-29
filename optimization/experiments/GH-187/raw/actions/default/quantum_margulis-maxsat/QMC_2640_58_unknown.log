@@ -1,0 +1,28 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/QMC_2640_58_unknown_Hx.txt
+c Hz: data/matrices/untiered/QMC_2640_58_unknown_Hz.txt
+c Gx: data/matrices/untiered/QMC_2640_58_unknown_Gx.txt
+c Gz: data/matrices/untiered/QMC_2640_58_unknown_Gz.txt
+c Hx: 1320 x 2640, Hz: 1320 x 2640, Gx: 58 x 2640, Gz: 58 x 2640, logicals: 116
+c frontier auto X: 0.09 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.09 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: no dual map (ranks Hz 1291 Hx 1291 [Hz;Gx] 1349 [Hx;Gz] 1349, 397 candidates, cpu 0.045s): both halves, no sharing
+c oddcap X: column weights 4..4 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 4..4 (an even weight present) -> odd caps kept
+c symbreak X: n=2640 candidates=396 verified_generators=0 orbits=2640 detect_cpu=0.033s clause=none
+c symbreak Z: n=2640 candidates=396 verified_generators=0 orbits=2640 detect_cpu=0.025s clause=none
+c stab-overlap X: 1320 of 1320 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:1320 (<= 4); native propagator rows 1320 (no clauses)
+c stab-overlap Z: 1320 of 1320 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:1320 (<= 4); native propagator rows 1320 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/QMC_2640_58_unknown_Hx.txt
+c Hz: data/matrices/untiered/QMC_2640_58_unknown_Hz.txt
+c Gx: data/matrices/untiered/QMC_2640_58_unknown_Gx.txt
+c Gz: data/matrices/untiered/QMC_2640_58_unknown_Gz.txt
+c Hx: 1320 x 2640, Hz: 1320 x 2640, Gx: 58 x 2640, Gz: 58 x 2640, logicals: 116
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN
