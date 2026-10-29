@@ -1,0 +1,86 @@
+name: Finite quantum Margulis SL2 CSS library smoke
+
+on:
+  push:
+    branches: [codex/quantum-margulis-library]
+    paths:
+      - '.github/workflows/quantum-margulis-library-smoke.yml'
+      - 'scripts/codegen/quantum_margulis*'
+      - 'scripts/codegen/validate_quantum_margulis.py'
+      - 'scripts/codegen/audit_quantum_margulis_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_quantum_margulis.py'
+      - 'tests/test_codegen_color666.py'
+      - 'data/matrices/untiered/QMC_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_quantum_margulis.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_quantum_margulis.py --out /tmp/quantum_margulis-construction.json
+          cmp optimization/experiments/GH-187/raw/construction.json /tmp/quantum_margulis-construction.json
+      - name: Reproduce all12 new matrix files
+        run: |
+          python3 scripts/codegen/quantum_margulis.py --all --out /tmp/quantum_margulis-rebuilt --certificates /tmp/quantum_margulis-certificates
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/quantum_margulis-rebuilt').glob('*.txt'))
+          assert len(files)==12
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          certs=list(Path('/tmp/quantum_margulis-certificates').glob('*.json'))
+          assert len(certs)==3
+          for p in certs:
+              assert p.read_bytes()==(Path('optimization/experiments/GH-187/raw/certificates')/p.name).read_bytes(),p
+          print('PASS:12 matrices and3 full certificates reproduced byte for byte')
+          PY
+      - name: Three default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family QMC --stems QMC_240_4_unknown QMC_672_20_unknown QMC_2640_58_unknown --verbose --out /tmp/quantum_margulis-maxsat
+      - name: Three CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family QMC --stems QMC_240_4_unknown QMC_672_20_unknown QMC_2640_58_unknown --engine cc --verbose --out /tmp/quantum_margulis-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_quantum_margulis_smoke.py --maxsat /tmp/quantum_margulis-maxsat --cc /tmp/quantum_margulis-cc --construction optimization/experiments/GH-187/raw/construction.json --out /tmp/quantum_margulis-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('quantum_margulis-maxsat','quantum_margulis-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH187_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/quantum_margulis-audit.json')
+          if audit.exists():print('GH187_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh187-quantum_margulis-smoke
+          path: |
+            /tmp/quantum_margulis-maxsat/
+            /tmp/quantum_margulis-cc/
+            /tmp/quantum_margulis-audit.json
+          if-no-files-found: warn
+          retention-days: 14
