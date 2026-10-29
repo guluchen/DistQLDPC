@@ -140,8 +140,12 @@ smaller original periods inherit no distance/decoder/cycle property.
 Independent source tensor-order bijection, every physical column, full
 logicals/GF2, actual basis words and typed physical connectivity pass.
 13new+34prior units pass; no same(n,k) peer across27 pinned main/library
-refs. Initial actual basis uppers2/4/10/14/20 are not minima; source16
-word reproduction remains pending. Linux47units/construction/20matrix+
-5complete-certificate reproduction and both-engine short checks pending.
+refs. Initial actual basis uppers2/4/10/14/20 are not minima. Linux47units/full
+construction/20matrix+5complete-certificate byte reproduction passed in
+run40915696103. Both engines exact2/4/8 for n232/928/1450; n2842 CC-only14
+and n5800 CC-only16 remain PLAUSIBLE. Actual CC word16 reproduces source
+upper16 after GF2 checks. MaxSAT n2842[6,14], n5800 no numeric fields, so
+its numeric gate remains INCOMPLETE. All26engine files/full log and local
+byte-identical audit retained; two unexecuted MaxSAT proof jobs packaged.
 All29untiered/80total inputs remain separate from other library branches;
 prior24manifest rows/96matrix files and51tiered inputs unchanged.

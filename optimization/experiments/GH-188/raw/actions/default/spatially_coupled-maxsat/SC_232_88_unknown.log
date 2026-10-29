@@ -1,0 +1,45 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/SC_232_88_unknown_Hx.txt
+c Hz: data/matrices/untiered/SC_232_88_unknown_Hz.txt
+c Gx: data/matrices/untiered/SC_232_88_unknown_Gx.txt
+c Gz: data/matrices/untiered/SC_232_88_unknown_Gz.txt
+c Hx: 84 x 232, Hz: 84 x 232, Gx: 88 x 232, Gz: 88 x 232, logicals: 176
+c frontier auto X: 5.95 Tanner 4-cycles per row (threshold 3.00) -> off
+c frontier auto Z: 6.90 Tanner 4-cycles per row (threshold 3.00) -> off
+c dualshare: no dual map (ranks Hz 72 Hx 72 [Hz;Gx] 160 [Hx;Gz] 160, 28 candidates, cpu 0.000s): both halves, no sharing
+c oddcap X: column weights 3..7 all odd (every logical has even weight) -> odd caps skipped
+c oddcap Z: column weights 3..7 all odd (every logical has even weight) -> odd caps skipped
+c symbreak X: n=232 candidates=27 verified_generators=2 orbits=58 detect_cpu=0.000s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=2
+c symbreak X: generator: plain 2dshift-a L=4 (2x2)
+c symbreak X: orbit reps (size): 0(4) 4(4) 8(4) 12(4) 16(4) 20(4) 24(4) 28(4) 32(4) 36(4) 40(4) 44(4) 48(4) 52(4) 56(4) 60(4) 64(4) 68(4) 72(4) 76(4) 80(4) 84(4) 88(4) 92(4) 96(4) 100(4) 104(4) 108(4) 112(4) 116(4) 120(4) 124(4) 128(4) 132(4) 136(4) 140(4) 144(4) 148(4) 152(4) 156(4) 160(4) 164(4) 168(4) 172(4) 176(4) 180(4) 184(4) 188(4) 192(4) 196(4) 200(4) 204(4) 208(4) 212(4) 216(4) 220(4) 224(4) 228(4)
+c symbreak Z: n=232 candidates=27 verified_generators=2 orbits=58 detect_cpu=0.000s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=2
+c symbreak Z: generator: plain 2dshift-a L=4 (2x2)
+c symbreak Z: orbit reps (size): 0(4) 4(4) 8(4) 12(4) 16(4) 20(4) 24(4) 28(4) 32(4) 36(4) 40(4) 44(4) 48(4) 52(4) 56(4) 60(4) 64(4) 68(4) 72(4) 76(4) 80(4) 84(4) 88(4) 92(4) 96(4) 100(4) 104(4) 108(4) 112(4) 116(4) 120(4) 124(4) 128(4) 132(4) 136(4) 140(4) 144(4) 148(4) 152(4) 156(4) 160(4) 164(4) 168(4) 172(4) 176(4) 180(4) 184(4) 188(4) 192(4) 196(4) 200(4) 204(4) 208(4) 212(4) 216(4) 220(4) 224(4) 228(4)
+c stab-overlap X: 84 of 84 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 10:84 (<= 5); native propagator rows 84 (no clauses)
+c stab-overlap Z: 84 of 84 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 10:84 (<= 5); native propagator rows 84 (no clauses)
+c ub-pre X: rank H 72, information set 160, seed 0, collision stern p 2 l 12 walk 32 batch 1 refresh 0
+c ub-pre Z: rank H 72, information set 160, seed 0, collision stern p 2 l 12 walk 32 batch 1 refresh 0
+c ub-pre X: word of weight 4 (iteration 1, wall 0.001s)
+c witness X (ub-pre): 170 179 183 186
+c ub-pre Z: word of weight 2 (iteration 1, wall 0.002s)
+c witness Z (ub-pre): 2 57
+c ub-pre Z: converged (re-hits of U without improvement) after 17 iterations, wall 0.018s
+c ub-pre X: converged (plateau) after 1001 iterations, wall 0.429s
+c ub-pre: U0 after 0.429s (both halves converged; iterations X 1001 Z 17, words X 1 Z 1): 2 (X 4, Z 2)
+c oddcap: X half cap 1 skipped (odd cap, no probe): lb 2
+c oddcap: Z half cap 1 skipped (odd cap, no probe): lb 2
+c CSS interleave: d = 2
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/SC_232_88_unknown_Hx.txt
+c Hz: data/matrices/untiered/SC_232_88_unknown_Hz.txt
+c Gx: data/matrices/untiered/SC_232_88_unknown_Gx.txt
+c Gz: data/matrices/untiered/SC_232_88_unknown_Gz.txt
+c Hx: 84 x 232, Hz: 84 x 232, Gx: 88 x 232, Gz: 88 x 232, logicals: 176
+c d_lb: 2
+c d_ub: 2
+c d  : 2
+o 2

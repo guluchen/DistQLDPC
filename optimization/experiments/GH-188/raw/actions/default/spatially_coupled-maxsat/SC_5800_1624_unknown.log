@@ -1,0 +1,42 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/SC_5800_1624_unknown_Hx.txt
+c Hz: data/matrices/untiered/SC_5800_1624_unknown_Hz.txt
+c Gx: data/matrices/untiered/SC_5800_1624_unknown_Gx.txt
+c Gz: data/matrices/untiered/SC_5800_1624_unknown_Gz.txt
+c Hx: 2100 x 5800, Hz: 2100 x 5800, Gx: 1624 x 5800, Gz: 1624 x 5800, logicals: 3248
+c frontier auto X: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: no dual map (ranks Hz 2088 Hx 2088 [Hz;Gx] 3712 [Hx;Gz] 3712, 174 candidates, cpu 0.124s): both halves, no sharing
+c oddcap X: column weights 3..7 all odd (every logical has even weight) -> odd caps skipped
+c oddcap Z: column weights 3..7 all odd (every logical has even weight) -> odd caps skipped
+c symbreak X: n=5800 candidates=173 verified_generators=6 orbits=58 detect_cpu=0.153s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=10
+c symbreak X: generator: plain 2dshift-a L=10 (2x5)
+c symbreak X: generator: plain 2dshift-a L=10 (5x2)
+c symbreak X: generator: plain 2dshift-a L=100 (2x50)
+c symbreak X: generator: plain 2dshift-a L=100 (5x20)
+c symbreak X: generator: plain 2dshift-a L=100 (10x10)
+c symbreak X: orbit reps (size): 0(100) 100(100) 200(100) 300(100) 400(100) 500(100) 600(100) 700(100) 800(100) 900(100) 1000(100) 1100(100) 1200(100) 1300(100) 1400(100) 1500(100) 1600(100) 1700(100) 1800(100) 1900(100) 2000(100) 2100(100) 2200(100) 2300(100) 2400(100) 2500(100) 2600(100) 2700(100) 2800(100) 2900(100) 3000(100) 3100(100) 3200(100) 3300(100) 3400(100) 3500(100) 3600(100) 3700(100) 3800(100) 3900(100) 4000(100) 4100(100) 4200(100) 4300(100) 4400(100) 4500(100) 4600(100) 4700(100) 4800(100) 4900(100) 5000(100) 5100(100) 5200(100) 5300(100) 5400(100) 5500(100) 5600(100) 5700(100)
+c symbreak Z: n=5800 candidates=173 verified_generators=6 orbits=58 detect_cpu=0.160s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=10
+c symbreak Z: generator: plain 2dshift-a L=10 (2x5)
+c symbreak Z: generator: plain 2dshift-a L=10 (5x2)
+c symbreak Z: generator: plain 2dshift-a L=100 (2x50)
+c symbreak Z: generator: plain 2dshift-a L=100 (5x20)
+c symbreak Z: generator: plain 2dshift-a L=100 (10x10)
+c symbreak Z: orbit reps (size): 0(100) 100(100) 200(100) 300(100) 400(100) 500(100) 600(100) 700(100) 800(100) 900(100) 1000(100) 1100(100) 1200(100) 1300(100) 1400(100) 1500(100) 1600(100) 1700(100) 1800(100) 1900(100) 2000(100) 2100(100) 2200(100) 2300(100) 2400(100) 2500(100) 2600(100) 2700(100) 2800(100) 2900(100) 3000(100) 3100(100) 3200(100) 3300(100) 3400(100) 3500(100) 3600(100) 3700(100) 3800(100) 3900(100) 4000(100) 4100(100) 4200(100) 4300(100) 4400(100) 4500(100) 4600(100) 4700(100) 4800(100) 4900(100) 5000(100) 5100(100) 5200(100) 5300(100) 5400(100) 5500(100) 5600(100) 5700(100)
+c stab-overlap X: 2100 of 2100 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 10:2100 (<= 5); native propagator rows 2100 (no clauses)
+c stab-overlap Z: 2100 of 2100 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 10:2100 (<= 5); native propagator rows 2100 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/SC_5800_1624_unknown_Hx.txt
+c Hz: data/matrices/untiered/SC_5800_1624_unknown_Hz.txt
+c Gx: data/matrices/untiered/SC_5800_1624_unknown_Gx.txt
+c Gz: data/matrices/untiered/SC_5800_1624_unknown_Gz.txt
+c Hx: 2100 x 5800, Hz: 2100 x 5800, Gx: 1624 x 5800, Gz: 1624 x 5800, logicals: 3248
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

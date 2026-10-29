@@ -1,6 +1,6 @@
 # GH-188: spatially coupled CSS unresolved-distance targets
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux and source-upper actual-word gates pending.
+Status: LOCAL_AND_LINUX_EVIDENCE_PASS; source-upper word PASS; n5800 numeric gate INCOMPLETE; two independent-proof jobs unexecuted.
 Issue https://github.com/guluchen/DistQLDPC/issues/188, hub claim6502716118.
 Branch codex/spatially-coupled-library, fresh remotely verified main
 6083e662c621f3b66defd434cfae31a028d483c4. No PR/main integration.
@@ -59,8 +59,8 @@ Source k>=1600, not exact1600. The n5800 case exceeds approximate100–3000
 by design to retain a genuine published unresolved-distance target. Smaller
 periods inherit no decoder/cycle/distance guarantee; period2 alias/easy upper2
 retained as control, not silently replaced. Basis words are actual checked
-uppers, not minima. Source16 not yet materialized: its actual-word gate is
-INCOMPLETE. Source/recent-result search found no independent exact proof
+uppers, not minima. Source16 was not materialized at the construction checkpoint. Linux CC
+subsequently supplied an actual verified weight16 word, so that gate is PASS. Source/recent-result search found no independent exact proof
 for this identified input; this search absence does not prove global openness.
 
 ## Local validation and retained engineering failures
@@ -111,18 +111,75 @@ PI-allocated confirmed-free core/nohup/nullstdin. No server core allocated,
 job run or paid-cloud substitute. Source numeric claims never fill missing
 raw bounds. Integration/final names/tiers/QDistSAT remain PI decisions.
 
+## Terminal Linux evidence and frozen completion jobs
+
+Source615470fa26f6be950a4738a6244a33640da2c04b; unchanged solver binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Library run40915696103/job123595188679 SUCCESS:47units/full construction/
+inventory comparison,20matrix+5complete-certificate byte regeneration,
+all10serial defaultseed engine attempts under60sCPU/90swall/4GiB/pinned
+allocated runner CPU, actual-word/source/binary/input identity audit.
+Ordinary source CI40915695967/job123595188171 SUCCESS.
+
+| n | MaxSAT60s | CC60s | numeric gate | scientific status |
+|---:|---|---|---|---|
+|232|2|2|PASS|cross-checked exact2 with actual GF2 word|
+|928|4|4|PASS|cross-checked exact4 with actual GF2 word|
+|1450|8|8|PASS|cross-checked exact8 with actual GF2 word|
+|2842|[6,14]|14|PASS|CC-only14 PLAUSIBLE, independent lower proof pending|
+|5800|no numeric fields|16|INCOMPLETE|CC-only16 PLAUSIBLE, independent lower proof pending|
+
+All supplied/printed physical words pass independent GF2. The actual CC
+word16 for n5800 reproduces the published upper estimate, so its separate
+source-upper actual-word gate is now PASS. Initial basis20 is retained as
+an initial certificate, not a minimum. No disagreement among SC results.
+
+Full480769-character job.log, all26collected engine files/metadata/input
+identities and actual-word audit retained in raw/actions/default. Local
+replay command and byte-identical comparison:
+```
+python3 scripts/codegen/audit_spatially_coupled_smoke.py --maxsat optimization/experiments/GH-188/raw/actions/default/spatially_coupled-maxsat --cc optimization/experiments/GH-188/raw/actions/default/spatially_coupled-cc --construction optimization/experiments/GH-188/raw/construction.json --out /tmp/gh188-audit-replay.json
+cmp optimization/experiments/GH-188/raw/actions/default/audit.json /tmp/gh188-audit-replay.json
+```
+No CLI missing numeric fields filled from another engine, source or word.
+These are finite correctness/bounds observations, not dedicated-server timing.
+
+runner/jobs.jsonl freezes two MaxSAT jobs n2842/5800 with actual verified
+upper references14/16,6hCPU+600swall/4GiB each, defaultseed0/verbose/serial
+pinned explicitly PI-allocated confirmed-free yfclab2 core/nohup/nullstdin.
+Aggregate12hCPU/12h20mwall are configured LIMITS, not ETA. No server
+allocation/run. Dry-run CPU54 is syntactic only; Mac execution and changed
+-ub-pre=off argv guards reject without solver invocation/output directory.
+Source/input/cases/job/argv/actual-word/other-engine contradiction guards,
+unchanged solver/build check and materialized minimum-word requirement remain.
+
+## Held next-source review and remaining coverage
+
+While the same SC Linux job ran, primary-source research identified a missing
+general pin-relation construction and practical upper-only APM candidates.
+Original fixed published-word arithmetic checks exposed a source Z-witness
+mismatch for APM C1: two independent implementations give22 odd X checks;
+PDF/latest v1 and both row/column conventions checked. Published X word10
+passes in the explicit companion row convention, so the overall upper10 is
+not refuted. No APM matrix files/new family inputs or distance search added.
+Exact evidence, one-check counterexample and reproducible scripts retained
+in NEXT_SOURCE_REVIEW.md/source_checks/raw. Source interpretation held for
+PI review under AGENTS scientific boundaries; no external communication or
+silent witness repair. Unambiguous library work can continue independently.
+
 ## Completion fields
 
-What changed: five original reproducible periodic SC-HGP inputs including
-a published unresolved-distance instance; source/provenance/soundness, full
-independent columns/tensor-order/logical/actual-word and bounded gates.
-Validation performed:47local units, independent construction/GF2/logicals/
-actual words/typed physical space/inventory/peer checks and tiny byte
-regeneration; full Linux gates pending.
-Results: initial verified basis uppers2/4/10/14/20; n5800 published upper16
-actual-word reproduction remains INCOMPLETE. No new exact result asserted.
-Unresolved: Linux/regeneration/numeric/scientific completion, prior jobs,
-remaining mainstream/unknown-distance coverage and PI integration.
+What changed: five reproducible periodic SC-HGP inputs including a published
+upper-only instance, full independent construction/physical/logical evidence,
+retained Linux actual results and two frozen unexecuted completion jobs;
+updated genuine coverage gaps and held APM-source review evidence.
+Validation performed:47local+Linux units, all source/column/tensor-order/
+GF2/logical/actual-word checks,20matrix+5fullcert byte regeneration,
+10bounded Linux attempts, byte-identical local audit replay, runner guards.
+Results: both engines exact2/4/8 at n232/928/1450; CC-only14/16 at n2842/
+5800 PLAUSIBLE. n5800 source upper16 word PASS; MaxSAT numeric INCOMPLETE.
+Unresolved: two independent-proof/numeric jobs; APM source interpretation;
+prior jobs, general pin/X-cube/certified-expander/cosheaf and other coverage.
 Scientific semantics changed:no.
-PI action required:yes for integration/names/tiers/server allocation;
-routine construction/independent validation continue.
+PI action required:yes for integration/final names/tiers/server allocation
+or APM source-interpretation decision; other routine library work continues.

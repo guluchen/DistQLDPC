@@ -1,0 +1,27 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-cpu-lim=60",
+    "-v",
+    "data/matrices/untiered/SC_5800_1624_unknown"
+  ],
+  "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "input_sha256": {
+    "Hx": "aa51fa65a35261440e6ca606206553e8c89ea5856f55ec540000e5e2cd4a3ba4",
+    "Hz": "5313cb1da7731c10757e852912c8521f5370bfe7a2a506f2c5f1ebd92e7991b0",
+    "Gx": "e48794595db4a132bbfef41140451576f68de2466658a27fb7469abf26c6001b",
+    "Gz": "f41927a1710e19a83f92035d3925b5334590968189853489a89d6540e40109a5"
+  },
+  "source_head": "615470fa26f6be950a4738a6244a33640da2c04b",
+  "rc": 1,
+  "wall_seconds": 60.265,
+  "lb": null,
+  "ub": null,
+  "status": "TIMEOUT_NO_BOUNDS"
+}

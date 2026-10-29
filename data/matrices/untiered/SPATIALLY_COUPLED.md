@@ -87,7 +87,8 @@ Actual basis words are independently syndrome/quotient/detector verified;
 they are not minima. Source Table2 Code7 lists distance<=16 and thanks a
 contributor for estimations. Record it as a published upper estimate until
 an actual <=16 physical word is materialized and checked. Initial basis20
-alone does not reproduce that source upper. No individual exact d is
+alone does not reproduce that source upper; the later Linux CC word16
+now does, after independent GF2 verification. No individual exact d is
 published for the smaller original specializations in this source; absence
 of a value does not establish a globally open problem. Retain all easy/poor
 results without reselection, including the period2 upper2 control.
@@ -107,9 +108,27 @@ logical/complement/wrong-commuting-basis/stabilizer-word/Pauli-type mutants,
 noncyclic deck action, byte reproduction and CLI default/selection guards.
 Prior34units retain original workloads, including HGP default12 and the
 original triangular COLOR6 selection. No solver or support-distance search
-on the Mac; generation and algebra only. Bounded serial Linux MaxSAT/CC
-60sCPU/90swall/4GiB/defaultseed checks are pending. All raw identities,
-actual words and inconsistent/missing results must be retained; new
-one-engine lower/exact values remain PLAUSIBLE, missing numeric gates remain
-INCOMPLETE. Any unfinished heavy proof becomes an unexecuted server package.
-No solver/default/tier/name/main/gh-pages/QDistSAT change or PR.
+on the Mac; generation and algebra only. Linux source
+615470fa26f6be950a4738a6244a33640da2c04b, library run40915696103/job123595188679
+SUCCESS:47units/full construction/inventory comparison and all20matrix+
+5complete-certificate byte regeneration. Ordinary source CI40915695967/
+job123595188171 SUCCESS. Full raw identities/logs/actual words retained in
+GH-188/raw/actions/default; local actual audit replay byte-identical.
+
+| n | MaxSAT60s | CC60s | Scientific / numeric status |
+|---:|---|---|---|
+|232|2|2|cross-checked exact2; numeric PASS|
+|928|4|4|cross-checked exact4; numeric PASS|
+|1450|8|8|cross-checked exact8; numeric PASS|
+|2842|[6,14]|14|CC-only14 PLAUSIBLE; numeric PASS|
+|5800|no numeric fields|16|CC-only16 PLAUSIBLE; numeric INCOMPLETE|
+
+All actual supplied/printed words pass independent GF2. Source n5800 upper16
+actual-word gate now PASS, while its MaxSAT numeric gate stays INCOMPLETE.
+Two frozen unexecuted MaxSAT proof/numeric jobs reference verified physical
+uppers14/16,6hCPU+600swall/4GiB each, serial seed0/verbose/pinned yfclab2,
+requiring PI-allocated confirmed-free core. Aggregate12hCPU/12h20mwall are
+configured limits, not ETA; no server job run. No stem/tier/solver/default/
+main/gh-pages/QDistSAT change or PR. Held next-source APM witness discrepancy
+and remaining pin-code construction gap are separate research records;
+neither alters these SC inputs or their validated source-instance identity.
