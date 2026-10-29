@@ -1,0 +1,86 @@
+name: Hyperbolic surface library smoke
+
+on:
+  push:
+    branches: [codex/hyperbolic-surface-library]
+    paths:
+      - '.github/workflows/hyperbolic-library-smoke.yml'
+      - 'scripts/codegen/hyperbolic*'
+      - 'scripts/codegen/validate_hyperbolic.py'
+      - 'scripts/codegen/diagnose_hyperbolic_orientation.py'
+      - 'scripts/codegen/audit_exact_smoke.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_hyperbolic.py'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units, algebra and independent surface topology
+        run: |
+          python3 tests/test_codegen_hyperbolic.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/hyp-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/hyp-validation.json
+          python3 scripts/codegen/validate_hyperbolic.py --output /tmp/hyp-topology.json
+          cmp optimization/experiments/GH-165/raw/topology.json /tmp/hyp-topology.json
+          python3 scripts/codegen/diagnose_hyperbolic_orientation.py --output /tmp/hyp-orientation.json
+          cmp optimization/experiments/GH-165/raw/orientation-diagnostic.json /tmp/hyp-orientation.json
+      - name: Reproduce matrices and full quotient certificates
+        run: |
+          python3 scripts/codegen/hyperbolic_surface.py --all --out /tmp/hyp-rebuilt --certificates /tmp/hyp-quotients
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/hyp-rebuilt').glob('*.txt'));assert len(files)==16
+          for p in files:assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          for p in Path('/tmp/hyp-quotients').glob('*.json'):
+              assert p.read_bytes()==(Path('optimization/experiments/GH-165/raw/quotients')/p.name).read_bytes(),p
+          print('PASS: all 16 matrices and four complete quotients reproduced')
+          PY
+      - name: Independent all-root graph homology distance and witnesses
+        run: >-
+          timeout 150s taskset -c $(python3 -c 'import os;print(min(os.sched_getaffinity(0)))')
+          prlimit --as=4294967296 -- python3 scripts/codegen/validate_hyperbolic.py
+          --distances --output /tmp/hyp-distances.json
+      - name: Four default MaxSAT 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HYP --verbose --out /tmp/hyp-maxsat
+      - name: Four CC 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family HYP --engine cc --verbose --out /tmp/hyp-cc
+      - name: Audit exact claims, witnesses and engine identity
+        run: >-
+          python3 scripts/codegen/audit_exact_smoke.py --family HYP --cases scripts/codegen/hyperbolic_cases.json
+          --independent /tmp/hyp-distances.json --maxsat /tmp/hyp-maxsat --cc /tmp/hyp-cc --out /tmp/hyp-audit.json
+      - name: Retain raw evidence on failure too
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('hyp-maxsat','hyp-cc'):
+              root=Path('/tmp')/name
+              print('GH165_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          for name in ('hyp-distances','hyp-audit'):
+              p=Path('/tmp')/(name+'.json')
+              if p.exists():print('GH165_'+name.upper().replace('-','_')+'_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh165-hyperbolic-smoke
+          path: |
+            /tmp/hyp-maxsat/
+            /tmp/hyp-cc/
+            /tmp/hyp-distances.json
+            /tmp/hyp-audit.json
+          if-no-files-found: warn
+          retention-days: 14
