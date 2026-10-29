@@ -2613,6 +2613,11 @@ int main(int argc, char** argv) {
             if (!argv[i][10] || !end || *end || !(v >= 0) || v > 1e9) die("invalid -cc-probe (seconds >= 0, or switch | stay for tests)");
             g_cc_opt.probe_sec = v;
             g_cc_opt.probe_force = 0;
+        } else if (!strncmp(argv[i], "-cc-probe-growth=", 17)) {   /* GH-206 */
+            char* end = NULL;
+            const double v = strtod(argv[i] + 17, &end);
+            if (!argv[i][17] || !end || *end || !(v == 0 || (v >= 1 && v <= 1e9))) die("invalid -cc-probe-growth (0, or a factor >= 1)");
+            g_cc_opt.probe_growth = v;
         } else if (!strncmp(argv[i], "-cc-probe", 9))
             die("invalid -cc-probe (seconds >= 0, or switch | stay for tests)");
         else if (!strncmp(argv[i], "-cc-roworder", 12))
@@ -2666,9 +2671,9 @@ int main(int argc, char** argv) {
             printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical)\n");
             printf("            -cc-roworder=index|bfs|auto (GH-183, default index): internal row order = packing scan order and mrv\n");
             printf("            tie-break; bfs = reversed BFS over the Tanner graph from the rows of the first seed (a row relabeling);\n");
-            printf("            auto (GH-206) = per half, index order without mrv until a probe at the first level refuted in >= S s\n");
-            printf("            (-cc-probe=S, default 1) re-runs it with bfs + mrv, capped at the first run's time; the faster one\n");
-            printf("            searches the remaining levels of that half\n");
+            printf("            auto (GH-206) = per half, index order without mrv first; a refuted level taking >= S s (-cc-probe=S,\n");
+            printf("            default 0.1) is re-run with the other configuration (bfs + mrv), capped at the first run's time, and\n");
+            printf("            the faster one continues; later probes at -cc-probe-growth=F (default 30; 0 = one probe) x that time\n");
             printf("            -cc-tbbase=desc|asc (GH-183, default desc): tiebreak base order after the seed (test variant)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -cc-aut=on|off (default on; GH-152; off = the CC search before GH-152): Tanner-graph automorphism\n");

@@ -71,11 +71,11 @@
 //   order under both row orders, vs brute force (witnesses checked in GF(2)); the bfs order must use every nonempty row
 //   (rows_used). Mutants 19 (the order drops a row) and 20 (no BFS restart: rows unreachable from the seed dropped) must give
 //   wrong ladders. Driver configurations with roworder bfs / tbbase asc in Parts B and H.
-// GH-206 (-cc-roworder=auto, per-half probe between A = index order without mrv and B = bfs order with mrv): Part B and Part H
-//   driver runs with the probe forced to switch, forced to stay, and by time (threshold 0 s, poll at every node, so the
-//   probe's abort at A's time is exercised; also with the finder on and with tbbase asc), against enumeration; counted:
-//   probes that switched, stayed, were aborted. Mutant 21 (the probe runs level w + 1 and an aborted probe is taken as a
-//   refuted level) must give wrong answers.
+// GH-206 (-cc-roworder=auto, per-half probes between A = index order without mrv and B = bfs order with mrv): Part B and
+//   Part H driver runs against enumeration with a probe after every refuted level that always switches (A and B alternate)
+//   or never switches, and by time (threshold 0 s, growth 1 or 0, poll at every node, so the probe's abort at the current
+//   search's time is exercised); with the finder on and with tbbase asc. Mutant 21 (after every refuted level the probe
+//   runs level w + 1 with a zero cap and an aborted probe is taken as a refuted level) must give wrong answers.
 // Part G (GH-148, -stab-overlap on the MaxSAT path): (a) encoding check: on one row g of weight w = 1..14 with the
 //   objective "maximize the true qubits" (soft clauses x_i), MaxCDCL's optimum must be w - floor(|g|/2) for the
 //   binomial and the sequential-counter encodings and the native MaxCDCL propagator (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
@@ -589,12 +589,13 @@ int main(int argc, char** argv) {
             }
         }
         {   // GH-206: -cc-roworder=auto (per-half probe); probe_force 1 switch / 2 stay / 0 by time (threshold 0 s)
-            struct ACfg { const char* name; int rmask; bool dual; uint64_t seed; bool symbreak; int force; bool ubs; bool asc; int mutant; };
+            struct ACfg { const char* name; int rmask; bool dual; uint64_t seed; bool symbreak; int force; bool ubs; bool asc; int mutant; double growth; };
             const ACfg acfgs[] = {
                 {"auto-switch", RM_NEW | RM_TB, true, 0, true, 1, false, false, 0}, {"auto-stay", RM_NEW | RM_TB, true, 0, true, 2, false, false, 0},
-                {"auto-time", RM_NEW | RM_TB, true, 0, true, 0, false, false, 0}, {"auto-time-dual-off-seed1", RM_NEW | RM_TB, false, 1, true, 0, false, false, 0},
-                {"auto-switch-index-seed2", RM_NEW, false, 2, false, 1, false, false, 0}, {"auto-time-ubsearch", RM_NEW | RM_TB, true, 3, true, 0, true, false, 0},
-                {"auto-switch-asc-oldrules", RM_OLD, true, 0, true, 1, false, true, 0}, {"auto-time-asc", RM_ALL | RM_TB, false, 0, true, 0, false, true, 0},
+                {"auto-time", RM_NEW | RM_TB, true, 0, true, 0, false, false, 0, 1.0}, {"auto-time-dual-off-seed1", RM_NEW | RM_TB, false, 1, true, 0, false, false, 0, 1.0},
+                {"auto-time-single", RM_NEW | RM_TB, true, 2, true, 0, false, false, 0, 0.0},
+                {"auto-switch-index-seed2", RM_NEW, false, 2, false, 1, false, false, 0}, {"auto-time-ubsearch", RM_NEW | RM_TB, true, 3, true, 0, true, false, 0, 1.0},
+                {"auto-switch-asc-oldrules", RM_OLD, true, 0, true, 1, false, true, 0}, {"auto-time-asc", RM_ALL | RM_TB, false, 0, true, 0, false, true, 0, 1.0},
                 {"mutant21-switch", RM_NEW | RM_TB, true, 0, true, 1, false, false, 21}, {"mutant21-time", RM_NEW | RM_TB, false, 0, true, 0, false, false, 21},
             };
             for (const ACfg& c : acfgs) {
@@ -603,7 +604,7 @@ int main(int argc, char** argv) {
                 if (c.ubs) { o.ub_pre = 0.0; o.ub_share = 0.5; }
                 o.rules = rules_of(c.rmask);
                 o.dual = c.dual; o.ub_basis = false; o.seed = c.seed; o.mutant = c.mutant;
-                o.roworder = distcc::ROWORDER_AUTO; o.probe_sec = 0.0; o.probe_force = c.force; o.tb_asc = c.asc;
+                o.roworder = distcc::ROWORDER_AUTO; o.probe_sec = 0.0; o.probe_force = c.force; o.tb_asc = c.asc; o.probe_growth = c.growth;
                 RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
                 const bool ok = run_ok(r, d);
                 if (c.mutant == 21) { mut_runs[21]++; if (!ok) mut_bad[21]++; continue; }
@@ -1242,7 +1243,7 @@ int main(int argc, char** argv) {
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed; o.mutant = c.mutant;
             o.roworder = c.ro; o.tb_asc = c.asc;   // GH-183
-            if (c.ro >= 2) { o.roworder = distcc::ROWORDER_AUTO; o.probe_sec = 0.0; o.probe_force = c.ro == 2 ? 1 : 0; o.ub_poll_mask = 0; }   // GH-206
+            if (c.ro >= 2) { o.roworder = distcc::ROWORDER_AUTO; o.probe_sec = 0.0; o.probe_growth = 1.0; o.probe_force = c.ro == 2 ? 1 : 0; o.ub_poll_mask = 0; }   // GH-206
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             const bool ok = run_ok(r, d);
             if (c.mutant == 13) { h_m13_runs++; if (!ok) h_m13_bad++; continue; }
