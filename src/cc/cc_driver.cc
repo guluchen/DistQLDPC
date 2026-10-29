@@ -217,7 +217,7 @@ bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::
 
 bool parse_rules(const char* s, Rules& out) {
     Rules r;
-    r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = r.tiebreak = false;
+    r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = r.tiebreak = r.erasure = false;
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -232,6 +232,7 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "leaf") r.leaf = true;
         else if (tok == "overlap") r.overlap = true;
         else if (tok == "tiebreak") r.tiebreak = true;   /* GH-162 */
+        else if (tok == "erasure") r.erasure = true;     /* GH-195 */
         else if (tok == "none") { /* nothing */ }
         else return false;
         pos = e + 1;
@@ -250,6 +251,7 @@ std::string rules_string(const Rules& r) {
     if (r.overlap) s += ",overlap";
     if (r.tiebreak) s += ",tiebreak";
     if (r.mrv) s += ",mrv";
+    if (r.erasure) s += ",erasure";   /* GH-195 */
     return s.empty() ? std::string("none") : s.substr(1);
 }
 
@@ -375,6 +377,12 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             if (opt.rules.tiebreak && S.overlap_active() && S.tiebreak_rows() > 0)
                 printf("c cc: %s half tiebreak: %d of %d rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then descending label)\n",
                        hs[k].tag, S.tiebreak_rows(), S.overlap_rows());
+            if (opt.rules.erasure)   /* GH-195 (no line without the token: byte identity) */
+                printf("c cc: %s half erasure: %s%s%s\n", hs[k].tag,
+                       !S.erasure_active() ? "idle (needs pack)" : "on (extra <= 2, region <= 128)",
+                       S.erasure_active() ? (S.erasure_pair_table() ? ", pair table" : ", pairs by scan") : "",
+                       opt.mutant == 22 ? " [TEST MUTANT 22: bound weakened by one]" :
+                       opt.mutant == 23 ? " [TEST MUTANT 23: fixed support ignored]" : "");
         }
     }
     /* GH-133 parity: level 1 of a qualifying half is empty (every element has even weight) */
@@ -603,6 +611,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                    (unsigned long long)r.closed, (unsigned long long)r.nocand, (unsigned long long)r.packprune,
                    (unsigned long long)r.parprune, (unsigned long long)r.leaf1, (unsigned long long)r.leaf2,
                    (unsigned long long)r.ovtight, (unsigned long long)r.ovforbid, dt);
+            if (opt.rules.erasure)   /* GH-195 (no line without the token) */
+                printf("c cc-stats: %s level %d erasure calls %llu prune %llu giveup %llu\n", h.tag, w,
+                       (unsigned long long)r.ercalls, (unsigned long long)r.erprune, (unsigned long long)r.ergiveup);
             if (!r.by_budget.empty()) {   /* nodes by remaining budget w - |S|, budget 0 (full clusters) first */
                 printf("c cc-stats: %s level %d nodes-by-budget", h.tag, w);
                 for (size_t b = 0; b < r.by_budget.size(); b++) printf(" %llu", (unsigned long long)r.by_budget[b]);

@@ -2524,7 +2524,7 @@ int main(int argc, char** argv) {
             die("invalid -engine (maxsat | cc | auto)");
         else if (!strncmp(argv[i], "-cc-rules=", 10)) {
             if (!distcc::parse_rules(argv[i] + 10, g_cc_opt.rules))
-                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, tiebreak, mrv, or none)");
+                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, tiebreak, mrv, erasure, or none)");
         } else if (!strcmp(argv[i], "-cc-dual=on"))
             g_cc_opt.dual = true;
         else if (!strcmp(argv[i], "-cc-dual=off"))
@@ -2595,7 +2595,7 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 14 && v != 17 && v != 18)) die("invalid -cc-mutant (0..14, 17, 18; test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 14 && v != 17 && v != 18 && (v < 22 || v > 23))) die("invalid -cc-mutant (0..14, 17, 18, 22, 23; test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strncmp(argv[i], "-cc-trace=", 10)) {
             g_cc_opt.trace_path = argv[i] + 10;
@@ -2632,12 +2632,14 @@ int main(int argc, char** argv) {
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
-            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap[,tiebreak][,mrv] (default excl,pack,orbf,parity,leaf,overlap;\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap[,tiebreak][,mrv][,erasure] (default excl,pack,orbf,parity,leaf,overlap;\n");
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden;\n");
             printf("            tiebreak (GH-162, opt-in) = with overlap, an even row g is replaced by g minus its first qubit in\n");
-            printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical)\n");
+            printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical;\n");
+            printf("            erasure (GH-195, opt-in) = with pack, when at most 2 added qubits are not charged to a packed row,\n");
+            printf("            a node is cut if no logical extends it inside the packed rows' candidates plus <= 2 more qubits)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -cc-aut=on|off (default on; GH-152; off = the CC search before GH-152): Tanner-graph automorphism\n");
             printf("            candidates for the orbit seeds and the dual map (every candidate GF(2)-verified before use)\n");
@@ -2654,7 +2656,7 @@ int main(int argc, char** argv) {
             printf("            -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..14, 17, 18)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..14, 17, 18, 22, 23)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");

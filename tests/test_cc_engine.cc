@@ -75,6 +75,8 @@
 //   d = 3..5 (weight-2 boundary stabilizers, the rule binds hard). Mutants (test-only g_stab_overlap_mutant): 1 = limit
 //   floor(|g|/2) - 1 and 2 = the half's parity rows used as g without the GF(2) check must give wrong answers.
 //   Also counted: codes where the constraints remove an element of F of weight <= d + 2 (the rule is not vacuous).
+// GH-195 (rule erasure): Part R (half level, below; own RNG stream, the shared stream is saved and restored), and erasure
+//   driver configurations in Parts B and H. Usage: test_cc_engine [NA [NB [NG [NH [NT [NR]]]]]].
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -174,9 +176,10 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
     r.overlap = mask & 64; r.tiebreak = mask & 128;   // GH-162 (Part T; the older parts use masks < 128)
+    r.erasure = mask & 256;                          // GH-195 (Part R)
     return r;
 }
-static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 128;
+static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 128, RM_ER = 256;
 static const char* rules_name(int mask) {
     static char buf[64];
     distcc::Rules r = rules_of(mask);
@@ -195,6 +198,38 @@ static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, co
     for (int w = 1; w <= top; w++) {
         distcc::LevelResult res = hs.run_level(w);
         if (nodes) *nodes += res.nodes;
+        const bool expect_found = (w == dh);
+        if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
+        if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
+            snprintf(buf, sizeof(buf), "w=%d got %s expected %s (d_h=%d)", w, res.verdict == distcc::LEVEL_FOUND ? "FOUND" : "EMPTY",
+                     expect_found ? "FOUND" : "EMPTY", dh);
+            why = buf; return false;
+        }
+        if (res.verdict == distcc::LEVEL_FOUND) {
+            Mask v = 0;
+            for (int q : res.witness) v |= 1u << q;
+            if (popc(v) != w || (int)res.witness.size() != w || !in_kernel(H, v) || !detected(G, v)) {
+                snprintf(buf, sizeof(buf), "w=%d invalid witness", w); why = buf; return false;
+            }
+        }
+    }
+    return true;
+}
+
+// GH-195 Part R: ladder_ok with the erasure test hooks (sizegate: also 2|S| + 2 <= w; verify: phi H_R = 0, F H_R = G_R
+// checked on every region column) and the erasure counters summed into *calls / *prunes
+static bool ladder_er(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
+                      const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, bool sizegate, bool verify,
+                      uint64_t* calls, uint64_t* prunes, uint64_t* giveups, std::string& why) {
+    distcc::Rules r = rules_of(rmask);
+    const distcc::SparseRows Kr = to_rows(K, n);
+    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
+    hs.set_erasure_test(sizegate, verify);
+    const int top = dh < 0 ? n : dh;
+    char buf[160];
+    for (int w = 1; w <= top; w++) {
+        distcc::LevelResult res = hs.run_level(w);
+        *calls += res.ercalls; *prunes += res.erprune; *giveups += res.ergiveup;
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
         if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
@@ -386,7 +421,7 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[19] = {0}, mut_runs[19] = {0};
+    long mut_bad[24] = {0}, mut_runs[24] = {0};
     long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
@@ -557,6 +592,9 @@ int main(int argc, char** argv) {
             {"tiebreak", RM_NEW | RM_TB, true, false, 0, true}, {"tiebreak-dual-off-seed1", RM_NEW | RM_TB, false, false, 1, true},   // GH-162
             {"tiebreak-mrv-seed2", RM_ALL | RM_TB, true, true, 2, true}, {"tiebreak-index", 1 | 2 | 64 | RM_TB, false, false, 3, false},
             {"tiebreak-overlap-orbf", 4 | 64 | RM_TB, true, false, 0, true},
+            {"erasure", RM_NEW | RM_ER, true, false, 0, true}, {"erasure-tiebreak", RM_NEW | RM_TB | RM_ER, true, false, 0, true},   // GH-195
+            {"erasure-tiebreak-mrv-dual-off-seed1", RM_ALL | RM_TB | RM_ER, false, true, 1, true},
+            {"erasure-index-seed2", 1 | 2 | RM_ER, false, false, 2, false}, {"erasure-gh133rules", RM_133 | RM_ER, true, false, 3, true},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
@@ -1187,6 +1225,7 @@ int main(int argc, char** argv) {
             {"aut-orbf-only", 4, true, true, 3, true, 0}, {"aut-excl-orbf", 1 | 4, false, false, 0, true, 0},
             {"aut-tiebreak", RM_NEW | RM_TB, true, false, 0, true, 0}, {"aut-tiebreak-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0},   // GH-162
             {"aut-tiebreak-excl-orbf-overlap", 1 | 4 | 64 | RM_TB, false, false, 2, true, 0},
+            {"aut-erasure-tiebreak", RM_NEW | RM_TB | RM_ER, true, false, 0, true, 0}, {"aut-erasure-seed1-dual-off", RM_NEW | RM_ER, false, false, 1, true, 0},   // GH-195
             {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
             {"mutant14", RM_NEW, true, false, 0, true, 14},
         };
@@ -1323,6 +1362,118 @@ int main(int argc, char** argv) {
            mut_bad[18], mut_runs[18], t_m18_orb);
     if (NT > 0 && (t_bind == 0 || t_bind_orb == 0)) { fprintf(stderr, "CC_FAIL GH-162 partT: the cut never binds\n"); fails++; }
     if (NT > 0 && (mut_bad[17] == 0 || mut_bad[18] == 0)) { fprintf(stderr, "CC_FAIL GH-162 mutant expectations not met\n"); fails++; }
+
+    // ---------------- GH-195 Part R: erasure bound at half level ----------------
+    // Own RNG stream (the shared stream is saved and restored, so the instance streams of Parts A-T are unchanged). Random
+    // halves as in Part T (planted shift / relabeled planted shift with -cc-aut orbits / none; every fourth all-odd; K = a
+    // basis of ker [H; G], its elements of weight <= 6, its even elements of weight <= 8, or random sums), n = 6..18 and
+    // denser H (more rows) so that the packing bound is often nearly tight. Ladders 1..d_h vs brute force (every witness
+    // checked in GF(2)) for the 128 subsets of {excl, orbf, mrv, parity, leaf, overlap, tiebreak} with pack+erasure, x seeds
+    // 0..2, x gate {default extra <= 2, test hook 2|S| + 2 <= w as well}; the default-gate runs also verify phi H_R = 0 and F H_R = G_R on
+    // every region column. Counted: erasure tests, prunes, give-ups (ker H_R holds a detected vector), and instances where the
+    // rule prunes. Mutants 22 (one fewer outside qubit: the bound weakened by one) and 23 (fixed support S ignored) run on 16
+    // subsets x seeds 0..1 with the production gate and must give wrong ladders on some instance.
+    const int NR = argc > 6 ? atoi(argv[6]) : 300;
+    long r_inst = 0, r_orb = 0, r_runs = 0, r_bad = 0, r_fire = 0, r_fire_def = 0, r_fire_orb = 0;
+    uint64_t r_calls = 0, r_prunes = 0, r_calls_def = 0, r_prunes_def = 0, r_giveup = 0;
+    {
+        const unsigned long long rng_saved = rng_state;   // GH-195: Part R must not shift the shared stream
+        rng_state = 0x9e3779b97f4a7c15ULL ^ 195;
+        for (int inst = 0; inst < NR; inst++) {
+            const int n = 6 + (int)rnd(13);
+            const int kind = inst % 3;   // 0 planted shift, 1 relabeled planted shift (-cc-aut), 2 none
+            std::vector<std::vector<int> > gens;
+            if (kind != 2) {
+                std::vector<int> divs;
+                for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+                const int L = divs[rnd((unsigned)divs.size())];
+                gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+            }
+            std::vector<Mask> h0, g0;
+            const int nh = 1 + (int)rnd((unsigned)(n / 2 + 4)), ng = 1 + (int)rnd(3);
+            for (int k = 0; k < nh; k++) h0.push_back(rand_vec(n, 2, 4 + (int)rnd(3)));
+            for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+            std::vector<Mask> H = closure(h0, gens, 64), G = closure(g0, gens, 32);
+            if (G.empty()) G.push_back(1u << rnd(n));
+            if (inst % 4 == 0) make_columns_odd(H, n);
+            if (kind == 1) {
+                std::vector<int> rho(n);
+                for (int i = 0; i < n; i++) rho[i] = i;
+                for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+                for (Mask& v : H) v = perm_apply(rho, v);
+                for (Mask& v : G) v = perm_apply(rho, v);
+            }
+            const int dh = half_opt(H, G, n);
+            std::vector<Mask> kerHG, basis, K;
+            {
+                Span sp;
+                for (Mask v = 1; v < (1u << n); v++) {
+                    if (!in_kernel(H, v) || detected(G, v)) continue;
+                    kerHG.push_back(v);
+                    if (sp.add(v)) basis.push_back(v);
+                }
+            }
+            const int kk = (inst / 3) % 4;
+            if (kk == 0) K = basis;
+            else if (kk == 1) { for (Mask v : kerHG) if (popc(v) <= 6 && K.size() < 60) K.push_back(v); }
+            else if (kk == 2) { for (Mask v : kerHG) if (popc(v) <= 8 && !odd(v) && K.size() < 80) K.push_back(v); }
+            else if (!basis.empty())
+                for (int t = 0, T = 1 + (int)rnd(8); t < T; t++) {
+                    Mask v = 0;
+                    for (Mask b : basis) if (rnd(2)) v ^= b;
+                    if (v) K.push_back(v);
+                }
+            std::vector<int> orb;
+            if (kind == 0) orb = orbits_of(H, G, n);
+            else if (kind == 1) {
+                const distcc::SparseRows Hr = to_rows(H, n), Gr = to_rows(G, n);
+                const std::vector<const distcc::SparseRows*> cls = {&Hr, &Gr};
+                const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, false);
+                const HalfSymInfo ext = find_half_symmetry(to_matrix(H, n), to_matrix(G, n), &ar.gens);
+                if ((int)ext.reps.size() < n) orb = ext.orbit_of;
+            }
+            r_inst++; if (!orb.empty()) r_orb++;
+            if (getenv("CC_TEST_PROGRESS")) fprintf(stderr, "partR inst %d n %d kind %d d_h %d |H| %zu |K| %zu orbits %d\n", inst, n, kind, dh, H.size(), K.size(), (int)!orb.empty());
+            uint64_t fire = 0, fire_def = 0;
+            for (int sub = 0; sub < 128; sub++) {
+                // bits of sub: excl, orbf, mrv, parity, leaf, overlap, tiebreak -> masks 1, 4, 8, 16, 32, 64, 128
+                const int rm = (sub & 1) | ((sub >> 1) << 2) | 2 | RM_ER;
+                for (uint64_t seed = 0; seed < 3; seed++)
+                    for (int always = 0; always < 2; always++) {   // always = 1: production gate (+ verify); 0: size gate
+                        std::string why;
+                        uint64_t calls = 0, prunes = 0;
+                        r_runs++;
+                        if (!ladder_er(H, G, K, n, dh, orb, rm, seed, 0, !always, always, &calls, &prunes, &r_giveup, why)) {
+                            r_bad++; fails++;
+                            if (r_bad <= 10) fprintf(stderr, "CC_FAIL GH-195 partR inst=%d n=%d kind=%d rules=%s seed=%llu always=%d: %s\n", inst, n,
+                                                     kind, rules_name(rm), (unsigned long long)seed, always, why.c_str());
+                        }
+                        if (always) { r_calls += calls; r_prunes += prunes; fire += prunes; }
+                        else { r_calls_def += calls; r_prunes_def += prunes; fire_def += prunes; }
+                    }
+                if (sub % 8 == 0)   // 16 subsets: mutants 22-23, seeds 0..1, production gate
+                    for (int mt = 22; mt <= 23; mt++)
+                        for (uint64_t seed = 0; seed < 2; seed++) {
+                            std::string why;
+                            uint64_t calls = 0, prunes = 0, giveups = 0;
+                            mut_runs[mt]++;
+                            if (!ladder_er(H, G, K, n, dh, orb, rm, seed, mt, false, false, &calls, &prunes, &giveups, why)) mut_bad[mt]++;
+                        }
+            }
+            if (fire) { r_fire++; if (!orb.empty()) r_fire_orb++; }
+            if (fire_def) r_fire_def++;
+        }
+        rng_state = rng_saved;
+    }
+    printf("GH-195 partR: %ld half instances (%ld with orbits), %ld ladder runs (128 rule subsets with pack,erasure x 3 seeds x 2 gates), %ld bad; "
+           "erasure tests %llu, prunes %llu with the production gate (%ld instances pruned, %ld with orbits); tests %llu, prunes %llu with the size gate 2|S| + 2 <= w (%ld instances); "
+           "give-ups (detected vector in ker H_R) %llu\n",
+           r_inst, r_orb, r_runs, r_bad, (unsigned long long)r_calls, (unsigned long long)r_prunes, r_fire, r_fire_orb,
+           (unsigned long long)r_calls_def, (unsigned long long)r_prunes_def, r_fire_def, (unsigned long long)r_giveup);
+    printf("mutant 22 (erasure bound weakened by one: extra - 1 outside qubits): %ld/%ld half ladders wrong\n", mut_bad[22], mut_runs[22]);
+    printf("mutant 23 (erasure with the fixed support S ignored): %ld/%ld half ladders wrong\n", mut_bad[23], mut_runs[23]);
+    if (NR > 0 && (r_fire == 0 || r_fire_def == 0)) { fprintf(stderr, "CC_FAIL GH-195 partR: the erasure rule never prunes\n"); fails++; }
+    if (NR > 0 && (mut_bad[22] == 0 || mut_bad[23] == 0)) { fprintf(stderr, "CC_FAIL GH-195 mutant expectations not met\n"); fails++; }
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);

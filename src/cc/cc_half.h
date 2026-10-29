@@ -102,6 +102,25 @@
  *         (one global order is not needed); the relabeling (-cc-seed) only changes the labels. The dual map and the stop
  *         rule act between halves and are unaffected. An order that does not put r_i first breaks (B) (mutant 18).
  *         Full proof: MODIFICATIONS.md (GH-162).
+ *   erasure (GH-195, default off; the erasure bound idea of Qubitserf 04b9349, S. Cercelescu, MIT, re-derived here) needs pack.
+ *         At a node S whose packing scan found disjoint odd rows j_1..j_p with free candidate sets R_1..R_p, let R be their
+ *         union, E the free qubits outside R (free: not in S, not forbidden) and extra = (w - |S|) - p. Any target e* kept
+ *         by the other rules (S subset of e*, e* disjoint from the forbidden set, e* in F, |e*| = w) has an odd number >= 1
+ *         of qubits of e* \ S in each packed row (odd in syn(S), even in syn(e*)), all free, hence in the disjoint R_i:
+ *         |(e* \ S) \ R| <= extra. So e* = S + y + z with y a subset of R, z a subset of E, |z| <= extra. With extra <= 2
+ *         the rule decides the relaxation "some y subset of R, z subset of E, |z| <= extra with H_R y = H(S + z) and
+ *         G(S + z + y) != 0" (no weight condition on y) and prunes when there is none. Decision: the columns of R are
+ *         eliminated (peeling of rows with one region qubit, then dense elimination of the rest with the detector labels
+ *         carried along). If ker H_R holds a y with G y != 0 the rule gives up. Otherwise back-substitution on the pivot
+ *         rows gives, exactly, a 64-lane vector phi with phi H_R = 0 (the leaf rule's random row keys on the other rows)
+ *         and a map F with F H_R = G_R (full-width labels); then for every v: phi.Hv != 0 implies H v outside colspace(H_R),
+ *         and H v = H_R y implies G(v + y) = G v + F H v. The node is pruned iff every z has phi.H(S + z) != 0 or
+ *         G(S + z) + F H(S + z) = 0 (singles through the leaf hash table, pairs through a pair table keyed by XOR of column
+ *         keys; qubits on a pivot row are projected explicitly). A fingerprint collision only makes the rule give up.
+ *         The rule never prunes a node that is a subset of a kept target, so every other rule's argument (and tiebreak's
+ *         Lemmas A-C) is unchanged. Gate (cost only): extra <= 2 and |R| <= 128 (Qubitserf also requires 2|S| + 2 <= w; that
+ *         size gate was measured as slower on every Tier 2-5 code tried, optimization/experiments/GH-195). Full proof: MODIFICATIONS.md
+ *         (GH-195).
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -121,7 +140,9 @@ struct SparseRows {
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
     bool tiebreak;   /* GH-162 (default off; acts only with overlap) */
-    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), tiebreak(false) {}
+    bool erasure;    /* GH-195 (default off; acts only with pack) */
+    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), tiebreak(false),
+              erasure(false) {}
 };
 
 /* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */
@@ -138,11 +159,13 @@ struct LevelResult {
     uint64_t leaf1, leaf2;     /* leaf: budget-1 lookups; budget-2 lookups (one per candidate a) */
     uint64_t ovtight;          /* overlap: a stabilizer row reached |S & g| = floor(|g|/2) (rest of g forbidden) */
     uint64_t ovforbid;         /* overlap: qubits turned from free to forbidden by those events */
+    uint64_t ercalls, erprune; /* erasure (GH-195): tests run; nodes pruned */
+    uint64_t ergiveup;         /* erasure: tests abandoned because ker H_R holds a detected vector */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
-                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0), skipped(false) {}
+                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0), ercalls(0), erprune(0), ergiveup(0), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -157,7 +180,9 @@ struct LevelResult {
  * both e and e + g when |e & g| = |g|/2). GH-162 tiebreak (13 and 14 are GH-152's, 15 and 16 are reserved for GH-157):
  * 17 the naive tie cut through the tiebreak rule (every even row keeps first(g) and gets the limit |g|/2 - 1), 18
  * the seed is not put first in the tie-break order (first(g) is taken in the base order also on the rows through the
- * seed, where the seed comes last: an orbit-incompatible order).
+ * seed, where the seed comes last: an orbit-incompatible order). GH-195 erasure (19-21 are used by the open GH-181 / GH-183
+ * branches): 22 the bound weakened by one (at most extra - 1 outside qubits are enumerated; the gate admits extra <= 3),
+ * 23 the fixed support S ignored (the completion is asked for without S).
  * (GH-124 fix round 1: the S0 spec's literal mutant 3, "orbit seeds without forbidding earlier orbits", only
  * drops a restriction and is a sound weakening that can never change a level verdict, so it was replaced by
  * this non-equivalent orbit-rule mutant. GH-133: the spec's literal leaf mutant, "leaf lookup ignoring the
@@ -200,6 +225,12 @@ public:
     int overlap_zero_rows() const { return kzero_; }
     /* tiebreak (GH-162): even rows replaced by g \ {first(g)} (before deduplication) */
     int tiebreak_rows() const { return ktie_; }
+    /* erasure (GH-195): in force (rule and pack on); pair table built (n <= 2048; otherwise pairs by a scan) */
+    bool erasure_active() const { return er_; }
+    bool erasure_pair_table() const { return !phead_.empty(); }
+    /* test hooks: sizegate = run the test only when also 2|S| + 2 <= w (a cost gate; fewer prunes, still sound);
+     * verify = check phi H_R = 0 and F H_R = G_R on every region column (fatal on failure) */
+    void set_erasure_test(bool sizegate, bool verify) { er_sizegate_ = sizegate; er_verify_ = verify; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
@@ -232,6 +263,32 @@ private:
     std::vector<uint32_t> tbrank_;
     std::vector<int32_t> kex_, kexbase_, kexfb_;   /* kexfb_: exempt qubit in an exhausted seed block (-1: none yet) */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
+    /* erasure (GH-195): scratch for one test (see erasure_excludes) */
+    bool er_, er_sizegate_, er_verify_;
+    std::vector<uint32_t> prow_;            /* packed rows of the current scan */
+    int np_;
+    std::vector<uint32_t> ereg_;            /* region qubits */
+    std::vector<int32_t> ecnt_;             /* per row: unpeeled region qubits in it (0 outside a test) */
+    std::vector<uint32_t> esole_;           /* per row: XOR of those qubits */
+    std::vector<uint32_t> etouch_, equeue_;
+    std::vector<uint32_t> epq_, epr_;       /* peeled qubits and their pivot rows, in peel order */
+    std::vector<uint64_t> eqs_;             /* per qubit stamp: peeled (== estamp_) or affected (== estamp_ + 1) */
+    std::vector<uint64_t> erows_;           /* per row stamp: phi/F assigned in this test */
+    uint64_t estamp_;
+    std::vector<uint64_t> ebas_, eblab_;    /* dense basis: rank x mw_ (rows), rank x kw_ (labels) */
+    std::vector<uint32_t> epiv_;
+    std::vector<uint64_t> ecol_, elab_;     /* scratch column / label */
+    std::vector<uint64_t> ephi_, eF_;       /* per row: phi (rowkey_ outside a test), F (m_ x kw_, zero outside a test) */
+    std::vector<uint32_t> echg_;            /* rows assigned in this test */
+    std::vector<uint32_t> eaff_;            /* eligible qubits on an assigned row */
+    std::vector<int32_t> eidx_;             /* per affected qubit: its index in eaff_ */
+    std::vector<uint64_t> eah_, eal_;       /* their projections (hash; label kw_ words) */
+    std::vector<int32_t> etab_, enext_;     /* affected pairs: hash table (open addressing) -> chain of equal hashes */
+    std::vector<uint64_t> etabst_;          /* per slot: stamp (== estamp_: in use) */
+    std::vector<uint64_t> etl_;             /* target label (kw_ words) */
+    std::vector<int32_t> phead_, pnext_;    /* pair table: bucket by (colkey a ^ colkey b) -> pairs (a < b) */
+    std::vector<uint32_t> pa_, pb_;
+    uint64_t pmask_;
 
     /* search state */
     int w_;
@@ -263,6 +320,9 @@ private:
     bool gpar_nonzero_with(int q) const;
     bool column_is_syndrome(int q) const;
     int closing_qubit() const;              /* free qubit whose column equals syn_ with a nontrivial closure, or -1 */
+    int key_head(uint64_t key) const;       /* first qubit of the leaf hash chain with colkey_ == key, or -1 */
+    bool erasure_excludes(int extra, uint64_t st);
+    template <int KW> bool erasure_test(int extra, uint64_t st);
     bool dfs(int size);
     void record_witness(int size);
 };

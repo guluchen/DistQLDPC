@@ -436,6 +436,26 @@ if [[ $rc -ne 0 ]] || grep -q "tiebreak" <<<"$out"; then
     echo "FAIL (GH-162: a tiebreak line without the token): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
+# 7h. GH-195 erasure (opt-in -cc-rules token; needs pack): values, -v and -cc-stats lines, mutants 22/23 accepted (24 rejected),
+#     no erasure line without the token
+reject "need -engine=cc or -engine=auto" -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+for f in -cc-rules=Erasure -cc-rules=erasure, -cc-rules=eras -cc-mutant=21 -cc-mutant=24; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=pack,erasure,mrv -cc-aut=off -no-symbreak $L $M
+vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128), pair table$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+vgrep 3 "^c cc: X half erasure: idle (needs pack)$" -v -engine=cc -cc-rules=excl,orbf,erasure $L $M
+vgrep 3 "^c cc-stats: X level [0-9]* erasure calls [0-9]* prune [0-9]* giveup [0-9]*$" -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 22: bound weakened by one\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure -cc-mutant=22 $L $M
+vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 23: fixed support ignored\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure -cc-mutant=23 $L $M
+runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+if [[ $rc -ne 0 ]] || grep -q "erasure" <<<"$out"; then
+    echo "FAIL (GH-195: an erasure line without the token): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
 echo "test_cc_flags: $runs checks, $fails failed"
 [[ $fails -eq 0 ]] && echo "CC_FLAG_TESTS PASS" || echo "CC_FLAG_TESTS FAIL"
 exit $((fails > 0))

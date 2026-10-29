@@ -42,7 +42,8 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
                        const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
-      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ktie_(0), tb_(false), ovtight_(0), ovforbid_(0), w_(0), nodd_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ktie_(0), tb_(false), ovtight_(0), ovforbid_(0),
+      er_(false), er_sizegate_(false), er_verify_(false), np_(0), estamp_(0), pmask_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -282,6 +283,55 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     gpar_.assign((size_t)kw_, 0);
     blk_.assign((size_t)n_, 0);
     mark_.assign((size_t)n_, 0);
+
+    /* erasure (GH-195): scratch, and the pair table of all qubit pairs keyed by the XOR of their column keys (n <= 2048,
+     * at most ~2.1M pairs; larger halves enumerate unchanged pairs by a scan with the leaf hash table) */
+    er_ = rules_.erasure && rules_.pack;
+    if (er_) {
+        prow_.assign((size_t)m_ + 1, 0);
+        ecnt_.assign((size_t)m_, 0);
+        esole_.assign((size_t)m_, 0);
+        erows_.assign((size_t)m_, 0);
+        eqs_.assign((size_t)n_, 0);
+        ephi_ = rowkey_;
+        eF_.assign((size_t)m_ * kw_, 0);
+        ecol_.assign((size_t)mw_, 0);
+        elab_.assign((size_t)kw_, 0);
+        etl_.assign((size_t)kw_, 0);
+        eidx_.assign((size_t)n_, 0);
+        /* fixed-size buffers (raw pointer writes in the test): region <= 128 qubits (larger regions are declined while
+         * they are collected), touched rows <= m_, queue <= m_ + 128 * max column weight, affected qubits <= n_ */
+        ereg_.assign((size_t)n_ + 1, 0);
+        etouch_.assign((size_t)m_ + 1, 0);
+        equeue_.assign((size_t)m_ + 128 * (size_t)maxcw_ + 1, 0);
+        epq_.assign(129, 0);
+        epr_.assign(129, 0);
+        epiv_.assign(129, 0);
+        echg_.assign(2 * 129, 0);
+        ebas_.assign(129 * (size_t)mw_, 0);
+        eblab_.assign(129 * (size_t)kw_, 0);
+        eaff_.assign((size_t)n_ + 1, 0);
+        eah_.assign((size_t)n_ + 1, 0);
+        eal_.assign(((size_t)n_ + 1) * kw_, 0);
+        if (n_ <= 2048 && n_ >= 2) {
+            const size_t np = (size_t)n_ * (size_t)(n_ - 1) / 2;
+            size_t sz = 4;
+            while (sz < 2 * np) sz <<= 1;
+            pmask_ = (uint64_t)sz - 1;
+            phead_.assign(sz, -1);
+            pnext_.reserve(np);
+            pa_.reserve(np);
+            pb_.reserve(np);
+            for (int a = 0; a < n_; a++)
+                for (int b = a + 1; b < n_; b++) {
+                    const uint64_t slot = (colkey_[a] ^ colkey_[b]) & pmask_;
+                    pa_.push_back((uint32_t)a);
+                    pb_.push_back((uint32_t)b);
+                    pnext_.push_back(phead_[slot]);
+                    phead_[slot] = (int32_t)(pa_.size() - 1);
+                }
+        }
+    }
 }
 
 inline void HalfSearch::toggle(int q) {
@@ -429,6 +479,289 @@ inline int HalfSearch::closing_qubit() const {
     }
 }
 
+inline int HalfSearch::key_head(uint64_t key) const {
+    uint64_t i = key & hmask_;
+    for (;;) {
+        const int32_t h = htab_[i];
+        if (h < 0 || colkey_[h] == key) return h;
+        i = (i + 1) & hmask_;
+    }
+}
+
+/* erasure (GH-195): true iff no completion S + y + z exists with y a subset of the region R (free qubits of the packed
+ * rows prow_[0..np_-1], all marked with stamp st), z a set of at most `extra` eligible qubits (free, outside R), H(S + y + z)
+ * = 0 and G(S + y + z) != 0. See cc_half.h for the argument; every test below that answers "a completion may exist"
+ * returns false (no prune), and false is also returned whenever the test gives up. */
+bool HalfSearch::erasure_excludes(int extra, uint64_t st) {
+    return kw_ == 1 ? erasure_test<1>(extra, st) : erasure_test<0>(extra, st);
+}
+
+/* KW = 1: one detector word (k <= 64), compile-time loops; KW = 0: kw_ words */
+template <int KW>
+bool HalfSearch::erasure_test(int extra, uint64_t st) {
+    const int kw = KW ? KW : kw_;
+    estamp_ += 2;
+    const uint64_t peeled = estamp_, affected = estamp_ + 1;
+    /* region (declined above 128 qubits) */
+    uint32_t* const reg = ereg_.data();
+    int nreg = 0;
+    for (int i = 0; i < np_; i++) {
+        const uint32_t r = prow_[i];
+        for (uint32_t t = rstart_[r], e = rstart_[r + 1]; t < e; t++)
+            if (blk_[rq_[t]] == 0) {
+                if (nreg == 128) return false;
+                reg[nreg++] = rq_[t];
+            }
+    }
+    /* per-row counts of region qubits and their XOR */
+    uint32_t* const touch = etouch_.data();
+    int32_t* const cnt = ecnt_.data();
+    uint32_t* const sole = esole_.data();
+    int ntouch = 0;
+    for (int t = 0; t < nreg; t++) {
+        const uint32_t q = reg[t];
+        for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) {
+            const uint32_t r = cr_[i];
+            if (cnt[r]++ == 0) { touch[ntouch++] = r; sole[r] = 0; }
+            sole[r] ^= q;
+        }
+    }
+    /* peeling: a row with exactly one unpeeled region qubit makes it a pivot (that qubit is in no kernel vector) */
+    uint32_t* const que = equeue_.data();
+    int nq = 0;
+    for (int t = 0; t < ntouch; t++)
+        if (cnt[touch[t]] == 1) que[nq++] = touch[t];
+    uint32_t* const pq = epq_.data();
+    uint32_t* const pr_of = epr_.data();
+    int npeel = 0;
+    for (int h = 0; h < nq; h++) {
+        const uint32_t r = que[h];
+        if (cnt[r] != 1) continue;
+        const uint32_t q = sole[r];
+        eqs_[q] = peeled;
+        pq[npeel] = q;
+        pr_of[npeel++] = r;
+        for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) {
+            const uint32_t r2 = cr_[i];
+            sole[r2] ^= q;
+            if (--cnt[r2] == 1) que[nq++] = r2;
+        }
+    }
+    for (int t = 0; t < ntouch; t++) cnt[touch[t]] = 0;
+    /* dense elimination of the residual stopping set (its columns avoid every peel pivot row), labels carried along */
+    uint32_t* const piv_of = epiv_.data();
+    int rank = 0;
+    if (npeel < nreg)
+        for (int t = 0; t < nreg; t++) {
+            const uint32_t q = reg[t];
+            if (eqs_[q] == peeled) continue;
+            uint64_t* col = &ebas_[(size_t)rank * mw_];
+            uint64_t* lab = &eblab_[(size_t)rank * kw];
+            for (int j = 0; j < mw_; j++) col[j] = 0;
+            for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) col[cr_[i] >> 6] |= 1ULL << (cr_[i] & 63);
+            const uint64_t* g = &gmask_[(size_t)q * kw];
+            for (int j = 0; j < kw; j++) lab[j] = g[j];
+            for (int b = 0; b < rank; b++)
+                if ((col[piv_of[b] >> 6] >> (piv_of[b] & 63)) & 1) {
+                    const uint64_t* bv = &ebas_[(size_t)b * mw_];
+                    for (int j = 0; j < mw_; j++) col[j] ^= bv[j];
+                    const uint64_t* bl = &eblab_[(size_t)b * kw];
+                    for (int j = 0; j < kw; j++) lab[j] ^= bl[j];
+                }
+            int piv = -1;
+            for (int j = 0; j < mw_; j++)
+                if (col[j]) { piv = j * 64 + __builtin_ctzll(col[j]); break; }
+            if (piv < 0) {   /* a kernel vector of H_R; detected (nonzero label): the relaxation is not refuted, give up */
+                uint64_t acc = 0;
+                for (int j = 0; j < kw; j++) acc |= lab[j];
+                if (acc) { ++res_->ergiveup; return false; }
+                continue;
+            }
+            piv_of[rank++] = (uint32_t)piv;
+        }
+    /* back-substitution: phi (phi H_R = 0) and F (F H_R = G_R) on the pivot rows; the other rows keep phi = rowkey_, F = 0.
+     * Dense pivots in reverse order (a basis vector has no earlier pivot), then peeled qubits in reverse peel order (a
+     * peeled qubit's other rows are non-pivot rows, dense pivots or pivots of later peeled qubits). */
+    uint32_t* const chg = echg_.data();
+    int nchg = 0;
+    for (int b = rank; b-- > 0;) {
+        const uint32_t pr = piv_of[b];
+        const uint64_t* bv = &ebas_[(size_t)b * mw_];
+        uint64_t h = 0;
+        uint64_t* F = &eF_[(size_t)pr * kw];
+        const uint64_t* bl = &eblab_[(size_t)b * kw];
+        for (int j = 0; j < kw; j++) elab_[j] = bl[j];
+        for (int wi = 0; wi < mw_; wi++)
+            for (uint64_t x = bv[wi]; x; x &= x - 1) {
+                const uint32_t r = (uint32_t)(wi * 64 + __builtin_ctzll(x));
+                if (r == pr) continue;
+                h ^= ephi_[r];
+                const uint64_t* Fr = &eF_[(size_t)r * kw];
+                for (int j = 0; j < kw; j++) elab_[j] ^= Fr[j];
+            }
+        ephi_[pr] = h;
+        for (int j = 0; j < kw; j++) F[j] = elab_[j];
+        erows_[pr] = estamp_;
+        chg[nchg++] = pr;
+    }
+    for (int t = npeel; t-- > 0;) {
+        const uint32_t q = pq[t], pr = pr_of[t];
+        uint64_t h = 0;
+        uint64_t* F = &eF_[(size_t)pr * kw];
+        const uint64_t* g = &gmask_[(size_t)q * kw];
+        for (int j = 0; j < kw; j++) F[j] = g[j];   /* F[pr] is 0 here (pr is assigned once) and not read below */
+        for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) {
+            const uint32_t r = cr_[i];
+            if (r == pr) continue;
+            h ^= ephi_[r];
+            const uint64_t* Fr = &eF_[(size_t)r * kw];
+            for (int j = 0; j < kw; j++) F[j] ^= Fr[j];
+        }
+        ephi_[pr] = h;
+        erows_[pr] = estamp_;
+        chg[nchg++] = pr;
+    }
+    bool result = true;
+    if (er_verify_)   /* test hook: every region column projects to (0, 0) */
+        for (int t = 0; t < nreg; t++) {
+            const uint32_t q = reg[t];
+            uint64_t h = 0;
+            const uint64_t* g = &gmask_[(size_t)q * kw];
+            for (int j = 0; j < kw; j++) elab_[j] = g[j];
+            for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) {
+                h ^= ephi_[cr_[i]];
+                const uint64_t* Fr = &eF_[(size_t)cr_[i] * kw];
+                for (int j = 0; j < kw; j++) elab_[j] ^= Fr[j];
+            }
+            uint64_t acc = h;
+            for (int j = 0; j < kw; j++) acc |= elab_[j];
+            if (acc) fatal("erasure: region column does not project to zero");
+        }
+    /* target: projection of S, from its syndrome (odd rows) and detector parities (mutant 23: S ignored) */
+    uint64_t th = 0;
+    uint64_t tl[KW ? KW : 1];
+    uint64_t* tlp = KW ? tl : &etl_[0];
+    if (mutant_ == 23) for (int j = 0; j < kw; j++) tlp[j] = 0;
+    else {
+        for (int j = 0; j < kw; j++) tlp[j] = gpar_[j];
+        for (int wi = 0; wi < mw_; wi++)
+            for (uint64_t x = syn_[wi]; x; x &= x - 1) {
+                const uint32_t r = (uint32_t)(wi * 64 + __builtin_ctzll(x));
+                th ^= ephi_[r];
+                if (erows_[r] == estamp_) {
+                    const uint64_t* Fr = &eF_[(size_t)r * kw];
+                    for (int j = 0; j < kw; j++) tlp[j] ^= Fr[j];
+                }
+            }
+    }
+    /* label tests: a != tl, a ^ b != tl */
+    auto ne1 = [&](const uint64_t* a) { for (int j = 0; j < kw; j++) if (a[j] != tlp[j]) return true; return false; };
+    auto ne2 = [&](const uint64_t* a, const uint64_t* b) {
+        for (int j = 0; j < kw; j++) if ((a[j] ^ b[j]) != tlp[j]) return true;
+        return false;
+    };
+    auto eligible = [this, st](uint32_t q) { return blk_[q] == 0 && mark_[q] != st; };
+    uint32_t* const aff = eaff_.data();
+    uint64_t* const ah = eah_.data();
+    uint64_t* const al = eal_.data();
+    int naff = 0;
+    {   /* z empty: S + y itself */
+        bool nz = false;
+        for (int j = 0; j < kw; j++) nz |= tlp[j] != 0;
+        if (th == 0 && nz) { result = false; goto done; }
+    }
+    if (extra == 0) goto done;
+    /* affected qubits: eligible qubits on an assigned row; projection = (colkey_, G column) plus, per assigned row, the
+     * change (phi ^ rowkey_, F) */
+    naff = 0;
+    for (int c = 0; c < nchg; c++) {
+        const uint32_t r = chg[c];
+        const uint64_t dh = ephi_[r] ^ rowkey_[r];
+        const uint64_t* Fr = &eF_[(size_t)r * kw];
+        for (uint32_t t = rstart_[r], e = rstart_[r + 1]; t < e; t++) {
+            const uint32_t q = rq_[t];
+            int32_t a;
+            if (eqs_[q] != affected) {
+                if (!eligible(q)) continue;
+                eqs_[q] = affected;
+                a = eidx_[q] = naff;
+                aff[naff++] = q;
+                ah[a] = colkey_[q];
+                const uint64_t* g = &gmask_[(size_t)q * kw];
+                uint64_t* l = &al[(size_t)a * kw];
+                for (int j = 0; j < kw; j++) l[j] = g[j];
+            } else a = eidx_[q];
+            ah[a] ^= dh;
+            uint64_t* l = &al[(size_t)a * kw];
+            for (int j = 0; j < kw; j++) l[j] ^= Fr[j];
+        }
+    }
+    /* single affected qubit */
+    for (int a = 0; a < naff; a++)
+        if (ah[a] == th && ne1(&al[(size_t)a * kw])) { result = false; goto done; }
+    /* single unchanged qubit: projection (colkey_, G column) */
+    for (int q = key_head(th); q >= 0; q = hnext_[q])
+        if (eqs_[q] != affected && eligible((uint32_t)q) && ne1(&gmask_[(size_t)q * kw])) { result = false; goto done; }
+    if (extra == 1) goto done;
+    /* pairs: affected + affected through a small hash table (affected b inserted after it is checked against the earlier
+     * ones; equal hashes chained), affected + unchanged through the leaf hash table */
+    if (etab_.size() < 2 * (size_t)naff + 2) {
+        size_t sz = 4;
+        while (sz < 2 * (size_t)naff + 2) sz <<= 1;
+        etab_.assign(sz, -1);
+        etabst_.assign(sz, 0);
+    }
+    if (enext_.size() < (size_t)naff) enext_.resize((size_t)n_ + 1);
+    {
+        const uint64_t tm = (uint64_t)etab_.size() - 1;
+        int32_t* const tab = etab_.data();
+        uint64_t* const tst = etabst_.data();
+        int32_t* const nxt = enext_.data();
+        for (int a = 0; a < naff; a++) {
+            const uint64_t want = th ^ ah[a];
+            const uint64_t* la = &al[(size_t)a * kw];
+            for (uint64_t i = want & tm; tst[i] == estamp_; i = (i + 1) & tm)
+                if (ah[tab[i]] == want) {
+                    for (int32_t b = tab[i]; b >= 0; b = nxt[b])
+                        if (ne2(la, &al[(size_t)b * kw])) { result = false; goto done; }
+                    break;
+                }
+            for (int q = key_head(want); q >= 0; q = hnext_[q])
+                if (eqs_[q] != affected && eligible((uint32_t)q) && ne2(la, &gmask_[(size_t)q * kw])) { result = false; goto done; }
+            uint64_t i = ah[a] & tm;
+            while (tst[i] == estamp_ && ah[tab[i]] != ah[a]) i = (i + 1) & tm;
+            if (tst[i] == estamp_) nxt[a] = tab[i];
+            else { nxt[a] = -1; tst[i] = estamp_; }
+            tab[i] = a;
+        }
+    }
+    /* unchanged + unchanged */
+    if (!phead_.empty()) {
+        for (int32_t pi = phead_[th & pmask_]; pi >= 0; pi = pnext_[pi]) {
+            const uint32_t a = pa_[pi], b = pb_[pi];
+            if ((colkey_[a] ^ colkey_[b]) != th) continue;
+            if (eqs_[a] == affected || eqs_[b] == affected || !eligible(a) || !eligible(b)) continue;
+            if (ne2(&gmask_[(size_t)a * kw], &gmask_[(size_t)b * kw])) { result = false; goto done; }
+        }
+    } else {
+        for (int a = 0; a < n_; a++) {
+            if (eqs_[a] == affected || !eligible((uint32_t)a)) continue;
+            for (int q = key_head(th ^ colkey_[a]); q >= 0; q = hnext_[q])
+                if (q != a && eqs_[q] != affected && eligible((uint32_t)q) &&
+                    ne2(&gmask_[(size_t)a * kw], &gmask_[(size_t)q * kw])) { result = false; goto done; }
+        }
+    }
+done:
+    /* restore phi = rowkey_ and F = 0 on the assigned rows */
+    for (int c = 0; c < nchg; c++) {
+        const uint32_t r = chg[c];
+        ephi_[r] = rowkey_[r];
+        uint64_t* F = &eF_[(size_t)r * kw];
+        for (int j = 0; j < kw; j++) F[j] = 0;
+    }
+    return result;
+}
+
 void HalfSearch::record_witness(int size) {
     res_->witness.clear();
     for (int i = 0; i < size; i++) res_->witness.push_back(to_orig_[cur_[i]]);
@@ -506,6 +839,7 @@ bool HalfSearch::dfs(int size) {
                         ++res_->packprune;
                         return false;
                     }
+                    if (er_) prow_[p - 1] = (uint32_t)r;   /* erasure (GH-195): packed rows */
                     /* marking forbidden qubits too is harmless: only free qubits can clash */
                     for (const uint32_t* t = a; t < e; ++t) mark_[*t] = st;
                 }
@@ -525,6 +859,19 @@ bool HalfSearch::dfs(int size) {
         }
     }
     if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
+    /* erasure (GH-195): at most `extra` qubits of a kept target lie outside the packed rows' candidates (mutant 22: one
+     * fewer is assumed); gate (cost only): extra <= 2 (test hook: also 2|S| + 2 <= w) */
+    if (er_) {
+        const int extra = (w_ - size) - p - (mutant_ == 22 ? 1 : 0);
+        if (extra >= 0 && extra <= 2 && (!er_sizegate_ || 2 * size + 2 <= w_)) {
+            ++res_->ercalls;
+            np_ = p;
+            if (erasure_excludes(extra, st)) {
+                ++res_->erprune;
+                return false;
+            }
+        }
+    }
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;
