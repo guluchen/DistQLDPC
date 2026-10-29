@@ -135,3 +135,9 @@ GH-172 adds six static triangular4.8.8 COLOR inputs n31..2887 on its work
 branch. [COLOR488.md](COLOR488.md) gives the complete original reconstruction,
 provenance and independent boundary upper-word checks. Linux gate status is
 recorded separately in optimization/experiments/GH-172/REPORT.md.
+
+GH-172 Linux results: both engines reproduce d7/11 for n31/71. CC-only d19
+at n199 and stronger CC lower bounds remain PLAUSIBLE. Numeric smoke gates
+for n1567/2887 are incomplete (default MaxSAT reports no numeric bounds).
+Independent boundary words prove upper bounds only; seven unresolved proofs
+are packaged, unexecuted, for explicitly allocated yfclab2 cores.
