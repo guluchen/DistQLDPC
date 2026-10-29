@@ -1,0 +1,88 @@
+name: Planar tile CSS library smoke
+
+on:
+  push:
+    branches: [codex/tile-library]
+    paths:
+      - '.github/workflows/tile-library-smoke.yml'
+      - 'scripts/codegen/tile*'
+      - 'scripts/codegen/validate_tile.py'
+      - 'scripts/codegen/audit_tile_smoke.py'
+      - 'scripts/codegen/review_tile_peers.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_tile.py'
+      - 'data/matrices/untiered/TILE_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Full independent columns and logicals, tiny units and inventory
+        run: |
+          python3 tests/test_codegen_tile.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_tile.py --out /tmp/tile-construction.json
+          cmp optimization/experiments/GH-194/raw/construction.json /tmp/tile-construction.json
+          git fetch --depth=1 origin 2cb22f295d161e9a2d29f58df1672c8c2799d732
+          python3 scripts/codegen/review_tile_peers.py --out /tmp/tile-peer.json
+          cmp optimization/experiments/GH-194/raw/tanner-peer-review.json /tmp/tile-peer.json
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+      - name: Reproduce all sixteen matrices and four certificates
+        run: |
+          python3 scripts/codegen/tile.py --all --out /tmp/tile-rebuilt --certificates /tmp/tile-rebuilt-certificates
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/tile-rebuilt').glob('*.txt'))
+          assert len(files)==16
+          for p in files: assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          certs=list(Path('/tmp/tile-rebuilt-certificates').glob('*.json'))
+          assert len(certs)==4
+          for p in certs: assert p.read_bytes()==(Path('optimization/experiments/GH-194/raw/certificates')/p.name).read_bytes(),p
+          print('PASS all sixteen matrices and four certificates byte-identical')
+          PY
+      - name: Four default serial bounded MaxSAT checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TILE --verbose --out /tmp/tile-maxsat
+      - name: Four independent serial bounded CC checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TILE --verbose --engine cc --out /tmp/tile-cc
+      - name: Actual words, source intervals and independent-engine audit
+        run: |
+          python3 scripts/codegen/audit_tile_smoke.py --maxsat /tmp/tile-maxsat --cc /tmp/tile-cc --construction /tmp/tile-construction.json --out /tmp/tile-audit.json
+          python3 - <<'PY'
+          from pathlib import Path
+          print('GH194_AUDIT_JSON='+Path('/tmp/tile-audit.json').read_text().replace('\n',''))
+          PY
+      - name: Retain all evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ['tile-maxsat','tile-cc']:
+              result[label]={p.name:p.read_text() for p in Path('/tmp',label).glob('*') if p.is_file()}
+          print('GH194_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh194-tile-smoke
+          path: |
+            /tmp/tile-maxsat/
+            /tmp/tile-cc/
+            /tmp/tile-construction.json
+            /tmp/tile-audit.json
+          if-no-files-found: warn
+          retention-days: 14
