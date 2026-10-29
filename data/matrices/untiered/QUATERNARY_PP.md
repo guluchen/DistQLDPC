@@ -113,3 +113,16 @@ identities. GF2-checked source words may certify an exact answer's upper bound,
 but never fill missing CLI numeric fields or lower proofs. Stronger one-engine
 lower/exact results stay PLAUSIBLE. Missing gates stay incomplete; heavy work
 becomes a server package. No solver/default/main/tier/rename/QDistSAT changes.
+
+## Recorded Linux outcome
+
+Run40859442106, source de5a58d53920711221e22b6467e259f7a537cb03, passes
+execution/audit. In size order MaxSAT gives[9,12],[9,19],[9,22],[9,25]; CC
+gives exact12,[16,20],[18,35],[18,59]. All actual numeric gates pass. MaxSAT
+words12,19,22,25 and source/reflected words pass GF2 independently; every
+printed CC word passes as well. CC1024 prints no word, so its actual upper59
+is retained without inventing support. Source word25 is separate evidence.
+CC-only stronger lower12,16,18,18 and exact12 are PLAUSIBLE pending other
+search completion; independently common lower9 is retained. Seven unresolved
+proof jobs are packaged, not executed. Full raw logs/identities/audit and
+bound-confidence review in GH-170/raw; no main integration or tier changes.
