@@ -140,3 +140,9 @@ source claims are exact8/12; larger16/20/22/24 labels are heuristic upper
 estimates. Actual solver results and word verification are recorded
 separately. See [COVERING_BB.md](COVERING_BB.md) and GH-176/REPORT.md.
 All stems remain unknown; no tier assignment or QDistSAT mirror.
+
+Linux GH-176: both engines reproduce d8/12 on n64/128. CC alone returns
+exact16 on n192 (PLAUSIBLE until independent completion); the other three
+CC intervals are[18,20],[18,22],[18,24], with provisional stronger lower bounds.
+All numeric smoke gates pass and source upper words are GF(2)-verified.
+Seven unresolved engine proofs are packaged without allocating a server core.

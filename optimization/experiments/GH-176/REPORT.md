@@ -1,9 +1,10 @@
 # GH-176: weight8 BB representatives with explicit covering maps
 
-Status: CONSTRUCTION_PASS; Linux smoke pending.
+Status: CONSTRUCTION_AND_ALL_NUMERIC_GATES_PASS; open-code lower/exact results provisional.
 Issue https://github.com/guluchen/DistQLDPC/issues/176; hub15 claim6497114686.
 Fresh baseline main6083e662c621f3b66defd434cfae31a028d483c4.
-Branch codex/covering-bb-library; source commit recorded after push.
+Branch codex/covering-bb-library; source e843d0e60103b1436ba21e7ca520a528e4fe2163
+(tree7cbf3e8dcb475ddd1fcb58e681cf4f715208821a; data9daaae551990f2dce671e9959129015f4eb29eb6).
 No PR requested; main integration remains a PI decision.
 
 ## Three proposals and selected hypothesis
@@ -76,9 +77,70 @@ frozen unexecuted yfclab2 package needing PI core allocation.
 ## Completion fields
 
 What changed: six BB inputs with reproducible actual covering-map evidence.
-Validation: local construction/44units/regeneration pass; Linux pending.
-Results: source claims exact8/12 and upper16/20/22/24, not new measurements.
-Unresolved: Linux numeric/word gates; other coverage-ledger gaps remain.
+Validation: local+Linux construction/44units/regeneration, all numeric fields,
+actual words, identities and retained-audit byte replay PASS.
+Results: both-engine exact8/12; CC-only exact16 PLAUSIBLE, other provisional
+lower18 with verified upper20/22/24. Source claims preserved.
+Unresolved:7 engine proofs packaged unexecuted; stronger open-code CC
+lower/exact results need independent completion; other coverage gaps remain.
 Scientific semantics changed: no.
 PI action required: yes for integration/tiering/naming and server allocation
 if heavy completion needed; independent library work continues meanwhile.
+
+
+## Next-target research under the PI's unknown-distance priority
+
+A pinned author numeric catalogue was inspected without reading or running
+constructor, decoder or MILP implementations. qiskit-community/qcode-discovery
+commit da9178fd65ffc2eec3dab46089f9879eb02d4b23,
+results/weight5_publication_catalogue.jsonl SHA256
+ a5f398de84652b49c11300c69e99af81fedff22361b8af2e52f431dba9772934.
+The GitHub connector rejected the5MB file, so the same pinned public numeric
+file was downloaded to temporary storage and checked against its manifest.
+517 source-connected, CSS, class-nonexact, model-attributed presentations
+exist across n120/162/180/384/420/432. Six initial distinct-size candidates
+were selected by source endpoint gap; no own distance experiment was run.
+Source "upper_is_supported=false" means a decoder estimate, not a certified
+upper bound. PBB/non-CSS and disconnected records were excluded.
+This is research for the next round, not an addition to this BB cover batch;
+next issue/fresh-branch/duplicate/science/license checks remain necessary.
+
+
+## Retained Linux evidence and verdict
+
+Library [40877312422](https://github.com/guluchen/DistQLDPC/actions/runs/40877312422)
+job123459337002 SUCCESS; source CI40877312387 job123459336695 SUCCESS.
+Source e843d0e60103b1436ba21e7ca520a528e4fe2163; unchanged binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux, Python3.12.3,c++13.3.0, pinnedCPU0, serial,
+60sCPU/90swall/4GiB each, default seed. Raw job log662257 characters and
+all engine logs/JSON/CSV/environment identities retained under
+raw/actions/default/. Audit replay is byte-identical locally. No repeated
+CI/supplemental solver run, Mac solver or external solver used.
+
+| n | Source claim | MaxSAT60s | CC60s | Scientific interpretation |
+|---:|---|---|---|---|
+|64|exact8|exact8|exact8|two-engine+GF2 confirmation|
+|128|exact12|exact12|exact12|two-engine+GF2 confirmation|
+|192|upper16|[9,16]|exact16|PLAUSIBLE, needs independent lower proof|
+|216|upper20|[9,20]|[18,20]|verified upper20; stronger lower18 PLAUSIBLE|
+|256|upper22|[9,22]|[18,22]|verified upper22; stronger lower18 PLAUSIBLE|
+|288|upper24|[9,24]|[18,24]|verified upper24; stronger lower18 PLAUSIBLE|
+
+Every emitted logical word is independently GF(2)-valid and all four source
+upper estimates have actual physical witnesses of that weight or better.
+All12 CLI runs have consistent numeric lower+upper fields; no scientific
+contradiction and no estimate/certificate used to fill missing output.
+A source upper estimate is not an independent lower-bound proof. The new
+CC-only exact16 and stronger open-code lower bounds remain PLAUSIBLE.
+
+Frozen7-job yfclab2 completion package: MaxSAT n192/216/256/288 and CC
+n216/256/288.6hCPU+600swall/4GiB per serial seed0 job, total42hCPU and
+43h10mwall limits (not an ETA), explicit PI-allocated free core required.
+No core allocated or server job executed. Default dry-run and Mac/altered-
+argv guards pass; frozen case/input hashes and retained-other-engine bounds
+are checked. No tier/name/QDistSAT/main/solver/default changes or PR.
+Verdict: representative covering-graph provenance/structure and all numeric
+smoke gates pass; retain seven independent scientific proof completions.
+Next round prioritizes the six nonexact source-connected LLM CSS candidates
+identified above, following the PI's explicit unknown-distance priority.

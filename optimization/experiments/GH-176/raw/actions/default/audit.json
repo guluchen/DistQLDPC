@@ -1,0 +1,689 @@
+[
+  {
+    "stem": "BB_64_14_unknown",
+    "published_claim": "exact",
+    "published_d": 8,
+    "engines": {
+      "maxsat": {
+        "lb": 8,
+        "ub": 8,
+        "status": "SOLVED"
+      },
+      "cc": {
+        "lb": 8,
+        "ub": 8,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          10,
+          23,
+          24,
+          25,
+          27,
+          29,
+          39,
+          45
+        ],
+        "weight": 8
+      }
+    ],
+    "scientific_status": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+    "numeric_smoke_gate": "PASS",
+    "lower_bound_status": "PUBLISHED_EXACT_ANCHOR",
+    "reference_exact_reproduced": true,
+    "reference_upper_witness_reproduced": null,
+    "source_head": "e843d0e60103b1436ba21e7ca520a528e4fe2163",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "BB_128_14_unknown",
+    "published_claim": "exact",
+    "published_d": 12,
+    "engines": {
+      "maxsat": {
+        "lb": 12,
+        "ub": 12,
+        "status": "SOLVED"
+      },
+      "cc": {
+        "lb": 12,
+        "ub": 12,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          7,
+          12,
+          19,
+          41,
+          54,
+          58,
+          69,
+          76,
+          87,
+          102,
+          120,
+          121
+        ],
+        "weight": 12
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          7,
+          12,
+          19,
+          41,
+          54,
+          58,
+          69,
+          76,
+          87,
+          102,
+          120,
+          121
+        ],
+        "weight": 12
+      }
+    ],
+    "scientific_status": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+    "numeric_smoke_gate": "PASS",
+    "lower_bound_status": "PUBLISHED_EXACT_ANCHOR",
+    "reference_exact_reproduced": true,
+    "reference_upper_witness_reproduced": null,
+    "source_head": "e843d0e60103b1436ba21e7ca520a528e4fe2163",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "BB_192_14_unknown",
+    "published_claim": "upper",
+    "published_d": 16,
+    "engines": {
+      "maxsat": {
+        "lb": 9,
+        "ub": 16,
+        "status": "BOUNDED"
+      },
+      "cc": {
+        "lb": 16,
+        "ub": 16,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          12,
+          29,
+          31,
+          37,
+          49,
+          56,
+          61,
+          93,
+          102,
+          104,
+          118,
+          120,
+          125,
+          139,
+          162,
+          186
+        ],
+        "weight": 16
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          12,
+          29,
+          31,
+          37,
+          49,
+          56,
+          61,
+          93,
+          102,
+          104,
+          118,
+          120,
+          125,
+          139,
+          162,
+          186
+        ],
+        "weight": 16
+      }
+    ],
+    "scientific_status": "PLAUSIBLE_PENDING_INDEPENDENT_COMPLETION",
+    "numeric_smoke_gate": "PASS",
+    "lower_bound_status": "PLAUSIBLE_PENDING_INDEPENDENT_LOWER_PROOF",
+    "reference_exact_reproduced": null,
+    "reference_upper_witness_reproduced": true,
+    "source_head": "e843d0e60103b1436ba21e7ca520a528e4fe2163",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "BB_216_14_unknown",
+    "published_claim": "upper",
+    "published_d": 20,
+    "engines": {
+      "maxsat": {
+        "lb": 9,
+        "ub": 20,
+        "status": "BOUNDED"
+      },
+      "cc": {
+        "lb": 18,
+        "ub": 20,
+        "status": "BOUNDED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          15,
+          21,
+          34,
+          37,
+          48,
+          70,
+          83,
+          84,
+          90,
+          92,
+          105,
+          106,
+          109,
+          134,
+          142,
+          143,
+          151,
+          166,
+          175,
+          176,
+          179,
+          199
+        ],
+        "weight": 22
+      },
+      {
+        "engine": "maxsat",
+        "half": "Z",
+        "support": [
+          14,
+          17,
+          36,
+          41,
+          54,
+          55,
+          59,
+          76,
+          77,
+          83,
+          93,
+          105,
+          110,
+          139,
+          145,
+          159,
+          166,
+          188,
+          208,
+          210
+        ],
+        "weight": 20
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          15,
+          21,
+          34,
+          37,
+          48,
+          70,
+          83,
+          84,
+          90,
+          92,
+          105,
+          106,
+          109,
+          134,
+          142,
+          143,
+          151,
+          166,
+          175,
+          176,
+          179,
+          199
+        ],
+        "weight": 22
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          4,
+          36,
+          56,
+          57,
+          77,
+          78,
+          90,
+          93,
+          99,
+          106,
+          109,
+          116,
+          117,
+          129,
+          146,
+          147,
+          159,
+          166,
+          169,
+          211
+        ],
+        "weight": 20
+      }
+    ],
+    "scientific_status": "NO_NEW_EXACT_RESULT",
+    "numeric_smoke_gate": "PASS",
+    "lower_bound_status": "PLAUSIBLE_PENDING_INDEPENDENT_LOWER_PROOF",
+    "reference_exact_reproduced": null,
+    "reference_upper_witness_reproduced": true,
+    "source_head": "e843d0e60103b1436ba21e7ca520a528e4fe2163",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "BB_256_14_unknown",
+    "published_claim": "upper",
+    "published_d": 22,
+    "engines": {
+      "maxsat": {
+        "lb": 9,
+        "ub": 22,
+        "status": "BOUNDED"
+      },
+      "cc": {
+        "lb": 18,
+        "ub": 22,
+        "status": "BOUNDED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          4,
+          7,
+          13,
+          21,
+          29,
+          50,
+          59,
+          67,
+          68,
+          77,
+          79,
+          87,
+          94,
+          106,
+          115,
+          126,
+          133,
+          158,
+          164,
+          171,
+          180,
+          190,
+          191,
+          203,
+          208,
+          209,
+          215,
+          216
+        ],
+        "weight": 28
+      },
+      {
+        "engine": "maxsat",
+        "half": "Z",
+        "support": [
+          8,
+          23,
+          35,
+          41,
+          72,
+          73,
+          77,
+          87,
+          99,
+          109,
+          130,
+          138,
+          139,
+          146,
+          150,
+          178,
+          198,
+          202,
+          207,
+          226,
+          230,
+          235,
+          239,
+          246
+        ],
+        "weight": 24
+      },
+      {
+        "engine": "maxsat",
+        "half": "Z",
+        "support": [
+          3,
+          23,
+          41,
+          54,
+          59,
+          69,
+          89,
+          91,
+          106,
+          125,
+          129,
+          150,
+          159,
+          174,
+          180,
+          189,
+          198,
+          200,
+          209,
+          215,
+          217,
+          222
+        ],
+        "weight": 22
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          4,
+          7,
+          13,
+          21,
+          29,
+          50,
+          59,
+          67,
+          68,
+          77,
+          79,
+          87,
+          94,
+          106,
+          115,
+          126,
+          133,
+          158,
+          164,
+          171,
+          180,
+          190,
+          191,
+          203,
+          208,
+          209,
+          215,
+          216
+        ],
+        "weight": 28
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          5,
+          22,
+          53,
+          68,
+          94,
+          100,
+          109,
+          117,
+          124,
+          125,
+          132,
+          137,
+          158,
+          165,
+          177,
+          183,
+          189,
+          191,
+          195,
+          201,
+          203,
+          227,
+          228,
+          233,
+          236,
+          240
+        ],
+        "weight": 26
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          25,
+          49,
+          56,
+          64,
+          66,
+          73,
+          74,
+          93,
+          94,
+          114,
+          121,
+          123,
+          134,
+          157,
+          194,
+          195,
+          214,
+          222,
+          223,
+          224,
+          240,
+          251
+        ],
+        "weight": 22
+      }
+    ],
+    "scientific_status": "NO_NEW_EXACT_RESULT",
+    "numeric_smoke_gate": "PASS",
+    "lower_bound_status": "PLAUSIBLE_PENDING_INDEPENDENT_LOWER_PROOF",
+    "reference_exact_reproduced": null,
+    "reference_upper_witness_reproduced": true,
+    "source_head": "e843d0e60103b1436ba21e7ca520a528e4fe2163",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "BB_288_14_unknown",
+    "published_claim": "upper",
+    "published_d": 24,
+    "engines": {
+      "maxsat": {
+        "lb": 9,
+        "ub": 24,
+        "status": "BOUNDED"
+      },
+      "cc": {
+        "lb": 18,
+        "ub": 24,
+        "status": "BOUNDED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          15,
+          38,
+          39,
+          40,
+          41,
+          61,
+          68,
+          90,
+          101,
+          102,
+          122,
+          131,
+          157,
+          160,
+          169,
+          179,
+          182,
+          183,
+          189,
+          192,
+          233,
+          239,
+          262,
+          267,
+          277,
+          283
+        ],
+        "weight": 26
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          15,
+          27,
+          42,
+          69,
+          93,
+          105,
+          108,
+          135,
+          146,
+          160,
+          173,
+          174,
+          180,
+          187,
+          190,
+          214,
+          224,
+          238,
+          240,
+          251,
+          253,
+          256,
+          258,
+          280
+        ],
+        "weight": 24
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          15,
+          38,
+          39,
+          40,
+          41,
+          61,
+          68,
+          90,
+          101,
+          102,
+          122,
+          131,
+          157,
+          160,
+          169,
+          179,
+          182,
+          183,
+          189,
+          192,
+          233,
+          239,
+          262,
+          267,
+          277,
+          283
+        ],
+        "weight": 26
+      },
+      {
+        "engine": "cc",
+        "half": "X",
+        "support": [
+          15,
+          27,
+          42,
+          69,
+          93,
+          105,
+          108,
+          135,
+          146,
+          160,
+          173,
+          174,
+          180,
+          187,
+          190,
+          214,
+          224,
+          238,
+          240,
+          251,
+          253,
+          256,
+          258,
+          280
+        ],
+        "weight": 24
+      }
+    ],
+    "scientific_status": "NO_NEW_EXACT_RESULT",
+    "numeric_smoke_gate": "PASS",
+    "lower_bound_status": "PLAUSIBLE_PENDING_INDEPENDENT_LOWER_PROOF",
+    "reference_exact_reproduced": null,
+    "reference_upper_witness_reproduced": true,
+    "source_head": "e843d0e60103b1436ba21e7ca520a528e4fe2163",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  }
+]
