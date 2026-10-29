@@ -413,6 +413,7 @@ int main(int argc, char** argv) {
     int fails = 0;
 
     // ---------------- Part I (a), GH-157: bound functions vs brute force ----------------
+    const unsigned long long rng_saved = rng_state;   // GH-157: Part I (a) must not shift the instance stream of the other parts
     long pi_inst = 0, pi_bad = 0, pi_tight_c = 0, pi_gain_c = 0, pi_m15 = 0;
     {
         distcc::LbWork lw;
@@ -458,6 +459,7 @@ int main(int argc, char** argv) {
             if (bad) { pi_bad++; fails++; if (pi_bad <= 10) fprintf(stderr, "CC_FAIL partI(a) inst=%d nq=%d k=%d tau=%d pack=%d charge=%d local=%d\n", inst, nq, kk, tau, p, bc, bl); }
         }
     }
+    rng_state = rng_saved;
     printf("partI(a) (GH-157 charge): %ld hitting-set instances, %ld bad (charge = tau on %ld; charge > pack on %ld)\n",
            pi_inst, pi_bad, pi_tight_c, pi_gain_c);
     printf("partI(a) mutant 15 (charge + 1/D) exceeds tau on %ld instances\n", pi_m15);
