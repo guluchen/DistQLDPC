@@ -1,0 +1,28 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-cpu-lim=60",
+    "-engine=cc",
+    "-v",
+    "data/matrices/untiered/TOR_1536_6_unknown"
+  ],
+  "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "input_sha256": {
+    "Hx": "20eb6353eb9d228b622ab2a907c628dca4732c9a0f49554e9753cb51ef5aa551",
+    "Hz": "6760670bde582dca54a718b7f06a96b0d11a899c22304e6f876248782ee22c8b",
+    "Gx": "ea1bd8bdcc94b9cfcaa8df304b1dd60e264b51c7d11f036c7a5cbec23d9abc2e",
+    "Gz": "5291d8fc48a6f70988eb6467f35979bb62aa4e84b6f010b94ceb3ee9714bf858"
+  },
+  "source_head": "075c39f3ad46d66a9f319fca9b3f6c67362f56f8",
+  "rc": 0,
+  "wall_seconds": 0.615,
+  "lb": 16,
+  "ub": 16,
+  "status": "SOLVED"
+}

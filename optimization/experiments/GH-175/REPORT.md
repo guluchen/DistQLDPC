@@ -1,9 +1,10 @@
 # GH-175: periodic4D toric CSS size ladder
 
-Status: CONSTRUCTION_AND_TWO_INDEPENDENT_CERTIFICATES_PASS; Linux smoke pending.
+Status: CONSTRUCTION_AND_CERTIFICATES_PASS;11/12 engine solves; n3000 MaxSAT numeric gate INCOMPLETE.
 Issue: https://github.com/guluchen/DistQLDPC/issues/175 (hub15 claim6496620342).
 Baseline: main6083e662c621f3b66defd434cfae31a028d483c4.
-Candidate: codex/toric4d-library, source commit recorded after push.
+Candidate: codex/toric4d-library, source commit075c39f3ad46d66a9f319fca9b3f6c67362f56f8
+(tree b697a419c13f9518341e59484fe280b08aee4688; data dad5aa3acc86d7c08e5c722cfc463739ebb9e238).
 No PR requested; no main integration authorized for this round.
 
 ## Proposals and choice
@@ -49,7 +50,8 @@ python3 scripts/codegen/toric4d.py --all --out /tmp/gh175-fresh
 
 Mac: generation/algebra/tiny randomized proof-unit checks only, no DistQLDPC
 execution, no source support search and no timing experiment. First10 units
-passed; two standalone-verifier tests subsequently added and12 rerun.
+passed; two standalone-verifier tests subsequently added and all12 rerun PASS.
+Prior34 units also pass; raw local unit logs retained.
 Full inventory:30 untiered+51 tiered. Preserve all prior24 manifest rows and
 96 matrix bytes. Same-(n,k) direct/swapped row spaces checked by validate_css;
 remote work-branch peer identities in raw/cross-branch-peers.json: no match.
@@ -83,9 +85,46 @@ INCOMPLETE rather than a fabricated certified interval.
 ## Completion fields
 
 What changed: six periodic4D toric inputs, reproducible generator and checks.
-Validation: local construction/two independent certificates pass; Linux pending.
+Validation: local and Linux46 units, full inventory,24-file regeneration, two independent
+certificates, all actual words/bounds and retained-audit byte replay PASS.
 Results: both-half mathematical distances4,6,9,12,16,20.
-Unresolved: Linux numeric gates; broader homological products remain open.
+Unresolved: default MaxSAT n3000 numeric gate INCOMPLETE; one unexecuted
+server completion job packaged. Broader homological products remain open.
 Scientific semantics changed: no.
 PI action required: yes, main integration/tiering/final names and server core
 allocation if incomplete C++ checks need heavy completion; none allocated.
+
+
+## Retained Linux results
+
+Library run [40874901627](https://github.com/guluchen/DistQLDPC/actions/runs/40874901627),
+job123451091982 SUCCESS. Source CI40874901519 job123451091673 SUCCESS.
+Source075c39f3ad46d66a9f319fca9b3f6c67362f56f8, unchanged binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux, Python3.12.3, c++13.3.0, pinnedCPU0, serial,
+4GiB per subprocess,60sCPU/90swall, default seed. Raw log1377748 characters
+and all JSON/log/CSV/environment files retained in raw/actions/default/;
+raw/audit.json there replayed byte-identically locally using the actual files.
+
+| n | Independent dX=dZ | Default MaxSAT60s | CC60s | Numeric smoke gate |
+|---:|---:|---|---|---|
+|96|4|exact4|exact4|PASS|
+|324|6|exact6|exact6|PASS|
+|486|9|exact9|exact9|PASS|
+|1152|12|exact12|exact12|PASS|
+|1536|16|exact16|exact16|PASS|
+|3000|20|UNKNOWN,no numeric fields|exact20|INCOMPLETE|
+
+All observed bounds/exact answers and every printed physical word agree
+with the independent matrix certificates; no scientific mismatch. n3000
+has complete independent distance evidence despite the incomplete default
+MaxSAT numeric-output gate. No bound was filled from source/certificates.
+One frozen unexecuted yfclab2 MaxSAT completion job:6hCPU+600s wall,4GiB,
+explicit PI-allocated free core, default seed0. Dry-run/host/argv guards pass.
+Limits6hCPU/6h10mwall are not a runtime prediction. No core allocated or job
+executed. No supplemental CI solver run or repeated diagnostic undertaken.
+
+Verdict: six representative higher-dimensional periodic CSS cases added;
+construction/independent certificates/CC exact pass,11/12 engine exact;
+retain the one incomplete numeric gate and general-product research gap.
+No Tier1..5 adoption, performance claim, automatic main push or PR.

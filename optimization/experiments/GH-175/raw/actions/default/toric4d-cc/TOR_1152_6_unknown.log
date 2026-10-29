@@ -1,0 +1,63 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/TOR_1152_6_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_1152_6_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_1152_6_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_1152_6_unknown_Gz.txt
+c Hx: 768 x 1152, Hz: 768 x 1152, Gx: 6 x 1152, Gz: 6 x 1152, logicals: 12
+c cc: dual map detection: none (ranks Hz 573 Hx 573 [Hz;Gx] 579 [Hx;Gz] 579, 213 candidates, cpu 0.006s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 8 generator(s), 2 qubit orbit(s), group partial, point stabiliser not proved trivial, swap map found, 12 test(s) (3 refuted, 0 undecided), work 775356, cpu 0.023s
+c cc aut: Tanner swap map: verified as XZ-dual map: X half only
+c cc symbreak X: n=1152 candidates=220 verified_generators=15 orbits=2 detect_cpu=0.017s clause=orbit-chain
+c cc symbreak X: generator: plain blockshift L=4
+c cc symbreak X: generator: plain 2dshift-a L=4 (2x2)
+c cc symbreak X: generator: plain 2dshift-a L=16 (2x8)
+c cc symbreak X: generator: plain 2dshift-a L=16 (4x4)
+c cc symbreak X: generator: plain 2dshift-a L=64 (2x32)
+c cc symbreak X: generator: plain 2dshift-a L=64 (4x16)
+c cc symbreak X: generator: plain 2dshift-a L=192 (3x64)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: generator: plain tanner-aut #3
+c cc symbreak X: generator: plain tanner-aut #4
+c cc symbreak X: generator: plain tanner-aut #5
+c cc symbreak X: generator: plain tanner-aut #6
+c cc symbreak X: generator: plain tanner-aut #7
+c cc symbreak X: generator: plain tanner-aut #8
+c cc symbreak X: orbit reps (size): 0(576) 576(576)
+c cc: X half: n 1152, rank H 573, rank [H;G] 579, rank S 573: detectors complete, 6 logical(s)
+c cc: Z half: n 1152, rank H 573, rank [H;G] 579, rank S 573: detectors complete, 6 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'tanner-swap (cc-aut)' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 12 (X 12, Z 12)
+c cc: X half search: 2 seeds (orbit representatives)
+c cc: X half parity: off (column weights 4..4, an even weight present)
+c cc: X half overlap: on (768 stabilizer rows of Hx, weights 6..6, 0 forbidden from the start)
+c cc: X half ub-search: rank H 573, information set 579, triples off, slack 4, li-cap 64, collision stern p 2 l 15 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 2 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 3 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 4 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 5 EMPTY nodes 8 seeds 2 time 0.000s
+c cc: X half level 6 EMPTY nodes 28 seeds 2 time 0.000s
+c cc: X half level 7 EMPTY nodes 89 seeds 2 time 0.000s
+c cc: X half level 8 EMPTY nodes 94 seeds 2 time 0.000s
+c cc: X half level 9 EMPTY nodes 148 seeds 2 time 0.000s
+c cc: X half level 10 EMPTY nodes 568 seeds 2 time 0.000s
+c cc: X half level 11 EMPTY nodes 1190 seeds 2 time 0.000s
+c cc: ub-search X: iterations 1, finder time 0.119s, kept 129, nontrivial 2, li-gain 0, improvements 0, rank 573, K 579, ub 12
+c cc: ub-search X collision: rounds 1, colliding pairs 18461069 (nontrivial 8223797)
+c cc: total nodes X 2133 Z 0, search time X 0.000s Z 0.000s, wall 0.120s
+c cc: d = 12
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/TOR_1152_6_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_1152_6_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_1152_6_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_1152_6_unknown_Gz.txt
+c Hx: 768 x 1152, Hz: 768 x 1152, Gx: 6 x 1152, Gz: 6 x 1152, logicals: 12
+c d_lb: 12
+c d_ub: 12
+c d  : 12
+o 12

@@ -141,3 +141,9 @@ See [TORIC4D.md](TORIC4D.md) for provenance, coordinate conventions and the
 lower-bound soundness proof. CLI short-run bounds remain separate evidence;
 missing numeric fields are not filled from mathematical certificates.
 No solver changes, tier assignments, final stem renames or QDistSAT mirror.
+
+Linux GH-175 result: CC reproduces all six exact distances; default MaxSAT
+reproduces the first five. n3000 MaxSAT times out with no numeric bounds,
+so its numeric smoke gate remains INCOMPLETE. One unexecuted server job
+is packaged; the independent distance20 certificate is already complete.
+Raw records and GF(2) audit are retained in GH-175/raw/actions/default/.
