@@ -130,3 +130,8 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+GH-172 adds six static triangular4.8.8 COLOR inputs n31..2887 on its work
+branch. [COLOR488.md](COLOR488.md) gives the complete original reconstruction,
+provenance and independent boundary upper-word checks. Linux gate status is
+recorded separately in optimization/experiments/GH-172/REPORT.md.

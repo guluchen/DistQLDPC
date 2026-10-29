@@ -25,7 +25,7 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def parse(text, expected):
+def parse(text, expected, exact=True):
     lbs = re.findall(r'^c d_lb:\s*(\d+)\s*$', text, re.M)
     ubs = re.findall(r'^c d_ub:\s*(\d+)\s*$', text, re.M)
     answers = re.findall(r'^o (\d+)\s*$', text, re.M)
@@ -34,10 +34,19 @@ def parse(text, expected):
         events = re.findall(rf'^c d_{kind}:\s*(\d+|-)\s*$',text,re.M)
         if events and events[-1] == '-' and any(x != '-' for x in events):
             raise ValueError('previous numeric bound withdrawn; review required')
-    if any(int(x)>expected for x in lbs) or any(int(x)<expected for x in ubs):
-        raise ValueError('bound contradicts published exact distance')
-    if any(int(x)!=expected for x in answers):
-        raise ValueError('answer contradicts published exact distance')
+    if any(int(x)>expected for x in lbs) or (exact and any(int(x)<expected for x in ubs)):
+        raise ValueError('bound contradicts reference distance claim')
+    if any((int(x)!=expected if exact else int(x)>expected) for x in answers):
+        raise ValueError('answer contradicts reference distance claim')
+    # Zero is a weak but valid lower bound. A nonpositive upper bound or
+    # exact answer is impossible for a nontrivial logical of these CSS codes.
+    if any(int(x)<1 for x in ubs+answers):
+        raise ValueError('nonpositive upper bound or exact distance')
+    if lbs and ubs and max(map(int,lbs))>min(map(int,ubs)):
+        raise ValueError('lower bound exceeds upper bound')
+    if answers and (len(set(answers))!=1 or any(int(x)>int(answers[0]) for x in lbs)
+                    or any(int(x)<int(answers[0]) for x in ubs)):
+        raise ValueError('answer contradicts observed bounds')
     if (not lbs or not ubs) and (not timed_out or answers):
         raise ValueError('missing bounds; inspect load/run failure')
     if not lbs or not ubs:
@@ -55,7 +64,8 @@ def main():
     ap.add_argument('--bin', type=Path, default=ROOT/'bin/distqldpc')
     ap.add_argument('--out', type=Path, required=True, help='new evidence directory')
     ap.add_argument('--dry-run', action='store_true')
-    ap.add_argument('--family', default='HGP', choices=('HGP','COLOR','BB'), help='manifest family; default HGP')
+    ap.add_argument('--family', default='HGP', choices=('HGP','COLOR','BB','BP','LP','HYP','PP','TOR','TN','GB'), help='manifest family; default HGP')
+    ap.add_argument('--engine', choices=('maxsat','cc'),default='maxsat',help='default MaxSAT or explicit CC cross-check')
     ap.add_argument('--stems', nargs='+', help='explicit subset of selected-family manifest stems')
     pre = ap.add_mutually_exclusive_group()
     pre.add_argument('--ub-pre', type=float, help='explicit supplemental pre-pass seconds; default unchanged')
@@ -82,6 +92,8 @@ def main():
             continue
         cmd = ['taskset','-c',str(args.cpu),'prlimit','--as=4294967296','--',
                str(args.bin.resolve()),'-cpu-lim=60']
+        if args.engine=='cc':
+            cmd.append('-engine=cc')
         if args.ub_pre is not None:
             cmd.append(f'-ub-pre={args.ub_pre:g}')
         if args.ub_pre_off:
@@ -138,7 +150,10 @@ def main():
         (args.out/f'{stem}.json').write_text(json.dumps(meta,indent=2)+'\n')
         print(f'--- RAW LOG {stem} ---',flush=True)
         print((args.out/f'{stem}.log').read_text(),end='',flush=True)
-        result = parse((args.out/f'{stem}.log').read_text(),int(row['claimed_d'].split()[1]))
+        claim=row['claimed_d'].split()
+        if claim[0] not in ('exact','<='):
+            raise ValueError('unsupported distance claim; explicit exact or <= required')
+        result = parse((args.out/f'{stem}.log').read_text(),int(claim[1]),exact=claim[0]=='exact')
         if rc not in (0,1) or (rc == 0) != (result['status']=='SOLVED'):
             raise RuntimeError(f'{stem}: unexpected exit status {rc}')
         meta.update(**result)

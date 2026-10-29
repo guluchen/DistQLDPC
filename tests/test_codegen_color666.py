@@ -120,8 +120,14 @@ class ColorTests(unittest.TestCase):
         selected = json.loads(subprocess.check_output(runner+['--family','COLOR'],cwd=ROOT,text=True))
         self.assertEqual(len(default),12)
         self.assertTrue(all('HGP_' in argv[-1] for argv in default))
-        self.assertEqual(len(selected),6)
+        import csv
+        manifest=list(csv.DictReader((ROOT/'data/matrices/untiered/MANIFEST.csv').open()))
+        self.assertEqual({argv[-1].split('/')[-1] for argv in selected},
+                         {r['stem'] for r in manifest if r['family']=='COLOR'})
         self.assertTrue(all('COLOR_' in argv[-1] for argv in selected))
+        old_stems=['COLOR_'+str(n)+'_1_unknown' for n in (7,19,127,331,1027,2791)]
+        old_subset=json.loads(subprocess.check_output(runner+['--family','COLOR','--stems']+old_stems,cwd=ROOT,text=True))
+        self.assertEqual({argv[-1].split('/')[-1] for argv in old_subset},set(old_stems))
         rejected = subprocess.run(runner+['--family','COLOR','--stems','HGP_13_1_unknown'],
                                   cwd=ROOT,capture_output=True)
         self.assertNotEqual(rejected.returncode,0)
