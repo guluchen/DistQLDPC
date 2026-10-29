@@ -253,7 +253,8 @@ vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
 # 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
-vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,charge, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf, " -v -engine=cc -cc-rules=excl,pack,orbf $L $C
 vgrep 2 "^c cc: X half parity: on (column weights 3..5, all odd)" -v -engine=cc $L $C
@@ -268,8 +269,9 @@ vgrep 3 "^c cc-stats: X level 2 EMPTY .* ovtight 0 ovforbid 0 time" -engine=cc -
 vgrep 3 "^c cc: node lower bound charge at remaining budget >= 3 and budget - packing <= 0, auto off below 40 % (GH-157)" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge $L $M
 vgrep 3 "^c cc-stats: X level 2 lb lbeval [0-9]* chgprune [0-9]* lbdead [0-9]*" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 -cc-lb-gap=5 $L $M
 vgrep 3 "^c cc-stats: X level 2 lbprune-by-budget" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 $L $M
-runs=$((runs + 1)); run -v -engine=cc -cc-stats $L $M
-if grep -q "node lower bounds\|lbeval\|lbprune" <<<"$out"; then echo "FAIL (GH-157 lines printed without the new rules)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -v -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $M
+if grep -q "node lower bound\|lbeval\|lbprune" <<<"$out"; then echo "FAIL (GH-157 lines printed without charge)" >&2; fails=$((fails + 1)); fi
+vgrep 3 "^c cc: node lower bound charge at remaining budget >= 3" -v -engine=cc $L $M   # GH-157: charge is a default rule
 # 7c. GH-138: overlap decision per half (K = same-type stabilizer rows; TN_36_8_3 rows have weight 4..6)
 vgrep 3 "^c cc: X half overlap: on ([0-9]* stabilizer rows of Hx, weights [0-9]*\.\.[0-9]*, 0 forbidden from the start)" -v -engine=cc $L $M
 vgrep 3 "^c cc: Z half overlap: on ([0-9]* stabilizer rows of Hz, weights " -v -engine=cc $L $M

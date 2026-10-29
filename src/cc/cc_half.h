@@ -78,7 +78,7 @@
  *         it would drop both e and e + g (mutant 10). With the leaf rule, children of remaining budget 1 or 2
  *         (whose subtrees are lookups only) skip the counter updates: a closure found there is a weight-w element
  *         of F and meets every limit by itself. Full proof: MODIFICATIONS.md (GH-138).
- *   charge (GH-157, default off; Banfi, Ferrari, Favano, Tarable, Barletta, arXiv:2610.28008, detector charges; Okada-Kasai,
+ *   charge (GH-157, default on since the PI's adoption decision of 2026-10-29; Banfi, Ferrari, Favano, Tarable, Barletta, arXiv:2610.28008, detector charges; Okada-Kasai,
  *         cpm-ldpc-distance, scaled feasible dual of set cover) node lower bound from a feasible dual of the hitting-set
  *         LP. At a node with odd rows U and available qubits A (not in S, not forbidden), every extension e of weight w
  *         that the other rules keep reachable (S a subset of e, no forbidden qubit in e) has e \ S inside A and meets
@@ -114,8 +114,8 @@ struct SparseRows {
 
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
-    bool charge;   /* GH-157 node lower bound, default off */
-    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(false) {}
+    bool charge;   /* GH-157 node lower bound, default on (PI, 2026-10-29) */
+    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true) {}
 };
 
 /* GH-157: node lower bound on the hitting set tau of the candidate sets of the odd rows, exposed for tests. The k

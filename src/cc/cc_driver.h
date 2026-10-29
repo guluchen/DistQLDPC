@@ -56,7 +56,7 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap; GH-157 adds charge) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap,charge since GH-157) */
     int lb_minr;             /* GH-157 -cc-lb-minr=K: charge evaluated at remaining budget >= K (default 3) */
     int lb_gap;              /* GH-157 -cc-lb-gap=G: ... and only where remaining budget - packing <= G (default 0) */
     bool lb_raise;           /* GH-157 -cc-lb-raise=on|off: charge raise step (default on) */

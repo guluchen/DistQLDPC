@@ -2650,12 +2650,13 @@ int main(int argc, char** argv) {
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
-            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap[,mrv] (default excl,pack,orbf,parity,leaf,overlap;\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge[,mrv] (default excl,pack,orbf,parity,leaf,\n");
+            printf("            overlap,charge; -cc-rules=excl,pack,orbf,parity,leaf,overlap = the CC search before GH-157;\n");
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden;\n");
-            printf("            GH-157, off by default: charge = fractional (LP-dual) charge node lower bound, evaluated at\n");
-            printf("            remaining budget >= -cc-lb-minr=K (default 3) where the\n");
+            printf("            charge (GH-157) = fractional (LP-dual) charge node lower bound, evaluated at remaining\n");
+            printf("            budget >= -cc-lb-minr=K (default 3) where the\n");
             printf("            packing is within -cc-lb-gap=G of pruning (default 0); -cc-lb-raise=off: charge without the raise;\n");
             printf("            -cc-lb-auto=P switches it off for a half after a level where < P %% of >= 100000 evaluations\n");
             printf("            pruned (default 40; 0 = never))\n");

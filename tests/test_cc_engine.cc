@@ -184,6 +184,7 @@ static distcc::Rules rules_of(int mask) {
     return r;
 }
 static const int RM_CHG = 128;   // GH-157
+static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule set (excl,pack,orbf,parity,leaf,overlap,charge)
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128;
 static const char* rules_name(int mask) {
     static char buf[64];
@@ -650,9 +651,9 @@ int main(int argc, char** argv) {
         b_inst++;
         struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int lbminr; int lbgap; };
         const Cfg cfgs[] = {
-            {"default", RM_NEW, true, false, 0, true}, {"dual-off", RM_NEW, false, false, 0, true}, {"ub-basis", RM_NEW, true, true, 0, true},
-            {"seed1", RM_NEW, true, false, 1, true}, {"seed2", RM_NEW, false, true, 2, true}, {"none", 0, true, false, 0, true},
-            {"mrv", RM_ALL, true, false, 0, true}, {"no-symbreak", RM_NEW, true, false, 0, false},
+            {"default", RM_DEF, true, false, 0, true}, {"dual-off", RM_DEF, false, false, 0, true}, {"ub-basis", RM_DEF, true, true, 0, true},
+            {"seed1", RM_DEF, true, false, 1, true}, {"seed2", RM_DEF, false, true, 2, true}, {"none", 0, true, false, 0, true},
+            {"mrv", RM_ALL | RM_CHG, true, false, 0, true}, {"no-symbreak", RM_DEF, true, false, 0, false}, {"gh152rules", RM_NEW, true, false, 0, true},
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
             {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
@@ -1282,7 +1283,7 @@ int main(int argc, char** argv) {
         }
         struct HCfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int mutant; };
         const HCfg cfgs[] = {
-            {"aut", RM_NEW, true, false, 0, true, 0}, {"aut-seed1", RM_NEW, true, false, 1, true, 0},
+            {"aut", RM_DEF, true, false, 0, true, 0}, {"aut-seed1", RM_NEW, true, false, 1, true, 0}, {"aut-charge-seed2", RM_DEF, false, false, 2, true, 0},
             {"aut-dual-off", RM_NEW, false, false, 0, true, 0}, {"aut-no-symbreak", RM_NEW, true, false, 0, false, 0},
             {"aut-oldrules", RM_OLD, true, false, 0, true, 0}, {"aut-133-seed2", RM_133, false, true, 2, true, 0},
             {"aut-mrv", RM_ALL, true, false, 0, true, 0}, {"aut-overlap-only", 64, true, false, 0, true, 0},
