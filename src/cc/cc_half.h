@@ -86,19 +86,22 @@
  *         with sum_{u ni j} y_u <= 1 for all j in A (dual feasibility), sum_u y_u <= tau* <= tau (weak duality), hence
  *         ceil(sum y) <= w - |S| or the node is empty. y is the local-degree charge y_u = 1 / max_{j in N(u) & A}
  *         c_j with c_j = |N(j) & U| (feasible: the c_j rows through j each give at most 1/c_j), then raised row by row
- *         (index order) by the smallest residual capacity 1 - load(j) of its qubits (stays feasible). All values are
- *         integers scaled by L = lcm(1..D), D = max c_j <= 32 (rule idle if D > 32); a prune needs sum y > w - |S|,
- *         i.e. scaled Y > (w - |S|) L, exact integer comparison. An odd row with no available qubit is a dead end.
+ *         (index order) by the smallest residual capacity 1 - load(j) of its qubits (stays feasible; -cc-lb-raise=off
+ *         skips it). All values are integers scaled by L = lcm(1..D), D = max c_j <= 32 (rule idle if D > 32); a prune
+ *         needs sum y > w - |S|, i.e. scaled Y > (w - |S|) L, exact integer comparison. lb_charge (below) computes it on
+ *         a copy of the candidate sets; an odd row with no available qubit is a dead end.
  *   ecover (GH-157, default off; Gallai's theorem; Okada-Kasai's bipartite matching bound a + b - s is the special case
- *         of two check classes) choose U' within U greedily (index order) such that every qubit of A lies in at most 2
- *         rows of U'. On U' a hitting set is an edge cover of the multigraph on U' whose edges are the qubits in 2 rows
- *         of U' (qubits in 1 row are loops), so tau(U', A) = |U'| - nu (Gallai; nu = maximum matching of the non-loop
- *         edges, Edmonds' blossom algorithm; every row of U' must have an available qubit, else the node is dead), and
- *         tau(U, A) >= tau(U', A). A prune needs |U'| - nu > w - |S|. If every qubit of A meets at most 2 rows of U, U'
- *         = U and the bound is the exact tau. Both bounds are evaluated only when the packing did not prune, the
- *         remaining budget is >= lb-minr (default 3) and |U| > w - |S| (tau <= |U| always), so they replace the pack
- *         test by max(pack, charge, ecover) > w - |S| and leave every other rule's argument unchanged (they only cut
- *         nodes with no extension of weight w at all). Full proof: MODIFICATIONS.md (GH-157).
+ *         of two check classes) choose U' within U greedily (index order): a row joins iff none of its available qubits
+ *         already lies in 2 rows of U'. On U' a hitting set is an edge cover of the multigraph on U' whose edges are the
+ *         qubits in 2 rows of U' (qubits in 1 row are loops), so tau(U', A) = |U'| - nu (Gallai; nu = maximum matching,
+ *         Edmonds' blossom algorithm), and tau(U, A) >= tau(U', A). A prune needs |U'| - nu > w - |S|. If every qubit of
+ *         A meets at most 2 rows of U, U' = U and the bound is the exact tau.
+ *         Evaluation gates (each only skips a sound prune): the packing did not prune; remaining budget r >= lb-minr
+ *         (default 3); |U| > r (tau <= |U| always); r - p <= lb-gap (default 0; p = the node's packing, pack on; almost all
+ *         prunes occur at r = p); and -cc-lb-auto (default 40 %): after an EMPTY level with >= 100 000 evaluations of
+ *         which fewer than 40 % pruned, the bounds are off for the rest of the half. The node is then pruned iff
+ *         max(pack, charge, ecover) > r; every other rule's argument is unchanged (the bounds only cut nodes with no
+ *         extension of weight w at all). Full proof: MODIFICATIONS.md (GH-157).
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -221,8 +224,8 @@ public:
     /* GH-157: with pack on, evaluated only where r - p <= gap (p = the node's packing, r = remaining budget; default 0) */
     void set_lb_gap(int gap) { lbgap_ = gap < 0 ? 0 : gap; }
     /* GH-157 auto switch-off: after an EMPTY level with >= minevals evaluations of which fewer than pct percent pruned, the
-     * bounds stay off for the rest of the half (pct 0: never; default 45 percent, 1000 evaluations) */
-    void set_lb_auto(int pct, uint64_t minevals = 1000) { lbauto_ = pct < 0 ? 0 : pct; lbautomin_ = minevals; }
+     * bounds stay off for the rest of the half (pct 0: never; default 40 percent, 100 000 evaluations) */
+    void set_lb_auto(int pct, uint64_t minevals = 100000) { lbauto_ = pct < 0 ? 0 : pct; lbautomin_ = minevals; }
     bool lb_active() const { return lbany_; }
     /* GH-157: charge without the raise step (local-degree charge only; tuning) */
     void set_lb_raise(bool on) { lbraise_ = on; }
