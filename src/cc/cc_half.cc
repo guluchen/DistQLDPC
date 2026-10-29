@@ -111,7 +111,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0),
-      mx_(0), mxw_(0), ux_(0), xminw_(0), xmaxw_(0), nk0_(0), nkx_(0), kxminw_(0), kxmaxw_(0), xu_(false), ovtightx_(0), w_(0), nodd_(0),
+      mx_(0), mxw_(0), ux_(0), ncls_(1), xminw_(0), xmaxw_(0), nk0_(0), nkx_(0), kxminw_(0), kxmaxw_(0), xu_(false), ovtightx_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -165,18 +165,23 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     ux_ = 64 * mw_;
     if (rules_.sparse) {
         std::vector<std::vector<int> > R = pair_sums(H.rows, n_, (size_t)4 * (size_t)m_);
-        std::vector<int> order(R.size());
-        for (size_t j = 0; j < R.size(); j++) order[j] = (int)j;
-        if (relabel_seed != 0) shuffle_ints(order, rs);
-        mx_ = (int)R.size();
-        mxw_ = (mx_ + 63) / 64;
-        xstart_.assign((size_t)mx_ + 1, 0);
-        for (int j = 0; j < mx_; j++) {
-            std::vector<int>& src = R[(size_t)order[j]];
+        std::vector<std::vector<uint32_t> > Rn;   /* relabeled; order: weight, then relabeled support */
+        for (size_t j = 0; j < R.size(); j++) {
+            std::vector<int>& src = R[j];
             if (mutant_ == 19 && !src.empty()) src.erase(src.begin());
             std::vector<uint32_t> g;
             for (size_t t = 0; t < src.size(); t++) g.push_back((uint32_t)new_of[src[t]]);
             std::sort(g.begin(), g.end());
+            Rn.push_back(g);
+        }
+        std::sort(Rn.begin(), Rn.end(), [](const std::vector<uint32_t>& x, const std::vector<uint32_t>& y) {
+            return x.size() != y.size() ? x.size() < y.size() : x < y;
+        });
+        mx_ = (int)Rn.size();
+        mxw_ = (mx_ + 63) / 64;
+        xstart_.assign((size_t)mx_ + 1, 0);
+        for (int j = 0; j < mx_; j++) {
+            const std::vector<uint32_t>& g = Rn[(size_t)j];
             const int wt = (int)g.size();
             if (j == 0 || wt < xminw_) xminw_ = wt;
             if (j == 0 || wt > xmaxw_) xmaxw_ = wt;
@@ -191,6 +196,24 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         std::vector<uint32_t> fill(xcstart_.begin(), xcstart_.end() - 1);
         for (int j = 0; j < mx_; j++)
             for (uint32_t t = xstart_[j]; t < xstart_[j + 1]; t++) xcr_[fill[xq_[t]]++] = (uint32_t)(ux_ + j);
+        /* weight classes over the unified rows (pack / mrv scan order) */
+        const int nw = mw_ + mxw_;
+        std::vector<int> wts;
+        for (int r = 0; r < m_; r++) wts.push_back((int)(rstart_[r + 1] - rstart_[r]));
+        for (int j = 0; j < mx_; j++) wts.push_back((int)(xstart_[j + 1] - xstart_[j]));
+        std::sort(wts.begin(), wts.end());
+        wts.erase(std::unique(wts.begin(), wts.end()), wts.end());
+        ncls_ = (int)wts.size();
+        wcls_.assign((size_t)ncls_ * (size_t)nw, 0);
+        for (int r = 0; r < m_; r++) {
+            const int c = (int)(std::lower_bound(wts.begin(), wts.end(), (int)(rstart_[r + 1] - rstart_[r])) - wts.begin());
+            wcls_[(size_t)c * nw + (r >> 6)] |= 1ULL << (r & 63);
+        }
+        for (int j = 0; j < mx_; j++) {
+            const int u = ux_ + j;
+            const int c = (int)(std::lower_bound(wts.begin(), wts.end(), (int)(xstart_[j + 1] - xstart_[j])) - wts.begin());
+            wcls_[(size_t)c * nw + (u >> 6)] |= 1ULL << (u & 63);
+        }
     }
     if (xcstart_.empty()) xcstart_.assign((size_t)n_ + 1, 0);
 
@@ -601,10 +624,16 @@ bool HalfSearch::expand(int size, int forced) {
     const uint64_t st = ++stamp_;
     int p = 0, brow = -1;
     uint32_t bcnt = UINT32_MAX;
-    /* GH-181 sparse: the words mw_.. (redundant rows) are scanned after H's rows, for pack and mrv only */
-    const int nw = (mx_ > 0 && (pack || mrv)) ? mw_ + mxw_ : mw_;
+    /* GH-181 sparse (pack or mrv): the odd rows of H and R are scanned by weight class, lightest first (within a class
+     * by unified index, H's rows first); without the token one class holds every row of H (index order, as before) */
+    const bool cls = rules_.sparse && (pack || mrv);
+    const int ncls = cls ? ncls_ : 1;
+    const int nw = cls ? mw_ + mxw_ : mw_;
+    int pr = 0;   /* redundant rows in the packing */
+    for (int c = 0; c < ncls && !(brow >= 0 && !pack && !mrv); c++)
     for (int wi = 0; wi < nw && !(brow >= 0 && !pack && !mrv); wi++) {
         uint64_t x = syn_[wi];
+        if (cls) x &= wcls_[(size_t)c * (size_t)nw + (size_t)wi];
         const bool red = wi >= mw_;
         while (x) {
             const int r = wi * 64 + __builtin_ctzll(x);
@@ -626,10 +655,10 @@ bool HalfSearch::expand(int size, int forced) {
                 }
                 if (disjoint) {
                     ++p;
-                    if (red) ++res_->spack;
+                    if (red) { ++res_->spack; ++pr; }
                     if (mutant_ == 2 ? size + p >= w_ : size + p > w_) {
                         ++res_->packprune;
-                        if (red) ++res_->sprune;
+                        if (pr > 0) ++res_->sprune;
                         return false;
                     }
                     /* marking forbidden qubits too is harmless: only free qubits can clash */
@@ -649,6 +678,11 @@ bool HalfSearch::expand(int size, int forced) {
                 break;
             }
         }
+    }
+    if (cls && !mrv) {   /* the branching row stays the lowest-index odd row of H */
+        brow = -1;
+        for (int wi = 0; wi < mw_ && brow < 0; wi++)
+            if (syn_[wi]) brow = wi * 64 + __builtin_ctzll(syn_[wi]);
     }
     if (forced >= 0) {   /* GH-181 xorunit: an odd row with one free qubit (mutant 20: an even one) */
         brow = forced;

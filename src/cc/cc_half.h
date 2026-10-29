@@ -80,13 +80,14 @@
  *         of F and meets every limit by itself. Full proof: MODIFICATIONS.md (GH-138).
  *   sparse (GH-181, opt-in) redundant sparse checks. R = the distinct pair sums r = h1 + h2 of rows of H with
  *         0 < |r| <= max(|h1|, |h2|), not equal to a row of H (deduplicated; at most 4 m rows, lightest first, ties by
- *         the sorted original support). Every r in R lies in the row space of H (checked at construction by
+ *         the sorted original support; in use ordered by weight, then relabeled support). Every r in R lies in the row space of H (checked at construction by
  *         recomputing h1 + h2), so r.e = 0 for EVERY e in ker H. Every argument that uses an odd row h of S only
  *         through "h.e = 0 for every e in ker H" therefore holds for an odd r of R as well: r.(e \ S) = r.S = 1, so
- *         e \ S meets r. Used in: pack (after the odd rows of H, in R's order, with the same disjointness test, so the
- *         packing of a node can only grow: every node pruned without the token is pruned with it), the
- *         no-candidate dead end (an odd r with no free qubit), mrv (the branch over the free qubits of an odd r
- *         contains a branch inside e, exactly as in (2)), and xorunit. NOT used for: syndrome-freeness (nodd, the
+ *         e \ S meets r. Used in: pack (the odd rows of H and R are scanned by weight class, lightest first, within a
+ *         class by index with H's rows first: any order of the greedy disjoint selection is sound, and lighter rows
+ *         first gives larger packings), the no-candidate dead end (an odd r with no free qubit), mrv (the branch over
+ *         the free qubits of an odd r contains a branch inside e, exactly as in (2)), and xorunit. Without mrv the
+ *         branching row stays the lowest-index odd row of H. NOT used for: syndrome-freeness (nodd, the
  *         size-w test), parity (column weights and wt(syn) are those of H), the leaf lookup (columns of H) and
  *         overlap (rows of H are stabilizers of the other type, not elements of ker H: test mutant 9). Credit:
  *         Qubitserf 04b9349 augment_sparse_checks (S. Cercelescu, MIT; idea only, no code), Puchert and Tillmann,
@@ -247,7 +248,8 @@ private:
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
     /* GH-181 sparse: redundant rows R (relabeled, ascending); row j has the unified index ux_ + j (ux_ = 64 mw_, so its
      * syndrome bit lives in syn_ words mw_..mw_ + mxw_ - 1 and never disturbs nodd_ or the scans of H's rows) */
-    int mx_, mxw_, ux_, xminw_, xmaxw_;
+    int mx_, mxw_, ux_, ncls_, xminw_, xmaxw_;
+    std::vector<uint64_t> wcls_;            /* weight classes (lightest first) over the unified rows, ncls_ x (mw_ + mxw_) words */
     std::vector<uint32_t> xstart_, xq_;     /* redundant row -> qubits */
     std::vector<uint32_t> xcstart_, xcr_;   /* qubit -> unified indices of its redundant rows */
     /* sparseov: rows nk0_..nk_-1 of K are the added pair sums */
