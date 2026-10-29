@@ -1,0 +1,48 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BP_130_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/BP_130_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/BP_130_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/BP_130_2_unknown_Gz.txt
+c Hx: 60 x 130, Hz: 70 x 130, Gx: 2 x 130, Gz: 2 x 130, logicals: 4
+c cc: dual map detection: none (ranks Hz 68 Hx 60 [Hz;Gx] 70 [Hx;Gz] 62, 0 candidates, cpu 0.000s): both halves
+c cc symbreak X: n=130 candidates=22 verified_generators=0 orbits=130 detect_cpu=0.000s clause=none
+c cc symbreak Z: n=130 candidates=22 verified_generators=0 orbits=130 detect_cpu=0.000s clause=none
+c cc: X half: n 130, rank H 68, rank [H;G] 70, rank S 60: detectors complete, 2 logical(s)
+c cc: Z half: n 130, rank H 60, rank [H;G] 62, rank S 68: detectors complete, 2 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 5 (X 5, Z 30)
+c cc: X half search: 130 seeds (index rule)
+c cc: X half parity: off (column weights 2..4, an even weight present)
+c cc: X half overlap: on (60 stabilizer rows of Hx, weights 6..6, 0 forbidden from the start)
+c cc: Z half search: 130 seeds (index rule)
+c cc: Z half parity: off (column weights 2..5, an even weight present)
+c cc: Z half overlap: on (70 stabilizer rows of Hz, weights 4..7, 0 forbidden from the start)
+c cc: X half ub-search: rank H 68, information set 62, triples off, slack 4, li-cap 64, collision stern p 2 l 9 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 60, information set 70, triples off, slack 4, li-cap 64, collision stern p 2 l 9 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 130 seeds 130 time 0.000s
+c cc: Z half level 1 EMPTY nodes 130 seeds 130 time 0.000s
+c cc: X half level 2 EMPTY nodes 130 seeds 130 time 0.000s
+c cc: Z half level 2 EMPTY nodes 130 seeds 130 time 0.000s
+c cc: X half level 3 EMPTY nodes 130 seeds 130 time 0.000s
+c cc: Z half level 3 EMPTY nodes 130 seeds 130 time 0.000s
+c cc: X half level 4 EMPTY nodes 422 seeds 130 time 0.000s
+c cc: Z half level 4 EMPTY nodes 312 seeds 130 time 0.000s
+c cc: ub-search X: iterations 1, finder time 0.000s, kept 19, nontrivial 12, li-gain 0, improvements 0, rank 68, K 62, ub 5
+c cc: ub-search X collision: rounds 1, colliding pairs 3255 (nontrivial 2424)
+c cc: ub-search Z: iterations 0, finder time 0.000s, kept 0, nontrivial 0, li-gain 0, improvements 0, rank 60, K 70, ub 30
+c cc: ub-search Z collision: rounds 0, colliding pairs 0 (nontrivial 0)
+c cc: total nodes X 812 Z 702, search time X 0.000s Z 0.000s, wall 0.000s
+c cc: d = 5
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BP_130_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/BP_130_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/BP_130_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/BP_130_2_unknown_Gz.txt
+c Hx: 60 x 130, Hz: 70 x 130, Gx: 2 x 130, Gz: 2 x 130, logicals: 4
+c d_lb: 5
+c d_ub: 5
+c d  : 5
+o 5

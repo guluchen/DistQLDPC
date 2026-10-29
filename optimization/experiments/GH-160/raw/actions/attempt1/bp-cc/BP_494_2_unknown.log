@@ -1,0 +1,59 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BP_494_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/BP_494_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/BP_494_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/BP_494_2_unknown_Gz.txt
+c Hx: 228 x 494, Hz: 266 x 494, Gx: 2 x 494, Gz: 2 x 494, logicals: 4
+c cc: dual map detection: none (ranks Hz 264 Hx 228 [Hz;Gx] 266 [Hx;Gz] 230, 0 candidates, cpu 0.001s): both halves
+c cc symbreak X: n=494 candidates=22 verified_generators=0 orbits=494 detect_cpu=0.001s clause=none
+c cc symbreak Z: n=494 candidates=22 verified_generators=0 orbits=494 detect_cpu=0.001s clause=none
+c cc: X half: n 494, rank H 264, rank [H;G] 266, rank S 228: detectors complete, 2 logical(s)
+c cc: Z half: n 494, rank H 228, rank [H;G] 230, rank S 264: detectors complete, 2 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 19 (X 19, Z 61)
+c cc: X half search: 494 seeds (index rule)
+c cc: X half parity: off (column weights 2..4, an even weight present)
+c cc: X half overlap: on (228 stabilizer rows of Hx, weights 6..6, 0 forbidden from the start)
+c cc: Z half search: 494 seeds (index rule)
+c cc: Z half parity: off (column weights 2..5, an even weight present)
+c cc: Z half overlap: on (266 stabilizer rows of Hz, weights 4..7, 0 forbidden from the start)
+c cc: X half ub-search: rank H 264, information set 230, triples off, slack 4, li-cap 64, collision stern p 2 l 13 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 228, information set 266, triples off, slack 4, li-cap 64, collision stern p 2 l 13 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 494 seeds 494 time 0.000s
+c cc: Z half level 1 EMPTY nodes 494 seeds 494 time 0.000s
+c cc: X half level 2 EMPTY nodes 494 seeds 494 time 0.000s
+c cc: Z half level 2 EMPTY nodes 494 seeds 494 time 0.000s
+c cc: X half level 3 EMPTY nodes 494 seeds 494 time 0.000s
+c cc: Z half level 3 EMPTY nodes 494 seeds 494 time 0.000s
+c cc: X half level 4 EMPTY nodes 1563 seeds 494 time 0.000s
+c cc: Z half level 4 EMPTY nodes 1110 seeds 494 time 0.000s
+c cc: Z half level 5 EMPTY nodes 2379 seeds 494 time 0.000s
+c cc: X half level 5 EMPTY nodes 3873 seeds 494 time 0.000s
+c cc: Z half level 6 EMPTY nodes 5402 seeds 494 time 0.001s
+c cc: X half level 6 EMPTY nodes 7047 seeds 494 time 0.001s
+c cc: Z half level 7 EMPTY nodes 12050 seeds 494 time 0.001s
+c cc: X half level 7 EMPTY nodes 12610 seeds 494 time 0.001s
+c cc: Z half level 8 EMPTY nodes 27590 seeds 494 time 0.003s
+c cc: X half level 8 EMPTY nodes 24116 seeds 494 time 0.003s
+c cc: X half level 9 EMPTY nodes 47977 seeds 494 time 0.006s
+c cc: Z half level 9 FOUND nodes 3406 seeds 2 time 0.000s
+c witness Z: 1 5 6 7 12 17 264 485 490
+c cc: ub-search X: iterations 1, finder time 0.003s, kept 77, nontrivial 0, li-gain 0, improvements 0, rank 264, K 230, ub 19
+c cc: ub-search X collision: rounds 1, colliding pairs 235411 (nontrivial 43217)
+c cc: ub-search Z: iterations 0, finder time 0.000s, kept 0, nontrivial 0, li-gain 0, improvements 0, rank 228, K 266, ub 9
+c cc: ub-search Z collision: rounds 0, colliding pairs 0 (nontrivial 0)
+c cc: total nodes X 98668 Z 53419, search time X 0.011s Z 0.005s, wall 0.020s
+c cc: d = 9
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BP_494_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/BP_494_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/BP_494_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/BP_494_2_unknown_Gz.txt
+c Hx: 228 x 494, Hz: 266 x 494, Gx: 2 x 494, Gz: 2 x 494, logicals: 4
+c d_lb: 9
+c d_ub: 9
+c d  : 9
+o 9

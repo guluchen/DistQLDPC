@@ -37,7 +37,8 @@ until independently cross-checked with a GF(2)-verified witness.
 - Six four-matrix inputs in untiered, manifest, NOTICE and reproducibility docs.
 - Smoke collector distinguishes exact claims from upper bounds and can explicitly
   run CC. Its default HGP/MaxSAT argv remains unchanged; old claim checks are
-  preserved. New safeguards reject inconsistent/nonpositive reported bounds.
+  preserved. New safeguards reject inconsistent intervals and nonpositive
+  upper bounds/answers; a zero lower bound remains valid.
 - Independent printed-witness/cross-engine auditor and scoped Linux CI.
 
 Let A be the Tanner boundary, T1/T0 the free deck actions on edge/check cells.
@@ -85,11 +86,61 @@ matrix files reproduce byte for byte. Raw local logs and certificates are in
 
 ## Linux execution and scientific status
 
-PENDING at the initial source checkpoint. CI builds the unchanged solver,
-repeats all units/algebra/orbit/regeneration checks, then runs each code for
-60 seconds with default MaxSAT and independently with CC. Both use verbose
-witness output; one pinned CPU, 4 GiB address-space cap, 90-second wall backstop,
+Two source checkpoints were validated:
+
+| Attempt | Source | Library run / job | Ordinary CI |
+|---|---|---|---|
+| initial | 5a58dafafe14544b8cc0ba5d5799330a5e189c30 | 40826355475 / 123290181493 | 40826355401 |
+| recheck | 2831b4b79f89b535f6649a85d29ca12b94090607 | 40826686405 / 123291225482 | 40826686375 |
+
+Both library workflows and ordinary CIs passed. The initial source tree is
+`df180c9e2e8a0d4312f91dbd275d5a5a1ca5e6a3`; recheck tree is
+`2482678bd1ad28402300fdd14002fbda053fde49`.
+After initial CI, collector review corrected two edge cases: zero is a valid
+weak lower bound, and exact-answer auditing must read the explicit `o` value
+rather than infer it from a possibly looser reported lower bound. No emitted
+result triggered those draft issues and no scientific contradiction occurred.
+Unit tests were updated and the same fixed panel rerun with the corrected
+collector. The matrices, solver executable and flags were unchanged. Both
+attempts' complete raw evidence is retained; no favorable run was selected.
+
+Binary SHA256 for both attempts and both engines (same unchanged executable
+as the prior library batches):
+`13aa8ba74b3960b8767bfda60d10fb09f057e6655f5112c6f3f343dfdee03328`.
+
+Each workflow passed all 43 tests, all-code algebra, independent cell-orbit
+reconstruction and 24-file regeneration. Each input then ran for 60 seconds
+with default MaxSAT and independently with CC. Both used verbose witnesses,
+one pinned CPU, a 4 GiB address-space cap, a 90-second wall backstop,
 stdin /dev/null and serial execution on the ephemeral Linux runner.
+
+Both attempts yielded exactly these bounds/results:
+
+| Stem | Derived reference upper bound | MaxSAT 60s | CC 60s | Scientific status |
+|---|---:|---|---|---|
+| BP_78_2_unknown | 3 | exact 3 | exact 3 | cross-checked; also tiny exact oracle |
+| BP_130_2_unknown | 5 | exact 5 | exact 5 | cross-checked |
+| BP_182_2_unknown | 7 | exact 7 | exact 7 | cross-checked |
+| BP_286_2_unknown | 11 | exact 9 | exact 9 | cross-checked |
+| BP_494_2_unknown | 19 | exact 9 | exact 9 | cross-checked |
+| BP_962_2_unknown | 37 | [5,9], timeout | exact 9 | **PLAUSIBLE**, independent completion pending |
+
+For the first five original finite instances, two distinct internal search
+implementations agree and matching weight witnesses were independently
+verified. The last case's CC result 9 is not promoted to cross-checked exact:
+MaxSAT did not complete. The observed lower-bound gap and the PLAUSIBLE status
+are preserved. All stems remain unknown and untiered; no new paper claim or
+asymptotic/performance assertion is made.
+
+Durable evidence: `raw/actions/attempt1/` and `raw/actions/recheck/`. Each has
+`bp-maxsat/`, `bp-cc/`, independent `audit.json`, and the complete Actions
+`job.log`. Per-case JSON records exact argv, input/binary SHA256, source, exit
+status and bounds; environment, CSV and completion markers are retained.
+All 24 executions replay consistently with CSV/JSON; both audits reproduce
+identically, independently checking every printed logical, cycle certificate,
+matrix identity and interval (`raw/actions/replay.txt`). The manifest's primary
+and supplemental fields use the latest corrected collector's MaxSAT and CC
+records. Earlier records remain in full and have identical semantic outcomes.
 
 ```sh
 make --jobs=2 bin/distqldpc
@@ -114,11 +165,13 @@ claims. No external distance solver, server allocation or Mac solver run.
 
 - What changed: six fully specified balanced-product CSS inputs and generator,
   independent orbit/witness checks, provenance and two-engine smoke package.
-- Validation: 43 unit tests, all-code algebra, independent orbit/rank/cycle
-  witnesses and 24-file regeneration pass; Linux executions pending.
-- Results: reference upper bounds are verified; new exact results pending.
-- Unresolved: Linux evidence and scientific cross-check status pending;
-  later server timing/tiering/naming are separate tasks.
+- Validation: 43 tests, all-code algebra, independent orbit/rank/cycle checks,
+  regeneration and both Linux panels pass; all 24 executions and witnesses
+  independently replayed and retained.
+- Results: five exact distances cross-checked on original finite instances;
+  largest code has a PLAUSIBLE CC distance 9 and independent MaxSAT [5,9].
+- Unresolved: independently complete the largest-code lower bound; later server
+  timing/tiering/naming are separate tasks. No numeric smoke bound is missing.
 - Scientific semantics changed: **no**.
 - PI action required: **no** to finish the authorized work-branch package;
   integrating this new batch into main remains separate approval.

@@ -131,3 +131,9 @@ solver, server allocation or solver timing on the PI's Mac.
 
 Observed results, scientific status and durable identities are in the manifest
 and [GH-160 report](../../../optimization/experiments/GH-160/REPORT.md).
+
+Two Linux panels (source `5a58dafa`, corrected collector `2831b4b7`) agree:
+both engines solve n=78,130,182,286,494 with distances 3,5,7,9,9 and matching
+independently verified witnesses. For n=962, CC solves 9 while MaxSAT times out
+with [5,9]; that exact result remains PLAUSIBLE pending independent completion.
+All observed intervals are numeric and consistent with the cycle upper bounds.

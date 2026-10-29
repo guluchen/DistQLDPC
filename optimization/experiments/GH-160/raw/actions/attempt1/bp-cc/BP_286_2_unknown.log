@@ -1,0 +1,60 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BP_286_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/BP_286_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/BP_286_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/BP_286_2_unknown_Gz.txt
+c Hx: 132 x 286, Hz: 154 x 286, Gx: 2 x 286, Gz: 2 x 286, logicals: 4
+c cc: dual map detection: none (ranks Hz 152 Hx 132 [Hz;Gx] 154 [Hx;Gz] 134, 0 candidates, cpu 0.000s): both halves
+c cc symbreak X: n=286 candidates=22 verified_generators=0 orbits=286 detect_cpu=0.000s clause=none
+c cc symbreak Z: n=286 candidates=22 verified_generators=0 orbits=286 detect_cpu=0.000s clause=none
+c cc: X half: n 286, rank H 152, rank [H;G] 154, rank S 132: detectors complete, 2 logical(s)
+c cc: Z half: n 286, rank H 132, rank [H;G] 134, rank S 152: detectors complete, 2 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 11 (X 11, Z 45)
+c cc: X half search: 286 seeds (index rule)
+c cc: X half parity: off (column weights 2..4, an even weight present)
+c cc: X half overlap: on (132 stabilizer rows of Hx, weights 6..6, 0 forbidden from the start)
+c cc: Z half search: 286 seeds (index rule)
+c cc: Z half parity: off (column weights 2..5, an even weight present)
+c cc: Z half overlap: on (154 stabilizer rows of Hz, weights 4..7, 0 forbidden from the start)
+c cc: X half ub-search: rank H 152, information set 134, triples off, slack 4, li-cap 64, collision stern p 2 l 11 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 132, information set 154, triples off, slack 4, li-cap 64, collision stern p 2 l 12 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 286 seeds 286 time 0.000s
+c cc: Z half level 1 EMPTY nodes 286 seeds 286 time 0.000s
+c cc: X half level 2 EMPTY nodes 286 seeds 286 time 0.000s
+c cc: Z half level 2 EMPTY nodes 286 seeds 286 time 0.000s
+c cc: X half level 3 EMPTY nodes 286 seeds 286 time 0.000s
+c cc: Z half level 3 EMPTY nodes 286 seeds 286 time 0.000s
+c cc: X half level 4 EMPTY nodes 911 seeds 286 time 0.000s
+c cc: Z half level 4 EMPTY nodes 654 seeds 286 time 0.000s
+c cc: Z half level 5 EMPTY nodes 1427 seeds 286 time 0.000s
+c cc: X half level 5 EMPTY nodes 2301 seeds 286 time 0.000s
+c cc: Z half level 6 EMPTY nodes 3346 seeds 286 time 0.000s
+c cc: X half level 6 EMPTY nodes 4351 seeds 286 time 0.000s
+c cc: Z half level 7 EMPTY nodes 7734 seeds 286 time 0.001s
+c cc: X half level 7 EMPTY nodes 8062 seeds 286 time 0.001s
+c cc: Z half level 8 EMPTY nodes 18418 seeds 286 time 0.002s
+c cc: X half level 8 EMPTY nodes 16086 seeds 286 time 0.002s
+c cc: ub-search: Z half word of weight 9 (iteration 1, wall 0.010s)
+c witness Z (ub-search): 128 131 133 134 135 137 139 253 258
+c cc: X half level 9 ABORTED nodes 16384 seeds 21 time 0.003s
+c cc: X half level 9 abandoned: ub-search upper bound 9 <= 9
+c cc: ub-search X: iterations 1, finder time 0.000s, kept 32, nontrivial 0, li-gain 0, improvements 0, rank 152, K 134, ub 11
+c cc: ub-search X collision: rounds 1, colliding pairs 23181 (nontrivial 7854)
+c cc: ub-search Z: iterations 1, finder time 0.001s, kept 113, nontrivial 87, li-gain 54, improvements 1, rank 132, K 154, ub 9
+c cc: ub-search Z collision: rounds 1, colliding pairs 19013 (nontrivial 5537)
+c cc: total nodes X 48953 Z 32437, search time X 0.006s Z 0.003s, wall 0.010s
+c cc: d = 9
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BP_286_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/BP_286_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/BP_286_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/BP_286_2_unknown_Gz.txt
+c Hx: 132 x 286, Hz: 154 x 286, Gx: 2 x 286, Gz: 2 x 286, logicals: 4
+c d_lb: 9
+c d_ub: 9
+c d  : 9
+o 9
