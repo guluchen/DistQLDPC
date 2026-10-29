@@ -312,3 +312,17 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Closed hyperbolic surface matrices (GH-165, untiered)
+------------------------------------------------------
+
+Original scripts/codegen/hyperbolic_surface.py, bounded quotient enumeration,
+independent manifold/graph-homology validator and HYP_{60,160,360,1800}_*_unknown_*
+matrices, GPL-3.0-or-later. Mathematical construction and finite presentation
+parameters: N. P. Breuckmann, B. M. Terhal, "Constructions and Noise Threshold
+of Hyperbolic Surface Codes", arXiv:1506.04029v2, DOI:10.1109/TIT.2016.2555700,
+Sec. III-A/B, IV-A, Table I. No third-party implementation, matrix files or
+paper text copied. Full CSS stabilizer homology retained. The paper's n=1920
+row is held pending a PI construction-interpretation decision, not added.
+Published distances and independent observations are recorded separately.
+See data/matrices/untiered/HYPERBOLIC.md and optimization/experiments/GH-165/.
