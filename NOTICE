@@ -57,6 +57,9 @@ These changes are documented in detail in MODIFICATIONS.md. Summary:
   - Retire inactive unit and auxiliary soft literals after preprocessing
     partition, preserving representative clauses and objective accounting (GH58)
   - Multi-instance search controls and per-instance heuristic state (interleaved CSS split, experimental)
+  - GH-148 (inactive unless DistQLDPC passes rows; it does by default on the split MaxSAT path): native "at most k of these
+    variables" propagator for stabilizer-overlap rows in propagate() / propagateForLK(), with
+    lazily allocated, cached reason clauses (relocated in relocAll, skipped by on-the-fly reduction)
 
 Modified files (partial list): Solver.h, Solver.cc
 
@@ -96,6 +99,19 @@ Modified files (partial list): Solver.h, Solver.cc
   cpm-ldpc-distance (https://github.com/kasaikenta/cpm-ldpc-distance);
   Gallai's theorem (minimum edge cover = |V| - maximum matching); and
   Edmonds' blossom algorithm. No third-party code was read or copied.
+
+  src/cc/cc_aut.h, src/cc/cc_aut.cc (GH-152, -cc-aut=on, the CC default
+  since 2026-10-28) find candidate automorphisms of the coloured Tanner
+  graph by colour refinement (coarsest equitable partition) and
+  individualisation-refinement with backtracking, in the style of the
+  graph-automorphism tools nauty and Traces (B. D. McKay, "Practical
+  graph isomorphism", Congressus Numerantium 30, 45-87, 1981; B. D.
+  McKay and A. Piperno, "Practical graph isomorphism, II", J. Symbolic
+  Computation 60, 94-112, 2014) and bliss (T. Junttila, P. Kaski,
+  ALENEX 2007). It was implemented from scratch from the published
+  descriptions; no nauty, Traces, bliss or other third-party code was
+  read, copied or linked. Every candidate is accepted only after
+  DistQLDPC's own GF(2) checks (GH-75/GH-85/GH-87).
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
@@ -268,3 +284,31 @@ Renamed 2026-10-22 (PI decision; same matrices): BB_756_16_ge30, BB_864_4_ge30, 
 Renamed 2026-10-23 (PI decision; same matrices, lower bounds unchanged): upper bounds added from
 nontrivial logical operators found by DistQLDPC's GH-146 finder and independently verified
 (optimization/experiments/GH-146/witnesses/): BB_1080_4_30to48 (was BB_1080_4_ge30), BB_756_16_30to34 (was BB_756_16_ge30), BB_864_4_30to40 (was BB_864_4_ge30), TN_288_2_9to24 (was TN_288_2_ge9), TN_324_4_9to25 (was TN_324_4_ge9), TN_360_4_17to24 (was TN_360_4_ge17), TN_396_4_17to26 (was TN_396_4_ge17), TN_432_8_9to29 (was TN_432_8_ge9), TN_468_4_17to29 (was TN_468_4_ge17), TN_496_2_17to30 (was TN_496_2_ge17), TN_504_2_17to34 (was TN_504_2_ge17), TN_540_4_9to34 (was TN_540_4_ge9), TN_576_2_9to37 (was TN_576_2_ge9), TN_612_2_17to40 (was TN_612_2_ge17), TN_648_10_9to32 (was TN_648_10_9to52), TN_648_14_9to28 (was TN_648_14_ge9), TN_684_2_9to29 (was TN_684_2_ge9).
+
+9. Triangular 6.6.6 color-code matrices (GH-156, untiered)
+--------------------------------------------------------
+
+Original clean-room generator scripts/codegen/color666.py and generated
+COLOR_{7,19,127,331,1027,2791}_1_unknown_* matrices, GPL-3.0-or-later.
+No third-party implementation, decoder, matrix data or paper text copied.
+Mathematical construction: H. Bombin and M. A. Martin-Delgado,
+"Topological Quantum Distillation", quant-ph/0605138v3,
+DOI:10.1103/PhysRevLett.97.180501. Honeycomb triangular-patch parameters
+and boundary logicals: K. Sahay and B. J. Brown, "A decoder for the triangular
+color code by matching on a Mobius strip", arXiv:2108.11395v3, Sec. II,
+Fig. 1, Eqs. (1)-(2). Claimed distances use the published family formula;
+DistQLDPC smoke observations are recorded separately. See
+data/matrices/untiered/COLOR666.md and optimization/experiments/GH-156/.
+
+10. Twisted-torus generalized toric / BB matrices (GH-159, untiered)
+----------------------------------------------------------------
+
+Original generator scripts/codegen/twisted_torus.py, independent congruence
+validator and generated BB_{30,120,186,248,294,340}_*_unknown_* matrices,
+GPL-3.0-or-later. No third-party code, matrices or paper text copied.
+Construction and numerical parameters: Z. Liang, K. Liu, H. Song, Y.-A. Chen,
+"Generalized toric codes on twisted tori for quantum error correction",
+arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
+Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
+DistQLDPC observations are recorded separately in the manifest. No external
+distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.

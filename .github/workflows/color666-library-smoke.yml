@@ -1,0 +1,68 @@
+name: Triangular color-code library smoke
+
+on:
+  push:
+    branches: [codex/color666-library]
+    paths:
+      - '.github/workflows/color666-library-smoke.yml'
+      - 'scripts/codegen/color666.py'
+      - 'scripts/codegen/validate_color666.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_color666.py'
+      - 'data/matrices/untiered/COLOR_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Geometry, exact tiny distances and CSS checks
+        run: |
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_color666.py --output /tmp/color-witnesses.json
+          cmp optimization/experiments/GH-156/raw/construction-witnesses.json /tmp/color-witnesses.json
+      - name: Reproduce all 24 new matrix files
+        run: |
+          python3 scripts/codegen/color666.py --ladder --out /tmp/color666-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          rebuilt=list(Path('/tmp/color666-rebuilt').glob('*.txt'))
+          assert len(rebuilt)==24
+          for p in rebuilt:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: all 24 color-code matrices reproduced byte for byte')
+          PY
+      - name: Six default 60-second serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family COLOR --out /tmp/color-default
+      - name: Largest input with pre-pass explicitly disabled
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family COLOR --stems COLOR_2791_1_unknown --ub-pre-off --verbose --out /tmp/color-no-prepass
+      - name: Retain evidence in job logs even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('color-default','color-no-prepass'):
+              root=Path('/tmp')/name
+              print('GH156_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh156-color666-smoke
+          path: |
+            /tmp/color-default/
+            /tmp/color-no-prepass/
+          if-no-files-found: warn
+          retention-days: 14

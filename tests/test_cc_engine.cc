@@ -42,7 +42,9 @@
 //   every UB >= d, LBs monotone <= d. (c) Mutants 11 (finder without the detector check: the driver's verification
 //   must stop the run) and 12 (mutant 11 plus words reported without verification: wrong answers) must fail.
 // Part D (GH-133, MaxSAT path): the production interleaved split driver (min_distance_css_interleaved, -no-card)
-//   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d].
+//   with -oddcap-skip on and off on the Part B codes: RESULT d OPTIMAL = enumeration, bounds within [1, d]. It runs
+//   with the production defaults of the other flags (so also -stab-overlap=auto, the default since GH-148's adoption;
+//   Parts F and G set -stab-overlap explicitly through PreCfg).
 // Part F (GH-144, -ub-pre on the MaxSAT path): the same driver with the verified finder pre-pass on the Part B codes:
 //   budget 1 s (converged pre-pass, U0 = d on almost every code), and pre-passes cut after 1, 2 or 3 finder iterations
 //   (U0 > d on many codes, so Phase 1 FOUND, Phase 2a FOUND and Phase 2b OPT below a seeded U are exercised), with
@@ -58,6 +60,20 @@
 //   finder-only), and mutants 11 / 12 in collision mode (12 = words reported without verification: some answer must be
 //   wrong). Part F: the MaxSAT pre-pass in collision mode (budget 1 s, cut after 2 iterations) and its mutants 1 / 2
 //   (2 must answer wrongly on the codes or on the rotated surface codes).
+// GH-152 (-cc-aut=on, Tanner-graph automorphism candidates): Part G = half level on relabeled planted-shift halves (hidden
+//   symmetry) with orbits from the Tanner generators under the GF(2) checks, all 128 rule subsets x seeds 0..2 vs brute force;
+//   Part H = driver with -cc-aut=on on relabeled hypergraph products (hidden transpose XZ duality) and relabeled random codes;
+//   mutants 13 (candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and 14 (swap map / identity used as dual map
+//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH]]]].
+// Part G (GH-148, -stab-overlap on the MaxSAT path): (a) encoding check: on one row g of weight w = 1..14 with the
+//   objective "maximize the true qubits" (soft clauses x_i), MaxCDCL's optimum must be w - floor(|g|/2) for the
+//   binomial and the sequential-counter encodings and the native MaxCDCL propagator (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
+//   split driver with the overlap constraints on the Part B codes, in configurations without and with -ub-pre (cut
+//   after one finder iteration), the four encodings (auto, bin, seq, native), the per-probe activation (auto ratio 2, ratio 1), -card-mto, -dualmode off/skip, -seed 3, -no-symbreak,
+//   -oddcap-skip off: RESULT d OPTIMAL = enumeration, every UB >= d, LBs monotone <= d; and on rotated surface codes
+//   d = 3..5 (weight-2 boundary stabilizers, the rule binds hard). Mutants (test-only g_stab_overlap_mutant): 1 = limit
+//   floor(|g|/2) - 1 and 2 = the half's parity rows used as g without the GF(2) check must give wrong answers.
+//   Also counted: codes where the constraints remove an element of F of weight <= d + 2 (the rule is not vacuous).
 // GH-157 (rule charge): Part I (a) the bound function on random hitting-set instances (k <= 10 candidate sets over <= 14
 //   qubits, a third of them with every qubit in <= 2 sets) against brute-force tau: charge (with and without the raise)
 //   <= tau, local <= raised, and the early-exit contract (bound(r) > r iff exact bound > r, and then bound(r) <= exact
@@ -249,6 +265,7 @@ static RunOut run_driver(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
 
 // GH-133 Part D: the production MaxSAT split driver (fresh solver per probe, -no-card) with -oddcap-skip off/on
 struct PreCfg { const char* name; double pre; uint64_t iters; bool oddcap; uint64_t seed; int dualmode; bool symbreak; int card; int mutant;
+                int ovl; int ovl_enc; int ovl_mutant; double ovl_ratio;   /* GH-148 (0 = -stab-overlap off) */
                 int isd = 0; int isd_p = 2; };   // GH-146: collision mode of the pre-pass finder
 static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool oddcap, const PreCfg* pc = NULL) {
     RunOut r; r.ok = false; r.d = -2;
@@ -265,6 +282,7 @@ static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
         if (pc) {   // GH-144 Part F
             g_ub_pre = pc->pre; g_ub_pre_max_iters = pc->iters; g_seed = pc->seed; g_ub_pre_mutant = pc->mutant;
             g_ub_isd.isd = pc->isd; g_ub_isd.isd_p = pc->isd_p;   // GH-146 (child process only)
+            g_stab_overlap = pc->ovl != 0; g_stab_overlap_enc = pc->ovl_enc; g_stab_overlap_mutant = pc->ovl_mutant; g_stab_overlap_ratio = pc->ovl_ratio;   // GH-148
             (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], pc->card, pc->symbreak, pc->dualmode, false);
         } else
         (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], 0, true, DUALMODE_SHARE, false);
@@ -333,6 +351,61 @@ static int brute_tau(const std::vector<Mask>& sets, int nq) {
     }
     return best;
 }
+
+// GH-148 Part G (a): optimum of "maximize true qubits" under one overlap row of weight w (forked child; -1 on failure)
+static long long ovl_encoding_opt(int w, int enc) {
+    int fd[2];
+    if (pipe(fd) != 0) { perror("pipe"); exit(2); }
+    fflush(stdout); fflush(stderr);
+    pid_t pid = fork();
+    if (pid == 0) {
+        close(fd[0]);
+        int devnull = open("/dev/null", O_WRONLY);
+        if (devnull >= 0 && !getenv("CC_TEST_VERBOSE")) { dup2(devnull, 1); dup2(devnull, 2); }
+        alarm(60);
+        g_stab_overlap_enc = enc;
+        SimpSolver S;
+        S.setBoundsPipe(-1);
+        S.parsing = true; S.verbosity = 0; S.instanceType = 1;
+        S.hardWeight = (unsigned)(w + 64); S.UB = S.hardWeight; S.initUB = INT32_MAX; S.nbOriVars = w;
+        while (S.nVars() < w) S.newVar();
+        std::vector<Var> aux;
+        OvlRows rows(1);
+        for (int i = 0; i < w; i++) rows[0].push_back(i);
+        long long res = -1;
+        if (enc == 3 || add_overlap_constraints(S, aux, rows)) {
+            bool ok = true;
+            for (int i = 0; ok && i < w; i++) { std::vector<Lit> c(1, mkLit(i)); ok = add_clause_soft_fail(S, c, 1); }
+            if (ok) {
+                S.parsing = false; S.setFrozenVars(); S.eliminate(true);
+                if (enc == 3) S.setOverlapRows(rows, std::vector<int>(1, w / 2), w);   // GH-148 native propagator
+                if (S.okay()) {
+                    vec<Lit> dummy;
+                    S.solveLimited(dummy);
+                    uint64_t opt = S.getLastOptimalCost();
+                    if (opt != UINT64_MAX) res = (long long)opt;
+                }
+            }
+        }
+        char buf[32]; int len = snprintf(buf, sizeof(buf), "%lld\n", res);
+        if (write(fd[1], buf, (size_t)len) < 0) {}
+        _exit(0);
+    }
+    close(fd[1]);
+    char buf[64] = {0}; ssize_t k = read(fd[0], buf, sizeof(buf) - 1); close(fd[0]);
+    int st = 0; waitpid(pid, &st, 0);
+    return k > 0 ? atoll(buf) : -1;
+}
+
+// GH-148: does the overlap rule (rows S, limit floor(|g|/2)) remove some element of F = {H v = 0, G v != 0} of weight <= wmax?
+static bool ovl_removes(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& S, int n, int wmax) {
+    for (Mask v = 1; v < (1u << n); v++) {
+        if (popc(v) > wmax || !in_kernel(H, v) || !detected(G, v)) continue;
+        for (Mask g : S) if (g && popc(g & v) > popc(g) / 2) return true;
+    }
+    return false;
+}
+
 int main(int argc, char** argv) {
     const int NA = argc > 1 ? atoi(argv[1]) : 300;   // part A instances
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
@@ -500,6 +573,7 @@ int main(int argc, char** argv) {
     long b_inst = 0, b_runs = 0, b_bad = 0, b_dual = 0, b_xorb = 0, b_dxdz = 0, b_odd = 0, b_seqbad4 = 0, b_seq = 0, b_lock4bad = 0, b_lock4 = 0;
     long b_traps = 0, d_runs = 0, d_bad = 0, d_odd = 0;
     long f_runs = 0, f_bad = 0, f_above = 0, f_exact = 0, f_m1_runs = 0, f_m1_bad = 0, f_m2_runs = 0, f_m2_wrong = 0;
+    long g_runs = 0, g_bad = 0, g_codes_removing = 0, g_m_runs[3] = {0, 0, 0}, g_m_wrong[3] = {0, 0, 0}, g_m_failed[3] = {0, 0, 0}, g_m_wrong_nat[3] = {0, 0, 0};
     long e_halves = 0, e_bad = 0, e_reach = 0, e_nondet = 0, e_mut11_unit = 0, e_runs = 0, e_dbad = 0, e_aborted = 0, e_mut12_wrong = 0, e_mut_halves = 0;
     // GH-146 collision mode
     static const struct ICfg { const char* name; int isd, p, l, walk, batch, refresh; } icfgs[] = {
@@ -818,7 +892,46 @@ int main(int argc, char** argv) {
                 if (!ok) { f_isd_bad++; fails++; if (f_isd_bad <= 10) fprintf(stderr, "CC_FAIL GH-146 partF inst=%d n=%d cfg=%d: d=%d got %d\n", inst, n, ic, d, r.d); }
             }
         }
+        {   // Part G (GH-148): -stab-overlap on the MaxSAT split driver
+            if (ovl_removes(Hz, Gx, Hx, n, dX + 2) || ovl_removes(Hx, Gz, Hz, n, dZ + 2)) g_codes_removing++;
+            static const PreCfg gcfg[] = {
+                {"ovl", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 0},
+                {"ovl-bin", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 1, 0},
+                {"ovl-seq", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 2, 0},
+                {"ovl-mto", -1.0, 0, true, 0, DUALMODE_SHARE, true, 3, 0, 1, 0, 0},
+                {"ovl-seq-mto-seed3", -1.0, 0, true, 3, DUALMODE_SHARE, true, 3, 0, 1, 2, 0},
+                {"ovl-dual-off", -1.0, 0, true, 0, DUALMODE_OFF, true, 0, 0, 1, 0, 0},
+                {"ovl-dual-skip", -1.0, 0, true, 0, DUALMODE_SKIP, true, 0, 0, 1, 2, 0},
+                {"ovl-nosymbreak", -1.0, 0, true, 0, DUALMODE_SHARE, false, 0, 0, 1, 0, 0},
+                {"ovl-oddcap-off", -1.0, 0, false, 0, DUALMODE_SHARE, true, 0, 0, 1, 1, 0},
+                {"ovl-pre-iter1", 1.0, 1, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 0},
+                {"ovl-pre1s-seq", 1.0, 0, true, 2, DUALMODE_SHARE, true, 0, 0, 1, 2, 0},
+                {"ovl-auto", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 0, 2.0},
+                {"ovl-native", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 0},
+                {"ovl-native-mto-seed4", -1.0, 0, true, 4, DUALMODE_SHARE, true, 3, 0, 1, 3, 0},
+                {"ovl-native-dual-off-nosymbreak", -1.0, 0, false, 1, DUALMODE_OFF, false, 0, 0, 1, 3, 0},
+                {"ovl-native-auto-pre-iter1", 1.0, 1, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 0, 2.0},
+                {"ovl-native-pre1s-ratio1", 1.0, 0, true, 2, DUALMODE_SKIP, true, 0, 0, 1, 3, 0, 1.0},
+                {"ovl-native-mutant1", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 1},
+                {"ovl-native-mutant2", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 2},
+                {"ovl-ratio1-pre-iter1-mto", 1.0, 1, true, 1, DUALMODE_SHARE, true, 3, 0, 1, 0, 0, 1.0},
+                {"ovl-mutant1", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 1},
+                {"ovl-mutant2", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 2},
+            };
+            for (const PreCfg& c : gcfg) {
+                RunOut r = run_maxsat(mHx, mHz, mGx, mGz, c.oddcap, &c);
+                if (c.ovl_mutant) {
+                    g_m_runs[c.ovl_mutant]++;
+                    if (!run_ok(r, d)) g_m_failed[c.ovl_mutant]++;
+                    if (r.ok && r.d != d) { g_m_wrong[c.ovl_mutant]++; if (c.ovl_enc == 3) g_m_wrong_nat[c.ovl_mutant]++; }
+                    continue;
+                }
+                g_runs++;
+                if (!run_ok(r, d)) { g_bad++; fails++; if (g_bad <= 10) fprintf(stderr, "CC_FAIL partG inst=%d n=%d cfg=%s: d=%d got %d\n", inst, n, c.name, d, r.d); }
+            }
+        }
     }
+    // (Part G per-code block is inside the Part B loop above)
     // Part E on rotated surface codes [[d^2, 1, d]] (d = 3, 4; also with X and Z swapped): weight-2 boundary stabilizers
     // are lighter than d, so mutants 11 and 12 must show here; the canonical driver with the finder must stay correct.
     long e_surf = 0, e_surf_bad = 0;
@@ -897,6 +1010,7 @@ int main(int argc, char** argv) {
         }
     printf("partE (rotated surface codes d = 3, 4, X/Z swapped): %ld canonical checks, %ld bad\n", e_surf, e_surf_bad);
     long f_surf = 0, f_surf_bad = 0, f_surf_m2 = 0, f_surf_m2_wrong = 0;
+    long g_surf = 0, g_surf_bad = 0, g_surf_mwrong[3] = {0, 0, 0};
     for (int dd = 3; dd <= 5; dd++) {   // GH-144 Part F on rotated surface codes (weight-2 stabilizers lighter than d)
         const int n = dd * dd;
         if (n > 31) break;
@@ -930,6 +1044,14 @@ int main(int argc, char** argv) {
                 else if (sd >= 3) { f_isd_m2_runs++; if (r.ok && r.d != d) f_isd_m2_wrong++; }
                 else { f_surf_m2++; if (r.ok && r.d != d) f_surf_m2_wrong++; }
             }
+        for (int mt = 0; mt <= 2; mt++)   // GH-148 Part G on the same surface codes
+            for (int enc = 0; enc <= 3; enc++)
+                for (uint64_t sd = 0; sd < 2; sd++) {
+                    PreCfg c = {"surface-ovl", sd ? 1.0 : -1.0, sd ? 1u : 0u, true, sd, DUALMODE_SHARE, true, enc == 2 ? 3 : 0, 0, 1, enc, mt};
+                    RunOut r = run_maxsat(mHx, mHz, mGx, mGz, true, &c);
+                    if (mt == 0) { g_surf++; if (!run_ok(r, d)) { g_surf_bad++; fails++; fprintf(stderr, "CC_FAIL partG surface d=%d enc=%d seed=%llu got %d\n", dd, enc, (unsigned long long)sd, r.d); } }
+                    else { g_m_runs[mt]++; if (!run_ok(r, d)) g_m_failed[mt]++; if (r.ok && r.d != d) { g_m_wrong[mt]++; g_surf_mwrong[mt]++; } }
+                }
     }
     printf("partF (MaxSAT -ub-pre): %ld runs on %ld codes, %ld bad (first UB = d on %ld runs, > d on %ld runs); "
            "mutant 1 %ld runs, %ld bad; surface codes d = 3..5: %ld canonical/mutant-1 runs, %ld bad\n",
@@ -939,6 +1061,23 @@ int main(int argc, char** argv) {
     if (f_above == 0) { fprintf(stderr, "CC_FAIL GH-144 seeded U0 > d never exercised\n"); fails++; }
     if (f_surf_m2_wrong == 0) { fprintf(stderr, "CC_FAIL GH-144 mutant 2 expectations not met\n"); fails++; }
 
+    {   // GH-148 Part G (a): encoding check, and the summary of Part G
+        long enc_runs = 0, enc_bad = 0;
+        for (int w = 1; w <= 14; w++)
+            for (int enc = 1; enc <= 3; enc++) {
+                long long opt = ovl_encoding_opt(w, enc);
+                enc_runs++;
+                if (opt != w - w / 2) { enc_bad++; fails++; fprintf(stderr, "CC_FAIL partG encoding w=%d enc=%d: optimum %lld, want %d\n", w, enc, opt, w - w / 2); }
+            }
+        printf("partG (a) encodings (binomial, sequential counter, native propagator; w = 1..14): %ld checks, %ld bad\n", enc_runs, enc_bad);
+        printf("partG (b) MaxSAT -stab-overlap: %ld runs on %ld codes (%ld codes where the rule removes an element of F of weight <= d + 2), %ld bad; "
+               "surface codes d = 3..5: %ld runs, %ld bad\n", g_runs, b_inst, g_codes_removing, g_bad, g_surf, g_surf_bad);
+        printf("partG mutant 1 (limit floor(|g|/2) - 1): %ld/%ld runs failed, %ld with a wrong RESULT d OPTIMAL (%ld on surface codes, %ld with the native propagator)\n",
+               g_m_failed[1], g_m_runs[1], g_m_wrong[1], g_surf_mwrong[1], g_m_wrong_nat[1]);
+        printf("partG mutant 2 (parity rows of the half as g, unverified): %ld/%ld runs failed, %ld with a wrong RESULT d OPTIMAL (%ld on surface codes)\n",
+               g_m_failed[2], g_m_runs[2], g_m_wrong[2], g_surf_mwrong[2]);
+        if (g_codes_removing == 0 || g_m_wrong[1] == 0 || g_m_wrong[2] == 0 || g_m_wrong_nat[1] == 0) { fprintf(stderr, "CC_FAIL GH-148 mutant/coverage expectations not met\n"); fails++; }
+    }
     printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ, %ld with all-odd Hz), %ld driver runs, %ld bad, %ld RESULT -1\n",
            b_inst, b_dual, b_xorb, b_dxdz, b_odd, b_runs, b_bad, b_traps);
     printf("partD (MaxSAT split, -oddcap-skip off/on): %ld runs on %ld codes (%ld with an all-odd half), %ld bad\n", d_runs, b_inst, d_odd, d_bad);
@@ -957,6 +1096,226 @@ int main(int argc, char** argv) {
     printf("GH-146 MaxSAT pre-pass in collision mode: %ld runs, %ld bad; mutant 1 %ld runs, %ld bad; mutant 2 %ld/%ld runs wrong (codes + surface)\n",
            f_isd_runs, f_isd_bad, f_isd_m1_runs, f_isd_m1_bad, f_isd_m2_wrong, f_isd_m2_runs);
     if (i_mut_trivial == 0 || i_m11_bad == 0 || i_m12_wrong == 0 || f_isd_m2_wrong == 0) { fprintf(stderr, "CC_FAIL GH-146 mutant expectations not met\n"); fails++; }
+
+    // ---------------- GH-152 Part G: half level with hidden symmetry (-cc-aut candidates) ----------------
+    // Random halves as in Part A, closed under a planted shift, then RELABELED by a random permutation rho, so that the
+    // planted map rho g rho^-1 is (in general) not in the GH-75 index family. Orbits come from find_half_symmetry with
+    // the Tanner-graph generators of (H, G) (find_row_automorphisms) as extra candidates under the GF(2) checks. Every
+    // generator must map each row class onto itself (independent set check, rows_map_onto); when the planted map
+    // preserves both row sets and the finder reports a complete group, the planted orbits must lie inside the found
+    // ones. Ladders for all 128 rule subsets x seeds 0..2 vs brute force. Mutant 13 at half level: the generators plus
+    // the cyclic shift i -> i+1 mod n, kept without the GF(2) checks, must give wrong ladders on some instance.
+    const int NG = argc > 3 ? atoi(argv[3]) : 300;
+    const int NH = argc > 4 ? atoi(argv[4]) : 150;
+    long g_inst = 0, g_coarser = 0, aut_g_runs = 0, aut_g_bad = 0, g_badgen = 0, g_inv = 0, g_inv_complete = 0, g_miss = 0;
+    long g_m13_runs = 0, g_m13_bad = 0, g_gens = 0, g_complete = 0;
+    const std::vector<int> idmap = {0, 1}, swapmap = {1, 0};
+    for (int inst = 0; inst < NG; inst++) {
+        const int n = 4 + (int)rnd(15);
+        std::vector<std::vector<int> > gens;
+        {
+            std::vector<int> divs;
+            for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+            const int L = divs[rnd((unsigned)divs.size())];
+            gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+        }
+        std::vector<Mask> h0, g0;
+        const int nh = 1 + (int)rnd((unsigned)(n / 2 + 2)), ng = 1 + (int)rnd(3);
+        for (int k = 0; k < nh; k++) h0.push_back(rand_vec(n, 2, 5));
+        for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+        std::vector<Mask> H = closure(h0, gens, 64), G = closure(g0, gens, 32);
+        if (G.empty()) G.push_back(1u << rnd(n));
+        if (inst % 3 == 0) make_columns_odd(H, n);
+        std::vector<int> rho(n);
+        for (int i = 0; i < n; i++) rho[i] = i;
+        for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+        for (Mask& v : H) v = perm_apply(rho, v);
+        for (Mask& v : G) v = perm_apply(rho, v);
+        std::vector<int> plant(n);
+        for (int q = 0; q < n; q++) plant[rho[q]] = rho[gens[0][q]];
+        const int dh = half_opt(H, G, n);
+        std::vector<Mask> K;
+        {
+            Span sp;
+            for (Mask v = 1; v < (1u << n); v++) {
+                if (!in_kernel(H, v) || detected(G, v)) continue;
+                if (inst % 2 == 0) { if (sp.add(v)) K.push_back(v); }
+                else if (popc(v) <= 6 && K.size() < 60) K.push_back(v);
+            }
+        }
+        const distcc::SparseRows Hr = to_rows(H, n), Gr = to_rows(G, n);
+        const std::vector<const distcc::SparseRows*> cls = {&Hr, &Gr};
+        const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, false);
+        g_inst++; g_gens += (long)ar.gens.size(); if (ar.complete) g_complete++;
+        for (const auto& p : ar.gens)
+            if (!distcc::rows_map_onto(n, cls, p, idmap)) {
+                g_badgen++; fails++;
+                if (g_badgen <= 5) fprintf(stderr, "CC_FAIL GH-152 partG inst=%d: a generator does not preserve the row classes\n", inst);
+            }
+        if (distcc::rows_map_onto(n, cls, plant, idmap)) {
+            g_inv++;
+            if (ar.complete) {
+                g_inv_complete++;
+                std::vector<int> par(n);
+                for (int q = 0; q < n; q++) par[q] = q;
+                for (const auto& p : ar.gens)
+                    for (int q = 0; q < n; q++) { int a = uf_find(par, q), b = uf_find(par, p[q]); if (a != b) par[std::max(a, b)] = std::min(a, b); }
+                for (int q = 0; q < n; q++)
+                    if (uf_find(par, q) != uf_find(par, plant[q])) {
+                        g_miss++; fails++;
+                        fprintf(stderr, "CC_FAIL GH-152 partG inst=%d: complete group misses the planted automorphism\n", inst);
+                        break;
+                    }
+            }
+        }
+        const Matrix mH = to_matrix(H, n), mG = to_matrix(G, n);
+        const HalfSymInfo fam = find_half_symmetry(mH, mG);
+        const HalfSymInfo ext = find_half_symmetry(mH, mG, &ar.gens);
+        if (ext.reps.size() < fam.reps.size()) g_coarser++;
+        const std::vector<int> orb = (int)ext.reps.size() < n ? ext.orbit_of : std::vector<int>();
+        for (int rm = 0; rm < RM_NSUB; rm++)
+            for (uint64_t seed = 0; seed < 3; seed++) {
+                std::string why;
+                aut_g_runs++;
+                if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, 0, NULL, why)) {
+                    aut_g_bad++; fails++;
+                    if (aut_g_bad <= 10) fprintf(stderr, "CC_FAIL GH-152 partG inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rm),
+                                             (unsigned long long)seed, why.c_str());
+                }
+            }
+        if (n >= 2) {   // mutant 13 at half level
+            std::vector<std::vector<int> > bad(ar.gens);
+            std::vector<int> t(n);
+            for (int i = 0; i < n; i++) t[i] = (i + 1) % n;
+            bad.push_back(t);
+            const HalfSymInfo m = find_half_symmetry(mH, mG, &bad, true);
+            const std::vector<int> orbm = (int)m.reps.size() < n ? m.orbit_of : std::vector<int>();
+            for (int rm = 0; rm < RM_NSUB; rm++) {
+                if (!(rm & 4)) continue;
+                std::string why;
+                g_m13_runs++;
+                if (!ladder_ok(H, G, K, n, dh, orbm, rm, 0, 0, NULL, why)) g_m13_bad++;
+            }
+        }
+    }
+    printf("GH-152 partG: %ld relabeled half instances, %ld Tanner generators (%ld complete groups), %ld instances with coarser orbits than the GH-75 family, "
+           "%ld ladder runs (128 rule subsets x 3 seeds), %ld bad; generators violating the row classes %ld; planted map preserved the row sets on %ld "
+           "(%ld with a complete group), missed %ld\n", g_inst, g_gens, g_complete, g_coarser, aut_g_runs, aut_g_bad, g_badgen, g_inv, g_inv_complete, g_miss);
+    if (g_coarser == 0) { fprintf(stderr, "CC_FAIL GH-152 partG: no instance with a hidden symmetry recovered\n"); fails++; }
+
+    // ---------------- GH-152 Part H: driver with -cc-aut=on ----------------
+    // Codes: (a) relabeled hypergraph products HGP(M, M) of a random 2x2 .. 3x3 matrix M (n = 8, 13, 18): the transpose
+    // map exchanges Hx and Hz, hidden by the relabeling; (b) relabeled Part-B-style random CSS codes with a planted
+    // shift. Configurations with -cc-aut=on over rule sets, seeds, dual off, index seeds; RESULT d OPTIMAL = enumeration,
+    // LBs monotone <= d <= UBs. Mutants 13 (generators and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and
+    // 14 (swap map, or the identity, used as dual map without the check) must give wrong answers or stop the run.
+    long h_inst = 0, h_hgp = 0, h_newdual = 0, h_coarser = 0, h_runs = 0, h_bad = 0, h_dxdz = 0;
+    long h_m13_runs = 0, h_m13_bad = 0, h_m14_runs = 0, h_m14_bad = 0, h_badswap = 0;
+    for (int inst = 0; inst < NH; inst++) {
+        const bool hgp = inst % 3 != 2;
+        int n = 0;
+        std::vector<Mask> Hx, Hz;
+        if (hgp) {
+            const int a = 2 + (int)rnd(2), b = 2 + (int)rnd(2);
+            int M[3][3];
+            for (int i = 0; i < a; i++) for (int j = 0; j < b; j++) M[i][j] = (int)rnd(2);
+            n = b * b + a * a;
+            for (int k = 0; k < a; k++)
+                for (int j = 0; j < b; j++) {   // Hx row (k, j)
+                    Mask v = 0;
+                    for (int i = 0; i < b; i++) if (M[k][i]) v |= 1u << (i * b + j);
+                    for (int l = 0; l < a; l++) if (M[l][j]) v |= 1u << (b * b + k * a + l);
+                    if (v) Hx.push_back(v);
+                }
+            for (int i = 0; i < b; i++)
+                for (int l = 0; l < a; l++) {   // Hz row (i, l)
+                    Mask v = 0;
+                    for (int j = 0; j < b; j++) if (M[l][j]) v |= 1u << (i * b + j);
+                    for (int k = 0; k < a; k++) if (M[k][i]) v |= 1u << (b * b + k * a + l);
+                    if (v) Hz.push_back(v);
+                }
+        } else {
+            n = 6 + (int)rnd(11);
+            std::vector<std::vector<int> > gens;
+            std::vector<int> divs;
+            for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+            const int L = divs[rnd((unsigned)divs.size())];
+            gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+            std::vector<Mask> z0;
+            const int mz = 1 + (int)rnd((unsigned)(n / 3 + 1));
+            for (int k = 0; k < mz; k++) z0.push_back(rand_vec(n, 2, 5));
+            Hz = closure(z0, gens, 48);
+            std::vector<Mask> ker;
+            for (Mask v = 1; v < (1u << n); v++) if (popc(v) <= 6 && in_kernel(Hz, v)) ker.push_back(v);
+            const int mx = 1 + (int)rnd((unsigned)(n / 3 + 1));
+            std::vector<Mask> x0;
+            for (int k = 0; k < mx && !ker.empty(); k++) x0.push_back(ker[rnd((unsigned)ker.size())]);
+            Hx = closure(x0, gens, 48);
+            std::vector<Mask> keep;
+            for (Mask v : Hx) if (in_kernel(Hz, v)) keep.push_back(v);
+            Hx = keep;
+        }
+        if (Hx.empty() || Hz.empty()) { inst--; continue; }
+        std::vector<int> rho(n);
+        for (int i = 0; i < n; i++) rho[i] = i;
+        for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+        for (Mask& v : Hx) v = perm_apply(rho, v);
+        for (Mask& v : Hz) v = perm_apply(rho, v);
+        std::vector<Mask> Gx = quotient_basis(Hx, Hz, n), Gz = quotient_basis(Hz, Hx, n);
+        if (Gx.empty() || Gz.empty() || Gx.size() != Gz.size()) { inst--; continue; }
+        const int dX = half_opt(Hz, Gx, n), dZ = half_opt(Hx, Gz, n);
+        const int d = std::min(dX, dZ);
+        if (dX != dZ) h_dxdz++;
+        h_inst++; if (hgp) h_hgp++;
+        const Matrix mHx = to_matrix(Hx, n), mHz = to_matrix(Hz, n), mGx = to_matrix(Gx, n), mGz = to_matrix(Gz, n);
+        {   // diagnostics: new dual maps and coarser orbits that -cc-aut brings on this code
+            const distcc::SparseRows rx = to_rows(Hx, n), rz = to_rows(Hz, n);
+            const std::vector<const distcc::SparseRows*> cls = {&rx, &rz};
+            const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, true);
+            if (!ar.swap.empty() && !distcc::rows_map_onto(n, cls, ar.swap, swapmap)) {
+                h_badswap++; fails++; fprintf(stderr, "CC_FAIL GH-152 partH inst=%d: swap map does not exchange the row classes\n", inst);
+            }
+            const DualMapInfo fdm = find_dual_maps(mHx, mHz, mGx, mGz, false);
+            if (fdm.maps.empty() && !ar.swap.empty() && verify_dual_perm(mHx, mHz, mGx, mGz, ar.swap, fdm))
+                h_newdual++;
+            if (find_half_symmetry(mHz, mGx, &ar.gens).reps.size() < find_half_symmetry(mHz, mGx).reps.size()) h_coarser++;
+        }
+        struct HCfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int mutant; };
+        const HCfg cfgs[] = {
+            {"aut", RM_NEW, true, false, 0, true, 0}, {"aut-seed1", RM_NEW, true, false, 1, true, 0},
+            {"aut-dual-off", RM_NEW, false, false, 0, true, 0}, {"aut-no-symbreak", RM_NEW, true, false, 0, false, 0},
+            {"aut-oldrules", RM_OLD, true, false, 0, true, 0}, {"aut-133-seed2", RM_133, false, true, 2, true, 0},
+            {"aut-mrv", RM_ALL, true, false, 0, true, 0}, {"aut-overlap-only", 64, true, false, 0, true, 0},
+            {"aut-orbf-only", 4, true, true, 3, true, 0}, {"aut-excl-orbf", 1 | 4, false, false, 0, true, 0},
+            {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
+            {"mutant14", RM_NEW, true, false, 0, true, 14},
+        };
+        for (const HCfg& c : cfgs) {
+            distcc::DriverOptions o;
+            o.ub_search = false;
+            o.aut = true;
+            o.rules = rules_of(c.rmask);
+            o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed; o.mutant = c.mutant;
+            RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
+            const bool ok = run_ok(r, d);
+            if (c.mutant == 13) { h_m13_runs++; if (!ok) h_m13_bad++; continue; }
+            if (c.mutant == 14) { h_m14_runs++; if (!ok) h_m14_bad++; continue; }
+            h_runs++;
+            if (!ok) {
+                h_bad++; fails++;
+                if (h_bad <= 10) fprintf(stderr, "CC_FAIL GH-152 partH inst=%d n=%d cfg=%s: d=%d (dX %d dZ %d) got %d\n", inst, n, c.name, d, dX, dZ, r.d);
+            }
+        }
+    }
+    printf("GH-152 partH: %ld relabeled codes (%ld hypergraph products, %ld with dX != dZ), %ld gain a verified dual map only through -cc-aut, "
+           "%ld gain coarser X-half orbits; %ld driver runs with -cc-aut=on, %ld bad; swap maps violating the classes %ld\n",
+           h_inst, h_hgp, h_dxdz, h_newdual, h_coarser, h_runs, h_bad, h_badswap);
+    printf("mutant 13 (Tanner candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks): half level %ld/%ld ladders wrong; driver %ld/%ld runs wrong or stopped\n",
+           g_m13_bad, g_m13_runs, h_m13_bad, h_m13_runs);
+    printf("mutant 14 (Tanner swap map, or the identity, used as dual map without the GF(2) check): driver %ld/%ld runs wrong or stopped\n",
+           h_m14_bad, h_m14_runs);
+    if (h_newdual == 0 || h_coarser == 0) { fprintf(stderr, "CC_FAIL GH-152 partH: the new dual-map / orbit paths were not exercised\n"); fails++; }
+    if (g_m13_bad == 0 || h_m13_bad == 0 || h_m14_bad == 0) { fprintf(stderr, "CC_FAIL GH-152 mutant expectations not met\n"); fails++; }
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);

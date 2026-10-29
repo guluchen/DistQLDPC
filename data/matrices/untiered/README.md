@@ -1,9 +1,11 @@
-# Untiered repetition-product HGP library
+# Untiered matrix library
 
-The untiered library also includes the separate
-[nonzero-rate cycle-factor HGP batch](CYCLE_HGP.md), GH-154. The shared
-MANIFEST.csv and validation.json cover both batches; the table below describes
-the original repetition-factor batch only.
+The library contains [repetition-factor HGP codes](#construction-and-distance-provenance) (GH-153),
+[nonzero-rate cycle-factor HGP codes](CYCLE_HGP.md) (GH-154),
+[triangular 6.6.6 color codes](COLOR666.md) (GH-156), and
+[twisted-torus generalized toric/BB codes](TWISTED_TORUS.md) (GH-159). The shared MANIFEST.csv
+and validation.json cover all batches. The table below describes the original
+repetition-factor HGP batch only.
 
 Issue: [GH-153](https://github.com/guluchen/DistQLDPC/issues/153).
 Proposed prefix: **HGP**. All six codes have k=1; stems retain `unknown`
@@ -20,7 +22,7 @@ until DistQLDPC evidence and PI naming approval are available.
 
 The small cases provide correctness anchors; the larger cases form a scaling
 ladder. These are the surface-code specialization of the HGP family, with
-vanishing rate. Non-repetition, finite-rate HGP targets remain future work.
+vanishing rate. Nonzero-rate cycle-factor HGP codes are documented separately above.
 These files do not enter the existing tier suites or the QDistSAT mirror.
 Run by path, e.g. `./bin/distqldpc -cpu-lim=60 data/matrices/untiered/HGP_13_1_unknown`.
 
