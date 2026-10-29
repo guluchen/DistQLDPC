@@ -1,0 +1,166 @@
+{
+  "same_nk": true,
+  "direct_rowspace": false,
+  "swapped_rowspace": false,
+  "coordinate_maps_tested": 288,
+  "verified_physical_map": null,
+  "arbitrary_column_equivalence": "UNRESOLVED_NOT_PROVED_INEQUIVALENT",
+  "source_case": {
+    "id": "D1-peer-only",
+    "r": 3,
+    "s": 5,
+    "n": 90,
+    "k": 8,
+    "A1": [
+      [
+        3,
+        2,
+        1
+      ],
+      [
+        4,
+        1,
+        4
+      ],
+      [
+        1,
+        2,
+        3
+      ]
+    ],
+    "A2": [
+      [
+        3,
+        3,
+        0
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        4,
+        2,
+        0
+      ]
+    ],
+    "published_estimate": 10,
+    "reference_lower": 1,
+    "reference_upper": 10,
+    "generic_ring_upper": 10
+  },
+  "actual_construction": {
+    "stem": "LP_90_8_unknown",
+    "n": 90,
+    "k": 8,
+    "rank_Hx": 41,
+    "rank_Hz": 41,
+    "rank_pairing": 8,
+    "checks": "PASS",
+    "parameter_sha256": "0d1daf3ee5daa78cd76f5a97e4b2bc8206a74f73b5ca091d0ca30a0e06891aee",
+    "classical": [
+      {
+        "prime": 5,
+        "exponent_rank": 3,
+        "actual_binary_rank": 13,
+        "actual_classical_dimension": 2
+      },
+      {
+        "prime": 5,
+        "exponent_rank": 3,
+        "actual_binary_rank": 13,
+        "actual_classical_dimension": 2
+      }
+    ],
+    "independent_source_columns": true,
+    "spoke_major_tensor_pullback": true,
+    "typed_physical_rowspace_connected": true,
+    "cyclic_spoke_automorphism": true,
+    "source_rank_statement_qualified": true,
+    "published_exact": null,
+    "published_estimate": 10,
+    "reference_upper": 10,
+    "generic_ring_upper": 10,
+    "independent_overall_upper": 10,
+    "independently_checked_uppers": [
+      {
+        "half": "X",
+        "basis": "computed quotient basis; upper only",
+        "weight": 10,
+        "support": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      {
+        "half": "Z",
+        "basis": "computed quotient basis; upper only",
+        "weight": 10,
+        "support": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          15,
+          16,
+          17,
+          18,
+          19
+        ]
+      },
+      {
+        "half": "X",
+        "basis": "independent complete ring-pair word",
+        "weight": 10,
+        "support": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          10,
+          11,
+          12,
+          13,
+          14
+        ]
+      },
+      {
+        "half": "Z",
+        "basis": "independent complete ring-pair word",
+        "weight": 10,
+        "support": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          30,
+          31,
+          32,
+          33,
+          34
+        ]
+      }
+    ]
+  },
+  "source_input_sha256": {
+    "Hx": "6daf834ecaf11a35a98ec1a1ccc63fc7664da1d9f217e009952c6a09a9e88460",
+    "Hz": "6a47a54025fc38d73a82dec1d7ff90ed706d791c2c747e9be198f4ebcaccd5e7",
+    "Gx": "f392d607f6b4a558e81140ee8300121902860781a9637b7ce3dfdb2b11521de9",
+    "Gz": "20637c424088a23f51152c34d4129b28d8432fa31c88f4da7de10b10a9fc2188"
+  },
+  "peer": "data/matrices/tier0/BB_90_8_10",
+  "benchmark_added": false,
+  "policy": "No duplicate/suspected copy added; source90 is comparison-only, not rejected after distance screening"
+}

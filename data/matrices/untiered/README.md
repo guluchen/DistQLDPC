@@ -130,3 +130,16 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Quantum radial LP prescription (GH-193)
+
+Four [radial LP inputs](RADIAL.md), n352/928/1504/2528,k18, add one published
+estimated-distance reference and three fixed original modulus cases.
+Independent source columns/spoke-major pullback/classical hypotheses AND
+actual binary ranks/full logicals/GF2/typed physical space and ring upper
+words22/58/94/158 pass. No inherited exact/growth/single-shot claim.
+51units/16matrix byte reproduction pass; Linux/source352 word20 pending.
+Source90 remains peer-review-only because BB_90_8_10 exists and arbitrary
+column equivalence is unresolved. No duplicate copy. No same(n,k) peers for
+the four added cases across32pinned refs; prior24rows/300matrices preserved.
+This branch28untiered/79total; heavy gates become unexecuted server jobs.

@@ -438,3 +438,26 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+## Library-only radial ring-pair upper certificates (GH-193)
+
+This changes no solver/pruning/default rule. For the finite radial lift
+Hx=[H1 tensor I | I tensor H2], Hz=[I tensor H2* | H1* tensor I], let r>=2,
+s odd and every base entry a cyclic permutation. In the left physical half,
+choose X support with first base coordinate0, second coordinate in{0,r-1},
+and all s spokes; choose Z support with first coordinate in{0,r-1}, second
+coordinate0, and all spokes. Every relevant parity row meets either0or2
+of the respective support: permutations preserve complete rings. Therefore
+X lies in kerHz and Z in kerHx. Their physical intersection is precisely
+one full ring, with odd size s, so X.Z=1. An Hx row combination would pair
+zero with Z in kerHx, and an Hz row combination zero with X in kerHz;
+thus both words are nontrivial and have weight2s, proving each-half upper2s.
+This is only an upper certificate, never a distance lower bound/exact value.
+
+Original implementation from Scruby–Hillmann–Roffe2406.14445v2 Eq8/SecIII,
+credited in NOTICE; no author code/prose copied. Independent actual-column/
+spoke-order pullbacks, full kernels/quotients/detectors/odd pairing verify
+materialized supports;25random tiny lifts and wrong-source/logical/rank/
+entry/transpose/actual-word mutants exercise the hypotheses. Sourcev2's
+classical rank qualification is retained and actual ranks checked separately.
+No published numerical estimate20 transferred to original changed moduli.
