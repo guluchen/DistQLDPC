@@ -73,21 +73,29 @@ std::vector<std::vector<int> > pair_sums(const std::vector<std::vector<int> >& s
     std::vector<std::vector<uint32_t> > rows_of((size_t)n);
     for (size_t r = 0; r < m; r++)
         for (size_t t = 0; t < src[r].size(); t++) rows_of[(size_t)src[r][t]].push_back((uint32_t)r);
-    std::vector<uint64_t> pairs;
-    for (int q = 0; q < n; q++)
-        for (size_t i = 0; i < rows_of[q].size(); i++)
-            for (size_t j = i + 1; j < rows_of[q].size(); j++)
-                pairs.push_back((uint64_t)rows_of[q][i] * (uint64_t)m + rows_of[q][j]);
-    std::sort(pairs.begin(), pairs.end());
-    pairs.erase(std::unique(pairs.begin(), pairs.end()), pairs.end());
+    /* overlap counts |a & b| for every later row b sharing a qubit with a (no allocation per pair); only pairs with
+     * |a| + |b| - 2 |a & b| <= max(|a|, |b|) build their sum */
     std::vector<std::pair<std::vector<int>, uint64_t> > cand;
-    for (size_t t = 0; t < pairs.size(); t++) {
-        const std::vector<int>& a = src[(size_t)(pairs[t] / m)];
-        const std::vector<int>& b = src[(size_t)(pairs[t] % m)];
-        std::vector<int> r = sym_diff(a, b);
-        if (r.empty() || r.size() > std::max(a.size(), b.size())) continue;
-        if (std::binary_search(src.begin(), src.end(), r)) continue;
-        cand.push_back(std::make_pair(r, pairs[t]));
+    std::vector<int> cnt(m, 0);
+    std::vector<uint32_t> touched;
+    for (size_t a = 0; a < m; a++) {
+        touched.clear();
+        for (size_t t = 0; t < src[a].size(); t++) {
+            const std::vector<uint32_t>& rs = rows_of[(size_t)src[a][t]];
+            for (size_t i = 0; i < rs.size(); i++)
+                if (rs[i] > a) { if (cnt[rs[i]]++ == 0) touched.push_back(rs[i]); }
+        }
+        std::sort(touched.begin(), touched.end());
+        for (size_t i = 0; i < touched.size(); i++) {
+            const uint32_t b = touched[i];
+            const size_t wa = src[a].size(), wb = src[b].size();
+            const size_t ws = wa + wb - 2 * (size_t)cnt[b];
+            cnt[b] = 0;
+            if (ws == 0 || ws > std::max(wa, wb)) continue;
+            std::vector<int> r = sym_diff(src[a], src[b]);
+            if (std::binary_search(src.begin(), src.end(), r)) continue;
+            cand.push_back(std::make_pair(r, (uint64_t)a * (uint64_t)m + b));
+        }
     }
     std::sort(cand.begin(), cand.end(), [](const std::pair<std::vector<int>, uint64_t>& x, const std::pair<std::vector<int>, uint64_t>& y) {
         if (x.first.size() != y.first.size()) return x.first.size() < y.first.size();

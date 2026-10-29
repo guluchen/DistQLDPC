@@ -105,6 +105,21 @@ Modified files (partial list): Solver.h, Solver.cc
   read, copied or linked. Every candidate is accepted only after
   DistQLDPC's own GF(2) checks (GH-75/GH-85/GH-87).
 
+  The CC rules "sparse", "sparseov" and "sparsemrv" (GH-181, opt-in)
+  add redundant parity rows (sparse sums of two rows of the half's
+  parity matrix, and of two stabilizer rows for the overlap rule). The
+  idea of redundant pair-XOR checks is from Qubitserf
+  (https://github.com/Quantinuum/Qubitserf, commit 04b9349,
+  augment_sparse_checks, Copyright (c) 2026 Serban Cercelescu and the
+  qubitserf contributors, MIT License); the classical precursor is
+  M. Puchert and A. M. Tillmann, "Exact separation of forbidden-set
+  cuts associated with redundant parity checks of binary linear
+  codes", arXiv:2004.03387. The rule "xorunit" (GH-181, opt-in) is a
+  forced-unit step in the style of K. Okada and K. Kasai's
+  cpm-ldpc-distance. All were re-derived from the mathematics and
+  implemented from scratch; no third-party code was copied
+  (MODIFICATIONS.md, GH-181).
+
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
 substantial portions, per the MIT license.

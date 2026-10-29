@@ -42,7 +42,7 @@ Optional engine, off by default (PI 2026-10-16): enable with `-engine=cc` (or `-
 
 | File | Description |
 |------|-------------|
-| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut). |
+| `cc_half.h`, `cc_half.cc` | Exact connected-cluster (CC) level search for one CSS half (Dumer, Kovalev, Pryadko 2017): clusters grown from a seed along one odd parity row at a time; syndrome-free clusters below the level are dead ends (a nontrivial one is reported as an inconsistency); rules `excl` (sibling exclusion), `pack` (disjoint odd-row packing bound), `orbf` (orbit seeds from the GH-85 verified per-half orbits, replacing the index rule), `mrv` (fewest-candidate branching), `parity` (GH-133: odd levels skipped on a half whose column weights are all odd; per-node parity check), `leaf` (GH-133: Zobrist hash from column to qubit; the closing qubit is looked up at budget 1, and at budget 2 each candidate is completed by one lookup), `overlap` (GH-138: a minimum logical meets every same-type stabilizer row g in at most floor(\|g\|/2) qubits; incremental counters, the rest of a tight row is forbidden); uint64 bitsets with an incremental syndrome; `-cc-seed` relabeling; test-only mutants 1-3 (1 forbidden set not restored, 2 packing prune `>=`, 3 orbit seed rule off by one) and 5-7 (5 parity forced on a half with an even column weight, 6 leaf budget off by one, 7 leaf closure without the detector check) and 8-10 (GH-138: 8 overlap limit off by one, 9 parity checks used as stabilizer rows, 10 even-weight tie cut); GH-181 opt-in rules `sparse`, `sparseov`, `sparsemrv` (redundant pair-sum rows in pack / overlap / branching) and `xorunit` (unit propagation), mutants 19-21. |
 | `cc_ubsearch.h`, `cc_ubsearch.cc` (GH-140, GH-146) | Randomized low-weight logical finder for one CSS half (`-ub-search`): random information sets (random column order, Gauss-Jordan elimination of H with pivots in that order, systematic kernel basis), words of 1-2 (optionally 3) systematic basis vectors below a weight threshold, detector check (G c != 0), greedy local improvement by same-type stabilizer rows; deterministic per seed; test mutant 11 (no detector check and no improvement). GH-146 collision mode (`-ub-isd`): Stern / Dumer collision step with Canteaut-Chabaud pivot swaps (`cc_swap`, `isd_round`, `iterate_isd`), parser `parse_isd`. |
 | `cc_aut.h`, `cc_aut.cc` (GH-152) | Candidate automorphisms for `-cc-aut=on`: colour refinement to the coarsest equitable partition of the coloured Tanner graph (qubits, rows of each class), individualisation of one vertex and lockstep refinement of a source and a target partition (McKay 1981, written from the published description), backtracking over the first non-singleton cell, edge-checked vertex maps; orbit computation by union-find from the first vertex of the smallest qubit cell (complete when that vertex's point stabiliser is trivial), one class-exchanging (swap) map; deterministic work counters. Candidates only: every map is GF(2)-verified by the wrapper before use. |
 | `cc_driver.h`, `cc_driver.cc` | Driver: start-up detector check (rank[H;G] + rank S = n and commutation), both halves interleaved level by level (cheaper half first) or one half under a verified XZ-dual map, stop rule (a hit at level w ends the run once the other half's lower bound is >= w), anytime `TRY`/`LB`/`UB`/`RESULT` lines, witness verification (H e = 0, independent GF(2) rank test against the same-type stabilizers, dual image check), its own check of the XZ-dual map (pi(rs Hz) = rs Hx and pi(rs Hx) = rs Hz), always-on traps (`RESULT -1 TRAP`, never a value; earlier bounds withdrawn), optional `-ub-basis`, `-cc-trace`, `-cc-stats`; test-only sequential schedule (`-cc-schedule=sequential`) and driver mutant 4 (stop rule without the other half's lower bound, run under the sequential schedule). |
@@ -301,6 +301,56 @@ candidates plus the cyclic shift i -> i+1 mod n kept without the GF(2) checks) m
 stopped driver runs. Mutant 14 (the swap map, or the identity when none was found, used as dual map without the check)
 must give wrong or stopped driver runs. `make test-cc-flags`: values, conflicts, `-v` lines (also without the flag, the default), no output with `-cc-aut=off`.
 *Evidence.* `optimization/experiments/GH-152/REPORT.md`.
+
+GH-181 (`sparse`, `sparseov`, `sparsemrv`, `xorunit` in `-cc-rules`, all default off; `src/cc/cc_half.{h,cc}`, token parsing
+and `-v` / `-cc-stats` lines in `cc_driver.cc`). *Credit.* Redundant pair-XOR checks: Qubitserf
+(github.com/Quantinuum/Qubitserf, commit 04b9349, `augment_sparse_checks`, S. Cercelescu, MIT; idea only, no code was read
+into or copied into DistQLDPC); the classical precursor is the forbidden-set inequality from redundant parity checks of
+M. Puchert and A. M. Tillmann (arXiv:2004.03387). Forced unit: Okada and Kasai, cpm-ldpc-distance. Implemented from the
+mathematics below.
+
+*Setting.* A half with F = {v : H v = 0, G v != 0} and stabilizer rows K (H g = 0, G g = 0), level w with the precondition
+that F has no element of weight < w. Every rule of cc_half.h keeps one chosen weight-w element e* of F reachable: at every
+visited node S on the path to e*, S is a subset of e* and no forbidden qubit lies in e*.
+
+*Lemma 1 (redundant rows).* Let r = h1 + h2 for rows h1, h2 of H. For every v in ker H, r.v = h1.v + h2.v = 0. Hence for
+a node S and any e in ker H containing S, r.(e \ S) = r.S. If r is odd on S, e \ S meets r. Proof: linearity over GF(2).
+
+*Consequences (sparse).* (a) Packing: if odd rows u_1..u_p (of H or R) have pairwise disjoint sets of free qubits, each
+needs its own qubit of e* \ S (Lemma 1, and e* has no forbidden qubit), so |S| + p <= w; the scan order of the greedy
+selection does not matter for soundness (weight classes, lightest first). (b) An odd row of R without a free qubit: no
+such e* exists. (c) Branching on an odd row of R (`sparsemrv`, or `mrv`): e* \ S meets it, so the first candidate in
+branch order that lies in e* is kept by sibling exclusion, exactly as for a row of H. (d) The rows of R are not used
+where the rows of H themselves are needed: syndrome-freeness (H S = 0 iff R S = 0 too, but nodd counts H only), the
+parity rule (column weights of H), the leaf lookup (columns of H), and overlap (rows of H are stabilizers of the other
+type, not elements of ker H: that is test mutant 9).
+
+*Lemma 2 (sparseov).* For stabilizer rows g1, g2 in K, g = g1 + g2 satisfies H g = 0 and G g = 0, so e + g is in F for
+every e in F and the GH-138 argument (|e & g| <= floor(|g|/2) for every minimum-weight e) holds with g's own limit. The
+added rows are checked with the same H g = 0 / G g = 0 test as K's rows.
+
+*Lemma 3 (xorunit).* Let u be a row of H or R with exactly one free qubit q at node S, and e in ker H with S a subset of
+e and no forbidden qubit in e. (a) If u.S = 0 then u.(e \ S) = 0 and (e \ S) & u is a subset of {q}, hence q is not in
+e: forbidding q for the subtree keeps every such e, in particular e*, so all other rules' arguments are unchanged and
+the forbids chain with excl, orbf and the overlap forbids. (b) If u.S = 1, q is in e, and branching on u (one child)
+is complete by (c) above. (c) An odd row with no free qubit has no such e.
+
+*Construction checks.* Every redundant row is recomputed from its two parents before use (`pair_sums`); the added
+stabilizer rows go through K's H g = 0 / G g = 0 check. Pair sums are taken only over pairs sharing a qubit with
+0 < |r| <= max(|h1|, |h2|), deduplicated against the source rows and each other, at most 4 x (number of source rows),
+lightest first. Rows are added on TN_200_10_10, TN_250_10_15, TN_496_2_23to30 and on the tier-0 codes LP_34_20_2,
+TN_36_8_3, TN_54_11_4, TN_72_14_4; on every other bundled code no row qualifies.
+
+*Identity.* With the tokens off, and on every half where they add nothing (no redundant row, no added stabilizer row,
+no `xorunit`), the search runs the pre-GH-181 instantiation of the node functions (template parameter E = false).
+`-v` / `-cc-stats` lines appear only with the tokens. Identity verified on tier0+1 (both engines).
+
+*Tests.* `make test-cc` Part X: random halves (planted shifts, all-odd columns, a TN-like third with heavily overlapping
+rows), 128 base rule subsets x 15 non-empty subsets of the GH-181 tokens, ladders checked against enumeration with
+witnesses checked in GF(2). Mutants that must change answers: 19 (every redundant row has one qubit removed: not in the
+row space of H), 20 (xorunit branches on an even row with one free qubit instead of forbidding the qubit), 21 (sparseov
+pair sums taken from H instead of K, without the check). Part B adds driver configurations with the tokens.
+*Evidence.* `optimization/experiments/GH-181/` and PR for issue #181.
 
 GH-148 (`-stab-overlap=off|on|auto`, split MaxSAT path, `src/core/distqldpc.cc`; default `auto` since the PI's adoption decision, `off` = the previous search). *What it adds.* Extra
 hard constraints in the half instance of `build_css_half`: for each verified row g, |x & g| <= floor(|g|/2). *Why every
