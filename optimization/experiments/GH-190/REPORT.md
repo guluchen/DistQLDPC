@@ -1,6 +1,6 @@
 # GH-190: static X-cube finite CSS ladder
 
-Status: LOCAL_CONSTRUCTION_AND_DISJOINT_CERTIFICATE_PASS; Linux pending.
+Status: LINUX_AND_FINITE_SCIENTIFIC_CROSS_CHECK_PASS; one MaxSAT numeric gate INCOMPLETE.
 Issue https://github.com/guluchen/DistQLDPC/issues/190; hub6503758090.
 Branch codex/xcube-library, remotely verified main6083e662c621f3b66defd434cfae31a028d483c4.
 No PR/main integration. Prior records throughGH189/coverage/literature read;
@@ -81,15 +81,65 @@ Heavy completion becomes frozen unexecuted6hCPU+600swall/4GiB/defaultseed/
 verbose/pinned serial yfclab2 jobs requiring PI-allocated confirmed-free
 core/nohup/nullstdin. No core allocation/server job/paid-cloud substitute.
 
+## Terminal Linux evidence
+
+Source85ae9e5b17da83f84e3a47249b5e20a36e6d12bb,
+tree877b70362a1f95694e03a98200c2dfdefb24e6bc;
+data260d1cbd4cafd637c3fd0968aa16cc4a41815919.
+[Library run40922592722](https://github.com/guluchen/DistQLDPC/actions/runs/40922592722),
+job123619530261 completed SUCCESS. Ordinary source CI40922592501,
+job123619528840 also completed SUCCESS. Build unchanged; binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+
+50units, full independent physical/logical/disjoint-coset construction and
+inventory comparisons,16matrix+4fullcertificate byte regeneration all PASS.
+The workflow above fixes exact generation/test/smoke/audit commands. Both
+engines ran once per case, defaultseed0,serial60sCPU/90swall/4GiB/pinned
+allocated runner CPU;12min job cap. Shared timings are not a performance
+claim; no repeated seeds/medians/tier adoption applicable to data collection.
+
+| stem | MaxSAT raw60s | CC raw60s | independent both-half finite exact | numeric gate |
+|---|---|---|---:|---|
+|XCB_81_15_unknown|3|3|3|PASS|
+|XCB_375_27_unknown|5|5|5|PASS|
+|XCB_1029_39_unknown|7|7|7|PASS|
+|XCB_2187_51_unknown|no numeric fields|9|9|INCOMPLETE|
+
+All4 finite exact conclusions have independent complete lower certificates,
+actual GF2 logical words and complete CC results; first3 also complete
+MaxSAT. No contradiction. Largest missing raw MaxSAT fields remain empty;
+never substitute CC/certificate results for CLI evidence. Materialized
+independent X/Z words3/5/7/9 and printed MaxSAT words3/5/7 all verify.
+Scientific proof status and numeric reporting completeness are distinct.
+
+Durable raw/actions/default/job.log retains the complete fetched job log;
+22engine files (4logs+4metadata+environment+results+DONE per engine),
+audit.json and original full finite certificates retained. Local replay:
+```
+python3 scripts/codegen/audit_xcube_smoke.py --maxsat optimization/experiments/GH-190/raw/actions/default/xcube-maxsat --cc optimization/experiments/GH-190/raw/actions/default/xcube-cc --construction optimization/experiments/GH-190/raw/construction.json --out /tmp/gh190-audit-replay.json
+cmp /tmp/gh190-audit-replay.json optimization/experiments/GH-190/raw/actions/default/audit.json
+```
+PASS byte-identical, no solver invocation on Mac. One defaultseed0/verbose
+MaxSAT n2187 numeric job frozen in runner/jobs.jsonl. Reference9 is an actual
+GF2 upper word.6hCPU/6h10mwall/4GiB are configured LIMITS, not ETA. No
+independent scientific lower job needed. No core allocated/server execution.
+Dry-run plus Mac/altered-argv guards pass without solver/output directory;
+CPU54 is syntax only, not a resource claim. PI-allocated confirmed-free
+yfclab2 core required for execution; no repeat scientific CI to hide timeout.
+
 ## Completion fields
 
-What changed:4 reproducible static X-cube inputs, full independent physical/
-logical/disjoint-coset certificates, written source/soundness and Linux gates.
-Validation performed:50local units/full actual columns/ranks/logicals/words/
-cosets/typed space/inventory/peers and first-case byte reproduction.
-Results: both-half finite lower/upper3/5/7/9; Linux comparison pending.
-Unresolved: Linux/numeric/scientific gates; prior jobs/APM source hold and
-stronger certified-expander/cosheaf hypotheses/practicality/PI integration.
+What changed:4 reproducible static X-cube inputs, independent physical/
+logical/disjoint-coset certificates, source/soundness, durable Linux evidence
+and one frozen numeric completion job. Next-source notes prioritize published
+unconfirmed intervals under the PI's latest library direction.
+Validation performed:50units, full actual columns/ranks/logicals/words/
+cosets/typed space/inventory/peers;16matrix+4certificate byte reproduction;
+8 bounded Linux attempts and byte-identical actual-word audit replay.
+Results: both-half finite exact3/5/7/9 cross-checked; first3 MaxSAT exact,
+CC all4 exact; largest MaxSAT numeric INCOMPLETE.
+Unresolved: one numeric job; previous packages/APM interpretation hold,
+stronger certified-expander/cosheaf hypotheses/practicality; PI integration.
 Scientific semantics changed:no.
 PI action required:yes for integration/names/tiers/server allocation or
-previous APM interpretation; routine validation continues.
+previous APM interpretation. Routine safe collection/research continues.

@@ -63,8 +63,14 @@ python3 scripts/codegen/validate_css.py --output data/matrices/untiered/validati
 16new+34prior units pass. Missing/duplicate quotient detectors, insufficient
 representatives, overlap, wrong coset, source edge, logical/hash/stabilizer
 mutants and5tiny random physical relabels exercise the proof hypotheses.
-First4matrix+1fullcert regeneration passes. Full16matrix+4certificate byte
-reproduction and4case MaxSAT+CC serial60sCPU/90swall/4GiB/defaultseed/pinned
-allocated Linux CPU checks pending,12min cap. Heavy unfinished work becomes
-unexecuted yfclab2 packages requiring PI allocation. No solver/scientific
+Linux run40922592722/job123619530261 passes all50units, full independent
+construction/inventory,16matrix+4fullcertificate byte reproduction and
+4case MaxSAT+CC serial60sCPU/90swall/4GiB/defaultseed/pinned allocated CPU.
+Both engines solve3/5/7; CC solves9. MaxSAT n2187 emits no numeric fields:
+retain TIMEOUT_NO_BOUNDS/numeric INCOMPLETE, not certificate-filled CLI data.
+All4 finite exact conclusions are cross-checked by complete independent
+both-half disjoint-coset proofs, actual GF2 words and CC. Only one required
+MaxSAT numeric completion job is frozen unexecuted in GH-190/runner.
+Full logs/22engine files/audit retained; local audit replay is byte-identical.
+Server allocation required before execution. No solver/scientific
 support search on Mac; no solver/default/tier/name/main/QDistSAT/PR change.

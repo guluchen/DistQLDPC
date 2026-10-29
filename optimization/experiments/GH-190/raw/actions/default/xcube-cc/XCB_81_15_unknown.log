@@ -1,0 +1,66 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/XCB_81_15_unknown_Hx.txt
+c Hz: data/matrices/untiered/XCB_81_15_unknown_Hz.txt
+c Gx: data/matrices/untiered/XCB_81_15_unknown_Gx.txt
+c Gz: data/matrices/untiered/XCB_81_15_unknown_Gz.txt
+c Hx: 27 x 81, Hz: 81 x 81, Gx: 15 x 81, Gz: 15 x 81, logicals: 30
+c cc: dual map detection: none (ranks Hz 46 Hx 20 [Hz;Gx] 61 [Hx;Gz] 35, 0 candidates, cpu 0.000s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 6 generator(s), 1 qubit orbit(s), group partial, point stabiliser not proved trivial, swap map not searched, 6 test(s) (0 refuted, 0 undecided), work 25020, cpu 0.001s
+c cc aut: Tanner swap map: none
+c cc symbreak X: n=81 candidates=16 verified_generators=9 orbits=1 detect_cpu=0.000s clause=unit
+c cc symbreak X: generator: plain blockshift L=3
+c cc symbreak X: generator: plain 2dshift-a L=9 (3x3)
+c cc symbreak X: generator: plain 2dshift-a L=27 (3x9)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: generator: plain tanner-aut #3
+c cc symbreak X: generator: plain tanner-aut #4
+c cc symbreak X: generator: plain tanner-aut #5
+c cc symbreak X: generator: plain tanner-aut #6
+c cc symbreak X: orbit reps (size): 0(81)
+c cc symbreak Z: n=81 candidates=16 verified_generators=9 orbits=1 detect_cpu=0.000s clause=unit
+c cc symbreak Z: generator: plain blockshift L=3
+c cc symbreak Z: generator: plain 2dshift-a L=9 (3x3)
+c cc symbreak Z: generator: plain 2dshift-a L=27 (3x9)
+c cc symbreak Z: generator: plain tanner-aut #1
+c cc symbreak Z: generator: plain tanner-aut #2
+c cc symbreak Z: generator: plain tanner-aut #3
+c cc symbreak Z: generator: plain tanner-aut #4
+c cc symbreak Z: generator: plain tanner-aut #5
+c cc symbreak Z: generator: plain tanner-aut #6
+c cc symbreak Z: orbit reps (size): 0(81)
+c cc: X half: n 81, rank H 46, rank [H;G] 61, rank S 20: detectors complete, 15 logical(s)
+c cc: Z half: n 81, rank H 20, rank [H;G] 35, rank S 46: detectors complete, 15 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 3 (X 3, Z 3)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 4..4, an even weight present)
+c cc: X half overlap: on (27 stabilizer rows of Hx, weights 12..12, 0 forbidden from the start)
+c cc: Z half search: 1 seeds (orbit representatives)
+c cc: Z half parity: off (column weights 4..4, an even weight present)
+c cc: Z half overlap: on (81 stabilizer rows of Hz, weights 4..4, 0 forbidden from the start)
+c cc: X half ub-search: rank H 46, information set 35, triples off, slack 4, li-cap 64, collision stern p 2 l 7 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 20, information set 61, triples off, slack 4, li-cap 64, collision stern p 2 l 9 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: Z half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: Z half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: ub-search X: iterations 1, finder time 0.000s, kept 209, nontrivial 209, li-gain 0, improvements 0, rank 46, K 35, ub 3
+c cc: ub-search X collision: rounds 1, colliding pairs 1725 (nontrivial 1721)
+c cc: ub-search Z: iterations 0, finder time 0.000s, kept 0, nontrivial 0, li-gain 0, improvements 0, rank 20, K 61, ub 3
+c cc: ub-search Z collision: rounds 0, colliding pairs 0 (nontrivial 0)
+c cc: total nodes X 2 Z 2, search time X 0.000s Z 0.000s, wall 0.000s
+c cc: d = 3
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/XCB_81_15_unknown_Hx.txt
+c Hz: data/matrices/untiered/XCB_81_15_unknown_Hz.txt
+c Gx: data/matrices/untiered/XCB_81_15_unknown_Gx.txt
+c Gz: data/matrices/untiered/XCB_81_15_unknown_Gz.txt
+c Hx: 27 x 81, Hz: 81 x 81, Gx: 15 x 81, Gz: 15 x 81, logicals: 30
+c d_lb: 3
+c d_ub: 3
+c d  : 3
+o 3

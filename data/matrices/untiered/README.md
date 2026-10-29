@@ -136,7 +136,9 @@ modify the manifest, assign tiers or mirror QDistSAT.
 Four [XCB](XCUBE.md) inputs n81/375/1029/2187,k15/27/39/51 add the
 missing type-I fracton prescription. Independent source columns, full
 logicals/GF2/typed physical connectivity and complete disjoint logical-coset
-certificates give both-half lower/upper3/5/7/9.50local units and first-case
-byte regeneration pass; no same(n,k) peer across29 pinned refs. Linux
-full16matrix+4certificate reproduction and both-engine checks pending.
+certificates give both-half lower/upper3/5/7/9. Linux40922592722 passes50units,
+full16matrix+4certificate byte reproduction and actual-word audit replay;
+no same(n,k) peer across29 pinned refs. Both engines exact3/5/7; CC exact9
+also independently cross-checked by the finite proof and GF2 words.
+MaxSAT n2187 has no numeric fields (INCOMPLETE); one unexecuted numeric job.
 This branch28untiered/79total; prior24rows/96matrices and51tiered preserved.
