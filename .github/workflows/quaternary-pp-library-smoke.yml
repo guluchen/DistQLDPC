@@ -1,0 +1,77 @@
+name: Quaternary group-valued PP library smoke
+
+on:
+  push:
+    branches: [codex/quaternary-pp-library]
+    paths:
+      - '.github/workflows/quaternary-pp-library-smoke.yml'
+      - 'scripts/codegen/quaternary_pp*'
+      - 'scripts/codegen/validate_quaternary_pp.py'
+      - 'scripts/codegen/verify_quaternary_pp_source.py'
+      - 'scripts/codegen/audit_quaternary_pp_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_quaternary_pp.py'
+      - 'data/matrices/untiered/PP_*'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units, independent field/group/physical/source checks
+        run: |
+          python3 tests/test_codegen_quaternary_pp.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/pp4-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/pp4-validation.json
+          python3 scripts/codegen/validate_quaternary_pp.py --out /tmp/pp4-construction.json
+          cmp optimization/experiments/GH-170/raw/construction.json /tmp/pp4-construction.json
+      - name: Byte-identical matrix regeneration
+        run: |
+          python3 scripts/codegen/quaternary_pp.py --all --out /tmp/pp4-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/pp4-rebuilt').glob('*.txt'));assert len(files)==16
+          for p in files:assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS all16 original quaternary group-valued PP matrices reproduced')
+          PY
+      - name: Four default MaxSAT 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family PP --verbose --out /tmp/pp4-maxsat
+      - name: Four independent CC 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family PP --engine cc --verbose --out /tmp/pp4-cc
+      - name: Audit actual bounds/words, independent source words and identities
+        run: >-
+          python3 scripts/codegen/audit_quaternary_pp_smoke.py --maxsat /tmp/pp4-maxsat
+          --cc /tmp/pp4-cc --construction /tmp/pp4-construction.json --out /tmp/pp4-audit.json
+      - name: Retain raw evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('pp4-maxsat','pp4-cc'):
+              root=Path('/tmp')/name
+              print('GH170_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          p=Path('/tmp/pp4-audit.json')
+          if p.exists():print('GH170_AUDIT_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh170-quaternary-group-valued-pp-smoke
+          path: |
+            /tmp/pp4-maxsat/
+            /tmp/pp4-cc/
+            /tmp/pp4-audit.json
+          if-no-files-found: warn
+          retention-days: 14
