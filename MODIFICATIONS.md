@@ -32,6 +32,7 @@ New code, not derived from MaxCDCL.
 | Odd-cap skip (GH-133; default on since 2026-10-21, PI decision; `-oddcap-skip=off` = previous search) | Split MaxSAT path only, `-oddcap-skip=on`: for a CSS half whose parity matrix H has only odd column weights every element of ker H has even weight (proof below, `src/cc/`), so an odd probe cap m is equivalent to the cap m - 1 and a NONE at an even cap 2t certifies the lower bound 2t + 2. Phase 1 (doubling caps): cap 1 is not probed (lb 2), and after a NONE the lower bound is raised to the next even value; Phase 2a: cap U-1 -> U-2 when U-1 is odd; Phase 2b/3: an odd optimisation cap U-1 (dual-half elimination) -> U-2. The decision per half is printed with `-v` (`c oddcap X: ...`). `-oddcap-skip=off` (default) leaves main's cap sequence byte for byte (identity verified on tier0+1 x 2 modes). The encoding, the cardinality constraints and the solver are unchanged. See `optimization/experiments/GH-133/`. |
 | Verified upper-bound pre-pass for the MaxSAT split (GH-144; `-ub-pre=off\|on\|S`, default on = 60 s since 2026-10-23, PI; silently off with -joint/-roundingsat unless given explicitly) | Split MaxSAT path only. Before Phase 1 the GH-140 finder (`src/cc/cc_ubsearch.h`, `UbFinder`) runs on every half that has logicals (X half: H = Hz, G = Gx, S = Hx; Z half: H = Hx, G = Gz, S = Hz) for at most S seconds (`on` = 60 s), always looking for a word lighter than the current bound; a half stops after `-ub-pre-hits=H` (16) re-hits of the bound or max(`-ub-pre-plateau=P` (1000), 4 x the iteration of its last improvement) iterations without improvement (iteration based: deterministic for a given `-seed` unless S ends it). Every word is verified (`ubpre_verify`: Hpar e = 0 and Glog e != 0 directly on the input matrices, plus `distcc::verify_logical`); a failure discards the pre-pass. The lightest weight U0 is the initial UB (pipe `UB U0`, printed `c d_ub: U0`) and each half's lightest word its incumbent. With U0: Phase 1 still probes a half with a pre-pass incumbent but only at caps < U - 1; Phase 2a runs on both halves (not only on ties) with feasibility probes at U - 1 and reports the global lower bound after each probe; Phase 2b optimises each unfinished half with cap U - 1. `-ub-pre=off` or no verified word = main byte for byte (identity verified on tier0+1 x 2 modes). Soundness below (GH-144). See `optimization/experiments/GH-144/`. |
 | Stern / Dumer collision mode of the shared finder (GH-146; `-ub-isd=off\|stern\|dumer[:P,L,W,B,R]`, default stern since 2026-10-23, PI; `-ub-isd=off` = previous finder, GH-140) | Applies to the CC `-ub-search` finder and to the MaxSAT `-ub-pre` pre-pass (both use `UbFinder`). Per round: W Canteaut-Chabaud pivot swaps on the stored systematic columns (or a fresh elimination), a random split of the information set into two halves and a random window of L reduced rows; all subsets of size <= P of each half (`dumer`: the window pivot columns are elements too), bucketed by the window part of their column sum; every colliding pair with different detector parities is weighed, kept words go through the unchanged detector check, stabilizer local improvement and the driver's / pre-pass's independent verification. Single systematic words are also tried every round. Defaults from S0: P 2, L automatic (about log2 of the list size), W 32, B 1 round per iteration. `-ub-isd=off` = the GH-140 enumeration byte for byte (identical to GH-144's 6d2b7a1 on tier0+1). Soundness below (GH-146). See `optimization/experiments/GH-146/`. |
+| Stabilizer-overlap dominance constraints in the MaxSAT split (GH-148; `-stab-overlap=off\|on\|auto`, default auto since the PI's adoption decision; `-stab-overlap=off` = previous search; silently off with -joint/-roundingsat unless given explicitly) | Split MaxSAT path only (an explicit `-stab-overlap=on\|auto` is refused with -joint/-roundingsat/-engine=cc). For every CSS half, the rows g of the same-type stabilizer matrix (X half: Hx; Z half: Hz) that pass a GF(2) check Hpar g = 0 and Glog g = 0 on the input matrices (duplicates removed) give the constraint "at most floor(\|g\|/2) of the qubits of g are 1" in each probe: by default (`-stab-overlap-enc=native`) as a native propagator inside MaxCDCL (`Solver::setOverlapRows`, set by `run_css_half` after `build_css_half`; see the `Solver.h` / `Solver.cc` section), or as clauses (`add_overlap_constraints` at the end of `build_css_half`): `clauses` = binomial clauses for \|g\| <= 9 and Sinz's sequential counter above, `bin` / `seq` = one of them for every row. `on`: every verified row in every probe; `auto`: row g only in probes of cap c >= 2 (floor(\|g\|/2) + 1) (`-stab-overlap-ratio=X` sets the factor). With `-stab-overlap=off` the instance and the `-v` log are those of the search before the adoption byte for byte (main e52d15b; identity verified on tier0+1 x 2 modes). Soundness below (GH-148). See `optimization/experiments/GH-148/`. |
 | CC engine switch (GH-124 S0, experimental) | `-engine=maxsat` (default) leaves the search above unchanged (byte-identical `-v` logs); `-engine=cc` runs the connected-cluster level search of `src/cc/` on the same CSS split through the same pipe protocol and output; `-engine=auto` is a structural selector (not the default): CC unless a half's parity matrix has a row of weight > 32 or, for n >= 64, a mean row weight > n/4 (pre-S1 rule; every bundled code goes to CC). `-seed=N` (timing seeds): N > 0 sets `random_seed` of every MaxCDCL solver on the MaxSAT path from the application layer (the engine source is unchanged; N = 0 or no flag keeps main's search byte for byte) and equals `-cc-seed=N` with the CC engine. A CC no-answer stop sends `RESULT -1 TRAP` on the pipe, and the parent withdraws the bounds it had received (MaxSAT never sends it). `find_dual_maps` additionally keeps the verified qubit maps (its report output is unchanged). Flags: `-seed`, `-cc-rules`, `-cc-dual`, `-ub-basis`, `-ub-search` and `-cc-ub-*` (GH-140), `-cc-seed`, `-cc-trace`, `-cc-stats`, `-cc-mutant` and `-cc-schedule` (tests only). Conflicting combinations are rejected (exit 1): CC flags without `-engine=cc\|auto`; `-joint`, `-roundingsat`, the dumps and `-native-parity-opb` with `-engine=cc\|auto`; the cardinality flags and `-dualshare-stats` with `-engine=cc` (`-engine=auto` warns about the flags its choice ignores). See `optimization/experiments/GH-124/`. |
 
 ### `src/cc/` (GH-124, experimental; new code, not derived from MaxCDCL or any third-party code)
@@ -254,6 +255,29 @@ iterations; mutant 1 stays correct, mutant 2 must answer wrongly) and rotated su
 values, conflicts (`-ub-isd` without a finder), `-v` lines, finder-only output, mutants 11/12 with `stern` and
 `dumer` on BB_90_8_10. *Evidence.* `optimization/experiments/GH-146/REPORT.md`.
 
+GH-148 (`-stab-overlap=off|on|auto`, split MaxSAT path, `src/core/distqldpc.cc`; default `auto` since the PI's adoption decision, `off` = the previous search). *What it adds.* Extra
+hard constraints in the half instance of `build_css_half`: for each verified row g, |x & g| <= floor(|g|/2). *Why every
+probe answer stays the same.* The half instance is F_h = {x : Hpar x = 0, Glog x != 0} (see GH-144 (1)). Each used
+row g satisfies Hpar g = 0 and Glog g = 0, checked over GF(2) on the input matrices (rows that fail are dropped with a
+warning). Then x in F_h implies x + g in F_h (Hpar (x + g) = 0, Glog (x + g) = Glog x != 0), and |x + g| = |x| + |g| -
+2 |x & g|. Lemma: every minimum-weight element x* of F_h satisfies |x* & g| <= floor(|g|/2) for every such g (otherwise
+|x* + g| < |x*|). The bound is not strict, so the even tie |x & g| = |g|/2 (x + g of equal weight) is kept. Hence for
+every cap c: if c >= d_h, a minimum-weight element (weight d_h <= c) satisfies all constraints, so the constrained
+probe still has a solution (FOUND unchanged; OPT = d_h unchanged); if c < d_h, the original probe has no solution and
+the constrained one, being more restricted, has none either (NONE unchanged). Every solution the solver returns is an
+element of F_h, so its weight is a valid upper bound. Any subset of the rows (the per-probe activation of `auto`) gives
+the same argument. *With the GH-85 orbit clauses.* They keep, for every minimum-weight v, some image pi v (pi a
+verified automorphism of the half, |pi v| = |v|); pi v is again of minimum weight, so it satisfies every overlap
+constraint by the lemma, and the combined instance still has a solution of weight d_h. *Other parts.* GH-133's parity
+step, GH-107's sharing and GH-144's seeding use only probe answers and verified weights, so they are unaffected. The
+encodings are exact "at most k" encodings (unit test Part G (a): maximizing the true qubits of one row of weight
+1..14 gives exactly w - k for the binomial clauses, the sequential counter and the native propagator). *Tests.* `make test-cc` Part G: the MaxSAT driver with the constraints on
+the 200 Part B codes in 18 configurations (encodings clauses/bin/seq/native, per-probe activation ratios 2 and 1, `-card-mto`, `-seed=3`, `-dualmode=off|skip`,
+`-no-symbreak`, `-oddcap-skip=off`, with `-ub-pre` cut after one iteration and converged) and on rotated surface codes
+d = 3..5: RESULT = enumeration, every UB >= d, LBs monotone <= d; test mutants (no flag) 1 (limit floor(|g|/2) - 1)
+and 2 (the half's parity rows used as g without the GF(2) check) must give wrong answers. `make test-cc-flags`:
+values, conflicts, `-v` lines, no output with the flag off. *Evidence.* `optimization/experiments/GH-148/REPORT.md`.
+
 Fix round 1 (S0a): the S0 spec's literal mutants 3 ("orbit seeds without forbidding earlier orbits") and 4 ("stop
 rule without checking the other half's lower bound") are equivalent mutants as built: the first only drops a
 restriction, so every level verdict stays exact; the second skips a check that the lockstep pick order (lowest
@@ -320,6 +344,29 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
 - `boundsLbCap`, `boundsUbCap`, `boundsHideLB`: emitted bounds are capped/suppressed to stay global
 - Former function-local `static` heuristic state in `search()`, `lookahead()` and
   `addCardinalityConstraints()` is now per-instance (identical behaviour for a single instance)
+
+#### Native stabilizer-overlap rows (GH-148, experimental; inactive unless rows are set)
+
+- `setOverlapRows(rows, lims, nQubits)`: rows of qubit variables with a limit each ("at most lim of them true");
+  called by `run_css_half` only with `-stab-overlap=on|auto -stab-overlap-enc=native`; with no rows every new
+  branch below is skipped by an `ovRows.empty()` test, so the solver behaves as before byte for byte
+- `ovPropagate(p, lk)`: called in `propagate()` and `propagateForLK()` after the watches of a dequeued literal p
+  (when no conflict was found); if p sets a qubit variable true, each row containing it is counted: above the
+  limit a conflict clause (p's literal and lim other true qubits of the row, all false) is returned; at the limit
+  every unassigned qubit of the row is enqueued false with the reason clause OR ~x over the lim true qubits and
+  the implied one (implied literal at position 0)
+- `ovClause(r, mask, impliedPos)`: reason/conflict clauses (OR of ~x over a (lim+1)-subset of row r) are
+  allocated on first use with `ca.alloc(lits, false)` and cached by (row, subset) in an open-addressing table;
+  they belong to no clause list and are never watched; a cached clause is reordered when it becomes a reason
+  (at any time at most one of its literals can be implied by it)
+- `relocAll()`: relocates every cached clause (and rebuilds `ovCrefs`); `reduceClause()` and
+  `simplereduceClause()` return immediately for a cached clause (`ovIsClause`), because on-the-fly
+  strengthening would shorten a shared clause and attach it to the watch lists
+- `simplePropagate()` / `simplepropagateForLK()` (learnt-clause simplification, failed-literal and initial
+  conflict detection) do not call the propagator: they only propagate less there, which is sound; a model
+  found by the solver satisfies all hard clauses of the half instance, so its weight is a valid upper bound
+  even if it were to violate an overlap row (the rows are dominance constraints, see GH-148 above)
+- Counters `ovProps`, `ovConfls` (printed by `-frontier-stats` as a `c OVERLAP` line)
 
 ---
 

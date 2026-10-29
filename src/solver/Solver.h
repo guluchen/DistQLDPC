@@ -48,6 +48,7 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #endif
 
 #include <vector>
+#include <unordered_set>   // DistQLDPC GH-148
 #include "mtl/Vec.h"
 #include "mtl/Heap.h"
 #include "mtl/Alg.h"
@@ -588,6 +589,22 @@ public:
     std::vector<Lit>  frApplied;
     std::vector<int>  frAppliedPos;
     uint64_t frPicks = 0, frFallbacks = 0, frNoEligible = 0, frCheckFails = 0, frOddSum = 0;
+    // DistQLDPC GH-148 (-stab-overlap with -stab-overlap-enc=native): "at most ovLim[r] of the qubit vars
+    // ovRows[r] are true", propagated natively: when a qubit var becomes true (main propagate() and the
+    // lookahead's propagateForLK()), each of its rows is counted; at the limit every unassigned qubit of the
+    // row is set false, above it a conflict is raised. Reasons/conflicts are the clauses (OR of ~x over a
+    // (limit+1)-subset of the row), allocated on first use and cached (ovCache, relocated in relocAll); they
+    // are in no clause list and never watched. Empty ovRows (default) = main's solver, untouched.
+    std::vector<std::vector<int> > ovRows, ovColRows;
+    std::vector<int>  ovLim;
+    std::vector<std::pair<uint64_t, CRef> > ovCacheList;   // (key, cref) for relocation
+    std::vector<int>  ovCacheIdx;                        // open addressing table into ovCacheList (-1 empty)
+    uint64_t ovProps = 0, ovConfls = 0;
+    std::unordered_set<uint32_t> ovCrefs;               // the cached crefs: on-the-fly clause reduction skips them
+    bool     ovIsClause(CRef cr) const { return !ovRows.empty() && ovCrefs.count((uint32_t)cr) > 0; }
+    void     setOverlapRows(const std::vector<std::vector<int> >& rows, const std::vector<int>& lims, int nQubits);
+    CRef     ovClause(int r, uint32_t mask, int impliedPos);
+    CRef     ovPropagate(Lit p, bool lk);
     // Former function-local statics, now per instance (identical for single-instance runs).
     uint64_t srch_prevUB = 0, card_prevUB = 0, lk_prevUB = 0;
     int      lk_thres = 2, lk_prevConflicts = 0, lk_maxSuccLB = 0, lk_nbSample = 0, lk_myLH = 0, lk_mySucc = 0;

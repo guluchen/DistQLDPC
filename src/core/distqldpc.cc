@@ -34,6 +34,8 @@
 #include <string>
 #include <algorithm>
 #include <memory>
+#include <map>   /* GH-148 */
+#include <set>   /* GH-148 */
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <fcntl.h>
@@ -880,10 +882,185 @@ static bool add_half_orbit_clauses(SimpSolver& S, std::vector<Var>& aux, int n, 
     return true;
 }
 
+/* ---- GH-148: -stab-overlap=on|auto|off (split MaxSAT path; default auto since PI adoption, off = the previous search
+ * byte for byte), issue #148.
+ * Stabilizer-overlap dominance constraints in every CSS-half probe (the GH-138 CC rule, Lee 2026 rule iv, as
+ * cardinality constraints of the MaxSAT half instance). Half instance (build_css_half): F = {x : Hpar x = 0,
+ * Glog x != 0}. For a vector g with Hpar g = 0 and Glog g = 0 (each checked over GF(2) on the input matrices; the
+ * candidates are the rows of the same-type stabilizer matrix: X half Hx, Z half Hz), x in F implies x + g in F and
+ * |x + g| = |x| + |g| - 2 |x & g|. Hence every minimum-weight element of F satisfies |x & g| <= floor(|g|/2) (else
+ * x + g is lighter); the even tie |x & g| = |g|/2 is allowed (non-strict bound). Adding "at most floor(|g|/2) of the
+ * qubits of g" to a probe keeps every minimum-weight element of F, so for every cap c the constrained probe has a
+ * solution of weight <= c iff the original has one (FOUND / NONE unchanged), its optimum is the same (OPT
+ * unchanged), and every FOUND/OPT solution is still an element of F (its weight is a valid upper bound). With the
+ * GH-85 orbit clauses: they keep the image pi v of some minimum-weight v, which is again of minimum weight and thus
+ * satisfies every overlap constraint, so the combination keeps a minimum-weight element too. GH-133 parity, GH-107
+ * sharing and GH-144 seeding only use probe answers and are unaffected. Encoding: for |g| with
+ * C(|g|, floor(|g|/2)+1) <= STAB_OVL_BIN_MAX, the binomial clauses (one negative clause per (floor(|g|/2)+1)-subset);
+ * otherwise Sinz's sequential counter (auxiliary variables). Both are propagation-complete: once floor(|g|/2) qubits
+ * of g are true, unit propagation sets the rest of g false (GH-138's forbidding). */
+static const double STAB_OVL_AUTO_RATIO = 2.0;   /* GH-148 S0 cost model: a row pays for its clauses only when the
+                                                    probe's weight budget holds two over-limit patterns of it */
+static bool g_stab_overlap = true;       /* -stab-overlap=on|auto|off (default auto; silently off with -joint /
+                                            -roundingsat unless given explicitly) */
+static bool g_stab_overlap_given = false;   /* -stab-overlap=on|auto|off given explicitly */
+static double g_stab_overlap_ratio = STAB_OVL_AUTO_RATIO;   /* per-probe row activation: row g is used in a probe of
+                                               cap c iff c >= ratio * (floor(|g|/2) + 1); on = 0 (every row in every
+                                               probe), auto = STAB_OVL_AUTO_RATIO (default); -stab-overlap-ratio=X sets it */
+static int g_stab_overlap_enc = 3;       /* -stab-overlap-enc=native|bin|seq|clauses: 3 native propagator in MaxCDCL
+                                            (Solver::setOverlapRows; no clauses; default, chosen in S0 of GH-148),
+                                            1 binomial clauses, 2 sequential counter, 0 clauses (binomial up to |g| = 9,
+                                            counter above) */
+static int g_stab_overlap_mutant = 0;    /* test only (no flag): 1 = limit floor(|g|/2) - 1 (cuts minimum logicals);
+                                            2 = the half's parity rows (Hpar) used as g without the GF(2) check */
+static const double STAB_OVL_BIN_MAX = 126.0;   /* auto: binomial up to |g| = 9 (C(9,5) = 126), counter above */
+
+typedef std::vector<std::vector<int> > OvlRows;
+
+struct OvlInfo {
+    int candidates;   /* nonzero rows of the candidate matrix */
+    int kept;         /* rows used (verified, duplicates removed) */
+    int rejected;     /* rows failing Hpar g = 0 or Glog g = 0 */
+    int duplicates;
+    long long clauses, auxvars;   /* per probe */
+    int bin_rows, seq_rows, native_rows;
+    std::map<int, int> weights;   /* |g| -> rows */
+};
+
+static double binom_d(int n, int k) {
+    if (k < 0 || k > n) return 0.0;
+    double r = 1.0;
+    for (int i = 1; i <= k; i++) r = r * (double)(n - k + i) / (double)i;
+    return r;
+}
+
+static int ovl_limit(int w) {
+    int k = w / 2;
+    if (g_stab_overlap_mutant == 1) k--;
+    return k;
+}
+
+static bool ovl_use_binomial(int w, int k) {
+    if (g_stab_overlap_enc == 1) return true;
+    if (g_stab_overlap_enc == 2) return false;
+    return binom_d(w, k + 1) <= STAB_OVL_BIN_MAX;
+}
+
+/* Rows g of Smat with Hpar g = 0 and Glog g = 0 (GF(2), via the column incidence of Hpar and Glog). */
+static OvlRows stab_overlap_rows(const Matrix& Hpar, const Matrix& Glog, const Matrix& Smat, OvlInfo& info)
+{
+    info = OvlInfo();
+    info.candidates = info.kept = info.rejected = info.duplicates = info.bin_rows = info.seq_rows = info.native_rows = 0;
+    info.clauses = info.auxvars = 0;
+    OvlRows out;
+    const int n = Hpar.cols;
+    const Matrix& Src = g_stab_overlap_mutant == 2 ? Hpar : Smat;
+    if (Src.cols != n) return out;
+    std::vector<std::vector<int> > colH((size_t)n), colG((size_t)n);
+    for (int r = 0; r < Hpar.rows; r++) for (int c = 0; c < n; c++) if (getm(Hpar, r, c)) colH[c].push_back(r);
+    for (int r = 0; r < Glog.rows; r++) for (int c = 0; c < n; c++) if (getm(Glog, r, c)) colG[c].push_back(r);
+    std::vector<uint8_t> parH((size_t)Hpar.rows, 0), parG((size_t)Glog.rows, 0);
+    std::set<std::vector<int> > seen;
+    for (int r = 0; r < Src.rows; r++) {
+        std::vector<int> g;
+        for (int c = 0; c < n; c++) if (getm(Src, r, c)) g.push_back(c);
+        if (g.empty()) continue;
+        info.candidates++;
+        bool ok = true;
+        if (g_stab_overlap_mutant != 2) {
+            std::vector<int> touchedH, touchedG;
+            for (size_t t = 0; t < g.size(); t++) {
+                for (size_t u = 0; u < colH[g[t]].size(); u++) { int q = colH[g[t]][u]; parH[q] ^= 1; touchedH.push_back(q); }
+                for (size_t u = 0; u < colG[g[t]].size(); u++) { int q = colG[g[t]][u]; parG[q] ^= 1; touchedG.push_back(q); }
+            }
+            for (size_t u = 0; u < touchedH.size(); u++) { if (parH[touchedH[u]]) ok = false; }
+            for (size_t u = 0; u < touchedG.size(); u++) { if (parG[touchedG[u]]) ok = false; }
+            for (size_t u = 0; u < touchedH.size(); u++) parH[touchedH[u]] = 0;
+            for (size_t u = 0; u < touchedG.size(); u++) parG[touchedG[u]] = 0;
+        }
+        if (!ok) { info.rejected++; continue; }
+        if (!seen.insert(g).second) { info.duplicates++; continue; }
+        const int w = (int)g.size(), k = ovl_limit(w);
+        if (k >= w) continue;   /* no constraint (cannot happen for w >= 1 with the true limit) */
+        info.kept++;
+        info.weights[w]++;
+        if (g_stab_overlap_enc == 3) { info.native_rows++; }
+        else if (k < 0) { info.clauses += w; info.bin_rows++; }      /* mutant 1 on |g| = 1: all of g false */
+        else if (ovl_use_binomial(w, k)) { info.clauses += (long long)binom_d(w, k + 1); info.bin_rows++; }
+        else {
+            info.seq_rows++;
+            if (k == 0) info.clauses += w;
+            else { info.auxvars += (long long)(w - 1) * k; info.clauses += 2LL * w * k + w - 3 * k - 1; }
+        }
+        out.push_back(g);
+    }
+    return out;
+}
+
+/* "at most floor(|g|/2) of g" for every row (qubit vars 0..n-1); false iff the solver became inconsistent. */
+static bool add_overlap_constraints(SimpSolver& S, std::vector<Var>& aux, const OvlRows& rows)
+{
+    for (size_t r = 0; r < rows.size(); r++) {
+        const std::vector<int>& g = rows[r];
+        const int w = (int)g.size(), k = ovl_limit(w);
+        if (k >= w) continue;
+        if (k <= 0) {   /* no qubit of g (k = 0: |g| = 1; k < 0 only for mutant 1) */
+            for (int i = 0; i < w; i++) {
+                std::vector<Lit> c(1, ~mkLit(g[i]));
+                if (!add_clause_soft_fail(S, c, S.hardWeight)) return false;
+            }
+            continue;
+        }
+        if (ovl_use_binomial(w, k)) {   /* every (k+1)-subset: not all true */
+            std::vector<int> idx((size_t)k + 1);
+            for (int i = 0; i <= k; i++) idx[i] = i;
+            while (true) {
+                std::vector<Lit> c;
+                for (int i = 0; i <= k; i++) c.push_back(~mkLit(g[idx[i]]));
+                if (!add_clause_soft_fail(S, c, S.hardWeight)) return false;
+                int i = k;
+                while (i >= 0 && idx[i] == w - (k + 1) + i) i--;
+                if (i < 0) break;
+                idx[i]++;
+                for (int j = i + 1; j <= k; j++) idx[j] = idx[j - 1] + 1;
+            }
+            continue;
+        }
+        /* Sinz sequential counter: s[i][j] <-> at least j+1 of x_0..x_i true (one direction suffices) */
+        std::vector<std::vector<Lit> > s((size_t)w - 1, std::vector<Lit>((size_t)k));
+        for (int i = 0; i < w - 1; i++)
+            for (int j = 0; j < k; j++) {
+                Var v = ensure_var(S, S.nVars());
+                aux.push_back(v);
+                s[i][j] = mkLit(v);
+            }
+        std::vector<Lit> c;
+#define OVL_ADD2(a, b) do { c.clear(); c.push_back(a); c.push_back(b); if (!add_clause_soft_fail(S, c, S.hardWeight)) return false; } while (0)
+#define OVL_ADD3(a, b, d) do { c.clear(); c.push_back(a); c.push_back(b); c.push_back(d); if (!add_clause_soft_fail(S, c, S.hardWeight)) return false; } while (0)
+        const Lit x0 = mkLit(g[0]);
+        OVL_ADD2(~x0, s[0][0]);
+        for (int j = 1; j < k; j++) { c.clear(); c.push_back(~s[0][j]); if (!add_clause_soft_fail(S, c, S.hardWeight)) return false; }
+        for (int i = 1; i < w - 1; i++) {
+            const Lit xi = mkLit(g[i]);
+            OVL_ADD2(~xi, s[i][0]);
+            OVL_ADD2(~s[i - 1][0], s[i][0]);
+            for (int j = 1; j < k; j++) {
+                OVL_ADD3(~xi, ~s[i - 1][j - 1], s[i][j]);
+                OVL_ADD2(~s[i - 1][j], s[i][j]);
+            }
+            OVL_ADD2(~xi, ~s[i - 1][k - 1]);
+        }
+        OVL_ADD2(~mkLit(g[w - 1]), ~s[w - 2][k - 1]);
+#undef OVL_ADD2
+#undef OVL_ADD3
+    }
+    return true;
+}
+
 /* Returns false when this half has no nontrivial logical (instance UNSAT). */
 static bool build_css_half(SimpSolver& S, std::vector<Var>& aux, int& n_out,
                            const Matrix& Hpar, const Matrix& Glog, int verb, int card_mode,
-                           const std::vector<int>* sb_orbit)
+                           const std::vector<int>* sb_orbit, const OvlRows* ovl_rows = NULL)
 {
     const int n = Hpar.cols;
     n_out = n;
@@ -936,6 +1113,8 @@ static bool build_css_half(SimpSolver& S, std::vector<Var>& aux, int& n_out,
     }
     if (ok && sb_orbit && (int)sb_orbit->size() == n)   /* GH-85 */
         ok = add_half_orbit_clauses(S, aux, n, *sb_orbit);
+    if (ok && ovl_rows && !ovl_rows->empty())            /* GH-148 */
+        ok = add_overlap_constraints(S, aux, *ovl_rows);
     if (!ok) return false;
     S.parsing = false;
     S.setFrozenVars();
@@ -1026,6 +1205,7 @@ struct CssHalf {
     int frontier;         /* GH-130: frontier mode of this half's probes (= g_frontier_mode unless auto) */
     bool par;             /* GH-133: -oddcap-skip in force (all column weights of H odd): odd caps skipped */
     bool pre;             /* GH-144: ub is a verified -ub-pre finder word (not a solver solution); false without -ub-pre */
+    OvlRows ovl;          /* GH-148: verified stabilizer rows for -stab-overlap (empty: no constraint, main's instance) */
 };
 
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
@@ -1037,7 +1217,25 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     apply_maxsat_seed(S);   /* GH-124: -seed=N (no-op for N = 0) */
     std::vector<Var> aux;
     int n = 0;
-    if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, h.sb_orbit.empty() ? NULL : &h.sb_orbit)) { h.exists = false; return HALF_INFEASIBLE; }
+    OvlRows ovl_active;   /* GH-148: rows active in this probe (any subset of the verified rows is sound) */
+    if (!h.ovl.empty()) {
+        for (size_t r = 0; r < h.ovl.size(); r++)
+            if (g_stab_overlap_ratio <= 0.0 || (double)cap >= g_stab_overlap_ratio * (double)(h.ovl[r].size() / 2 + 1))
+                ovl_active.push_back(h.ovl[r]);
+        if (verb > 0) {
+            printf("c stab-overlap %s cap %llu: %zu of %zu rows active (ratio %.2f)\n", h.tag, (unsigned long long)cap,
+                   ovl_active.size(), h.ovl.size(), g_stab_overlap_ratio);
+            fflush(stdout);
+        }
+    }
+    const bool ovl_native = g_stab_overlap_enc == 3 && !ovl_active.empty();
+    if (!build_css_half(S, aux, n, *h.H, *h.G, verb, card_mode, h.sb_orbit.empty() ? NULL : &h.sb_orbit,
+                        ovl_active.empty() || ovl_native ? NULL : &ovl_active)) { h.exists = false; return HALF_INFEASIBLE; }
+    if (ovl_native) {   /* GH-148: the same rows as a native propagator (no clauses) */
+        std::vector<int> lims;
+        for (size_t r = 0; r < ovl_active.size(); r++) lims.push_back(ovl_limit((int)ovl_active[r].size()));
+        S.setOverlapRows(ovl_active, lims, n);
+    }
     S.setBoundsPipe(pipe_w);
     S.initUB = cap >= (uint64_t)INT32_MAX ? INT32_MAX : cap;
     S.strictUB = cap < (uint64_t)INT32_MAX;
@@ -1065,6 +1263,9 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
                 (unsigned long long)S.decisions, (unsigned long long)S.frPicks, (unsigned long long)S.frFallbacks,
                 (unsigned long long)S.frNoEligible, S.frPicks ? (double)S.frOddSum / (double)(S.frPicks + S.frNoEligible) : 0.0,
                 (unsigned long long)S.frCheckFails);
+        if (ovl_native)   /* GH-148: appended only with the native propagator (main's line format otherwise) */
+            fprintf(stderr, "c OVERLAP %s cap %llu: rows %zu props %llu conflicts %llu cached_clauses %zu\n", h.tag, (unsigned long long)cap,
+                    ovl_active.size(), (unsigned long long)S.ovProps, (unsigned long long)S.ovConfls, S.ovCacheList.size());
         fflush(stderr);
     }
     h.probes++; h.conflicts += S.conflicts;   /* GH-107 work counters (fresh solver per probe) */
@@ -1404,6 +1605,25 @@ static int min_distance_css_interleaved(
         }
         if ((int)info.reps.size() < info.n) hs[k].sb_orbit = info.orbit_of;
     }
+    /* GH-148: -stab-overlap, verified same-type stabilizer rows per half (X half: rows of Hx, Z half: rows of Hz) */
+    for (int k = 0; g_stab_overlap && k < 2; k++) {
+        if (!hs[k].exists) continue;
+        OvlInfo oi;
+        hs[k].ovl = stab_overlap_rows(*hs[k].H, *hs[k].G, k == 0 ? Hx : Hz, oi);
+        if (oi.rejected > 0)
+            fprintf(stderr, "warning: stab-overlap: %s half: %d of %d stabilizer rows fail H g = 0 or G g = 0 (not used)\n",
+                    hs[k].tag, oi.rejected, oi.candidates);
+        if (verb > 0) {
+            printf("c stab-overlap %s: %d of %d rows used (%d rejected: H g != 0 or G g != 0; %d duplicates); |g| -> rows:",
+                   hs[k].tag, oi.kept, oi.candidates, oi.rejected, oi.duplicates);
+            for (std::map<int, int>::const_iterator it = oi.weights.begin(); it != oi.weights.end(); ++it)
+                printf(" %d:%d (<= %d)", it->first, it->second, ovl_limit(it->first));
+            if (g_stab_overlap_enc == 3) printf("; native propagator rows %d (no clauses)%s\n", oi.native_rows, g_stab_overlap_mutant ? " [TEST MUTANT]" : "");
+            else printf("; binomial rows %d, counter rows %d; per probe %lld clauses, %lld aux vars%s\n", oi.bin_rows, oi.seq_rows,
+                        oi.clauses, oi.auxvars, g_stab_overlap_mutant ? " [TEST MUTANT]" : "");
+            fflush(stdout);
+        }
+    }
     uint64_t U = INF, v = 0, lastLB = 0;
     bool seeded = false;   /* GH-144: U holds a verified -ub-pre word (never without -ub-pre) */
     if (g_ub_pre >= 0) {
@@ -1717,7 +1937,8 @@ static int engine_flag_family(const char* a)
         return ENGFLAG_MAXSAT_FORM;
     if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
         !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") || !strncmp(a, "-oddcap-skip=", 13) ||
-        !strncmp(a, "-ub-pre", 7))   /* GH-144: -ub-pre=, -ub-pre-hits=, -ub-pre-plateau= */
+        !strncmp(a, "-ub-pre", 7) ||   /* GH-144: -ub-pre=, -ub-pre-hits=, -ub-pre-plateau= */
+        !strncmp(a, "-stab-overlap", 13))   /* GH-148: -stab-overlap=, -stab-overlap-enc= */
         return ENGFLAG_MAXSAT_TUNE;
     if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10) || !strncmp(a, "-ub-search", 10))
         return ENGFLAG_CC;
@@ -2071,6 +2292,7 @@ int main(int argc, char** argv) {
     bool symbreak_report = false;  /* GH-85 */
     bool dualskip_report = false;  /* GH-87 */
     bool seed_given = false, cc_seed_given = false;   /* GH-124: -seed=N, -cc-seed=N */
+    bool stab_ratio_given = false;                     /* GH-148: -stab-overlap-ratio=X */
 
     for (int i = 1; i < argc; i++) {
         if (!strncmp(argv[i], "-cpu-lim=", 9))
@@ -2142,6 +2364,30 @@ int main(int argc, char** argv) {
             g_oddcap_skip = false;
         else if (!strncmp(argv[i], "-oddcap-skip", 12))
             die("invalid -oddcap-skip (on | off)");
+        else if (!strcmp(argv[i], "-stab-overlap=on")) {   /* GH-148 */
+            g_stab_overlap = true; g_stab_overlap_ratio = 0.0; g_stab_overlap_given = true;
+        } else if (!strcmp(argv[i], "-stab-overlap=auto")) {
+            g_stab_overlap = true; g_stab_overlap_ratio = STAB_OVL_AUTO_RATIO; g_stab_overlap_given = true;
+        } else if (!strcmp(argv[i], "-stab-overlap=off")) {
+            g_stab_overlap = false; g_stab_overlap_given = true;
+        }
+        else if (!strncmp(argv[i], "-stab-overlap-ratio=", 20)) {
+            double v = 0;
+            if (!cc_parse_seconds(argv[i] + 20, &v) || v < 0 || v > 1000) die("invalid -stab-overlap-ratio (0..1000)");
+            g_stab_overlap_ratio = v; stab_ratio_given = true;
+        }
+        else if (!strcmp(argv[i], "-stab-overlap-enc=clauses"))
+            g_stab_overlap_enc = 0;
+        else if (!strcmp(argv[i], "-stab-overlap-enc=bin"))
+            g_stab_overlap_enc = 1;
+        else if (!strcmp(argv[i], "-stab-overlap-enc=seq"))
+            g_stab_overlap_enc = 2;
+        else if (!strcmp(argv[i], "-stab-overlap-enc=native"))
+            g_stab_overlap_enc = 3;
+        else if (!strncmp(argv[i], "-stab-overlap-enc", 17))
+            die("invalid -stab-overlap-enc (native | clauses | bin | seq)");
+        else if (!strncmp(argv[i], "-stab-overlap", 13))
+            die("invalid -stab-overlap (on | auto | off)");
         else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */
             g_ub_pre = -1.0; g_ub_pre_given = true;
         } else if (!strcmp(argv[i], "-ub-pre=on")) {
@@ -2325,6 +2571,13 @@ int main(int argc, char** argv) {
             printf("            per iteration (default 1), a fresh elimination every R rounds (0 = never); needs\n");
             printf("            -ub-search=on|budget:S or -ub-pre=S; defaults P 2, L automatic (~log2 of the list size), W 32,\n");
             printf("            B 1, R 0 (S0 of GH-146); every word is still verified before use\n");
+            printf("  Stabilizer-overlap constraints (split MaxSAT path only, GH-148): -stab-overlap=on|auto|off (default auto;\n");
+            printf("            off restores the previous search):\n");
+            printf("            probes of a half also require |x & g| <= floor(|g|/2) for same-type stabilizer rows g (verified\n");
+            printf("            H g = 0, G g = 0; a minimum-weight logical always satisfies it, else x + g is lighter); on: every\n");
+            printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
+            printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");
+            printf("            clauses up to |g| = 9, sequential counter above; bin / seq: one of them for every row)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -2358,6 +2611,22 @@ int main(int argc, char** argv) {
         if (msg.empty() && g_ub_pre >= 0 && (g_css_joint || backend == SOLVER_ROUNDINGSAT)) {   /* GH-144 */
             if (g_ub_pre_given) msg = "-ub-pre: needs the split MaxSAT path (not -joint or -roundingsat)";
             else g_ub_pre = -1.0;   /* default-on pre-pass silently off on paths it does not apply to */
+        }
+        if (msg.empty() && g_stab_overlap && (g_css_joint || backend == SOLVER_ROUNDINGSAT)) {   /* GH-148 */
+            if (g_stab_overlap_given) msg = "-stab-overlap=on: needs the split MaxSAT path (not -joint or -roundingsat)";
+            else g_stab_overlap = false;   /* default auto: silently off on paths it does not apply to */
+        }
+        if (msg.empty() && !g_stab_overlap) {   /* GH-148: the tuning flags need the constraints */
+            for (int i = 1; i < argc; i++)
+                if (!strncmp(argv[i], "-stab-overlap-", 14)) { msg = std::string(argv[i]) + ": needs -stab-overlap=on or -stab-overlap=auto"; break; }
+        }
+        if (msg.empty() && stab_ratio_given) {   /* the ratio must follow the mode it tunes (on/auto reset it) */
+            bool after = false;
+            for (int i = 1; i < argc; i++) {
+                if (!strcmp(argv[i], "-stab-overlap=on") || !strcmp(argv[i], "-stab-overlap=auto")) after = false;
+                if (!strncmp(argv[i], "-stab-overlap-ratio=", 20)) after = true;
+            }
+            if (!after) msg = "-stab-overlap-ratio=X must come after -stab-overlap=on|auto";
         }
         if (msg.empty() && g_ub_pre < 0) {   /* GH-144: the pre-pass tuning flags need the pre-pass */
             std::string t;
