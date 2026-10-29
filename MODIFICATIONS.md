@@ -438,3 +438,38 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+## GH-202 generalized Schreier Tanner input reconstruction
+
+No solver change. Construct the source commuting labelled graphs on
+U=Zp x{0,1}^2 (2+2) or Zp x{0,1} (2+1), using the source block adjacencies.
+Internal generator labels use position-matched first/third symmetric sets;
+cross generators map opposite layers by+e/-e and are self-inverse, matching
+the source off-diagonal transpose. A depends only on A-layer, B only on
+B-layer (or none in2+1); group addition is abelian, so every A-label and
+B-label commute. Verify permutations, unique inverse labels and actual
+pointwise commutation rather than assuming it from graph spectra.
+
+Quadripartite cover gives four distinct vertex types and qubits(u,a,b).
+Their local coordinates are(a,b),(inverse(a),b),(a,inverse(b)), and both
+inverses, with actual endpoints reached by the commuting actions. Expand
+kerHA tensor kerHB at types00/11 for Hx (sourceH0) and HA tensor HB at
+10/01 for Hz(sourceH1). An overlap of opposite-type local generators is a
+union of complete shared strips, with the unfixed coordinate aligned in
+the two local views. Thus each inner product factors through a local code
+and its dual, giving0 inGF2. Independently enumerate local codewords, inverse
+arcs and every physical corner/strip, and check actual full stabilizer
+rowspaces, commutation, dimensions, complete logical quotients and pairing.
+Source AppendixB alternative local row bases span the same tensor spaces;
+no decoder-basis/timing comparison is imported. Actual X/Z ranks can differ,
+so no half-distance map is presumed. New original primes imply no source
+distance or asymptotically-good guarantee.
+
+The sole same(n,k)peer GB180k26 has retained complete own MaxSAT+CC proofs
+and actual GF2 minimum word7 (GH196). Current TN180k26 has an actual GF2
+logical word6; since qubit permutations/global XZ swap preserve global
+minimum distance, the two physical codes cannot be equivalent. This proves
+inequivalence using verified words/proofs, not a paper label or row-weight
+heuristic. Independent peer-log/input identities are retained in GH202.
+No new pruning or solver bound; unknown-claim smoke parsing uses only the
+physical n ceiling and generic consistency checks, never fills missing bounds.

@@ -1,0 +1,55 @@
+{
+  "ref_count": 39,
+  "same_n_k_peers": [
+    {
+      "ref": {
+        "branch": "codex/lower-reference-gb-library",
+        "sha": "3fea2322b478a21fb0c987c29829a9169aaf4f75"
+      },
+      "path": "data/matrices/untiered/GB_180_26_unknown_Hx.txt",
+      "stem": "GB_180_26_unknown",
+      "candidate": "TN_180_26_unknown"
+    }
+  ],
+  "rowspace_and_XZ_swap": "distinct actual stabilizer pairs",
+  "peer_proof_ref": "3fea2322b478a21fb0c987c29829a9169aaf4f75",
+  "peer_exact": {
+    "maxsat": {
+      "result": {
+        "lb": 7,
+        "ub": 7,
+        "status": "SOLVED"
+      },
+      "path": "optimization/experiments/GH-196/raw/actions/default/lower-reference-gb-maxsat/GB_180_26_unknown.log",
+      "sha256": "f2eaee15e3ec03263e74f368d986a2c76c1d657deb22536e54e5b27dd62b7dbc",
+      "source_head": "faeb1269d94e362f964e645169b79fbd457b11fd",
+      "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+    },
+    "cc": {
+      "result": {
+        "lb": 7,
+        "ub": 7,
+        "status": "SOLVED"
+      },
+      "path": "optimization/experiments/GH-196/raw/actions/default/lower-reference-gb-cc/GB_180_26_unknown.log",
+      "sha256": "1d708bff07c0a405602c9844d8f11858b5277a45b6f21d136047eb12edcd2c80",
+      "source_head": "faeb1269d94e362f964e645169b79fbd457b11fd",
+      "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+    }
+  },
+  "candidate_actual_GF2_word": {
+    "half": "X",
+    "weight": 6,
+    "support": [
+      0,
+      1,
+      27,
+      29,
+      54,
+      56
+    ],
+    "basis": "computed complete quotient basis; upper only"
+  },
+  "physical_inequivalence": "candidate distance<=6 by actual GF2 word; peer exact7 independently cross-checked in retained own engines; qubit permutations/global XZ swap preserve distance",
+  "scope": "no new distance search or external solver; not a claim that candidate exact6 has been reproduced yet"
+}
