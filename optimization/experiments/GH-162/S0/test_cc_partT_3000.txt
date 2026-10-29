@@ -8,3 +8,42 @@ CC_FAIL GH-148 mutant/coverage expectations not met
 CC_FAIL GH-152 partG: no instance with a hidden symmetry recovered
 CC_FAIL GH-152 partH: the new dual-map / orbit paths were not exercised
 CC_FAIL GH-152 mutant expectations not met
+partG (a) encodings (binomial, sequential counter, native propagator; w = 1..14): 42 checks, 0 bad
+partG (b) MaxSAT -stab-overlap: 0 runs on 0 codes (0 codes where the rule removes an element of F of weight <= d + 2), 0 bad; surface codes d = 3..5: 24 runs, 0 bad
+partG mutant 1 (limit floor(|g|/2) - 1): 20/24 runs failed, 0 with a wrong RESULT d OPTIMAL (0 on surface codes, 0 with the native propagator)
+partG mutant 2 (parity rows of the half as g, unverified): 0/24 runs failed, 0 with a wrong RESULT d OPTIMAL (0 on surface codes)
+partB: 0 CSS codes (0 with a verified dual map, 0 with X-half orbits, 0 with dX != dZ, 0 with all-odd Hz), 0 driver runs, 0 bad, 0 RESULT -1
+partD (MaxSAT split, -oddcap-skip off/on): 0 runs on 0 codes (0 with an all-odd half), 0 bad
+partE (ub-search finder): 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+partE (driver with ub-search): 0 runs, 0 bad, 0 levels abandoned (U <= w)
+GH-146 finder stern2              : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder stern1              : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder dumer2              : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder stern2-l0-fresh     : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder dumer1-l2-w1-b3-r5  : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder stern2-l3-w32-b2    : 0 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 0/0 halves
+GH-146 finder mutant 11 (collision mode, no detector check): trivial word returned on 16/16 halves
+GH-146 CC driver in collision mode: 0 runs, 0 bad; mutant 11 4/4 runs stopped or wrong; mutant 12 4/4 failed, 4 with a wrong RESULT d OPTIMAL
+GH-146 MaxSAT pre-pass in collision mode: 0 runs, 0 bad; mutant 1 0 runs, 0 bad; mutant 2 9/9 runs wrong (codes + surface)
+GH-152 partG: 0 relabeled half instances, 0 Tanner generators (0 complete groups), 0 instances with coarser orbits than the GH-75 family, 0 ladder runs (128 rule subsets x 3 seeds), 0 bad; generators violating the row classes 0; planted map preserved the row sets on 0 (0 with a complete group), missed 0
+GH-152 partH: 0 relabeled codes (0 hypergraph products, 0 with dX != dZ), 0 gain a verified dual map only through -cc-aut, 0 gain coarser X-half orbits; 0 driver runs with -cc-aut=on, 0 bad; swap maps violating the classes 0
+mutant 13 (Tanner candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks): half level 0/0 ladders wrong; driver 0/0 runs wrong or stopped
+mutant 14 (Tanner swap map, or the identity, used as dual map without the GF(2) check): driver 0/0 runs wrong or stopped
+GH-162 partT: 3000 half instances (1999 with orbits, 999 of them hidden -cc-aut orbits; 1159 all-odd; 571 with a weight-2 row in K), 439 where the cut removes a minimum element (86 with orbits), 768000 ladder runs (64 rule subsets with overlap,tiebreak x 4 seeds), 0 bad
+mutant 17 (tiebreak without the first(g) exemption: naive tie cut): 53576/768000 half ladders wrong
+mutant 18 (tiebreak order without the seed first: orbit-incompatible): 3272/768000 half ladders wrong (3272 with orbit seeds)
+mutant 1 (forbidden set not restored): 0/0 half ladders wrong
+mutant 2 (packing prune >=): 0/0 half ladders wrong
+mutant 3 (orbit seed rule off by one, instances with orbits): 0/0 half ladders wrong
+mutant 4 (stop rule without other half's lb, forces sequential): schedule requested 0/0 runs wrong; default options 0/0 wrong
+mutant 5 (parity rule forced on halves with an even column weight): 0/0 half ladders wrong
+mutant 6 (leaf budget off by one): 0/0 half ladders wrong
+mutant 7 (leaf closure without the detector check): 0/0 half ladders wrong
+mutant 8 (overlap limit off by one): 0/0 half ladders wrong
+mutant 9 (overlap with the parity checks H as K): 0/0 half ladders wrong
+mutant 10 (overlap even-|g| tie cut): 0/0 half ladders wrong
+mutant 11 (ub-search without the dCC_FAIL GH-140 abort path never exercised
+CC_FAIL mutant expectations not met
+etector check; halves/codes where a trivial word is lighter than d): finder returned a trivial word on 8/8 halves; driver 4/4 runs stopped or wrong
+mutant 12 (mutant 11 + words reported without verification): 4/4 driver runs failed, 4 of them with a wrong RESULT d OPTIMAL
+CC_ENGINE_TESTS FAIL (7)
