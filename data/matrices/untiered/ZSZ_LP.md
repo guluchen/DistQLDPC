@@ -1,6 +1,6 @@
 # Nonabelian ZSZ lifted products (GH-166)
 
-Six original reconstructions from Y. Hong,
+Six original reconstructions from Yifan Hong,
 [arXiv:2607.27644v1](https://arxiv.org/abs/2607.27644v1), Sections 2.1-2.4,
 Eqs. (1),(5)-(10),(13), Tables 1 and 3. Existing LP prefix is retained;
 nonabelian structure is new coverage, not a claim that lifted products and
@@ -22,6 +22,8 @@ answers. Stems stay `LP_{n}_{k}_unknown`. These explicit finite examples span
 the source's 160-775 range; no larger parameters/distances are extrapolated.
 No third-party source, matrix file, paper text or distance solver is used.
 Original generator/validators and derived matrices: GPL-3.0-or-later; see NOTICE.
+The source paper is CC BY 4.0; author/title/source/license attribution and
+the change of representation to generated binary matrices are recorded there.
 
 ## Mathematical construction and soundness
 
@@ -92,6 +94,29 @@ separately. Partial/no bounds stay incomplete numeric gates. New exact results
 stay PLAUSIBLE until both independent engines complete and a minimum witness
 is verified; the literature heuristic is not an independent lower-bound proof.
 
-Actual run IDs, bounds and witness evidence will be added to GH-166/REPORT.md
-and MANIFEST.csv after execution. Long work becomes a server package; no
-Mac solver timing, increased CI limits, stem rename or tier assignment occurs.
+Linux workflow [40843413324](https://github.com/guluchen/DistQLDPC/actions/runs/40843413324)
+passed. Actual results (default 60s per engine):
+
+| n | MaxSAT | CC | confidence |
+|---|---|---|---|
+| 160 | exact 10 | exact 10 | two engines + verified minimum witness |
+| 240 | exact 12 | exact 12 | two engines + verified minimum witness |
+| 320 | [9,14] | exact 14 | CC reproduction; independent completion pending |
+| 390 | [9,16] | [15,16] | CC stronger lower bound PLAUSIBLE |
+| 550 | [9,18] | [16,18] | CC stronger lower bound PLAUSIBLE |
+| 775 | [9,22] | [16,22] | CC stronger lower bound PLAUSIBLE |
+
+All six pass the numeric smoke gate. Last three upper bounds are actual
+GF(2)-verified nontrivial witness weights, independently reproducing the
+published estimates. The common lower bound proved by both engines is 9
+for n=320/390/550/775. Stronger CC-only lower bounds remain PLAUSIBLE under
+PI policy; do not present [15,16]/[16,18]/[16,22] as independently confirmed
+scientific intervals. Raw observed values remain intact in the manifest;
+confidence is explicit in checks, report and raw/bound-crosschecks.json.
+The source paper's last three distances remain estimates, not exact answers.
+
+All twelve raw logs, input/source/binary identities, result CSVs and audit are
+durably retained under GH-166/raw/actions/default/. Audit replay matches CI.
+Seven unresolved exact-proof jobs are prepared, not executed, in GH-166/runner/;
+no longer CI runs, Mac solver experiments or server cores were allocated.
+No solver/default changes, main integration, stem rename or tier move.

@@ -55,7 +55,7 @@ GH-166 adds six nonabelian ZSZ-LP inputs here, taking this branch's untiered inv
 | Weight-8-check BB | GH-164: six published examples at n=72,144,200; all exact claims reproduced by both engines, GF(2) witness audit passes; work branch only | `WEIGHT8_BB.md`, [2609.06572v1](https://arxiv.org/abs/2609.06572v1) |
 | Periodic toric codes | Missing explicit closed-boundary ladder. Planar repetition-HGP does not provide k=2 toric topology | Kitaev [quant-ph/9707021](https://arxiv.org/abs/quant-ph/9707021) |
 | Closed hyperbolic surface codes | GH-165: four {5,4} inputs at n=60,160,360,1800; independent quotient/manifold and both-half graph distances pass. Both engines solve first three; n=1800 numeric smoke incomplete after bounded diagnostics, server package prepared. Published n=1920 normal-closure ambiguity awaits PI decision | Breuckmann-Terhal [1506.04029v2](https://arxiv.org/abs/1506.04029v2) |
-| Nonabelian balanced / lifted products and ZSZ-LP | GH-166: six published nonabelian ZSZ-LP cases n=160..775; independent group/action/CSS checks pass, Linux smoke pending; cyclic GH-160 alone did not complete this coverage | Hong [2607.27644v1](https://arxiv.org/abs/2607.27644v1) |
+| Nonabelian balanced / lifted products and ZSZ-LP | GH-166: six published nonabelian ZSZ-LP cases n=160..775; all numeric smoke gates and upper witnesses pass. Two-engine d=10,12; CC d=14 pending other engine. Stronger open-code CC lower bounds marked PLAUSIBLE; seven exact-proof jobs packaged; cyclic GH-160 alone did not complete this coverage | Hong [2607.27644v1](https://arxiv.org/abs/2607.27644v1) |
 | Moderate-blocklength Quantum Tanner from new finite groups | Missing explicit new-group examples; retain heuristic d as upper estimates | Mian et al. [2608.12509](https://arxiv.org/abs/2608.12509); resolve group/local-code provenance |
 | Pair-partition / group-valued constructions | Missing; check overlap with LP/BB before adding | Okada-Kasai [2607.14091](https://arxiv.org/abs/2607.14091); Lee group-valued paper/source to resolve |
 | BB from covering graphs | Missing provenance/cover structure specialization | Symons-Rajput-Browne [2511.13560](https://arxiv.org/abs/2511.13560): cover parameters to resolve |
@@ -73,7 +73,7 @@ converted into inputs for this CSS stabilizer-distance solver.
 
 1. GH-164 package complete on its work branch: independent witness audits and raw Linux logs retained. Main integration remains pending PI approval.
 2. GH-165 first three cases validated; n=1800 numeric smoke remains open for the prepared server package, and n=1920 remains a PI interpretation decision. Independent ZSZ-LP work is tracked in GH-166; periodic toric references remain missing.
-3. Finish GH-166 nonabelian ZSZ-LP evidence, then finite-group Tanner and pair-partition/group examples; prioritize structurally new inputs over more BB variants.
+3. GH-166 six-input library package passes construction/numeric gates; retain its provisional scientific bounds and unexecuted proof jobs. Next: pair-partition/group examples and finite-group Tanner cases, prioritizing new structure over more BB variants.
 4. Cover the remaining handoff targets and genuine family gaps; repair the
    incomplete numeric smoke gates listed above using short checks or a server
    package, without reinterpreting UNKNOWN as a certified interval.

@@ -3,7 +3,7 @@
 Issue: https://github.com/guluchen/DistQLDPC/issues/166
 Branch: codex/zsz-lp-library
 Base main: 6083e662c621f3b66defd434cfae31a028d483c4.
-Status: construction/algebra/units validated, Linux evidence pending.
+Status: ACCEPTED AS SIX-INPUT UNTIERED LIBRARY PACKAGE; all construction and numeric smoke gates pass. Stronger single-engine scientific lower bounds remain PLAUSIBLE; optional exact-proof jobs prepared, not executed.
 
 ## Proposals and scope
 
@@ -93,9 +93,81 @@ cases, independent validator, shared claim/witness helpers, provenance,
 manifest, tests and bounded Linux workflow.
 Validation performed: local generation, independent GF(2)/group/action/rank/
 logical/pairing/duplicate checks, 45 units and byte-identical regeneration.
-Results: local checks pass; actual solver evidence pending.
-Unresolved issues: Linux gates pending; scientific discrepancies would stop
-this batch; prior hyperbolic open items remain; main integration needs PI.
+Results: all local/Linux numeric gates pass; exact d=10,12 cross-checked by both engines, CC reproduces published d=14; all heuristic upper witnesses independently verified.
+Unresolved issues: stronger CC-only lower bounds and remaining exact proofs need independent completion; prior hyperbolic open items remain; main integration/server allocation need PI.
 Scientific semantics changed: no.
 PI action required: no for continued work; yes before main integration or
 any dedicated-server execution; prior n=1920 interpretation remains pending.
+
+## Actual Linux evidence and scientific verdict
+
+Tested source 1fb9ba1d535c2a6936c9ac86ccb82e2d0dcc2a43. Library workflow
+https://github.com/guluchen/DistQLDPC/actions/runs/40843413324,
+job 123345015971, SUCCESS. Generic CI 40843413165, SUCCESS.
+Binary SHA256 68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+All twelve input/source/binary identities, argv, environment, raw outputs,
+CSVs, exact/witness audit and full job log retained in raw/actions/default/.
+Every raw/CSV/JSON result and matrix hash rechecked; audit replay is
+byte-identical to the actual CI audit. Published claims remain separate.
+
+| stem | published claim | MaxSAT 60s | CC 60s | numeric gate |
+|---|---|---|---|---|
+| LP_160_32_unknown | exact 10 | exact 10 | exact 10 | PASS |
+| LP_240_48_unknown | exact 12 | exact 12 | exact 12 | PASS |
+| LP_320_64_unknown | exact 14 | [9,14] | exact 14 | PASS |
+| LP_390_78_unknown | heuristic <=16 | [9,16] | [15,16] | PASS |
+| LP_550_110_unknown | heuristic <=18 | [9,18] | [16,18] | PASS |
+| LP_775_155_unknown | heuristic <=22 | [9,22] | [16,22] | PASS |
+
+n=160 and 240 are CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS, reproducing
+published exact distances. n=320 reproduces published d=14 with CC and a
+verified weight-14 word, but independent MaxSAT completion remains pending;
+label the current independent-reproduction status PLAUSIBLE, not complete.
+
+For the three previously heuristic-only cases, all upper estimates 16/18/22
+are independently reproduced by actual nontrivial GF(2)-verified words.
+Stronger CC-only lower bounds 15/16/16 are **PLAUSIBLE_PENDING_INDEPENDENT_LOWER_BOUND_COMPLETION**.
+Both engines independently support lower bound 9. Do not publish provisional
+[15,16]/[16,18]/[16,22] as independently confirmed scientific intervals, or
+infer exact d=16/18/22. The source literature estimates provide no lower-bound
+proof. No new exact distance on an open code is claimed. Confidence fields
+are explicit in raw/bound-crosschecks.json, manifest checks and this report.
+The original audit's NO_NEW_EXACT_RESULT marker refers only to exact answers;
+the separate bound review supplies the required provisional status for
+stronger lower-bound observations, without changing any raw bound value.
+
+Bound review is reproducible with runner/review_bounds.py (audit SHA256 retained).
+It distinguishes the strongest observed lower bound from the minimum independently
+supported by both engines and handles absent numeric bounds explicitly.
+All 24 previous manifest records and all previous matrix files are unchanged.
+CC BY 4.0 source attribution for Yifan Hong is recorded with source/license
+links and an explicit statement of our original implementation/binary expansion.
+
+## Optional long-proof package (prepared only)
+
+runner/prepare_jobs.py selects exactly seven unresolved per-engine proofs
+from the actual audit: MaxSAT n=320; both engines at n=390/550/775. It skips
+all completed proofs. runner/jobs.jsonl is committed; command dry-run output
+in raw/server-dry-run.json was inspected against the selected set. Runner
+is syntax checked; no solver process launched locally or on a server.
+
+One explicitly PI-assigned, occupancy-checked yfclab2 core, serial jobs,
+4 GiB each, 21600s per job, +600s wall backstop, stdin /dev/null. Worst-case
+serial package budget is 42h of solver limits or 43h10m with all backstops;
+this is NOT authorization to run or a claim that any long gate passed. It
+requires PI allocation and a server-enabled agent. Frozen source/case/job/
+binary/input identities and raw logs are retained, mutations during execution
+are rejected, all emitted witnesses are GF(2)-checked, contradictions stop
+the queue. Exact/upper semantics are preserved for every job, no unknown stem
+is parsed as a numeric expected distance. See runner/README.md.
+
+Verdict: accept the six reproducible inputs as untiered library representatives;
+all requested short numeric gates pass, with the scientific confidence limits
+above. Seven optional exact-proof jobs and prior hyperbolic unresolved items
+remain visible. No PR/main integration, tiering/renames, QDistSAT mirror,
+external distance solver, Mac solver experiment or server allocation.
+Continuous coverage goal remains active; next independent construction target
+is pair-partition CPM, with source/provenance research in NEXT_FAMILY_RESEARCH.md.
+Scientific semantics changed: no. PI action required: no to continue library
+work; yes for main integration or any server execution, and the prior n=1920
+hyperbolic interpretation question remains pending.
