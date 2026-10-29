@@ -130,3 +130,13 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+## Explicit covering-graph BB specialization (GH-176 work branch)
+
+Six weight8 BB cases n64/128/192/216/256/288,k14 from attributed published
+Tables7/8, with an original generator and independent physical-column,
+actual covering-star and chain-projection/transfer checks. The two smallest
+source claims are exact8/12; larger16/20/22/24 labels are heuristic upper
+estimates. Actual solver results and word verification are recorded
+separately. See [COVERING_BB.md](COVERING_BB.md) and GH-176/REPORT.md.
+All stems remain unknown; no tier assignment or QDistSAT mirror.
