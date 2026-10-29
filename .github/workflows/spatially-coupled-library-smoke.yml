@@ -1,0 +1,86 @@
+name: Periodic spatially coupled CSS library smoke
+
+on:
+  push:
+    branches: [codex/spatially-coupled-library]
+    paths:
+      - '.github/workflows/spatially-coupled-library-smoke.yml'
+      - 'scripts/codegen/spatially_coupled*'
+      - 'scripts/codegen/validate_spatially_coupled.py'
+      - 'scripts/codegen/audit_spatially_coupled_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_spatially_coupled.py'
+      - 'tests/test_codegen_color666.py'
+      - 'data/matrices/untiered/SC_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_spatially_coupled.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_spatially_coupled.py --out /tmp/spatially_coupled-construction.json
+          cmp optimization/experiments/GH-188/raw/construction.json /tmp/spatially_coupled-construction.json
+      - name: Reproduce all20 new matrix files
+        run: |
+          python3 scripts/codegen/spatially_coupled.py --all --out /tmp/spatially_coupled-rebuilt --certificates /tmp/spatially_coupled-certificates
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/spatially_coupled-rebuilt').glob('*.txt'))
+          assert len(files)==20
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          certs=list(Path('/tmp/spatially_coupled-certificates').glob('*.json'))
+          assert len(certs)==5
+          for p in certs:
+              assert p.read_bytes()==(Path('optimization/experiments/GH-188/raw/certificates')/p.name).read_bytes(),p
+          print('PASS:20 matrices and5 full certificates reproduced byte for byte')
+          PY
+      - name: Five default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family SC --stems SC_232_88_unknown SC_928_280_unknown SC_1450_424_unknown SC_2842_808_unknown SC_5800_1624_unknown --verbose --out /tmp/spatially_coupled-maxsat
+      - name: Five CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family SC --stems SC_232_88_unknown SC_928_280_unknown SC_1450_424_unknown SC_2842_808_unknown SC_5800_1624_unknown --engine cc --verbose --out /tmp/spatially_coupled-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_spatially_coupled_smoke.py --maxsat /tmp/spatially_coupled-maxsat --cc /tmp/spatially_coupled-cc --construction optimization/experiments/GH-188/raw/construction.json --out /tmp/spatially_coupled-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('spatially_coupled-maxsat','spatially_coupled-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH188_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/spatially_coupled-audit.json')
+          if audit.exists():print('GH188_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh188-spatially_coupled-smoke
+          path: |
+            /tmp/spatially_coupled-maxsat/
+            /tmp/spatially_coupled-cc/
+            /tmp/spatially_coupled-audit.json
+          if-no-files-found: warn
+          retention-days: 14
