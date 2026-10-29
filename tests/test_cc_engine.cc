@@ -173,6 +173,7 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
     r.overlap = mask & 64;
+    r.sparse = mask & 128; r.sparseov = mask & 256; r.xorunit = mask & 512;   // GH-181
     return r;
 }
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128;
@@ -194,6 +195,39 @@ static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, co
     for (int w = 1; w <= top; w++) {
         distcc::LevelResult res = hs.run_level(w);
         if (nodes) *nodes += res.nodes;
+        const bool expect_found = (w == dh);
+        if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
+        if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
+            snprintf(buf, sizeof(buf), "w=%d got %s expected %s (d_h=%d)", w, res.verdict == distcc::LEVEL_FOUND ? "FOUND" : "EMPTY",
+                     expect_found ? "FOUND" : "EMPTY", dh);
+            why = buf; return false;
+        }
+        if (res.verdict == distcc::LEVEL_FOUND) {
+            Mask v = 0;
+            for (int q : res.witness) v |= 1u << q;
+            if (popc(v) != w || (int)res.witness.size() != w || !in_kernel(H, v) || !detected(G, v)) {
+                snprintf(buf, sizeof(buf), "w=%d invalid witness", w); why = buf; return false;
+            }
+        }
+    }
+    return true;
+}
+
+// GH-181 Part X: ladder 1..dh with the level counters summed into *acc (verdicts and witnesses checked as in ladder_ok)
+static bool ladder_x(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
+                     const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, distcc::LevelResult* acc, int* xrows, std::string& why) {
+    distcc::Rules r = rules_of(rmask);
+    const distcc::SparseRows Kr = to_rows(K, n);
+    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
+    if (xrows) { xrows[0] = hs.sparse_rows(); xrows[1] = hs.sparseov_rows(); }
+    const int top = dh < 0 ? n : dh;
+    char buf[160];
+    for (int w = 1; w <= top; w++) {
+        distcc::LevelResult res = hs.run_level(w);
+        if (acc) {
+            acc->nodes += res.nodes; acc->spack += res.spack; acc->sprune += res.sprune; acc->snocand += res.snocand;
+            acc->ovtightx += res.ovtightx; acc->xuforbid += res.xuforbid; acc->xuforced += res.xuforced; acc->xudead += res.xudead;
+        }
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
         if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
@@ -553,6 +587,8 @@ int main(int argc, char** argv) {
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
             {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
+            {"gh181", RM_NEW | 128 | 256 | 512, true, false, 0, true}, {"gh181-mrv-seed1", RM_ALL | 128 | 256 | 512, false, false, 1, true},
+            {"gh181-xorunit-plain", 512, true, true, 2, false}, {"gh181-sparse-pack", 2 | 128, false, false, 0, true},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
@@ -1210,6 +1246,95 @@ int main(int argc, char** argv) {
            h_m14_bad, h_m14_runs);
     if (h_newdual == 0 || h_coarser == 0) { fprintf(stderr, "CC_FAIL GH-152 partH: the new dual-map / orbit paths were not exercised\n"); fails++; }
     if (g_m13_bad == 0 || h_m13_bad == 0 || h_m14_bad == 0) { fprintf(stderr, "CC_FAIL GH-152 mutant expectations not met\n"); fails++; }
+
+    // ---------------- GH-181 Part X: sparse / sparseov / xorunit vs brute force ----------------
+    // Half instances as in Part A (planted shifts, a third all-odd, K inside ker [H; G] by the same three kinds), plus a
+    // TN-like third whose rows overlap heavily (pairs h, h + small) so that sparse pair sums exist. For every subset of the
+    // 7 base rules and every nonzero subset of {sparse, sparseov, xorunit} (896 configurations, seed (subset + combo) mod 3)
+    // the ladder must match enumeration. Mutants 19 (redundant row with a flipped qubit), 20 (xorunit branches on an even
+    // unit row) and 21 (sparseov pair sums from H) must produce wrong ladders.
+    {
+        const int NX = argc > 3 ? atoi(argv[3]) : 300;
+        long x_inst = 0, x_runs = 0, x_bad = 0, x_rows = 0, x_ovrows = 0, x_spack = 0, x_sprune = 0, x_forbid = 0, x_forced = 0, x_dead = 0, x_ovtx = 0;
+        long xm_bad[3] = {0, 0, 0}, xm_runs[3] = {0, 0, 0};
+        for (int inst = 0; inst < NX; inst++) {
+            const int n = 5 + (int)rnd(14);
+            std::vector<std::vector<int> > gens;
+            if (rnd(2)) {
+                std::vector<int> divs;
+                for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+                if (!divs.empty()) { int L = divs[rnd((unsigned)divs.size())]; gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L)); }
+            }
+            std::vector<Mask> h0, g0;
+            int nh = 1 + (int)rnd((unsigned)(n / 2 + 2)), ng = 1 + (int)rnd(3);
+            const bool tnlike = inst % 3 == 2;
+            for (int k = 0; k < nh; k++) {
+                Mask h = rand_vec(n, tnlike ? 4 : 2, tnlike ? 7 : 5);
+                h0.push_back(h);
+                if (tnlike && rnd(2)) {   // a heavily overlapping partner: h + (a few qubits), weight kept close to |h|
+                    Mask t = h;
+                    for (int f = 0, F = 1 + (int)rnd(3); f < F; f++) t ^= 1u << rnd(n);
+                    if (t && t != h) h0.push_back(t);
+                }
+            }
+            for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+            std::vector<Mask> H = closure(h0, gens, 20), G = closure(g0, gens, 12);
+            if (G.empty()) G.push_back(1u << rnd(n));
+            if (inst % 4 == 0) make_columns_odd(H, n);
+            const int dh = half_opt(H, G, n);
+            std::vector<Mask> kerHG, K;
+            {
+                Span sp; std::vector<Mask> basis;
+                for (Mask v = 1; v < (1u << n); v++) {
+                    if (!in_kernel(H, v) || detected(G, v)) continue;
+                    kerHG.push_back(v);
+                    if (sp.add(v)) basis.push_back(v);
+                }
+                const int kind = inst % 3;
+                if (kind == 0) K = basis;
+                else if (kind == 1) { for (Mask v : kerHG) if (popc(v) <= 6 && K.size() < 60) K.push_back(v); }
+                else if (!basis.empty())
+                    for (int t = 0, T = 1 + (int)rnd(8); t < T; t++) { Mask v = 0; for (Mask b : basis) if (rnd(2)) v ^= b; if (v) K.push_back(v); }
+            }
+            std::vector<int> orb = orbits_of(H, G, n);
+            x_inst++;
+            bool counted = false;
+            for (int combo = 1; combo < 8; combo++)
+                for (int base = 0; base < 128; base++) {
+                    const int rm = base | (combo << 7);
+                    const uint64_t seed = (uint64_t)((base + combo) % 3);
+                    distcc::LevelResult acc; int xr[2] = {0, 0};
+                    std::string why;
+                    x_runs++;
+                    if (!ladder_x(H, G, K, n, dh, orb, rm, seed, 0, &acc, xr, why)) {
+                        x_bad++; fails++;
+                        if (x_bad <= 10) fprintf(stderr, "CC_FAIL GH-181 partX inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rm),
+                                                 (unsigned long long)seed, why.c_str());
+                    }
+                    if (!counted && combo == 7) { counted = true; if (xr[0] > 0) x_rows++; if (xr[1] > 0) x_ovrows++; }
+                    x_spack += acc.spack > 0; x_sprune += acc.sprune > 0; x_forbid += acc.xuforbid > 0; x_forced += acc.xuforced > 0;
+                    x_dead += acc.xudead > 0; x_ovtx += acc.ovtightx > 0;
+                    // mutants on the configurations where they apply
+                    for (int mi = 0; mi < 3; mi++) {
+                        const int mt = 19 + mi;
+                        if (mt == 19 && (!(rm & 128) || !(rm & (2 | 8 | 512)))) continue;
+                        if (mt == 20 && !(rm & 512)) continue;
+                        if (mt == 21 && (!(rm & 256) || !(rm & 64))) continue;
+                        std::string w2;
+                        xm_runs[mi]++;
+                        if (!ladder_x(H, G, K, n, dh, orb, rm, seed, mt, NULL, NULL, w2)) xm_bad[mi]++;
+                    }
+                }
+        }
+        printf("GH-181 partX: %ld half instances (%ld with sparse rows, %ld with sparseov rows), %ld ladder runs (128 base subsets x 7 token subsets), %ld bad; "
+               "runs where the rule acted: spack %ld, sprune %ld, ovtightx %ld, xuforbid %ld, xuforced %ld, xudead %ld\n",
+               x_inst, x_rows, x_ovrows, x_runs, x_bad, x_spack, x_sprune, x_ovtx, x_forbid, x_forced, x_dead);
+        printf("mutant 19 (sparse redundant row with one qubit flipped): %ld/%ld half ladders wrong\n", xm_bad[0], xm_runs[0]);
+        printf("mutant 20 (xorunit branches on an even unit row): %ld/%ld half ladders wrong\n", xm_bad[1], xm_runs[1]);
+        printf("mutant 21 (sparseov pair sums of H instead of K): %ld/%ld half ladders wrong\n", xm_bad[2], xm_runs[2]);
+        if (xm_bad[0] == 0 || xm_bad[1] == 0 || xm_bad[2] == 0) { fprintf(stderr, "CC_FAIL GH-181 mutant expectations not met\n"); fails++; }
+        if (x_sprune == 0 || x_forbid == 0 || x_forced == 0 || x_ovtx == 0) { fprintf(stderr, "CC_FAIL GH-181 rules never acted\n"); fails++; }
+    }
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);

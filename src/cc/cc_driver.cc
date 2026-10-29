@@ -218,6 +218,7 @@ bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::
 bool parse_rules(const char* s, Rules& out) {
     Rules r;
     r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = false;
+    r.sparse = r.sparseov = r.xorunit = false;
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -231,6 +232,9 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "parity") r.parity = true;
         else if (tok == "leaf") r.leaf = true;
         else if (tok == "overlap") r.overlap = true;
+        else if (tok == "sparse") r.sparse = true;     /* GH-181 */
+        else if (tok == "sparseov") r.sparseov = true; /* GH-181 */
+        else if (tok == "xorunit") r.xorunit = true;   /* GH-181 */
         else if (tok == "none") { /* nothing */ }
         else return false;
         pos = e + 1;
@@ -247,6 +251,9 @@ std::string rules_string(const Rules& r) {
     if (r.parity) s += ",parity";
     if (r.leaf) s += ",leaf";
     if (r.overlap) s += ",overlap";
+    if (r.sparse) s += ",sparse";
+    if (r.sparseov) s += ",sparseov";
+    if (r.xorunit) s += ",xorunit";
     if (r.mrv) s += ",mrv";
     return s.empty() ? std::string("none") : s.substr(1);
 }
@@ -365,6 +372,19 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        S.overlap_max_weight(), S.overlap_zero_rows());
             else
                 printf("c cc: %s half overlap: idle (no stabilizer row)\n", hs[k].tag);
+            /* GH-181 (no line without the tokens: byte identity) */
+            if (opt.rules.sparse)
+                printf("c cc: %s half sparse: %d redundant rows (pair sums of %s rows, weights %d..%d)%s\n", hs[k].tag,
+                       S.sparse_rows(), k == 0 ? "Hz" : "Hx", S.sparse_min_weight(), S.sparse_max_weight(),
+                       opt.mutant == 19 ? " [TEST MUTANT 19: one qubit flipped per row]" : "");
+            if (opt.rules.sparseov)
+                printf("c cc: %s half sparseov: %s%d redundant stabilizer rows (pair sums of %s rows, weights %d..%d)%s\n", hs[k].tag,
+                       opt.rules.overlap ? "" : "idle (needs overlap), ", S.sparseov_rows(),
+                       opt.mutant == 21 ? (k == 0 ? "Hz" : "Hx") : (k == 0 ? "Hx" : "Hz"), S.sparseov_min_weight(),
+                       S.sparseov_max_weight(), opt.mutant == 21 ? " [TEST MUTANT 21: parity-check pair sums]" : "");
+            if (opt.rules.xorunit)
+                printf("c cc: %s half xorunit: on (%s)%s\n", hs[k].tag, opt.rules.sparse ? "rows of H and the redundant rows" : "rows of H",
+                       opt.mutant == 20 ? " [TEST MUTANT 20: even unit rows branched on]" : "");
         }
     }
     /* GH-133 parity: level 1 of a qualifying half is empty (every element has even weight) */
@@ -593,6 +613,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                    (unsigned long long)r.closed, (unsigned long long)r.nocand, (unsigned long long)r.packprune,
                    (unsigned long long)r.parprune, (unsigned long long)r.leaf1, (unsigned long long)r.leaf2,
                    (unsigned long long)r.ovtight, (unsigned long long)r.ovforbid, dt);
+            if (opt.rules.sparse || opt.rules.sparseov || opt.rules.xorunit)   /* GH-181 counters (only with the tokens) */
+                printf("c cc-stats: %s level %d gh181 spack %llu sprune %llu snocand %llu ovtightx %llu xuforbid %llu xuforced %llu xudead %llu\n",
+                       h.tag, w, (unsigned long long)r.spack, (unsigned long long)r.sprune, (unsigned long long)r.snocand,
+                       (unsigned long long)r.ovtightx, (unsigned long long)r.xuforbid, (unsigned long long)r.xuforced,
+                       (unsigned long long)r.xudead);
             if (!r.by_budget.empty()) {   /* nodes by remaining budget w - |S|, budget 0 (full clusters) first */
                 printf("c cc-stats: %s level %d nodes-by-budget", h.tag, w);
                 for (size_t b = 0; b < r.by_budget.size(); b++) printf(" %llu", (unsigned long long)r.by_budget[b]);

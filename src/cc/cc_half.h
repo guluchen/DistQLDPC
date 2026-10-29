@@ -78,6 +78,32 @@
  *         it would drop both e and e + g (mutant 10). With the leaf rule, children of remaining budget 1 or 2
  *         (whose subtrees are lookups only) skip the counter updates: a closure found there is a weight-w element
  *         of F and meets every limit by itself. Full proof: MODIFICATIONS.md (GH-138).
+ *   sparse (GH-181, opt-in) redundant sparse checks. R = the distinct pair sums r = h1 + h2 of rows of H with
+ *         0 < |r| <= max(|h1|, |h2|), not equal to a row of H (deduplicated; at most 4 m rows, lightest first, ties by
+ *         the sorted original support). Every r in R lies in the row space of H (checked at construction by
+ *         recomputing h1 + h2), so r.e = 0 for EVERY e in ker H. Every argument that uses an odd row h of S only
+ *         through "h.e = 0 for every e in ker H" therefore holds for an odd r of R as well: r.(e \ S) = r.S = 1, so
+ *         e \ S meets r. Used in: pack (after the odd rows of H, in R's order, with the same disjointness test, so the
+ *         packing of a node can only grow: every node pruned without the token is pruned with it), the
+ *         no-candidate dead end (an odd r with no free qubit), mrv (the branch over the free qubits of an odd r
+ *         contains a branch inside e, exactly as in (2)), and xorunit. NOT used for: syndrome-freeness (nodd, the
+ *         size-w test), parity (column weights and wt(syn) are those of H), the leaf lookup (columns of H) and
+ *         overlap (rows of H are stabilizers of the other type, not elements of ker H: test mutant 9). Credit:
+ *         Qubitserf 04b9349 augment_sparse_checks (S. Cercelescu, MIT; idea only, no code), Puchert and Tillmann,
+ *         arXiv:2004.03387 (forbidden-set cuts from redundant parity checks).
+ *   sparseov (GH-181, opt-in) redundant stabilizer rows for overlap: the distinct pair sums g = g1 + g2 of rows of K
+ *         with 0 < |g| <= max(|g1|, |g2|), not equal to a row of K (at most 4 |K| rows, same order rule). Each satisfies
+ *         H g = 0 and G g = 0 (checked with K's rows), so e + g is in F and the GH-138 argument applies with g's own
+ *         limit floor(|g|/2). Counted separately (ovtightx).
+ *   xorunit (GH-181, opt-in) XOR unit propagation at every node of remaining budget >= 2, to a fixpoint, over the rows
+ *         of H (and of R with sparse). Let e be any element of ker H with S a subset of e and no forbidden qubit in e
+ *         (every rule above keeps its chosen target e* of this kind), and u a row with exactly one free qubit q.
+ *         (a) u even (u.S = 0): u.(e \ S) = 0 and e \ S meets u at most in q, so q is not in e: q is forbidden for the
+ *         subtree (restored on return). (b) u odd: e \ S meets u, so q is in e; u becomes the branching row (one
+ *         child; complete by (2)). (c) u odd with no free qubit: dead end. The forbids keep every such e, so they
+ *         chain with excl, orbf and the overlap forbids (a tight stabilizer row can leave a row with one free qubit).
+ *         Kept per row: the number of free qubits (updated on every change of the forbidden set) and bitsets of the
+ *         rows with one / no free qubit. Credit: Okada and Kasai, cpm-ldpc-distance (forced unit).
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -96,7 +122,9 @@ struct SparseRows {
 
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
-    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true) {}
+    bool sparse, sparseov, xorunit;   /* GH-181 (default off) */
+    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true),
+              sparse(false), sparseov(false), xorunit(false) {}
 };
 
 /* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */
@@ -113,11 +141,20 @@ struct LevelResult {
     uint64_t leaf1, leaf2;     /* leaf: budget-1 lookups; budget-2 lookups (one per candidate a) */
     uint64_t ovtight;          /* overlap: a stabilizer row reached |S & g| = floor(|g|/2) (rest of g forbidden) */
     uint64_t ovforbid;         /* overlap: qubits turned from free to forbidden by those events */
+    /* GH-181 (zero unless the tokens are on) */
+    uint64_t spack;            /* sparse: packing rows contributed by redundant rows (summed over nodes) */
+    uint64_t sprune;           /* sparse: packing prunes reached only through redundant rows */
+    uint64_t snocand;          /* sparse: odd redundant row without candidate */
+    uint64_t ovtightx;         /* sparseov: tight events on redundant stabilizer rows */
+    uint64_t xuforbid;         /* xorunit: qubits forbidden by an even row with one free qubit */
+    uint64_t xuforced;         /* xorunit: nodes branching on an odd row with one free qubit */
+    uint64_t xudead;           /* xorunit: odd row without free qubit after propagation */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
     LevelResult() : verdict(LEVEL_EMPTY), nodes(0), seeds(0), closed(0), nocand(0), packprune(0), parprune(0),
-                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0), skipped(false) {}
+                    leaf1(0), leaf2(0), ovtight(0), ovforbid(0),
+                    spack(0), sprune(0), snocand(0), ovtightx(0), xuforbid(0), xuforced(0), xudead(0), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -129,7 +166,10 @@ struct LevelResult {
  * 7 leaf closures accepted without the detector check (trivial closures reported as found); GH-138 overlap
  * mutants: 8 limit off by one (floor(|g|/2) - 1: a row is tight one qubit early), 9 the parity checks H used as K
  * (rows of H are not in ker H in general), 10 the even-|g| tie cut (limit |g|/2 - 1 for even |g|, which loses
- * both e and e + g when |e & g| = |g|/2).
+ * both e and e + g when |e & g| = |g|/2). GH-181 mutants (numbers 15-18 are taken by GH-157 / GH-162):
+ * 19 every redundant row of sparse has one qubit flipped (its first qubit removed: not in the row space of H),
+ * 20 xorunit branches on an even row with one free qubit as if it were forced (instead of forbidding the qubit),
+ * 21 sparseov takes its pair sums from H instead of K (no check; not stabilizers of this half).
  * (GH-124 fix round 1: the S0 spec's literal mutant 3, "orbit seeds without forbidding earlier orbits", only
  * drops a restriction and is a sound weakening that can never change a level verdict, so it was replaced by
  * this non-equivalent orbit-rule mutant. GH-133: the spec's literal leaf mutant, "leaf lookup ignoring the
@@ -170,6 +210,14 @@ public:
     int overlap_min_weight() const { return kminw_; }
     int overlap_max_weight() const { return kmaxw_; }
     int overlap_zero_rows() const { return kzero_; }
+    /* GH-181: redundant rows in use (sparse: rows of R; sparseov: added stabilizer rows) and their weight ranges */
+    int sparse_rows() const { return mx_; }
+    int sparse_min_weight() const { return xminw_; }
+    int sparse_max_weight() const { return xmaxw_; }
+    int sparseov_rows() const { return nkx_; }
+    int sparseov_min_weight() const { return kxminw_; }
+    int sparseov_max_weight() const { return kxmaxw_; }
+    bool xorunit_active() const { return xu_; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
@@ -197,6 +245,19 @@ private:
     std::vector<int> klim_;
     std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
+    /* GH-181 sparse: redundant rows R (relabeled, ascending); row j has the unified index ux_ + j (ux_ = 64 mw_, so its
+     * syndrome bit lives in syn_ words mw_..mw_ + mxw_ - 1 and never disturbs nodd_ or the scans of H's rows) */
+    int mx_, mxw_, ux_, xminw_, xmaxw_;
+    std::vector<uint32_t> xstart_, xq_;     /* redundant row -> qubits */
+    std::vector<uint32_t> xcstart_, xcr_;   /* qubit -> unified indices of its redundant rows */
+    /* sparseov: rows nk0_..nk_-1 of K are the added pair sums */
+    int nk0_, nkx_, kxminw_, kxmaxw_;
+    /* xorunit: free-qubit count per unified row, bitsets of rows with one / no free qubit, trail of unit forbids */
+    bool xu_;
+    uint64_t ovtightx_;                     /* sparseov: per-level counter */
+    std::vector<int32_t> freecnt_;
+    std::vector<uint64_t> unit_, zero_;
+    std::vector<uint32_t> xtrail_;
 
     /* search state */
     int w_;
@@ -217,6 +278,11 @@ private:
     bool abort_;
 
     void toggle(int q);
+    void blk_up(uint32_t q);                /* forbidden-set changes (xorunit keeps its counters) */
+    void blk_down(uint32_t q);
+    void xu_count(uint32_t q, int d);
+    bool xu_propagate(int size, int& forced); /* false: dead end; forced: unified index of an odd unit row or -1 */
+    bool expand(int size, int forced);
     void ov_add(int q);
     void ov_del(int q);
     bool gpar_nonzero() const;
