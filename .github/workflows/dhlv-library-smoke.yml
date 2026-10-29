@@ -1,0 +1,86 @@
+name: Finite DHLV edge-qubit CSS library smoke
+
+on:
+  push:
+    branches: [codex/dhlv-library]
+    paths:
+      - '.github/workflows/dhlv-library-smoke.yml'
+      - 'scripts/codegen/dhlv*'
+      - 'scripts/codegen/validate_dhlv.py'
+      - 'scripts/codegen/audit_dhlv_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_dhlv.py'
+      - 'tests/test_codegen_color666.py'
+      - 'data/matrices/untiered/DHLV_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_dhlv.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_dhlv.py --out /tmp/dhlv-construction.json
+          cmp optimization/experiments/GH-186/raw/construction.json /tmp/dhlv-construction.json
+      - name: Reproduce all24 new matrix files
+        run: |
+          python3 scripts/codegen/dhlv.py --all --out /tmp/dhlv-rebuilt --certificates /tmp/dhlv-certificates
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/dhlv-rebuilt').glob('*.txt'))
+          assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          certs=list(Path('/tmp/dhlv-certificates').glob('*.json'))
+          assert len(certs)==6
+          for p in certs:
+              assert p.read_bytes()==(Path('optimization/experiments/GH-186/raw/certificates')/p.name).read_bytes(),p
+          print('PASS:24 matrices and6 full certificates reproduced byte for byte')
+          PY
+      - name: Six default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family DHLV --stems DHLV_108_10_unknown DHLV_784_40_unknown DHLV_1176_50_unknown DHLV_1568_48_unknown DHLV_1960_58_unknown DHLV_2744_66_unknown --verbose --out /tmp/dhlv-maxsat
+      - name: Six CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family DHLV --stems DHLV_108_10_unknown DHLV_784_40_unknown DHLV_1176_50_unknown DHLV_1568_48_unknown DHLV_1960_58_unknown DHLV_2744_66_unknown --engine cc --verbose --out /tmp/dhlv-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_dhlv_smoke.py --maxsat /tmp/dhlv-maxsat --cc /tmp/dhlv-cc --construction optimization/experiments/GH-186/raw/construction.json --out /tmp/dhlv-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('dhlv-maxsat','dhlv-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH186_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/dhlv-audit.json')
+          if audit.exists():print('GH186_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh186-dhlv-smoke
+          path: |
+            /tmp/dhlv-maxsat/
+            /tmp/dhlv-cc/
+            /tmp/dhlv-audit.json
+          if-no-files-found: warn
+          retention-days: 14
