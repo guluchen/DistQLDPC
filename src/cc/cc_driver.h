@@ -95,9 +95,20 @@ struct DriverOptions {
                                 packing scan order and the mrv tie-break (cc_half.h); a row permutation. Mutants 19 / 20 (bfs only):
                                 the order drops a row / is not restarted for rows unreachable from the seed */
     bool tb_asc;             /* GH-183 -cc-tbbase=desc|asc (default desc): base order of the tiebreak rule (test variant) */
+    /* GH-206 -cc-roworder=auto: per searched half, two exact searches -- A (index order, rules without mrv) and B (bfs order,
+     * rules with mrv), both with tb_asc. A searches from level 1. At the first level of the half that A refutes (EMPTY) with a
+     * search time (finder time excluded) >= probe_sec, B searches the SAME level with an abort at A's search time (poll
+     * hook; the finder does not run during the probe); if B ends EMPTY first, B searches every later level of the half,
+     * else A does. Verdicts are unchanged: both are exact, the probe level is already refuted, an aborted probe changes no
+     * bound, and a probe that is not EMPTY or ABORTED after A's EMPTY is a trap. probe_force (test only): 0 by time,
+     * 1 always switch to B after the probe level (B's result ignored unless it disagrees), 2 never switch. Mutant 21: the
+     * probe re-arms after every refuted level and runs level w + 1 (instead of w) with a zero time cap, and an ABORTED
+     * probe is taken as a refuted level (lb raised without proof). */
+    double probe_sec;        /* -cc-probe=S (default 1.0 s) */
+    int probe_force;         /* -cc-probe=switch|stay (test only) */
     DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0),
-                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false) {}
+                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false), probe_sec(1.0), probe_force(0) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).

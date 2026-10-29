@@ -140,8 +140,10 @@ struct Rules {
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), tiebreak(false) {}
 };
 
-/* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment) */
-enum RowOrder { ROWORDER_INDEX = 0, ROWORDER_BFS = 1 };
+/* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment).
+ * ROWORDER_AUTO (GH-206) is resolved by the driver (cc_driver.h: a per-half probe between two HalfSearch objects, one
+ * with each order); a HalfSearch itself takes only INDEX or BFS. */
+enum RowOrder { ROWORDER_INDEX = 0, ROWORDER_BFS = 1, ROWORDER_AUTO = 2 };
 
 /* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */
 enum LevelVerdict { LEVEL_EMPTY = 0, LEVEL_FOUND = 1, LEVEL_INCONSISTENT = 2, LEVEL_ABORTED = 3 };
