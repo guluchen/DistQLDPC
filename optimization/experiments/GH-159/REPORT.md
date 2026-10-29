@@ -78,9 +78,38 @@ is no optimization adoption gate or seed-median timing claim.
 
 ## Linux smoke results
 
-PENDING at the initial source checkpoint. Published exact values are not
-solver results. CI builds the unchanged solver and repeats unit, geometry,
-GF(2) and regeneration checks, then six default-seed smoke executions.
+Source checkpoint: `5745cb2ac0f9091a5cd93455e32e1e526fa115c2`;
+tree `4be689bcd8ed8acf74afcac8fb125f6af1993fd7`.
+[Library workflow 40802954550](https://github.com/guluchen/DistQLDPC/actions/runs/40802954550),
+job `123215096866`: **success**. Ordinary CI `40802954319`: **success**.
+CI passed unchanged-solver compilation, all 34 tests, independent lattice and
+GF(2) checks, all 24 regeneration comparisons and six default smoke executions.
+
+Binary SHA256 (same unchanged build as GH-153/GH-154/GH-156):
+`13aa8ba74b3960b8767bfda60d10fb09f057e6655f5112c6f3f343dfdee03328`.
+
+| Stem | Published exact d | Default 60s lb | ub | Status |
+|---|---:|---:|---:|---|
+| BB_30_4_unknown | 6 | 6 | 6 | SOLVED |
+| BB_120_8_unknown | 12 | 12 | 12 | SOLVED |
+| BB_186_10_unknown | 14 | 14 | 14 | SOLVED |
+| BB_248_10_unknown | 18 | 10 | 18 | BOUNDED, timeout |
+| BB_294_10_unknown | 20 | 10 | 20 | BOUNDED, timeout |
+| BB_340_16_unknown | 18 | 10 | 18 | BOUNDED, timeout |
+
+All six have numeric lower and upper bounds consistent with their published
+claims. Three exact distances are reproduced; the remaining three published
+lower bounds are not independently established by this 60-second run. No
+scientific contradiction is observed. One default seed per input, no repeats
+or seed-median timing claim. Verdict: **library and short-check acceptance
+pass; untiered, no solver optimization/performance adoption**.
+
+All raw stdout, per-case argv/identity/results, input and binary SHA256,
+source commit, environment, CSV and completion marker are retained in
+`raw/actions/default/`; complete Actions job log in `raw/actions/job.log`.
+All six execution records were replayed through the collector and agree with
+their JSON, CSV and every bundled input hash (`raw/actions/replay.txt`). Final
+report/manifest-only edits do not change validated inputs or executable code.
 
 ```sh
 make --jobs=2 bin/distqldpc
@@ -99,11 +128,13 @@ even if the execution workflow is green (lesson retained from GH-153/GH-156).
 
 - What changed: six representative twisted-torus BB inputs and reproducibility,
   independent validation, provenance and smoke package.
-- Validation: 34 tests, all-code GF(2), independent lattice checks and full
-  regeneration pass; Linux smoke pending.
-- Results: no new scientific or performance claim.
-- Unresolved: Linux execution and evidence retention pending; subsequent server
-  timing, tier assignment and naming remain separate tasks.
+- Validation: 34 tests, all-code GF(2), independent lattice checks, full
+  regeneration, Linux CI and all six raw execution replays pass.
+- Results: three known exact distances reproduced, three bounded timeouts;
+  all six numeric intervals agree with source claims. No new scientific or
+  performance claim.
+- Unresolved: the last three exact distances are not reproduced within 60s;
+  subsequent server timing, tier assignment and naming remain separate tasks.
 - Scientific semantics changed: **no**.
 - PI action required: **no** to finish the authorized work-branch package;
   main integration remains a separate approval.

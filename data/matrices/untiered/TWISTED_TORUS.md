@@ -89,3 +89,8 @@ contradictions fail collection and require scientific review. A timeout
 without numeric bounds remains an unmet bound requirement, even if its
 execution check succeeds. Final results and raw identities are recorded in
 the manifest and [GH-159 report](../../../optimization/experiments/GH-159/REPORT.md).
+
+Source checkpoint `5745cb2a`, Linux workflow `40802954550`: n=30,120,186
+reproduce exact d=6,12,14. The n=248,294,340 cases time out with intervals
+[10,18], [10,20], [10,18]. All six emit both numeric bounds; these results
+do not independently establish the last three published exact distances.
