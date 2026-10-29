@@ -1,11 +1,12 @@
 # GH-184: closed higher-genus static4.8.10 color CSS open targets
 
-Status: LOCAL_GROUP_TOPOLOGY_COVER_LOGICALS_AND_ACTUAL_WORDS_PASS;
-Linux numeric and scientific gates pending. No new exact/lower distance
-claimed from topology, source geometry or a supplied-basis word.
+Status: CONSTRUCTION_AND_ACTUAL_WORD_AUDIT_PASS; two exact distances
+cross-checked; one numeric gate and five engine-proof completions remain.
+No exact/lower distance inferred from a cover, source geometry or basis word.
 Issue https://github.com/guluchen/DistQLDPC/issues/184; hub15 claim6500161639.
 Fresh main6083e662c621f3b66defd434cfae31a028d483c4;
-branch codex/closed-color-library; source recorded after push.
+branch codex/closed-color-library; data8ecb7dd45e660ea040b573454c5ed51bd763c70b;
+Linux source44039a47ece3e0637184784440c46d48053b503e.
 No PR requested; no solver/build/default/tiered/QDistSAT/main change.
 
 ## Three proposals and choice
@@ -144,10 +145,64 @@ reproducible source/group/cell/integral-cover construction, provenance,
 independent full topology/chain/logical/actual-word evidence and library gates.
 Validation: local47units, source regularity/reflection, every manifold/color/
 cover/chain/rowspace/GF2/logical check,24matrix+6certificate byte regeneration,
-full inventory/duplicate checks pass; Linux pending.
-Results: actual static dimensions/genus and upper words only, no exact d.
-Unresolved: Linux numeric/scientific gates, broader3D-color/explicit-expander/
+full inventory/duplicate checks pass locally and on Linux; actual-word audit
+replay byte-identical against local matrices/certificates.
+Results: two-engine exact8 at n240/480; CC-only exact12/8/16 at n640/
+1200/1440 remain PLAUSIBLE. n2400 CC[2,8] with actual upper8; MaxSAT
+no numeric fields, INCOMPLETE.
+Unresolved: n2400 default MaxSAT numeric gate and five engine-proof jobs
+packaged unexecuted; broader3D-color/explicit-expander/
 good-qLDPC coverage, prior incomplete jobs and PI integration.
 Scientific semantics changed: no.
 PI action required: yes for main integration/final names/tiers and any server
 allocation; independent validation/construction continues meanwhile.
+
+
+## Retained terminal Linux evidence and verdict
+
+Library [40900677931](https://github.com/guluchen/DistQLDPC/actions/runs/40900677931),
+job123541774247 SUCCESS; source CI40900677725/job123541773257 SUCCESS.
+Source44039a47ece3e0637184784440c46d48053b503e; unchanged solver binary
+SHA25668f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux,Python3.12.3,c++13.3.0,pinnedCPU0,serial defaultseed,
+60sCPU/90swall/4GiB per call. Full job log485284 characters plus all engine
+logs/JSON/CSV/environment/source/binary/input identities retained under
+raw/actions/default/. Replay against actual local matrices/full certificates
+is byte-identical. No repeated/supplemental scientific CI, Mac/external
+solver, paid-cloud substitute or timing claim. A green collector does not
+pass the missing n2400 numeric gate. No engine/actual-word contradiction.
+
+| n | MaxSAT60s | CC60s | Numeric gate | Scientific status |
+|---:|---|---|---|---|
+|240|exact8|exact8|PASS|two engines+actual GF2 word|
+|480|exact8|exact8|PASS|two engines+actual GF2 word|
+|640|[10,12]|exact12|PASS|PLAUSIBLE, independent lower proof pending|
+|1200|[6,8]|exact8|PASS|PLAUSIBLE, independent lower proof pending|
+|1440|[4,16]|exact16|PASS|PLAUSIBLE, independent lower proof pending|
+|2400|UNKNOWN,no numeric fields|[2,8]|INCOMPLETE|open; actual supplied-basis upper8|
+
+Every printed physical word and supplied-basis upper passes independent GF2
+syndrome/stabilizer/logical-detector checks. Two exact8 values have complete
+two-engine independent confirmation. CC-only exact12/8/16 and unresolved
+stronger lower results remain PLAUSIBLE; no name/source claim is changed.
+No Floquet distance, group isomorphism, genus, primitive-cover property or
+source geometric expression is used as an absolute distance proof. The
+fixed cover upper8 controls are retained without reselection or advertising
+growing d; largest case remains genuinely unresolved by these short calls.
+Missing default MaxSAT fields stay empty, never filled by CC/basis/source.
+
+Five frozen unexecuted yfclab2 jobs: MaxSAT n640/1200/1440/2400; CC n2400.
+References12/8/16/8 are actual checked physical uppers, not asserted exact
+answers. Each6hCPU+600swall/4GiB,serial seed0,explicit PI-allocated confirmed-
+free core;30hCPU/30h50mwall aggregate LIMITS, not ETA. Dry-run/Mac/altered-
+argv guards pass without solver invocation/output directory. Case/input/
+argv/host/allocation/core, actual-upper/minimum-word and retained-other-
+engine contradiction guards apply. No core allocated/server job executed;
+no final name/tier/QDistSAT/main/default/solver/PR change.
+
+Verdict: all six genuine closed static constructions/topology/chain/logical/
+rowspace/actual-word gates pass; two exact distances cross-checked. Four
+codes' independent proof completions and one default numeric gate remain
+with five jobs. Broader coverage/validation/integration gaps remain; the
+continuous goal is not complete. Next-source3D-color notes are research only,
+not additional implemented or validated cases in this one-family package.

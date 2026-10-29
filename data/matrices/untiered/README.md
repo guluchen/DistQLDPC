@@ -131,14 +131,17 @@ numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
 
-## Closed higher-genus static4.8.10 color CSS (GH-184, validation in progress)
+## Closed higher-genus static4.8.10 color CSS (GH-184, proof/numeric completions pending)
 
 Six fixed original Wythoff/cyclic-cover inputs n240/480/640/1200/1440/2400,
-static k16/28/36/64/76/124 and genus4/7/9/16/19/31. Individual exact d is
-not asserted. These use both static face Paulis: source Floquet k/distances
+static k16/28/36/64/76/124 and genus4/7/9/16/19/31. No published individual exact d
+is asserted. These use both static face Paulis: source Floquet k/distances
 are not imported. Full independent finite regular-action/reflection/manifold/
 color/integer-cover/chain/GF2/logical/actual-word checks pass locally.
 Initial supplied-basis uppers8/8/12/8/16/8 are actual words, not minima or a
 claim of growing d. All24 matrices and6 complete certificates reproduce byte
-for byte;47local units pass. Linux numeric/scientific gates remain pending.
+for byte;47local+Linux units and actual-word audit pass. Both engines confirm
+exact8 at n240/480; CC-only exact12/8/16 at n640/1200/1440 PLAUSIBLE.
+n2400 CC[2,8] with actual upper8; default MaxSAT numeric fields missing
+(INCOMPLETE). Five guarded proof/numeric jobs packaged unexecuted.
 See CLOSED_COLOR.md and optimization/experiments/GH-184/REPORT.md.

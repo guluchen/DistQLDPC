@@ -1,0 +1,39 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/COLOR_2400_124_unknown_Hx.txt
+c Hz: data/matrices/untiered/COLOR_2400_124_unknown_Hz.txt
+c Gx: data/matrices/untiered/COLOR_2400_124_unknown_Gx.txt
+c Gz: data/matrices/untiered/COLOR_2400_124_unknown_Gz.txt
+c Hx: 1140 x 2400, Hz: 1140 x 2400, Gx: 124 x 2400, Gz: 124 x 2400, logicals: 248
+c cc: dual map detection: 'identity' verified (rank Hz=Hx=1138, [Hz;Gx]=[Hx;Gz]=1262, cpu 0.020s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 3 generator(s), 30 qubit orbit(s), group complete, point stabiliser trivial, swap map not searched, 66 test(s) (63 refuted, 0 undecided), work 279260, cpu 0.008s
+c cc symbreak X: n=2400 candidates=374 verified_generators=6 orbits=30 detect_cpu=0.023s clause=orbit-chain
+c cc symbreak X: generator: plain blockshift L=10
+c cc symbreak X: generator: plain 2dshift-a L=10 (2x5)
+c cc symbreak X: generator: plain 2dshift-a L=10 (5x2)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: generator: plain tanner-aut #3
+c cc symbreak X: orbit reps (size): 0(80) 10(80) 40(80) 50(80) 60(80) 70(80) 80(80) 90(80) 160(80) 180(80) 190(80) 200(80) 210(80) 220(80) 230(80) 240(80) 250(80) 380(80) 420(80) 430(80) 440(80) 450(80) 480(80) 490(80) 500(80) 520(80) 840(80) 850(80) 940(80) 950(80)
+c cc: X half: n 2400, rank H 1138, rank [H;G] 1262, rank S 1138: detectors complete, 124 logical(s)
+c cc: Z half: n 2400, rank H 1138, rank [H;G] 1262, rank S 1138: detectors complete, 124 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'identity' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 8 (X 8, Z 8)
+c cc: X half search: 30 seeds (orbit representatives)
+c cc: X half parity: on (column weights 3..3, all odd): every logical has even weight, odd levels skipped
+c cc: X half overlap: on (1140 stabilizer rows of Hx, weights 4..10, 0 forbidden from the start)
+c cc: X half ub-search: rank H 1138, information set 1262, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/COLOR_2400_124_unknown_Hx.txt
+c Hz: data/matrices/untiered/COLOR_2400_124_unknown_Hz.txt
+c Gx: data/matrices/untiered/COLOR_2400_124_unknown_Gx.txt
+c Gz: data/matrices/untiered/COLOR_2400_124_unknown_Gz.txt
+c Hx: 1140 x 2400, Hz: 1140 x 2400, Gx: 124 x 2400, Gz: 124 x 2400, logicals: 248
+c d_lb: 2
+c d_ub: 8
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

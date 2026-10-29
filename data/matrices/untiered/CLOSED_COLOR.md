@@ -151,3 +151,12 @@ Mac generation/algebra/tiny units only; selected Linux serial60sCPU/90swall/
 unexecuted yfclab2 package requiring PI allocation/free-core confirmation.
 No solver/default/build/tiered/QDistSAT/final-name/main/gh-pages/PR change.
 Actual status and every failure/timeout: GH-184/REPORT.md and raw/.
+
+## Retained Linux outcome
+
+Both engines confirm exact8 at n240/480. CC-only exact12/8/16 at n640/
+1200/1440 remain PLAUSIBLE pending independent completion; n2400 CC[2,8]
+has an actual basis upper8 and default MaxSAT has no numeric fields
+(INCOMPLETE).47local+Linux units, full construction/inventory/actual-word
+audit and24matrix+6certificate byte reproduction pass. Five guarded server
+jobs are packaged unexecuted. All raw identities/statuses in GH-184/REPORT.md.
