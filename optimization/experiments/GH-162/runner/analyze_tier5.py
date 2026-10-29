@@ -24,7 +24,7 @@ def lbt(r, v):
     return None
 def ev(r, lo=18):
     return ' '.join(f'{x}@{t:.0f}' for t, x in r['lb_events'] if x >= lo)
-print('| Code | main | tb | time to main's final value: main -> tb s (ratio) | largest level done by both: nodes main -> tb (ratio), s main -> tb (ratio) |')
+print('| Code | main | tb | time to the main arm final value: main -> tb s (ratio) | largest level done by both: nodes main -> tb (ratio), s main -> tb (ratio) |')
 print('|---|---|---|---|---|')
 nr, tr, changed = [], [], []
 for stem in sorted(T, key=lambda s: (s[:2], int(s.split('_')[1]), s)):
