@@ -438,3 +438,54 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+
+## GH-198 library-only length-3 tricycle chain
+
+No solver/pruning/bound rules change. Original reconstruction from
+Jacob-McLauchlan-Browne2508.08191v3 Eqs5-14/TableV, attribution NOTICE.
+Source S_l[i,j]=delta(i,j+1) has FIRST-COLUMN positive shifts: row r meets
+column r-e for monomial exponent e. This differs from GH197's row-RIGHT
+convention. On G=Z_l x Z_m x Z_p, three polynomials A,B,C in commuting
+permutation shifts define Hx=[A B C] and Hz block rows[0 C^T B^T],
+[C^T 0 A^T],[B^T A^T 0]. Thus HxHz^T has blocks BC+CB,AC+CA,AB+BA,
+all zero in GF(2). Metacheck Mz=[A^T B^T C^T] similarly satisfies MzHz=0
+by pairwise cancellation of transposed commuting factors. Mz audits source
+redundancy; it is never supplied in place of a check or logical matrix.
+
+Constructor translates ROWS. Independent verifier enumerates each actual
+physical COLUMN's incident roots using inverse offsets and a separately
+specified block table. A second reconstruction explicitly Kronecker-lifts
+single-axis shift powers, sums source polynomials, transposes actual binary
+blocks and assembles Hx/Hz/Mz. Every actual entry must agree. Quantum ranks/
+k/logical quotient bases/kernel/full pairing and MzHz=0 are checked over
+actual finite GF2 matrices. Coordinate inversion conjugates each polynomial
+to its transpose, so rankMz=rankHx; actual equality is verified. No other
+rank formula or distance theorem is assumed. In particular there is no
+presumed weight-preserving qubit X/Z metric map for asymmetric halves.
+
+Physical shifts on all3axes are checked as actual typed-stabilizer-space
+automorphisms of the stated orders and faithful full vertex action. This
+is not itself a proof of CSS inequivalence under arbitrary permutations.
+Canonical typed-rowspace connectivity guards disconnected copies.36pinned
+main/library inventories have no selected same(n,k)peer. No inherited
+3D toric geometric-layout/single-shot/decoder/threshold/gate guarantee.
+
+All actual upper words are independently checked in the opposite-check
+kernel and outside stabilizer space via complete logical detectors. Source
+anchor global6 and halfX12/Z6 are different reference facts; any actual
+word below an exact source half is an escalation. The five other source
+global upper14/14/14/16/16 claims are not exact or lower claims, and missing
+sourceX values remain absent. Actual half-word uppers and source half claims
+are retained separately; global source-word gate requires a materialized
+word at the overall upper or better. Weaker found upper is INCOMPLETE,
+not contradiction or source-filled proof. New lower/exact PLAUSIBLE until
+independent search/proof plus GF2 witness confirmation.
+
+18new tests cover30tiny random three-polynomial column/tensor/commutator/
+metacheck cases, exact source row/column/transpose signs, all6full actual
+checks, entry/logical/wrong-but-commuting/source-k/support/metacheck mutants,
+24matrix byte regeneration/overwrite, asymmetric-half guard, missing raw
+fields, exact-half/global contradiction, invalid word/missing minimum and
+CLI/defaultHGP12/TT6 selection. Mac generation/algebra/tiny tests only,
+no scientific distance solver or external verification tool is run.
