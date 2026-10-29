@@ -181,3 +181,8 @@ section 5.
   this is the same algorithm, not an independent method. Record: issue #152 and
   `optimization/experiments/GH-152/REPRODUCTION.md` (branch `experiment/gh-152-tanner-aut`).
 - **BB_288_12_18 / LP_714_100_16:** distances from main's solver (PI 2026-10-11: no strict cross-verification; partial internal checks agreed so far — `-no-symbreak` reached lb 17 / ub 18 on BB_288 and ub 16 on LP_714; re-check if a later run disagrees).
+
+The [pinned work-branch input index](../../docs/library/INDEX.md) groups
+shared untiered manifest records across library branches. It does not adopt
+those branches into main, count independent families, resolve quarantines,
+or certify distances. Main directories remain the authoritative tier inventory.
