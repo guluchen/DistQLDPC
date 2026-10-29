@@ -1,0 +1,75 @@
+name: Pair-partition CPM library smoke
+
+on:
+  push:
+    branches: [codex/pair-partition-library]
+    paths:
+      - '.github/workflows/pair-partition-library-smoke.yml'
+      - 'scripts/codegen/pair_partition*'
+      - 'scripts/codegen/validate_pair_partition.py'
+      - 'scripts/codegen/audit_exact_smoke.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_pair_partition.py'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units, independent source/pairing/incidence/girth checks
+        run: |
+          python3 tests/test_codegen_pair_partition.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/pp-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/pp-validation.json
+          python3 scripts/codegen/validate_pair_partition.py --output /tmp/pp-construction.json
+          cmp optimization/experiments/GH-167/raw/construction.json /tmp/pp-construction.json
+      - name: Byte-identical matrix and pairing regeneration
+        run: |
+          python3 scripts/codegen/pair_partition.py --all --out /tmp/pp-rebuilt --certificates /tmp/pp-pairings.json
+          cmp optimization/experiments/GH-167/raw/pairings.json /tmp/pp-pairings.json
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/pp-rebuilt').glob('*.txt'));assert len(files)==24
+          for p in files:assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: all 24 pair-partition matrices and matching certificates reproduced')
+          PY
+      - name: Six default MaxSAT 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family PP --verbose --out /tmp/pp-maxsat
+      - name: Six independent CC 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family PP --engine cc --verbose --out /tmp/pp-cc
+      - name: Audit reference distances, actual witnesses and identities
+        run: >-
+          python3 scripts/codegen/audit_exact_smoke.py --family PP --cases scripts/codegen/pair_partition_cases.json
+          --maxsat /tmp/pp-maxsat --cc /tmp/pp-cc --out /tmp/pp-audit.json
+      - name: Retain raw evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('pp-maxsat','pp-cc'):
+              root=Path('/tmp')/name
+              print('GH167_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          p=Path('/tmp/pp-audit.json')
+          if p.exists():print('GH167_AUDIT_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh167-pair-partition-smoke
+          path: |
+            /tmp/pp-maxsat/
+            /tmp/pp-cc/
+            /tmp/pp-audit.json
+          if-no-files-found: warn
+          retention-days: 14
