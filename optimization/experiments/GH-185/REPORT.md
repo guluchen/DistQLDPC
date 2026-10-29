@@ -1,9 +1,12 @@
 # GH-185: static three-dimensional color/colex representatives
 
-Status: CONSTRUCTION_AND_LOCAL_ALGEBRA_PASS; Linux short gates pending.
+Status: CONSTRUCTION_AND_LINUX_NUMERIC_ACTUAL_WORD_PASS; six distances
+cross-checked; largest CC-only exact6 PLAUSIBLE pending one MaxSAT job.
 Issue https://github.com/guluchen/DistQLDPC/issues/185; hub claim6501268975.
 Fresh main6083e662c621f3b66defd434cfae31a028d483c4;
-branch codex/color3d-library. No PR requested or main integration.
+branch codex/color3d-library; data bb7b1f1c5a08b00c37555764d40b9c5f8f615485;
+Linux source19ecc55090b1f03dbbdb540b9b7ac8bebf36bc8f.
+No PR requested or main integration.
 
 ## Proposals, selection and prior evidence
 
@@ -126,11 +129,65 @@ build, tiered/name, QDistSAT, main/gh-pages or PR change.
 
 What changed: seven original reproducible static3D-color/colex inputs,
 complete finite certificates, independent soundness/provenance and gates.
-Validation performed:48local units, actual topology/chain/GF2/full-logical/
+Validation performed:48local+Linux units, actual topology/chain/GF2/full-logical/
 upper-word/rowspace/inventory checks,28matrix+7certificate byte reproduction.
-Results: construction passes; Linux terminal bounds/anchor reproduction pending.
-Unresolved: Linux numeric/actual-result gates, any independent proof jobs,
+Results: all seven numeric/actual-word gates pass; both engines reproduce
+exact2/4/4/4/6/6; largest MaxSAT[5,6]/CCexact6 remains PLAUSIBLE.
+Unresolved: one frozen unexecuted MaxSAT n2304 independent proof job,
 prior jobs, broader expander/good-qLDPC gap and PI integration.
 Scientific semantics changed: no.
 PI action required: yes for integration/final names/tiers/server allocation;
 independent construction/validation continues meanwhile.
+
+
+## Retained terminal Linux results
+
+Library [40905450007](https://github.com/guluchen/DistQLDPC/actions/runs/40905450007),
+job123558839663 SUCCESS; source CI40905449887/job123558839241 SUCCESS. One unchanged solver
+build,48units, full actual construction/inventory comparisons and28matrix/
+7complete-certificate byte regeneration pass. Source19ecc55090b1f03dbbdb540b9b7ac8bebf36bc8f;
+binarySHA25668f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+Ubuntu24.04 hosted Linux7.0.0-1017-azure/glibc2.39,Python3.12.3,c++13.3.0,
+pinnedCPU0,serial defaultseed,60sCPU/90swall/4GiB per call. Full job log
+772193characters and all engine logs/JSON/CSV/environment/input identities
+retained under raw/actions/default/. Actual-result audit replay against
+local matrices/full certificates is byte-identical. No repeated/supplemental
+scientific CI or Mac/external solver; timings are diagnostic only.
+
+| n | MaxSAT60s | CC60s | Numeric gate | Scientific status |
+|---:|---|---|---|---|
+|8|exact2|exact2|PASS|published anchor reproduced, both engines+GF2 word|
+|384|exact4|exact4|PASS|two engines+GF2 word|
+|576|exact4|exact4|PASS|two engines+GF2 word|
+|864|exact4|exact4|PASS|two engines+GF2 word|
+|1296|exact6|exact6|PASS|two engines+GF2 word|
+|1728|exact6|exact6|PASS|two engines+GF2 word|
+|2304|[5,6]|exact6|PASS|PLAUSIBLE, independent lower-proof completion pending|
+
+All actual printed/basis words independently verify syndrome, stabilizer
+exclusion and nonzero logical detection over GF2. No interval/word/source
+contradiction. The six non-anchor cases were not asserted globally open
+research problems, only original finite specializations with separately
+stated source-distance status. Most finish quickly at their basis uppers;
+the fixed selection is retained, not replaced after observing easy results.
+Source claimed_d remains separate from raw observations; stems unchanged.
+
+One frozen unexecuted yfclab2 MaxSAT n2304 job uses actual upper6 as a
+reference, not an assumed exact answer; defaultseed0/verbose/6hCPU+600swall/
+4GiB/serial explicitly allocated confirmed-free core.6hCPU/6h10mwall are
+limits, not ETA. Case/input/argv/source/binary/actual-word/other-engine
+contradiction guards, Mac refusal and dry-run pass without executing a
+solver or creating an output directory. No server core allocated/job run.
+No final names/tiers/QDistSAT/main/default/solver/PR change.
+
+Next-source research is retained separately in next-source-notes.md: stronger
+expander hypotheses, distinct DHLV edge-qubit chain construction and a new
+cubical cosheaf/qLTC lead. The latter's displayed numerical specialization
+has impractical local lengths; no smaller surrogate or unverified theorem
+is counted as completed coverage. Unused source ambiguities are recorded
+without silently repairing a published parameter.
+
+Verdict: seven static3D constructions and all numeric/actual-word gates pass;
+six distances independently cross-checked. One proof completion, prior jobs,
+additional genuine construction gaps and PI integration remain. The full
+continuous goal stays active.

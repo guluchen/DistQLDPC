@@ -143,6 +143,8 @@ exact distance for these original finite specializations; absence is not a
 globally open-problem claim. Actual supplied-basis uppers4/4/4/6/6/6 are not
 minima. No assumed identity X/Z metric duality. Fourteen new unit tests and
 28 matrix/seven complete certificate byte reproductions pass. Linux short
-checks are pending at this construction checkpoint; see GH-185/REPORT.md.
+checks pass all seven numeric/actual-word gates; both engines exact2/4/4/4/6/6,
+with largest n2304 MaxSAT[5,6]/CCexact6 still PLAUSIBLE and one unexecuted
+server proof completion job; see GH-185/REPORT.md.
 All51 tiered inputs and prior24 untiered inputs remain unchanged; this branch
 has31 untiered inputs. No new code is mirrored or tiered here.

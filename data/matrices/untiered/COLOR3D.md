@@ -128,6 +128,8 @@ CPU. Source/binary/input identities, raw results and actual words are
 retained and independently audited. No source/basis value fills missing raw
 fields. A new one-engine exact distance or raised lower bound is PLAUSIBLE
 until independently checked. See GH-185/REPORT.md for terminal evidence;
-Linux is pending at this construction checkpoint. Long work, if needed,
-becomes an unexecuted dedicated-server package. Unknown stems, tiers and
+Both engines reproduce exact2/4/4/4/6/6; largest n2304 has MaxSAT[5,6]
+and CC-only exact6, still PLAUSIBLE until independent lower-proof completion.
+All seven numeric gates and actual-word audits pass. One guarded unexecuted
+MaxSAT server job is packaged. Unknown stems, tiers and
 main remain unchanged.
