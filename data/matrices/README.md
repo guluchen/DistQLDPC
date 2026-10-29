@@ -181,3 +181,7 @@ section 5.
   this is the same algorithm, not an independent method. Record: issue #152 and
   `optimization/experiments/GH-152/REPRODUCTION.md` (branch `experiment/gh-152-tanner-aut`).
 - **BB_288_12_18 / LP_714_100_16:** distances from main's solver (PI 2026-10-11: no strict cross-verification; partial internal checks agreed so far — `-no-symbreak` reached lb 17 / ub 18 on BB_288 and ub 16 on LP_714; re-check if a later run disagrees).
+
+GH-199 cyclic collapsed4D AMC finite prescriptions (untiered work branch):
+see [COLLAPSED_AMC.md](untiered/COLLAPSED_AMC.md). Source randomized
+distance estimates remain distinct from exact claims and actual bounds.

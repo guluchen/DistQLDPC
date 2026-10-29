@@ -438,3 +438,25 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+## GH-199 cyclic collapsed 4D AMC input reconstruction
+
+No solver modification. For four commuting cyclic matrices M(a_i), use
+subset-labelled chain spaces K_j with columns (j-subset S,group coordinate).
+The boundary deletes i from S and multiplies by a_i=1+x^e_i. Every two-axis
+deletion in d_(j-1)d_j occurs twice with commuting products, hence cancels
+in GF(2). Lexicographic subsets with axis order D,C,B,A give source R2 and
+R3 of Lin et al.2506.16910v3 Eq27/28. Hx=d2,Hz=d3T therefore commute.
+The regular representation is M(x^e)[r,c]=1 iff r=c+e modulo l; the transpose
+in Hz reverses that shift. An independent literal block implementation
+checks each actual matrix entry. No code or matrix from external programs
+is copied. Source Mian et al.2601.18879v2 TableVI parameters are reconstructed
+mathematically; randomized source distances remain estimates.
+
+Mx=d1 and Mz=d4T are checked by XORing actual rows. They annihilate checks
+but need not span every check dependency; no such completeness is claimed.
+Complete logical quotient bases, pairing and rank-derived k are separately
+verified. Coordinate translation and pair-complement/group inversion are
+actual checked rowspace maps, not assumed distance proofs. No geometric,
+single-shot, decoder, threshold or gate property is imported. Generation
+and algebraic checks are not a logical-distance search.
