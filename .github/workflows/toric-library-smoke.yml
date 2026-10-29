@@ -1,0 +1,79 @@
+name: Periodic square toric library smoke
+
+on:
+  push:
+    branches: [codex/periodic-toric-library]
+    paths:
+      - '.github/workflows/toric-library-smoke.yml'
+      - 'scripts/codegen/toric*'
+      - 'scripts/codegen/validate_toric.py'
+      - 'scripts/codegen/audit_exact_smoke.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_toric.py'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units, independent incidence/topology/winding checks
+        run: |
+          python3 tests/test_codegen_toric.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/tor-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/tor-validation.json
+          python3 scripts/codegen/validate_toric.py --output /tmp/tor-construction.json
+          cmp optimization/experiments/GH-168/raw/construction.json /tmp/tor-construction.json
+      - name: Byte-identical matrix regeneration
+        run: |
+          python3 scripts/codegen/toric.py --all --out /tmp/tor-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/tor-rebuilt').glob('*.txt'));assert len(files)==24
+          for p in files:assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: all 24 periodic-toric matrices reproduced')
+          PY
+      - name: Independent exact signed-cover graph distances (120s bound)
+        run: timeout 120s python3 scripts/codegen/validate_toric.py --distance --output /tmp/tor-distance.json
+      - name: Six default MaxSAT 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TOR --verbose --out /tmp/tor-maxsat
+      - name: Six independent CC 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TOR --engine cc --verbose --out /tmp/tor-cc
+      - name: Audit reference distances, actual witnesses and identities
+        run: >-
+          python3 scripts/codegen/audit_exact_smoke.py --family TOR --cases scripts/codegen/toric_cases.json
+          --maxsat /tmp/tor-maxsat --cc /tmp/tor-cc --independent /tmp/tor-distance.json --out /tmp/tor-audit.json
+      - name: Retain raw evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('tor-maxsat','tor-cc'):
+              root=Path('/tmp')/name
+              print('GH168_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          d=Path('/tmp/tor-distance.json')
+          if d.exists():print('GH168_DISTANCE_JSON='+d.read_text().replace('\n',''))
+          p=Path('/tmp/tor-audit.json')
+          if p.exists():print('GH168_AUDIT_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh168-periodic-toric-smoke
+          path: |
+            /tmp/tor-maxsat/
+            /tmp/tor-cc/
+            /tmp/tor-audit.json
+            /tmp/tor-distance.json
+          if-no-files-found: warn
+          retention-days: 14
