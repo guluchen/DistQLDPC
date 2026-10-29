@@ -1,0 +1,32 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/LP_2528_18_unknown_Hx.txt
+c Hz: data/matrices/untiered/LP_2528_18_unknown_Hz.txt
+c Gx: data/matrices/untiered/LP_2528_18_unknown_Gx.txt
+c Gz: data/matrices/untiered/LP_2528_18_unknown_Gz.txt
+c Hx: 1264 x 2528, Hz: 1264 x 2528, Gx: 18 x 2528, Gz: 18 x 2528, logicals: 36
+c frontier auto X: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: no dual map (ranks Hz 1255 Hx 1255 [Hz;Gx] 1273 [Hx;Gz] 1273, 61 candidates, cpu 0.019s): both halves, no sharing
+c oddcap X: column weights 4..4 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 4..4 (an even weight present) -> odd caps kept
+c symbreak X: n=2528 candidates=60 verified_generators=1 orbits=32 detect_cpu=0.013s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=79
+c symbreak X: orbit reps (size): 0(79) 79(79) 158(79) 237(79) 316(79) 395(79) 474(79) 553(79) 632(79) 711(79) 790(79) 869(79) 948(79) 1027(79) 1106(79) 1185(79) 1264(79) 1343(79) 1422(79) 1501(79) 1580(79) 1659(79) 1738(79) 1817(79) 1896(79) 1975(79) 2054(79) 2133(79) 2212(79) 2291(79) 2370(79) 2449(79)
+c symbreak Z: n=2528 candidates=60 verified_generators=1 orbits=32 detect_cpu=0.014s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=79
+c symbreak Z: orbit reps (size): 0(79) 79(79) 158(79) 237(79) 316(79) 395(79) 474(79) 553(79) 632(79) 711(79) 790(79) 869(79) 948(79) 1027(79) 1106(79) 1185(79) 1264(79) 1343(79) 1422(79) 1501(79) 1580(79) 1659(79) 1738(79) 1817(79) 1896(79) 1975(79) 2054(79) 2133(79) 2212(79) 2291(79) 2370(79) 2449(79)
+c stab-overlap X: 1264 of 1264 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:1264 (<= 4); native propagator rows 1264 (no clauses)
+c stab-overlap Z: 1264 of 1264 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 8:1264 (<= 4); native propagator rows 1264 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/LP_2528_18_unknown_Hx.txt
+c Hz: data/matrices/untiered/LP_2528_18_unknown_Hz.txt
+c Gx: data/matrices/untiered/LP_2528_18_unknown_Gx.txt
+c Gz: data/matrices/untiered/LP_2528_18_unknown_Gz.txt
+c Hx: 1264 x 2528, Hz: 1264 x 2528, Gx: 18 x 2528, Gz: 18 x 2528, logicals: 36
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

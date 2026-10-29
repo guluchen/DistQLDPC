@@ -74,8 +74,18 @@ python3 scripts/codegen/validate_css.py --output /absolute/new/validation.json
 upper-word checks, source/transpose/commuting-wrong-matrix/logical/entry/
 rank/girth/parameter/audit mutants,16matrix byte reproduction/overwrite/
 HGP12/LP4 selections and peer90 CLI exclusion. Mac algebra/generation/tiny
-checks only, no solver or support-distance search. Linux one serial60sCPU/
-90swall/4GiB/defaultseed/pinned allocated attempt per case/engine pending.
+checks only, no solver or support-distance search. Linux40931932802/
+job123652333577 passes51units/full source/pullback/peer90/inventory compare,
+16matrix byte reproduction and8one-time serial60sCPU/90swall/4GiB/defaultseed/
+pinned allocated CPU attempts. Actual upper words20/26/26/26 independently
+GF2-verified; source352 estimate20 word PASS. MaxSAT raw[9,20]/[9,26]/
+[9,26]/no numeric fields; CC[19,20]/[22,58]/[22,26]/[22,26]. Strongest CC
+lower19/22 PLAUSIBLE pending independent proof. Largest MaxSAT numeric
+INCOMPLETE; do not fill from CC. Original cases' common actual upper26 is
+not growing-distance evidence. Full607114-character job log/22engine files/
+audit retained; local replay byte-identical. Four default MaxSAT proof/
+numeric jobs plus a separately selected optional four-CC completion queue
+are frozen unexecuted. No allocated core/run.
 Raw missing numbers stay INCOMPLETE; source words and scientific proofs
 have separate gates. New exact/lower results PLAUSIBLE until independent
 implementation/search plus actual GF2 words. Heavy work freezes unexecuted

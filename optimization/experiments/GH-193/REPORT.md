@@ -1,6 +1,6 @@
 # GH-193: finite quantum radial LP ladder
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux/estimated source20 actual-word pending.
+Status: LINUX_AND_SOURCE_WORD_GATES_PASS; largest MaxSAT numeric/independent lower proofs INCOMPLETE.
 Issue https://github.com/guluchen/DistQLDPC/issues/193; hub6504943810.
 Branch codex/radial-library from remotely verified main
 6083e662c621f3b66defd434cfae31a028d483c4. No PR/main integration.
@@ -89,18 +89,84 @@ sweeps/timing adoption. Heavy proof/numeric/source-word gates freeze6hCPU+
 yfclab2/nohup/nullstdin jobs; separate supplemental flags if needed. Limits
 not ETA; no allocated core/server execution or paid-cloud substitute.
 
+## Terminal Linux evidence
+
+Dataddbf947872c6264d00181fdead2c0793c5938031;
+sourcebada5e6e917e3b06f7db5c0c004111f22abce95b,
+tree75097b36324135310d8af375187636c3869baed4.
+[Library40931932802](https://github.com/guluchen/DistQLDPC/actions/runs/40931932802),
+job123652333577 completed SUCCESS, all steps including audit/retention/upload.
+Ordinary sourceCI40931932655 SUCCESS. Unchanged solver binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+51units/full independent physical/pullback/classical+quantum ranks/logicals/
+peer90/inventory comparisons and16matrix byte regeneration PASS. Exact
+commands in source-pinned workflow. Eight one-time serial60sCPU/90swall/
+4GiB/defaultseed/pinned allocated CPU attempts,15min cap. Shared timings
+not performance/median/tier adoption evidence; no scientific CI repeats.
+
+| stem | MaxSAT raw60s | CC raw60s | actual GF2 upper | numeric gate |
+|---|---|---|---:|---|
+|LP_352_18_unknown|[9,20]|[19,20]|20|PASS|
+|LP_928_18_unknown|[9,26]|[22,58]|26|PASS|
+|LP_1504_18_unknown|[9,26]|[22,26]|26|PASS|
+|LP_2528_18_unknown|no numeric fields|[22,26]|26|INCOMPLETE|
+
+Source352 numerical20 actual word reproduced in MaxSAT and CC (Z20).
+Original finite cases have verified X26 words, including CC2528 X26 (and
+prior Z46). Complete upper-word histories retained (including pre-pass
+worse-than-basis words140/138 for928); actual kernels/stabilizer quotients/
+detectors all verify. Reference upper-word gates all PASS. Strongest CC
+lower19/22 remains PLAUSIBLE pending independent search/proof; no exact
+result or certified improvement headline. No contradiction. Keep raw CC928
+upper58 and empty MaxSAT2528 fields; do not substitute another engine's
+upper26 or source/reference targets. Largest numeric INCOMPLETE remains.
+
+All three larger fixed-modulus cases have actual upper26. These are useful
+unknown-distance inputs and n-scaling controls, not evidence that d grows
+with n. Retain the frozen cases without replacement or new source-growth/
+single-shot/memory inference. Source90 remains comparison-only/unresolved,
+not a new benchmark or a post-distance exclusion.
+
+Durable raw/actions/default/job.log607114characters,22engine files
+(4logs+4metadata+environment/results/DONE each engine),audit.json. Local
+actual-word replay is byte-identical, no solver on Mac:
+```
+python3 scripts/codegen/audit_radial_smoke.py --maxsat optimization/experiments/GH-193/raw/actions/default/radial-maxsat --cc optimization/experiments/GH-193/raw/actions/default/radial-cc --construction optimization/experiments/GH-193/raw/construction.json --out /tmp/gh193-audit-replay.json
+cmp /tmp/gh193-audit-replay.json optimization/experiments/GH-193/raw/actions/default/audit.json
+```
+Four default MaxSAT independent-proof jobs frozen in runner/jobs.jsonl;
+largest also closes the missing numeric gate, not a second duplicate job.
+Four CC exact-completion research jobs separately frozen in optional-cc-
+jobs.jsonl; not the default queue and require explicit selection, not run
+merely because distance is unknown. No supplemental source-word job needed.
+All seed0/verbose/6hCPU+600swall/4GiB/serial pinned explicit PI-allocated
+confirmed-free yfclab2/nohup/nullstdin. Each queue configured24hCPU/
+24h40mwall LIMITS, not ETA (both48hCPU/49h20mwall). Actual reference
+words20/26/26/26; case/job/argv/input/source/binary/other-engine/source-
+reference/word contradiction guards. Required+optional dry-runs, Mac and
+altered-argv refusal PASS without solver/output directory; CPU54 syntax
+only. No allocated core/server run/paid cloud/repeat scientific CI.
+
+Independent next-source work in NEXT_TILE_DESIGN.md identifies source
+weight10 [[512,18,<=23]] (distinct from TableI exact labels), transcribes
+PDF stencils, derives finite boundary/commutation checks and records
+proposed size coverage and TN288k8 peer caution. No new tile issue/input or
+implementation selected here. Prior source/proof/semantic holds remain.
+
 ## Completion fields
 
-What changed:4reproducible finite radial LP inputs, independent source/
-physical/tensor/rank/logical/upper-word checks/proof/provenance and source90
-peer-only record. No duplicate copy or inherited source distance claims.
-Validation performed:17newunits/full actual columns/pullback/hypotheses/
-classical+quantum ranks/full logicals/words/typed space/32pinned refs;
-16matrix byte reproduction and inventory. Prior34units also PASS,51total.
-Results: actual k18/ranks agree, upper ring words22/58/94/158; source352
-numerical20 actual-word and Linux gates pending.
-Unresolved: source90 arbitrary equivalence, Linux/numeric/science/sourceword
-and earlier packages/APM/stronger-hypothesis/PI integration items.
+What changed:4reproducible radial LP inputs, source/rank/coordinate/logical/
+upper-word proof/provenance, source90peer-only record, full Linux evidence,
+4default proof/numeric jobs+separate4optional CC queue and next tile design.
+Validation performed:51units/full finite hypotheses/actual classical+quantum
+ranks/physical columns/pullback/logicals/words/typed space/32pinned refs,
+16matrix byte reproduction,8bounded Linux attempts and byte-identical audit
+replay. Prior24rows/300matrix files and solver/build preserved.
+Results: actual uppers20/26/26/26, source20 word PASS; strongest CC lower
+19/22 PLAUSIBLE, no exact result. Largest MaxSAT numeric INCOMPLETE.
+Unresolved: independent lower proof, largest numeric gate, source90 arbitrary
+equivalence; earlier packages/APM/stronger-hypothesis/PI integration items;
+planar tiles and multivariate prescription coverage remain open.
 Scientific semantics changed:no.
 PI action required:yes for integration/tier/name/server allocation or prior
-scientific hold; routine safe validation/research continues.
+scientific hold; routine safe collection/research continues.

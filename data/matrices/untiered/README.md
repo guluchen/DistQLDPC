@@ -138,7 +138,12 @@ estimated-distance reference and three fixed original modulus cases.
 Independent source columns/spoke-major pullback/classical hypotheses AND
 actual binary ranks/full logicals/GF2/typed physical space and ring upper
 words22/58/94/158 pass. No inherited exact/growth/single-shot claim.
-51units/16matrix byte reproduction pass; Linux/source352 word20 pending.
+Linux40931932802 passes51units/16matrix byte reproduction and actual-word
+audit replay. Verified uppers20/26/26/26, source352 word20 PASS. MaxSAT raw
+[9,20]/[9,26]/[9,26]/no numbers; CC[19,20]/[22,58]/[22,26]/[22,26].
+Strongest CC lower19/22 PLAUSIBLE; largest MaxSAT numeric INCOMPLETE.
+Four default independent-proof/numeric jobs and separately optional4CC
+completion jobs frozen unexecuted. Common upper26 is not a growth claim.
 Source90 remains peer-review-only because BB_90_8_10 exists and arbitrary
 column equivalence is unresolved. No duplicate copy. No same(n,k) peers for
 the four added cases across32pinned refs; prior24rows/300matrices preserved.
