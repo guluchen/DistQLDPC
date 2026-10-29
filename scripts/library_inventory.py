@@ -172,8 +172,8 @@ def markdown(result):
         r=p['ref'];url='https://github.com/guluchen/DistQLDPC/tree/'+r['sha']
         lines.append('|'+r['branch']+'|['+r['sha'][:12]+']('+url+')|'+str(p['flat_manifest_rows'])+'|'+str(p['quarantined_candidates'])+'|'+str(len(p['queue_paths']))+'|')
     lines+=['','## Configured scientific holds','',
-        'This list tracks explicit snapshot decisions. The [coverage ledger]',
-        '(../CSS_LIBRARY_COVERAGE.md) retains other source/proof/integration gaps.','']
+        'This list tracks explicit snapshot decisions. See the',
+        '[coverage ledger](../CSS_LIBRARY_COVERAGE.md) for other source/proof/integration gaps.','']
     for hold in result['pins'].get('scientific_holds',[]):
         lines.append('* [GH-%d](https://github.com/guluchen/DistQLDPC/issues/%d): %s. %s'%(hold['issue'],hold['issue'],hold['status'],hold['decision']))
     lines+=['','## Retained queues','',

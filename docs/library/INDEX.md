@@ -61,8 +61,8 @@ or scientific completion label is inferred from a green check or filename.
 
 ## Configured scientific holds
 
-This list tracks explicit snapshot decisions. The [coverage ledger]
-(../CSS_LIBRARY_COVERAGE.md) retains other source/proof/integration gaps.
+This list tracks explicit snapshot decisions. See the
+[coverage ledger](../CSS_LIBRARY_COVERAGE.md) for other source/proof/integration gaps.
 
 * [GH-200](https://github.com/guluchen/DistQLDPC/issues/200): SOURCE_DIMENSION_HOLD. PI decision pending; indexing does not authorize source-dependent work.
 
