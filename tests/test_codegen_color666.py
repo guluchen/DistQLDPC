@@ -117,7 +117,8 @@ class ColorTests(unittest.TestCase):
         runner = [sys.executable,str(ROOT/'scripts/codegen/smoke_untiered.py'),
                   '--cpu','0','--dry-run','--out','/tmp/not-created-color-smoke']
         default = json.loads(subprocess.check_output(runner,cwd=ROOT,text=True))
-        selected = json.loads(subprocess.check_output(runner+['--family','COLOR'],cwd=ROOT,text=True))
+        stems = [f'COLOR_{(3*d*d+1)//4}_1_unknown' for d in gen.LADDER]
+        selected = json.loads(subprocess.check_output(runner+['--family','COLOR','--stems']+stems,cwd=ROOT,text=True))
         self.assertEqual(len(default),12)
         self.assertTrue(all('HGP_' in argv[-1] for argv in default))
         self.assertEqual(len(selected),6)

@@ -130,3 +130,18 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+### Periodic spatially coupled CSS targets (GH-188)
+
+Five [SC-HGP](SPATIALLY_COUPLED.md) inputs n232/928/1450/2842/5800,
+k88/280/424/808/1624, use published Eq89 partition facts and fixed periods.
+Only the period10 n5800 instance carries the published upper estimate16;
+smaller original periods inherit no distance/decoder/cycle property.
+Independent source tensor-order bijection, every physical column, full
+logicals/GF2, actual basis words and typed physical connectivity pass.
+13new+34prior units pass; no same(n,k) peer across27 pinned main/library
+refs. Initial actual basis uppers2/4/10/14/20 are not minima; source16
+word reproduction remains pending. Linux47units/construction/20matrix+
+5complete-certificate reproduction and both-engine short checks pending.
+All29untiered/80total inputs remain separate from other library branches;
+prior24manifest rows/96matrix files and51tiered inputs unchanged.
