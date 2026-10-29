@@ -1,0 +1,75 @@
+name: Tanner-cycle balanced-product smoke
+
+on:
+  push:
+    branches: [codex/balanced-tanner-library]
+    paths:
+      - '.github/workflows/balanced-tanner-library-smoke.yml'
+      - 'scripts/codegen/balanced_tanner.py'
+      - 'scripts/codegen/validate_balanced_tanner.py'
+      - 'scripts/codegen/audit_balanced_smoke.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_balanced_tanner.py'
+      - 'data/matrices/untiered/BP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units, algebra and independent cell-orbit checks
+        run: |
+          python3 tests/test_codegen_balanced_tanner.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/bp-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/bp-validation.json
+          python3 scripts/codegen/validate_balanced_tanner.py --output /tmp/bp-certificates.json
+          cmp optimization/experiments/GH-160/raw/construction-witnesses.json /tmp/bp-certificates.json
+      - name: Reproduce all 24 new matrices
+        run: |
+          python3 scripts/codegen/balanced_tanner.py --ladder --out /tmp/bp-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/bp-rebuilt').glob('*.txt'));assert len(files)==24
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: all 24 balanced-product matrix files reproduced byte for byte')
+          PY
+      - name: Six default MaxSAT 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family BP --verbose --out /tmp/bp-maxsat
+      - name: Six independent CC 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family BP --engine cc --verbose --out /tmp/bp-cc
+      - name: Cross-engine results and independent GF(2) witness audit
+        run: python3 scripts/codegen/audit_balanced_smoke.py --maxsat /tmp/bp-maxsat --cc /tmp/bp-cc --out /tmp/bp-audit.json
+      - name: Retain evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('bp-maxsat','bp-cc'):
+              root=Path('/tmp')/name
+              print('GH160_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          p=Path('/tmp/bp-audit.json')
+          if p.exists(): print('GH160_AUDIT_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh160-balanced-smoke
+          path: |
+            /tmp/bp-maxsat/
+            /tmp/bp-cc/
+            /tmp/bp-audit.json
+          if-no-files-found: warn
+          retention-days: 14

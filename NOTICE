@@ -288,3 +288,18 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Tanner-cycle balanced-product specializations (GH-160, untiered)
+-----------------------------------------------------------------
+
+Original generator scripts/codegen/balanced_tanner.py, independent orbit
+validator and BP_{78,130,182,286,494,962}_2_unknown_* matrices,
+GPL-3.0-or-later. General mathematical construction: N. P. Breuckmann and
+J. N. Eberhardt, "Balanced Product Quantum Codes", arXiv:2012.09271v3,
+DOI:10.1109/TIT.2021.3097347, Sec. IV-D/E/F. Graphs, fixed Hamming labels
+and sizes are our explicit finite specializations, not the published 1014-qubit
+hyperbolic example. No third-party code, matrices or paper text copied.
+Full CSS homology is retained, with no subsystem projection. Derived cycle
+upper bounds and observed distances are recorded separately. Cyclic balanced
+products also admit lifted-product descriptions. See
+data/matrices/untiered/BALANCED_TANNER.md and optimization/experiments/GH-160/.
