@@ -1,0 +1,241 @@
+[
+  {
+    "stem": "HYP_60_8_unknown",
+    "published_exact_d": 4,
+    "engines": {
+      "maxsat": {
+        "lb": 4,
+        "ub": 4,
+        "status": "SOLVED"
+      },
+      "cc": {
+        "lb": 4,
+        "ub": 4,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-surface-oracle",
+        "half": "Z",
+        "support": [
+          3,
+          8,
+          9,
+          16,
+          30,
+          52
+        ],
+        "weight": 6
+      },
+      {
+        "engine": "independent-surface-oracle",
+        "half": "X",
+        "support": [
+          1,
+          2,
+          15,
+          23
+        ],
+        "weight": 4
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          13,
+          14,
+          47,
+          51
+        ],
+        "weight": 4
+      }
+    ],
+    "verification": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+    "source_head": "fc31c10ecfd3ab3f4abc03f5fb27d7c29e13c2d4",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "HYP_160_18_unknown",
+    "published_exact_d": 6,
+    "engines": {
+      "maxsat": {
+        "lb": 6,
+        "ub": 6,
+        "status": "SOLVED"
+      },
+      "cc": {
+        "lb": 6,
+        "ub": 6,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-surface-oracle",
+        "half": "Z",
+        "support": [
+          0,
+          2,
+          11,
+          14,
+          22,
+          27,
+          46,
+          68
+        ],
+        "weight": 8
+      },
+      {
+        "engine": "independent-surface-oracle",
+        "half": "X",
+        "support": [
+          1,
+          2,
+          16,
+          20,
+          30,
+          62
+        ],
+        "weight": 6
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          44,
+          74,
+          76,
+          102,
+          145,
+          150
+        ],
+        "weight": 6
+      }
+    ],
+    "verification": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+    "source_head": "fc31c10ecfd3ab3f4abc03f5fb27d7c29e13c2d4",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "HYP_360_38_unknown",
+    "published_exact_d": 8,
+    "engines": {
+      "maxsat": {
+        "lb": 8,
+        "ub": 8,
+        "status": "SOLVED"
+      },
+      "cc": {
+        "lb": 8,
+        "ub": 8,
+        "status": "SOLVED"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-surface-oracle",
+        "half": "Z",
+        "support": [
+          0,
+          2,
+          7,
+          11,
+          22,
+          49,
+          83,
+          111
+        ],
+        "weight": 8
+      },
+      {
+        "engine": "independent-surface-oracle",
+        "half": "X",
+        "support": [
+          1,
+          2,
+          7,
+          20,
+          48,
+          62,
+          82,
+          164
+        ],
+        "weight": 8
+      },
+      {
+        "engine": "maxsat",
+        "half": "X",
+        "support": [
+          88,
+          141,
+          142,
+          144,
+          218,
+          221,
+          313,
+          339
+        ],
+        "weight": 8
+      }
+    ],
+    "verification": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+    "source_head": "fc31c10ecfd3ab3f4abc03f5fb27d7c29e13c2d4",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  },
+  {
+    "stem": "HYP_1800_182_unknown",
+    "published_exact_d": 10,
+    "engines": {
+      "maxsat": {
+        "lb": null,
+        "ub": null,
+        "status": "TIMEOUT_NO_BOUNDS"
+      },
+      "cc": {
+        "lb": null,
+        "ub": 10,
+        "status": "TIMEOUT_PARTIAL_BOUNDS"
+      }
+    },
+    "witnesses": [
+      {
+        "engine": "independent-surface-oracle",
+        "half": "Z",
+        "support": [
+          2,
+          3,
+          14,
+          19,
+          47,
+          60,
+          129,
+          160,
+          328,
+          403
+        ],
+        "weight": 10
+      },
+      {
+        "engine": "independent-surface-oracle",
+        "half": "X",
+        "support": [
+          1,
+          2,
+          15,
+          20,
+          36,
+          51,
+          86,
+          101,
+          222,
+          408
+        ],
+        "weight": 10
+      }
+    ],
+    "verification": "INCOMPLETE_INDEPENDENT_REPRODUCTION",
+    "source_head": "fc31c10ecfd3ab3f4abc03f5fb27d7c29e13c2d4",
+    "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+  }
+]

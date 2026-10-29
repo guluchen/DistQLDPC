@@ -1,0 +1,62 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/HYP_360_38_unknown_Hx.txt
+c Hz: data/matrices/untiered/HYP_360_38_unknown_Hz.txt
+c Gx: data/matrices/untiered/HYP_360_38_unknown_Gx.txt
+c Gz: data/matrices/untiered/HYP_360_38_unknown_Gz.txt
+c Hx: 180 x 360, Hz: 144 x 360, Gx: 38 x 360, Gz: 38 x 360, logicals: 76
+c cc: dual map detection: none (ranks Hz 143 Hx 179 [Hz;Gx] 181 [Hx;Gz] 217, 0 candidates, cpu 0.001s): both halves
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 2 generator(s), 1 qubit orbit(s), group partial, point stabiliser not proved trivial, swap map not searched, 2 test(s) (0 refuted, 0 undecided), work 23858, cpu 0.001s
+c cc aut: Tanner swap map: none
+c cc symbreak X: n=360 candidates=175 verified_generators=2 orbits=1 detect_cpu=0.001s clause=unit
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: orbit reps (size): 0(360)
+c cc symbreak Z: n=360 candidates=175 verified_generators=2 orbits=1 detect_cpu=0.001s clause=unit
+c cc symbreak Z: generator: plain tanner-aut #1
+c cc symbreak Z: generator: plain tanner-aut #2
+c cc symbreak Z: orbit reps (size): 0(360)
+c cc: X half: n 360, rank H 143, rank [H;G] 181, rank S 179: detectors complete, 38 logical(s)
+c cc: Z half: n 360, rank H 179, rank [H;G] 217, rank S 143: detectors complete, 38 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on
+c cc: ub-basis: verified basis rows give UB 8 (X 8, Z 10)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 2..2, an even weight present)
+c cc: X half overlap: on (180 stabilizer rows of Hx, weights 4..4, 0 forbidden from the start)
+c cc: Z half search: 1 seeds (orbit representatives)
+c cc: Z half parity: off (column weights 2..2, an even weight present)
+c cc: Z half overlap: on (144 stabilizer rows of Hz, weights 5..5, 0 forbidden from the start)
+c cc: X half ub-search: rank H 143, information set 217, triples off, slack 4, li-cap 64, collision stern p 2 l 13 walk 32 batch 1 refresh 0
+c cc: Z half ub-search: rank H 179, information set 181, triples off, slack 4, li-cap 64, collision stern p 2 l 12 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: Z half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: Z half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 3 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: Z half level 3 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 4 EMPTY nodes 5 seeds 1 time 0.000s
+c cc: Z half level 4 EMPTY nodes 4 seeds 1 time 0.000s
+c cc: Z half level 5 EMPTY nodes 11 seeds 1 time 0.000s
+c cc: X half level 5 EMPTY nodes 19 seeds 1 time 0.000s
+c cc: Z half level 6 EMPTY nodes 27 seeds 1 time 0.000s
+c cc: X half level 6 EMPTY nodes 68 seeds 1 time 0.000s
+c cc: Z half level 7 EMPTY nodes 68 seeds 1 time 0.000s
+c cc: X half level 7 EMPTY nodes 240 seeds 1 time 0.000s
+c cc: ub-search X: iterations 1, finder time 0.008s, kept 3462, nontrivial 3439, li-gain 0, improvements 0, rank 143, K 217, ub 8
+c cc: ub-search X collision: rounds 1, colliding pairs 579912 (nontrivial 570312)
+c cc: ub-search Z: iterations 0, finder time 0.000s, kept 0, nontrivial 0, li-gain 0, improvements 0, rank 179, K 181, ub 10
+c cc: ub-search Z collision: rounds 0, colliding pairs 0 (nontrivial 0)
+c cc: total nodes X 335 Z 113, search time X 0.000s Z 0.000s, wall 0.008s
+c cc: d = 8
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/HYP_360_38_unknown_Hx.txt
+c Hz: data/matrices/untiered/HYP_360_38_unknown_Hz.txt
+c Gx: data/matrices/untiered/HYP_360_38_unknown_Gx.txt
+c Gz: data/matrices/untiered/HYP_360_38_unknown_Gz.txt
+c Hx: 180 x 360, Hz: 144 x 360, Gx: 38 x 360, Gz: 38 x 360, logicals: 76
+c d_lb: 8
+c d_ub: 8
+c d  : 8
+o 8

@@ -112,3 +112,30 @@ main integration requires explicit approval. Continuous goal remains active.
 Scientific semantics changed: no.
 PI action required: yes for n=1920 interpretation and later main integration;
 no for continued validation of the other four cases.
+
+## Default Linux execution
+
+Source fc31c10ecfd3ab3f4abc03f5fb27d7c29e13c2d4, tree
+0420083501cacacd0a1de2cdb10af186ec91e94b. Library run 40840322516,
+job 123334825827, SUCCESS; generic CI 40840322459, SUCCESS.
+Binary SHA256 68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+All 46 units, algebra/manifold checks, orientation diagnostic, regeneration
+and independent full graph-distance checks passed. Full raw logs, per-run
+identity/argv/environment/CSV, oracle witnesses and audit retained in
+raw/actions/default/. The audit replay is byte-identical to CI audit.json.
+
+| n | independent primal / dual | MaxSAT 60s default | CC 60s default |
+|---|---|---|---|
+| 60 | 6 / 4 | exact 4 | exact 4 |
+| 160 | 8 / 6 | exact 6 | exact 6 |
+| 360 | 8 / 8 | exact 8 | exact 8 |
+| 1800 | 10 / 10 | TIMEOUT_NO_BOUNDS | TIMEOUT_PARTIAL_BOUNDS, UB=10 |
+
+The first three reproduce published exact d with both engines and independent
+GF(2) witnesses. n=1800 has an independent mathematical/graph implementation
+certifying the published distance, but its default DistQLDPC numeric smoke
+gate remains incomplete. No absent lower bound is inferred from a timeout.
+Run one targeted supplemental MaxSAT 60s check with -ub-pre=off -v to observe
+solver progress separately from the default finder budget. Preserve the
+original default failure-to-produce-bounds and CC partial result. This is a
+short diagnostic, not a longer limit, sweep or performance comparison.
