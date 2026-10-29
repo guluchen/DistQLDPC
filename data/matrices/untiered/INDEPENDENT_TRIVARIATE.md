@@ -55,4 +55,33 @@ until independent implementation/search and actual GF2 witness confirmation.
 No invented source-upper-word targets for originals, no repeated scientific
 CI for timeouts/fullsuite/sweep/timing adoption. Heavy proof/numeric gates
 become guarded unexecuted yfclab2 jobs; no core allocated. All untiered on
-work branch, no solver/default/tier/name/QDistSAT/main/PR change. Linux pending.
+work branch, no solver/default/tier/name/QDistSAT/main/PR change. Terminal Linux evidence below.
+
+
+## Terminal Linux evidence
+
+[Run40942338412](https://github.com/guluchen/DistQLDPC/actions/runs/40942338412),
+job123688677544 SUCCESS, source29fca9ec447b2a8f0246c7a38754b62def20fee1.
+52units/full independent construction/inventory and24matrix byte regeneration
+PASS. Full577628character job log/30engine files/audit and byte hashes
+retained; local actual-word replay byte-identical. No solver on Mac.
+
+| stem | MaxSAT raw60s | CC raw60s | actual GF2 upper |
+|---|---|---|---:|
+|ITB_54_14_unknown|exact5|exact5|5|
+|ITB_128_20_unknown|exact8|exact8|8|
+|ITB_250_26_unknown|exact10|exact10|10|
+|ITB_686_38_unknown|[9,14]|exact14|14|
+|ITB_1458_50_unknown|[9,18]|exact18|18|
+|ITB_2662_62_unknown|[9,22]|[18,22]|22|
+
+All numeric gates PASS; source5/8 reproduced. Original250exact10 is cross-
+checked by both engines+actual GF2 words. CC-only14/18 and largest lower18
+remain PLAUSIBLE pending independent proof; do not rename stems or assert
+a universal d=2L/growing-distance theorem from these finite observations.
+Actual upper10/14/18/22 words independently verified, complete histories
+retained. Three defaultMaxSAT proof/progress jobs and separately one optional
+CC exact-completion job frozen unexecuted. Default configured18CPUh/
+18h30mwall, optional6CPUh/6h10mwall LIMITS, not ETA; no core/server execution.
+No synthetic bounds, source-upper-word target for originals, repeated
+scientific CI or integration/tiering/naming/default/QDistSAT change.

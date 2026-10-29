@@ -1,0 +1,59 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/ITB_2662_62_unknown_Hx.txt
+c Hz: data/matrices/untiered/ITB_2662_62_unknown_Hz.txt
+c Gx: data/matrices/untiered/ITB_2662_62_unknown_Gx.txt
+c Gz: data/matrices/untiered/ITB_2662_62_unknown_Gz.txt
+c Hx: 1331 x 2662, Hz: 1331 x 2662, Gx: 62 x 2662, Gz: 62 x 2662, logicals: 124
+c cc: dual map detection: 'identity' verified (rank Hz=Hx=1300, [Hz;Gx]=[Hx;Gz]=1362, cpu 0.055s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 4 generator(s), 1 qubit orbit(s), group partial, point stabiliser not proved trivial, swap map not searched, 4 test(s) (0 refuted, 0 undecided), work 838304, cpu 0.025s
+c cc symbreak X: n=2662 candidates=29 verified_generators=7 orbits=1 detect_cpu=0.048s clause=unit
+c cc symbreak X: generator: plain blockshift L=11
+c cc symbreak X: generator: plain 2dshift-a L=121 (11x11)
+c cc symbreak X: generator: plain 2dshift-a L=1331 (11x121)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: generator: plain tanner-aut #3
+c cc symbreak X: generator: plain tanner-aut #4
+c cc symbreak X: orbit reps (size): 0(2662)
+c cc: X half: n 2662, rank H 1300, rank [H;G] 1362, rank S 1300: detectors complete, 62 logical(s)
+c cc: Z half: n 2662, rank H 1300, rank [H;G] 1362, rank S 1300: detectors complete, 62 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'identity' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 121 (X 121, Z 121)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 4..4, an even weight present)
+c cc: X half overlap: on (1331 stabilizer rows of Hx, weights 8..8, 0 forbidden from the start)
+c cc: X half ub-search: rank H 1300, information set 1362, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 22 (iteration 1, wall 0.137s)
+c witness X (ub-search): 55 166 277 388 499 610 842 953 1064 1175 1286 1375 1486 1597 1708 1819 2051 2162 2273 2384 2495 2606
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 3 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 4 EMPTY nodes 8 seeds 1 time 0.000s
+c cc: X half level 5 EMPTY nodes 53 seeds 1 time 0.000s
+c cc: X half level 6 EMPTY nodes 338 seeds 1 time 0.000s
+c cc: X half level 7 EMPTY nodes 807 seeds 1 time 0.000s
+c cc: X half level 8 EMPTY nodes 3752 seeds 1 time 0.001s
+c cc: X half level 9 EMPTY nodes 9953 seeds 1 time 0.002s
+c cc: X half level 10 EMPTY nodes 33403 seeds 1 time 0.006s
+c cc: X half level 11 EMPTY nodes 95831 seeds 1 time 0.020s
+c cc: X half level 12 EMPTY nodes 315535 seeds 1 time 0.066s
+c cc: X half level 13 EMPTY nodes 926179 seeds 1 time 0.204s
+c cc: X half level 14 EMPTY nodes 2891250 seeds 1 time 0.659s
+c cc: X half level 15 EMPTY nodes 8799261 seeds 1 time 2.153s
+c cc: X half level 16 EMPTY nodes 26992530 seeds 1 time 7.001s
+c cc: X half level 17 EMPTY nodes 81860273 seeds 1 time 21.544s
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/ITB_2662_62_unknown_Hx.txt
+c Hz: data/matrices/untiered/ITB_2662_62_unknown_Hz.txt
+c Gx: data/matrices/untiered/ITB_2662_62_unknown_Gx.txt
+c Gz: data/matrices/untiered/ITB_2662_62_unknown_Gz.txt
+c Hx: 1331 x 2662, Hz: 1331 x 2662, Gx: 62 x 2662, Gz: 62 x 2662, logicals: 124
+c d_lb: 18
+c d_ub: 22
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

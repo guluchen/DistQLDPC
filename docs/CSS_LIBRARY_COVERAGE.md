@@ -194,8 +194,31 @@ or source distance/growth claim. Proposed ITB provenance prefix, not a new
 disjoint-family count. Row/independent-column/separate Kronecker-transpose/
 full logical/GF2/physical cyclic-XZ/typed space/actual upper checks PASS;
 18new+34prior units/24matrix byte reproduction,35pinned refs no same(n,k)peer.
-Initial actual uppers5/8/17/14/65/121. Linux pending. Source exact labels not
+Initial actual uppers5/8/17/14/65/121. Linux40942338412 passes52units/full
+independent construction/inventory/24matrix byte reproduction and actual-
+word audit replay. Both engines exact5/8/10 for54/128/250;686rawMaxSAT[9,14]/
+CCexact14,1458[9,18]/CCexact18,2662[9,22]/CC[18,22]. Actualuppers5/8/10/14/
+18/22, all numericPASS. CC-only14/18 and largestlower18 PLAUSIBLE;3default
+MaxSAT proof/progress+1separateoptionalCCcompletion jobs frozen unexecuted.
+No universal d=2L/growing-distance theorem or stem rename. Source exact labels not
 heuristic; source prose transpose expansion caveat recorded, Eq5 followed
 and actual product independently verified. Original unknown exact status
 and poor/easy frozen outcomes retained. Remaining non-Cayley Schreier/MB/
 longer-chain explicit prescriptions and prior scientific holds remain open.
+
+
+## Longer-chain finite prescriptions requiring explicit coverage
+
+New primary-source review during GH197 identifies TT length3/Koszul,
+abelian multi-cycle and MM longer-chain finite prescriptions. Ordinary
+2block GB/BB/ITB and2factorHGP labels do not establish those examples; their
+homological overlap is not a new-disjoint-family claim. Jacob et al.
+2508.08191v3(2Oct2026,CC BY4) Table5 has explicit overall upper-only targets
+588k9<=14,648k6<=16/648k12<=14,735k18<=14,840k9<=16,1029k18<=16,
+plus exact-known72k6d6 control. These are useful next structure+unknown-
+distance candidates; full primaryPDF/rowspace/provenance review pending.
+Lin et al.2506.16910v3(16Mar2026) AMC and Mian et al.2601.18879v2(24May2026)
+MM remain source-review backlog; MM table-specific randomized-versus-MIP
+proof status must be resolved before treating source labels as ground truth.
+No new issue/input/benchmark selected for these longer-chain prescriptions
+here. Details/math/source labels in GH-197/NEXT_LONG_CHAIN_REVIEW.md.
