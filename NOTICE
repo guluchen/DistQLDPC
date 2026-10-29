@@ -312,3 +312,20 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+
+11. Planar tile boundary CSS inputs (GH-194, untiered)
+---------------------------------------------------
+
+Original GPL-3.0-or-later scripts/codegen/tile.py, independent finite-column/
+boundary/pruning/logical/witness validators and generated TILE matrices.
+Mathematical construction: Vincent Steffan, Shin Ho Choe, Nikolas P.
+Breuckmann, Francisco Revson Fernandes Pereira and Jens Niklas Eberhardt,
+"Tile Codes: High-Efficiency Quantum Codes on a Lattice with Boundary",
+arXiv:2504.09171v1, https://arxiv.org/abs/2504.09171v1, Secs II-IV,
+Fig.2/Table I and the separate weight10 upper23 example. Source paper is
+CC BY-NC-SA4.0; no author code/matrices or paper text/images redistributed.
+Only the mathematical construction is independently reimplemented here;
+the paper's license is not imputed to original software/data. Source288
+exact12 and512 upper23 remain distinct from our verified bounds. Larger
+finite sizes are original, with no inherited distance or growth guarantee.
+See data/matrices/untiered/TILE.md and GH-194 evidence/provenance record.

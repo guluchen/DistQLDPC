@@ -438,3 +438,50 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+
+## GH-194 library-only planar tile boundary soundness
+
+No solver or pruning rule changes. Original mathematical reconstruction of
+Steffan et al., arXiv2504.09171v1; attribution and license boundary in NOTICE.
+For B-cell boxes write b=B-1 and S=L+b. An edge is (orientation,x,y), where
+0<=x,y<B are lower-left endpoints. T2 swaps H/V and maps x,y to b-x,b-y.
+For the separately transcribed source X/Z tiles, the independent validator
+counts every coefficient of their infinite translated overlap Laurent
+polynomial: all counts are even. Thus all infinite translated checks commute.
+
+Red X anchor x lies in[0,L-1], y in[-b,L+b-1]; blue Z anchor y lies in[0,L-1],
+x in[-b,L+b-1]. The physical square is[0,S-1]^2 for each edge orientation.
+Every X box is wholly physical in x and every Z box wholly physical in y.
+Their common edges therefore lie wholly inside the physical square. Finite
+truncation deletes no common edge of an X/Z pair, so preserves commutation.
+Delete physical columns absent from either type's support union: each such
+column has zero contribution to every cross dot product. Removing empty
+checks then also preserves commutation. This is the prescribed finite code,
+not a claim that dropping arbitrary singly checked qubits preserves distance
+or k. Every actual rank, k, quotient basis and pairing is verified afresh.
+
+Constructor translates rows; independent verifier enumerates each physical
+edge's incident anchors by inverse offsets, using literal blue source tiles.
+Full certificate inventories and actual columns must agree. Frozen cases
+have zero pruning; a B2,L1 diagonal toy removes6columns and empty checks,
+preventing vacuous coverage. Thirty tiny layouts and source/blue/boundary/
+entry/logical/pruning/inventory/commuting-wrong-source mutants cover errors.
+Initial computed-basis words are checked against actual opposite checks,
+stabilizer quotient and logical detectors; they assert upper bounds only.
+
+For duplicate review let S be a binary stabilizer rowspace and K a complete
+basis of its orthogonal complement. Physical column q has signature K[:,q].
+Since S=(S-perp)-perp, a weight1 row belongs to S iff its signature is zero;
+a weight2 row iff its two signatures agree; a weight3 row iff the XOR of its
+three distinct signatures is zero. Exact counts therefore depend only on S,
+not a supplied generator basis. They are invariant under arbitrary physical
+column permutations. The unordered pair of typed X/Z count triples is also
+invariant under global X/Z swap. TILE288 has X(0,10,28),Z(0,10,30), whereas
+pinned TN288 has both(0,0,0). Different triples prove physical inequivalence
+without assuming the provisional Tanner quantum-distance lower bound.
+Forty tiny full-rowspace enumerations independently check this invariant,
+including random column permutations and redundant/reordered generators.
+This is deterministic stabilizer linear algebra, not logical-distance search.
+New quantum lower bounds still require independent search/proof and GF(2)
+words; this invariant supplies no distance lower bound for the tile code.
