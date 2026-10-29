@@ -438,3 +438,18 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+
+GH-207 adds original binary nonprimitive CSS BCH scripts/data and independent
+field/root-syndrome/dual-polynomial/logical validation. Solver sources/build/
+defaults unchanged. Source Hx=Hz is the complete classical dual stabilizer
+space, not a list of logicals or a Hermitian non-CSS construction.
+Soundness: full physical root-rowspace equality puts every quantum logical
+in the classical BCH kernel. For a hypothetical weight-w word with w<delta,
+the first w consecutive root equations form a nonsingular Vandermonde times
+diagonal matrix on its distinct nonzero root positions; only the zero word
+can satisfy them. Thus delta is a construction lower bound, independently
+kept separate from observed search fields. Source references/hypotheses,
+complete logical bases and actual GF2 upper words are detailed in
+data/matrices/untiered/BCH.md. Existing smoke helper extensions are reused
+from GH205; only an explicit BCH family selector is added, default HGP unchanged.
+No pruning, solver-result reinterpretation, performance or qLDPC claim.
