@@ -43,7 +43,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ktie_(0), tb_(false), ovtight_(0), ovforbid_(0),
-      er_(false), er_sizegate_(false), er_verify_(false), np_(0), estamp_(0), pmask_(0), epscan_(0), w_(0), nodd_(0),
+      er_(false), er_sizegate_(false), er_verify_(false), er_live_(false), np_(0), estamp_(0), pmask_(0), epscan_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -286,6 +286,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
 
     /* erasure (GH-195): scratch (the pair table is built lazily, erasure_pair_table_build) */
     er_ = rules_.erasure && rules_.pack;
+    er_live_ = er_ && rules_.erasure_start == 0;
     if (er_) {
         prow_.assign((size_t)m_ + 1, 0);
         ecnt_.assign((size_t)m_, 0);
@@ -843,7 +844,7 @@ bool HalfSearch::dfs(int size) {
                         ++res_->packprune;
                         return false;
                     }
-                    if (er_) prow_[p - 1] = (uint32_t)r;   /* erasure (GH-195): packed rows */
+                    if (er_live_) prow_[p - 1] = (uint32_t)r;   /* erasure (GH-195): packed rows */
                     /* marking forbidden qubits too is harmless: only free qubits can clash */
                     for (const uint32_t* t = a; t < e; ++t) mark_[*t] = st;
                 }
@@ -865,7 +866,7 @@ bool HalfSearch::dfs(int size) {
     if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
     /* erasure (GH-195): at most `extra` qubits of a kept target lie outside the packed rows' candidates (mutant 22: one
      * fewer is assumed); gate (cost only): extra <= 2 (test hook: also 2|S| + 2 <= w) */
-    if (er_) {
+    if (er_live_) {
         const int extra = (w_ - size) - p - (mutant_ == 22 ? 1 : 0);
         if (extra >= 0 && extra <= 2 && (!er_sizegate_ || 2 * size + 2 <= w_)) {
             ++res_->ercalls;
@@ -1003,6 +1004,7 @@ LevelResult HalfSearch::run_level(int w) {
     r.ovtight = ovtight_;
     r.ovforbid = ovforbid_;
     res_ = NULL;
+    if (er_ && !er_live_ && r.nodes >= rules_.erasure_start) er_live_ = true;   /* GH-195: from the next level on */
     return r;
 }
 

@@ -2593,6 +2593,10 @@ int main(int argc, char** argv) {
             if (!cc_parse_uint(argv[i] + 9, &v)) die("invalid -cc-seed (non-negative integer)");
             g_cc_opt.seed = (uint64_t)v;
             cc_seed_given = true;
+        } else if (!strncmp(argv[i], "-cc-erasure-start=", 18)) {   /* GH-195 */
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 18, &v)) die("invalid -cc-erasure-start (non-negative integer)");
+            g_cc_opt.rules.erasure_start = (uint64_t)v;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 11, &v) || (v > 14 && v != 17 && v != 18 && (v < 22 || v > 23))) die("invalid -cc-mutant (0..14, 17, 18, 22, 23; test only)");
@@ -2639,7 +2643,8 @@ int main(int argc, char** argv) {
             printf("            tiebreak (GH-162, opt-in) = with overlap, an even row g is replaced by g minus its first qubit in\n");
             printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical;\n");
             printf("            erasure (GH-195, opt-in) = with pack, when at most 2 added qubits are not charged to a packed row,\n");
-            printf("            a node is cut if no logical extends it inside the packed rows' candidates plus <= 2 more qubits)\n");
+            printf("            a node is cut if no logical extends it inside the packed rows' candidates plus <= 2 more qubits;\n");
+            printf("            the tests start at the level after the first one with >= N nodes, -cc-erasure-start=N, default 16384)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -cc-aut=on|off (default on; GH-152; off = the CC search before GH-152): Tanner-graph automorphism\n");
             printf("            candidates for the orbit seeds and the dual map (every candidate GF(2)-verified before use)\n");

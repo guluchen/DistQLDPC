@@ -119,7 +119,9 @@
  *         keys, built lazily; qubits on a pivot row are projected explicitly). A fingerprint collision only makes the rule give up.
  *         The rule never prunes a node that is a subset of a kept target, so every other rule's argument (and tiebreak's
  *         Lemmas A-C) is unchanged. Gate (cost only): extra <= 2 and |R| <= 128 (Qubitserf also requires 2|S| + 2 <= w; that
- *         size gate was measured as slower on every Tier 2-5 code tried, optimization/experiments/GH-195). Full proof: MODIFICATIONS.md
+ *         size gate was measured as slower on every Tier 2-5 code tried, optimization/experiments/GH-195); and the tests
+ *         start only at the level after the first level of the half with >= erasure_start nodes (default 16384: a test
+ *         costs microseconds, so small levels are faster without it). Full proof: MODIFICATIONS.md
  *         (GH-195).
  */
 #ifndef DISTQLDPC_CC_HALF_H
@@ -141,8 +143,10 @@ struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
     bool tiebreak;   /* GH-162 (default off; acts only with overlap) */
     bool erasure;    /* GH-195 (default off; acts only with pack) */
+    uint64_t erasure_start;   /* GH-195: erasure tests start at the level after the first level of this half with at least
+                               * this many nodes (0: from the first level; -cc-erasure-start) */
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), tiebreak(false),
-              erasure(false) {}
+              erasure(false), erasure_start(16384) {}
 };
 
 /* LEVEL_ABORTED (GH-140): the poll callback asked to stop (the level is undecided; lb unchanged) */
@@ -230,7 +234,7 @@ public:
     bool erasure_pair_table() const { return n_ >= 2 && n_ <= 2048; }
     /* test hooks: sizegate = run the test only when also 2|S| + 2 <= w (a cost gate; fewer prunes, still sound);
      * verify = check phi H_R = 0 and F H_R = G_R on every region column (fatal on failure) */
-    void set_erasure_test(bool sizegate, bool verify) { er_sizegate_ = sizegate; er_verify_ = verify; }
+    void set_erasure_test(bool sizegate, bool verify) { er_sizegate_ = sizegate; er_verify_ = verify; er_live_ = true; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
@@ -264,7 +268,7 @@ private:
     std::vector<int32_t> kex_, kexbase_, kexfb_;   /* kexfb_: exempt qubit in an exhausted seed block (-1: none yet) */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
     /* erasure (GH-195): scratch for one test (see erasure_excludes) */
-    bool er_, er_sizegate_, er_verify_;
+    bool er_, er_sizegate_, er_verify_, er_live_;   /* er_live_: tests running (erasure_start reached) */
     std::vector<uint32_t> prow_;            /* packed rows of the current scan */
     int np_;
     std::vector<uint32_t> ereg_;            /* region qubits */

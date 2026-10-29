@@ -446,9 +446,15 @@ accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure -cc-seed=2 -cc-dual=off $L $M
 accept 3 "" -engine=cc -cc-rules=pack,erasure,mrv -cc-aut=off -no-symbreak $L $M
 vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,erasure $L $M
-vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128), pair table (lazy)$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 16384 nodes), pair table (lazy)$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 0 nodes)" -v -engine=cc -cc-erasure-start=0 -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 7 nodes)" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure -cc-erasure-start=7 $L $M
+reject "need -engine=cc or -engine=auto" -cc-erasure-start=0 $L $M
+for f in -cc-erasure-start=-1 -cc-erasure-start=x -cc-erasure-start=; do
+    reject "invalid" -engine=cc "$f" $L $C
+done
 vgrep 3 "^c cc: X half erasure: idle (needs pack)$" -v -engine=cc -cc-rules=excl,orbf,erasure $L $M
-vgrep 3 "^c cc-stats: X level [0-9]* erasure calls [0-9]* prune [0-9]* giveup [0-9]*$" -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
+vgrep 3 "^c cc-stats: X level [0-9]* erasure calls [0-9]* prune [0-9]* giveup [0-9]*$" -cc-stats -engine=cc -cc-erasure-start=0 -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure $L $M
 vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 22: bound weakened by one\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure -cc-mutant=22 $L $M
 vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 23: fixed support ignored\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,erasure -cc-mutant=23 $L $M
 runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M

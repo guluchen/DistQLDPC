@@ -600,6 +600,7 @@ int main(int argc, char** argv) {
             distcc::DriverOptions o;
             o.ub_search = false;   // Part B tests the ladder; -ub-search is on by default since 2026-10-23 (Part E/F test it)
             o.rules = rules_of(c.rmask);
+            if (c.rmask & RM_ER) o.rules.erasure_start = c.seed == 3 ? 16384 : 0;   // GH-195: tests from the first level (seed 3: default)
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
@@ -1234,6 +1235,7 @@ int main(int argc, char** argv) {
             o.ub_search = false;
             o.aut = true;
             o.rules = rules_of(c.rmask);
+            if (c.rmask & RM_ER) o.rules.erasure_start = 0;   // GH-195: tests from the first level
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed; o.mutant = c.mutant;
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             const bool ok = run_ok(r, d);

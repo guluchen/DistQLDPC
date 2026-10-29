@@ -217,6 +217,7 @@ bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::
 
 bool parse_rules(const char* s, Rules& out) {
     Rules r;
+    r.erasure_start = out.erasure_start;   /* GH-195: set by its own flag, kept across -cc-rules */
     r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = r.tiebreak = r.erasure = false;
     std::string all(s ? s : "");
     size_t pos = 0;
@@ -379,7 +380,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        hs[k].tag, S.tiebreak_rows(), S.overlap_rows());
             if (opt.rules.erasure)   /* GH-195 (no line without the token: byte identity) */
                 printf("c cc: %s half erasure: %s%s%s\n", hs[k].tag,
-                       !S.erasure_active() ? "idle (needs pack)" : "on (extra <= 2, region <= 128)",
+                       !S.erasure_active() ? "idle (needs pack)" : ("on (extra <= 2, region <= 128, from the level after one with >= " +
+                                                     std::to_string((unsigned long long)opt.rules.erasure_start) + " nodes)").c_str(),
                        S.erasure_active() ? (S.erasure_pair_table() ? ", pair table (lazy)" : ", pairs by scan") : "",
                        opt.mutant == 22 ? " [TEST MUTANT 22: bound weakened by one]" :
                        opt.mutant == 23 ? " [TEST MUTANT 23: fixed support ignored]" : "");
