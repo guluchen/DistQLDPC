@@ -1,0 +1,254 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/TOR_648_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_648_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_648_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_648_2_unknown_Gz.txt
+c Hx: 324 x 648, Hz: 324 x 648, Gx: 2 x 648, Gz: 2 x 648, logicals: 4
+c frontier auto X: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: dual map 'halfswap-inverse Z_18 x Z_18' verified (rank Hz=Hx=323, [Hz;Gx]=[Hx;Gz]=325, cpu 0.003s): dX = dZ, both halves kept, lower bounds shared
+c oddcap X: column weights 2..2 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 2..2 (an even weight present) -> odd caps kept
+c symbreak X: n=648 candidates=144 verified_generators=10 orbits=2 detect_cpu=0.004s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=18
+c symbreak X: generator: plain 2dshift-a L=18 (2x9)
+c symbreak X: generator: plain 2dshift-a L=18 (3x6)
+c symbreak X: generator: plain 2dshift-a L=18 (6x3)
+c symbreak X: generator: plain 2dshift-a L=18 (9x2)
+c symbreak X: generator: plain 2dshift-a L=324 (2x162)
+c symbreak X: generator: plain 2dshift-a L=324 (3x108)
+c symbreak X: generator: plain 2dshift-a L=324 (6x54)
+c symbreak X: generator: plain 2dshift-a L=324 (9x36)
+c symbreak X: generator: plain 2dshift-a L=324 (18x18)
+c symbreak X: orbit reps (size): 0(324) 324(324)
+c symbreak Z: n=648 candidates=144 verified_generators=10 orbits=2 detect_cpu=0.003s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=18
+c symbreak Z: generator: plain 2dshift-a L=18 (2x9)
+c symbreak Z: generator: plain 2dshift-a L=18 (3x6)
+c symbreak Z: generator: plain 2dshift-a L=18 (6x3)
+c symbreak Z: generator: plain 2dshift-a L=18 (9x2)
+c symbreak Z: generator: plain 2dshift-a L=324 (2x162)
+c symbreak Z: generator: plain 2dshift-a L=324 (3x108)
+c symbreak Z: generator: plain 2dshift-a L=324 (6x54)
+c symbreak Z: generator: plain 2dshift-a L=324 (9x36)
+c symbreak Z: generator: plain 2dshift-a L=324 (18x18)
+c symbreak Z: orbit reps (size): 0(324) 324(324)
+c stab-overlap X: 324 of 324 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 4:324 (<= 2); native propagator rows 324 (no clauses)
+c stab-overlap Z: 324 of 324 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 4:324 (<= 2); native propagator rows 324 (no clauses)
+c ub-pre X: rank H 323, information set 325, seed 0, collision stern p 2 l 14 walk 32 batch 1 refresh 0
+c ub-pre Z: rank H 323, information set 325, seed 0, collision stern p 2 l 14 walk 32 batch 1 refresh 0
+c ub-pre X: word of weight 20 (iteration 1, wall 0.176s)
+c witness X (ub-pre): 1 19 37 55 72 90 108 126 144 162 180 198 216 235 253 271 289 307 379 541
+c ub-pre Z: word of weight 18 (iteration 2, wall 0.511s)
+c witness Z (ub-pre): 334 352 370 388 406 424 442 460 478 496 514 532 550 568 586 604 622 640
+c ub-pre Z: converged (re-hits of U without improvement) after 73 iterations, wall 20.470s
+c ub-pre X: converged (re-hits of U without improvement) after 82 iterations, wall 21.146s
+c ub-pre: U0 after 21.146s (both halves converged; iterations X 82 Z 73, words X 1 Z 1): 18 (X 20, Z 18)
+c stab-overlap X cap 1: 0 of 324 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 992 vars, 3048 cls (c/v ratio==3.1, grow=0)
+c No iterative elimination performed. (vars=992, c/v ratio=3.1)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 648, of which 648 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8919
+c conflLits 19, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 326
+c init nbIsets: 19
+c nbIsets after pass 1: 18
+c isets 18, derivedCost 1
+c 1 conflict sets found with length 36
+c fixedCost 0, nbSatLits 0, totalFixedVars 326, objForSearch: 647
+
+c provided UB: 1
+c ends of initiationization by VSIDS at 0 conflicts with init 10000
+
+c UB=1 fails, cnfls=0, hcnfls=0, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 1 (fixed 647), lk: 1, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+c ===============================================================================
+c no feasible solution, hardConflicts: 0
+c nbLK: 1, nbSuccLK: 0(0.00%), nbLKup: 1309(362.60%), hardens 1 (fixed 647), dynVars 0, shorten: 0
+c CSS interleave: X half cap 1 lb 1 feasibility -> NONE 0
+c dualshare: Z half cap 1 skipped (NONE implied, shared lb 2)
+c stab-overlap X cap 2: 0 of 324 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 992 vars, 3048 cls (c/v ratio==3.1, grow=0)
+c No iterative elimination performed. (vars=992, c/v ratio=3.1)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 648, of which 648 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8919
+c conflLits 19, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 326
+c init nbIsets: 19
+c nbIsets after pass 1: 18
+c isets 18, derivedCost 1
+c 1 conflict sets found with length 36
+c fixedCost 0, nbSatLits 0, totalFixedVars 326, objForSearch: 647
+
+c provided UB: 2
+c provided LB: 2 (search units 1)
+
+c Cardinality: 1938 (Sinz+MTO) for UB 2
+c ends of initiationization by VSIDS at 1 conflicts with init 9999
+
+c UB=2 fails, cnfls=1, hcnfls=1, core 0, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 2.00, dev 0.00, succRate 0.50, nbSucc 1, nbHardens 0 (fixed 0), lk: 2, shorten: 0, pureSo 0, nbFlyRd 0, nbFixedLH 0
+c ===============================================================================
+c no feasible solution, hardConflicts: 1
+c nbLK: 2, nbSuccLK: 1(50.00%), nbLKup: 2950(904.91%), hardens 0 (fixed 0), dynVars 646, shorten: 0
+c CSS interleave: X half cap 2 lb 2 feasibility -> NONE 0
+c dualshare: Z half cap 2 skipped (NONE implied, shared lb 3)
+c stab-overlap X cap 4: 0 of 324 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 992 vars, 3048 cls (c/v ratio==3.1, grow=0)
+c No iterative elimination performed. (vars=992, c/v ratio=3.1)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 648, of which 648 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8919
+c conflLits 19, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 326
+c init nbIsets: 19
+c nbIsets after pass 1: 18
+c isets 18, derivedCost 1
+c 1 conflict sets found with length 36
+c fixedCost 0, nbSatLits 0, totalFixedVars 326, objForSearch: 647
+
+c provided UB: 4
+c provided LB: 3 (search units 2)
+
+c Cardinality: 4129 (Sinz+MTO) for UB 4
+c ends of initiationization by VSIDS at 28 conflicts with init 9972
+
+c UB=4 fails, cnfls=28, hcnfls=28, core 180, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 0.00, dev 0.00, succRate 0.00, nbSucc 0, nbHardens 26 (fixed 16642), lk: 1, shorten: 0, pureSo 0, nbFlyRd 30, nbFixedLH 0
+c ===============================================================================
+c no feasible solution, hardConflicts: 28
+c nbLK: 1, nbSuccLK: 0(0.00%), nbLKup: 1309(9.54%), hardens 26 (fixed 16642), dynVars 1938, shorten: 0
+c CSS interleave: X half cap 4 lb 3 feasibility -> NONE 0
+c dualshare: Z half cap 4 skipped (NONE implied, shared lb 5)
+c stab-overlap X cap 8: 324 of 324 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 992 vars, 3048 cls (c/v ratio==3.1, grow=0)
+c No iterative elimination performed. (vars=992, c/v ratio=3.1)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 648, of which 648 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8919
+c conflLits 19, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 326
+c init nbIsets: 19
+c nbIsets after pass 1: 18
+c isets 18, derivedCost 1
+c 1 conflict sets found with length 36
+c fixedCost 0, nbSatLits 0, totalFixedVars 326, objForSearch: 647
+
+c provided UB: 8
+c provided LB: 5 (search units 4)
+
+c Cardinality: 5686 (Sinz+MTO) for UB 8
+c ends of initiationization by VSIDS at 281 conflicts with init 9719
+
+c UB=8 fails, cnfls=281, hcnfls=239, core 14, tier2 0, local 0, quasiC: 0 (fixed: 0)
+c prunedLB 3.00, dev 0.00, succRate 0.98, nbSucc 42, nbHardens 238 (fixed 149165), lk: 43, shorten: 0, pureSo 1, nbFlyRd 132, nbFixedLH 0
+c ===============================================================================
+c no feasible solution, hardConflicts: 239
+c nbLK: 43, nbSuccLK: 42(97.67%), nbLKup: 54957(55.41%), hardens 238 (fixed 149165), dynVars 2718, shorten: 0
+c CSS interleave: X half cap 8 lb 5 feasibility -> NONE 0
+c dualshare: Z half cap 8 skipped (NONE implied, shared lb 9)
+c stab-overlap X cap 16: 324 of 324 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 992 vars, 3048 cls (c/v ratio==3.1, grow=0)
+c No iterative elimination performed. (vars=992, c/v ratio=3.1)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 648, of which 648 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8919
+c conflLits 19, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 326
+c init nbIsets: 19
+c nbIsets after pass 1: 18
+c isets 18, derivedCost 1
+c 1 conflict sets found with length 36
+c fixedCost 0, nbSatLits 0, totalFixedVars 326, objForSearch: 647
+
+c provided UB: 16
+c provided LB: 9 (search units 8)
+
+c Cardinality: 6710 (Sinz+MTO) for UB 16
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 327, nbTested: 1001, counter 23490
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 327, nbTested: 1001, counter 139978
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 327, nbTested: 1001, counter 398227
+c ends of initiationization by VSIDS at 10003 conflicts with init -3
+
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 328, nbTested: 1001, counter 750535
+c ***** top quasi confl at level 0*****
+c LRB phase 1: conflicts 9051, phase 20000000, starts 38, UP 1078311
+c UB=16 fails, cnfls=19054, hcnfls=2832, core 3402, tier2 324, local 386, quasiC: 3937 (fixed: 1166424)
+c prunedLB 5.06, dev 1.50, succRate 0.62, nbSucc 15693, nbHardens 610 (fixed 1450882), lk: 25404, shorten: 0, pureSo 530, nbFlyRd 426, nbFixedLH 825
+c ===============================================================================
+c no feasible solution, hardConflicts: 2832
+c nbLK: 25404, nbSuccLK: 15693(61.77%), nbLKup: 45424313(1657.34%), hardens 610 (fixed 1450882), dynVars 3228, shorten: 0
+c CSS interleave: X half cap 16 lb 9 feasibility -> NONE 0
+c dualshare: Z half cap 16 skipped (NONE implied, shared lb 17)
+c stab-overlap X cap 17: 324 of 324 rows active (ratio 2.00)
+c Mono: 0, fixed: 0
+c |  Eliminated clauses:           0.02 Mb                                      |
+c Reduced to 992 vars, 3048 cls (c/v ratio==3.1, grow=0)
+c No iterative elimination performed. (vars=992, c/v ratio=3.1)
+c ============================[ Search Statistics ]==============================
+c | Conflicts |          ORIGINAL         |          LEARNT          | Progress |
+c |           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |
+c ===============================================================================
+c nb soft clauses: 648, of which 648 unit, 0 nonUnit and 0 empty
+c total nb of literals: 8919
+c conflLits 19, conflLits2 0, nbFailedLits 0, fixedVarsBypreproc 0, totalFixedVars 326
+c init nbIsets: 19
+c nbIsets after pass 1: 18
+c isets 18, derivedCost 1
+c 1 conflict sets found with length 36
+c fixedCost 0, nbSatLits 0, totalFixedVars 326, objForSearch: 647
+
+c provided UB: 17
+c provided LB: 17 (search units 16)
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 327, nbTested: 991, counter 20808
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 327, nbTested: 991, counter 126743
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 327, nbTested: 991, counter 346767
+c ends of initiationization by VSIDS at 10000 conflicts with init 0
+
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 327, nbTested: 991, counter 733541
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 329, nbTested: 990, counter 1211579
+c nbFailedLits 0, nbI 0, fixedVarsByFL 0, totalFixedVars 332, nbTested: 987, counter 1704478
+c ***** top quasi confl at level 0*****
+c LRB phase 1: conflicts 33171, phase 20000000, starts 123, UP 3791337
+c UB=17 fails, cnfls=43171, hcnfls=5247, core 20813, tier2 2399, local 3650, quasiC: 8124 (fixed: 2161997)
+c prunedLB 5.21, dev 1.78, succRate 0.63, nbSucc 36162, nbHardens 1399 (fixed 2764609), lk: 57017, shorten: 0, pureSo 1763, nbFlyRd 625, nbFixedLH 1524
+c ===============================================================================
+c no feasible solution, hardConflicts: 5247
+c nbLK: 57017, nbSuccLK: 36162(63.42%), nbLKup: 100238166(1885.15%), hardens 1399 (fixed 2764609), dynVars 0, shorten: 0
+c CSS interleave: X half cap 17 lb 17 feasibility -> NONE 0
+c dualshare: Z half cap 17 skipped (NONE implied, shared lb 18)
+c CSS interleave: d = 18
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/TOR_648_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_648_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_648_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_648_2_unknown_Gz.txt
+c Hx: 324 x 648, Hz: 324 x 648, Gx: 2 x 648, Gz: 2 x 648, logicals: 4
+c d_lb: 18
+c d_ub: 18
+c d  : 18
+o 18

@@ -93,3 +93,15 @@ in GH-168/REPORT.md; missing numeric bounds remain incomplete gates even if
 the graph oracle proves a known distance. Heavy CLI completion is packaged
 for a PI-allocated server core, never longer CI or Mac solver runs. No stem
 rename, tier assignment, QDistSAT mirror or main integration occurs here.
+
+## Recorded Linux outcome
+
+Run40851403211 (source cdc653e77e8f45f61c02ee8abbde35163827359d) passes
+execution/audits. Independent signed-cover BFS confirms both-half distances
+3,8,13,18,27,38 with GF(2) supports. Both CLI engines solve first four. At
+n1458 MaxSAT returns no bounds, CC[25,27]; at n2888 MaxSAT no bounds,
+CC upper38 only. Those two CLI numeric gates remain INCOMPLETE despite
+known independently verified distances. Raw logs/identities/audit and graph
+certificate are retained in GH-168/raw/actions/default. Three missing-numeric
+server jobs are prepared, not executed. No new scientific distance claim,
+rename, tier move or main integration.

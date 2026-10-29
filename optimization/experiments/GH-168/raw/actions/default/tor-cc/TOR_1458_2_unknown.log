@@ -1,0 +1,66 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/TOR_1458_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_1458_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_1458_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_1458_2_unknown_Gz.txt
+c Hx: 729 x 1458, Hz: 729 x 1458, Gx: 2 x 1458, Gz: 2 x 1458, logicals: 4
+c cc: dual map detection: 'halfswap-inverse Z_27 x Z_27' verified (rank Hz=Hx=728, [Hz;Gx]=[Hx;Gz]=730, cpu 0.008s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 3 generator(s), 1 qubit orbit(s), group partial, point stabiliser not proved trivial, swap map not searched, 3 test(s) (0 refuted, 0 undecided), work 125480, cpu 0.003s
+c cc symbreak X: n=1458 candidates=79 verified_generators=9 orbits=1 detect_cpu=0.013s clause=unit
+c cc symbreak X: generator: plain blockshift L=27
+c cc symbreak X: generator: plain 2dshift-a L=27 (3x9)
+c cc symbreak X: generator: plain 2dshift-a L=27 (9x3)
+c cc symbreak X: generator: plain 2dshift-a L=729 (3x243)
+c cc symbreak X: generator: plain 2dshift-a L=729 (9x81)
+c cc symbreak X: generator: plain 2dshift-a L=729 (27x27)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: generator: plain tanner-aut #2
+c cc symbreak X: generator: plain tanner-aut #3
+c cc symbreak X: orbit reps (size): 0(1458)
+c cc: X half: n 1458, rank H 728, rank [H;G] 730, rank S 728: detectors complete, 2 logical(s)
+c cc: Z half: n 1458, rank H 728, rank [H;G] 730, rank S 728: detectors complete, 2 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'halfswap-inverse Z_27 x Z_27' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 27 (X 27, Z 27)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 2..2, an even weight present)
+c cc: X half overlap: on (729 stabilizer rows of Hx, weights 4..4, 0 forbidden from the start)
+c cc: X half ub-search: rank H 728, information set 730, triples off, slack 4, li-cap 64, collision stern p 2 l 16 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 3 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 4 EMPTY nodes 4 seeds 1 time 0.000s
+c cc: X half level 5 EMPTY nodes 11 seeds 1 time 0.000s
+c cc: X half level 6 EMPTY nodes 28 seeds 1 time 0.000s
+c cc: X half level 7 EMPTY nodes 69 seeds 1 time 0.000s
+c cc: X half level 8 EMPTY nodes 168 seeds 1 time 0.000s
+c cc: X half level 9 EMPTY nodes 407 seeds 1 time 0.000s
+c cc: X half level 10 EMPTY nodes 986 seeds 1 time 0.000s
+c cc: X half level 11 EMPTY nodes 2373 seeds 1 time 0.000s
+c cc: X half level 12 EMPTY nodes 5695 seeds 1 time 0.001s
+c cc: X half level 13 EMPTY nodes 13637 seeds 1 time 0.002s
+c cc: X half level 14 EMPTY nodes 32623 seeds 1 time 0.004s
+c cc: X half level 15 EMPTY nodes 77873 seeds 1 time 0.009s
+c cc: X half level 16 EMPTY nodes 185753 seeds 1 time 0.020s
+c cc: X half level 17 EMPTY nodes 442265 seeds 1 time 0.051s
+c cc: X half level 18 EMPTY nodes 1052458 seeds 1 time 0.116s
+c cc: X half level 19 EMPTY nodes 2500464 seeds 1 time 0.274s
+c cc: X half level 20 EMPTY nodes 5938408 seeds 1 time 0.646s
+c cc: X half level 21 EMPTY nodes 14083294 seeds 1 time 1.533s
+c cc: X half level 22 EMPTY nodes 33390090 seeds 1 time 3.623s
+c cc: X half level 23 EMPTY nodes 79067006 seeds 1 time 8.500s
+c cc: X half level 24 EMPTY nodes 187189431 seeds 1 time 19.902s
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/TOR_1458_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_1458_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_1458_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_1458_2_unknown_Gz.txt
+c Hx: 729 x 1458, Hz: 729 x 1458, Gx: 2 x 1458, Gz: 2 x 1458, logicals: 4
+c d_lb: 25
+c d_ub: 27
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

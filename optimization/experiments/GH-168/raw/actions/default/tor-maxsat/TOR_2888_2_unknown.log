@@ -1,0 +1,42 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/TOR_2888_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_2888_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_2888_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_2888_2_unknown_Gz.txt
+c Hx: 1444 x 2888, Hz: 1444 x 2888, Gx: 2 x 2888, Gz: 2 x 2888, logicals: 4
+c frontier auto X: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: dual map 'halfswap-inverse Z_38 x Z_38' verified (rank Hz=Hx=1443, [Hz;Gx]=[Hx;Gz]=1445, cpu 0.024s): dX = dZ, both halves kept, lower bounds shared
+c oddcap X: column weights 2..2 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 2..2 (an even weight present) -> odd caps kept
+c symbreak X: n=2888 candidates=56 verified_generators=6 orbits=2 detect_cpu=0.034s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=38
+c symbreak X: generator: plain 2dshift-a L=38 (2x19)
+c symbreak X: generator: plain 2dshift-a L=38 (19x2)
+c symbreak X: generator: plain 2dshift-a L=1444 (2x722)
+c symbreak X: generator: plain 2dshift-a L=1444 (19x76)
+c symbreak X: generator: plain 2dshift-a L=1444 (38x38)
+c symbreak X: orbit reps (size): 0(1444) 1444(1444)
+c symbreak Z: n=2888 candidates=56 verified_generators=6 orbits=2 detect_cpu=0.028s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=38
+c symbreak Z: generator: plain 2dshift-a L=38 (2x19)
+c symbreak Z: generator: plain 2dshift-a L=38 (19x2)
+c symbreak Z: generator: plain 2dshift-a L=1444 (2x722)
+c symbreak Z: generator: plain 2dshift-a L=1444 (19x76)
+c symbreak Z: generator: plain 2dshift-a L=1444 (38x38)
+c symbreak Z: orbit reps (size): 0(1444) 1444(1444)
+c stab-overlap X: 1444 of 1444 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 4:1444 (<= 2); native propagator rows 1444 (no clauses)
+c stab-overlap Z: 1444 of 1444 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 4:1444 (<= 2); native propagator rows 1444 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/TOR_2888_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_2888_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_2888_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_2888_2_unknown_Gz.txt
+c Hx: 1444 x 2888, Hz: 1444 x 2888, Gx: 2 x 2888, Gz: 2 x 2888, logicals: 4
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

@@ -1,0 +1,42 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/TOR_1458_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_1458_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_1458_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_1458_2_unknown_Gz.txt
+c Hx: 729 x 1458, Hz: 729 x 1458, Gx: 2 x 1458, Gz: 2 x 1458, logicals: 4
+c frontier auto X: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c frontier auto Z: 0.00 Tanner 4-cycles per row (threshold 3.00) -> on
+c dualshare: dual map 'halfswap-inverse Z_27 x Z_27' verified (rank Hz=Hx=728, [Hz;Gx]=[Hx;Gz]=730, cpu 0.007s): dX = dZ, both halves kept, lower bounds shared
+c oddcap X: column weights 2..2 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 2..2 (an even weight present) -> odd caps kept
+c symbreak X: n=1458 candidates=76 verified_generators=6 orbits=2 detect_cpu=0.011s clause=orbit-chain
+c symbreak X: generator: plain blockshift L=27
+c symbreak X: generator: plain 2dshift-a L=27 (3x9)
+c symbreak X: generator: plain 2dshift-a L=27 (9x3)
+c symbreak X: generator: plain 2dshift-a L=729 (3x243)
+c symbreak X: generator: plain 2dshift-a L=729 (9x81)
+c symbreak X: generator: plain 2dshift-a L=729 (27x27)
+c symbreak X: orbit reps (size): 0(729) 729(729)
+c symbreak Z: n=1458 candidates=76 verified_generators=6 orbits=2 detect_cpu=0.008s clause=orbit-chain
+c symbreak Z: generator: plain blockshift L=27
+c symbreak Z: generator: plain 2dshift-a L=27 (3x9)
+c symbreak Z: generator: plain 2dshift-a L=27 (9x3)
+c symbreak Z: generator: plain 2dshift-a L=729 (3x243)
+c symbreak Z: generator: plain 2dshift-a L=729 (9x81)
+c symbreak Z: generator: plain 2dshift-a L=729 (27x27)
+c symbreak Z: orbit reps (size): 0(729) 729(729)
+c stab-overlap X: 729 of 729 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 4:729 (<= 2); native propagator rows 729 (no clauses)
+c stab-overlap Z: 729 of 729 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 4:729 (<= 2); native propagator rows 729 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/TOR_1458_2_unknown_Hx.txt
+c Hz: data/matrices/untiered/TOR_1458_2_unknown_Hz.txt
+c Gx: data/matrices/untiered/TOR_1458_2_unknown_Gx.txt
+c Gz: data/matrices/untiered/TOR_1458_2_unknown_Gz.txt
+c Hx: 729 x 1458, Hz: 729 x 1458, Gx: 2 x 1458, Gz: 2 x 1458, logicals: 4
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN
