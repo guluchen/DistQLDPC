@@ -1,0 +1,77 @@
+name: Finite-group Tanner library smoke
+
+on:
+  push:
+    branches: [codex/finite-group-tanner-library]
+    paths:
+      - '.github/workflows/finite-tanner-library-smoke.yml'
+      - 'scripts/codegen/finite_tanner*'
+      - 'scripts/codegen/validate_finite_tanner.py'
+      - 'scripts/codegen/verify_finite_tanner_source.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/audit_finite_tanner_smoke.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_finite_tanner.py'
+      - 'data/matrices/untiered/TN_*'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units and independent inverse-action/source/incidence checks
+        run: |
+          python3 tests/test_codegen_finite_tanner.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/tn-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/tn-validation.json
+          python3 scripts/codegen/validate_finite_tanner.py --out /tmp/tn-construction.json
+          cmp optimization/experiments/GH-169/raw/construction.json /tmp/tn-construction.json
+      - name: Byte-identical matrix regeneration
+        run: |
+          python3 scripts/codegen/finite_tanner.py --all --out /tmp/tn-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/tn-rebuilt').glob('*.txt'));assert len(files)==24
+          for p in files:assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS all24 original finite-group Tanner matrices reproduced')
+          PY
+      - name: Six default MaxSAT 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TN --verbose --out /tmp/tn-maxsat
+      - name: Six independent CC 60s checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family TN --engine cc --verbose --out /tmp/tn-cc
+      - name: Audit upper estimates, raw bounds, identities and GF2 words
+        run: >-
+          python3 scripts/codegen/audit_finite_tanner_smoke.py --maxsat /tmp/tn-maxsat
+          --cc /tmp/tn-cc --out /tmp/tn-audit.json
+      - name: Retain raw evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('tn-maxsat','tn-cc'):
+              root=Path('/tmp')/name
+              print('GH169_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          p=Path('/tmp/tn-audit.json')
+          if p.exists():print('GH169_AUDIT_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh169-finite-group-tanner-smoke
+          path: |
+            /tmp/tn-maxsat/
+            /tmp/tn-cc/
+            /tmp/tn-audit.json
+          if-no-files-found: warn
+          retention-days: 14
