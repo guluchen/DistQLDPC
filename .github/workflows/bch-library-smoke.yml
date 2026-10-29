@@ -1,0 +1,77 @@
+name: BCH library short gates
+
+on:
+  push:
+    branches: [codex/bch-library]
+    paths:
+      - '.github/workflows/bch-library-smoke.yml'
+      - 'scripts/codegen/bch*'
+      - 'scripts/codegen/validate_bch.py'
+      - 'scripts/codegen/audit_bch_smoke.py'
+      - 'scripts/codegen/smoke_bch.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'tests/test_codegen_bch.py'
+      - 'data/matrices/untiered/LP_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent construction, complete logicals and unit contracts
+        run: |
+          python3 -m unittest discover -s tests -p 'test_codegen_*.py'
+          python3 scripts/codegen/validate_css.py --output /tmp/gh207-css.json
+          cmp data/matrices/untiered/validation.json /tmp/gh207-css.json
+          python3 scripts/codegen/validate_bch.py --out /tmp/gh207-construction.json
+          cmp optimization/experiments/GH-207/raw/construction.json /tmp/gh207-construction.json
+      - name: Reproduce all20 matrix files byte for byte
+        run: |
+          python3 scripts/codegen/bch.py --all --out /tmp/gh207-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/gh207-rebuilt').glob('*.txt'))
+          assert len(files)==20
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS20matrixbyteidentical')
+          PY
+      - name: Five serial default MaxSAT 60CPU-second checks
+        run: python3 scripts/codegen/smoke_bch.py --ci --engine maxsat --out /tmp/gh207-maxsat
+      - name: Five serial explicit CC 60CPU-second checks
+        run: python3 scripts/codegen/smoke_bch.py --ci --engine cc --out /tmp/gh207-cc
+      - name: Cross-engine source bounds and actual GF2 minimum-word audit
+        run: python3 scripts/codegen/audit_bch_smoke.py --maxsat /tmp/gh207-maxsat --cc /tmp/gh207-cc --construction /tmp/gh207-construction.json --out /tmp/gh207-smoke-audit.json
+      - name: Retain complete evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          evidence={}
+          for label in ('maxsat','cc'):
+              root=Path('/tmp/gh207-'+label)
+              evidence[label]={str(p.relative_to(root)):p.read_text() for p in root.rglob('*') if p.is_file()}
+          for name in ('construction','smoke-audit'):
+              p=Path('/tmp/gh207-'+name+'.json')
+              if p.exists():evidence[name]=p.read_text()
+          print('GH207_EVIDENCE_JSON='+json.dumps(evidence,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh207-bch-short-gates
+          path: |
+            /tmp/gh207-maxsat/
+            /tmp/gh207-cc/
+            /tmp/gh207-construction.json
+            /tmp/gh207-smoke-audit.json
+          if-no-files-found: warn
+          retention-days: 14
