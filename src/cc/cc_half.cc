@@ -112,7 +112,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0),
       mx_(0), mxw_(0), ux_(0), ncls_(1), xminw_(0), xmaxw_(0), nk0_(0), nkx_(0), kxminw_(0), kxmaxw_(0), xu_(false), ovtightx_(0), w_(0), nodd_(0),
-      synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
+      synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false), ext_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
     if (G.cols != n_) fatal("detector column count differs from H");
@@ -402,6 +402,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     syn_.assign((size_t)(mw_ + mxw_), 0);   /* GH-181: words mw_.. hold the redundant rows */
     gpar_.assign((size_t)kw_, 0);
     xu_ = rules_.xorunit;
+    ext_ = mx_ > 0 || nkx_ > 0 || xu_;
     if (xu_) {
         freecnt_.assign((size_t)64 * (size_t)(mw_ + mxw_), 1 << 30);   /* padding entries never reach 0 or 1 */
         unit_.assign((size_t)(mw_ + mxw_), 0);
@@ -411,7 +412,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     mark_.assign((size_t)n_, 0);
 }
 
-inline void HalfSearch::toggle(int q) {
+template <bool E> inline void HalfSearch::toggle(int q) {
     for (uint32_t i = cstart_[q], e = cstart_[q + 1]; i < e; i++) {
         const uint32_t r = cr_[i];
         uint64_t& wd = syn_[r >> 6];
@@ -419,7 +420,7 @@ inline void HalfSearch::toggle(int q) {
         wd ^= b;
         nodd_ += (wd & b) ? 1 : -1;
     }
-    for (uint32_t i = xcstart_[q], e = xcstart_[q + 1]; i < e; i++) {   /* GH-181 redundant rows (not in nodd_) */
+    if (E) for (uint32_t i = xcstart_[q], e = xcstart_[q + 1]; i < e; i++) {   /* GH-181 redundant rows (not in nodd_) */
         const uint32_t u = xcr_[i];
         syn_[u >> 6] ^= 1ULL << (u & 63);
     }
@@ -443,35 +444,35 @@ void HalfSearch::xu_count(uint32_t q, int d) {
     }
 }
 
-inline void HalfSearch::blk_up(uint32_t q) {
-    if (blk_[q]++ == 0 && xu_) xu_count(q, -1);
+template <bool E> inline void HalfSearch::blk_up(uint32_t q) {
+    if (blk_[q]++ == 0 && E && xu_) xu_count(q, -1);
 }
 
-inline void HalfSearch::blk_down(uint32_t q) {
-    if (--blk_[q] == 0 && xu_) xu_count(q, +1);
+template <bool E> inline void HalfSearch::blk_down(uint32_t q) {
+    if (--blk_[q] == 0 && E && xu_) xu_count(q, +1);
 }
 
 /* overlap (GH-138): q joins S. A row g that reaches its limit (|S & g| = floor(|g|/2)) forbids all its qubits
  * (those in S are blocked anyway; the count is undone symmetrically by ov_del). */
-inline void HalfSearch::ov_add(int q) {
+template <bool E> inline void HalfSearch::ov_add(int q) {
     for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
         const uint32_t g = kcr_[i];
         if (--slack_[g] == 0) {
             ++ovtight_;
-            if ((int)g >= nk0_) ++ovtightx_;   /* GH-181 sparseov row */
+            if (E && (int)g >= nk0_) ++ovtightx_;   /* GH-181 sparseov row */
             uint64_t nf = 0;
-            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t) { nf += blk_[*t] == 0; blk_up(*t); }
+            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t) { nf += blk_[*t] == 0; blk_up<E>(*t); }
             ovforbid_ += nf;
         }
     }
 }
 
 /* overlap: q leaves S (exact inverse of ov_add) */
-inline void HalfSearch::ov_del(int q) {
+template <bool E> inline void HalfSearch::ov_del(int q) {
     for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
         const uint32_t g = kcr_[i];
         if (slack_[g]++ == 0)
-            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t) blk_down(*t);
+            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t) blk_down<E>(*t);
     }
 }
 
@@ -523,7 +524,7 @@ void HalfSearch::record_witness(int size) {
     std::sort(res_->witness.begin(), res_->witness.end());
 }
 
-bool HalfSearch::dfs(int size) {
+template <bool E> bool HalfSearch::dfs(int size) {
     ++res_->nodes;
     ++res_->by_budget[(size_t)(w_ - size)];
     if (poll_fn_ && !(res_->nodes & poll_mask_) && poll_fn_(poll_ctx_)) {   /* GH-140: abort requested */
@@ -562,18 +563,18 @@ bool HalfSearch::dfs(int size) {
         record_witness(size + 1);
         return true;
     }
-    if (xu_) {   /* GH-181 xorunit: unit propagation (forbids undone on return) */
+    if (E && xu_) {   /* GH-181 xorunit: unit propagation (forbids undone on return) */
         const size_t mark = xtrail_.size();
         int forced = -1;
         bool hit = false;
-        if (xu_propagate(size, forced)) hit = expand(size, forced);
+        if (xu_propagate(size, forced)) hit = expand<E>(size, forced);
         while (xtrail_.size() > mark) {
-            blk_down(xtrail_.back());
+            blk_down<E>(xtrail_.back());
             xtrail_.pop_back();
         }
         return hit;
     }
-    return expand(size, -1);
+    return expand<E>(size, -1);
 }
 
 /* GH-181 xorunit, to a fixpoint: an even row with one free qubit forbids it (mutant 20: branches on it instead); then an
@@ -597,7 +598,7 @@ bool HalfSearch::xu_propagate(int size, int& forced) {
                 while (t < e && blk_[*t]) ++t;
                 if (t == e) fatal("xorunit: free count out of sync");
                 if (mutant_ == 20) { forced = (int)u; return true; }
-                blk_up(*t);
+                blk_up<true>(*t);
                 xtrail_.push_back(*t);
                 ++res_->xuforbid;
                 changed = true;
@@ -615,18 +616,18 @@ bool HalfSearch::xu_propagate(int size, int& forced) {
 }
 
 /* the node's bound scan and branching (forced >= 0: branch on that row, GH-181 xorunit) */
-bool HalfSearch::expand(int size, int forced) {
+template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(int size, int forced) {
     const bool leaf = rules_.leaf;
     const bool meet = leaf && size == w_ - (mutant_ == 6 ? 3 : 2);   /* budget 2: lookup instead of recursion */
 
     /* scan the odd rows in index order: packing bound, no-candidate dead end, branching row */
-    const bool pack = rules_.pack, mrv = rules_.mrv || (rules_.sparsemrv && mx_ > 0);   /* GH-181 sparsemrv */
+    const bool pack = rules_.pack, mrv = rules_.mrv || (E && rules_.sparsemrv && mx_ > 0);   /* GH-181 sparsemrv */
     const uint64_t st = ++stamp_;
     int p = 0, brow = -1;
     uint32_t bcnt = UINT32_MAX;
     /* GH-181 sparse (pack or mrv): the odd rows of H and R are scanned by weight class, lightest first (within a class
      * by unified index, H's rows first); without the token one class holds every row of H (index order, as before) */
-    const bool cls = rules_.sparse && (pack || mrv);
+    const bool cls = E && rules_.sparse && (pack || mrv);
     const int ncls = cls ? ncls_ : 1;
     const int nw = cls ? mw_ + mxw_ : mw_;
     int pr = 0;   /* redundant rows in the packing */
@@ -634,7 +635,7 @@ bool HalfSearch::expand(int size, int forced) {
     for (int wi = 0; wi < nw && !(brow >= 0 && !pack && !mrv); wi++) {
         uint64_t x = syn_[wi];
         if (cls) x &= wcls_[(size_t)c * (size_t)nw + (size_t)wi];
-        const bool red = wi >= mw_;
+        const bool red = E && wi >= mw_;
         while (x) {
             const int r = wi * 64 + __builtin_ctzll(x);
             x &= x - 1;
@@ -684,7 +685,7 @@ bool HalfSearch::expand(int size, int forced) {
         for (int wi = 0; wi < mw_ && brow < 0; wi++)
             if (syn_[wi]) brow = wi * 64 + __builtin_ctzll(syn_[wi]);
     }
-    if (forced >= 0) {   /* GH-181 xorunit: an odd row with one free qubit (mutant 20: an even one) */
+    if (E && forced >= 0) {   /* GH-181 xorunit: an odd row with one free qubit (mutant 20: an even one) */
         brow = forced;
         ++res_->xuforced;
     }
@@ -693,7 +694,7 @@ bool HalfSearch::expand(int size, int forced) {
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;
     {
-        const bool red = brow >= ux_;
+        const bool red = E && brow >= ux_;
         const uint32_t* a = red ? &xq_[xstart_[brow - ux_]] : &rq_[rstart_[brow]];
         const uint32_t* e = red ? &xq_[xstart_[brow - ux_ + 1]] : &rq_[rstart_[brow + 1]];
         for (const uint32_t* t = a; t < e; ++t)
@@ -709,9 +710,9 @@ bool HalfSearch::expand(int size, int forced) {
     const bool ovrc = ovr_ && !meet && !(rules_.leaf && size + 1 >= w_ - 2);
     for (int i = 0; i < nc; i++) {
         const int a = (int)cb[i];
-        blk_up((uint32_t)a);
-        toggle(a);
-        if (ovrc) ov_add(a);
+        blk_up<E>((uint32_t)a);
+        toggle<E>(a);
+        if (ovrc) ov_add<E>(a);
         cur_[size] = a;
         if (meet) {   /* the child S + a is closed by one more qubit iff syn(S + a) is a free column */
             if (nodd_ == 0) {   /* as dfs(size + 1) would: dead end, or an inconsistency if nontrivial */
@@ -731,19 +732,19 @@ bool HalfSearch::expand(int size, int forced) {
                 }
             }
         } else {
-            hit = dfs(size + 1);
+            hit = dfs<E>(size + 1);
         }
-        if (ovrc) ov_del(a);
-        toggle(a);
-        blk_down((uint32_t)a);
+        if (ovrc) ov_del<E>(a);
+        toggle<E>(a);
+        blk_down<E>((uint32_t)a);
         if (hit) break;
         if (rules_.excl) {   /* sibling exclusion: a is forbidden in the later siblings */
-            blk_up((uint32_t)a);
+            blk_up<E>((uint32_t)a);
             excluded = i + 1;
         }
     }
     if (mutant_ != 1)   /* restore the forbidden set (mutant 1 leaves it) */
-        for (int i = 0; i < excluded; i++) blk_down(cb[i]);
+        for (int i = 0; i < excluded; i++) blk_down<E>(cb[i]);
     return hit;
 }
 
@@ -782,7 +783,7 @@ LevelResult HalfSearch::run_level(int w) {
             if (klim_[g] == 0)
                 for (uint32_t t = kstart_[g]; t < kstart_[g + 1]; t++) {
                     ovforbid_ += blk_[kq_[t]] == 0;
-                    blk_up(kq_[t]);
+                    blk_up<true>(kq_[t]);
                 }
         }
     }
@@ -796,18 +797,18 @@ LevelResult HalfSearch::run_level(int w) {
          * every element of F that needs two qubits of its first orbit */
         const bool m3 = orbit_mode_ && mutant_ == 3;
         if (m3)
-            for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_up(block_[t]);
+            for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_up<true>(block_[t]);
         /* a seed is never forbidden by an earlier seed, except through mutant 1's leak */
         if (blk_[s] == (m3 ? 1u : 0u)) {
             r.seeds++;
-            if (!m3) blk_up((uint32_t)s);
-            toggle(s);
-            if (ovr_) ov_add(s);
+            if (!m3) blk_up<true>((uint32_t)s);
+            toggle<true>(s);
+            if (ovr_) ov_add<true>(s);
             cur_[0] = s;
-            const bool hit = dfs(1);
-            if (ovr_) ov_del(s);
-            toggle(s);
-            if (!m3) blk_down((uint32_t)s);
+            const bool hit = ext_ ? dfs<true>(1) : dfs<false>(1);
+            if (ovr_) ov_del<true>(s);
+            toggle<true>(s);
+            if (!m3) blk_down<true>((uint32_t)s);
             if (hit) {
                 r.verdict = abort_ ? LEVEL_ABORTED : incons_ ? LEVEL_INCONSISTENT : LEVEL_FOUND;
                 if (abort_) r.witness.clear();
@@ -820,7 +821,7 @@ LevelResult HalfSearch::run_level(int w) {
         }
         /* seed rule: index rule forbids the seed; orbit rule forbids its whole orbit (mutant 3: done above) */
         if (!m3)
-            for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_up(block_[t]);
+            for (uint32_t t = bstart_[i]; t < bstart_[i + 1]; t++) blk_up<true>(block_[t]);
     }
     r.ovtight = ovtight_;
     r.ovforbid = ovforbid_;

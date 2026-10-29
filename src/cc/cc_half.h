@@ -283,19 +283,22 @@ private:
     uint64_t poll_mask_;
     bool abort_;
 
-    void toggle(int q);
-    void blk_up(uint32_t q);                /* forbidden-set changes (xorunit keeps its counters) */
-    void blk_down(uint32_t q);
+    /* GH-181: the search functions are instantiated twice: E = false is the code path before GH-181 (used when the
+     * half has no redundant row, no added stabilizer row and no xorunit: ext_ false), E = true adds the GH-181 work */
+    bool ext_;
+    template <bool E> void toggle(int q);
+    template <bool E> void blk_up(uint32_t q);   /* forbidden-set changes (xorunit keeps its counters) */
+    template <bool E> void blk_down(uint32_t q);
     void xu_count(uint32_t q, int d);
     bool xu_propagate(int size, int& forced); /* false: dead end; forced: unified index of an odd unit row or -1 */
-    bool expand(int size, int forced);
-    void ov_add(int q);
-    void ov_del(int q);
+    template <bool E> bool expand(int size, int forced);
+    template <bool E> void ov_add(int q);
+    template <bool E> void ov_del(int q);
     bool gpar_nonzero() const;
     bool gpar_nonzero_with(int q) const;
     bool column_is_syndrome(int q) const;
     int closing_qubit() const;              /* free qubit whose column equals syn_ with a nontrivial closure, or -1 */
-    bool dfs(int size);
+    template <bool E> bool dfs(int size);
     void record_witness(int size);
 };
 
