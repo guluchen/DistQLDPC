@@ -1,6 +1,6 @@
 # GH-191: published interval-valued GB references
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux/actual source-upper words pending.
+Status: LINUX_NUMERIC_AND_ACTUAL_WORD_GATES_PASS; independent lower proofs pending.
 Issue https://github.com/guluchen/DistQLDPC/issues/191; hub6504120701.
 Branch codex/open-reference-gb-library from remotely verified main
 6083e662c621f3b66defd434cfae31a028d483c4. No PR/main integration.
@@ -73,16 +73,63 @@ Heavy proof/numeric completions freeze defaultseed0/verbose6hCPU+600swall/
 requiring explicit PI allocation/free-core checks/nohup/nullstdin. Configured
 limits are not ETA; no server core allocated or paid-cloud substitute.
 
+## Terminal Linux evidence
+
+Data732eb0849dfd14a433f9086518dcf31b615577dd;
+source9588fc5ed120c57bf9bdc4588c52022e48e01bc9,
+treecdd63f1d239aee4fb433c925e1ebd9d99eefc072.
+[Library run40925199585](https://github.com/guluchen/DistQLDPC/actions/runs/40925199585),
+job123628715707 completed SUCCESS, every step including audit/retention/upload.
+Ordinary sourceCI40925199561 completed SUCCESS. Unchanged solver binary SHA256
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a.
+47units/full independent construction/inventory comparisons and8matrix byte
+regeneration pass. Exact commands in source-pinned workflow. Four one-time
+serial60sCPU/90swall/4GiB/defaultseed/pinned allocated runner CPU attempts,
+10min cap. No performance/median/tier adoption inference from shared timing.
+
+| stem | MaxSAT raw60s | CC raw60s | actual GF2 upper | numeric/word gates |
+|---|---|---|---:|---|
+|GB_254_28_unknown|[10,20]|[16,20]|20|PASS/PASS|
+|GB_180_10_unknown|[9,18]|[17,18]|18|PASS/PASS|
+
+Actual printed upper words20/18 reproduce source upper claims, verified
+against both actual parity/stabilizer quotient/detector conditions. Full
+printed word histories retained, not replaced by basis uppers48/36. No
+contradiction. Published14/15 lower claims stay separate from our raw
+MaxSAT10/9 and CC16/17. The raised CC lower16/17 is PLAUSIBLE pending an
+independent proof/search; do not rename stems or claim certified improvement
+from one engine. No exact answer. Both numeric gates complete; no synthetic
+bound filled from source or another engine.
+
+Durable raw/actions/default/job.log has342080characters,14engine files
+(two logs/two metadata/environment/results/DONE per engine),audit.json.
+Local replay (no solver) is byte-identical:
+```
+python3 scripts/codegen/audit_reference_gb_smoke.py --maxsat optimization/experiments/GH-191/raw/actions/default/reference-gb-maxsat --cc optimization/experiments/GH-191/raw/actions/default/reference-gb-cc --construction optimization/experiments/GH-191/raw/construction.json --out /tmp/gh191-audit-replay.json
+cmp /tmp/gh191-audit-replay.json optimization/experiments/GH-191/raw/actions/default/audit.json
+```
+Four unfinished proof jobs frozen in runner/jobs.jsonl, one MaxSAT+one CC
+per case, defaultseed0/verbose,6hCPU+600swall/4GiB/serial pinned explicit
+PI-allocated confirmed-free yfclab2 core/nohup/nullstdin. Actual upper
+references20/18, source/other-engine/word contradiction guards. Total24hCPU/
+24h40mwall configured LIMITS, not ETA. No core allocated/server execution.
+Dry-run, Mac and altered-argv refusals pass with no solver/output directory;
+CPU54 syntax only. No repeated scientific CI to fill proof gaps.
+
 ## Completion fields
 
-What changed:2 original reproducible GB interval references, independent
-source/GF2/physical/logical validator, audit mutants and provenance.
-Validation performed:13units/full source/GF2/rowspace/actual basis words,
-30pinned peer inventories and8matrix regeneration.
-Results: source k28/10 and ranks113/85 confirmed; actual basis uppers48/36,
-not source20/18; Linux and actual source-upper words pending.
-Unresolved: Linux/scientific/numeric/actual-upper gates, previous packages/
-APM source hold and stronger-expander/cosheaf practical hypotheses.
+What changed:2 reproducible GB interval references, independent source/
+GF2/physical/logical checks, actual-word audit/provenance and durable Linux
+evidence;4frozen proof jobs; next independent source notes.
+Validation performed:47units/full actual columns/gcd/ranks/logicals/typed
+space/XZ map/30pinned peers;8matrix byte reproduction;4bounded Linux attempts
+and byte-identical local actual-word audit replay. Prior24rows/300matrices
+and solver/build preserved.
+Results: actual verified uppers20/18; MaxSAT raw[10,20]/[9,18], CC raw
+[16,20]/[17,18]. All numeric/actual-word gates PASS, no exact distance.
+Unresolved: CC raised lower16/17 PLAUSIBLE pending independent proof;
+4proof jobs, earlier packages/APM hold/stronger finite-expander/cosheaf gaps
+and PI integration. Goal continues with interval-valued GHP source review.
 Scientific semantics changed:no.
-PI action required:yes for eventual integration/tier/name/server allocation
-or earlier scientific hold. Routine collection validation continues.
+PI action required:yes for integration/tier/name/server allocation or prior
+scientific hold; routine safe collection/research continues.

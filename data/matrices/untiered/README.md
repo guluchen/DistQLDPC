@@ -137,6 +137,9 @@ Two [PK2021 GB references](REFERENCE_GB.md), n254k28 and n180k10, have
 published distance intervals14..20 and15..18. Original first-column
 circulant reconstruction, independent physical columns/polynomial gcd,
 full GF2/logicals/typed physical rowspace/XZ map and no-peer checks pass.
-13new units/full8matrix byte regeneration pass; Linux/actual low upper-word
-gates pending. Source claims are not filled into raw solver fields.
+Linux40925199585 passes47units/full8matrix byte regeneration and actual-word
+audit replay. MaxSAT[10,20]/[9,18], CC[16,20]/[17,18]; actual GF2 words20/18
+reproduce source uppers. Numeric/word gates PASS; CC lower16/17 PLAUSIBLE
+pending independent proof. Four frozen unexecuted proof jobs. Source claims
+are not filled into raw solver fields.
 This branch26untiered/77total; prior24rows/300matrix files preserved.

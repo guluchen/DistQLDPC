@@ -1,0 +1,66 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/GB_180_10_unknown_Hx.txt
+c Hz: data/matrices/untiered/GB_180_10_unknown_Hz.txt
+c Gx: data/matrices/untiered/GB_180_10_unknown_Gx.txt
+c Gz: data/matrices/untiered/GB_180_10_unknown_Gz.txt
+c Hx: 90 x 180, Hz: 90 x 180, Gx: 10 x 180, Gz: 10 x 180, logicals: 20
+c cc: dual map detection: 'halfswap-inverse Z_h' verified (rank Hz=Hx=85, [Hz;Gx]=[Hx;Gz]=95, cpu 0.000s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 1 generator(s), 2 qubit orbit(s), group complete, point stabiliser trivial, swap map not searched, 2 test(s) (1 refuted, 0 undecided), work 9448, cpu 0.000s
+c cc symbreak X: n=180 candidates=102 verified_generators=12 orbits=2 detect_cpu=0.001s clause=orbit-chain
+c cc symbreak X: generator: plain blockshift L=90
+c cc symbreak X: generator: plain 2dshift-a L=90 (2x45)
+c cc symbreak X: generator: plain 2dshift-a L=90 (3x30)
+c cc symbreak X: generator: plain 2dshift-a L=90 (5x18)
+c cc symbreak X: generator: plain 2dshift-a L=90 (6x15)
+c cc symbreak X: generator: plain 2dshift-a L=90 (9x10)
+c cc symbreak X: generator: plain 2dshift-a L=90 (10x9)
+c cc symbreak X: generator: plain 2dshift-a L=90 (15x6)
+c cc symbreak X: generator: plain 2dshift-a L=90 (18x5)
+c cc symbreak X: generator: plain 2dshift-a L=90 (30x3)
+c cc symbreak X: generator: plain 2dshift-a L=90 (45x2)
+c cc symbreak X: generator: plain tanner-aut #1
+c cc symbreak X: orbit reps (size): 0(90) 90(90)
+c cc: X half: n 180, rank H 85, rank [H;G] 95, rank S 85: detectors complete, 10 logical(s)
+c cc: Z half: n 180, rank H 85, rank [H;G] 95, rank S 85: detectors complete, 10 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'halfswap-inverse Z_h' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 36 (X 36, Z 36)
+c cc: X half search: 2 seeds (orbit representatives)
+c cc: X half parity: off (column weights 4..4, an even weight present)
+c cc: X half overlap: on (90 stabilizer rows of Hx, weights 8..8, 0 forbidden from the start)
+c cc: X half ub-search: rank H 85, information set 95, triples off, slack 4, li-cap 64, collision stern p 2 l 10 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 19 (iteration 1, wall 0.000s)
+c witness X (ub-search): 0 4 10 18 21 23 28 29 31 52 75 86 89 96 108 141 144 169 173
+c cc: X half level 1 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 2 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 3 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 4 EMPTY nodes 2 seeds 2 time 0.000s
+c cc: X half level 5 EMPTY nodes 26 seeds 2 time 0.000s
+c cc: X half level 6 EMPTY nodes 83 seeds 2 time 0.000s
+c cc: X half level 7 EMPTY nodes 185 seeds 2 time 0.000s
+c cc: X half level 8 EMPTY nodes 748 seeds 2 time 0.000s
+c cc: X half level 9 EMPTY nodes 2643 seeds 2 time 0.000s
+c cc: X half level 10 EMPTY nodes 10327 seeds 2 time 0.002s
+c cc: X half level 11 EMPTY nodes 43617 seeds 2 time 0.008s
+c cc: ub-search: X half word of weight 18 (iteration 4, wall 0.011s)
+c witness X (ub-search): 12 16 18 20 35 37 43 45 47 49 58 62 81 83 106 107 117 167
+c cc: X half level 12 EMPTY nodes 184421 seeds 2 time 0.038s
+c cc: ub-search: U 18 not improved on a plateau: finder share 0.0031 from now on (iteration 68, wall 0.137s)
+c cc: X half level 13 EMPTY nodes 779599 seeds 2 time 0.164s
+c cc: X half level 14 EMPTY nodes 3309828 seeds 2 time 0.713s
+c cc: X half level 15 EMPTY nodes 14045612 seeds 2 time 3.131s
+c cc: X half level 16 EMPTY nodes 59590982 seeds 2 time 13.808s
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/GB_180_10_unknown_Hx.txt
+c Hz: data/matrices/untiered/GB_180_10_unknown_Hz.txt
+c Gx: data/matrices/untiered/GB_180_10_unknown_Gx.txt
+c Gz: data/matrices/untiered/GB_180_10_unknown_Gz.txt
+c Hx: 90 x 180, Hz: 90 x 180, Gx: 10 x 180, Gz: 10 x 180, logicals: 20
+c d_lb: 17
+c d_ub: 18
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

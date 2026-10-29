@@ -50,7 +50,14 @@ python3 scripts/codegen/validate_css.py --output /absolute/new/validation.json
 source/commuting-wrong-matrix/logical/entry/duplicate-support mutants, full
 8matrix byte regeneration, overwrite/selection and raw-bound/actual-word
 audit guards. No distance/support search on Mac. Linux default MaxSAT and
-CC serial60sCPU/90swall/4GiB/defaultseed/pinned allocated core still pending.
+CC serial60sCPU/90swall/4GiB/defaultseed/pinned allocated CPU checks PASS
+in Linux40925199585/job123628715707. MaxSAT raw[10,20]/[9,18], CC
+raw[16,20]/[17,18]. Actual GF2 words20/18 reproduce source uppers; all
+numeric/actual-word gates PASS. CC lower16/17 remains PLAUSIBLE until
+independent proof, distinct from source lower14/15 and raw MaxSAT10/9.
+Four unfinished proof jobs frozen unexecuted in GH191/runner; no exact
+distance claim. Full342080-character log/14engine files and byte-identical
+local audit replay retained.
 Missing raw numbers stay INCOMPLETE. New exact/lower results remain PLAUSIBLE
 until independent search/proof plus actual GF2 words. Heavy unresolved work
 becomes frozen unexecuted yfclab2 jobs, requiring explicit PI allocation.

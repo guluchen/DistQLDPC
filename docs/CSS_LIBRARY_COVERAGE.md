@@ -132,5 +132,8 @@ GH191 adds PK2021 GB A1/A5 n254k28/n180k10 on a separate workbranch,
 published14..20/15..18. Existing GB family, no new family label. Independent
 physical columns/gcd/full logicals/GF2/typed stabilizer space/XZ map and
 30pinned peer inventories pass;13new units/full8matrix byte regeneration.
-Actual basis uppers48/36; source20/18 upper words and Linux still pending.
+Linux40925199585 passes47units/full8matrix byte reproduction/actual-word
+audit replay; actual words20/18 reproduce source upper claims. MaxSAT
+[10,20]/[9,18], CC[16,20]/[17,18]; numeric/word gates PASS, CC lower16/17
+PLAUSIBLE pending independent proof. Four unexecuted proof jobs.
 Source1904.02703v3 AppendixB sectionA/Table1; NOTICE/REFERENCE_GB.md.
