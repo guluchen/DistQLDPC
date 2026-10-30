@@ -29,7 +29,7 @@ certified).
 | tier2 | medium filter; main 10–100 s on yfclab2 | TN_108_2_12 [[108,2,12]], BB_144_14_14 [[144,14,14]], GB_144_12_12 [[144,12,12]], TN_200_10_10 [[200,10,10]], BB_288_12_18 [[288,12,18]], LP_544_80_12 [[544,80,12]] |
 | tier3 | decisive set; main 100–2000 s on yfclab2 | TN_144_2_13 [[144,2,13]], LP_714_100_16 [[714,100,16]] |
 | tier4 | hard; main 2000–5000 s on yfclab2; timeout 2000 s Mac / 5000 s yfclab2 | TN_250_10_15 [[250,10,15]] |
-| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_22to24 [[288,2,22–24]], TN_324_4_22to25 [[324,4,22–25]], BB_360_12_24 [[360,12,24]], TN_360_4_17to24 [[360,4,17–24]], TN_396_4_17to26 [[396,4,17–26]], TN_432_8_23to29 [[432,8,23–29]], TN_468_4_17to29 [[468,4,17–29]], TN_496_2_23to30 [[496,2,23–30]], TN_504_2_17to34 [[504,2,17–34]], TN_540_4_23to34 [[540,4,23–34]], TN_576_2_24to37 [[576,2,24–37]], TN_612_2_17to40 [[612,2,17–40]], TN_648_10_9to32 [[648,10,9–32]], TN_648_14_9to28 [[648,14,9–28]], TN_684_2_9to29 [[684,2,9–29]], BB_756_16_30to34 [[756,16,30–34]], BB_864_4_30to40 [[864,4,30–40]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_30to48 [[1080,4,30–48]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_1122_148_20 [[1122,148,20]], LP_2610_744_16 [[2610,744,16]] |
+| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_22to24 [[288,2,22–24]], TN_324_4_22to25 [[324,4,22–25]], BB_360_12_24 [[360,12,24]], TN_360_4_23to24 [[360,4,23–24]], TN_396_4_23to26 [[396,4,23–26]], TN_432_8_23to29 [[432,8,23–29]], TN_468_4_17to29 [[468,4,17–29]], TN_496_2_27to30 [[496,2,27–30]], TN_504_2_24to34 [[504,2,24–34]], TN_540_4_23to34 [[540,4,23–34]], TN_576_2_24to37 [[576,2,24–37]], TN_612_2_17to40 [[612,2,17–40]], TN_648_10_22to32 [[648,10,22–32]], TN_648_14_9to28 [[648,14,9–28]], TN_684_2_9to29 [[684,2,9–29]], BB_756_16_32to34 [[756,16,32–34]], BB_864_4_32to40 [[864,4,32–40]], LP_1020_136_16 [[1020,136,16]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_32to48 [[1080,4,32–48]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_1122_148_20 [[1122,148,20]], LP_2610_744_16 [[2610,744,16]] |
 
 Counts: tier0 13, tier1 2, tier2 6, tier3 2, tier4 1, tier5 27 (total 51).
 
@@ -54,6 +54,14 @@ section 5.
 
 | Date | Old | New | Note |
 |------|-----|-----|------|
+| 2026-10-31 | TN_360_4_17to24 | TN_360_4_23to24 | lb 23: CC lower bound from GH-157 (issue #157, PR #161): DistQLDPC's optional CC engine with the `charge` rule (fractional LP-dual node bound; opt-in when found, default CC rule on main since PR #161); levels up to 22 completed EMPTY on both halves (yfclab2, 6 h, binary c3c315d). Reproduction: same binary c3c315d and labels, different search order (`-cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,mrv`, 12 h), every level EMPTY, same lb; same engine and rule, not an independent second method; `optimization/experiments/GH-157/REPRODUCTION.md`. ub unchanged (GH-146 witness; copy under the new stem in `optimization/experiments/GH-146/witnesses/renamed-2026-10-31/`) (PI 2026-10-31) |
+| 2026-10-31 | TN_396_4_17to26 | TN_396_4_23to26 | lb 23 (GH-157 CC lower bound with `charge`, reproduced with the `mrv` order, as above); ub unchanged |
+| 2026-10-31 | TN_504_2_17to34 | TN_504_2_24to34 | lb 24 (GH-157 CC lower bound with `charge`, reproduced with the `mrv` order, as above); ub unchanged |
+| 2026-10-31 | TN_648_10_9to32 | TN_648_10_22to32 | lb 22 (GH-157 CC lower bound with `charge`, no symmetry used, reproduced with the `mrv` order, as above); ub unchanged |
+| 2026-10-31 | BB_1080_4_30to48 | BB_1080_4_32to48 | lb 32: CC lower bound from GH-162 (issue #162, PR #180): opt-in `tiebreak` rule (orbit-compatible even-weight overlap tie-break; not on main), seed 0, lb 32 at 19 378 s (yfclab2, 6 h, binary 97c8629); levels 2-30 EMPTY (X half under the verified dual map; odd levels skipped by the parity rule). Reproduction: two GH-183 Tier 5 runs (issue #183, PR #204, binary d26070d) with a different search order (`tiebreak,mrv`, `-cc-roworder=bfs`, one also `-cc-tbbase=asc`): lb 32 at 7 127 s and 6 739 s, every level EMPTY, node counts differ at every level from 6 on; same engine and `tiebreak` rule, not an independent second method. ub unchanged (GH-146 witness, copy as above) (PI 2026-10-31) |
+| 2026-10-31 | BB_756_16_30to34 | BB_756_16_32to34 | lb 32: CC lower bound from GH-183 (issue #183, PR #204): opt-in `tiebreak` (GH-162) with `mrv` and `-cc-roworder=bfs` (not on main), binary d26070d, 6 h, lb 32 at 10 437 s; level 30 EMPTY certifies 32 (all column weights odd, parity rule). Reproduction: same binary and configuration with relabeled seeds 1-3 (different qubit and row order, different orbit representatives), 8 h, all three reach lb 32 with every level EMPTY (GH-183 cross-check, 9/9 runs REPRODUCED); same engine and rules, not an independent second method; `optimization/experiments/GH-183/S3_xcheck/` on branch `experiment/gh-183-cc-roworder`. ub unchanged (GH-146 witness, copy as above) (PI 2026-10-31) |
+| 2026-10-31 | BB_864_4_30to40 | BB_864_4_32to40 | lb 32 (GH-183 CC lower bound, 6 h lb 32 at 9 951 s; reproduced with relabeled seeds 1-3, 8 h, as above); ub unchanged |
+| 2026-10-31 | TN_496_2_23to30 | TN_496_2_27to30 | lb 27: CC lower bound from GH-181 (issue #181, PR #203): opt-in `sparse,sparseov,sparsemrv` rules (redundant pair-sum checks; not on main), 6 h, seeds 0, 1 and 2 all reach lb 27 (X half under the verified XZ-dual map). Cross-check by a different binary (`sparse,sparseov,sparsemrv,tiebreak`, scratch merge with GH-162 97c86299), seeds 0 and 3, 8 h: lb 27 at 11 864 s and 10 739 s, every level 1-26 EMPTY; same engine, not an independent second method; `optimization/experiments/GH-181/XC27/` on branch `experiment/gh-181-cc-sparse-rows` (commit f0afded3). ub unchanged (GH-146 witness, copy as above) (PI 2026-10-31) |
 | 2026-10-29 | TN_288_2_9to24 | TN_288_2_22to24 | lb 22: CC lower bound from GH-152 (issue #152): DistQLDPC's optional CC engine with `-cc-aut=on` (Tanner-graph automorphism candidates for the orbit seeds and the XZ-dual map, each GF(2)-verified before use); levels up to 21 completed EMPTY (yfclab2, 6 h, binary dfd0717). Reproduction: same binary and labels, different search order (`-cc-rules=excl,pack,orbf,parity,leaf,overlap,mrv`, 12 h), every level EMPTY, same lb; genuinely different tree (node counts differ at every level), same algorithm, not a second method; `optimization/experiments/GH-152/REPRODUCTION.md` on branch `experiment/gh-152-tanner-aut`. ub unchanged (GH-146 witness; copy under the new stem in `optimization/experiments/GH-152/witnesses/`) (PI 2026-10-29) |
 | 2026-10-29 | TN_324_4_9to25 | TN_324_4_22to25 | lb 22 (GH-152 CC lower bound with `-cc-aut=on`, reproduced with the `mrv` order, as above); ub unchanged |
 | 2026-10-29 | TN_432_8_9to29 | TN_432_8_23to29 | lb 23 (GH-152 CC lower bound with `-cc-aut=on`, reproduced with the `mrv` order, as above); ub unchanged |
@@ -164,8 +172,8 @@ section 5.
 ## Open items
 
 - **Former numeric tier5 names** (BB_756_16_34, BB_864_4_40, BB_1080_4_54, TN_180_2_17 ... TN_684_2_29): the old third field may be a literature value or an upstream index; it is kept in the rename history but not in the stem until DistQLDPC confirms the distance.
-- **TN_648_10_9to32:** d <= 32 (GH-146 verified witness; the bundled bases contain weight-52
-  nontrivial logicals); the exact distance is unknown.
+- **TN_648_10_22to32:** d <= 32 (GH-146 verified witness; the bundled bases contain weight-52
+  nontrivial logicals); lb 22 from GH-157 (2026-10-31); the exact distance is unknown.
 - **Upper-bound witnesses (`{lb}to{ub}` stems):** the upper bounds of the tier5 `{lb}to{ub}` stems renamed on
   2026-10-23 come from the GH-146 finder; one nontrivial logical per stem is stored as
   `optimization/experiments/GH-146/witnesses/renamed/<stem>.<X|Z>.w<ub>.txt` (0-based qubit indices) and can be
@@ -176,8 +184,20 @@ section 5.
   the older stem and no longer resolve under `data/matrices`; copies under the current stems are in
   `optimization/experiments/GH-152/witnesses/` (same supports, `VERIFY.txt`: 6/6 VALID) and are checked with the same
   command on `optimization/experiments/GH-152/witnesses/*.txt`.
+  Eight stems were renamed on 2026-10-31 (TN_360_4_23to24, TN_396_4_23to26, TN_504_2_24to34, TN_648_10_22to32,
+  BB_1080_4_32to48, BB_756_16_32to34, BB_864_4_32to40, TN_496_2_27to30); their older copies in `renamed/` and
+  `GH-152/witnesses/` no longer resolve, and copies under the current stems are in
+  `optimization/experiments/GH-146/witnesses/renamed-2026-10-31/` (same supports, `VERIFY.txt`: 8/8 VALID), checked
+  with the same command on `optimization/experiments/GH-146/witnesses/renamed-2026-10-31/*.w*.txt`.
 - **GH-152 lower bounds (2026-10-29):** the lower bounds of the six stems above come from the optional CC engine with
   `-cc-aut=on` (6 h, yfclab2) and were reproduced with a different search order (`mrv`, 12 h) on the same labels;
   this is the same algorithm, not an independent method. Record: issue #152 and
-  `optimization/experiments/GH-152/REPRODUCTION.md` (branch `experiment/gh-152-tanner-aut`).
+  `optimization/experiments/GH-152/REPRODUCTION.md` (branch `experiment/gh-152-tanner-aut`). TN_496 was renamed
+  again on 2026-10-31 (TN_496_2_27to30, GH-181).
+- **2026-10-31 lower bounds (GH-157, GH-162/GH-183, GH-181):** each lower bound of the eight stems renamed that day
+  comes from DistQLDPC's own CC engine with a rule that was opt-in when the bound was found: `charge` (GH-157, the
+  default CC rule on main since PR #161), and `tiebreak` with `mrv` / `-cc-roworder=bfs` (PRs #180 / #204) and
+  `sparse,sparseov,sparsemrv` (PR #203), which are not yet on main. Each was reproduced with a different search order
+  or binary of the same engine. This is not an independent second method. Records: issues
+  #157, #162, #183, #181 and the rename-history rows above.
 - **BB_288_12_18 / LP_714_100_16:** distances from main's solver (PI 2026-10-11: no strict cross-verification; partial internal checks agreed so far — `-no-symbreak` reached lb 17 / ub 18 on BB_288 and ub 16 on LP_714; re-check if a later run disagrees).
