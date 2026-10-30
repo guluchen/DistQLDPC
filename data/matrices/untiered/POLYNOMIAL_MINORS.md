@@ -102,3 +102,35 @@ exact agreement without a GF2 minimum word stays PLAUSIBLE, never confirmed;
 actual contradictions remain fatal. Linux one-shot short checks and remaining
 unexecuted server packages are recorded in GH209/REPORT.md. No solver/default,
 tier, stem, main or QDistSAT change is authorized by this library batch.
+
+
+## Terminal native evidence and remaining gates
+
+Scientific sourceb859a70a30b0be63a26d2d2df68024a406927d54, tree
+49e7354f862b08f61b9a388b85ab452d9e1064f4, [41009341781](https://github.com/guluchen/DistQLDPC/actions/runs/41009341781)/
+job123911436532 SUCCESS.53Linux units, physical/Smith/logical/source/word/
+connectivity/inventory gates and24byte reproduction PASS, then exactly6default
+MaxSAT+6CC one-shot short attempts. Source general CI41009341788/job123911436549
+and data CI41009227430 SUCCESS. No scientific retry. Identical compiled binary
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a on all12.
+
+|n,k|Raw default MaxSAT|Raw CC|Actual GF2 upper|Status|
+|---|---|---|---:|---|
+|27,4|4..4 SOLVED|4..4 SOLVED|4|source4 independently reproduced|
+|255,80|5..12 BOUNDED|8..12 BOUNDED|12|published12, both native proofs INCOMPLETE|
+|765,88|3..64 BOUNDED|8..76 BOUNDED|54|original unknown target|
+|1275,80|5..138 BOUNDED|8..100 BOUNDED|54|original unknown target|
+|1785,80|null/null TIMEOUT_NO_BOUNDS|8..140 BOUNDED|54|default numeric gate INCOMPLETE|
+|2805,80|null/null TIMEOUT_NO_BOUNDS|8..220 BOUNDED|54|default numeric gate INCOMPLETE|
+
+Every actual source/basis/primitive/native word independently GF2 verified.
+Reported-upper-word and exact-minimum-word gates PASS for every case; no
+missing-word job. Both source controls have actual minimum-weight upper words,
+but the255source lower12 has not been reproduced by either native search in
+60seconds. This is an INCOMPLETE control proof, not a contradiction or an
+erratum. Its source exact12 claim remains a source field, never injected into
+native5/8lower fields. Four new CC8 lower bounds remain PLAUSIBLE, not renamed
+or advertised as independently certified8..54. Both-engine conservative new
+intervals are3..54 and5..54 on n765/1275; larger two have no independent search
+lower beyond the trivial positive-weight floor1. Actual upper54 is rigorous.
+No global openness/novelty claim. Original raw fields/audit remain unchanged.

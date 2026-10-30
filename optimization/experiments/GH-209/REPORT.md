@@ -1,6 +1,7 @@
 # GH209 polynomial-minor cyclic CSS targets
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux short gates pending. Whole-library
+Status: CONSTRUCTION_AND_WORD_GATES_PASS; FOUR_REQUIRED_SERVER_GATES_INCOMPLETE;
+final retained-only Linux pending. Whole-library
 objective incomplete. Issue https://github.com/guluchen/DistQLDPC/issues/209;
 hub6515461156, algebraic dimension checkpoint6515506686. Branch
 codex/polynomial-minors-library from main6083e662c621f3b66defd434cfae31a028d483c4.
@@ -135,3 +136,74 @@ known source4/12 controls plus four genuine unconfirmed-distance specializations
 with actual word54. Unresolved:Linux native gates, scientific/server/integration
 and mainstream backlog. Scientific semantics changed:no. PI action required:
 only actual source ambiguity, future server allocation or integration.
+
+
+## Terminal native evidence and remaining gates
+
+Scientific sourceb859a70a30b0be63a26d2d2df68024a406927d54, tree
+49e7354f862b08f61b9a388b85ab452d9e1064f4, [41009341781](https://github.com/guluchen/DistQLDPC/actions/runs/41009341781)/
+job123911436532 SUCCESS.53Linux units, physical/Smith/logical/source/word/
+connectivity/inventory gates and24byte reproduction PASS, then exactly6default
+MaxSAT+6CC one-shot short attempts. Source general CI41009341788/job123911436549
+and data CI41009227430 SUCCESS. No scientific retry. Identical compiled binary
+68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a on all12.
+
+|n,k|Raw default MaxSAT|Raw CC|Actual GF2 upper|Status|
+|---|---|---|---:|---|
+|27,4|4..4 SOLVED|4..4 SOLVED|4|source4 independently reproduced|
+|255,80|5..12 BOUNDED|8..12 BOUNDED|12|published12, both native proofs INCOMPLETE|
+|765,88|3..64 BOUNDED|8..76 BOUNDED|54|original unknown target|
+|1275,80|5..138 BOUNDED|8..100 BOUNDED|54|original unknown target|
+|1785,80|null/null TIMEOUT_NO_BOUNDS|8..140 BOUNDED|54|default numeric gate INCOMPLETE|
+|2805,80|null/null TIMEOUT_NO_BOUNDS|8..220 BOUNDED|54|default numeric gate INCOMPLETE|
+
+Every actual source/basis/primitive/native word independently GF2 verified.
+Reported-upper-word and exact-minimum-word gates PASS for every case; no
+missing-word job. Both source controls have actual minimum-weight upper words,
+but the255source lower12 has not been reproduced by either native search in
+60seconds. This is an INCOMPLETE control proof, not a contradiction or an
+erratum. Its source exact12 claim remains a source field, never injected into
+native5/8lower fields. Four new CC8 lower bounds remain PLAUSIBLE, not renamed
+or advertised as independently certified8..54. Both-engine conservative new
+intervals are3..54 and5..54 on n765/1275; larger two have no independent search
+lower beyond the trivial positive-weight floor1. Actual upper54 is rigorous.
+No global openness/novelty claim. Original raw fields/audit remain unchanged.
+
+Exactly4REQUIRED remaining jobs: both255source-control proofs and two missing
+default numeric gates1785/2805. Optional2MaxSAT+4CC are further research on
+intended unknown targets, not failed exact-distance acceptance gates. No core
+allocated or execution. Each21600CPU/22200wall/4GiB/seed0,serialtaskset/prlimit/
+nohup/nullstdin with explicit PI allocation/free-core/source/input/word guards.
+Required4 ceilings24CPUh/24h40wall; optionalMaxSAT2=12CPUh/12h20wall;
+optionalCC4=24CPUh/24h40wall; all10 ceilings60CPUh/61h40wall. Limits, not ETA.
+
+Complete1810159-character native job and72engine files retained. Lossless
+transport34indexed chunks decoded12945962payload bytes; SHA256
+7b3fcea9394806daf7a930114b3bfb469bca6e3d827ac7d71c2946c18380484e plus length/
+chunk-index/gzip-CRC checks all PASS. Complete construction and original audit
+retained, byte-identical source construction, local12log/word replay PASS.
+Transport decoder/receipt persisted so no evidence relies on expiring artifacts.
+
+Retained-only transitionf8e399c215b0ea11a3b48c4506b4f9187137573a removed native
+commands BEFORE follow-up edits.62local contracts (53original+9server-gate
+planning/allocation/source/queue guards) PASS. Final static Linux pending.
+No additional native searches. Every frozen matrix unchanged; prior300matrix/
+40source-build files and24prior manifest rows unchanged; main/default/tier/
+stem/QDistSAT untouched and no PR. Existing GH200/GH202 holds remain separate.
+
+Related-family audit: GH198 full TT/Koszul triplet prescription reviewed; PM
+is not counted as a disjoint family. For the SAME minor triplet at oddN,
+full Koszul k=3deg(g1), versus PM k=deg(g)+2deg(g1); dimensions6/84/96/84/84/84
+would differ from actualPM4/80/88/80/80/80. This limited rank comparison does
+not assert arbitrary inequivalence to all possible other constructions.
+
+What changed: six reproducible PM inputs, source provenance, independent
+physical/Smith/logical/constructive-word validation, complete native evidence
+and remaining-work packages. Validation:53originalLinux+62localstatic checks,
+43pinned peers,24byte regeneration,12raw-log/witness replay and transport SHA.
+Results:known4cross-checked; published12control proof incomplete; four original
+unconfirmed targets retain verified upper54 and provisionalCC8. Unresolved:
+4required server gates, intended unknown distances, existing source/mainstream/
+server/integration backlog. Scientific semantics changed:no. PI action required:
+future core allocation/integration/held source decisions; routine archive needs
+no extra permission. Whole-library objective remains incomplete.
