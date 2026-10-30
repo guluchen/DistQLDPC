@@ -517,6 +517,8 @@ fi
 runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-roworder=bfs $L $M
 if [[ $rc -ne 0 ]] || grep -q "probe" <<<"$out"; then
     echo "FAIL (GH-206: a probe line without auto): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
 # 7j. GH-181 sparse / sparseov / sparsemrv / xorunit (opt-in -cc-rules tokens): values, -v lines, mutants 22-24 (19-21 before the
 #     merge with GH-162/183/206), no line without them
 G=excl,pack,orbf,parity,leaf,overlap
