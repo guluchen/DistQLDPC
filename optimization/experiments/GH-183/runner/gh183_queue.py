@@ -18,7 +18,7 @@ os.makedirs(a.out + '/logs', exist_ok=True)
 cpus = []
 for part in a.cpus.split(','):
     lo, _, hi = part.partition('-'); cpus += list(range(int(lo), int(hi or lo) + 1))
-assert all(28 <= c <= 43 and c not in (28, 33) for c in cpus)   # GH-183: cores 28-43 only (28 and 33 are used by other users)
+assert all(24 <= c <= 43 and c != 40 for c in cpus)   # GH-183 follow-ups: cores 24-39 and 41-43 (coordinator 2026-10-30)
 jobs = [json.loads(l) for l in open(a.jobs) if l.strip()]
 done_ids = set()
 if os.path.exists(f'{a.out}/results.jsonl'):

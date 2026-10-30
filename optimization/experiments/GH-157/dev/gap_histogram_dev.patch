@@ -1,0 +1,48 @@
+diff --git a/src/cc/cc_half.cc b/src/cc/cc_half.cc
+index 3f98970c..17f27917 100644
+--- a/src/cc/cc_half.cc
++++ b/src/cc/cc_half.cc
+@@ -13,6 +13,8 @@
+ #include <algorithm>
+ 
+ namespace distcc {
++static uint64_t dq_hev[64], dq_hpr[64];
++static void dq_dump(int w) { fprintf(stderr, "DQGAP w%d ev", w); for (int i = 0; i < 12; i++) fprintf(stderr, " %llu", (unsigned long long)dq_hev[i]); fprintf(stderr, " pr"); for (int i = 0; i < 12; i++) fprintf(stderr, " %llu", (unsigned long long)dq_hpr[i]); fprintf(stderr, "\n"); for (int i = 0; i < 64; i++) dq_hev[i] = dq_hpr[i] = 0; }
+ 
+ namespace {
+ 
+@@ -835,7 +837,17 @@ bool HalfSearch::dfs(int size) {
+         }
+     }
+     if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
+-    if (lbon && lb_prune(size, st, nu2, lbscan)) return false;
++    if (lbon) {   /* DEV gap experiment */
++        static int gap = -2; if (gap == -2) { const char* g = getenv("DQ_GAP"); gap = g ? atoi(g) : -1; }
++        const int g = (w_ - size) - p;
++        if (gap < 0 || !pack || g <= gap) {
++            const uint64_t before = res_->chgprune + res_->ecprune + res_->lbdead;
++            const bool pr = lb_prune(size, st, nu2, lbscan);
++            dq_hev[g < 63 ? g : 63]++;
++            if (res_->chgprune + res_->ecprune + res_->lbdead != before) dq_hpr[g < 63 ? g : 63]++;
++            if (pr) return false;
++        }
++    }
+ 
+     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
+     int nc = 0;
+@@ -945,6 +957,7 @@ LevelResult HalfSearch::run_level(int w) {
+                 r.ovtight = ovtight_;
+                 r.ovforbid = ovforbid_;
+                 res_ = NULL;
++                dq_dump(w);
+                 return r;
+             }
+         }
+@@ -955,6 +968,7 @@ LevelResult HalfSearch::run_level(int w) {
+     r.ovtight = ovtight_;
+     r.ovforbid = ovforbid_;
+     res_ = NULL;
++    dq_dump(w);
+     return r;
+ }
+ 

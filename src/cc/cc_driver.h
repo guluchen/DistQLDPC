@@ -56,7 +56,12 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap,charge since GH-157) */
+    int lb_minr;             /* GH-157 -cc-lb-minr=K: charge evaluated at remaining budget >= K (default 3) */
+    int lb_gap;              /* GH-157 -cc-lb-gap=G: ... and only where remaining budget - packing <= G (default 0) */
+    bool lb_raise;           /* GH-157 -cc-lb-raise=on|off: charge raise step (default on) */
+    int lb_auto;             /* GH-157 -cc-lb-auto=P: switch the bounds off for a half when < P % of the evaluations of a level
+                                (>= 100 000 evaluations) prune (default 40; 0 = never) */
     bool dual;               /* -cc-dual=on|off (default on) */
     bool ub_basis;           /* -ub-basis (default on; -ub-basis=off): verified basis rows as initial upper bound */
     uint64_t seed;           /* -cc-seed=N (default 0 = identity labels) */
@@ -108,7 +113,7 @@ struct DriverOptions {
     double probe_sec;        /* -cc-probe=S (default 0.1 s) */
     double probe_growth;     /* -cc-probe-growth=F (default 0 = a single probe per half; F >= 1: re-probes at F x the last probe level's time) */
     int probe_force;         /* -cc-probe=switch|stay (test only) */
-    DriverOptions() : dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
+    DriverOptions() : lb_minr(3), lb_gap(0), lb_raise(true), lb_auto(40), dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0),
                       aut(true), roworder(ROWORDER_INDEX), tb_asc(false), probe_sec(0.1), probe_growth(0), probe_force(0) {}
 };
@@ -127,7 +132,7 @@ struct BoundSink {
 /* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
-/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv (or "none"); empty values and empty items
+/* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge (or "none"); empty values and empty items
  * are invalid. */
 bool parse_rules(const char* s, Rules& out);
 std::string rules_string(const Rules& r);
