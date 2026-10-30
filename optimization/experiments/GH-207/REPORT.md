@@ -163,7 +163,7 @@ Local73contracts (57prior+14certificate+2server-guard), including120additional r
 products, missing/wrong root equations, bad order/field, duplicate/nonkernel
 words, invalid/even-pairing detectors and physical identity mutants PASS.
 Static Linux workflow now checks these proofs,20byte regeneration and replays
-original10logs only; certificate Linux result is pending this evidence commit.
+original10logs only; certificate Linux result PASS at run40984476152/job123832151018, source25a948a7a99c16beed75d4018ff838d56184d072.
 
 Only the two n1365 default MaxSAT missing-numeric/proof cases enter the frozen
 required server queue. Optional CC queue contains the same two genuine gaps.
@@ -188,3 +188,13 @@ logicals/byte/static contracts and retained10short attempts. Results: exact
 source holds, server allocation, mainstream gaps and main integration.
 Scientific semantics changed:no. PI action required: future server core
 allocation/integration and source-label decisions; no routine certificate approval.
+
+
+Final static Linux confirmation: source25a948a7a99c16beed75d4018ff838d56184d072,
+[40984476152](https://github.com/guluchen/DistQLDPC/actions/runs/40984476152)/
+job123832151018 SUCCESS.73units, full physical/root/logical/CSS reconstruction,
+20byte reproduction, original10raw-log/actual-word replay, and standalone
+finite-root certificates all PASS. Complete65223-character job retained with
+SHA receipt. This follow-up ran zero scientific distance searches. General
+build CI40984476124/job123832150633 also SUCCESS. This final archive changes
+only evidence/docs/observed manifest fields; no frozen matrices or source code.

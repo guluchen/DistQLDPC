@@ -132,7 +132,7 @@ Local73contracts (57prior+14certificate+2server-guard), including120additional r
 products, missing/wrong root equations, bad order/field, duplicate/nonkernel
 words, invalid/even-pairing detectors and physical identity mutants PASS.
 Static Linux workflow now checks these proofs,20byte regeneration and replays
-original10logs only; certificate Linux result is pending this evidence commit.
+original10logs only; certificate Linux result PASS at run40984476152/job123832151018, source25a948a7a99c16beed75d4018ff838d56184d072.
 
 Only the two n1365 default MaxSAT missing-numeric/proof cases enter the frozen
 required server queue. Optional CC queue contains the same two genuine gaps.

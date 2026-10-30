@@ -1,0 +1,913 @@
+﻿2026-10-30T01:12:55.5899635Z Current runner version: '2.338.0'
+2026-10-30T01:12:55.5915735Z ##[group]Runner Image Provisioner
+2026-10-30T01:12:55.5916292Z Hosted Compute Agent
+2026-10-30T01:12:55.5916700Z Version: 20261021.618
+2026-10-30T01:12:55.5917071Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-30T01:12:55.5917517Z Build Date: 2026-10-21T00:45:21Z
+2026-10-30T01:12:55.5917970Z Worker ID: {ee5d1493-4fe7-42ef-a8c3-3e38182f4afa}
+2026-10-30T01:12:55.5918390Z Region: southcentralus
+2026-10-30T01:12:55.5918757Z Cloud: Azure
+2026-10-30T01:12:55.5919101Z ##[endgroup]
+2026-10-30T01:12:55.5919853Z ##[group]Operating System
+2026-10-30T01:12:55.5920254Z Ubuntu
+2026-10-30T01:12:55.5920601Z 24.04.5
+2026-10-30T01:12:55.5920934Z LTS
+2026-10-30T01:12:55.5921260Z ##[endgroup]
+2026-10-30T01:12:55.5921800Z ##[group]Runner Image
+2026-10-30T01:12:55.5922197Z Image: ubuntu-24.04
+2026-10-30T01:12:55.5922539Z Version: 20261025.353.1
+2026-10-30T01:12:55.5923366Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-30T01:12:55.5924258Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-10-30T01:12:55.5924838Z ##[endgroup]
+2026-10-30T01:12:55.5925495Z ##[group]GITHUB_TOKEN Permissions
+2026-10-30T01:12:55.5926832Z Contents: read
+2026-10-30T01:12:55.5927213Z Metadata: read
+2026-10-30T01:12:55.5927780Z ##[endgroup]
+2026-10-30T01:12:55.5929005Z Secret source: Actions
+2026-10-30T01:12:55.5929604Z Cache mode: write
+2026-10-30T01:12:55.5930002Z Prepare workflow directory
+2026-10-30T01:12:55.6129041Z Prepare all required actions
+2026-10-30T01:12:55.6160036Z Getting action download info
+2026-10-30T01:12:55.8593279Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-30T01:12:56.0276291Z Complete job name: validate
+2026-10-30T01:12:56.0863952Z ##[group]Run actions/checkout@v7
+2026-10-30T01:12:56.0864361Z with:
+2026-10-30T01:12:56.0864600Z   repository: guluchen/DistQLDPC
+2026-10-30T01:12:56.0866552Z   token: ***
+2026-10-30T01:12:56.0866781Z   ssh-strict: true
+2026-10-30T01:12:56.0867023Z   ssh-user: git
+2026-10-30T01:12:56.0867270Z   persist-credentials: true
+2026-10-30T01:12:56.0867531Z   clean: true
+2026-10-30T01:12:56.0867774Z   sparse-checkout-cone-mode: true
+2026-10-30T01:12:56.0868055Z   fetch-depth: 1
+2026-10-30T01:12:56.0868288Z   fetch-tags: false
+2026-10-30T01:12:56.0868530Z   show-progress: true
+2026-10-30T01:12:56.0868772Z   lfs: false
+2026-10-30T01:12:56.0868990Z   submodules: false
+2026-10-30T01:12:56.0869231Z   set-safe-directory: true
+2026-10-30T01:12:56.0869505Z   allow-unsafe-pr-checkout: false
+2026-10-30T01:12:56.0869849Z ##[endgroup]
+2026-10-30T01:12:56.2710941Z Syncing repository: guluchen/DistQLDPC
+2026-10-30T01:12:56.2712380Z ##[group]Getting Git version info
+2026-10-30T01:12:56.2712903Z Working directory is '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-30T01:12:56.2713698Z [command]/usr/bin/git version
+2026-10-30T01:12:56.2774525Z git version 2.56.0
+2026-10-30T01:12:56.2787339Z ##[endgroup]
+2026-10-30T01:12:56.2812732Z Temporarily overriding HOME='/home/runner/work/_temp/1bf068c6-d5ab-416c-abbd-21153934b9cc' before making global git config changes
+2026-10-30T01:12:56.2813497Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T01:12:56.2814088Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T01:12:56.2843602Z Deleting the contents of '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-30T01:12:56.2846788Z ##[group]Determining repository object format
+2026-10-30T01:12:56.2848195Z ##[endgroup]
+2026-10-30T01:12:56.2848812Z ##[group]Initializing the repository
+2026-10-30T01:12:56.2852992Z [command]/usr/bin/git init /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T01:12:56.2939600Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-30T01:12:56.2940405Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-30T01:12:56.2941912Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-30T01:12:56.2942465Z hint: call:
+2026-10-30T01:12:56.2942794Z hint:
+2026-10-30T01:12:56.2943350Z hint: 	git config --global init.defaultBranch <name>
+2026-10-30T01:12:56.2943979Z hint:
+2026-10-30T01:12:56.2944576Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-30T01:12:56.2945457Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-30T01:12:56.2946236Z hint:
+2026-10-30T01:12:56.2946626Z hint: 	git branch -m <name>
+2026-10-30T01:12:56.2946984Z hint:
+2026-10-30T01:12:56.2947426Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-30T01:12:56.2948150Z Initialized empty Git repository in /home/runner/work/DistQLDPC/DistQLDPC/.git/
+2026-10-30T01:12:56.2954846Z [command]/usr/bin/git remote add origin https://github.com/guluchen/DistQLDPC
+2026-10-30T01:12:56.2996778Z ##[endgroup]
+2026-10-30T01:12:56.2997417Z ##[group]Disabling automatic garbage collection
+2026-10-30T01:12:56.2999821Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-30T01:12:56.3029544Z ##[endgroup]
+2026-10-30T01:12:56.3030128Z ##[group]Setting up auth
+2026-10-30T01:12:56.3030559Z Removing SSH command configuration
+2026-10-30T01:12:56.3053522Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T01:12:56.3091816Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T01:12:56.3388595Z Removing HTTP extra header
+2026-10-30T01:12:56.3393400Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T01:12:56.3433347Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T01:12:56.3618783Z Removing includeIf entries pointing to credentials config files
+2026-10-30T01:12:56.3623304Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T01:12:56.3663869Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T01:12:56.3851807Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-30T01:12:56.3894197Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path /home/runner/work/_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:12:56.3930915Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:12:56.3966777Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:12:56.4051166Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:12:56.4085971Z ##[endgroup]
+2026-10-30T01:12:56.4090763Z ##[group]Fetching the repository
+2026-10-30T01:12:56.4091640Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +25a948a7a99c16beed75d4018ff838d56184d072:refs/remotes/origin/codex/bch-library
+2026-10-30T01:12:58.7637397Z From https://github.com/guluchen/DistQLDPC
+2026-10-30T01:12:58.7639060Z  * [new ref]         25a948a7a99c16beed75d4018ff838d56184d072 -> origin/codex/bch-library
+2026-10-30T01:12:58.7643947Z [command]/usr/bin/git branch --list --remote origin/codex/bch-library
+2026-10-30T01:12:58.7677954Z   origin/codex/bch-library
+2026-10-30T01:12:58.7683763Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/bch-library
+2026-10-30T01:12:58.7714250Z 25a948a7a99c16beed75d4018ff838d56184d072
+2026-10-30T01:12:58.7718334Z ##[endgroup]
+2026-10-30T01:12:58.7719543Z ##[group]Determining the checkout info
+2026-10-30T01:12:58.7720979Z ##[endgroup]
+2026-10-30T01:12:58.7722110Z [command]/usr/bin/git sparse-checkout disable
+2026-10-30T01:12:58.7772592Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-30T01:12:58.7808805Z ##[group]Checking out the ref
+2026-10-30T01:12:58.7811254Z [command]/usr/bin/git checkout --progress --force -B codex/bch-library refs/remotes/origin/codex/bch-library
+2026-10-30T01:12:58.9925907Z Switched to a new branch 'codex/bch-library'
+2026-10-30T01:12:58.9927627Z branch 'codex/bch-library' set up to track 'origin/codex/bch-library'.
+2026-10-30T01:12:58.9978458Z ##[endgroup]
+2026-10-30T01:12:59.0029313Z [command]/usr/bin/git log -1 --format=%H
+2026-10-30T01:12:59.0063612Z 25a948a7a99c16beed75d4018ff838d56184d072
+2026-10-30T01:12:59.0235308Z ##[group]Run python3 -m unittest discover -s tests -p 'test_codegen_*.py'
+2026-10-30T01:12:59.0235669Z [36;1mpython3 -m unittest discover -s tests -p 'test_codegen_*.py'[0m
+2026-10-30T01:12:59.0235976Z [36;1mpython3 scripts/codegen/validate_css.py --output /tmp/gh207-css.json[0m
+2026-10-30T01:12:59.0236271Z [36;1mcmp data/matrices/untiered/validation.json /tmp/gh207-css.json[0m
+2026-10-30T01:12:59.0236573Z [36;1mpython3 scripts/codegen/validate_bch.py --out /tmp/gh207-construction.json[0m
+2026-10-30T01:12:59.0236918Z [36;1mcmp optimization/experiments/GH-207/raw/construction.json /tmp/gh207-construction.json[0m
+2026-10-30T01:12:59.0255203Z shell: /usr/bin/bash -e {0}
+2026-10-30T01:12:59.0255383Z ##[endgroup]
+2026-10-30T01:12:59.1775736Z wrote /tmp/tmpt5u2p6y4/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpt5u2p6y4/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.3470431Z wrote /tmp/tmp93x066g2/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmp93x066g2/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.3734473Z wrote /tmp/tmpf1583ycs/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpf1583ycs/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.3980895Z wrote /tmp/tmpuesgtnkt/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpuesgtnkt/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.4253695Z wrote /tmp/tmpexfum76a/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpexfum76a/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.4546048Z wrote /tmp/tmpyt2mfx7e/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpyt2mfx7e/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.4794718Z wrote /tmp/tmpsmvi5pi2/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpsmvi5pi2/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.5061109Z wrote /tmp/tmpbvpxbx5u/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpbvpxbx5u/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:12:59.5325321Z wrote /tmp/tmpn4s2hsal/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpn4s2hsal/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.2086666Z wrote /tmp/tmpc9xko1hb/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpc9xko1hb/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.2365466Z wrote /tmp/tmpcqmpvupp/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpcqmpvupp/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.2641989Z wrote /tmp/tmp0i3jkkdh/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmp0i3jkkdh/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.2946685Z wrote /tmp/tmpa4gb3coj/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpa4gb3coj/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.3214507Z wrote /tmp/tmprcrj_rpt/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmprcrj_rpt/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.3472463Z wrote /tmp/tmps7hlphaa/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmps7hlphaa/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.3729572Z wrote /tmp/tmpjj8li1c3/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpjj8li1c3/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.3994742Z wrote /tmp/tmpkciuxm55/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpkciuxm55/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.4259305Z wrote /tmp/tmp4gwfuaml/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmp4gwfuaml/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.4522175Z wrote /tmp/tmpl9qv52kc/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpl9qv52kc/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.4779452Z wrote /tmp/tmpofyvxps9/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpofyvxps9/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:00.5034377Z wrote /tmp/tmpuo5z8urx/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpuo5z8urx/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:03.2373116Z wrote /tmp/tmpdr4l_buh/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpdr4l_buh/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:04.6431978Z wrote /tmp/tmplu8c6fkf/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmplu8c6fkf/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:04.6701346Z wrote /tmp/tmpl5y8auvv/BCH_7_1_unknown_Gx.txt (1 rows), /tmp/tmpl5y8auvv/BCH_7_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:04.7950235Z wrote /tmp/tmpym1vf4mq/COLOR_19_1_unknown_Gx.txt (1 rows), /tmp/tmpym1vf4mq/COLOR_19_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:04.8217244Z wrote /tmp/tmpare53lrj/COLOR_19_1_unknown_Gx.txt (1 rows), /tmp/tmpare53lrj/COLOR_19_1_unknown_Gz.txt (1 rows)
+2026-10-30T01:13:05.3220337Z wrote /tmp/tmp6iao2yvj/BB_30_4_unknown_Gx.txt (4 rows), /tmp/tmp6iao2yvj/BB_30_4_unknown_Gz.txt (4 rows)
+2026-10-30T01:13:05.3531368Z wrote /tmp/tmp7cofwrdt/BB_30_4_unknown_Gx.txt (4 rows), /tmp/tmp7cofwrdt/BB_30_4_unknown_Gz.txt (4 rows)
+2026-10-30T01:13:05.4544188Z .........................................................................
+2026-10-30T01:13:05.4544553Z ----------------------------------------------------------------------
+2026-10-30T01:13:05.4544962Z Ran 73 tests in 6.319s
+2026-10-30T01:13:05.4545194Z 
+2026-10-30T01:13:05.4545260Z OK
+2026-10-30T01:13:10.9213234Z {
+2026-10-30T01:13:10.9213499Z   "codes_checked": 29,
+2026-10-30T01:13:10.9213728Z   "inventory_codes": 80,
+2026-10-30T01:13:10.9213920Z   "results": [
+2026-10-30T01:13:10.9214168Z     {
+2026-10-30T01:13:10.9214328Z       "n": 13,
+2026-10-30T01:13:10.9214516Z       "k": 1,
+2026-10-30T01:13:10.9214671Z       "rank_Hx": 6,
+2026-10-30T01:13:10.9214830Z       "rank_Hz": 6,
+2026-10-30T01:13:10.9214993Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9215185Z       "checks": "PASS",
+2026-10-30T01:13:10.9215370Z       "stem": "HGP_13_1_unknown",
+2026-10-30T01:13:10.9215577Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9215768Z       "duplicates": [],
+2026-10-30T01:13:10.9216036Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9216317Z       "sha256": {
+2026-10-30T01:13:10.9216582Z         "Hx": "0cb58ca3272ec7044292e6d4cf13b96a7778c2ee36f162a31a00a94cec190a59",
+2026-10-30T01:13:10.9216979Z         "Hz": "57cc48638fa610ed719caa050089772c471c7b830f96095314a00bd049ce32f9",
+2026-10-30T01:13:10.9217385Z         "Gx": "788801efbe7285e805f402b475a13ade78f25ed6d469368e645856628da4b6d9",
+2026-10-30T01:13:10.9217819Z         "Gz": "7e004ea9c8a1f3d4315db7ab930c72a1a61bcad776af64ad258f1cb06303c1b6"
+2026-10-30T01:13:10.9218356Z       }
+2026-10-30T01:13:10.9218500Z     },
+2026-10-30T01:13:10.9218643Z     {
+2026-10-30T01:13:10.9218786Z       "n": 41,
+2026-10-30T01:13:10.9218942Z       "k": 1,
+2026-10-30T01:13:10.9219096Z       "rank_Hx": 20,
+2026-10-30T01:13:10.9219259Z       "rank_Hz": 20,
+2026-10-30T01:13:10.9219436Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9219620Z       "checks": "PASS",
+2026-10-30T01:13:10.9219810Z       "stem": "HGP_41_1_unknown",
+2026-10-30T01:13:10.9220028Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9220231Z       "duplicates": [],
+2026-10-30T01:13:10.9220496Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9220803Z       "sha256": {
+2026-10-30T01:13:10.9221099Z         "Hx": "fff0bbddda67fe0967ccaac7f3e2874459d5d6e3564418664732adc9ceac7c98",
+2026-10-30T01:13:10.9221846Z         "Hz": "49fe498adf5b42c61533a8366f829c3f6b3b6603a2ddcfe0e3c098a7c701304b",
+2026-10-30T01:13:10.9222708Z         "Gx": "6773ce6433d9e181dc1e56e1c1f1d4119e62d88e83024c7eb9803352623d555e",
+2026-10-30T01:13:10.9223116Z         "Gz": "3101aa3784cd8cd80e0547bc934b91e9e2e27b26e17dc1c645ea5566dda0d818"
+2026-10-30T01:13:10.9223423Z       }
+2026-10-30T01:13:10.9223572Z     },
+2026-10-30T01:13:10.9223722Z     {
+2026-10-30T01:13:10.9223873Z       "n": 113,
+2026-10-30T01:13:10.9224042Z       "k": 1,
+2026-10-30T01:13:10.9224211Z       "rank_Hx": 56,
+2026-10-30T01:13:10.9224396Z       "rank_Hz": 56,
+2026-10-30T01:13:10.9224589Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9224788Z       "checks": "PASS",
+2026-10-30T01:13:10.9224991Z       "stem": "HGP_113_1_unknown",
+2026-10-30T01:13:10.9225223Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9225431Z       "duplicates": [],
+2026-10-30T01:13:10.9225708Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9226074Z       "sha256": {
+2026-10-30T01:13:10.9226348Z         "Hx": "3a4bc166306ce7b3cc3a3eb7f1ff345bc9c9875b89cb32304c55d5e9871b1d1f",
+2026-10-30T01:13:10.9227000Z         "Hz": "ae2ebfc6b0ab71be7fdb1ddd3334f1d63f185159392d26ac31a2106ae91b924b",
+2026-10-30T01:13:10.9227427Z         "Gx": "a5289983a87c8d21bab42c8a2bdf379e77e7891afe72695c6079fc4f0eac48ba",
+2026-10-30T01:13:10.9227853Z         "Gz": "9c97633ee16c9cf045698c9fa24079713eda0c28c23b0820112644b3d8fab27b"
+2026-10-30T01:13:10.9228166Z       }
+2026-10-30T01:13:10.9228316Z     },
+2026-10-30T01:13:10.9228464Z     {
+2026-10-30T01:13:10.9228616Z       "n": 265,
+2026-10-30T01:13:10.9228779Z       "k": 1,
+2026-10-30T01:13:10.9228942Z       "rank_Hx": 132,
+2026-10-30T01:13:10.9229121Z       "rank_Hz": 132,
+2026-10-30T01:13:10.9229313Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9229511Z       "checks": "PASS",
+2026-10-30T01:13:10.9229728Z       "stem": "HGP_265_1_unknown",
+2026-10-30T01:13:10.9230003Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9230211Z       "duplicates": [],
+2026-10-30T01:13:10.9230490Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9230802Z       "sha256": {
+2026-10-30T01:13:10.9231094Z         "Hx": "f851afe742a6a5e6031675ed628ead46ea9b9ecdb55ac9adbade2dd0a98ccbae",
+2026-10-30T01:13:10.9231696Z         "Hz": "b443d8671803271ac1a14bcd4c5a34eba2b586c205ebcb345694b42b99ac002a",
+2026-10-30T01:13:10.9232126Z         "Gx": "65fe0419f4a5682571a697df9b17061986b1dcdc38e6ebd54d560eadb347afdd",
+2026-10-30T01:13:10.9232553Z         "Gz": "0ca8b17c5e13a62a1172eb2700b32b0f9107aeb9e090a49f837001167d48be0f"
+2026-10-30T01:13:10.9232862Z       }
+2026-10-30T01:13:10.9233008Z     },
+2026-10-30T01:13:10.9233161Z     {
+2026-10-30T01:13:10.9233320Z       "n": 481,
+2026-10-30T01:13:10.9233487Z       "k": 1,
+2026-10-30T01:13:10.9233661Z       "rank_Hx": 240,
+2026-10-30T01:13:10.9233858Z       "rank_Hz": 240,
+2026-10-30T01:13:10.9234046Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9234248Z       "checks": "PASS",
+2026-10-30T01:13:10.9234449Z       "stem": "HGP_481_1_unknown",
+2026-10-30T01:13:10.9234681Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9234892Z       "duplicates": [],
+2026-10-30T01:13:10.9235175Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9235482Z       "sha256": {
+2026-10-30T01:13:10.9235757Z         "Hx": "8cc83621ce5be83f462710a87f44ea914f239b8ec3a0d862774eec21a0e34278",
+2026-10-30T01:13:10.9236181Z         "Hz": "8ce8ed5a18653ba73a3d09a758b47c2698df2b37af31c5f269a389ac16f86f6e",
+2026-10-30T01:13:10.9236598Z         "Gx": "35bdb8aa7d8233ab5c2bd867916c3b707be65751f0c89a508233628ee6fbd0e8",
+2026-10-30T01:13:10.9237024Z         "Gz": "5492575abe42ba18100fcf2f4f733c67b67d6457c15ec228c80a47a96de9c007"
+2026-10-30T01:13:10.9237342Z       }
+2026-10-30T01:13:10.9237499Z     },
+2026-10-30T01:13:10.9237653Z     {
+2026-10-30T01:13:10.9237809Z       "n": 1105,
+2026-10-30T01:13:10.9237981Z       "k": 1,
+2026-10-30T01:13:10.9238145Z       "rank_Hx": 552,
+2026-10-30T01:13:10.9238329Z       "rank_Hz": 552,
+2026-10-30T01:13:10.9238515Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9238899Z       "checks": "PASS",
+2026-10-30T01:13:10.9239104Z       "stem": "HGP_1105_1_unknown",
+2026-10-30T01:13:10.9239332Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9239539Z       "duplicates": [],
+2026-10-30T01:13:10.9239821Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9240136Z       "sha256": {
+2026-10-30T01:13:10.9240419Z         "Hx": "547ef907e916658c4b9dbbae787706ae7a8cac62320ef6eeb5f8cea50e3c68db",
+2026-10-30T01:13:10.9240864Z         "Hz": "d7ffe62bd3ae8644a1f45025ae23470d9c59528b32f26779c2a0a0be78d63897",
+2026-10-30T01:13:10.9241286Z         "Gx": "4fee3ed02aef2291c5959540d6c5f1fa23ac7e632502543342724a00b0a53f89",
+2026-10-30T01:13:10.9241869Z         "Gz": "390b41f95173d76ab483a26dc011979af31099214952d3de0b4d7d9e3b11f772"
+2026-10-30T01:13:10.9242181Z       }
+2026-10-30T01:13:10.9242336Z     },
+2026-10-30T01:13:10.9305758Z     {
+2026-10-30T01:13:10.9306080Z       "n": 45,
+2026-10-30T01:13:10.9306278Z       "k": 9,
+2026-10-30T01:13:10.9306469Z       "rank_Hx": 18,
+2026-10-30T01:13:10.9306653Z       "rank_Hz": 18,
+2026-10-30T01:13:10.9307098Z       "rank_pairing": 9,
+2026-10-30T01:13:10.9307248Z       "checks": "PASS",
+2026-10-30T01:13:10.9307391Z       "stem": "HGP_45_9_unknown",
+2026-10-30T01:13:10.9307561Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9307710Z       "duplicates": [],
+2026-10-30T01:13:10.9307923Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9308128Z       "sha256": {
+2026-10-30T01:13:10.9308312Z         "Hx": "3d97766a8b5ef89850847ee994202a70e51b68076e0f7327b6c5da06548e0ebc",
+2026-10-30T01:13:10.9308585Z         "Hz": "06f713d5e98dc403febd00f6b981a26447c7fa151577cac0ac96e85f8d83f86a",
+2026-10-30T01:13:10.9308849Z         "Gx": "396bac0b1785d50fb631aeac369fa69199782700000973469a1f2dd0443c58f5",
+2026-10-30T01:13:10.9309106Z         "Gz": "2af13f46eb441c5955f5f28780ff306950e987c42778fc79490422d98598e326"
+2026-10-30T01:13:10.9309302Z       }
+2026-10-30T01:13:10.9309404Z     },
+2026-10-30T01:13:10.9309510Z     {
+2026-10-30T01:13:10.9309618Z       "n": 106,
+2026-10-30T01:13:10.9309730Z       "k": 16,
+2026-10-30T01:13:10.9309841Z       "rank_Hx": 45,
+2026-10-30T01:13:10.9309957Z       "rank_Hz": 45,
+2026-10-30T01:13:10.9310079Z       "rank_pairing": 16,
+2026-10-30T01:13:10.9310213Z       "checks": "PASS",
+2026-10-30T01:13:10.9310344Z       "stem": "HGP_106_16_unknown",
+2026-10-30T01:13:10.9310490Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9310627Z       "duplicates": [],
+2026-10-30T01:13:10.9310804Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9310998Z       "sha256": {
+2026-10-30T01:13:10.9311175Z         "Hx": "eb12dfd59b2809867488319673737f440b1a6335d4eb55e7f8318d4d55aab769",
+2026-10-30T01:13:10.9311449Z         "Hz": "a6ec477e82f857793aa9ea888d26465c605ee4ccce7a94ca1976e1411a97a6bc",
+2026-10-30T01:13:10.9311875Z         "Gx": "ccc9bab994812bcd2bdb9142ee08e588b8ccdce451ce2ffaa750a359c2a91b99",
+2026-10-30T01:13:10.9312159Z         "Gz": "eca06fb6cf533f142d0bdc8a2b05f13ac4be82f4d298092377125fe0e74d63af"
+2026-10-30T01:13:10.9312357Z       }
+2026-10-30T01:13:10.9312453Z     },
+2026-10-30T01:13:10.9312554Z     {
+2026-10-30T01:13:10.9312652Z       "n": 306,
+2026-10-30T01:13:10.9312755Z       "k": 36,
+2026-10-30T01:13:10.9312860Z       "rank_Hx": 135,
+2026-10-30T01:13:10.9312976Z       "rank_Hz": 135,
+2026-10-30T01:13:10.9313095Z       "rank_pairing": 36,
+2026-10-30T01:13:10.9313222Z       "checks": "PASS",
+2026-10-30T01:13:10.9313349Z       "stem": "HGP_306_36_unknown",
+2026-10-30T01:13:10.9313491Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9313625Z       "duplicates": [],
+2026-10-30T01:13:10.9313798Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9313984Z       "sha256": {
+2026-10-30T01:13:10.9314155Z         "Hx": "728c72f3ce9c491d496d37077ffd68cf2569422c35f52480ac3cdcb76cf79395",
+2026-10-30T01:13:10.9314413Z         "Hz": "59cd8c430c89071053679380b6bc2f37347bcdf51a927fbd1fdaffdd039ab8ca",
+2026-10-30T01:13:10.9314779Z         "Gx": "23a87c33f38a8a289ccf30ddb158daca4225db4e7220c26969b417fba45dfe59",
+2026-10-30T01:13:10.9315037Z         "Gz": "ac415e21e958c224deb269f0b71508096bf43caf3f597a196c044ade5d5029e8"
+2026-10-30T01:13:10.9315231Z       }
+2026-10-30T01:13:10.9315330Z     },
+2026-10-30T01:13:10.9315429Z     {
+2026-10-30T01:13:10.9315530Z       "n": 610,
+2026-10-30T01:13:10.9315638Z       "k": 64,
+2026-10-30T01:13:10.9315747Z       "rank_Hx": 273,
+2026-10-30T01:13:10.9315865Z       "rank_Hz": 273,
+2026-10-30T01:13:10.9315984Z       "rank_pairing": 64,
+2026-10-30T01:13:10.9316112Z       "checks": "PASS",
+2026-10-30T01:13:10.9316237Z       "stem": "HGP_610_64_unknown",
+2026-10-30T01:13:10.9316377Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9316509Z       "duplicates": [],
+2026-10-30T01:13:10.9316683Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9316876Z       "sha256": {
+2026-10-30T01:13:10.9317051Z         "Hx": "b5441af8f9308d8992e71e802a60ce93fe3b722e4230b4e0270d6c89ee5ad2ec",
+2026-10-30T01:13:10.9317399Z         "Hz": "11cbb0b14d50ef7e9434ba905056b699322ed5085b17db9259eb872be306aa87",
+2026-10-30T01:13:10.9317655Z         "Gx": "217074a250e1c2e1d769161fae2919874ecb9648cb403b7172f90dca9ad04e42",
+2026-10-30T01:13:10.9317907Z         "Gz": "420f6609942f7ee1809053309a4ca0577f2a083a9bca67587a717e9e6e2542e7"
+2026-10-30T01:13:10.9318098Z       }
+2026-10-30T01:13:10.9318196Z     },
+2026-10-30T01:13:10.9318294Z     {
+2026-10-30T01:13:10.9318395Z       "n": 1261,
+2026-10-30T01:13:10.9318519Z       "k": 121,
+2026-10-30T01:13:10.9318628Z       "rank_Hx": 570,
+2026-10-30T01:13:10.9318749Z       "rank_Hz": 570,
+2026-10-30T01:13:10.9318881Z       "rank_pairing": 121,
+2026-10-30T01:13:10.9319011Z       "checks": "PASS",
+2026-10-30T01:13:10.9319139Z       "stem": "HGP_1261_121_unknown",
+2026-10-30T01:13:10.9319308Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9319473Z       "duplicates": [],
+2026-10-30T01:13:10.9319651Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9319853Z       "sha256": {
+2026-10-30T01:13:10.9320024Z         "Hx": "91b8ea2747183a9fa6d3531ea72c0e73c71cd5762dcf8429894dcd23ee57c4d2",
+2026-10-30T01:13:10.9320282Z         "Hz": "894e7dce8df14ca46b677898246092a5b106c98476f3357475aad0fdad0a5239",
+2026-10-30T01:13:10.9320541Z         "Gx": "a8185dd6fea1e2d0ad2acc1d12eba2fdc9d863ab5d63c8659e9052270b00b612",
+2026-10-30T01:13:10.9320806Z         "Gz": "70b5756dba0d1595117fac1a9cca22db00af1fc914280deb47cf354b8ebe3009"
+2026-10-30T01:13:10.9321001Z       }
+2026-10-30T01:13:10.9321102Z     },
+2026-10-30T01:13:10.9321200Z     {
+2026-10-30T01:13:10.9321302Z       "n": 2866,
+2026-10-30T01:13:10.9321411Z       "k": 256,
+2026-10-30T01:13:10.9321699Z       "rank_Hx": 1305,
+2026-10-30T01:13:10.9321895Z       "rank_Hz": 1305,
+2026-10-30T01:13:10.9322021Z       "rank_pairing": 256,
+2026-10-30T01:13:10.9322150Z       "checks": "PASS",
+2026-10-30T01:13:10.9322278Z       "stem": "HGP_2866_256_unknown",
+2026-10-30T01:13:10.9322427Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9322567Z       "duplicates": [],
+2026-10-30T01:13:10.9322740Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9322931Z       "sha256": {
+2026-10-30T01:13:10.9323111Z         "Hx": "a6bce48f3f27a34e16a2bc84caf227850619ff7337c427acde99d090673becdb",
+2026-10-30T01:13:10.9323376Z         "Hz": "1029bbf8bb1a4551f0aaededcf30c2612b8d0083c0d53d8f0c4e1d29d23f392c",
+2026-10-30T01:13:10.9323637Z         "Gx": "28b26d4096e881be18a56f2a8cbf07b313b5405b5e42a476d1d77b8a73a6ffea",
+2026-10-30T01:13:10.9323888Z         "Gz": "ac1818a79e71454c01321651131b5997b746b96f58630726e986890f8debd5b9"
+2026-10-30T01:13:10.9324075Z       }
+2026-10-30T01:13:10.9324175Z     },
+2026-10-30T01:13:10.9324276Z     {
+2026-10-30T01:13:10.9324377Z       "n": 7,
+2026-10-30T01:13:10.9324478Z       "k": 1,
+2026-10-30T01:13:10.9324585Z       "rank_Hx": 3,
+2026-10-30T01:13:10.9324702Z       "rank_Hz": 3,
+2026-10-30T01:13:10.9324921Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9325050Z       "checks": "PASS",
+2026-10-30T01:13:10.9325178Z       "stem": "COLOR_7_1_unknown",
+2026-10-30T01:13:10.9325322Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9325456Z       "duplicates": [],
+2026-10-30T01:13:10.9325630Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9325822Z       "sha256": {
+2026-10-30T01:13:10.9325997Z         "Hx": "50a1337bcf05108a3c4f74f11f2075813ccb3da4e8155f46ad0a0bbbe06c58d7",
+2026-10-30T01:13:10.9326293Z         "Hz": "5eb1ad5b5e44de8417caaa7fa2775cc6b7300b2cbd59698a37e36b142010062e",
+2026-10-30T01:13:10.9326562Z         "Gx": "350841e3e975ace8d5bbd8aa525b71bb27f204a841b8ca5587188300ff1992c3",
+2026-10-30T01:13:10.9326819Z         "Gz": "a23c23dc5a089264be793f1ab3e4a62abbd2c866474ed5d1a79370a7b9d4fc74"
+2026-10-30T01:13:10.9327016Z       }
+2026-10-30T01:13:10.9327113Z     },
+2026-10-30T01:13:10.9327212Z     {
+2026-10-30T01:13:10.9327310Z       "n": 19,
+2026-10-30T01:13:10.9327421Z       "k": 1,
+2026-10-30T01:13:10.9327610Z       "rank_Hx": 9,
+2026-10-30T01:13:10.9327722Z       "rank_Hz": 9,
+2026-10-30T01:13:10.9327837Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9327962Z       "checks": "PASS",
+2026-10-30T01:13:10.9328090Z       "stem": "COLOR_19_1_unknown",
+2026-10-30T01:13:10.9328234Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9328368Z       "duplicates": [],
+2026-10-30T01:13:10.9328541Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9328733Z       "sha256": {
+2026-10-30T01:13:10.9328909Z         "Hx": "8d786bb60aad6f2c4b65fe792a6fe2374b803cc27068ab69e3b16c310e7a638e",
+2026-10-30T01:13:10.9329170Z         "Hz": "9a6464db11a025eea60e410e139078c604a56e9b35ed14cbe22712e0d0505660",
+2026-10-30T01:13:10.9329426Z         "Gx": "7091e60c8138c61e745568e9dc792ea1b6cdd7ea2e936cb3816e767ac6b95dcc",
+2026-10-30T01:13:10.9329682Z         "Gz": "fdcc171fbe6709eba530533064732075f6cef72212cb125749eb2aff4450b897"
+2026-10-30T01:13:10.9329879Z       }
+2026-10-30T01:13:10.9329980Z     },
+2026-10-30T01:13:10.9330086Z     {
+2026-10-30T01:13:10.9330185Z       "n": 127,
+2026-10-30T01:13:10.9330293Z       "k": 1,
+2026-10-30T01:13:10.9330404Z       "rank_Hx": 63,
+2026-10-30T01:13:10.9330520Z       "rank_Hz": 63,
+2026-10-30T01:13:10.9330636Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9330756Z       "checks": "PASS",
+2026-10-30T01:13:10.9330884Z       "stem": "COLOR_127_1_unknown",
+2026-10-30T01:13:10.9331029Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9331159Z       "duplicates": [],
+2026-10-30T01:13:10.9331331Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9331716Z       "sha256": {
+2026-10-30T01:13:10.9331891Z         "Hx": "315bf73c786416e6edb0c5cc90b82c7730be81391a0f49545babd4e1f342ae9c",
+2026-10-30T01:13:10.9332152Z         "Hz": "2dab6c9fd153101482facd22ecd26334fadbc51f96d2198a36f41393146ee192",
+2026-10-30T01:13:10.9332412Z         "Gx": "49c8bc90f7b52dfc33b325b855f884fa619d7ab2483de7e52e26e33e5f24369f",
+2026-10-30T01:13:10.9332679Z         "Gz": "14b75d75537cf4c4c7586e4f73a241b988ef7ddb92f2fffca31b05487ca6914c"
+2026-10-30T01:13:10.9332873Z       }
+2026-10-30T01:13:10.9332972Z     },
+2026-10-30T01:13:10.9333068Z     {
+2026-10-30T01:13:10.9333165Z       "n": 331,
+2026-10-30T01:13:10.9333270Z       "k": 1,
+2026-10-30T01:13:10.9333377Z       "rank_Hx": 165,
+2026-10-30T01:13:10.9333491Z       "rank_Hz": 165,
+2026-10-30T01:13:10.9333607Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9333728Z       "checks": "PASS",
+2026-10-30T01:13:10.9333854Z       "stem": "COLOR_331_1_unknown",
+2026-10-30T01:13:10.9333994Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9334124Z       "duplicates": [],
+2026-10-30T01:13:10.9334294Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9334488Z       "sha256": {
+2026-10-30T01:13:10.9334660Z         "Hx": "5f3daca3228be9a4e732595c7cea1d4f798ec6bab398f11662251e87e7b369fe",
+2026-10-30T01:13:10.9334921Z         "Hz": "6f1ea0881d43136d3b3c9fd8a7c6acee2ec0593fcc801c5badc26584b7441349",
+2026-10-30T01:13:10.9335282Z         "Gx": "1c179130c6dca3ada978530db3f0824932c12a90471a01f40b632defa16f468c",
+2026-10-30T01:13:10.9335537Z         "Gz": "811e3409aa85bcb8c252d490e1fa6cfb5b44bcc7e5602bfec51f25388bf4a6aa"
+2026-10-30T01:13:10.9335730Z       }
+2026-10-30T01:13:10.9335825Z     },
+2026-10-30T01:13:10.9335922Z     {
+2026-10-30T01:13:10.9336018Z       "n": 1027,
+2026-10-30T01:13:10.9336124Z       "k": 1,
+2026-10-30T01:13:10.9336232Z       "rank_Hx": 513,
+2026-10-30T01:13:10.9336345Z       "rank_Hz": 513,
+2026-10-30T01:13:10.9336460Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9336581Z       "checks": "PASS",
+2026-10-30T01:13:10.9336706Z       "stem": "COLOR_1027_1_unknown",
+2026-10-30T01:13:10.9336848Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9336977Z       "duplicates": [],
+2026-10-30T01:13:10.9337149Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9337338Z       "sha256": {
+2026-10-30T01:13:10.9337596Z         "Hx": "9905d528d233a8773dacf71ef0b4758bd36b9a6133ae318892989234bcc5dbea",
+2026-10-30T01:13:10.9337859Z         "Hz": "1601cb663e79ed6a00e3a80c8d7c5edf1ae6e62d2ed96f0a4dac38a7799887d6",
+2026-10-30T01:13:10.9338112Z         "Gx": "b6830920e2c172989591a2817ce56b693d3130353467386eb6c72ef834b1c12e",
+2026-10-30T01:13:10.9338366Z         "Gz": "fbf3b453a89d4811540951f704ea53c34cd35a0efedcfa2db9653ddced749797"
+2026-10-30T01:13:10.9338562Z       }
+2026-10-30T01:13:10.9338655Z     },
+2026-10-30T01:13:10.9338749Z     {
+2026-10-30T01:13:10.9338843Z       "n": 2791,
+2026-10-30T01:13:10.9338948Z       "k": 1,
+2026-10-30T01:13:10.9339052Z       "rank_Hx": 1395,
+2026-10-30T01:13:10.9339167Z       "rank_Hz": 1395,
+2026-10-30T01:13:10.9339282Z       "rank_pairing": 1,
+2026-10-30T01:13:10.9339403Z       "checks": "PASS",
+2026-10-30T01:13:10.9339528Z       "stem": "COLOR_2791_1_unknown",
+2026-10-30T01:13:10.9339671Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9339799Z       "duplicates": [],
+2026-10-30T01:13:10.9339977Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9340165Z       "sha256": {
+2026-10-30T01:13:10.9340336Z         "Hx": "20a4eac60254e3703e75c05ac26a137199eae0f0d85aaf53ad29defc1a5df1c0",
+2026-10-30T01:13:10.9340592Z         "Hz": "4b537908c20851e9addd0d14ae593e6f3b01c024cae692743dc4a77e0f56795a",
+2026-10-30T01:13:10.9340847Z         "Gx": "6799ddbf13742363cdee4512f65b8edfed497ba8855821cc121245095fd896ca",
+2026-10-30T01:13:10.9341111Z         "Gz": "49e0ef25b2ade849312cd7d2e1d7aefea2bd60abb1af6f8a241c1e528a7e47d7"
+2026-10-30T01:13:10.9341312Z       }
+2026-10-30T01:13:10.9341407Z     },
+2026-10-30T01:13:10.9341629Z     {
+2026-10-30T01:13:10.9341778Z       "n": 30,
+2026-10-30T01:13:10.9341896Z       "k": 4,
+2026-10-30T01:13:10.9342002Z       "rank_Hx": 13,
+2026-10-30T01:13:10.9342114Z       "rank_Hz": 13,
+2026-10-30T01:13:10.9342230Z       "rank_pairing": 4,
+2026-10-30T01:13:10.9342351Z       "checks": "PASS",
+2026-10-30T01:13:10.9342481Z       "stem": "BB_30_4_unknown",
+2026-10-30T01:13:10.9342620Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9342755Z       "duplicates": [],
+2026-10-30T01:13:10.9342925Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9343113Z       "sha256": {
+2026-10-30T01:13:10.9343287Z         "Hx": "32629bd267b1102b4d932b9df45524c7e2e4fde02db0b82d0eb19b89fcba679c",
+2026-10-30T01:13:10.9343544Z         "Hz": "6974cff8b469d5ea212dc268311a3745d17e6c9d712bbc32237a2dfda143e85d",
+2026-10-30T01:13:10.9343801Z         "Gx": "4e22e180d2988a96e4320312fdab4d187e561103902f13cd149f2e732a2b6e99",
+2026-10-30T01:13:10.9344060Z         "Gz": "ff37d36be834fcce33fdd67a2760f749da4297c5920f63c3e79875c23e376bd6"
+2026-10-30T01:13:10.9344254Z       }
+2026-10-30T01:13:10.9344349Z     },
+2026-10-30T01:13:10.9344444Z     {
+2026-10-30T01:13:10.9344546Z       "n": 120,
+2026-10-30T01:13:10.9344652Z       "k": 8,
+2026-10-30T01:13:10.9344757Z       "rank_Hx": 56,
+2026-10-30T01:13:10.9344973Z       "rank_Hz": 56,
+2026-10-30T01:13:10.9345088Z       "rank_pairing": 8,
+2026-10-30T01:13:10.9345214Z       "checks": "PASS",
+2026-10-30T01:13:10.9345338Z       "stem": "BB_120_8_unknown",
+2026-10-30T01:13:10.9345477Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9345607Z       "duplicates": [],
+2026-10-30T01:13:10.9345778Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9345968Z       "sha256": {
+2026-10-30T01:13:10.9346142Z         "Hx": "db433f1dd394e45eb1b8da5e23582f3f275b296f9c290e8ebe95e5c28560a6ac",
+2026-10-30T01:13:10.9346405Z         "Hz": "5a0d048a5b773ac45c38e42c15cff04633459cc1f99a4b5662a6c9da6add70db",
+2026-10-30T01:13:10.9346660Z         "Gx": "b1148471740843b796aacb73c0941d9e38395742652cae5fd308635dfeb9faf2",
+2026-10-30T01:13:10.9346909Z         "Gz": "f857a2561ccc80873710f161a147393ea336aad5e5f122b327d570dfe22a8c86"
+2026-10-30T01:13:10.9347098Z       }
+2026-10-30T01:13:10.9347193Z     },
+2026-10-30T01:13:10.9347289Z     {
+2026-10-30T01:13:10.9347391Z       "n": 186,
+2026-10-30T01:13:10.9347495Z       "k": 10,
+2026-10-30T01:13:10.9347686Z       "rank_Hx": 88,
+2026-10-30T01:13:10.9347802Z       "rank_Hz": 88,
+2026-10-30T01:13:10.9347917Z       "rank_pairing": 10,
+2026-10-30T01:13:10.9348040Z       "checks": "PASS",
+2026-10-30T01:13:10.9348164Z       "stem": "BB_186_10_unknown",
+2026-10-30T01:13:10.9348300Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9348430Z       "duplicates": [],
+2026-10-30T01:13:10.9348599Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9348788Z       "sha256": {
+2026-10-30T01:13:10.9348961Z         "Hx": "8d92ee8af1fa64737ec4efa52c082c752feb6b8418a9c8a52d70febb5a8d5b9f",
+2026-10-30T01:13:10.9349223Z         "Hz": "ed74b08b38d9421a41546c8d3194c53a10d348970fb9bf71a3e6fbbbe471335a",
+2026-10-30T01:13:10.9349480Z         "Gx": "53ebac85b8438d0019f71490d4b52e77385deb24b4ddedd26158985b305cda06",
+2026-10-30T01:13:10.9349732Z         "Gz": "47843578d13e2e50618c3b2f5529564d36f1cdb5d79c73cb5d50e62b1a242290"
+2026-10-30T01:13:10.9349923Z       }
+2026-10-30T01:13:10.9350025Z     },
+2026-10-30T01:13:10.9350121Z     {
+2026-10-30T01:13:10.9350218Z       "n": 248,
+2026-10-30T01:13:10.9350323Z       "k": 10,
+2026-10-30T01:13:10.9350432Z       "rank_Hx": 119,
+2026-10-30T01:13:10.9350546Z       "rank_Hz": 119,
+2026-10-30T01:13:10.9350665Z       "rank_pairing": 10,
+2026-10-30T01:13:10.9350789Z       "checks": "PASS",
+2026-10-30T01:13:10.9350912Z       "stem": "BB_248_10_unknown",
+2026-10-30T01:13:10.9351052Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9351182Z       "duplicates": [],
+2026-10-30T01:13:10.9351351Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9351683Z       "sha256": {
+2026-10-30T01:13:10.9351856Z         "Hx": "8df252a3360e15cb16ab8244d4e0940e9e9e0e1fc300f922b4c20e4cc7858e24",
+2026-10-30T01:13:10.9352120Z         "Hz": "1ddc39cfdb866fcfe4346aaabf58e3d7218d6f6f3432c69e16e54b429c45ca40",
+2026-10-30T01:13:10.9352379Z         "Gx": "e32a4fea9bae2158b66ad476d358497004ac7b390ade25f52801e916e62f87cc",
+2026-10-30T01:13:10.9352651Z         "Gz": "a718eeda232e656b9c08aebfbaebdb743d4cfdb78ab94a20eeffac1338bdb4e4"
+2026-10-30T01:13:10.9352847Z       }
+2026-10-30T01:13:10.9352944Z     },
+2026-10-30T01:13:10.9353040Z     {
+2026-10-30T01:13:10.9353137Z       "n": 294,
+2026-10-30T01:13:10.9353240Z       "k": 10,
+2026-10-30T01:13:10.9353347Z       "rank_Hx": 142,
+2026-10-30T01:13:10.9353460Z       "rank_Hz": 142,
+2026-10-30T01:13:10.9353574Z       "rank_pairing": 10,
+2026-10-30T01:13:10.9353700Z       "checks": "PASS",
+2026-10-30T01:13:10.9353823Z       "stem": "BB_294_10_unknown",
+2026-10-30T01:13:10.9353958Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9354087Z       "duplicates": [],
+2026-10-30T01:13:10.9354258Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9354448Z       "sha256": {
+2026-10-30T01:13:10.9354615Z         "Hx": "7718661737a9ac0d846691b8cb4a170840e04b1d20976a2564edfe6e956b0327",
+2026-10-30T01:13:10.9354975Z         "Hz": "e194d205f8bb439c878ff4fbf4e35cdc16a7afa145a9158f982900d461dae02b",
+2026-10-30T01:13:10.9355233Z         "Gx": "1dac92a1a0a153b17be9eba3947f5be59521a77d33113f6277d0b6d5b3bc3e2b",
+2026-10-30T01:13:10.9355487Z         "Gz": "a49ea5c20df940d5003b22c5a686674a3879a08f0652d93c9e479d256f438453"
+2026-10-30T01:13:10.9355674Z       }
+2026-10-30T01:13:10.9355768Z     },
+2026-10-30T01:13:10.9355862Z     {
+2026-10-30T01:13:10.9355959Z       "n": 340,
+2026-10-30T01:13:10.9356063Z       "k": 16,
+2026-10-30T01:13:10.9356173Z       "rank_Hx": 162,
+2026-10-30T01:13:10.9356287Z       "rank_Hz": 162,
+2026-10-30T01:13:10.9356404Z       "rank_pairing": 16,
+2026-10-30T01:13:10.9356528Z       "checks": "PASS",
+2026-10-30T01:13:10.9356650Z       "stem": "BB_340_16_unknown",
+2026-10-30T01:13:10.9356790Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9356920Z       "duplicates": [],
+2026-10-30T01:13:10.9357091Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9357284Z       "sha256": {
+2026-10-30T01:13:10.9357600Z         "Hx": "3c487b46bd6e25d747b873eb9c0363b34c458b481bd50efd0159b4a577c3556d",
+2026-10-30T01:13:10.9357862Z         "Hz": "b54b64abfe59767a8dda1c625c7279de2eacda688174f421b04f6976db31f5c1",
+2026-10-30T01:13:10.9358123Z         "Gx": "1a3a81fbf4d3d3fe8818c1dacbb144c79c5da0161f29472b0b8ecbd6362ab9b2",
+2026-10-30T01:13:10.9358388Z         "Gz": "386901bb918f130b175a4da82b5200bec2c3a1ea208b91fb6dde7bcaadc98031"
+2026-10-30T01:13:10.9358579Z       }
+2026-10-30T01:13:10.9358674Z     },
+2026-10-30T01:13:10.9358769Z     {
+2026-10-30T01:13:10.9358863Z       "n": 85,
+2026-10-30T01:13:10.9358970Z       "k": 53,
+2026-10-30T01:13:10.9359075Z       "rank_Hx": 16,
+2026-10-30T01:13:10.9359188Z       "rank_Hz": 16,
+2026-10-30T01:13:10.9359321Z       "rank_pairing": 53,
+2026-10-30T01:13:10.9359445Z       "checks": "PASS",
+2026-10-30T01:13:10.9359572Z       "stem": "BCH_85_53_unknown",
+2026-10-30T01:13:10.9359711Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9359846Z       "duplicates": [],
+2026-10-30T01:13:10.9360022Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9360210Z       "sha256": {
+2026-10-30T01:13:10.9360384Z         "Hx": "e003bf0acbfa76520a9d64ec3fdc3326a9d6aac942e8559fdb0a16b7fa24b828",
+2026-10-30T01:13:10.9360657Z         "Hz": "b10b1ce313938f994e1f878352780f9fc03772832b4d2b6ffb683baa2aa651f4",
+2026-10-30T01:13:10.9360912Z         "Gx": "ab22184e82f666f5b96252b6a0b68e74a689de852b6f6e44c1a8ac2b872a5861",
+2026-10-30T01:13:10.9361174Z         "Gz": "d67e199c09fc7c29cfdd1eb2e18ecfe5fd5f304c295d49f6dd08ebedc9332e1f"
+2026-10-30T01:13:10.9361370Z       }
+2026-10-30T01:13:10.9361597Z     },
+2026-10-30T01:13:10.9361698Z     {
+2026-10-30T01:13:10.9361794Z       "n": 341,
+2026-10-30T01:13:10.9361901Z       "k": 261,
+2026-10-30T01:13:10.9362007Z       "rank_Hx": 40,
+2026-10-30T01:13:10.9362118Z       "rank_Hz": 40,
+2026-10-30T01:13:10.9362236Z       "rank_pairing": 261,
+2026-10-30T01:13:10.9362362Z       "checks": "PASS",
+2026-10-30T01:13:10.9362494Z       "stem": "BCH_341_261_unknown",
+2026-10-30T01:13:10.9362639Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9362770Z       "duplicates": [],
+2026-10-30T01:13:10.9362942Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9363133Z       "sha256": {
+2026-10-30T01:13:10.9363303Z         "Hx": "a1270a498de04826a17cde69d2e67f90de8b37df08291eac671923278bb410a2",
+2026-10-30T01:13:10.9363559Z         "Hz": "8bec4910d236072e9eaf790b714ae31757e11a977617ac2773bb97852b255ed7",
+2026-10-30T01:13:10.9363815Z         "Gx": "37e2d12f40451c4c119c6d5ee6d1cc11bb1ff9d75c9472a50d3f0ec04e954a89",
+2026-10-30T01:13:10.9364079Z         "Gz": "ac0f6de25e8cfd1fca7b966523c9e0ee3f72f49a06e3bca909f4fa62d1732937"
+2026-10-30T01:13:10.9364277Z       }
+2026-10-30T01:13:10.9364371Z     },
+2026-10-30T01:13:10.9364466Z     {
+2026-10-30T01:13:10.9364563Z       "n": 819,
+2026-10-30T01:13:10.9364668Z       "k": 699,
+2026-10-30T01:13:10.9364777Z       "rank_Hx": 60,
+2026-10-30T01:13:10.9364988Z       "rank_Hz": 60,
+2026-10-30T01:13:10.9365109Z       "rank_pairing": 699,
+2026-10-30T01:13:10.9365234Z       "checks": "PASS",
+2026-10-30T01:13:10.9365359Z       "stem": "BCH_819_699_unknown",
+2026-10-30T01:13:10.9365501Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9365632Z       "duplicates": [],
+2026-10-30T01:13:10.9365803Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9365989Z       "sha256": {
+2026-10-30T01:13:10.9366160Z         "Hx": "08e0481dc09f304825fcd9ea7cf1c2567515d0b358ef62c803b775f6a53eb1ec",
+2026-10-30T01:13:10.9366428Z         "Hz": "bb342afceec87f69ffbddd6dc2628732bcef251cb80cafcd7d528498b5827a27",
+2026-10-30T01:13:10.9366685Z         "Gx": "e12027d79c1942dd4a26996722e7522c0c8e3f59104700e9c88889547b661340",
+2026-10-30T01:13:10.9366933Z         "Gz": "e17300b37883f1fbe239513dff01ab5218768bc7c2290072e84b37bde77eec76"
+2026-10-30T01:13:10.9367122Z       }
+2026-10-30T01:13:10.9367216Z     },
+2026-10-30T01:13:10.9367313Z     {
+2026-10-30T01:13:10.9367491Z       "n": 1365,
+2026-10-30T01:13:10.9367596Z       "k": 1173,
+2026-10-30T01:13:10.9367701Z       "rank_Hx": 96,
+2026-10-30T01:13:10.9367814Z       "rank_Hz": 96,
+2026-10-30T01:13:10.9367931Z       "rank_pairing": 1173,
+2026-10-30T01:13:10.9368061Z       "checks": "PASS",
+2026-10-30T01:13:10.9368186Z       "stem": "BCH_1365_1173_unknown",
+2026-10-30T01:13:10.9368329Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9368459Z       "duplicates": [],
+2026-10-30T01:13:10.9368630Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9368819Z       "sha256": {
+2026-10-30T01:13:10.9368990Z         "Hx": "7dfc122559128b54ce93250ca75fec80cf560c73435bb8b51f7c6d765df5bda5",
+2026-10-30T01:13:10.9369248Z         "Hz": "73bdc8a12c36fda65cf1e33796426f69929d1d767ac67683004ec59da0a0838f",
+2026-10-30T01:13:10.9369508Z         "Gx": "9e395980100eb611f5cf8b32f14ff3fd45b3df4d2fb3261b2f9a50ad49a522fc",
+2026-10-30T01:13:10.9369768Z         "Gz": "32a2d84d696836f95d88e9c096d40b326dd624e42c7442a183f531d76030a7f0"
+2026-10-30T01:13:10.9369961Z       }
+2026-10-30T01:13:10.9370056Z     },
+2026-10-30T01:13:10.9370151Z     {
+2026-10-30T01:13:10.9370248Z       "n": 1365,
+2026-10-30T01:13:10.9370354Z       "k": 1149,
+2026-10-30T01:13:10.9370462Z       "rank_Hx": 108,
+2026-10-30T01:13:10.9370577Z       "rank_Hz": 108,
+2026-10-30T01:13:10.9370694Z       "rank_pairing": 1149,
+2026-10-30T01:13:10.9370821Z       "checks": "PASS",
+2026-10-30T01:13:10.9370946Z       "stem": "BCH_1365_1149_unknown",
+2026-10-30T01:13:10.9371089Z       "same_n_k_compared": [],
+2026-10-30T01:13:10.9371224Z       "duplicates": [],
+2026-10-30T01:13:10.9371394Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T01:13:10.9371722Z       "sha256": {
+2026-10-30T01:13:10.9371890Z         "Hx": "9bf5717d7e52602d4a79590614602f4c0e268a2e6497dfbb1598d811078146a0",
+2026-10-30T01:13:10.9372147Z         "Hz": "61723bc6afc15fbbbb2148d46c41528bd0e356e4aac47ad4b20b5e8faeec0931",
+2026-10-30T01:13:10.9372408Z         "Gx": "d964370573217224638639bd3736ec18af89db692f2c853f13826786c86996bd",
+2026-10-30T01:13:10.9372657Z         "Gz": "8822cb73f1afdcc1d90206e1cd26c2e23d4f423177853a593c4e158298c45650"
+2026-10-30T01:13:10.9372850Z       }
+2026-10-30T01:13:10.9372945Z     }
+2026-10-30T01:13:10.9373041Z   ]
+2026-10-30T01:13:10.9373146Z }
+2026-10-30T01:13:13.6395109Z ##[group]Run python3 scripts/codegen/bch.py --all --out /tmp/gh207-rebuilt
+2026-10-30T01:13:13.6395430Z [36;1mpython3 scripts/codegen/bch.py --all --out /tmp/gh207-rebuilt[0m
+2026-10-30T01:13:13.6395634Z [36;1mpython3 - <<'PY'[0m
+2026-10-30T01:13:13.6395772Z [36;1mfrom pathlib import Path[0m
+2026-10-30T01:13:13.6395962Z [36;1mfiles=list(Path('/tmp/gh207-rebuilt').glob('*.txt'))[0m
+2026-10-30T01:13:13.6396148Z [36;1massert len(files)==20[0m
+2026-10-30T01:13:13.6396284Z [36;1mfor p in files:[0m
+2026-10-30T01:13:13.6396500Z [36;1m    assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p[0m
+2026-10-30T01:13:13.6396883Z [36;1mprint('PASS20matrixbyteidentical')[0m
+2026-10-30T01:13:13.6397039Z [36;1mPY[0m
+2026-10-30T01:13:13.6413985Z shell: /usr/bin/bash -e {0}
+2026-10-30T01:13:13.6414126Z ##[endgroup]
+2026-10-30T01:13:13.6934275Z wrote /tmp/gh207-rebuilt/BCH_85_53_unknown_Gx.txt (53 rows), /tmp/gh207-rebuilt/BCH_85_53_unknown_Gz.txt (53 rows)
+2026-10-30T01:13:13.6968201Z BCH_85_53_unknown
+2026-10-30T01:13:13.7593160Z wrote /tmp/gh207-rebuilt/BCH_341_261_unknown_Gx.txt (261 rows), /tmp/gh207-rebuilt/BCH_341_261_unknown_Gz.txt (261 rows)
+2026-10-30T01:13:13.7628663Z BCH_341_261_unknown
+2026-10-30T01:13:14.0510797Z wrote /tmp/gh207-rebuilt/BCH_819_699_unknown_Gx.txt (699 rows), /tmp/gh207-rebuilt/BCH_819_699_unknown_Gz.txt (699 rows)
+2026-10-30T01:13:14.0581829Z BCH_819_699_unknown
+2026-10-30T01:13:14.8750864Z wrote /tmp/gh207-rebuilt/BCH_1365_1173_unknown_Gx.txt (1173 rows), /tmp/gh207-rebuilt/BCH_1365_1173_unknown_Gz.txt (1173 rows)
+2026-10-30T01:13:14.8807198Z BCH_1365_1173_unknown
+2026-10-30T01:13:15.6453738Z wrote /tmp/gh207-rebuilt/BCH_1365_1149_unknown_Gx.txt (1149 rows), /tmp/gh207-rebuilt/BCH_1365_1149_unknown_Gz.txt (1149 rows)
+2026-10-30T01:13:15.6513426Z BCH_1365_1149_unknown
+2026-10-30T01:13:15.6830320Z PASS20matrixbyteidentical
+2026-10-30T01:13:15.6882889Z ##[group]Run python3 scripts/codegen/audit_bch_smoke.py --maxsat optimization/experiments/GH-207/raw/actions/default/maxsat --cc optimization/experiments/GH-207/raw/actions/default/cc --construction optimization/experiments/GH-207/raw/construction.json --out /tmp/gh207-replayed.json
+2026-10-30T01:13:15.6883896Z [36;1mpython3 scripts/codegen/audit_bch_smoke.py --maxsat optimization/experiments/GH-207/raw/actions/default/maxsat --cc optimization/experiments/GH-207/raw/actions/default/cc --construction optimization/experiments/GH-207/raw/construction.json --out /tmp/gh207-replayed.json[0m
+2026-10-30T01:13:15.6884543Z [36;1mcmp optimization/experiments/GH-207/raw/actions/default/audit.json /tmp/gh207-replayed.json[0m
+2026-10-30T01:13:15.6899815Z shell: /usr/bin/bash -e {0}
+2026-10-30T01:13:15.6899954Z ##[endgroup]
+2026-10-30T01:13:16.5214662Z [
+2026-10-30T01:13:16.5214887Z   {
+2026-10-30T01:13:16.5215054Z     "stem": "BCH_85_53_unknown",
+2026-10-30T01:13:16.5215356Z     "published_lower": 5,
+2026-10-30T01:13:16.5215520Z     "published_exact": 5,
+2026-10-30T01:13:16.5215652Z     "engines": {
+2026-10-30T01:13:16.5215765Z       "maxsat": {
+2026-10-30T01:13:16.5215873Z         "lb": 5,
+2026-10-30T01:13:16.5216044Z         "ub": 5,
+2026-10-30T01:13:16.5216206Z         "status": "SOLVED"
+2026-10-30T01:13:16.5216384Z       },
+2026-10-30T01:13:16.5216538Z       "cc": {
+2026-10-30T01:13:16.5216695Z         "lb": 5,
+2026-10-30T01:13:16.5216864Z         "ub": 5,
+2026-10-30T01:13:16.5217037Z         "status": "SOLVED"
+2026-10-30T01:13:16.5217224Z       }
+2026-10-30T01:13:16.5217374Z     },
+2026-10-30T01:13:16.5217547Z     "explicit_exact_answers": {
+2026-10-30T01:13:16.5217756Z       "maxsat": 5,
+2026-10-30T01:13:16.5217921Z       "cc": 5
+2026-10-30T01:13:16.5218088Z     },
+2026-10-30T01:13:16.5218246Z     "confirmed_exact": 5,
+2026-10-30T01:13:16.5218445Z     "actual_verified_upper": 5,
+2026-10-30T01:13:16.5218664Z     "actual_verified_half_uppers": {
+2026-10-30T01:13:16.5218883Z       "X": 5,
+2026-10-30T01:13:16.5219044Z       "Z": 5
+2026-10-30T01:13:16.5219199Z     },
+2026-10-30T01:13:16.5219362Z     "numeric_smoke_gate": "PASS",
+2026-10-30T01:13:16.5219587Z     "reported_upper_word_gate": "PASS",
+2026-10-30T01:13:16.5219820Z     "source_upper_word_gate": "PASS",
+2026-10-30T01:13:16.5220108Z     "scientific_status": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+2026-10-30T01:13:16.5220418Z     "independent_search_lower_corrob": 5,
+2026-10-30T01:13:16.5220733Z     "source_head": "25936e3f36aad13fa47ba85708af68b01c274b0a",
+2026-10-30T01:13:16.5221117Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T01:13:16.5221447Z   },
+2026-10-30T01:13:16.5221728Z   {
+2026-10-30T01:13:16.5222126Z     "stem": "BCH_341_261_unknown",
+2026-10-30T01:13:16.5222337Z     "published_lower": 9,
+2026-10-30T01:13:16.5222536Z     "published_exact": null,
+2026-10-30T01:13:16.5222731Z     "engines": {
+2026-10-30T01:13:16.5222895Z       "maxsat": {
+2026-10-30T01:13:16.5223060Z         "lb": 5,
+2026-10-30T01:13:16.5223219Z         "ub": 9,
+2026-10-30T01:13:16.5223391Z         "status": "BOUNDED"
+2026-10-30T01:13:16.5223573Z       },
+2026-10-30T01:13:16.5223724Z       "cc": {
+2026-10-30T01:13:16.5238816Z         "lb": 7,
+2026-10-30T01:13:16.5239047Z         "ub": 9,
+2026-10-30T01:13:16.5239217Z         "status": "BOUNDED"
+2026-10-30T01:13:16.5239399Z       }
+2026-10-30T01:13:16.5239553Z     },
+2026-10-30T01:13:16.5239717Z     "explicit_exact_answers": {},
+2026-10-30T01:13:16.5239931Z     "confirmed_exact": null,
+2026-10-30T01:13:16.5240137Z     "actual_verified_upper": 9,
+2026-10-30T01:13:16.5240353Z     "actual_verified_half_uppers": {
+2026-10-30T01:13:16.5240563Z       "X": 9,
+2026-10-30T01:13:16.5240722Z       "Z": 13
+2026-10-30T01:13:16.5240833Z     },
+2026-10-30T01:13:16.5240944Z     "numeric_smoke_gate": "PASS",
+2026-10-30T01:13:16.5241098Z     "reported_upper_word_gate": "PASS",
+2026-10-30T01:13:16.5241274Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T01:13:16.5241968Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; source-construction lower independently checked",
+2026-10-30T01:13:16.5242241Z     "independent_search_lower_corrob": 5,
+2026-10-30T01:13:16.5242435Z     "source_head": "25936e3f36aad13fa47ba85708af68b01c274b0a",
+2026-10-30T01:13:16.5242694Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T01:13:16.5242912Z   },
+2026-10-30T01:13:16.5243010Z   {
+2026-10-30T01:13:16.5243117Z     "stem": "BCH_819_699_unknown",
+2026-10-30T01:13:16.5243259Z     "published_lower": 11,
+2026-10-30T01:13:16.5243394Z     "published_exact": null,
+2026-10-30T01:13:16.5243527Z     "engines": {
+2026-10-30T01:13:16.5243633Z       "maxsat": {
+2026-10-30T01:13:16.5243741Z         "lb": 3,
+2026-10-30T01:13:16.5243842Z         "ub": 11,
+2026-10-30T01:13:16.5243961Z         "status": "BOUNDED"
+2026-10-30T01:13:16.5244086Z       },
+2026-10-30T01:13:16.5244187Z       "cc": {
+2026-10-30T01:13:16.5244292Z         "lb": 6,
+2026-10-30T01:13:16.5244405Z         "ub": 11,
+2026-10-30T01:13:16.5244518Z         "status": "BOUNDED"
+2026-10-30T01:13:16.5244641Z       }
+2026-10-30T01:13:16.5244744Z     },
+2026-10-30T01:13:16.5244854Z     "explicit_exact_answers": {},
+2026-10-30T01:13:16.5244994Z     "confirmed_exact": null,
+2026-10-30T01:13:16.5245131Z     "actual_verified_upper": 11,
+2026-10-30T01:13:16.5245280Z     "actual_verified_half_uppers": {
+2026-10-30T01:13:16.5245423Z       "X": 11,
+2026-10-30T01:13:16.5245529Z       "Z": 11
+2026-10-30T01:13:16.5245635Z     },
+2026-10-30T01:13:16.5245746Z     "numeric_smoke_gate": "PASS",
+2026-10-30T01:13:16.5245894Z     "reported_upper_word_gate": "PASS",
+2026-10-30T01:13:16.5246061Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T01:13:16.5246334Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; source-construction lower independently checked",
+2026-10-30T01:13:16.5246592Z     "independent_search_lower_corrob": 3,
+2026-10-30T01:13:16.5246780Z     "source_head": "25936e3f36aad13fa47ba85708af68b01c274b0a",
+2026-10-30T01:13:16.5247035Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T01:13:16.5247253Z   },
+2026-10-30T01:13:16.5247351Z   {
+2026-10-30T01:13:16.5247457Z     "stem": "BCH_1365_1173_unknown",
+2026-10-30T01:13:16.5247602Z     "published_lower": 17,
+2026-10-30T01:13:16.5247736Z     "published_exact": null,
+2026-10-30T01:13:16.5247864Z     "engines": {
+2026-10-30T01:13:16.5247979Z       "maxsat": {
+2026-10-30T01:13:16.5248092Z         "lb": null,
+2026-10-30T01:13:16.5248205Z         "ub": null,
+2026-10-30T01:13:16.5248327Z         "status": "TIMEOUT_NO_BOUNDS"
+2026-10-30T01:13:16.5248468Z       },
+2026-10-30T01:13:16.5248567Z       "cc": {
+2026-10-30T01:13:16.5248668Z         "lb": 5,
+2026-10-30T01:13:16.5248883Z         "ub": 22,
+2026-10-30T01:13:16.5248996Z         "status": "BOUNDED"
+2026-10-30T01:13:16.5249120Z       }
+2026-10-30T01:13:16.5249217Z     },
+2026-10-30T01:13:16.5249329Z     "explicit_exact_answers": {},
+2026-10-30T01:13:16.5249477Z     "confirmed_exact": null,
+2026-10-30T01:13:16.5249615Z     "actual_verified_upper": 22,
+2026-10-30T01:13:16.5249761Z     "actual_verified_half_uppers": {
+2026-10-30T01:13:16.5249900Z       "X": 22,
+2026-10-30T01:13:16.5250009Z       "Z": 36
+2026-10-30T01:13:16.5250113Z     },
+2026-10-30T01:13:16.5250226Z     "numeric_smoke_gate": "INCOMPLETE",
+2026-10-30T01:13:16.5250380Z     "reported_upper_word_gate": "PASS",
+2026-10-30T01:13:16.5250545Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T01:13:16.5250805Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; source-construction lower independently checked",
+2026-10-30T01:13:16.5251068Z     "independent_search_lower_corrob": null,
+2026-10-30T01:13:16.5251260Z     "source_head": "25936e3f36aad13fa47ba85708af68b01c274b0a",
+2026-10-30T01:13:16.5251660Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T01:13:16.5251977Z   },
+2026-10-30T01:13:16.5252074Z   {
+2026-10-30T01:13:16.5252286Z     "stem": "BCH_1365_1149_unknown",
+2026-10-30T01:13:16.5252432Z     "published_lower": 19,
+2026-10-30T01:13:16.5252566Z     "published_exact": null,
+2026-10-30T01:13:16.5252693Z     "engines": {
+2026-10-30T01:13:16.5252807Z       "maxsat": {
+2026-10-30T01:13:16.5252917Z         "lb": null,
+2026-10-30T01:13:16.5253026Z         "ub": null,
+2026-10-30T01:13:16.5253152Z         "status": "TIMEOUT_NO_BOUNDS"
+2026-10-30T01:13:16.5253289Z       },
+2026-10-30T01:13:16.5253389Z       "cc": {
+2026-10-30T01:13:16.5253494Z         "lb": 5,
+2026-10-30T01:13:16.5253602Z         "ub": 24,
+2026-10-30T01:13:16.5253718Z         "status": "BOUNDED"
+2026-10-30T01:13:16.5253843Z       }
+2026-10-30T01:13:16.5253940Z     },
+2026-10-30T01:13:16.5254045Z     "explicit_exact_answers": {},
+2026-10-30T01:13:16.5254190Z     "confirmed_exact": null,
+2026-10-30T01:13:16.5254329Z     "actual_verified_upper": 24,
+2026-10-30T01:13:16.5254470Z     "actual_verified_half_uppers": {
+2026-10-30T01:13:16.5254605Z       "X": 24,
+2026-10-30T01:13:16.5254715Z       "Z": 41
+2026-10-30T01:13:16.5254815Z     },
+2026-10-30T01:13:16.5254923Z     "numeric_smoke_gate": "INCOMPLETE",
+2026-10-30T01:13:16.5255073Z     "reported_upper_word_gate": "PASS",
+2026-10-30T01:13:16.5255233Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T01:13:16.5255492Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; source-construction lower independently checked",
+2026-10-30T01:13:16.5255750Z     "independent_search_lower_corrob": null,
+2026-10-30T01:13:16.5255934Z     "source_head": "25936e3f36aad13fa47ba85708af68b01c274b0a",
+2026-10-30T01:13:16.5256180Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T01:13:16.5256390Z   }
+2026-10-30T01:13:16.5256487Z ]
+2026-10-30T01:13:16.5333357Z ##[group]Run python3 scripts/codegen/bch_certificate.py --verify optimization/experiments/GH-207/raw/certificates --out /tmp/gh207-certificates.json
+2026-10-30T01:13:16.5333919Z [36;1mpython3 scripts/codegen/bch_certificate.py --verify optimization/experiments/GH-207/raw/certificates --out /tmp/gh207-certificates.json[0m
+2026-10-30T01:13:16.5334360Z [36;1mcmp optimization/experiments/GH-207/raw/certificates/VERDICT.json /tmp/gh207-certificates.json[0m
+2026-10-30T01:13:16.5350133Z shell: /usr/bin/bash -e {0}
+2026-10-30T01:13:16.5350272Z ##[endgroup]
+2026-10-30T01:13:17.2641894Z Post job cleanup.
+2026-10-30T01:13:17.3202911Z [command]/usr/bin/git version
+2026-10-30T01:13:17.3231341Z git version 2.56.0
+2026-10-30T01:13:17.3252666Z Temporarily overriding HOME='/home/runner/work/_temp/ec2a3dd7-ddaa-407b-8b82-d8b5ea1c3766' before making global git config changes
+2026-10-30T01:13:17.3253547Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T01:13:17.3255505Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T01:13:17.3283968Z Removing SSH command configuration
+2026-10-30T01:13:17.3286859Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T01:13:17.3317957Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T01:13:17.3519891Z Removing HTTP extra header
+2026-10-30T01:13:17.3525007Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T01:13:17.3555544Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T01:13:17.3754751Z Removing includeIf entries pointing to credentials config files
+2026-10-30T01:13:17.3760830Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T01:13:17.3798126Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-30T01:13:17.3798733Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-30T01:13:17.3799130Z includeif.gitdir:/github/workspace/.git.path
+2026-10-30T01:13:17.3799508Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-30T01:13:17.3819733Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-30T01:13:17.3838853Z /home/runner/work/_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:13:17.3847684Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-018f409d\-1e22\-4df0\-890f\-61f52a3945b6\.config
+2026-10-30T01:13:17.3887450Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-30T01:13:17.3916882Z /home/runner/work/_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:13:17.3923147Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-018f409d\-1e22\-4df0\-890f\-61f52a3945b6\.config
+2026-10-30T01:13:17.3965481Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-30T01:13:17.3994538Z /github/runner_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:13:17.3999670Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-018f409d\-1e22\-4df0\-890f\-61f52a3945b6\.config
+2026-10-30T01:13:17.4036257Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-30T01:13:17.4065137Z /github/runner_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config
+2026-10-30T01:13:17.4069923Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-018f409d\-1e22\-4df0\-890f\-61f52a3945b6\.config
+2026-10-30T01:13:17.4149871Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T01:13:17.4331275Z Removing credentials config '/home/runner/work/_temp/git-credentials-018f409d-1e22-4df0-890f-61f52a3945b6.config'
+2026-10-30T01:13:17.4446877Z Cleaning up orphan processes
