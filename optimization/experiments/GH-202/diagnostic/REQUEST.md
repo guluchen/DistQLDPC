@@ -22,9 +22,18 @@ local labeling or establish an erratum. A smaller valid word/upper, or another
 engine contradiction, stops with raw evidence for PI review. Incomplete CC
 proof does not inherit the MaxSAT lower8. All24files stay quarantined.
 
-Seven no-solver unit contracts check pinned input, source6 versus observed8
+Eight no-solver unit contracts check pinned input, source6 versus observed8
 separation, incomplete bounds, conflicting bounds, invalid word/exit and
 non-Actions refusal. A separate workflow runs only this case and retains all
 raw identities/logs on failure. After its single attempt the workflow becomes
 retained-evidence replay only before any further source-triggering changes.
 No automatic scientific retries. GH200 remains independently held.
+
+The first workflow40980664069/job123819613607 passed the original7contracts
+but stopped before output-directory creation or CC launch: shallow checkout
+lacked ancestor e41bff4c. Full failed-job evidence is in preflight-failure/.
+The guard now compares the exact pinned src-tree/Makefile-blob IDs and rejects
+current source dirtiness, without needing historical objects. A fresh-snapshot
+Git fixture regression covers the missing-ancestor case and altered-source
+refusals.8local contracts pass; original inputs/raw evidence remain unchanged.
+The authorized single CC attempt is still pending, not a scientific retry.

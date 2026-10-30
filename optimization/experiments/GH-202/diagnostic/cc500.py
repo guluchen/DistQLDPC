@@ -27,6 +27,8 @@ MATRICES=ROOT/'data/matrices/untiered/quarantine/GH-202'
 RAW=ROOT/'optimization/experiments/GH-202/raw'
 OLD=RAW/'actions/failed-source-smoke/schreier-maxsat'
 ORIGINAL_SOURCE='e41bff4c327fa60a3467be5552509ea9ec9e496c'
+ORIGINAL_SRC_TREE='19cbea916c41b3918de87f86791da9f1c80abbbd'
+ORIGINAL_MAKEFILE_BLOB='1951a24d5de920a651ad3919c672331862976365'
 EXPECTED={
     'Hx':'a350fdef721ff6accf99369d0cb36e141edeb7445168fe17baa8be03f06f9041',
     'Hz':'f6c1c9afff5b15f7ca0de889390b0e1cf989162a9e1959ddc6b7f6523c191b7c',
@@ -40,6 +42,16 @@ def require(ok,message):
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def verify_solver_sources(root=ROOT,src_tree=ORIGINAL_SRC_TREE,make_blob=ORIGINAL_MAKEFILE_BLOB):
+    # GitHub's checkout is shallow: the original ancestor object need not be
+    # present. Compare immutable current tree/blob identities, then reject any
+    # uncommitted source/build changes; no historical fetch or weaker guard.
+    observed=subprocess.check_output(['git','rev-parse','HEAD:src','HEAD:Makefile'],cwd=root,text=True).splitlines()
+    require(observed==[src_tree,make_blob],'original solver/build tree identities changed')
+    require(subprocess.run(['git','diff','--quiet','HEAD','--','src','Makefile'],cwd=root).returncode==0,
+            'uncommitted solver/build changes')
 
 
 def preflight():
@@ -101,13 +113,14 @@ def main():
     require(sys.platform.startswith('linux') and os.environ.get('GITHUB_ACTIONS')=='true','ephemeral Linux Actions only; no Mac/server execution')
     require(not (RAW/'authorized-cc500').exists(),'a retained CC diagnosis already exists; new PI approval required')
     preflight()
-    require(subprocess.run(['git','diff','--quiet',ORIGINAL_SOURCE,'--','src','Makefile'],cwd=ROOT).returncode==0,'original solver/build sources changed')
+    verify_solver_sources()
     a.out.mkdir(parents=True,exist_ok=False)
     cpu=min(os.sched_getaffinity(0))
     cmd=['taskset','-c',str(cpu),'prlimit','--as=4294967296','--',str(a.bin.resolve()),
          '-engine=cc','-seed=0','-v','-cpu-lim=60','data/matrices/untiered/quarantine/GH-202/'+STEM]
     identity=dict(cmd=cmd,source_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                   binary_sha256=sha(a.bin),input_sha256=EXPECTED,engine='cc',original_source=ORIGINAL_SOURCE,
+                  original_src_tree=ORIGINAL_SRC_TREE,original_makefile_blob=ORIGINAL_MAKEFILE_BLOB,
                   original_binary_sha256=json.loads((OLD/(STEM+'.json')).read_text())['binary_sha256'],
                   platform=platform.platform(),cpu=cpu,source_reference_exact=6,
                   authorization='human chat2026-10-30; issue202 comment6510319434',address_space_limit=4294967296)

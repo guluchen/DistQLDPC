@@ -54,5 +54,21 @@ class DiagnosticTests(unittest.TestCase):
             self.assertIn('ephemeral Linux Actions only',result.stderr)
             self.assertFalse(out.exists())
 
+    def test_guard_without_original_ancestor_and_rejects_dirty_sources(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);(root/'src').mkdir();(root/'src/f').write_text('unit source\n')
+            (root/'Makefile').write_text('unit build\n')
+            subprocess.run(['git','init','--quiet'],cwd=root,check=True)
+            subprocess.run(['git','add','src','Makefile'],cwd=root,check=True)
+            subprocess.run(['git','-c','user.name=unit','-c','user.email=unit@example.invalid',
+                            'commit','--quiet','-m','single snapshot'],cwd=root,check=True)
+            trees=subprocess.check_output(['git','rev-parse','HEAD:src','HEAD:Makefile'],cwd=root,text=True).splitlines()
+            missing=subprocess.run(['git','cat-file','-e',diag.ORIGINAL_SOURCE],cwd=root,capture_output=True)
+            self.assertNotEqual(missing.returncode,0)
+            diag.verify_solver_sources(root,*trees)
+            with self.assertRaises(ValueError):diag.verify_solver_sources(root,'0'*40,trees[1])
+            (root/'src/f').write_text('changed source\n')
+            with self.assertRaises(ValueError):diag.verify_solver_sources(root,*trees)
+
 
 if __name__=='__main__':unittest.main()

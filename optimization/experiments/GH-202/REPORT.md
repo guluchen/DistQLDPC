@@ -197,3 +197,13 @@ in diagnostic/REQUEST.md and diagnostic/cc500.py. The source-distance hold,
 original reference6 and all prior raw fields remain unchanged. A cross-engine
 input8 would not prove a paper erratum or intended-coordinate identification.
 Status: authorized diagnostic PENDING; accepted library additions remain zero.
+
+
+CC500 preflight40980664069/job123819613607 failed before any CC process or
+identity/output file: checkout lacked e41bff4c ancestor object.7input/diagnostic
+contracts passed, and full failure log/empty evidence saved under diagnostic/
+preflight-failure/. Original src tree19cbea916c41b3918de87f86791da9f1c80abbbd
+and Makefile blob1951a24d5de920a651ad3919c672331862976365 equal current exactly.
+Guard is corrected to compare those immutable IDs plus a clean-source diff;
+8unit contracts including an ancestor-free snapshot pass. No scientific run
+was consumed or retried; the PI-authorized single CC attempt remains pending.
