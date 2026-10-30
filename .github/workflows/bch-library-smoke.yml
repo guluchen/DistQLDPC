@@ -1,18 +1,18 @@
-name: BCH library short gates
+name: BCH retained evidence contracts
 
 on:
   push:
     branches: [codex/bch-library]
     paths:
-      - '.github/workflows/bch-library-smoke.yml'
       - 'scripts/codegen/bch*'
       - 'scripts/codegen/validate_bch.py'
       - 'scripts/codegen/audit_bch_smoke.py'
       - 'scripts/codegen/smoke_bch.py'
       - 'scripts/codegen/smoke_untiered.py'
       - 'scripts/codegen/verify_css_witness.py'
-      - 'tests/test_codegen_bch.py'
-      - 'data/matrices/untiered/LP_*.txt'
+      - 'tests/test_codegen_bch*.py'
+      - 'data/matrices/untiered/BCH_*.txt'
+      - 'optimization/experiments/GH-207/raw/certificates/**'
 
 permissions:
   contents: read
@@ -20,12 +20,10 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - name: Build unchanged solver
-        run: make --jobs=2 bin/distqldpc
-      - name: Independent construction, complete logicals and unit contracts
+      - name: Unit, physical root construction and complete logical contracts without solver
         run: |
           python3 -m unittest discover -s tests -p 'test_codegen_*.py'
           python3 scripts/codegen/validate_css.py --output /tmp/gh207-css.json
@@ -43,35 +41,11 @@ jobs:
               assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
           print('PASS20matrixbyteidentical')
           PY
-      - name: Five serial default MaxSAT 60CPU-second checks
-        run: python3 scripts/codegen/smoke_bch.py --ci --engine maxsat --out /tmp/gh207-maxsat
-      - name: Five serial explicit CC 60CPU-second checks
-        run: python3 scripts/codegen/smoke_bch.py --ci --engine cc --out /tmp/gh207-cc
-      - name: Cross-engine source bounds and actual GF2 minimum-word audit
-        run: python3 scripts/codegen/audit_bch_smoke.py --maxsat /tmp/gh207-maxsat --cc /tmp/gh207-cc --construction /tmp/gh207-construction.json --out /tmp/gh207-smoke-audit.json
-      - name: Retain complete evidence even on failure
-        if: always()
+      - name: Replay original ten engine logs and physical words only
         run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          evidence={}
-          for label in ('maxsat','cc'):
-              root=Path('/tmp/gh207-'+label)
-              evidence[label]={str(p.relative_to(root)):p.read_text() for p in root.rglob('*') if p.is_file()}
-          for name in ('construction','smoke-audit'):
-              p=Path('/tmp/gh207-'+name+'.json')
-              if p.exists():evidence[name]=p.read_text()
-          print('GH207_EVIDENCE_JSON='+json.dumps(evidence,separators=(',',':')))
-          PY
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: gh207-bch-short-gates
-          path: |
-            /tmp/gh207-maxsat/
-            /tmp/gh207-cc/
-            /tmp/gh207-construction.json
-            /tmp/gh207-smoke-audit.json
-          if-no-files-found: warn
-          retention-days: 14
+          python3 scripts/codegen/audit_bch_smoke.py --maxsat optimization/experiments/GH-207/raw/actions/default/maxsat --cc optimization/experiments/GH-207/raw/actions/default/cc --construction optimization/experiments/GH-207/raw/construction.json --out /tmp/gh207-replayed.json
+          cmp optimization/experiments/GH-207/raw/actions/default/audit.json /tmp/gh207-replayed.json
+      - name: Independently verify finite field-root certificates and detectors, no distance search
+        run: |
+          python3 scripts/codegen/bch_certificate.py --verify optimization/experiments/GH-207/raw/certificates --out /tmp/gh207-certificates.json
+          cmp optimization/experiments/GH-207/raw/certificates/VERDICT.json /tmp/gh207-certificates.json
