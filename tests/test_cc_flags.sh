@@ -113,7 +113,8 @@ done
 for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-rules=parity,leaf -cc-dual=on -cc-dual=off -cc-seed=1 \
          "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-mutant=10 -cc-schedule=sequential \
          -cc-schedule=lockstep -cc-rules=overlap -ub-search=on -ub-search=off -ub-search=budget:5 -cc-ub-only -cc-ub-pre=1 \
-         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12 -cc-aut=on -cc-aut=off -cc-mutant=13 -cc-mutant=14; do
+         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12 -cc-aut=on -cc-aut=off -cc-mutant=13 -cc-mutant=14 \
+         -cc-rules=charge -cc-lb-minr=2 -cc-lb-gap=1 -cc-lb-raise=off -cc-lb-auto=0 -cc-mutant=15; do
     reject "need -engine=cc or -engine=auto" "$f" $L $M
     reject "need -engine=cc or -engine=auto" -engine=maxsat "$f" $L $M
 done
@@ -121,9 +122,11 @@ reject "need -engine=cc or -engine=auto" -cc-rules=mrv -cc-mutant=2 -engine=maxs
 reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L $M   # the last -engine= wins
 
 # 4. invalid values
-for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=15 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
+for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=16 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
          -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
-         -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-dual=maybe -cc-aut -cc-aut= -cc-aut=maybe -cc-aut=ON -cc-autx -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
+         -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-rules=Charge -cc-rules=charge, -cc-dual=maybe \
+         -cc-aut -cc-aut= -cc-aut=maybe -cc-aut=ON -cc-autx -cc-rules=ecover -cc-lb-minr=0 -cc-lb-minr= -cc-lb-minr=x -cc-lb-minr=1001 -cc-lb-gap= -cc-lb-gap=-1 \
+         -cc-lb-gap=x -cc-lb-gap=1001 -cc-lb-raise= -cc-lb-raise=no -cc-lb-auto= -cc-lb-auto=101 -cc-lb-auto=x -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 # GH-140: -ub-search values and the finder's tuning flags
@@ -160,6 +163,13 @@ accept 2 "" -engine=cc -cc-rules=excl,pack,orbf $L $C                           
 accept 2 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C                                       # GH-133 rule set
 accept 3 "" -engine=cc -cc-rules=overlap $L $M                                                          # GH-138 rule alone
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,mrv -cc-seed=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge $L $M                         # GH-157 rules
+accept 2 "" -engine=cc -cc-rules=charge -cc-lb-minr=1 $L $C
+accept 2 "" -engine=cc -cc-rules=charge,mrv -cc-lb-minr=2 -cc-seed=2 $L $C
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-gap=2 -cc-lb-minr=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-raise=off -cc-lb-minr=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-auto=0 -cc-lb-minr=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-auto=100 $L $M
 accept 2 "" -oddcap-skip=on $L $C                                                                       # GH-133 MaxSAT flag
 accept 2 "" -oddcap-skip=off -card-mto $L $C
 accept 3 "" -oddcap-skip=on -no-card $L $M
@@ -243,7 +253,8 @@ vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
 # 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
-vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,charge, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf, " -v -engine=cc -cc-rules=excl,pack,orbf $L $C
 vgrep 2 "^c cc: X half parity: on (column weights 3..5, all odd)" -v -engine=cc $L $C
@@ -254,6 +265,13 @@ vgrep 2 "^c cc: X half level 1 skipped\|^c d_lb: 2" -v -engine=cc $L $C
 vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 [0-9]* ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats -ub-basis=off -ub-search=off $L $C
 vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 0 ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats $L $M
 vgrep 3 "^c cc-stats: X level 2 EMPTY .* ovtight 0 ovforbid 0 time" -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf $L $M
+# 7b'. GH-157: the node-lower-bound line and stats lines appear only with the new rules
+vgrep 3 "^c cc: node lower bound charge at remaining budget >= 3 and budget - packing <= 0, auto off below 40 % (GH-157)" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge $L $M
+vgrep 3 "^c cc-stats: X level 2 lb lbeval [0-9]* chgprune [0-9]* lbdead [0-9]*" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 -cc-lb-gap=5 $L $M
+vgrep 3 "^c cc-stats: X level 2 lbprune-by-budget" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 $L $M
+runs=$((runs + 1)); run -v -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $M
+if grep -q "node lower bound\|lbeval\|lbprune" <<<"$out"; then echo "FAIL (GH-157 lines printed without charge)" >&2; fails=$((fails + 1)); fi
+vgrep 3 "^c cc: node lower bound charge at remaining budget >= 3" -v -engine=cc $L $M   # GH-157: charge is a default rule
 # 7c. GH-138: overlap decision per half (K = same-type stabilizer rows; TN_36_8_3 rows have weight 4..6)
 vgrep 3 "^c cc: X half overlap: on ([0-9]* stabilizer rows of Hx, weights [0-9]*\.\.[0-9]*, 0 forbidden from the start)" -v -engine=cc $L $M
 vgrep 3 "^c cc: Z half overlap: on ([0-9]* stabilizer rows of Hz, weights " -v -engine=cc $L $M
@@ -424,6 +442,8 @@ done
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
 accept 3 "" -engine=cc -cc-rules=overlap,tiebreak -cc-seed=2 -cc-dual=off $L $M
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-aut=off -no-symbreak $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak $L $M                  # default rules (GH-157) + tiebreak
+vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,charge, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak $L $M
 vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
 vgrep 3 "^c cc: X half tiebreak: on$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
 vgrep 3 "^c cc: X half tiebreak: [0-9]* of [0-9]* rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then descending label)" \

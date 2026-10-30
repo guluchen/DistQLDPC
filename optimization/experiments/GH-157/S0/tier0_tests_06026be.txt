@@ -1,0 +1,45 @@
+partI(a) (GH-157 bounds): 20000 hitting-set instances, 0 bad (U' = U on 8427; charge = tau on 15739, ecover = tau on 15707; charge > pack on 4780, ecover > pack on 3957); matching 20000 graphs, 0 bad
+partI(a) mutants: 15 (charge + 1/D) exceeds tau on 17240 instances, 16 (ecover without the at-most-2 check) on 8014
+partI(b) (GH-157 rules on the Part A halves): 345600 ladder runs (128 base subsets x 3 x seeds 0..2), 0 bad, 10606583 charge/ecover prunes
+mutant 15 (charge inflated by 1/D): 3808/38400 half ladders wrong; mutant 16 (ecover without the at-most-2 check): 2256/38400 half ladders wrong
+partA: 300 half instances (149 with verified orbits, 115 with all column weights odd, 101 without any nontrivial element), 115200 ladder runs over 128 rule subsets x 3 seeds, 0 bad
+partA K (GH-138): 100 basis, 100 low-weight sets, 58 random sets; 83 instances where a minimum element meets a row of K in floor(|g|/2) qubits
+partE (rotated surface codes d = 3, 4, X/Z swapped): 40 canonical checks, 0 bad
+partF (MaxSAT -ub-pre): 1600 runs on 200 codes, 0 bad (first UB = d on 1447 runs, > d on 153 runs); mutant 1 200 runs, 0 bad; surface codes d = 3..5: 36 canonical/mutant-1 runs, 0 bad
+partF mutant 2 (finder without detector check, words unverified): 4/200 code runs and 9/9 surface runs wrong
+partB: 200 CSS codes (60 with a verified dual map, 33 with X-half orbits, 63 with dX != dZ, 46 with all-odd Hz), 3600 driver runs, 0 bad, 0 RESULT -1
+partD (MaxSAT split, -oddcap-skip off/on): 400 runs on 200 codes (47 with an all-odd half), 0 bad
+partE (ub-search finder): 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+partE (driver with ub-search): 1600 runs, 0 bad, 31 levels abandoned (U <= w)
+GH-146 finder stern2              : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder stern1              : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder dumer2              : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder stern2-l0-fresh     : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder dumer1-l2-w1-b3-r5  : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder stern2-l3-w32-b2    : 400 halves x 300 iterations, 0 bad, 0 nondeterministic, reached d_h on 400/400 halves
+GH-146 finder mutant 11 (collision mode, no detector check): trivial word returned on 35/35 halves
+GH-146 CC driver in collision mode: 600 runs, 0 bad; mutant 11 8/8 runs stopped or wrong; mutant 12 8/8 failed, 8 with a wrong RESULT d OPTIMAL
+GH-146 MaxSAT pre-pass in collision mode: 400 runs, 0 bad; mutant 1 200 runs, 0 bad; mutant 2 13/209 runs wrong (codes + surface)
+mutant 1 (forbidden set not restored): 780/19200 half ladders wrong
+mutant 2 (packing prune >=): 4516/19200 half ladders wrong
+mutant 3 (orbit seed rule off by one, instances with orbits): 2176/9536 half ladders wrong
+mutant 4 (stop rule without other half's lb, forces sequential): schedule requested 51/200 runs wrong; default options 51/200 wrong
+mutant 5 (parity rule forced on halves with an even column weight): 7344/11840 half ladders wrong
+mutant 6 (leaf budget off by one): 2368/19200 half ladders wrong
+mutant 7 (leaf closure without the detector check): 1568/19200 half ladders wrong
+mutant 8 (overlap limit off by one): 3328/19200 half ladders wrong
+mutant 9 (overlap with the parity checks H as K): 3232/19200 half ladders wrong
+mutant 10 (overlap even-|g| tie cut): 2176/19200 half ladders wrong
+mutant 11 (ub-search without the detector check; halves/codes where a trivial word is lighter than d): finder returned a trivial word on 27/27 halves; driver 8/8 runs stopped or wrong
+mutant 12 (mutant 11 + words reported without verification): 8/8 driver runs failed, 8 of them with a wrong RESULT d OPTIMAL
+CC_ENGINE_TESTS PASS
+
+real	2m17.990s
+user	2m9.336s
+sys	0m4.444s
+test_cc_flags: 369 checks, 0 failed
+CC_FLAG_TESTS PASS
+
+real	0m11.375s
+user	0m5.927s
+sys	0m3.710s

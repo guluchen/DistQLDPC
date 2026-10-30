@@ -75,6 +75,14 @@
 //   d = 3..5 (weight-2 boundary stabilizers, the rule binds hard). Mutants (test-only g_stab_overlap_mutant): 1 = limit
 //   floor(|g|/2) - 1 and 2 = the half's parity rows used as g without the GF(2) check must give wrong answers.
 //   Also counted: codes where the constraints remove an element of F of weight <= d + 2 (the rule is not vacuous).
+// GH-157 (rule charge): Part I (a) the bound function on random hitting-set instances (k <= 10 candidate sets over <= 14
+//   qubits, a third of them with every qubit in <= 2 sets) against brute-force tau: charge (with and without the raise)
+//   <= tau, local <= raised, and the early-exit contract (bound(r) > r iff exact bound > r, and then bound(r) <= exact
+//   bound) for every r; mutant 15 must exceed tau somewhere. (b) On every Part A half: all 128 base rule subsets x three
+//   charge configurations (lb-minr 1 / 2 / 3 with lb-gap unlimited / 0 / 1) x seeds 0..2 (seed 1: auto switch-off at
+//   60 % after any level; seed 2: no raise): the ladder must match enumeration; mutant 15 (charge inflated by 1/D) must
+//   give wrong half-level verdicts. The search hands a copy of the odd rows' candidate sets to the lb_charge tested in
+//   (a). (c) Part B driver configurations with charge (minr 1 and 3, gap 0 / 1 / unlimited, with and without pack).
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -173,12 +181,15 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
-    r.overlap = mask & 64; r.tiebreak = mask & 128;   // GH-162 (Part T; the older parts use masks < 128)
+    r.overlap = mask & 64; r.charge = mask & 128;   // GH-157
+    r.tiebreak = mask & 256;   // GH-162 (Part T and the tiebreak driver configurations; the older parts use masks < 128)
     return r;
 }
-static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 128;
+static const int RM_CHG = 128;   // GH-157
+static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule set (excl,pack,orbf,parity,leaf,overlap,charge)
+static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 256;   // RM_TB: GH-162
 static const char* rules_name(int mask) {
-    static char buf[64];
+    static char buf[128];
     distcc::Rules r = rules_of(mask);
     snprintf(buf, sizeof(buf), "%s", distcc::rules_string(r).c_str());
     return buf;
@@ -186,15 +197,21 @@ static const char* rules_name(int mask) {
 
 // ladder 1..dh for one configuration; returns true if every verdict matches; nodes summed into *nodes
 static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
-                      const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why) {
+                      const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why,
+                      int lbminr = 3, uint64_t* lbprunes = NULL, int lbgap = 1000) {
     distcc::Rules r = rules_of(rmask);
     const distcc::SparseRows Kr = to_rows(K, n);
     distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
+    hs.set_lb_minr(lbminr);
+    hs.set_lb_gap(lbgap);
+    hs.set_lb_raise(seed != 2 || mutant != 0);   // GH-157: seed 2 ladders run the charge without the raise
+    hs.set_lb_auto(seed == 1 && mutant == 0 ? 60 : 0, 1);   // GH-157: seed 1 ladders exercise the auto switch-off (any level)
     const int top = dh < 0 ? n : dh;
     char buf[160];
     for (int w = 1; w <= top; w++) {
         distcc::LevelResult res = hs.run_level(w);
         if (nodes) *nodes += res.nodes;
+        if (lbprunes) *lbprunes += res.chgprune;
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
         if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
@@ -325,6 +342,19 @@ static std::vector<Mask> quotient_basis(const std::vector<Mask>& A, const std::v
     return out;
 }
 
+// GH-157: brute-force minimum hitting set of k sets (bit masks over nq <= 14 qubits); -1 if a set is empty
+static int brute_tau(const std::vector<Mask>& sets, int nq) {
+    for (Mask s : sets) if (!s) return -1;
+    int best = nq + 1;
+    for (Mask x = 0; x < (1u << nq); x++) {
+        if (popc(x) >= best) continue;
+        bool ok = true;
+        for (Mask s : sets) if (!(s & x)) { ok = false; break; }
+        if (ok) best = popc(x);
+    }
+    return best;
+}
+
 // GH-148 Part G (a): optimum of "maximize true qubits" under one overlap row of weight w (forked child; -1 on failure)
 static long long ovl_encoding_opt(int w, int enc) {
     int fd[2];
@@ -383,6 +413,60 @@ int main(int argc, char** argv) {
     const int NA = argc > 1 ? atoi(argv[1]) : 300;   // part A instances
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
     int fails = 0;
+
+    // ---------------- Part I (a), GH-157: bound functions vs brute force ----------------
+    const unsigned long long rng_saved = rng_state;   // GH-157: Part I (a) must not shift the instance stream of the other parts
+    long pi_inst = 0, pi_bad = 0, pi_tight_c = 0, pi_gain_c = 0, pi_m15 = 0;
+    {
+        distcc::LbWork lw;
+        lw.reset(16, 16);
+        for (int inst = 0; inst < 20000; inst++) {
+            const int nq = 3 + (int)rnd(12), k = 1 + (int)rnd(10);
+            const bool deg2 = inst % 3 == 0;
+            std::vector<Mask> sets;
+            std::vector<int> deg((size_t)nq, 0);
+            for (int i = 0; i < k; i++) {
+                Mask s = 0;
+                const int sz = 1 + (int)rnd(5);
+                for (int t = 0; t < 3 * sz && popc(s) < sz; t++) {
+                    const int j = (int)rnd((unsigned)nq);
+                    if (deg2 && !(s >> j & 1) && deg[j] >= 2) continue;
+                    if (!(s >> j & 1)) { s |= 1u << j; deg[j]++; }
+                }
+                if (!s && rnd(8)) { i--; continue; }   // empty sets are rare (dead-node path)
+                sets.push_back(s);
+            }
+            const int kk = (int)sets.size();
+            std::vector<uint32_t> rs(1, 0), rq;
+            for (Mask s : sets) { for (int j = 0; j < nq; j++) if (s >> j & 1) rq.push_back((uint32_t)j); rs.push_back((uint32_t)rq.size()); }
+            rq.push_back(0);
+            const int tau = brute_tau(sets, nq);
+            int p = 0;   // greedy disjoint packing in index order (the pack rule)
+            { Mask m = 0; for (Mask s : sets) if (s && !(s & m)) { p++; m |= s; } }
+            pi_inst++;
+            const int bc = distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 0);
+            const int bl = distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 0, false);   // local-degree only
+            bool bad = false;
+            if (tau < 0) bad = bc != distcc::LB_DEAD || bl != distcc::LB_DEAD;
+            else {
+                if (bc > tau || p > tau || bl > bc) bad = true;
+                if (bc == tau) pi_tight_c++;
+                if (bc > p) pi_gain_c++;
+                for (int r = 0; r <= kk + 1; r++) {   // early-exit contract
+                    const int c2 = distcc::lb_charge(&rs[0], &rq[0], kk, r, lw, 0);
+                    if ((c2 > r) != (bc > r) || (c2 > r && c2 > bc)) bad = true;
+                }
+                if (distcc::lb_charge(&rs[0], &rq[0], kk, -1, lw, 15) > tau) pi_m15++;
+            }
+            if (bad) { pi_bad++; fails++; if (pi_bad <= 10) fprintf(stderr, "CC_FAIL partI(a) inst=%d nq=%d k=%d tau=%d pack=%d charge=%d local=%d\n", inst, nq, kk, tau, p, bc, bl); }
+        }
+    }
+    rng_state = rng_saved;
+    printf("partI(a) (GH-157 charge): %ld hitting-set instances, %ld bad (charge = tau on %ld; charge > pack on %ld)\n",
+           pi_inst, pi_bad, pi_tight_c, pi_gain_c);
+    printf("partI(a) mutant 15 (charge + 1/D) exceeds tau on %ld instances\n", pi_m15);
+    if (pi_m15 == 0 || pi_gain_c == 0) { fprintf(stderr, "CC_FAIL GH-157 bound expectations not met\n"); fails++; }
+    long ib_runs = 0, ib_bad = 0, ib_prunes = 0, ib_m15_runs = 0, ib_m15_bad = 0;
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
@@ -461,7 +545,30 @@ int main(int argc, char** argv) {
                 mut_runs[mt]++;
                 if (!ladder_ok(H, G, K, n, dh, orb, rm, 0, mt, NULL, why)) mut_bad[mt]++;
             }
+        // Part I (b), GH-157: charge on top of every base subset, three gate configurations; mutant 15
+        for (int rm = 0; rm < RM_NSUB; rm++)
+            for (int lb = 1; lb <= 3; lb++) {
+                const int rmx = rm | RM_CHG;
+                static const int gaps[4] = {0, 1000, 0, 1};
+                for (uint64_t seed = 0; seed < 3; seed++) {
+                    std::string why;
+                    uint64_t pr = 0;
+                    ib_runs++;
+                    if (!ladder_ok(H, G, K, n, dh, orb, rmx, seed, 0, NULL, why, lb, &pr, gaps[lb])) {
+                        ib_bad++; fails++;
+                        if (ib_bad <= 10) fprintf(stderr, "CC_FAIL partI(b) inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n, rules_name(rmx),
+                                                  (unsigned long long)seed, why.c_str());
+                    }
+                    ib_prunes += (long)pr;
+                }
+                std::string why;
+                if (lb == 1) { ib_m15_runs++; if (!ladder_ok(H, G, K, n, dh, orb, rmx, 0, 15, NULL, why, 1)) ib_m15_bad++; }
+            }
     }
+    printf("partI(b) (GH-157 charge on the Part A halves): %ld ladder runs (128 base subsets x 3 configurations x seeds 0..2), %ld bad, %ld charge prunes\n",
+           ib_runs, ib_bad, ib_prunes);
+    printf("mutant 15 (charge inflated by 1/D): %ld/%ld half ladders wrong\n", ib_m15_bad, ib_m15_runs);
+    if (ib_prunes == 0 || ib_m15_bad == 0) { fprintf(stderr, "CC_FAIL GH-157 mutant/prune expectations not met\n"); fails++; }
     printf("partA: %ld half instances (%ld with verified orbits, %ld with all column weights odd, %ld without any nontrivial element), %ld ladder runs over %d rule subsets x 3 seeds, %ld bad\n",
            a_inst, a_orb, a_odd, a_none, a_runs, RM_NSUB, a_bad);
     printf("partA K (GH-138): %ld basis, %ld low-weight sets, %ld random sets; %ld instances where a minimum element meets a row of K in floor(|g|/2) qubits\n",
@@ -546,23 +653,26 @@ int main(int argc, char** argv) {
         if (!dm.maps.empty()) b_dual++;
         if (!orbits_of(Hz, Gx, n).empty()) b_xorb++;
         b_inst++;
-        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; };
+        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int lbminr; int lbgap; };
         const Cfg cfgs[] = {
-            {"default", RM_NEW, true, false, 0, true}, {"dual-off", RM_NEW, false, false, 0, true}, {"ub-basis", RM_NEW, true, true, 0, true},
-            {"seed1", RM_NEW, true, false, 1, true}, {"seed2", RM_NEW, false, true, 2, true}, {"none", 0, true, false, 0, true},
-            {"mrv", RM_ALL, true, false, 0, true}, {"no-symbreak", RM_NEW, true, false, 0, false},
+            {"default", RM_DEF, true, false, 0, true}, {"dual-off", RM_DEF, false, false, 0, true}, {"ub-basis", RM_DEF, true, true, 0, true},
+            {"seed1", RM_DEF, true, false, 1, true}, {"seed2", RM_DEF, false, true, 2, true}, {"none", 0, true, false, 0, true},
+            {"mrv", RM_ALL | RM_CHG, true, false, 0, true}, {"no-symbreak", RM_DEF, true, false, 0, false}, {"gh152rules", RM_NEW, true, false, 0, true},
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
             {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
-            {"tiebreak", RM_NEW | RM_TB, true, false, 0, true}, {"tiebreak-dual-off-seed1", RM_NEW | RM_TB, false, false, 1, true},   // GH-162
-            {"tiebreak-mrv-seed2", RM_ALL | RM_TB, true, true, 2, true}, {"tiebreak-index", 1 | 2 | 64 | RM_TB, false, false, 3, false},
-            {"tiebreak-overlap-orbf", 4 | 64 | RM_TB, true, false, 0, true},
+            {"tiebreak", RM_DEF | RM_TB, true, false, 0, true}, {"tiebreak-dual-off-seed1", RM_DEF | RM_TB, false, false, 1, true},   // GH-162 (default rules + tiebreak)
+            {"tiebreak-mrv-seed2", RM_ALL | RM_CHG | RM_TB, true, true, 2, true}, {"tiebreak-index", 1 | 2 | 64 | RM_TB, false, false, 3, false},
+            {"tiebreak-overlap-orbf", 4 | 64 | RM_TB, true, false, 0, true}, {"tiebreak-nocharge", RM_NEW | RM_TB, true, false, 1, true},
+            {"charge", RM_NEW | RM_CHG, true, false, 0, true, 3, 0}, {"charge-minr1-gapinf", RM_NEW | RM_CHG, false, true, 1, true, 1, 1000},
+            {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1, 1}, {"charge-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_CHG, true, false, 0, true, 1, 0},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
             o.ub_search = false;   // Part B tests the ladder; -ub-search is on by default since 2026-10-23 (Part E/F test it)
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
+            if (c.lbminr) { o.lb_minr = c.lbminr; o.lb_gap = c.lbgap; }   // GH-157
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
             if (r.d == -1) b_traps++;
@@ -1180,12 +1290,12 @@ int main(int argc, char** argv) {
         }
         struct HCfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int mutant; };
         const HCfg cfgs[] = {
-            {"aut", RM_NEW, true, false, 0, true, 0}, {"aut-seed1", RM_NEW, true, false, 1, true, 0},
+            {"aut", RM_DEF, true, false, 0, true, 0}, {"aut-seed1", RM_NEW, true, false, 1, true, 0}, {"aut-charge-seed2", RM_DEF, false, false, 2, true, 0},
             {"aut-dual-off", RM_NEW, false, false, 0, true, 0}, {"aut-no-symbreak", RM_NEW, true, false, 0, false, 0},
             {"aut-oldrules", RM_OLD, true, false, 0, true, 0}, {"aut-133-seed2", RM_133, false, true, 2, true, 0},
             {"aut-mrv", RM_ALL, true, false, 0, true, 0}, {"aut-overlap-only", 64, true, false, 0, true, 0},
             {"aut-orbf-only", 4, true, true, 3, true, 0}, {"aut-excl-orbf", 1 | 4, false, false, 0, true, 0},
-            {"aut-tiebreak", RM_NEW | RM_TB, true, false, 0, true, 0}, {"aut-tiebreak-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0},   // GH-162
+            {"aut-tiebreak", RM_DEF | RM_TB, true, false, 0, true, 0}, {"aut-tiebreak-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0},   // GH-162
             {"aut-tiebreak-excl-orbf-overlap", 1 | 4 | 64 | RM_TB, false, false, 2, true, 0},
             {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
             {"mutant14", RM_NEW, true, false, 0, true, 14},
@@ -1297,8 +1407,8 @@ int main(int argc, char** argv) {
             }
         if (bind) { t_bind++; if (!orb.empty()) t_bind_orb++; }
         for (int sub = 0; sub < 64; sub++) {
-            const int rm = sub | 64 | RM_TB;
             for (uint64_t seed = 0; seed < 4; seed++) {
+                const int rm = sub | 64 | RM_TB | (seed & 1 ? RM_CHG : 0);   // odd seeds add the default rule charge (GH-157)
                 std::string why;
                 t_runs++;
                 if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, 0, NULL, why)) {
@@ -1309,6 +1419,7 @@ int main(int argc, char** argv) {
             }
             for (int mt = 17; mt <= 18; mt++)
                 for (uint64_t seed = 0; seed < 4; seed++) {
+                    const int rm = sub | 64 | RM_TB | (seed & 1 ? RM_CHG : 0);
                     std::string why;
                     mut_runs[mt]++;
                     if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, mt, NULL, why)) { mut_bad[mt]++; if (mt == 18 && !orb.empty() && (sub & 4)) t_m18_orb++; }
@@ -1316,7 +1427,7 @@ int main(int argc, char** argv) {
         }
     }
     printf("GH-162 partT: %ld half instances (%ld with orbits, %ld of them hidden -cc-aut orbits; %ld all-odd; %ld with a weight-2 row in K), "
-           "%ld where the cut removes a minimum element (%ld with orbits), %ld ladder runs (64 rule subsets with overlap,tiebreak x 4 seeds), %ld bad\n",
+           "%ld where the cut removes a minimum element (%ld with orbits), %ld ladder runs (64 rule subsets with overlap,tiebreak x 4 seeds; charge on seeds 1 and 3), %ld bad\n",
            t_inst, t_orb, t_hidden, t_odd, t_k2, t_bind, t_bind_orb, t_runs, t_bad);
     printf("mutant 17 (tiebreak without the first(g) exemption: naive tie cut): %ld/%ld half ladders wrong\n", mut_bad[17], mut_runs[17]);
     printf("mutant 18 (tiebreak order without the seed first: orbit-incompatible): %ld/%ld half ladders wrong (%ld with orbit seeds)\n",
