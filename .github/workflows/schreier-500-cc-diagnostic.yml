@@ -1,41 +1,23 @@
-name: PI-authorized Schreier500 CC diagnosis
+name: Schreier500 diagnosis retained contracts
 
 on:
   push:
     branches: [codex/schreier-tanner-library]
     paths:
-      - '.github/workflows/schreier-500-cc-diagnostic.yml'
-      - 'optimization/experiments/GH-202/diagnostic/cc500.py'
+      - 'optimization/experiments/GH-202/diagnostic/**'
+      - 'optimization/experiments/GH-202/raw/authorized-cc500/**'
       - 'tests/test_schreier_cc500_diagnostic.py'
 
 permissions:
   contents: read
 
 jobs:
-  cc500-only:
+  retained-cc500:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-      - name: Build original unchanged solver
-        run: make --jobs=2 bin/distqldpc
-      - name: Seven no-solver input and interpretation contracts
+      - name: Eight no-solver frozen-input and diagnostic contracts
         run: python3 tests/test_schreier_cc500_diagnostic.py
-      - name: Exactly one PI-authorized CC500 short diagnosis
-        run: python3 optimization/experiments/GH-202/diagnostic/cc500.py --ci --out /tmp/gh202-cc500
-      - name: Retain all diagnostic evidence even on failure
-        if: always()
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p=Path('/tmp/gh202-cc500')
-          print('GH202_CC500_EVIDENCE_JSON='+json.dumps({f.name:f.read_text() for f in p.glob('*') if f.is_file()},separators=(',',':')))
-          PY
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: gh202-authorized-cc500
-          path: /tmp/gh202-cc500/
-          if-no-files-found: warn
-          retention-days: 14
+      - name: Replay original MaxSAT and authorized CC words only
+        run: python3 optimization/experiments/GH-202/diagnostic/replay_cc500.py
