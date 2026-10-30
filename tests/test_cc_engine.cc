@@ -64,8 +64,13 @@
 //   symmetry) with orbits from the Tanner generators under the GF(2) checks, all 128 rule subsets x seeds 0..2 vs brute force;
 //   Part H = driver with -cc-aut=on on relabeled hypergraph products (hidden transpose XZ duality) and relabeled random codes;
 //   mutants 13 (candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and 14 (swap map / identity used as dual map
-//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT]]]]].
+//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT [NR]]]]]].
 // GH-162 (rule tiebreak): Part T (half level, below), and tiebreak driver configurations in Parts B and H.
+// GH-183 (-cc-roworder=bfs, -cc-tbbase=asc): Part R (half level, below): every subset of {excl, pack, orbf, mrv, parity, leaf}
+//   x {no overlap, overlap, overlap+tiebreak} with the reversed-BFS row order, x seeds 0..3, plus the ascending tiebreak base
+//   order under both row orders, vs brute force (witnesses checked in GF(2)); the bfs order must use every nonempty row
+//   (rows_used). Mutants 19 (the order drops a row) and 20 (no BFS restart: rows unreachable from the seed dropped) must give
+//   wrong ladders. Driver configurations with roworder bfs / tbbase asc in Parts B and H.
 // Part G (GH-148, -stab-overlap on the MaxSAT path): (a) encoding check: on one row g of weight w = 1..14 with the
 //   objective "maximize the true qubits" (soft clauses x_i), MaxCDCL's optimum must be w - floor(|g|/2) for the
 //   binomial and the sequential-counter encodings and the native MaxCDCL propagator (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
@@ -198,10 +203,12 @@ static const char* rules_name(int mask) {
 // ladder 1..dh for one configuration; returns true if every verdict matches; nodes summed into *nodes
 static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
                       const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, uint64_t* nodes, std::string& why,
-                      int lbminr = 3, uint64_t* lbprunes = NULL, int lbgap = 1000) {
+                      int lbminr = 3, uint64_t* lbprunes = NULL, int lbgap = 1000,
+                      int roworder = distcc::ROWORDER_INDEX, bool tb_asc = false, int* rows_used = NULL) {
     distcc::Rules r = rules_of(rmask);
     const distcc::SparseRows Kr = to_rows(K, n);
-    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr);
+    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr, roworder, tb_asc);   // GH-183: row order, tb base
+    if (rows_used) *rows_used = hs.rows_used();
     hs.set_lb_minr(lbminr);
     hs.set_lb_gap(lbgap);
     hs.set_lb_raise(seed != 2 || mutant != 0);   // GH-157: seed 2 ladders run the charge without the raise
@@ -470,7 +477,7 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[19] = {0}, mut_runs[19] = {0};
+    long mut_bad[21] = {0}, mut_runs[21] = {0};
     long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
@@ -653,7 +660,7 @@ int main(int argc, char** argv) {
         if (!dm.maps.empty()) b_dual++;
         if (!orbits_of(Hz, Gx, n).empty()) b_xorb++;
         b_inst++;
-        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int lbminr; int lbgap; };
+        struct Cfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int lbminr; int lbgap; int ro; bool asc; };   // GH-183: ro, asc
         const Cfg cfgs[] = {
             {"default", RM_DEF, true, false, 0, true}, {"dual-off", RM_DEF, false, false, 0, true}, {"ub-basis", RM_DEF, true, true, 0, true},
             {"seed1", RM_DEF, true, false, 1, true}, {"seed2", RM_DEF, false, true, 2, true}, {"none", 0, true, false, 0, true},
@@ -664,6 +671,9 @@ int main(int argc, char** argv) {
             {"tiebreak", RM_DEF | RM_TB, true, false, 0, true}, {"tiebreak-dual-off-seed1", RM_DEF | RM_TB, false, false, 1, true},   // GH-162 (default rules + tiebreak)
             {"tiebreak-mrv-seed2", RM_ALL | RM_CHG | RM_TB, true, true, 2, true}, {"tiebreak-index", 1 | 2 | 64 | RM_TB, false, false, 3, false},
             {"tiebreak-overlap-orbf", 4 | 64 | RM_TB, true, false, 0, true}, {"tiebreak-nocharge", RM_NEW | RM_TB, true, false, 1, true},
+            {"tiebreak-mrv-bfs", RM_ALL | RM_CHG | RM_TB, true, false, 0, true, 0, 0, 1, false}, {"tiebreak-mrv-bfs-asc-dual-off-seed1", RM_ALL | RM_TB, false, false, 1, true, 0, 0, 1, true},   // GH-183
+            {"mrv-bfs-index-seed2", RM_ALL, true, true, 2, false, 0, 0, 1, false}, {"tiebreak-mrv-asc", RM_ALL | RM_CHG | RM_TB, true, false, 3, true, 0, 0, 0, true},
+            {"bfs-oldrules", RM_OLD, false, false, 0, true, 0, 0, 1, false}, {"charge-mrv-bfs-minr1", RM_ALL | RM_CHG, false, false, 1, true, 1, 1, 1, false},
             {"charge", RM_NEW | RM_CHG, true, false, 0, true, 3, 0}, {"charge-minr1-gapinf", RM_NEW | RM_CHG, false, true, 1, true, 1, 1000},
             {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1, 1}, {"charge-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_CHG, true, false, 0, true, 1, 0},
         };
@@ -673,6 +683,7 @@ int main(int argc, char** argv) {
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
             if (c.lbminr) { o.lb_minr = c.lbminr; o.lb_gap = c.lbgap; }   // GH-157
+            o.roworder = c.ro; o.tb_asc = c.asc;   // GH-183
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
             if (r.d == -1) b_traps++;
@@ -1288,7 +1299,7 @@ int main(int argc, char** argv) {
                 h_newdual++;
             if (find_half_symmetry(mHz, mGx, &ar.gens).reps.size() < find_half_symmetry(mHz, mGx).reps.size()) h_coarser++;
         }
-        struct HCfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int mutant; };
+        struct HCfg { const char* name; int rmask; bool dual; bool ubb; uint64_t seed; bool symbreak; int mutant; int ro; bool asc; };   // GH-183: ro, asc
         const HCfg cfgs[] = {
             {"aut", RM_DEF, true, false, 0, true, 0}, {"aut-seed1", RM_NEW, true, false, 1, true, 0}, {"aut-charge-seed2", RM_DEF, false, false, 2, true, 0},
             {"aut-dual-off", RM_NEW, false, false, 0, true, 0}, {"aut-no-symbreak", RM_NEW, true, false, 0, false, 0},
@@ -1297,6 +1308,7 @@ int main(int argc, char** argv) {
             {"aut-orbf-only", 4, true, true, 3, true, 0}, {"aut-excl-orbf", 1 | 4, false, false, 0, true, 0},
             {"aut-tiebreak", RM_DEF | RM_TB, true, false, 0, true, 0}, {"aut-tiebreak-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0},   // GH-162
             {"aut-tiebreak-excl-orbf-overlap", 1 | 4 | 64 | RM_TB, false, false, 2, true, 0},
+            {"aut-tiebreak-mrv-bfs", RM_ALL | RM_CHG | RM_TB, true, false, 0, true, 0, 1, false}, {"aut-tiebreak-mrv-bfs-asc-seed1-dual-off", RM_ALL | RM_TB, false, false, 1, true, 0, 1, true},   // GH-183
             {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
             {"mutant14", RM_NEW, true, false, 0, true, 14},
         };
@@ -1306,6 +1318,7 @@ int main(int argc, char** argv) {
             o.aut = true;
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed; o.mutant = c.mutant;
+            o.roworder = c.ro; o.tb_asc = c.asc;   // GH-183
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             const bool ok = run_ok(r, d);
             if (c.mutant == 13) { h_m13_runs++; if (!ok) h_m13_bad++; continue; }
@@ -1434,6 +1447,133 @@ int main(int argc, char** argv) {
            mut_bad[18], mut_runs[18], t_m18_orb);
     if (NT > 0 && (t_bind == 0 || t_bind_orb == 0)) { fprintf(stderr, "CC_FAIL GH-162 partT: the cut never binds\n"); fails++; }
     if (NT > 0 && (mut_bad[17] == 0 || mut_bad[18] == 0)) { fprintf(stderr, "CC_FAIL GH-162 mutant expectations not met\n"); fails++; }
+
+    // ---------------- GH-183 Part R: reversed-BFS row order (-cc-roworder=bfs) and the ascending tiebreak base order ----------------
+    // Halves generated as in Part T (planted shift / relabeled planted shift with -cc-aut orbits / none; every fourth all-odd;
+    // K by the four Part T recipes); every fifth (n >= 6) has each row split into its parts on {0..n/2-1} and on the rest, so
+    // the Tanner graph is disconnected (the BFS restart is exercised). For every subset of {excl, pack, orbf, mrv, parity, leaf} x {overlap off, overlap,
+    // overlap+tiebreak} x seeds 0..3: the ladder with roworder bfs vs brute force; for the tiebreak masks also tbbase asc with
+    // roworder bfs and index. Every bfs search must use every nonempty row of H (a permutation; rows_used). Counted: instances
+    // where the bfs order changes the node count of some ladder (the option is not vacuous). Mutants 19 (the bfs order drops its
+    // last row) and 20 (the BFS is not restarted: rows unreachable from the seed are dropped) must give wrong ladders.
+    const int NR = argc > 6 ? atoi(argv[6]) : 300;
+    long r_inst = 0, r_orb = 0, r_runs = 0, r_bad = 0, r_perm_bad = 0, r_diff = 0, r_disc = 0;
+    for (int inst = 0; inst < NR; inst++) {
+        const int n = 4 + (int)rnd(15);
+        const int kind = inst % 3;
+        std::vector<std::vector<int> > gens;
+        if (kind != 2) {
+            std::vector<int> divs;
+            for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+            const int L = divs[rnd((unsigned)divs.size())];
+            gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+        }
+        std::vector<Mask> h0, g0;
+        const int nh = 1 + (int)rnd((unsigned)(n / 2 + 2)), ng = 1 + (int)rnd(3);
+        for (int k = 0; k < nh; k++) h0.push_back(rand_vec(n, 2, 5));
+        for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+        std::vector<Mask> H = closure(h0, gens, 64), G = closure(g0, gens, 32);
+        if (G.empty()) G.push_back(1u << rnd(n));
+        if (inst % 5 == 4 && n >= 6) {   // GH-183: split every row into its parts on {0..n/2-1} and the rest (disconnected Tanner graph)
+            const Mask A = (1u << (n / 2)) - 1;
+            std::vector<Mask> H2;
+            for (Mask h : H) { if (h & A) H2.push_back(h & A); if (h & ~A) H2.push_back(h & ~A); }
+            std::sort(H2.begin(), H2.end()); H2.erase(std::unique(H2.begin(), H2.end()), H2.end());
+            H = H2;
+        }
+        if (inst % 4 == 0) make_columns_odd(H, n);
+        if (kind == 1) {
+            std::vector<int> rho(n);
+            for (int i = 0; i < n; i++) rho[i] = i;
+            for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+            for (Mask& v : H) v = perm_apply(rho, v);
+            for (Mask& v : G) v = perm_apply(rho, v);
+        }
+        const int dh = half_opt(H, G, n);
+        std::vector<Mask> kerHG, basis, K;
+        {
+            Span sp;
+            for (Mask v = 1; v < (1u << n); v++) {
+                if (!in_kernel(H, v) || detected(G, v)) continue;
+                kerHG.push_back(v);
+                if (sp.add(v)) basis.push_back(v);
+            }
+        }
+        const int kk = (inst / 3) % 4;
+        if (kk == 0) K = basis;
+        else if (kk == 1) { for (Mask v : kerHG) if (popc(v) <= 6 && K.size() < 60) K.push_back(v); }
+        else if (kk == 2) { for (Mask v : kerHG) if (popc(v) <= 8 && !odd(v) && K.size() < 80) K.push_back(v); }
+        else if (!basis.empty())
+            for (int t = 0, T = 1 + (int)rnd(8); t < T; t++) {
+                Mask v = 0;
+                for (Mask b : basis) if (rnd(2)) v ^= b;
+                if (v) K.push_back(v);
+            }
+        std::vector<int> orb;
+        if (kind == 0) orb = orbits_of(H, G, n);
+        else if (kind == 1) {
+            const distcc::SparseRows Hr = to_rows(H, n), Gr = to_rows(G, n);
+            const std::vector<const distcc::SparseRows*> cls = {&Hr, &Gr};
+            const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, false);
+            const HalfSymInfo ext = find_half_symmetry(to_matrix(H, n), to_matrix(G, n), &ar.gens);
+            if ((int)ext.reps.size() < n) orb = ext.orbit_of;
+        }
+        int nonempty = 0;
+        for (Mask h : H) if (h) nonempty++;
+        {   // Tanner graph of the nonempty rows disconnected from qubit 0's component (mutant 20 can act)
+            std::vector<char> seenr(H.size(), 0); Mask reach = 1u; bool grow = true;
+            while (grow) { grow = false; for (size_t i = 0; i < H.size(); i++) if (!seenr[i] && (H[i] & reach)) { seenr[i] = 1; reach |= H[i]; grow = true; } }
+            for (size_t i = 0; i < H.size(); i++) if (H[i] && !seenr[i]) { r_disc++; break; }
+        }
+        r_inst++; if (!orb.empty()) r_orb++;
+        bool diff = false;
+        for (int sub = 0; sub < 64; sub++)
+            for (int ov = 0; ov < 3; ov++) {
+                const int rm0 = sub | (ov >= 1 ? 64 : 0) | (ov == 2 ? RM_TB : 0);
+                for (uint64_t seed = 0; seed < 4; seed++) {
+                    const int rm = rm0 | (seed & 1 ? RM_CHG : 0);   // odd seeds add the default rule charge (GH-157)
+                    struct V { int ro; bool asc; };
+                    const V vs[] = {{distcc::ROWORDER_BFS, false}, {distcc::ROWORDER_BFS, true}, {distcc::ROWORDER_INDEX, true}};
+                    const int nv = ov == 2 ? 3 : 1;
+                    for (int vi = 0; vi < nv; vi++) {
+                        std::string why; int used = -1; uint64_t nodes = 0;
+                        r_runs++;
+                        if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, 0, &nodes, why, 3, NULL, 1000, vs[vi].ro, vs[vi].asc, &used)) {
+                            r_bad++; fails++;
+                            if (r_bad <= 10) fprintf(stderr, "CC_FAIL GH-183 partR inst=%d n=%d kind=%d rules=%s seed=%llu ro=%d asc=%d: %s\n", inst, n, kind,
+                                                     rules_name(rm), (unsigned long long)seed, vs[vi].ro, (int)vs[vi].asc, why.c_str());
+                        }
+                        if (vs[vi].ro == distcc::ROWORDER_BFS && used != nonempty) {
+                            r_perm_bad++; fails++;
+                            if (r_perm_bad <= 5) fprintf(stderr, "CC_FAIL GH-183 partR inst=%d: bfs order uses %d of %d rows\n", inst, used, nonempty);
+                        }
+                        if (vi == 0 && !diff && (sub & 10) && dh > 1) {   // pack or mrv: compare nodes with the index order
+                            std::string w2; uint64_t n2 = 0;
+                            ladder_ok(H, G, K, n, dh, orb, rm, seed, 0, &n2, w2);
+                            if (n2 != nodes) diff = true;
+                        }
+                    }
+                }
+                if (sub % 4 == 0)   // mutants on a quarter of the subsets, seeds 0..1
+                    for (int mt = 19; mt <= 20; mt++)
+                        for (uint64_t seed = 0; seed < 2; seed++) {
+                            std::string why; int used = -1;
+                            mut_runs[mt]++;
+                            const int rm = rm0 | (seed & 1 ? RM_CHG : 0);
+                            const bool ok = ladder_ok(H, G, K, n, dh, orb, rm, seed, mt, NULL, why, 3, NULL, 1000, distcc::ROWORDER_BFS, false, &used);
+                            if (!ok) mut_bad[mt]++;
+                        }
+            }
+        if (diff) r_diff++;
+    }
+    printf("GH-183 partR: %ld half instances (%ld with orbits, %ld with rows unreachable from qubit 0), %ld ladder runs (64 rule subsets x "
+           "{-, overlap, overlap+tiebreak} x 4 seeds with roworder bfs, charge on seeds 1 and 3; tiebreak also tbbase asc under bfs and index), %ld bad; bfs orders "
+           "not using every row %ld; instances where bfs changes the node count %ld\n",
+           r_inst, r_orb, r_disc, r_runs, r_bad, r_perm_bad, r_diff);
+    printf("mutant 19 (bfs order drops a row): %ld/%ld half ladders wrong\n", mut_bad[19], mut_runs[19]);
+    printf("mutant 20 (bfs without restart: unreachable rows dropped): %ld/%ld half ladders wrong\n", mut_bad[20], mut_runs[20]);
+    if (NR > 0 && r_diff == 0) { fprintf(stderr, "CC_FAIL GH-183 partR: the bfs order never changes the search\n"); fails++; }
+    if (NR > 0 && (mut_bad[19] == 0 || mut_bad[20] == 0)) { fprintf(stderr, "CC_FAIL GH-183 mutant expectations not met\n"); fails++; }
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);

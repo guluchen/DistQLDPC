@@ -96,9 +96,13 @@ struct DriverOptions {
                                 driver itself does not read it. Test mutants (wrapper): 13 = candidates kept without the
                                 GF(2) checks plus the cyclic shift i -> i+1 mod n (not an automorphism in general); 14 = swap map used without the check, the identity
                                 when none was found. */
+    int roworder;            /* GH-183 -cc-roworder=index|bfs (default index): internal row order of each half search, i.e. the
+                                packing scan order and the mrv tie-break (cc_half.h); a row permutation. Mutants 19 / 20 (bfs only):
+                                the order drops a row / is not restarted for rows unreachable from the seed */
+    bool tb_asc;             /* GH-183 -cc-tbbase=desc|asc (default desc): base order of the tiebreak rule (test variant) */
     DriverOptions() : lb_minr(3), lb_gap(0), lb_raise(true), lb_auto(40), dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0),
-                      aut(true) {}
+                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).

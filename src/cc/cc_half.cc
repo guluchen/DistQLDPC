@@ -31,6 +31,53 @@ void shuffle_ints(std::vector<int>& v, uint64_t& s) {
     }
 }
 
+/* GH-183 (-cc-roworder=bfs): the seed-anchored reversed BFS order of the rows (see cc_half.h). rows: the input row list
+ * (original row ids, in index order); new_of: relabeled label of each original qubit; the start qubit is relabeled label
+ * 0. Returns the rows in the new order. Mutant 19 drops the last row of the result, mutant 20 does not restart the BFS. */
+std::vector<int> reversed_bfs_rows(const SparseRows& H, const std::vector<int>& rows, const std::vector<int>& new_of, int n,
+                                   int mutant) {
+    const int mr = (int)rows.size();
+    std::vector<std::vector<int> > rs((size_t)mr), cols((size_t)n);
+    for (int i = 0; i < mr; i++) {
+        const std::vector<int>& src = H.rows[(size_t)rows[i]];
+        for (size_t t = 0; t < src.size(); t++)
+            if (src[t] >= 0 && src[t] < n) rs[i].push_back(new_of[src[t]]);   /* range is checked by the caller */
+        std::sort(rs[i].begin(), rs[i].end());
+        rs[i].erase(std::unique(rs[i].begin(), rs[i].end()), rs[i].end());
+        for (size_t t = 0; t < rs[i].size(); t++) cols[(size_t)rs[i][t]].push_back(i);   /* ascending row index */
+    }
+    std::vector<int> order;
+    order.reserve((size_t)mr);
+    std::vector<char> seen((size_t)mr, 0);
+    for (size_t t = 0; t < cols[0].size(); t++) {
+        const int i = cols[0][t];
+        if (!seen[i]) { seen[i] = 1; order.push_back(i); }
+    }
+    size_t head = 0;
+    for (int start = -1; start < mr; start++) {
+        if (start >= 0) {
+            if (mutant == 20) break;   /* mutant 20: no restart, unreachable rows are lost */
+            if (seen[start]) continue;
+            seen[start] = 1;
+            order.push_back(start);
+        }
+        while (head < order.size()) {
+            const int j = order[head++];
+            for (size_t a = 0; a < rs[j].size(); a++) {
+                const std::vector<int>& cr = cols[(size_t)rs[j][a]];
+                for (size_t b = 0; b < cr.size(); b++)
+                    if (!seen[cr[b]]) { seen[cr[b]] = 1; order.push_back(cr[b]); }
+            }
+        }
+    }
+    std::reverse(order.begin(), order.end());
+    if (mutant == 19 && !order.empty()) order.pop_back();   /* mutant 19: the last row (a row of the seed) is dropped */
+    std::vector<int> out;
+    out.reserve(order.size());
+    for (size_t i = 0; i < order.size(); i++) out.push_back(rows[(size_t)order[i]]);
+    return out;
+}
+
 [[noreturn]] void fatal(const char* msg) {
     fprintf(stderr, "error: cc: %s\n", msg);
     abort();
@@ -39,8 +86,9 @@ void shuffle_ints(std::vector<int>& v, uint64_t& s) {
 } /* namespace */
 
 HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vector<int>& orbit_of,
-                       const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
-    : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
+                       const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K,
+                       int roworder, bool tb_asc)
+    : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant), roworder_(roworder),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ktie_(0), tb_(false), ovtight_(0), ovforbid_(0), lbminr_(3), lbgap_(0), lbauto_(40), lbautomin_(100000), lbany_(false), lbraise_(true), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
@@ -61,6 +109,15 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     for (size_t r = 0; r < H.rows.size(); r++)
         if (!H.rows[r].empty()) rows.push_back((int)r);
     if (relabel_seed != 0) shuffle_ints(rows, rs);
+    if (roworder_ != ROWORDER_INDEX && roworder_ != ROWORDER_BFS) fatal("unknown row order");
+    if (roworder_ == ROWORDER_BFS) {   /* GH-183: internal row index = reversed seed-anchored BFS (a row permutation) */
+        for (size_t i = 0; i < rows.size(); i++) {
+            const std::vector<int>& src = H.rows[(size_t)rows[i]];
+            for (size_t t = 0; t < src.size(); t++)
+                if (src[t] < 0 || src[t] >= n_) fatal("row entry out of range");
+        }
+        rows = reversed_bfs_rows(H, rows, new_of, n_, mutant_);
+    }
     m_ = (int)rows.size();
     mw_ = (m_ + 63) / 64;
     if (mw_ < 1) mw_ = 1;
@@ -240,7 +297,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         tb_ = rules_.tiebreak && mutant_ != 17;
         if (tb_) {
             tbrank_.assign((size_t)n_, 0);
-            for (int q = 0; q < n_; q++) tbrank_[q] = (uint32_t)(n_ - 1 - q);
+            for (int q = 0; q < n_; q++) tbrank_[q] = tb_asc ? (uint32_t)q : (uint32_t)(n_ - 1 - q);   /* GH-183 -cc-tbbase */
         }
         kex_.assign((size_t)nk_, -1);
         kexbase_.assign((size_t)nk_, -1);
