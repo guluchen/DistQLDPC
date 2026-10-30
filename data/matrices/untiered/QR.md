@@ -93,3 +93,36 @@ All inputs stay `_unknown` in untiered. Source claims, finite certificates,
 native bounds and actual words are recorded separately. A source lower-only
 target never requires a word at its lower endpoint. Large missing gates use
 guarded unexecuted server packages; no main/tier/default/QDistSAT changes.
+
+
+## Terminal native results and retained-only completion
+
+Scientific source00f51d54c1a07a6ce20e75ff6b9b4326fa54055c,
+tree1006dbee8b29a17a79aca118820807c76946d82b. Run
+[40993376260](https://github.com/guluchen/DistQLDPC/actions/runs/40993376260)/
+job123860784465 SUCCESS:49Linux units, full physical/certificate/logical
+construction/inventory and20byte reproduction, exactly5defaultMaxSAT+5CC
+short attempts. Original60engine evidence files, complete1017948-character
+job, source/binary/all4input hashes and original audit retained in raw/.
+One identical compiled binary68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a
+for all10 attempts. Source general CI40993376202/job123860784291 SUCCESS;
+data CI40993302471 SUCCESS. No scientific retry or parameter change.
+
+|n,k|Raw MaxSAT|Raw CC|Actual GF2 upper|Finite-certificate interval|
+|---|---|---|---:|---|
+|23,1|7..7 SOLVED|7..7 SOLVED|7|7..7|
+|431,1|3..71 BOUNDED|6..71 BOUNDED|71|23..71|
+|719,1|3..135 BOUNDED|6..135 BOUNDED|135|31..135|
+|1031,1|3..191 BOUNDED|5..199 BOUNDED|191|35..191|
+|2039,1|null/null TIMEOUT_NO_BOUNDS|5..427 BOUNDED|427|47..427|
+
+Every reported upper has an actual word, and every actual word passes GF2
+syndrome/quotient/detector checks. Golay exact7 independently confirmed by
+both complete engines and tiny2048coset. Four large exact distances remain
+unresolved by these searches; reviewed sources supply construction floors,
+not exact/upper claims. No assertion of global openness/novelty. Source floors
+and independently checked finite matrix proof are never substituted into raw
+engine fields. CC1031 reported199 stays199 even though MaxSAT materializes191.
+MaxSAT2039 null/null remains null/null; numeric gate INCOMPLETE. Other four
+numeric gates PASS. Four lower-only source-upper-word gates NOT_APPLICABLE.
+Original raw audit and all20frozen matrices remain byte-identical.

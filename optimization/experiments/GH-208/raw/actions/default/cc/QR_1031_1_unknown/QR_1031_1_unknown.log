@@ -1,0 +1,42 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/QR_1031_1_unknown_Hx.txt
+c Hz: data/matrices/untiered/QR_1031_1_unknown_Hz.txt
+c Gx: data/matrices/untiered/QR_1031_1_unknown_Gx.txt
+c Gz: data/matrices/untiered/QR_1031_1_unknown_Gz.txt
+c Hx: 515 x 1031, Hz: 515 x 1031, Gx: 1 x 1031, Gz: 1 x 1031, logicals: 2
+c cc: dual map detection: 'identity' verified (rank Hz=Hx=515, [Hz;Gx]=[Hx;Gz]=516, cpu 0.020s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 0 generator(s), 1031 qubit orbit(s), group complete, point stabiliser trivial, swap map not searched, 0 test(s) (0 refuted, 0 undecided), work 2090708, cpu 0.033s
+c cc symbreak X: n=1031 candidates=1 verified_generators=1 orbits=1 detect_cpu=0.010s clause=unit
+c cc symbreak X: generator: plain blockshift L=1031
+c cc symbreak X: orbit reps (size): 0(1031)
+c cc: X half: n 1031, rank H 515, rank [H;G] 516, rank S 515: detectors complete, 1 logical(s)
+c cc: Z half: n 1031, rank H 515, rank [H;G] 516, rank S 515: detectors complete, 1 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'identity' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 283 (X 283, Z 283)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 240..276, an even weight present)
+c cc: X half overlap: on (515 stabilizer rows of Hx, weights 516..516, 0 forbidden from the start)
+c cc: X half ub-search: rank H 515, information set 516, triples off, slack 4, li-cap 64, collision stern p 2 l 15 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 207 (iteration 1, wall 0.011s)
+c witness X (ub-search): 8 26 28 31 35 39 42 46 51 52 55 60 63 71 77 78 79 97 98 100 114 115 116 120 121 123 141 144 150 157 176 177 188 191 192 197 204 206 220 229 237 239 249 251 254 263 264 271 276 280 287 289 292 299 302 303 307 311 315 321 327 329 332 342 344 345 353 363 369 373 379 384 385 389 392 414 417 420 424 430 439 441 442 446 451 455 460 463 464 465 468 469 474 478 481 487 489 491 498 501 520 537 538 543 546 547 550 558 561 567 574 575 580 585 586 597 602 606 609 613 622 628 634 648 651 652 669 670 672 674 676 677 686 689 691 704 719 732 737 739 743 748 749 751 753 757 758 766 769 770 774 776 782 783 787 790 796 802 803 805 808 809 815 832 837 839 852 853 858 861 862 878 880 883 884 895 897 901 902 903 905 906 916 937 938 950 954 964 965 968 973 976 979 982 983 989 991 992 997 998 1004 1006 1011 1013 1018 1020 1027
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 3 EMPTY nodes 1 seeds 1 time 0.002s
+c cc: X half level 4 EMPTY nodes 516 seeds 1 time 0.622s
+c cc: ub-search: X half word of weight 199 (iteration 16, wall 20.126s)
+c witness X (ub-search): 1 6 23 33 39 45 46 52 55 62 63 68 74 78 81 102 107 113 114 123 146 150 151 152 158 170 177 188 191 195 198 199 200 213 214 217 221 222 229 237 248 249 254 259 260 263 280 297 307 312 316 317 328 329 333 334 344 345 360 372 376 378 379 381 385 399 404 406 414 427 438 440 444 446 450 455 459 465 468 473 477 489 491 492 498 501 508 511 514 515 518 520 528 533 534 538 539 542 556 559 563 564 569 572 573 577 581 582 583 585 622 623 627 634 641 651 655 656 660 661 671 682 687 688 701 705 717 718 722 724 729 735 737 743 745 747 753 754 760 762 774 784 785 787 790 791 795 797 812 818 824 826 827 828 833 834 838 845 847 848 849 850 854 858 859 869 870 871 872 884 893 895 901 906 909 919 924 925 931 939 940 942 946 951 957 970 975 977 982 987 988 989 991 997 999 1002 1003 1006 1021
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/QR_1031_1_unknown_Hx.txt
+c Hz: data/matrices/untiered/QR_1031_1_unknown_Hz.txt
+c Gx: data/matrices/untiered/QR_1031_1_unknown_Gx.txt
+c Gz: data/matrices/untiered/QR_1031_1_unknown_Gz.txt
+c Hx: 515 x 1031, Hz: 515 x 1031, Gx: 1 x 1031, Gz: 1 x 1031, logicals: 2
+c d_lb: 5
+c d_ub: 199
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

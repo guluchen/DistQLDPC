@@ -1,6 +1,7 @@
 # GH208 prime quadratic-residue CSS targets
 
-Status: LOCAL_CONSTRUCTION_PASS; Linux short gates pending. Continuous library
+Status: CONSTRUCTION_AND_WORD_GATES_PASS; ONE_NUMERIC_GATE_INCOMPLETE;
+final retained-only Linux contracts pending. Continuous library
 objective incomplete. Issue https://github.com/guluchen/DistQLDPC/issues/208,
 hub6513519019. Branch codex/quadratic-residue-library from current
 main6083e662c621f3b66defd434cfae31a028d483c4. No colliding QR issue/branch in
@@ -106,3 +107,71 @@ source floors and actual basis uppers separated. Unresolved: Linux terminal
 bounds, remaining global-family/backlog/server/integration gates, prior source
 holds. Scientific semantics changed:no. PI action required: only future server
 allocation/integration/source decisions, not routine library construction.
+
+
+## Terminal native results and retained-only completion
+
+Scientific source00f51d54c1a07a6ce20e75ff6b9b4326fa54055c,
+tree1006dbee8b29a17a79aca118820807c76946d82b. Run
+[40993376260](https://github.com/guluchen/DistQLDPC/actions/runs/40993376260)/
+job123860784465 SUCCESS:49Linux units, full physical/certificate/logical
+construction/inventory and20byte reproduction, exactly5defaultMaxSAT+5CC
+short attempts. Original60engine evidence files, complete1017948-character
+job, source/binary/all4input hashes and original audit retained in raw/.
+One identical compiled binary68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a
+for all10 attempts. Source general CI40993376202/job123860784291 SUCCESS;
+data CI40993302471 SUCCESS. No scientific retry or parameter change.
+
+|n,k|Raw MaxSAT|Raw CC|Actual GF2 upper|Finite-certificate interval|
+|---|---|---|---:|---|
+|23,1|7..7 SOLVED|7..7 SOLVED|7|7..7|
+|431,1|3..71 BOUNDED|6..71 BOUNDED|71|23..71|
+|719,1|3..135 BOUNDED|6..135 BOUNDED|135|31..135|
+|1031,1|3..191 BOUNDED|5..199 BOUNDED|191|35..191|
+|2039,1|null/null TIMEOUT_NO_BOUNDS|5..427 BOUNDED|427|47..427|
+
+Every reported upper has an actual word, and every actual word passes GF2
+syndrome/quotient/detector checks. Golay exact7 independently confirmed by
+both complete engines and tiny2048coset. Four large exact distances remain
+unresolved by these searches; reviewed sources supply construction floors,
+not exact/upper claims. No assertion of global openness/novelty. Source floors
+and independently checked finite matrix proof are never substituted into raw
+engine fields. CC1031 reported199 stays199 even though MaxSAT materializes191.
+MaxSAT2039 null/null remains null/null; numeric gate INCOMPLETE. Other four
+numeric gates PASS. Four lower-only source-upper-word gates NOT_APPLICABLE.
+Original raw audit and all20frozen matrices remain byte-identical.
+
+No large-case search proof completion is an acceptance prerequisite merely
+because the target is intentionally unknown. No new native lower exceeds the
+existing physical source certificate, and no new exact is claimed. Exactly
+one REQUIRED remaining gate, MaxSAT2039numeric, is in runner/jobs.jsonl.
+Optional3MaxSAT and4CC jobs are further distance research, not failed acceptance
+gates. All queues unexecuted: required6CPUh/6h10wall; optionalMaxSAT18CPUh/
+18h30wall; optionalCC24CPUh/24h40wall; all8 ceilings48CPUh/49h20wall, limits
+not expected runtimes. Every job21600CPU/22200wall seconds/4GiB/seed0/v,
+serial taskset/prlimit/nohup/nullstdin, fresh free-core check and PI allocation.
+The runner checks canonical queues, retained input/case/source/build identities,
+independent physical certificates and actual prior words before any execution;
+source tree identities also work in shallow checkouts. No core allocated.
+
+Retained-only workflowfc607c4e4f15cd01da6cf0000f31d3a9929ca532 replaced all native
+commands before follow-up edits. Local54contracts (49original+5server guards)
+PASS; final three canonical dry queues and unallocated/unregistered/changed/
+dirty-source/ancestor-free guards pass. This static follow-up reproduces
+20matrix bytes and original10logs only, never a native distance search.
+Final Linux54static contracts pending the evidence commit.
+
+Prior300matrix/40source-build files and24prior manifest rows unchanged; new
+matrices/source helpers unchanged after the frozen scientific source. Main,
+tiers, stem names, defaults and QDistSAT untouched; no PR. GH200dimension and
+GH202published6 versus reconstructed8 source holds remain separate and frozen.
+
+What changed:5QRinputs/generator/provenance, independent physical lower proof,
+full logical/GF2 validation, retained native evidence and guarded queues.
+Validation:49originalLinux+54localstatic contracts,42peer refs,20byte rebuild,
+all actual words and native-log replay. Results:knownexact7 and four finite
+intervals23..71/31..135/35..191/47..427. Unresolved:one required numeric gate,
+intended4exact-distance research targets, global mainstream/source/server/
+integration backlog. Scientific semantics changed:no. PI action required:
+future server allocation/integration/source decisions; routine evidence work
+needs no further approval. Whole-library goal remains incomplete.
