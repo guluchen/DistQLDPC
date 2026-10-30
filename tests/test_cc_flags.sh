@@ -436,7 +436,7 @@ fi
 
 # 7g. GH-162 tiebreak (opt-in -cc-rules token; needs overlap): values, -v lines, mutants 17/18 accepted, no line without it
 reject "need -engine=cc or -engine=auto" -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
-for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=21; do
+for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=22; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
@@ -459,7 +459,7 @@ fi
 # 7h. GH-183 -cc-roworder=index|bfs and -cc-tbbase=desc|asc: values, -v lines, mutants 19/20 accepted, no line with the defaults
 reject "need -engine=cc or -engine=auto" -cc-roworder=bfs $L $M
 reject "need -engine=cc or -engine=auto" -cc-tbbase=asc $L $M
-for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=21; do
+for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=22; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-roworder=bfs $L $M
@@ -485,6 +485,39 @@ for a in "" "-cc-roworder=index" "-cc-tbbase=desc" "-cc-roworder=index -cc-tbbas
         echo "FAIL (GH-183: a row-order line with the defaults: $a): rc=$rc" >&2; fails=$((fails + 1))
     fi
 done
+
+# 7i. GH-206 -cc-roworder=auto, -cc-probe=S|switch|stay, -cc-probe-growth=F: values, -v lines, probe lines, mutant 21 accepted
+reject "need -engine=cc or -engine=auto" -cc-roworder=auto $L $M
+reject "need -engine=cc or -engine=auto" -cc-probe=2 $L $M
+reject "need -engine=cc or -engine=auto" -cc-probe-growth=10 $L $M
+for f in -cc-roworder=Auto -cc-probe -cc-probe= -cc-probe=-1 -cc-probe=x -cc-probe=1s -cc-probe=SWITCH -cc-probe-growth= \
+         -cc-probe-growth=0.5 -cc-probe-growth=-2 -cc-probe-growth=x -cc-mutant=22; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+NB="-ub-basis=off -ub-search=off"   # no upper bound before the hit, so a probe is not skipped for lb >= U
+accept 3 "" -engine=cc -cc-roworder=auto $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak -cc-roworder=auto -cc-probe=0 $L $M   # default rules (GH-157) + tiebreak
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-roworder=auto -cc-probe=0 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-roworder=auto -cc-probe=switch -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=auto -cc-probe=stay -cc-tbbase=asc $L $M
+accept 3 "" -engine=cc -cc-roworder=auto -cc-probe=0 -cc-probe-growth=0 $NB $L $M
+accept 3 "" -engine=cc -cc-roworder=auto -cc-probe=0 -cc-probe-growth=1 $NB $L $M
+accept 2 "" -engine=cc -cc-roworder=auto -cc-probe=0.5 -cc-probe-growth=100 $L $C
+vgrep 3 "^c cc: X half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, [0-9]* rows; probe at the first refuted level taking >= 0.1s (one probe))$" \
+    -v -engine=cc -cc-roworder=auto $L $M
+vgrep 3 "^c cc: X half auto probe at level [0-9]*: current A [0-9.]*s, B [A-Z]* nodes [0-9]* [0-9.]*s -> B (A = index, no mrv; B = bfs, mrv)$" \
+    -v -engine=cc -cc-roworder=auto -cc-probe=switch $NB $L $M
+vgrep 3 "^c cc-probe: X level [0-9]* B [A-Z]* nodes [0-9]* time [0-9.]*s A [0-9.]*s -> A$" -cc-stats -engine=cc -cc-roworder=auto -cc-probe=stay $NB $L $M
+vgrep 3 "^c cc: X half row order: auto (.* probe at the first refuted level taking >= 0.5s, then >= 30 x the last probe level)$" \
+    -v -engine=cc -cc-roworder=auto -cc-probe=0.5 -cc-probe-growth=30 $L $M
+runs=$((runs + 1)); run -v -engine=cc -cc-roworder=auto -cc-mutant=21 $L $M
+if ! grep -q "TEST MUTANT 21" <<<"$out" || ! grep -q "^warning: cc: test mutant 21 active" <<<"$err"; then
+    echo "FAIL (GH-206: mutant 21 not reported): rc=$rc" >&2; fails=$((fails + 1))
+fi
+runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-roworder=bfs $L $M
+if [[ $rc -ne 0 ]] || grep -q "probe" <<<"$out"; then
+    echo "FAIL (GH-206: a probe line without auto): rc=$rc" >&2; fails=$((fails + 1))
+fi
 
 echo "test_cc_flags: $runs checks, $fails failed"
 [[ $fails -eq 0 ]] && echo "CC_FLAG_TESTS PASS" || echo "CC_FLAG_TESTS FAIL"

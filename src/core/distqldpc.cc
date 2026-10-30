@@ -2613,14 +2613,33 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 15 && (v < 17 || v > 20))) die("invalid -cc-mutant (0..15, 17..20; test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 15 && (v < 17 || v > 21))) die("invalid -cc-mutant (0..15, 17..21; test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strcmp(argv[i], "-cc-roworder=index"))   /* GH-183 */
             g_cc_opt.roworder = distcc::ROWORDER_INDEX;
         else if (!strcmp(argv[i], "-cc-roworder=bfs"))
             g_cc_opt.roworder = distcc::ROWORDER_BFS;
+        else if (!strcmp(argv[i], "-cc-roworder=auto"))   /* GH-206 */
+            g_cc_opt.roworder = distcc::ROWORDER_AUTO;
+        else if (!strcmp(argv[i], "-cc-probe=switch"))   /* GH-206 (test only) */
+            g_cc_opt.probe_force = 1;
+        else if (!strcmp(argv[i], "-cc-probe=stay"))
+            g_cc_opt.probe_force = 2;
+        else if (!strncmp(argv[i], "-cc-probe=", 10)) {
+            char* end = NULL;
+            const double v = strtod(argv[i] + 10, &end);
+            if (!argv[i][10] || !end || *end || !(v >= 0) || v > 1e9) die("invalid -cc-probe (seconds >= 0, or switch | stay for tests)");
+            g_cc_opt.probe_sec = v;
+            g_cc_opt.probe_force = 0;
+        } else if (!strncmp(argv[i], "-cc-probe-growth=", 17)) {   /* GH-206 */
+            char* end = NULL;
+            const double v = strtod(argv[i] + 17, &end);
+            if (!argv[i][17] || !end || *end || !(v == 0 || (v >= 1 && v <= 1e9))) die("invalid -cc-probe-growth (0, or a factor >= 1)");
+            g_cc_opt.probe_growth = v;
+        } else if (!strncmp(argv[i], "-cc-probe", 9))
+            die("invalid -cc-probe (seconds >= 0, or switch | stay for tests)");
         else if (!strncmp(argv[i], "-cc-roworder", 12))
-            die("invalid -cc-roworder (index | bfs)");
+            die("invalid -cc-roworder (index | bfs | auto)");
         else if (!strcmp(argv[i], "-cc-tbbase=desc"))   /* GH-183 (test variant) */
             g_cc_opt.tb_asc = false;
         else if (!strcmp(argv[i], "-cc-tbbase=asc"))
@@ -2674,8 +2693,11 @@ int main(int argc, char** argv) {
             printf("            pruned (default 40; 0 = never);\n");
             printf("            tiebreak (GH-162, opt-in) = with overlap, an even row g is replaced by g minus its first qubit in\n");
             printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical)\n");
-            printf("            -cc-roworder=index|bfs (GH-183, default index): internal row order = packing scan order and mrv\n");
-            printf("            tie-break; bfs = reversed BFS over the Tanner graph from the rows of the first seed (a row relabeling)\n");
+            printf("            -cc-roworder=index|bfs|auto (GH-183, default index): internal row order = packing scan order and mrv\n");
+            printf("            tie-break; bfs = reversed BFS over the Tanner graph from the rows of the first seed (a row relabeling);\n");
+            printf("            auto (GH-206) = per half, index order without mrv first; a refuted level taking >= S s (-cc-probe=S,\n");
+            printf("            default 0.1) is re-run with the other configuration (bfs + mrv), capped at the first run's time, and\n");
+            printf("            the faster one continues (one probe per half; -cc-probe-growth=F >= 1: re-probes at F x that time)\n");
             printf("            -cc-tbbase=desc|asc (GH-183, default desc): tiebreak base order after the seed (test variant)\n");
             printf("            -cc-dual=on|off (default on: verified XZ-dual map -> X half only)\n");
             printf("            -cc-aut=on|off (default on; GH-152; off = the CC search before GH-152): Tanner-graph automorphism\n");
@@ -2693,7 +2715,7 @@ int main(int argc, char** argv) {
             printf("            -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..15, 17..20)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..15, 17..21)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");

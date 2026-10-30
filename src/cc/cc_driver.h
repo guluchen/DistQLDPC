@@ -100,9 +100,22 @@ struct DriverOptions {
                                 packing scan order and the mrv tie-break (cc_half.h); a row permutation. Mutants 19 / 20 (bfs only):
                                 the order drops a row / is not restarted for rows unreachable from the seed */
     bool tb_asc;             /* GH-183 -cc-tbbase=desc|asc (default desc): base order of the tiebreak rule (test variant) */
+    /* GH-206 -cc-roworder=auto: per searched half, two exact searches -- A (index order, rules without mrv) and B (bfs order,
+     * rules with mrv), both with tb_asc; A searches first. A refuted (EMPTY) level w whose search time (finder slices
+     * excluded) is >= probe_next -- first probe_sec, after each probe probe_growth x that level's time (growth 0: one probe
+     * only) -- triggers a probe, unless the half needs no further level (lb >= U): the other configuration searches the SAME
+     * level w with an abort at the current one's time (poll hook; no finder during the probe); if it ends EMPTY first, it
+     * searches the later levels. Verdicts are unchanged: both are exact, the probe level is already refuted, an aborted
+     * probe changes no bound, and a probe that is not EMPTY or ABORTED after an EMPTY is a trap. probe_force (test only):
+     * 0 by time, 1 a probe after every refuted level that always switches, 2 the same, never switching. Mutant 21: after
+     * every refuted level the probe runs level w + 1 with a zero time cap and an ABORTED probe is taken as a refuted level
+     * (lb raised without proof). */
+    double probe_sec;        /* -cc-probe=S (default 0.1 s) */
+    double probe_growth;     /* -cc-probe-growth=F (default 0 = a single probe per half; F >= 1: re-probes at F x the last probe level's time) */
+    int probe_force;         /* -cc-probe=switch|stay (test only) */
     DriverOptions() : lb_minr(3), lb_gap(0), lb_raise(true), lb_auto(40), dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0),
-                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false) {}
+                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false), probe_sec(0.1), probe_growth(0), probe_force(0) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).

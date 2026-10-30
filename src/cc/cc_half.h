@@ -159,8 +159,10 @@ struct Rules {
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true), tiebreak(false) {}
 };
 
-/* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment) */
-enum RowOrder { ROWORDER_INDEX = 0, ROWORDER_BFS = 1 };
+/* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment).
+ * ROWORDER_AUTO (GH-206) is resolved by the driver (cc_driver.h: a per-half probe between two HalfSearch objects, one
+ * with each order); a HalfSearch itself takes only INDEX or BFS. */
+enum RowOrder { ROWORDER_INDEX = 0, ROWORDER_BFS = 1, ROWORDER_AUTO = 2 };
 /* GH-157: node lower bound on the hitting set tau of the candidate sets of the odd rows, exposed for tests. The k
  * candidate sets are rows rs[i]..rs[i+1]-1 of rq (distinct qubit ids < the work size per row). Scratch state lives in
  * LbWork (sized by reset(nq, max rows)). With r >= 0 it returns v such that v > r iff the bound exceeds r, and v > r

@@ -97,8 +97,11 @@ struct Half {
     std::vector<Bits> hbits;
     std::unique_ptr<Echelon> sbasis;
     std::unique_ptr<HalfSearch> search;
+    std::unique_ptr<HalfSearch> alt;   /* GH-206 -cc-roworder=auto: configuration B until the probe has decided (then NULL) */
+    double probe_next;                 /* GH-206: a refuted level taking at least this many seconds triggers a probe */
+    bool on_b;                         /* GH-206: configuration B searches this half (alt holds the other one) */
     Half() : tag(""), H(NULL), G(NULL), S(NULL), B(NULL), exists(false), searched(false), par(false), rankH(0), rankHG(0),
-             rankS(0), lb(INT_MAX), ub(INT_MAX), last_nodes(0), total_nodes(0), total_time(0) {}
+             rankS(0), lb(INT_MAX), ub(INT_MAX), last_nodes(0), total_nodes(0), total_time(0), probe_next(0), on_b(false) {}
 };
 
 /* Start-up check of the half: (a) every same-type stabilizer row has even overlap with every parity
@@ -346,12 +349,25 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
     for (int k = 0; k < 2; k++) {
         if (!hs[k].searched) continue;
         /* GH-138: the half's stabilizer rows S (X half Hx, Z half Hz; verified by detector_check) feed rule overlap */
-        hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S,
-                                          opt.roworder, opt.tb_asc));
-        hs[k].search->set_lb_minr(opt.lb_minr);   /* GH-157 */
-        hs[k].search->set_lb_gap(opt.lb_gap);
-        hs[k].search->set_lb_raise(opt.lb_raise);
-        hs[k].search->set_lb_auto(opt.lb_auto);
+        if (opt.roworder == ROWORDER_AUTO) {   /* GH-206: A = index order without mrv (searches first), B = bfs order with mrv */
+            Rules ra = opt.rules, rb = opt.rules;
+            ra.mrv = false;
+            rb.mrv = true;
+            hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], ra, opt.seed, opt.mutant, hs[k].S,
+                                              ROWORDER_INDEX, opt.tb_asc));
+            hs[k].alt.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], rb, opt.seed, opt.mutant, hs[k].S,
+                                           ROWORDER_BFS, opt.tb_asc));
+            hs[k].probe_next = opt.probe_sec;
+        } else
+            hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S,
+                                              opt.roworder, opt.tb_asc));
+        for (HalfSearch* hp : {hs[k].search.get(), hs[k].alt.get()}) {   /* GH-157 settings (both auto configurations) */
+            if (!hp) continue;
+            hp->set_lb_minr(opt.lb_minr);
+            hp->set_lb_gap(opt.lb_gap);
+            hp->set_lb_raise(opt.lb_raise);
+            hp->set_lb_auto(opt.lb_auto);
+        }
         hs[k].par = hs[k].search->parity_active();
         if (verb > 0) {
             printf("c cc: %s half search: %d seeds (%s)\n", hs[k].tag, hs[k].search->num_seeds(),
@@ -385,6 +401,13 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             if (opt.rules.tiebreak && S.overlap_active() && S.tiebreak_rows() > 0)
                 printf("c cc: %s half tiebreak: %d of %d rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then %s label)\n",
                        hs[k].tag, S.tiebreak_rows(), S.overlap_rows(), opt.tb_asc ? "ascending" : "descending");
+            if (opt.roworder == ROWORDER_AUTO)   /* GH-206 */
+                printf("c cc: %s half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, %d rows; "
+                       "probe at the first refuted level taking >= %gs%s%s)%s\n", hs[k].tag, hs[k].alt->rows_used(), opt.probe_sec,
+                       opt.probe_growth > 0 ? (", then >= " + std::to_string((long long)opt.probe_growth) + " x the last probe level").c_str() : " (one probe)",
+                       opt.probe_force == 1 ? ", TEST: always switch" : opt.probe_force == 2 ? ", TEST: never switch" : "",
+                       opt.mutant == 19 ? " [TEST MUTANT 19: a row dropped]" : opt.mutant == 20 ? " [TEST MUTANT 20: no BFS restart]" :
+                       opt.mutant == 21 ? " [TEST MUTANT 21: aborted probe of level w + 1 taken as refuted]" : "");
             if (opt.roworder == ROWORDER_BFS)   /* GH-183 (no line with the default order: byte identity) */
                 printf("c cc: %s half row order: reversed BFS from the rows of the first seed (%d rows; packing scan and mrv ties)%s\n",
                        hs[k].tag, S.rows_used(),
@@ -526,7 +549,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         return !ub_trap.empty() || (ub_curw > 0 && U <= ub_curw);
     };
     struct PollThunk { std::function<bool()> f; } thunk;
-    thunk.f = ub_poll;
+    double probe_deadline = 0;   /* GH-206: > 0 while a probe runs: the poll aborts the probe level at this time (no finder) */
+    thunk.f = [&]() -> bool {
+        if (probe_deadline > 0) return now_seconds() > probe_deadline;
+        return ubs ? ub_poll() : false;
+    };
     auto ub_report = [&]() {
         if (!ubs || !(verb > 0 || opt.stats)) return;
         for (int k = 0; k < 2; k++) {
@@ -553,9 +580,11 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         sink.result(sink.ctx, -1, false);
         return -1;
     }
-    if (ubs)
-        for (int k = 0; k < 2; k++)
+    if (ubs || opt.roworder == ROWORDER_AUTO)   /* GH-206: the probe needs the poll even without the finder */
+        for (int k = 0; k < 2; k++) {
             if (hs[k].search) hs[k].search->set_poll([](void* c) { return ((PollThunk*)c)->f(); }, &thunk, opt.ub_poll_mask);
+            if (hs[k].alt) hs[k].alt->set_poll([](void* c) { return ((PollThunk*)c)->f(); }, &thunk, opt.ub_poll_mask);
+        }
 
     int lastLB = 1, lastTry = 0, d = -1;   /* the trivial bound 1 is not emitted */
     {   /* parity: the certified bound 2 of a qualifying half is emitted before the first level */
@@ -593,11 +622,12 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         const int w = h.lb;   /* contiguous levels: the level-w precondition is lb_h = w */
         if (w > n) return fail(std::string(h.tag) + " half: rank shows a nontrivial logical but no level <= n found one");
         if (w > lastTry) { sink.bound(sink.ctx, "TRY", (uint64_t)w); lastTry = w; }
-        const double t0 = now_seconds();
+        const double t0 = now_seconds(), ub0 = ub_spent;
         ub_curw = w;
         LevelResult r = h.search->run_level(w);
         ub_curw = 0;
         const double dt = now_seconds() - t0;
+        const double net = dt - (ub_spent - ub0);   /* GH-206: search time without the finder slices inside the level */
         if (!ub_trap.empty()) return fail(ub_trap);
         h.last_nodes = r.nodes;
         h.total_nodes += r.nodes;
@@ -658,6 +688,57 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 if (verb > 0) printf("c cc: %s half level %d skipped (parity: every logical has even weight)\n", h.tag, w + 1);
             }
             if (dual) hs[1].lb = hs[0].lb;
+            /* GH-206 -cc-roworder=auto: probe at a refuted level w whose search took net >= probe_next (first probe_sec, then
+             * probe_growth x the last probe level's time; growth 0: one probe), unless this half needs no further level
+             * (lb >= U). The other configuration searches the same level w, aborted at the current one's time; if it ends
+             * EMPTY first it becomes the current one. probe_force (tests): a probe after every refuted level, always / never
+             * switching. Mutant 21: after every refuted level, level w + 1 with a zero cap, an ABORTED probe counted as refuted. */
+            const bool m21 = opt.mutant == 21 && h.alt;
+            const bool due = h.alt && h.lb < U && (opt.probe_force != 0 || net >= h.probe_next);
+            if (m21 || due) {
+                const int pw = m21 ? w + 1 : w;
+                const double cap = m21 ? 0.0 : std::max(net, 0.0);
+                const double p0 = now_seconds();
+                probe_deadline = p0 + cap;
+                if (probe_deadline <= 0) probe_deadline = 1e-9;
+                LevelResult pr = pw <= n ? h.alt->run_level(pw) : LevelResult();
+                probe_deadline = 0;
+                const double pdt = now_seconds() - p0;
+                const char* pvs = pr.verdict == LEVEL_FOUND ? "FOUND" : pr.verdict == LEVEL_EMPTY ? "EMPTY" :
+                                  pr.verdict == LEVEL_ABORTED ? "ABORTED" : "INCONSISTENT";
+                if (!m21 && (pr.verdict == LEVEL_FOUND || pr.verdict == LEVEL_INCONSISTENT)) {
+                    char buf[200];
+                    snprintf(buf, sizeof(buf), "%s half: auto probe of level %d gave %s after the level was refuted (both searches are exact)",
+                             h.tag, w, pvs);
+                    return fail(buf);
+                }
+                bool sw = opt.probe_force == 1 ? true : opt.probe_force == 2 ? false : (pr.verdict == LEVEL_EMPTY && pdt < cap);
+                if (m21) {
+                    sw = false;
+                    if (pr.verdict == LEVEL_EMPTY || pr.verdict == LEVEL_ABORTED) {   /* mutant 21: unproven lb */
+                        h.lb = pw + 1;
+                        if (h.par && (h.lb & 1)) h.lb++;
+                        if (dual) hs[1].lb = hs[0].lb;
+                    }
+                } else
+                    h.probe_next = opt.probe_growth > 0 ? std::max(net, 1e-6) * opt.probe_growth : 1e300;
+                const char* cur = h.on_b ? "B" : "A";
+                const char* oth = h.on_b ? "A" : "B";
+                if (sw) { h.search.swap(h.alt); h.on_b = !h.on_b; h.par = h.search->parity_active(); }
+                const char* now = h.on_b ? "B" : "A";
+                if (trace) {
+                    fprintf(trace, "# probe %s %d %s %s %llu %.6f %s %.6f -> %s\n", h.tag, pw, oth, pvs, (unsigned long long)pr.nodes, pdt,
+                            cur, cap, now);
+                    fflush(trace);
+                }
+                if (verb > 0)
+                    printf("c cc: %s half auto probe at level %d: current %s %.3fs, %s %s nodes %llu %.3fs -> %s (A = index, no mrv; B = bfs, mrv)\n",
+                           h.tag, pw, cur, cap, oth, pvs, (unsigned long long)pr.nodes, pdt, now);
+                if (opt.stats)
+                    printf("c cc-probe: %s level %d %s %s nodes %llu time %.6fs %s %.6fs -> %s\n", h.tag, pw, oth, pvs,
+                           (unsigned long long)pr.nodes, pdt, cur, cap, now);
+                fflush(stdout);
+            }
         } else {
             std::string why;
             if ((int)r.witness.size() != w || !verify_in_half(h, r.witness, n, why))

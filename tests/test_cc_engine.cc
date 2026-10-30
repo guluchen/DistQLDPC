@@ -71,6 +71,11 @@
 //   order under both row orders, vs brute force (witnesses checked in GF(2)); the bfs order must use every nonempty row
 //   (rows_used). Mutants 19 (the order drops a row) and 20 (no BFS restart: rows unreachable from the seed dropped) must give
 //   wrong ladders. Driver configurations with roworder bfs / tbbase asc in Parts B and H.
+// GH-206 (-cc-roworder=auto, per-half probes between A = index order without mrv and B = bfs order with mrv): Part B and
+//   Part H driver runs against enumeration with a probe after every refuted level that always switches (A and B alternate)
+//   or never switches, and by time (threshold 0 s, growth 1 or 0, poll at every node, so the probe's abort at the current
+//   search's time is exercised); with the finder on and with tbbase asc. Mutant 21 (after every refuted level the probe
+//   runs level w + 1 with a zero cap and an aborted probe is taken as a refuted level) must give wrong answers.
 // Part G (GH-148, -stab-overlap on the MaxSAT path): (a) encoding check: on one row g of weight w = 1..14 with the
 //   objective "maximize the true qubits" (soft clauses x_i), MaxCDCL's optimum must be w - floor(|g|/2) for the
 //   binomial and the sequential-counter encodings and the native MaxCDCL propagator (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
@@ -477,7 +482,8 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[21] = {0}, mut_runs[21] = {0};
+    long mut_bad[22] = {0}, mut_runs[22] = {0};
+    long au_runs = 0, au_bad = 0;   // GH-206 auto-probe driver runs
     long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
@@ -690,6 +696,33 @@ int main(int argc, char** argv) {
             if (!run_ok(r, d)) {
                 b_bad++; fails++;
                 if (b_bad <= 10) fprintf(stderr, "CC_FAIL partB inst=%d n=%d cfg=%s: d=%d (dX %d dZ %d) got %d\n", inst, n, c.name, d, dX, dZ, r.d);
+            }
+        }
+        {   // GH-206: -cc-roworder=auto (per-half probe); probe_force 1 switch / 2 stay / 0 by time (threshold 0 s)
+            struct ACfg { const char* name; int rmask; bool dual; uint64_t seed; bool symbreak; int force; bool ubs; bool asc; int mutant; double growth; };
+            const ACfg acfgs[] = {
+                {"auto-switch", RM_DEF | RM_TB, true, 0, true, 1, false, false, 0}, {"auto-stay", RM_NEW | RM_TB, true, 0, true, 2, false, false, 0},
+                {"auto-time", RM_DEF | RM_TB, true, 0, true, 0, false, false, 0, 1.0}, {"auto-time-dual-off-seed1", RM_NEW | RM_TB, false, 1, true, 0, false, false, 0, 1.0},
+                {"auto-time-single", RM_NEW | RM_TB, true, 2, true, 0, false, false, 0, 0.0},
+                {"auto-switch-index-seed2", RM_NEW, false, 2, false, 1, false, false, 0}, {"auto-time-ubsearch", RM_DEF | RM_TB, true, 3, true, 0, true, false, 0, 1.0},
+                {"auto-switch-asc-oldrules", RM_OLD, true, 0, true, 1, false, true, 0}, {"auto-time-asc", RM_ALL | RM_TB, false, 0, true, 0, false, true, 0, 1.0},
+                {"mutant21-switch", RM_DEF | RM_TB, true, 0, true, 1, false, false, 21}, {"mutant21-time", RM_NEW | RM_TB, false, 0, true, 0, false, false, 21},
+            };
+            for (const ACfg& c : acfgs) {
+                distcc::DriverOptions o;
+                o.ub_search = c.ubs; o.ub_poll_mask = 0;
+                if (c.ubs) { o.ub_pre = 0.0; o.ub_share = 0.5; }
+                o.rules = rules_of(c.rmask);
+                o.dual = c.dual; o.ub_basis = false; o.seed = c.seed; o.mutant = c.mutant;
+                o.roworder = distcc::ROWORDER_AUTO; o.probe_sec = 0.0; o.probe_force = c.force; o.tb_asc = c.asc; o.probe_growth = c.growth;
+                RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
+                const bool ok = run_ok(r, d);
+                if (c.mutant == 21) { mut_runs[21]++; if (!ok) mut_bad[21]++; continue; }
+                au_runs++;
+                if (!ok) {
+                    au_bad++; fails++;
+                    if (au_bad <= 10) fprintf(stderr, "CC_FAIL GH-206 partB inst=%d n=%d cfg=%s: d=%d (dX %d dZ %d) got %d\n", inst, n, c.name, d, dX, dZ, r.d);
+                }
             }
         }
         {   // test-only sequential schedule: canonical must pass; mutant 4 (forces sequential) must be caught when dZ < dX.
@@ -1309,6 +1342,7 @@ int main(int argc, char** argv) {
             {"aut-tiebreak", RM_DEF | RM_TB, true, false, 0, true, 0}, {"aut-tiebreak-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0},   // GH-162
             {"aut-tiebreak-excl-orbf-overlap", 1 | 4 | 64 | RM_TB, false, false, 2, true, 0},
             {"aut-tiebreak-mrv-bfs", RM_ALL | RM_CHG | RM_TB, true, false, 0, true, 0, 1, false}, {"aut-tiebreak-mrv-bfs-asc-seed1-dual-off", RM_ALL | RM_TB, false, false, 1, true, 0, 1, true},   // GH-183
+            {"aut-auto-switch", RM_DEF | RM_TB, true, false, 0, true, 0, 2, false}, {"aut-auto-time-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0, 3, false},   // GH-206 (ro 2: auto, forced switch; 3: auto, by time)
             {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
             {"mutant14", RM_NEW, true, false, 0, true, 14},
         };
@@ -1319,6 +1353,7 @@ int main(int argc, char** argv) {
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed; o.mutant = c.mutant;
             o.roworder = c.ro; o.tb_asc = c.asc;   // GH-183
+            if (c.ro >= 2) { o.roworder = distcc::ROWORDER_AUTO; o.probe_sec = 0.0; o.probe_growth = 1.0; o.probe_force = c.ro == 2 ? 1 : 0; o.ub_poll_mask = 0; }   // GH-206
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             const bool ok = run_ok(r, d);
             if (c.mutant == 13) { h_m13_runs++; if (!ok) h_m13_bad++; continue; }
@@ -1576,6 +1611,9 @@ int main(int argc, char** argv) {
     if (NR > 0 && (mut_bad[19] == 0 || mut_bad[20] == 0)) { fprintf(stderr, "CC_FAIL GH-183 mutant expectations not met\n"); fails++; }
 
     // ---------------- Part C: mutants ----------------
+    printf("GH-206 auto probe (Part B): %ld driver runs (forced switch / stay / by time, finder on and off, tbbase asc), %ld bad\n", au_runs, au_bad);
+    printf("mutant 21 (auto probe of level w + 1, an aborted probe taken as refuted): %ld/%ld driver runs wrong or stopped\n", mut_bad[21], mut_runs[21]);
+    if (NB > 0 && mut_bad[21] == 0) { fprintf(stderr, "CC_FAIL GH-206 mutant 21 expectations not met\n"); fails++; }
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);
     printf("mutant 2 (packing prune >=): %ld/%ld half ladders wrong\n", mut_bad[2], mut_runs[2]);
     printf("mutant 3 (orbit seed rule off by one, instances with orbits): %ld/%ld half ladders wrong\n", mut_bad[3], mut_runs[3]);
