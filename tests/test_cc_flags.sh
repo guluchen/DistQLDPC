@@ -436,7 +436,7 @@ fi
 
 # 7g. GH-162 tiebreak (opt-in -cc-rules token; needs overlap): values, -v lines, mutants 17/18 accepted, no line without it
 reject "need -engine=cc or -engine=auto" -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
-for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=22; do
+for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=25; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
@@ -459,7 +459,7 @@ fi
 # 7h. GH-183 -cc-roworder=index|bfs and -cc-tbbase=desc|asc: values, -v lines, mutants 19/20 accepted, no line with the defaults
 reject "need -engine=cc or -engine=auto" -cc-roworder=bfs $L $M
 reject "need -engine=cc or -engine=auto" -cc-tbbase=asc $L $M
-for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=22; do
+for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=25; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-roworder=bfs $L $M
@@ -491,7 +491,7 @@ reject "need -engine=cc or -engine=auto" -cc-roworder=auto $L $M
 reject "need -engine=cc or -engine=auto" -cc-probe=2 $L $M
 reject "need -engine=cc or -engine=auto" -cc-probe-growth=10 $L $M
 for f in -cc-roworder=Auto -cc-probe -cc-probe= -cc-probe=-1 -cc-probe=x -cc-probe=1s -cc-probe=SWITCH -cc-probe-growth= \
-         -cc-probe-growth=0.5 -cc-probe-growth=-2 -cc-probe-growth=x -cc-mutant=22; do
+         -cc-probe-growth=0.5 -cc-probe-growth=-2 -cc-probe-growth=x -cc-mutant=25; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 NB="-ub-basis=off -ub-search=off"   # no upper bound before the hit, so a probe is not skipped for lb >= U
@@ -517,6 +517,44 @@ fi
 runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-roworder=bfs $L $M
 if [[ $rc -ne 0 ]] || grep -q "probe" <<<"$out"; then
     echo "FAIL (GH-206: a probe line without auto): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
+# 7j. GH-181 sparse / sparseov / sparsemrv / xorunit (opt-in -cc-rules tokens): values, -v lines, mutants 22-24 (19-21 before the
+#     merge with GH-162/183/206), no line without them
+G=excl,pack,orbf,parity,leaf,overlap
+reject "need -engine=cc or -engine=auto" -cc-rules=$G,sparse $L $M
+for f in -cc-rules=Sparse -cc-rules=sparse, -cc-rules=sparseOV -cc-rules=xor -cc-rules=sparse-mrv -cc-mutant=16 -cc-mutant=25; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-rules=$G,sparse $L $M
+accept 3 "" -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv,xorunit -cc-aut=off -no-symbreak $L $M
+accept 3 "" -engine=cc -cc-rules=xorunit,sparse $L $M
+accept 2 "" -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv,xorunit,mrv $L $C
+vgrep 3 "^c cc: rules $G,sparse,sparseov,sparsemrv,xorunit, " -v -engine=cc -cc-rules=$G,sparse,sparseov,sparsemrv,xorunit $L $M
+vgrep 3 "^c cc: X half sparse: [1-9][0-9]* redundant rows (pair sums of Hz rows, weights [0-9]*\.\.[0-9]*)$" -v -engine=cc -cc-rules=$G,sparse $L $M
+vgrep 3 "^c cc: X half sparseov: [0-9]* redundant stabilizer rows (pair sums of Hx rows" -v -engine=cc -cc-rules=$G,sparseov $L $M
+vgrep 3 "^c cc: X half sparseov: idle (needs overlap)" -v -engine=cc -cc-rules=excl,pack,sparseov $L $M
+vgrep 3 "^c cc: X half sparsemrv: on (fewest-candidate branching" -v -engine=cc -cc-rules=$G,sparse,sparsemrv $L $M
+vgrep 3 "^c cc: X half sparsemrv: idle (no redundant rows)" -v -engine=cc -cc-rules=$G,sparsemrv $L $M
+vgrep 3 "^c cc: X half xorunit: on (rows of H and the redundant rows)" -v -engine=cc -cc-rules=$G,sparse,xorunit $L $M
+vgrep 3 "^c cc-stats: X level 2 gh181 spack " -cc-stats -engine=cc -cc-rules=$G,sparse $L $M
+# merge with GH-157/162/183/206: the new default rules + the GH-181 tokens, with tiebreak, mrv + bfs, and auto
+accept 3 "" -engine=cc -cc-rules=$G,charge,sparse,sparseov,sparsemrv $L $M
+accept 3 "" -engine=cc -cc-rules=$G,charge,tiebreak,sparse,sparseov,sparsemrv $L $M
+accept 3 "" -engine=cc -cc-rules=$G,charge,tiebreak,mrv,sparse,sparseov,sparsemrv -cc-roworder=bfs $L $M
+accept 3 "" -engine=cc -cc-rules=$G,charge,tiebreak,sparse,sparseov,sparsemrv,xorunit -cc-roworder=auto -cc-probe=0 $L $M
+vgrep 3 "^c cc: rules $G,tiebreak,sparse,sparseov,sparsemrv,charge, " -v -engine=cc -cc-rules=$G,charge,tiebreak,sparse,sparseov,sparsemrv $L $M
+vgrep 3 "^c cc: X half sparsemrv: on (mrv is on everywhere)" -v -engine=cc -cc-rules=$G,sparse,sparsemrv,mrv $L $M   # sparsemrv + mrv = mrv
+for mt in 22 23 24; do   # mutants are accepted values (answers may be wrong by design): the -v line names them
+    runs=$((runs + 1)); run -v -engine=cc -cc-rules=$G,sparse,sparseov,xorunit -cc-mutant=$mt -ub-search=off $L $M
+    if ! grep -q "TEST MUTANT $mt" <<<"$out" || ! grep -q "^warning: cc: test mutant $mt" <<<"$err"; then
+        echo "FAIL (GH-181: mutant $mt not reported)" >&2; fails=$((fails + 1))
+    fi
+done
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $L $M
+if [[ $rc -ne 0 ]] || grep -q "sparse\|xorunit\|gh181" <<<"$out"; then
+    echo "FAIL (GH-181: a sparse/xorunit line without the tokens): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
 echo "test_cc_flags: $runs checks, $fails failed"

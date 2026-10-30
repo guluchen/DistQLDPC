@@ -2524,7 +2524,8 @@ int main(int argc, char** argv) {
             die("invalid -engine (maxsat | cc | auto)");
         else if (!strncmp(argv[i], "-cc-rules=", 10)) {
             if (!distcc::parse_rules(argv[i] + 10, g_cc_opt.rules))
-                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge, tiebreak, or none)");
+                die("invalid -cc-rules (comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge, tiebreak, sparse, sparseov, sparsemrv,\n"
+                    "xorunit, or none)");
         } else if (!strncmp(argv[i], "-cc-lb-minr=", 12)) {   /* GH-157 */
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 12, &v) || v < 1 || v > 1000) die("invalid -cc-lb-minr (1..1000)");
@@ -2613,7 +2614,7 @@ int main(int argc, char** argv) {
             cc_seed_given = true;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 15 && (v < 17 || v > 21))) die("invalid -cc-mutant (0..15, 17..21; test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 15 && (v < 17 || v > 24))) die("invalid -cc-mutant (0..15, 17..24; test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strcmp(argv[i], "-cc-roworder=index"))   /* GH-183 */
             g_cc_opt.roworder = distcc::ROWORDER_INDEX;
@@ -2681,8 +2682,9 @@ int main(int argc, char** argv) {
             printf("  Engine (GH-124, experimental): -engine=maxsat (default, the MaxSAT search above) | cc | auto\n");
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
-            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge[,tiebreak][,mrv] (default excl,pack,orbf,parity,leaf,\n");
-            printf("            overlap,charge; -cc-rules=excl,pack,orbf,parity,leaf,overlap = the CC search before GH-157;\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge[,tiebreak][,sparse,sparseov,sparsemrv,xorunit][,mrv]\n");
+            printf("            (default excl,pack,orbf,parity,leaf,overlap,charge;\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap = the CC search before GH-157;\n");
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
             printf("            every same-type stabilizer row g in at most floor(|g|/2) qubits, the rest of a full row is forbidden;\n");
@@ -2692,7 +2694,12 @@ int main(int argc, char** argv) {
             printf("            -cc-lb-auto=P switches it off for a half after a level where < P %% of >= 100000 evaluations\n");
             printf("            pruned (default 40; 0 = never);\n");
             printf("            tiebreak (GH-162, opt-in) = with overlap, an even row g is replaced by g minus its first qubit in\n");
-            printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical)\n");
+            printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical;\n");
+            printf("            GH-181, opt-in: sparse = redundant parity rows (sparse pair sums of the half's rows) in pack and mrv;\n");
+            printf("            sparsemrv = fewest-candidate branching over the parity and redundant rows on halves with redundant rows\n");
+            printf("            (with mrv it adds nothing: mrv branches that way on every half);\n");
+            printf("            sparseov = sparse pair sums of the stabilizer rows as extra overlap rows; xorunit = an even row with\n");
+            printf("            one free qubit forbids it, an odd row with one free qubit is branched on first)\n");
             printf("            -cc-roworder=index|bfs|auto (GH-183, default index): internal row order = packing scan order and mrv\n");
             printf("            tie-break; bfs = reversed BFS over the Tanner graph from the rows of the first seed (a row relabeling);\n");
             printf("            auto (GH-206) = per half, index order without mrv first; a refuted level taking >= S s (-cc-probe=S,\n");
@@ -2715,7 +2722,7 @@ int main(int argc, char** argv) {
             printf("            -cc-ub-only runs only the finder for budget:S (diagnostic, no answer)\n");
             printf("  Seed (both engines): -seed=N (default 0 = main's search): MaxCDCL random seed on the MaxSAT\n");
             printf("            path; with the CC engine the same as -cc-seed=N\n");
-            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..15, 17..21)\n");
+            printf("            -cc-mutant=K deliberately broken variant for tests only (K = 1..15, 17..24)\n");
             printf("            -cc-schedule=lockstep|sequential half schedule, tests only (default lockstep)\n");
             printf("            Conflicts are rejected: -cc-*/-ub-basis need -engine=cc|auto; -engine=cc|auto refuse\n");
             printf("            -joint, -roundingsat, -dump-*, -native-parity-opb; -engine=cc refuses the\n");

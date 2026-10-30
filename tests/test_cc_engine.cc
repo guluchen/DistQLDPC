@@ -64,7 +64,7 @@
 //   symmetry) with orbits from the Tanner generators under the GF(2) checks, all 128 rule subsets x seeds 0..2 vs brute force;
 //   Part H = driver with -cc-aut=on on relabeled hypergraph products (hidden transpose XZ duality) and relabeled random codes;
 //   mutants 13 (candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and 14 (swap map / identity used as dual map
-//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT [NR]]]]]].
+//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT [NR [NX]]]]]]].
 // GH-162 (rule tiebreak): Part T (half level, below), and tiebreak driver configurations in Parts B and H.
 // GH-183 (-cc-roworder=bfs, -cc-tbbase=asc): Part R (half level, below): every subset of {excl, pack, orbf, mrv, parity, leaf}
 //   x {no overlap, overlap, overlap+tiebreak} with the reversed-BFS row order, x seeds 0..3, plus the ascending tiebreak base
@@ -76,6 +76,9 @@
 //   or never switches, and by time (threshold 0 s, growth 1 or 0, poll at every node, so the probe's abort at the current
 //   search's time is exercised); with the finder on and with tbbase asc. Mutant 21 (after every refuted level the probe
 //   runs level w + 1 with a zero cap and an aborted probe is taken as a refuted level) must give wrong answers.
+// GH-181 (sparse, sparseov, sparsemrv, xorunit): Part X (half level, after Part R) and driver configurations in Part B.
+//   Since the merge with GH-157/162/183/206 its mutants are 22 (redundant row with a flipped qubit), 23 (xorunit branches
+//   on an even unit row) and 24 (sparseov pair sums of H), and Part X also mixes in charge, tiebreak and the bfs order.
 // Part G (GH-148, -stab-overlap on the MaxSAT path): (a) encoding check: on one row g of weight w = 1..14 with the
 //   objective "maximize the true qubits" (soft clauses x_i), MaxCDCL's optimum must be w - floor(|g|/2) for the
 //   binomial and the sequential-counter encodings and the native MaxCDCL propagator (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
@@ -193,11 +196,13 @@ static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
     r.overlap = mask & 64; r.charge = mask & 128;   // GH-157
     r.tiebreak = mask & 256;   // GH-162 (Part T and the tiebreak driver configurations; the older parts use masks < 128)
+    r.sparse = mask & 512; r.sparseov = mask & 1024; r.xorunit = mask & 2048; r.sparsemrv = mask & 4096;   // GH-181 (RM_SP.. below)
     return r;
 }
 static const int RM_CHG = 128;   // GH-157
 static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule set (excl,pack,orbf,parity,leaf,overlap,charge)
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 256;   // RM_TB: GH-162
+static const int RM_SP = 512, RM_SPOV = 1024, RM_XU = 2048, RM_SPMRV = 4096;   // GH-181 sparse, sparseov, xorunit, sparsemrv
 static const char* rules_name(int mask) {
     static char buf[128];
     distcc::Rules r = rules_of(mask);
@@ -224,6 +229,40 @@ static bool ladder_ok(const std::vector<Mask>& H, const std::vector<Mask>& G, co
         distcc::LevelResult res = hs.run_level(w);
         if (nodes) *nodes += res.nodes;
         if (lbprunes) *lbprunes += res.chgprune;
+        const bool expect_found = (w == dh);
+        if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
+        if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
+            snprintf(buf, sizeof(buf), "w=%d got %s expected %s (d_h=%d)", w, res.verdict == distcc::LEVEL_FOUND ? "FOUND" : "EMPTY",
+                     expect_found ? "FOUND" : "EMPTY", dh);
+            why = buf; return false;
+        }
+        if (res.verdict == distcc::LEVEL_FOUND) {
+            Mask v = 0;
+            for (int q : res.witness) v |= 1u << q;
+            if (popc(v) != w || (int)res.witness.size() != w || !in_kernel(H, v) || !detected(G, v)) {
+                snprintf(buf, sizeof(buf), "w=%d invalid witness", w); why = buf; return false;
+            }
+        }
+    }
+    return true;
+}
+
+// GH-181 Part X: ladder 1..dh with the level counters summed into *acc (verdicts and witnesses checked as in ladder_ok)
+static bool ladder_x(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
+                     const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, distcc::LevelResult* acc, int* xrows, std::string& why,
+                     int roworder = distcc::ROWORDER_INDEX) {
+    distcc::Rules r = rules_of(rmask);
+    const distcc::SparseRows Kr = to_rows(K, n);
+    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr, roworder);
+    if (xrows) { xrows[0] = hs.sparse_rows(); xrows[1] = hs.sparseov_rows(); }
+    const int top = dh < 0 ? n : dh;
+    char buf[160];
+    for (int w = 1; w <= top; w++) {
+        distcc::LevelResult res = hs.run_level(w);
+        if (acc) {
+            acc->nodes += res.nodes; acc->spack += res.spack; acc->sprune += res.sprune; acc->snocand += res.snocand;
+            acc->ovtightx += res.ovtightx; acc->xuforbid += res.xuforbid; acc->xuforced += res.xuforced; acc->xudead += res.xudead;
+        }
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
         if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
@@ -682,6 +721,12 @@ int main(int argc, char** argv) {
             {"bfs-oldrules", RM_OLD, false, false, 0, true, 0, 0, 1, false}, {"charge-mrv-bfs-minr1", RM_ALL | RM_CHG, false, false, 1, true, 1, 1, 1, false},
             {"charge", RM_NEW | RM_CHG, true, false, 0, true, 3, 0}, {"charge-minr1-gapinf", RM_NEW | RM_CHG, false, true, 1, true, 1, 1000},
             {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1, 1}, {"charge-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_CHG, true, false, 0, true, 1, 0},
+            {"gh181", RM_NEW | RM_SP | RM_SPOV | RM_XU, true, false, 0, true}, {"gh181-mrv-seed1", RM_ALL | RM_SP | RM_SPOV | RM_XU, false, false, 1, true},
+            {"gh181-xorunit-plain", RM_XU, true, true, 2, false}, {"gh181-sparse-pack", 2 | RM_SP, false, false, 0, true},
+            {"gh181-sparsemrv", RM_NEW | RM_SP | RM_SPOV | RM_SPMRV, true, false, 0, true}, {"gh181-sparsemrv-seed2", RM_NEW | RM_SP | RM_SPMRV, false, true, 2, true},
+            {"gh181-default-sparse", RM_DEF | RM_SP | RM_SPOV | RM_SPMRV, true, false, 0, true},   // merge: new default rules + the GH-181 candidate tokens
+            {"gh181-default-tiebreak-sparse-xu", RM_DEF | RM_TB | RM_SP | RM_SPOV | RM_SPMRV | RM_XU, false, false, 1, true},
+            {"gh181-tb-mrv-bfs-sparse", RM_ALL | RM_CHG | RM_TB | RM_SP | RM_SPOV | RM_SPMRV, true, false, 2, true, 0, 0, 1, false},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
@@ -1610,6 +1655,98 @@ int main(int argc, char** argv) {
     if (NR > 0 && r_diff == 0) { fprintf(stderr, "CC_FAIL GH-183 partR: the bfs order never changes the search\n"); fails++; }
     if (NR > 0 && (mut_bad[19] == 0 || mut_bad[20] == 0)) { fprintf(stderr, "CC_FAIL GH-183 mutant expectations not met\n"); fails++; }
 
+    // ---------------- GH-181 Part X: sparse / sparseov / xorunit vs brute force ----------------
+    // Half instances as in Part A (planted shifts, a third all-odd, K inside ker [H; G] by the same three kinds), plus a
+    // TN-like third whose rows overlap heavily (pairs h, h + small) so that sparse pair sums exist. For every subset of the
+    // 7 base rules and every nonzero subset of {sparse, sparseov, xorunit, sparsemrv} (1920 configurations, seed (subset + combo) mod 3)
+    // the ladder must match enumeration. Mutants 22 (redundant row with a flipped qubit), 23 (xorunit branches on an even
+    // unit row) and 24 (sparseov pair sums from H) must produce wrong ladders (numbered 19-21 on the GH-181 branch).
+    {
+        const int NX = argc > 7 ? atoi(argv[7]) : 300;   // argv[7] since the merge (argv[3] is GH-152 Part G)
+        long x_inst = 0, x_runs = 0, x_bad = 0, x_rows = 0, x_ovrows = 0, x_spack = 0, x_sprune = 0, x_forbid = 0, x_forced = 0, x_dead = 0, x_ovtx = 0;
+        long xm_bad[3] = {0, 0, 0}, xm_runs[3] = {0, 0, 0};
+        for (int inst = 0; inst < NX; inst++) {
+            const int n = 5 + (int)rnd(14);
+            std::vector<std::vector<int> > gens;
+            if (rnd(2)) {
+                std::vector<int> divs;
+                for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+                if (!divs.empty()) { int L = divs[rnd((unsigned)divs.size())]; gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L)); }
+            }
+            std::vector<Mask> h0, g0;
+            int nh = 1 + (int)rnd((unsigned)(n / 2 + 2)), ng = 1 + (int)rnd(3);
+            const bool tnlike = inst % 3 == 2;
+            for (int k = 0; k < nh; k++) {
+                Mask h = rand_vec(n, tnlike ? 4 : 2, tnlike ? 7 : 5);
+                h0.push_back(h);
+                if (tnlike && rnd(2)) {   // a heavily overlapping partner: h + (a few qubits), weight kept close to |h|
+                    Mask t = h;
+                    for (int f = 0, F = 1 + (int)rnd(3); f < F; f++) t ^= 1u << rnd(n);
+                    if (t && t != h) h0.push_back(t);
+                }
+            }
+            for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+            std::vector<Mask> H = closure(h0, gens, 20), G = closure(g0, gens, 12);
+            if (G.empty()) G.push_back(1u << rnd(n));
+            if (inst % 4 == 0) make_columns_odd(H, n);
+            const int dh = half_opt(H, G, n);
+            std::vector<Mask> kerHG, K;
+            {
+                Span sp; std::vector<Mask> basis;
+                for (Mask v = 1; v < (1u << n); v++) {
+                    if (!in_kernel(H, v) || detected(G, v)) continue;
+                    kerHG.push_back(v);
+                    if (sp.add(v)) basis.push_back(v);
+                }
+                const int kind = inst % 3;
+                if (kind == 0) K = basis;
+                else if (kind == 1) { for (Mask v : kerHG) if (popc(v) <= 6 && K.size() < 60) K.push_back(v); }
+                else if (!basis.empty())
+                    for (int t = 0, T = 1 + (int)rnd(8); t < T; t++) { Mask v = 0; for (Mask b : basis) if (rnd(2)) v ^= b; if (v) K.push_back(v); }
+            }
+            std::vector<int> orb = orbits_of(H, G, n);
+            x_inst++;
+            bool counted = false;
+            for (int combo = 1; combo < 16; combo++)
+                for (int base = 0; base < 128; base++) {
+                    // merge with GH-157/162/183: charge on odd base + combo, tiebreak on a fifth of the overlap subsets, and the
+                    // GH-183 bfs row order on a quarter of the runs (the run count is unchanged)
+                    const int rm = base | ((combo & 1) ? RM_SP : 0) | ((combo & 2) ? RM_SPOV : 0) | ((combo & 4) ? RM_XU : 0) | ((combo & 8) ? RM_SPMRV : 0)
+                                   | (((base + combo) & 1) ? RM_CHG : 0) | (((base & 64) && (base + 3 * combo) % 5 == 0) ? RM_TB : 0);
+                    const int ro = (base + combo) % 4 == 3 ? distcc::ROWORDER_BFS : distcc::ROWORDER_INDEX;
+                    const uint64_t seed = (uint64_t)((base + combo) % 3);
+                    distcc::LevelResult acc; int xr[2] = {0, 0};
+                    std::string why;
+                    x_runs++;
+                    if (!ladder_x(H, G, K, n, dh, orb, rm, seed, 0, &acc, xr, why, ro)) {
+                        x_bad++; fails++;
+                        if (x_bad <= 10) fprintf(stderr, "CC_FAIL GH-181 partX inst=%d n=%d rules=%s seed=%llu ro=%d: %s\n", inst, n, rules_name(rm),
+                                                 (unsigned long long)seed, ro, why.c_str());
+                    }
+                    if (!counted && combo == 15 && base == 127) { counted = true; if (xr[0] > 0) x_rows++; if (xr[1] > 0) x_ovrows++; }
+                    x_spack += acc.spack > 0; x_sprune += acc.sprune > 0; x_forbid += acc.xuforbid > 0; x_forced += acc.xuforced > 0;
+                    x_dead += acc.xudead > 0; x_ovtx += acc.ovtightx > 0;
+                    // mutants on the configurations where they apply
+                    for (int mi = 0; mi < 3; mi++) {
+                        const int mt = 22 + mi;   // GH-181 mutants (19-21 on the GH-181 branch, renumbered at the merge)
+                        if (mt == 22 && (!(rm & RM_SP) || !(rm & (2 | 8 | RM_XU)))) continue;
+                        if (mt == 23 && !(rm & RM_XU)) continue;
+                        if (mt == 24 && (!(rm & RM_SPOV) || !(rm & 64))) continue;
+                        std::string w2;
+                        xm_runs[mi]++;
+                        if (!ladder_x(H, G, K, n, dh, orb, rm, seed, mt, NULL, NULL, w2, ro)) xm_bad[mi]++;
+                    }
+                }
+        }
+        printf("GH-181 partX: %ld half instances (%ld with sparse rows, %ld with sparseov rows), %ld ladder runs (128 base subsets x 15 token subsets; charge, tiebreak and bfs mixed in), %ld bad; "
+               "runs where the rule acted: spack %ld, sprune %ld, ovtightx %ld, xuforbid %ld, xuforced %ld, xudead %ld\n",
+               x_inst, x_rows, x_ovrows, x_runs, x_bad, x_spack, x_sprune, x_ovtx, x_forbid, x_forced, x_dead);
+        printf("mutant 22 (GH-181 sparse redundant row with one qubit flipped): %ld/%ld half ladders wrong\n", xm_bad[0], xm_runs[0]);
+        printf("mutant 23 (GH-181 xorunit branches on an even unit row): %ld/%ld half ladders wrong\n", xm_bad[1], xm_runs[1]);
+        printf("mutant 24 (GH-181 sparseov pair sums of H instead of K): %ld/%ld half ladders wrong\n", xm_bad[2], xm_runs[2]);
+        if (xm_bad[0] == 0 || xm_bad[1] == 0 || xm_bad[2] == 0) { fprintf(stderr, "CC_FAIL GH-181 mutant expectations not met\n"); fails++; }
+        if (x_sprune == 0 || x_forbid == 0 || x_forced == 0 || x_ovtx == 0) { fprintf(stderr, "CC_FAIL GH-181 rules never acted\n"); fails++; }
+    }
     // ---------------- Part C: mutants ----------------
     printf("GH-206 auto probe (Part B): %ld driver runs (forced switch / stay / by time, finder on and off, tbbase asc), %ld bad\n", au_runs, au_bad);
     printf("mutant 21 (auto probe of level w + 1, an aborted probe taken as refuted): %ld/%ld driver runs wrong or stopped\n", mut_bad[21], mut_runs[21]);

@@ -1,0 +1,153 @@
+diff --git a/src/cc/cc_half.cc b/src/cc/cc_half.cc
+index a8744a3a..0ad40845 100644
+--- a/src/cc/cc_half.cc
++++ b/src/cc/cc_half.cc
+@@ -111,7 +111,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
+     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
+       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
+       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0),
+-      mx_(0), mxw_(0), ux_(0), xminw_(0), xmaxw_(0), nk0_(0), nkx_(0), kxminw_(0), kxmaxw_(0), xu_(false), ovtightx_(0), w_(0), nodd_(0),
++      mx_(0), mxw_(0), ux_(0), xminw_(0), xmaxw_(0), nk0_(0), nkx_(0), kxminw_(0), kxmaxw_(0), xu_(false), xl_(false), ovtightx_(0), w_(0), nodd_(0),
+       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
+ {
+     if (n_ <= 0) fatal("half without qubits");
+@@ -379,6 +379,8 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
+     syn_.assign((size_t)(mw_ + mxw_), 0);   /* GH-181: words mw_.. hold the redundant rows */
+     gpar_.assign((size_t)kw_, 0);
+     xu_ = rules_.xorunit;
++    xl_ = xu_ && getenv("GH181_XULITE") && atoi(getenv("GH181_XULITE")) > 0;
++    if (xl_) xu_ = false;
+     if (xu_) {
+         freecnt_.assign((size_t)64 * (size_t)(mw_ + mxw_), 1 << 30);   /* padding entries never reach 0 or 1 */
+         unit_.assign((size_t)(mw_ + mxw_), 0);
+@@ -539,6 +541,14 @@ bool HalfSearch::dfs(int size) {
+         record_witness(size + 1);
+         return true;
+     }
++    if (xl_) {   /* EXPLORATION lite: even rows of the last added qubit (chained) */
++        const size_t mark = xtrail_.size();
++        static const bool xl2 = atoi(getenv("GH181_XULITE")) == 2;
++        if (!xl2) xl_rows((uint32_t)cur_[size - 1]);
++        const bool hit = expand(size, -1);
++        while (xtrail_.size() > mark) { blk_down(xtrail_.back()); xtrail_.pop_back(); }
++        return hit;
++    }
+     if (xu_) {   /* GH-181 xorunit: unit propagation (forbids undone on return) */
+         const size_t mark = xtrail_.size();
+         int forced = -1;
+@@ -591,13 +601,81 @@ bool HalfSearch::xu_propagate(int size, int& forced) {
+     return true;
+ }
+ 
++void HalfSearch::xl_rows(uint32_t q0) {
++    const size_t base = xlwl_.size();
++    xlwl_.push_back(q0);
++    while (xlwl_.size() > base) {
++        const uint32_t x = xlwl_.back();
++        xlwl_.pop_back();
++        for (int pass = 0; pass < 2; pass++) {
++            const uint32_t* a0 = pass == 0 ? cr_.data() + cstart_[x] : xcr_.data() + xcstart_[x];
++            const uint32_t* e0 = pass == 0 ? cr_.data() + cstart_[x + 1] : xcr_.data() + xcstart_[x + 1];
++            for (const uint32_t* it = a0; it < e0; ++it) {
++                const uint32_t u = *it;
++                if ((syn_[u >> 6] >> (u & 63)) & 1) continue;
++                const uint32_t *a, *e;
++                if ((int)u < ux_) { a = &rq_[rstart_[u]]; e = &rq_[rstart_[u + 1]]; }
++                else { a = &xq_[xstart_[u - ux_]]; e = &xq_[xstart_[u - ux_ + 1]]; }
++                int cnt = 0; uint32_t f = 0;
++                for (const uint32_t* t = a; t < e && cnt < 2; ++t) if (!blk_[*t]) { cnt++; f = *t; }
++                if (cnt == 1) { blk_up(f); xtrail_.push_back(f); ++res_->xuforbid; xlwl_.push_back(f); }
++            }
++        }
++    }
++}
++
+ /* the node's bound scan and branching (forced >= 0: branch on that row, GH-181 xorunit) */
+ bool HalfSearch::expand(int size, int forced) {
++    const size_t xlmark = xtrail_.size();
+     const bool leaf = rules_.leaf;
+     const bool meet = leaf && size == w_ - (mutant_ == 6 ? 3 : 2);   /* budget 2: lookup instead of recursion */
+ 
+     /* scan the odd rows in index order: packing bound, no-candidate dead end, branching row */
+-    const bool pack = rules_.pack, mrv = rules_.mrv;
++    const bool pack0 = rules_.pack, mrv = rules_.mrv;
++    static int packord = getenv("GH181_PACKORD") ? atoi(getenv("GH181_PACKORD")) : 0;
++    if (pack0 && mx_ > 0 && packord) {   /* EXPLORATION: an alternative packing order (max of both orders is used) */
++        const uint64_t st2 = ++stamp_;
++        int p2 = 0;
++        const int nwall = mw_ + mxw_;
++        static std::vector<std::vector<uint64_t> > cls;   /* packord 4: weight classes over unified rows */
++        static const HalfSearch* clsfor = NULL;
++        if ((packord == 4 || packord == 5) && clsfor != this) {
++            clsfor = this;
++            cls.assign(65, std::vector<uint64_t>((size_t)nwall, 0));
++            for (int r = 0; r < m_; r++) { int wt = std::min(64, (int)(rstart_[r + 1] - rstart_[r])); cls[wt][r >> 6] |= 1ULL << (r & 63); }
++            for (int j = 0; j < mx_; j++) { int u = ux_ + j, wt = std::min(64, (int)(xstart_[j + 1] - xstart_[j])); cls[wt][u >> 6] |= 1ULL << (u & 63); }
++            std::vector<std::vector<uint64_t> > nz;
++            for (int wt = 0; wt <= 64; wt++) { bool any = false; for (uint64_t v : cls[wt]) any |= v != 0; if (any) nz.push_back(cls[wt]); }
++            cls = nz;
++        }
++        const int passes = packord == 2 ? 2 : (packord == 4 || packord == 5) ? (int)cls.size() : 1;
++        for (int pass = 0; pass < passes; pass++)
++        for (int k = 0; k < nwall; k++) {
++            const int wi = (packord == 1 || packord == 3) ? (k + mw_) % nwall : k;
++            uint64_t x = syn_[wi];
++            if (packord == 4 || packord == 5) x &= cls[pass][wi];
++            const bool red = wi >= mw_;
++            while (x) {
++                const int r = wi * 64 + __builtin_ctzll(x);
++                x &= x - 1;
++                const uint32_t* a = red ? &xq_[xstart_[r - ux_]] : &rq_[rstart_[r]];
++                const uint32_t* e = red ? &xq_[xstart_[r - ux_ + 1]] : &rq_[rstart_[r + 1]];
++                uint32_t cnt = 0, clash = 0;
++                for (const uint32_t* t = a; t < e; ++t) {
++                    const uint32_t free_q = blk_[*t] == 0;
++                    cnt += free_q;
++                    clash |= free_q & (uint32_t)(mark_[*t] == st2);
++                }
++                if (cnt == 0) { ++res_->nocand; return false; }
++                if (packord == 2 && ((pass == 0) != (cnt <= 2))) continue;
++                if (!clash) {
++                    if (size + ++p2 > w_) { ++res_->packprune; ++res_->sprune; return false; }
++                    for (const uint32_t* t = a; t < e; ++t) mark_[*t] = st2;
++                }
++            }
++        }
++    }
++    const bool pack = pack0 && !(mx_ > 0 && (packord == 3 || packord == 4));
+     const uint64_t st = ++stamp_;
+     int p = 0, brow = -1;
+     uint32_t bcnt = UINT32_MAX;
+@@ -635,6 +713,7 @@ bool HalfSearch::expand(int size, int forced) {
+                     /* marking forbidden qubits too is harmless: only free qubits can clash */
+                     for (const uint32_t* t = a; t < e; ++t) mark_[*t] = st;
+                 }
++                if (xl_ && cnt == 1 && forced < 0) forced = r;
+                 if (mrv) {
+                     if (cnt < bcnt) { bcnt = cnt; brow = r; }
+                 } else if (brow < 0) {
+@@ -706,8 +785,10 @@ bool HalfSearch::expand(int size, int forced) {
+         if (rules_.excl) {   /* sibling exclusion: a is forbidden in the later siblings */
+             blk_up((uint32_t)a);
+             excluded = i + 1;
++            if (xl_ && atoi(getenv("GH181_XULITE")) != 2) xl_rows((uint32_t)a);
+         }
+     }
++    while (xtrail_.size() > xlmark) { blk_down(xtrail_.back()); xtrail_.pop_back(); }
+     if (mutant_ != 1)   /* restore the forbidden set (mutant 1 leaves it) */
+         for (int i = 0; i < excluded; i++) blk_down(cb[i]);
+     return hit;
+diff --git a/src/cc/cc_half.h b/src/cc/cc_half.h
+index bc953d75..9bb2fc0c 100644
+--- a/src/cc/cc_half.h
++++ b/src/cc/cc_half.h
+@@ -254,6 +254,9 @@ private:
+     int nk0_, nkx_, kxminw_, kxmaxw_;
+     /* xorunit: free-qubit count per unified row, bitsets of rows with one / no free qubit, trail of unit forbids */
+     bool xu_;
++    bool xl_;                               /* EXPLORATION: xorunit lite (GH181_XULITE) */
++    std::vector<uint32_t> xlwl_;
++    void xl_rows(uint32_t q);
+     uint64_t ovtightx_;                     /* sparseov: per-level counter */
+     std::vector<int32_t> freecnt_;
+     std::vector<uint64_t> unit_, zero_;
