@@ -438,3 +438,22 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+GH209 adds original polynomial-minor cyclic CSS inputs and independent
+validation, without solver/build/default changes. For P=[[a,b,c],[c,a,b]],
+the minors Delta=[b²+ac,ab+c²,a²+bc] satisfy P*Delta^T=0 over GF2[X] before
+cyclic reduction. Starred physical Hx and unstarred Hz then commute. Generic
+Smith invariant ranks and the odd-lift square-free formula k=deg(g)+2deg(g1)
+are independently checked against every expanded binary rank and logical base.
+Source X words use ker(Hz)/row(Hx), distinct from bundled detector Gx in
+ker(Hx). Unequal ranks preclude a pure permutation X/Z exchange; none assumed.
+Constructive upper proof: dividing the first polynomial syzygy row by the
+ordinary entry gcd preserves the exact Laplace identity. Where the gcd and
+X^N+1 share a root, the primitive row is nonzero while original rows vanish;
+it is nontrivial. Each physical reflected word is independently GF2 syndrome/
+quotient/detector checked (weight54 on five fixed lifts). This never fills
+native output fields or supplies a native bound. Tiny27 exhaustive supports
+below4 plus an actual word4 verify the source control; no large local search.
+The local audit treats a missing minimum word as INCOMPLETE/PLAUSIBLE, never
+confirmed exact, while inconsistent numeric/source/actual-word claims still
+stop. No result semantics, pruning or performance/adoption changes; detailed
+math/provenance in data/matrices/untiered/POLYNOMIAL_MINORS.md and NOTICE.
