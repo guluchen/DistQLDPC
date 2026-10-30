@@ -126,3 +126,8 @@ engine fields. CC1031 reported199 stays199 even though MaxSAT materializes191.
 MaxSAT2039 null/null remains null/null; numeric gate INCOMPLETE. Other four
 numeric gates PASS. Four lower-only source-upper-word gates NOT_APPLICABLE.
 Original raw audit and all20frozen matrices remain byte-identical.
+
+Final retained-only Linux54contracts and general CI pass at source72d7c651
+(run40995422015/job123867299821 and40995422157/job123867300502).
+One required MaxSAT2039numeric completion remains; optional long searches
+do not gate acceptance of the intended unresolved-distance targets.

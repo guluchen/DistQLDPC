@@ -1,7 +1,7 @@
 # GH208 prime quadratic-residue CSS targets
 
 Status: CONSTRUCTION_AND_WORD_GATES_PASS; ONE_NUMERIC_GATE_INCOMPLETE;
-final retained-only Linux contracts pending. Continuous library
+FINAL_RETAINED_CONTRACTS_PASS. Continuous library
 objective incomplete. Issue https://github.com/guluchen/DistQLDPC/issues/208,
 hub6513519019. Branch codex/quadratic-residue-library from current
 main6083e662c621f3b66defd434cfae31a028d483c4. No colliding QR issue/branch in
@@ -159,7 +159,7 @@ commands before follow-up edits. Local54contracts (49original+5server guards)
 PASS; final three canonical dry queues and unallocated/unregistered/changed/
 dirty-source/ancestor-free guards pass. This static follow-up reproduces
 20matrix bytes and original10logs only, never a native distance search.
-Final Linux54static contracts pending the evidence commit.
+Final Linux54static contracts PASS at40995422015/job123867299821.
 
 Prior300matrix/40source-build files and24prior manifest rows unchanged; new
 matrices/source helpers unchanged after the frozen scientific source. Main,
@@ -181,3 +181,17 @@ both native numeric fields, so rejection specifically exercises the missing
 physical minimum-word contract. Targeted local test PASS; no input, validator,
 solver or native observation changed. Known exact controls must still reproduce;
 only intended unknown targets have no exact-answer acceptance prerequisite.
+
+
+Final retained-only acceptance: first source647237a4d387c997c859dd44bcfd12324152875a,
+run40995215615/job123866644984 SUCCESS. Strengthened word-contract source
+72d7c651584c0d6babb1187291d93e0976e1add1,
+[40995422015](https://github.com/guluchen/DistQLDPC/actions/runs/40995422015)/
+job123867299821 SUCCESS; general CI40995422157/job123867300502 SUCCESS.
+Both full static jobs retained.54units, full physical polynomial/correlation
+certificate/logical/inventory reconstruction,20byte reproduction, original
+10raw-log/GF2 actual-word replay, retained SHA and server guards PASS. Zero
+additional scientific native searches. The final archive edits only evidence
+and documentation, preserving all frozen inputs/native fields. Required2039
+numeric gate remains INCOMPLETE; intended four exact distances remain unknown
+in this work, not failed acceptance gates. No server allocation or main move.
