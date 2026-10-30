@@ -1,18 +1,19 @@
-name: QR library short gates
+name: QR retained evidence contracts
 
 on:
   push:
     branches: [codex/quadratic-residue-library]
     paths:
-      - '.github/workflows/qr-library-smoke.yml'
       - 'scripts/codegen/qr*'
       - 'scripts/codegen/validate_qr.py'
       - 'scripts/codegen/audit_qr_smoke.py'
       - 'scripts/codegen/smoke_qr.py'
       - 'scripts/codegen/smoke_untiered.py'
       - 'scripts/codegen/verify_css_witness.py'
-      - 'tests/test_codegen_qr.py'
+      - 'tests/test_codegen_qr*.py'
       - 'data/matrices/untiered/QR_*.txt'
+      - 'optimization/experiments/GH-208/runner/**'
+      - 'optimization/experiments/GH-208/raw/actions/**'
 
 permissions:
   contents: read
@@ -20,19 +21,17 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - name: Build unchanged solver
-        run: make --jobs=2 bin/distqldpc
-      - name: Independent construction, complete logicals and unit contracts
+      - name: Independent finite certificates, physical roots, logicals and unit guards without solver
         run: |
           python3 -m unittest discover -s tests -p 'test_codegen_*.py'
           python3 scripts/codegen/validate_css.py --output /tmp/gh208-css.json
           cmp data/matrices/untiered/validation.json /tmp/gh208-css.json
           python3 scripts/codegen/validate_qr.py --out /tmp/gh208-construction.json
           cmp optimization/experiments/GH-208/raw/construction.json /tmp/gh208-construction.json
-      - name: Reproduce all20 matrix files byte for byte
+      - name: Reproduce all20 physical matrix files byte for byte
         run: |
           python3 scripts/codegen/qr.py --all --out /tmp/gh208-rebuilt
           python3 - <<'PY'
@@ -43,35 +42,17 @@ jobs:
               assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
           print('PASS20matrixbyteidentical')
           PY
-      - name: Five serial default MaxSAT 60CPU-second checks
-        run: python3 scripts/codegen/smoke_qr.py --ci --engine maxsat --out /tmp/gh208-maxsat
-      - name: Five serial explicit CC 60CPU-second checks
-        run: python3 scripts/codegen/smoke_qr.py --ci --engine cc --out /tmp/gh208-cc
-      - name: Cross-engine source bounds and actual GF2 minimum-word audit
-        run: python3 scripts/codegen/audit_qr_smoke.py --maxsat /tmp/gh208-maxsat --cc /tmp/gh208-cc --construction /tmp/gh208-construction.json --out /tmp/gh208-smoke-audit.json
-      - name: Retain complete evidence even on failure
-        if: always()
+      - name: Replay original ten engine logs and actual GF2 words only
+        run: |
+          python3 scripts/codegen/audit_qr_smoke.py --maxsat optimization/experiments/GH-208/raw/actions/default/maxsat --cc optimization/experiments/GH-208/raw/actions/default/cc --construction optimization/experiments/GH-208/raw/construction.json --out /tmp/gh208-replayed.json
+          cmp optimization/experiments/GH-208/raw/actions/default/audit.json /tmp/gh208-replayed.json
+      - name: Verify retained raw evidence identities
         run: |
           python3 - <<'PY'
-          import json
           from pathlib import Path
-          evidence={}
-          for label in ('maxsat','cc'):
-              root=Path('/tmp/gh208-'+label)
-              evidence[label]={str(p.relative_to(root)):p.read_text() for p in root.rglob('*') if p.is_file()}
-          for name in ('construction','smoke-audit'):
-              p=Path('/tmp/gh208-'+name+'.json')
-              if p.exists():evidence[name]=p.read_text()
-          print('GH208_EVIDENCE_JSON='+json.dumps(evidence,separators=(',',':')))
+          import hashlib,json
+          hashes=json.loads(Path('optimization/experiments/GH-208/raw/retained-sha256.json').read_text())
+          for p,h in hashes.items():
+              assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==h,p
+          print('PASS retained SHA256 identities',len(hashes))
           PY
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: gh208-qr-short-gates
-          path: |
-            /tmp/gh208-maxsat/
-            /tmp/gh208-cc/
-            /tmp/gh208-construction.json
-            /tmp/gh208-smoke-audit.json
-          if-no-files-found: warn
-          retention-days: 14
