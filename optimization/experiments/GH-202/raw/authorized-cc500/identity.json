@@ -1,0 +1,37 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-engine=cc",
+    "-seed=0",
+    "-v",
+    "-cpu-lim=60",
+    "data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown"
+  ],
+  "source_head": "bf892dbc5113804b65fe822756b7457320dda68e",
+  "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "input_sha256": {
+    "Hx": "a350fdef721ff6accf99369d0cb36e141edeb7445168fe17baa8be03f06f9041",
+    "Hz": "f6c1c9afff5b15f7ca0de889390b0e1cf989162a9e1959ddc6b7f6523c191b7c",
+    "Gx": "d83b9967c4acfa18d95ffddf0e90f7c28a2136621e10abf4b9b24b8865e03507",
+    "Gz": "57e7c8941ee472f65953af26802abedc40633b40d3689cc32e9e371558e0c61f"
+  },
+  "engine": "cc",
+  "original_source": "e41bff4c327fa60a3467be5552509ea9ec9e496c",
+  "original_src_tree": "19cbea916c41b3918de87f86791da9f1c80abbbd",
+  "original_makefile_blob": "1951a24d5de920a651ad3919c672331862976365",
+  "original_binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+  "cpu": 0,
+  "source_reference_exact": 6,
+  "authorization": "human chat2026-10-30; issue202 comment6510319434",
+  "address_space_limit": 4294967296,
+  "rc": 0,
+  "wall_seconds": 0.05110420899998758,
+  "runner_backstop": false
+}

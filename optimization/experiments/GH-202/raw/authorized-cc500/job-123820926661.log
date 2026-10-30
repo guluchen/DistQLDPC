@@ -1,0 +1,1195 @@
+﻿2026-10-30T00:39:31.6067827Z Current runner version: '2.338.0'
+2026-10-30T00:39:31.6094495Z ##[group]Runner Image Provisioner
+2026-10-30T00:39:31.6095494Z Hosted Compute Agent
+2026-10-30T00:39:31.6096130Z Version: 20261021.618
+2026-10-30T00:39:31.6096802Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-30T00:39:31.6097615Z Build Date: 2026-10-21T00:45:21Z
+2026-10-30T00:39:31.6098331Z Worker ID: {d97c686d-0b7e-498b-a5e3-cea99994608d}
+2026-10-30T00:39:31.6099352Z Region: westcentralus
+2026-10-30T00:39:31.6100032Z Cloud: Azure
+2026-10-30T00:39:31.6100581Z ##[endgroup]
+2026-10-30T00:39:31.6102215Z ##[group]Operating System
+2026-10-30T00:39:31.6102882Z Ubuntu
+2026-10-30T00:39:31.6103436Z 24.04.5
+2026-10-30T00:39:31.6104020Z LTS
+2026-10-30T00:39:31.6104535Z ##[endgroup]
+2026-10-30T00:39:31.6105114Z ##[group]Runner Image
+2026-10-30T00:39:31.6105739Z Image: ubuntu-24.04
+2026-10-30T00:39:31.6106328Z Version: 20261025.353.1
+2026-10-30T00:39:31.6107622Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-30T00:39:31.6109474Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-10-30T00:39:31.6110473Z ##[endgroup]
+2026-10-30T00:39:31.6111643Z ##[group]GITHUB_TOKEN Permissions
+2026-10-30T00:39:31.6113863Z Contents: read
+2026-10-30T00:39:31.6114491Z Metadata: read
+2026-10-30T00:39:31.6115543Z ##[endgroup]
+2026-10-30T00:39:31.6117811Z Secret source: Actions
+2026-10-30T00:39:31.6119324Z Cache mode: write
+2026-10-30T00:39:31.6120197Z Prepare workflow directory
+2026-10-30T00:39:31.6481700Z Prepare all required actions
+2026-10-30T00:39:31.6531984Z Getting action download info
+2026-10-30T00:39:31.9518996Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-30T00:39:32.0586703Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-30T00:39:32.2737126Z Complete job name: cc500-only
+2026-10-30T00:39:32.3630212Z ##[group]Run actions/checkout@v7
+2026-10-30T00:39:32.3631166Z with:
+2026-10-30T00:39:32.3631613Z   repository: guluchen/DistQLDPC
+2026-10-30T00:39:32.3635399Z   token: ***
+2026-10-30T00:39:32.3635828Z   ssh-strict: true
+2026-10-30T00:39:32.3636266Z   ssh-user: git
+2026-10-30T00:39:32.3636712Z   persist-credentials: true
+2026-10-30T00:39:32.3637196Z   clean: true
+2026-10-30T00:39:32.3637647Z   sparse-checkout-cone-mode: true
+2026-10-30T00:39:32.3638172Z   fetch-depth: 1
+2026-10-30T00:39:32.3638599Z   fetch-tags: false
+2026-10-30T00:39:32.3639255Z   show-progress: true
+2026-10-30T00:39:32.3639714Z   lfs: false
+2026-10-30T00:39:32.3640454Z   submodules: false
+2026-10-30T00:39:32.3640920Z   set-safe-directory: true
+2026-10-30T00:39:32.3641431Z   allow-unsafe-pr-checkout: false
+2026-10-30T00:39:32.3642310Z ##[endgroup]
+2026-10-30T00:39:32.6735436Z Syncing repository: guluchen/DistQLDPC
+2026-10-30T00:39:32.6737935Z ##[group]Getting Git version info
+2026-10-30T00:39:32.6739436Z Working directory is '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-30T00:39:32.6741136Z [command]/usr/bin/git version
+2026-10-30T00:39:32.6873793Z git version 2.56.0
+2026-10-30T00:39:32.6929195Z ##[endgroup]
+2026-10-30T00:39:32.6966690Z Temporarily overriding HOME='/home/runner/work/_temp/58735093-10ac-498b-94c5-d3590f65de7d' before making global git config changes
+2026-10-30T00:39:32.6970223Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T00:39:32.6972285Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T00:39:32.7015531Z Deleting the contents of '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-30T00:39:32.7028505Z ##[group]Determining repository object format
+2026-10-30T00:39:32.7030739Z ##[endgroup]
+2026-10-30T00:39:32.7042191Z ##[group]Initializing the repository
+2026-10-30T00:39:32.7043115Z [command]/usr/bin/git init /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T00:39:32.7188044Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-30T00:39:32.7190147Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-30T00:39:32.7191128Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-30T00:39:32.7191860Z hint: call:
+2026-10-30T00:39:32.7192263Z hint:
+2026-10-30T00:39:32.7192983Z hint: 	git config --global init.defaultBranch <name>
+2026-10-30T00:39:32.7193748Z hint:
+2026-10-30T00:39:32.7194338Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-30T00:39:32.7195254Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-30T00:39:32.7195977Z hint:
+2026-10-30T00:39:32.7196395Z hint: 	git branch -m <name>
+2026-10-30T00:39:32.7197094Z hint:
+2026-10-30T00:39:32.7198182Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-30T00:39:32.7200437Z Initialized empty Git repository in /home/runner/work/DistQLDPC/DistQLDPC/.git/
+2026-10-30T00:39:32.7215040Z [command]/usr/bin/git remote add origin https://github.com/guluchen/DistQLDPC
+2026-10-30T00:39:32.7269699Z ##[endgroup]
+2026-10-30T00:39:32.7270742Z ##[group]Disabling automatic garbage collection
+2026-10-30T00:39:32.7273955Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-30T00:39:32.7316604Z ##[endgroup]
+2026-10-30T00:39:32.7317829Z ##[group]Setting up auth
+2026-10-30T00:39:32.7318417Z Removing SSH command configuration
+2026-10-30T00:39:32.7325008Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T00:39:32.7375018Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T00:39:32.7805863Z Removing HTTP extra header
+2026-10-30T00:39:32.7811876Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T00:39:32.7859960Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T00:39:32.8100373Z Removing includeIf entries pointing to credentials config files
+2026-10-30T00:39:32.8113562Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T00:39:32.8165702Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T00:39:32.8417407Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-30T00:39:32.8473449Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path /home/runner/work/_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:32.8520072Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:32.8566915Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:32.8614179Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:32.8657249Z ##[endgroup]
+2026-10-30T00:39:32.8658587Z ##[group]Fetching the repository
+2026-10-30T00:39:32.8665812Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +bf892dbc5113804b65fe822756b7457320dda68e:refs/remotes/origin/codex/schreier-tanner-library
+2026-10-30T00:39:35.3931381Z From https://github.com/guluchen/DistQLDPC
+2026-10-30T00:39:35.3933229Z  * [new ref]         bf892dbc5113804b65fe822756b7457320dda68e -> origin/codex/schreier-tanner-library
+2026-10-30T00:39:35.3946993Z [command]/usr/bin/git branch --list --remote origin/codex/schreier-tanner-library
+2026-10-30T00:39:35.3986937Z   origin/codex/schreier-tanner-library
+2026-10-30T00:39:35.3997543Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/schreier-tanner-library
+2026-10-30T00:39:35.4034207Z bf892dbc5113804b65fe822756b7457320dda68e
+2026-10-30T00:39:35.4039862Z ##[endgroup]
+2026-10-30T00:39:35.4041322Z ##[group]Determining the checkout info
+2026-10-30T00:39:35.4042997Z ##[endgroup]
+2026-10-30T00:39:35.4046636Z [command]/usr/bin/git sparse-checkout disable
+2026-10-30T00:39:35.4113717Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-30T00:39:35.4163418Z ##[group]Checking out the ref
+2026-10-30T00:39:35.4165612Z [command]/usr/bin/git checkout --progress --force -B codex/schreier-tanner-library refs/remotes/origin/codex/schreier-tanner-library
+2026-10-30T00:39:35.7410892Z Switched to a new branch 'codex/schreier-tanner-library'
+2026-10-30T00:39:35.7436409Z branch 'codex/schreier-tanner-library' set up to track 'origin/codex/schreier-tanner-library'.
+2026-10-30T00:39:35.7501676Z ##[endgroup]
+2026-10-30T00:39:35.7560428Z [command]/usr/bin/git log -1 --format=%H
+2026-10-30T00:39:35.7598732Z bf892dbc5113804b65fe822756b7457320dda68e
+2026-10-30T00:39:35.7838213Z ##[group]Run make --jobs=2 bin/distqldpc
+2026-10-30T00:39:35.7838700Z [36;1mmake --jobs=2 bin/distqldpc[0m
+2026-10-30T00:39:35.7862465Z shell: /usr/bin/bash -e {0}
+2026-10-30T00:39:35.7862794Z ##[endgroup]
+2026-10-30T00:39:35.7968628Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/SimpSolver.o src/solver/SimpSolver.cc
+2026-10-30T00:39:35.7973526Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Solver.o src/solver/Solver.cc
+2026-10-30T00:39:35.9454643Z In file included from src/solver/Solver.h:55,
+2026-10-30T00:39:35.9455467Z                  from src/solver/Solver.cc:107:
+2026-10-30T00:39:35.9456815Z src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:35.9458112Z   285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+2026-10-30T00:39:35.9459116Z       |                             ^
+2026-10-30T00:39:35.9460383Z src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:35.9461694Z   291 |             fprintf(stderr, "%4"PRIi64, range.end);
+2026-10-30T00:39:35.9462321Z       |                             ^
+2026-10-30T00:39:35.9463501Z src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:35.9464800Z   293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+2026-10-30T00:39:35.9465471Z       |                         ^
+2026-10-30T00:39:35.9466116Z In file included from src/solver/Solver.h:55,
+2026-10-30T00:39:35.9466770Z                  from src/solver/SimpSolver.h:37,
+2026-10-30T00:39:35.9467411Z                  from src/solver/SimpSolver.cc:34:
+2026-10-30T00:39:35.9468661Z src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:35.9470327Z   285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+2026-10-30T00:39:35.9470889Z       |                             ^
+2026-10-30T00:39:35.9471948Z src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:35.9473163Z   291 |             fprintf(stderr, "%4"PRIi64, range.end);
+2026-10-30T00:39:35.9473794Z       |                             ^
+2026-10-30T00:39:35.9474952Z src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:35.9476574Z   293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+2026-10-30T00:39:35.9477240Z       |                         ^
+2026-10-30T00:39:36.2059230Z src/solver/Solver.h: In constructor ‘Minisat::Solver::Solver()’:
+2026-10-30T00:39:36.2061454Z src/solver/Solver.h:482:15: warning: ‘Minisat::Solver::my_var_decay’ will be initialized after [-Wreorder]
+2026-10-30T00:39:36.2062609Z   482 |     double    my_var_decay;
+2026-10-30T00:39:36.2063227Z       |               ^~~~~~~~~~~~
+2026-10-30T00:39:36.2064919Z src/solver/Solver.h:295:42: warning:   ‘Minisat::Heap<Minisat::Solver::VarOrderLt> Minisat::Solver::order_heap_distance’ [-Wreorder]
+2026-10-30T00:39:36.2066317Z   295 |                         order_heap_VSIDS,order_heap_distance;
+2026-10-30T00:39:36.2067120Z       |                                          ^~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2068024Z src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+2026-10-30T00:39:36.2069307Z   143 | Solver::Solver() :
+2026-10-30T00:39:36.2069886Z       | ^~~~~~
+2026-10-30T00:39:36.2071186Z src/solver/Solver.h:516:14: warning: ‘Minisat::Solver::lastOptimalCost’ will be initialized after [-Wreorder]
+2026-10-30T00:39:36.2073141Z   516 |     uint64_t lastOptimalCost;
+2026-10-30T00:39:36.2073862Z       |              ^~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2075196Z src/solver/Solver.h:515:40: warning:   ‘uint64_t Minisat::Solver::totalWeight’ [-Wreorder]
+2026-10-30T00:39:36.2076326Z   515 |     uint64_t hardWeight, solutionCost, totalWeight, UB;
+2026-10-30T00:39:36.2077125Z       |                                        ^~~~~~~~~~~
+2026-10-30T00:39:36.2077996Z src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+2026-10-30T00:39:36.2079174Z   143 | Solver::Solver() :
+2026-10-30T00:39:36.2079738Z       | ^~~~~~
+2026-10-30T00:39:36.2080930Z src/solver/Solver.h:758:25: warning: ‘Minisat::Solver::orderHeapAuxi’ will be initialized after [-Wreorder]
+2026-10-30T00:39:36.2082111Z   758 |     Heap<VarOrderGt>    orderHeapAuxi;
+2026-10-30T00:39:36.2082790Z       |                         ^~~~~~~~~~~~~
+2026-10-30T00:39:36.2083973Z src/solver/Solver.h:670:25: warning:   ‘int Minisat::Solver::tier2_lbd_cut’ [-Wreorder]
+2026-10-30T00:39:36.2084963Z   670 |     int                 tier2_lbd_cut;
+2026-10-30T00:39:36.2085626Z       |                         ^~~~~~~~~~~~~
+2026-10-30T00:39:36.2086467Z src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+2026-10-30T00:39:36.2087359Z   143 | Solver::Solver() :
+2026-10-30T00:39:36.2087888Z       | ^~~~~~
+2026-10-30T00:39:36.2089418Z src/solver/Solver.h:714:9: warning: ‘Minisat::Solver::cardinalityEncMode’ will be initialized after [-Wreorder]
+2026-10-30T00:39:36.2090607Z   714 |     int cardinalityEncMode;
+2026-10-30T00:39:36.2091223Z       |         ^~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2092450Z src/solver/Solver.h:695:14: warning:   ‘uint64_t Minisat::Solver::quasiSoftConflicts’ [-Wreorder]
+2026-10-30T00:39:36.2093510Z   695 |     uint64_t quasiSoftConflicts;
+2026-10-30T00:39:36.2094207Z       |              ^~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2095010Z src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+2026-10-30T00:39:36.2095864Z   143 | Solver::Solver() :
+2026-10-30T00:39:36.2096446Z       | ^~~~~~
+2026-10-30T00:39:36.2097744Z src/solver/Solver.h:747:14: warning: ‘Minisat::Solver::nbFixedByLH’ will be initialized after [-Wreorder]
+2026-10-30T00:39:36.2099147Z   747 |     uint64_t nbFixedByLH;
+2026-10-30T00:39:36.2099775Z       |              ^~~~~~~~~~~
+2026-10-30T00:39:36.2101032Z src/solver/Solver.h:613:10: warning:   ‘bool Minisat::Solver::bestSolutionFound’ [-Wreorder]
+2026-10-30T00:39:36.2102043Z   613 |     bool bestSolutionFound;
+2026-10-30T00:39:36.2102659Z       |          ^~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2103462Z src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+2026-10-30T00:39:36.2104313Z   143 | Solver::Solver() :
+2026-10-30T00:39:36.2105199Z       | ^~~~~~
+2026-10-30T00:39:36.2106518Z src/solver/Solver.h:615:9: warning: ‘Minisat::Solver::nbSatLitsAtStart’ will be initialized after [-Wreorder]
+2026-10-30T00:39:36.2107680Z   615 |     int nbSatLitsAtStart;
+2026-10-30T00:39:36.2108280Z       |         ^~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2109740Z src/solver/Solver.h:562:9: warning:   ‘int Minisat::Solver::bounds_pipe_w’ [-Wreorder]
+2026-10-30T00:39:36.2110700Z   562 |     int bounds_pipe_w;
+2026-10-30T00:39:36.2223792Z       |         ^~~~~~~~~~~~~
+2026-10-30T00:39:36.2224710Z src/solver/Solver.cc:143:1: warning:   when initialized here [-Wreorder]
+2026-10-30T00:39:36.2225743Z   143 | Solver::Solver() :
+2026-10-30T00:39:36.2226389Z       | ^~~~~~
+2026-10-30T00:39:36.2228217Z src/solver/Solver.cc: In member function ‘Minisat::CRef Minisat::Solver::simplePropagate()’:
+2026-10-30T00:39:36.2241015Z src/solver/Solver.cc:316:27: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2243733Z   316 |         if (c.lastPoint() > c.size())
+2026-10-30T00:39:36.2244939Z       |             ~~~~~~~~~~~~~~^~~~~~~~~~
+2026-10-30T00:39:36.2246925Z src/solver/Solver.cc:335:27: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+2026-10-30T00:39:36.2249043Z   335 |         for (int k = 2; k < c.lastPoint(); k++) {
+2026-10-30T00:39:36.2249850Z       |                         ~~^~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2251627Z src/solver/Solver.cc:381:63: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.2253287Z   381 |     if (confl == CRef_Undef && falseLits.size() + rootNbIsets >= UB)
+2026-10-30T00:39:36.2254222Z       |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+2026-10-30T00:39:36.2255585Z src/solver/Solver.cc: In member function ‘bool Minisat::Solver::simplifyLearnt_core()’:
+2026-10-30T00:39:36.2257517Z src/solver/Solver.cc:788:34: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2259149Z   788 |                     if (nblevels < c.lbd()){
+2026-10-30T00:39:36.2259897Z       |                         ~~~~~~~~~^~~~~~~~~
+2026-10-30T00:39:36.2261224Z src/solver/Solver.cc:722:9: warning: unused variable ‘learnts_core_size_before’ [-Wunused-variable]
+2026-10-30T00:39:36.2262393Z   722 |     int learnts_core_size_before = learnts_core.size();
+2026-10-30T00:39:36.2263105Z       |         ^~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2264255Z src/solver/Solver.cc: In member function ‘bool Minisat::Solver::simplifyLearnt_tier2()’:
+2026-10-30T00:39:36.2266728Z src/solver/Solver.cc:896:34: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2268105Z   896 |                     if (nblevels < c.lbd()){
+2026-10-30T00:39:36.2269052Z       |                         ~~~~~~~~~^~~~~~~~~
+2026-10-30T00:39:36.2270447Z src/solver/Solver.cc:824:9: warning: unused variable ‘learnts_tier2_size_before’ [-Wunused-variable]
+2026-10-30T00:39:36.2271776Z   824 |     int learnts_tier2_size_before = learnts_tier2.size();
+2026-10-30T00:39:36.2272619Z       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2273929Z src/solver/Solver.cc:829:9: warning: variable ‘limit’ set but not used [-Wunused-but-set-variable]
+2026-10-30T00:39:36.2274985Z   829 |     int limit;
+2026-10-30T00:39:36.2275573Z       |         ^~~~~
+2026-10-30T00:39:36.2276888Z src/solver/Solver.cc: In member function ‘bool Minisat::Solver::failedLiteralDetection()’:
+2026-10-30T00:39:36.2279321Z src/solver/Solver.cc:1039:100: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 7 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2281340Z  1039 |   printf("c nbFailedLits %d, nbI %d, fixedVarsByFL %d, totalFixedVars %d, nbTested: %d, counter %llu\n",
+2026-10-30T00:39:36.2282963Z       |                                                                                                 ~~~^
+2026-10-30T00:39:36.2283924Z       |                                                                                                    |
+2026-10-30T00:39:36.2284997Z       |                                                                                                    long long unsigned int
+2026-10-30T00:39:36.2286033Z       |                                                                                                 %lu
+2026-10-30T00:39:36.2287169Z  1040 |          nbFailedLits, nbI, trail.size()-initTrail, trail.size(), nbTested, counter);
+2026-10-30T00:39:36.2288278Z       |                                                                             ~~~~~~~                 
+2026-10-30T00:39:36.2289426Z       |                                                                             |
+2026-10-30T00:39:36.2290297Z       |                                                                             uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2291733Z src/solver/Solver.cc: In member function ‘bool Minisat::Solver::simplifyOriginalClauses()’:
+2026-10-30T00:39:36.2294094Z src/solver/Solver.cc:1180:40: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2295767Z  1180 |     printf("c total nb of literals: %llu\n", clauses_literals);
+2026-10-30T00:39:36.2296649Z       |                                     ~~~^     ~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2297387Z       |                                        |     |
+2026-10-30T00:39:36.2298175Z       |                                        |     uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2299307Z       |                                        long long unsigned int
+2026-10-30T00:39:36.2300047Z       |                                     %lu
+2026-10-30T00:39:36.2301327Z src/solver/Solver.cc:1174:25: warning: unused variable ‘nbOriginalClauses_before’ [-Wunused-variable]
+2026-10-30T00:39:36.2302626Z  1174 |     int last_shorten=0, nbOriginalClauses_before = clauses.size();
+2026-10-30T00:39:36.2303501Z       |                         ^~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2304719Z src/solver/Solver.cc:1186:17: warning: unused variable ‘begin_simp_time’ [-Wunused-variable]
+2026-10-30T00:39:36.2305788Z  1186 |     double      begin_simp_time = cpuTime();
+2026-10-30T00:39:36.2306494Z       |                 ^~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2307737Z src/solver/Solver.cc:1251:12: warning: variable ‘avg’ set but not used [-Wunused-but-set-variable]
+2026-10-30T00:39:36.2308774Z  1251 |     double avg;
+2026-10-30T00:39:36.2309556Z       |            ^~~
+2026-10-30T00:39:36.2376095Z src/solver/Solver.cc: In member function ‘Minisat::CRef Minisat::Solver::propagate()’:
+2026-10-30T00:39:36.2378651Z src/solver/Solver.cc:2008:31: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2380416Z  2008 |             if (c.lastPoint() > c.size())
+2026-10-30T00:39:36.2381141Z       |                 ~~~~~~~~~~~~~~^~~~~~~~~~
+2026-10-30T00:39:36.2382743Z src/solver/Solver.cc:2027:31: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+2026-10-30T00:39:36.2384125Z  2027 |             for (int k = 2; k < c.lastPoint(); k++) {
+2026-10-30T00:39:36.2384884Z       |                             ~~^~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2387537Z src/solver/Solver.cc:2083:49: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.2388512Z  2083 |     if (confl == CRef_Undef && falseLits.size() >= UB)
+2026-10-30T00:39:36.2389366Z       |                                ~~~~~~~~~~~~~~~~~^~~~~
+2026-10-30T00:39:36.2391945Z src/solver/Solver.cc:2079:1: warning: label ‘ExitProp’ defined but not used [-Wunused-label]
+2026-10-30T00:39:36.2392807Z  2079 | ExitProp:;
+2026-10-30T00:39:36.2393073Z       | ^~~~~~~~
+2026-10-30T00:39:36.2420001Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::getAllUIP(Minisat::vec<Minisat::Lit>&, int&, int&)’:
+2026-10-30T00:39:36.2421513Z src/solver/Solver.cc:2184:9: warning: variable ‘myLevel’ set but not used [-Wunused-but-set-variable]
+2026-10-30T00:39:36.2422147Z  2184 |     int myLevel = decisionLevel() +1;
+2026-10-30T00:39:36.2422499Z       |         ^~~~~~~
+2026-10-30T00:39:36.2424164Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)’:
+2026-10-30T00:39:36.2426013Z src/solver/Solver.cc:2203:26: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.2427118Z  2203 |     if (falseLits.size() >= UB)
+2026-10-30T00:39:36.2427458Z       |         ~~~~~~~~~~~~~~~~~^~~~~
+2026-10-30T00:39:36.2428366Z src/solver/Solver.cc:2213:26: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.2429421Z  2213 |     if (falseLits.size() > UB) {
+2026-10-30T00:39:36.2429761Z       |         ~~~~~~~~~~~~~~~~~^~~~
+2026-10-30T00:39:36.2497574Z src/solver/Solver.cc: In member function ‘bool Minisat::Solver::simplifyLearnt_local()’:
+2026-10-30T00:39:36.2499616Z src/solver/Solver.cc:2638:34: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2500622Z  2638 |                     if (nblevels < c.lbd()){
+2026-10-30T00:39:36.2501013Z       |                         ~~~~~~~~~^~~~~~~~~
+2026-10-30T00:39:36.2501681Z src/solver/Solver.cc:2566:7: warning: unused variable ‘learnts_local_size_before’ [-Wunused-variable]
+2026-10-30T00:39:36.2502315Z  2566 |   int learnts_local_size_before = learnts_local.size();
+2026-10-30T00:39:36.2502715Z       |       ^~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2503306Z src/solver/Solver.cc:2567:7: warning: unused variable ‘savedTrail’ [-Wunused-variable]
+2026-10-30T00:39:36.2503806Z  2567 |   int savedTrail = trail.size();
+2026-10-30T00:39:36.2504127Z       |       ^~~~~~~~~~
+2026-10-30T00:39:36.2520255Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::reduceDB_core()’:
+2026-10-30T00:39:36.2521614Z src/solver/Solver.cc:2779:9: warning: unused variable ‘totalLocalSize’ [-Wunused-variable]
+2026-10-30T00:39:36.2522220Z  2779 |     int totalLocalSize=0, removedSize=0;
+2026-10-30T00:39:36.2522590Z       |         ^~~~~~~~~~~~~~
+2026-10-30T00:39:36.2523141Z src/solver/Solver.cc:2779:27: warning: unused variable ‘removedSize’ [-Wunused-variable]
+2026-10-30T00:39:36.2523684Z  2779 |     int totalLocalSize=0, removedSize=0;
+2026-10-30T00:39:36.2524050Z       |                           ^~~~~~~~~~~
+2026-10-30T00:39:36.2555979Z src/solver/Solver.cc: In member function ‘Minisat::CRef Minisat::Solver::lPropagate()’:
+2026-10-30T00:39:36.2558486Z src/solver/Solver.cc:3029:20: warning: comparison of integer expressions of different signedness: ‘uint64_t’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2560935Z  3029 |   if (UB > 1 && UB == falseLits.size() + 1 && decisionLevel() < hardenLevel) {
+2026-10-30T00:39:36.2561871Z       |                 ~~~^~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2577163Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::identifyClausesToSplit(Minisat::vec<unsigned int>&)’:
+2026-10-30T00:39:36.2579830Z src/solver/Solver.cc:3177:46: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.2581465Z  3177 |     for(j=i+1; j<cs.size() && 2*nbCommunLits >= UB; j++) {
+2026-10-30T00:39:36.2582254Z       |                               ~~~~~~~~~~~~~~~^~~~~
+2026-10-30T00:39:36.2645289Z src/solver/Solver.cc: In member function ‘Minisat::lbool Minisat::Solver::search(int&)’:
+2026-10-30T00:39:36.2647789Z src/solver/Solver.cc:3833:31: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2650357Z  3833 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.2651688Z       |                            ~~~^
+2026-10-30T00:39:36.2652213Z       |                               |
+2026-10-30T00:39:36.2652796Z       |                               long long unsigned int
+2026-10-30T00:39:36.2653394Z       |                            %lu
+2026-10-30T00:39:36.2654450Z  3834 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+2026-10-30T00:39:36.2655484Z       |                      ~~        
+2026-10-30T00:39:36.2656000Z       |                      |
+2026-10-30T00:39:36.2656581Z       |                      uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2658420Z src/solver/Solver.cc:3833:50: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2661305Z  3833 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.2662872Z       |                                               ~~~^
+2026-10-30T00:39:36.2663537Z       |                                                  |
+2026-10-30T00:39:36.2664245Z       |                                                  long long unsigned int
+2026-10-30T00:39:36.2664966Z       |                                               %lu
+2026-10-30T00:39:36.2666115Z  3834 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+2026-10-30T00:39:36.2667304Z       |                          ~~~~~~~~~                
+2026-10-30T00:39:36.2667903Z       |                          |
+2026-10-30T00:39:36.2668504Z       |                          uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2670636Z src/solver/Solver.cc:3833:64: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2673110Z  3833 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.2674648Z       |                                                             ~~~^
+2026-10-30T00:39:36.2675424Z       |                                                                |
+2026-10-30T00:39:36.2676243Z       |                                                                long long unsigned int
+2026-10-30T00:39:36.2677143Z       |                                                             %lu
+2026-10-30T00:39:36.2678388Z  3834 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+2026-10-30T00:39:36.2679843Z       |                                     ~~~~~~~~~~~~~~~~~~~~~~~     
+2026-10-30T00:39:36.2680593Z       |                                              |
+2026-10-30T00:39:36.2681362Z       |                                              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2683481Z src/solver/Solver.cc:3833:186: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 13 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2685867Z  3833 |               printf("c UB=%llu succs, confls=%llu, hconfls=%llu, core %d, tier2 %d, local %d,  %d soft cls unsat (%d at L0), %d fixed vars at L0, softCnfl %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.2688032Z       |                                                                                                                                                                                       ~~~^
+2026-10-30T00:39:36.2689670Z       |                                                                                                                                                                                          |
+2026-10-30T00:39:36.2691204Z       |                                                                                                                                                                                          long long unsigned int
+2026-10-30T00:39:36.2692690Z       |                                                                                                                                                                                       %lu
+2026-10-30T00:39:36.2694291Z  3834 |                      UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(),
+2026-10-30T00:39:36.2695874Z  3835 |                      falseLits.size(), nbFalses, nbFixeds, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+2026-10-30T00:39:36.2697568Z       |                                                                                         ~~~~~~~~~~~                                                                                       
+2026-10-30T00:39:36.2698752Z       |                                                                                         |
+2026-10-30T00:39:36.2700094Z       |                                                                                         uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2702174Z src/solver/Solver.cc:3837:48: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2704529Z  3837 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+2026-10-30T00:39:36.2706009Z       |                                             ~~~^
+2026-10-30T00:39:36.2706718Z       |                                                |
+2026-10-30T00:39:36.2707572Z       |                                                long long unsigned int
+2026-10-30T00:39:36.2708369Z       |                                             %lu
+2026-10-30T00:39:36.2710366Z  3838 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.2712030Z       |                                 ~~~~~~~~~~~~~~  
+2026-10-30T00:39:36.2712633Z       |                                 |
+2026-10-30T00:39:36.2713293Z       |                                 uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2715205Z src/solver/Solver.cc:3837:64: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2717578Z  3837 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+2026-10-30T00:39:36.2719398Z       |                                                             ~~~^
+2026-10-30T00:39:36.2720214Z       |                                                                |
+2026-10-30T00:39:36.2721084Z       |                                                                long long unsigned int
+2026-10-30T00:39:36.2721929Z       |                                                             %lu
+2026-10-30T00:39:36.2723711Z  3838 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.2725811Z       |                                                 ~~~~~~~~~~~     
+2026-10-30T00:39:36.2726564Z       |                                                 |
+2026-10-30T00:39:36.2727349Z       |                                                 uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2729613Z src/solver/Solver.cc:3837:120: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 8 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2731975Z  3837 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+2026-10-30T00:39:36.2733586Z       |                                                                                                                     ~~~^
+2026-10-30T00:39:36.2734655Z       |                                                                                                                        |
+2026-10-30T00:39:36.2735793Z       |                                                                                                                        long long unsigned int
+2026-10-30T00:39:36.2737206Z       |                                                                                                                     %lu
+2026-10-30T00:39:36.2739451Z  3838 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.2741373Z       |                                                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~        
+2026-10-30T00:39:36.2742418Z       |                                                                                                |
+2026-10-30T00:39:36.2743471Z       |                                                                                                uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2745474Z src/solver/Solver.cc:3837:130: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 9 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2747700Z  3837 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+2026-10-30T00:39:36.2749641Z       |                                                                                                                               ~~~^
+2026-10-30T00:39:36.2750763Z       |                                                                                                                                  |
+2026-10-30T00:39:36.2751960Z       |                                                                                                                                  long long unsigned int
+2026-10-30T00:39:36.2753154Z       |                                                                                                                               %lu
+2026-10-30T00:39:36.2755138Z  3838 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.2757134Z       |                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2758271Z       |                                                                                                                            |
+2026-10-30T00:39:36.2759804Z       |                                                                                                                            uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2761038Z src/solver/Solver.cc:3837:145: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 10 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2762605Z  3837 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+2026-10-30T00:39:36.2763519Z       |                                                                                                                                              ~~~^
+2026-10-30T00:39:36.2764142Z       |                                                                                                                                                 |
+2026-10-30T00:39:36.2764789Z       |                                                                                                                                                 long long unsigned int
+2026-10-30T00:39:36.2765436Z       |                                                                                                                                              %lu
+2026-10-30T00:39:36.2766496Z  3838 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.2767671Z       |                                                                                                                                             ~~~~~~~~~~~
+2026-10-30T00:39:36.2768301Z       |                                                                                                                                             |
+2026-10-30T00:39:36.2769305Z       |                                                                                                                                             uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2770675Z src/solver/Solver.cc:3837:159: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 11 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2771996Z  3837 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+2026-10-30T00:39:36.2772917Z       |                                                                                                                                                            ~~~^
+2026-10-30T00:39:36.2773570Z       |                                                                                                                                                               |
+2026-10-30T00:39:36.2774248Z       |                                                                                                                                                               long long unsigned int
+2026-10-30T00:39:36.2774921Z       |                                                                                                                                                            %lu
+2026-10-30T00:39:36.2775953Z  3838 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.2776996Z       |                                                                                                                                                          ~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2777650Z       |                                                                                                                                                          |
+2026-10-30T00:39:36.2778331Z       |                                                                                                                                                          uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2779768Z src/solver/Solver.cc:3837:172: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 12 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2781207Z  3837 |               printf("c nbHardens %d (fixed %llu), shorten: %llu, prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, lk: %llu, shorten: %llu, quasiC: %llu (fixed: %llu)\n\n",
+2026-10-30T00:39:36.2782136Z       |                                                                                                                                                                         ~~~^
+2026-10-30T00:39:36.2782818Z       |                                                                                                                                                                            |
+2026-10-30T00:39:36.2783530Z       |                                                                                                                                                                            long long unsigned int
+2026-10-30T00:39:36.2784237Z       |                                                                                                                                                                         %lu
+2026-10-30T00:39:36.2785292Z  3838 |                      nbHardens, fixedByHardens, nbSavedLits, meanLB, dev, succRate, nbLKsuccess-savednbLKsuccess, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.2786476Z       |                                                                                                                                                                              ~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2787224Z       |                                                                                                                                                                              |
+2026-10-30T00:39:36.2787961Z       |                                                                                                                                                                              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2789053Z src/solver/Solver.cc: In member function ‘Minisat::CRef Minisat::Solver::propagateForLK()’:
+2026-10-30T00:39:36.2790049Z src/solver/Solver.cc:3998:27: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2791003Z  3998 |         if (c.lastPoint() > c.size())
+2026-10-30T00:39:36.2791383Z       |             ~~~~~~~~~~~~~~^~~~~~~~~~
+2026-10-30T00:39:36.2792191Z src/solver/Solver.cc:4017:27: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+2026-10-30T00:39:36.2792904Z  4017 |         for (int k = 2; k < c.lastPoint(); k++) {
+2026-10-30T00:39:36.2793285Z       |                         ~~^~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2813258Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)’:
+2026-10-30T00:39:36.2814902Z src/solver/Solver.cc:4521:26: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.2815722Z  4521 |     if (falseLits.size() > UB) {
+2026-10-30T00:39:36.2816055Z       |         ~~~~~~~~~~~~~~~~~^~~~
+2026-10-30T00:39:36.2865688Z src/solver/Solver.cc: In member function ‘bool Minisat::Solver::lookahead()’:
+2026-10-30T00:39:36.2867052Z src/solver/Solver.cc:4863:17: warning: comparison of integer expressions of different signedness: ‘uint64_t’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2867865Z  4863 |   if (conflicts > prevConflicts) {
+2026-10-30T00:39:36.2868470Z       |       ~~~~~~~~~~^~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2869320Z In file included from src/solver/mtl/Sort.h:24,
+2026-10-30T00:39:36.2869886Z                  from src/solver/SimpSolver.cc:33:
+2026-10-30T00:39:36.2870724Z src/solver/mtl/Vec.h: In instantiation of ‘void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<unsigned int>]’:
+2026-10-30T00:39:36.2871683Z src/solver/mtl/Vec.h:115:13:   required from ‘void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<unsigned int>]’
+2026-10-30T00:39:36.2873293Z src/solver/SolverTypes.h:339:50:   required from ‘void Minisat::OccLists<Idx, Vec, Deleted>::init(const Idx&) [with Idx = int; Vec = Minisat::vec<unsigned int>; Deleted = Minisat::SimpSolver::ClauseDeleted]’
+2026-10-30T00:39:36.2874246Z src/solver/SimpSolver.cc:98:24:   required from here
+2026-10-30T00:39:36.2875390Z src/solver/mtl/Vec.h:99:54: warning: ‘void* realloc(void*, size_t)’ moving an object of non-trivially copyable type ‘class Minisat::vec<unsigned int>’; use ‘new’ and ‘delete’ instead [-Wclass-memaccess]
+2026-10-30T00:39:36.2876511Z    99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+2026-10-30T00:39:36.2877165Z       |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2877803Z src/solver/mtl/Vec.h:38:7: note: ‘class Minisat::vec<unsigned int>’ declared here
+2026-10-30T00:39:36.2878262Z    38 | class vec {
+2026-10-30T00:39:36.2878517Z       |       ^~~
+2026-10-30T00:39:36.2907552Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::addHardClausesForSoftClauses()’:
+2026-10-30T00:39:36.2909467Z src/solver/Solver.cc:5108:70: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2910485Z  5108 |   printf("c nb soft clauses: %d, of which %d unit, %d nonUnit and %llu empty\n",
+2026-10-30T00:39:36.2911019Z       |                                                                   ~~~^
+2026-10-30T00:39:36.2911445Z       |                                                                      |
+2026-10-30T00:39:36.2911896Z       |                                                                      long long unsigned int
+2026-10-30T00:39:36.2912353Z       |                                                                   %lu
+2026-10-30T00:39:36.2912851Z  5109 |          softClauses.size(), nbUnitSoft, nbNonUnitSoft, solutionCost);
+2026-10-30T00:39:36.2913346Z       |                                                         ~~~~~~~~~~~~  
+2026-10-30T00:39:36.2913744Z       |                                                         |
+2026-10-30T00:39:36.2914181Z       |                                                         uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2942044Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::printBestSolution() const’:
+2026-10-30T00:39:36.2943957Z src/solver/Solver.cc:5262:49: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘long unsigned int’ [-Wformat=]
+2026-10-30T00:39:36.2944845Z  5262 |     printf("c   unsat soft clauses (search): %llu\n", bestSup);
+2026-10-30T00:39:36.2945305Z       |                                              ~~~^     ~~~~~~~
+2026-10-30T00:39:36.2946121Z       |                                                 |     |
+2026-10-30T00:39:36.2946951Z       |                                                 |     long unsigned int
+2026-10-30T00:39:36.2947780Z       |                                                 long long unsigned int
+2026-10-30T00:39:36.2948524Z       |                                              %lu
+2026-10-30T00:39:36.2950468Z src/solver/Solver.cc:5263:53: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2951967Z  5263 |     printf("c   satisfied soft clauses (maxsat): %llu\n", maxsat);
+2026-10-30T00:39:36.2952719Z       |                                                  ~~~^     ~~~~~~
+2026-10-30T00:39:36.2953393Z       |                                                     |     |
+2026-10-30T00:39:36.2954125Z       |                                                     |     uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2954947Z       |                                                     long long unsigned int
+2026-10-30T00:39:36.2955933Z       |                                                  %lu
+2026-10-30T00:39:36.2957656Z src/solver/Solver.cc:5264:39: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2959332Z  5264 |     printf("c   total weight cost: %llu\n", optimal);
+2026-10-30T00:39:36.2959999Z       |                                    ~~~^     ~~~~~~~
+2026-10-30T00:39:36.2960566Z       |                                       |     |
+2026-10-30T00:39:36.2961208Z       |                                       |     uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2961903Z       |                                       long long unsigned int
+2026-10-30T00:39:36.2962510Z       |                                    %lu
+2026-10-30T00:39:36.2963491Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::checkSolution()’:
+2026-10-30T00:39:36.2965160Z src/solver/Solver.cc:5280:15: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.2966595Z  5280 |   if (nbFalse != falseLits.size()+fixedCostBySearch + relaxedCost)
+2026-10-30T00:39:36.2967404Z       |       ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.2969487Z src/solver/Solver.cc:5281:92: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2971232Z  5281 |     printf("c **** error nb of false soft clauses real nbfalse: %d, recorded falseLits: %llu****\n",
+2026-10-30T00:39:36.2972271Z       |                                                                                         ~~~^
+2026-10-30T00:39:36.2973101Z       |                                                                                            |
+2026-10-30T00:39:36.2973977Z       |                                                                                            long long unsigned int
+2026-10-30T00:39:36.2974857Z       |                                                                                         %lu
+2026-10-30T00:39:36.2975724Z  5282 |            nbFalse, falseLits.size()+fixedCostBySearch+relaxedCost);
+2026-10-30T00:39:36.2976630Z       |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                          
+2026-10-30T00:39:36.2977376Z       |                                                       |
+2026-10-30T00:39:36.2978072Z       |                                                       uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2980047Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::partition()’:
+2026-10-30T00:39:36.2981663Z src/solver/Solver.cc:5402:31: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2982856Z  5402 |         if (conflicted[var(q)]==iset.size()) {
+2026-10-30T00:39:36.2984095Z src/solver/Solver.cc:5412:32: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2984856Z  5412 |         if (conflicted[var(q)] < iset.size())
+2026-10-30T00:39:36.2985730Z src/solver/Solver.cc:5471:50: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.2987022Z  5471 |         if (q != lit_Undef && conflicted[var(q)] == iset.size()) {
+2026-10-30T00:39:36.2994234Z src/solver/Solver.cc:5544:38: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.2995392Z  5544 |   printf("c isets %d, derivedCost %llu\n", nbIsets, derivedCost);
+2026-10-30T00:39:36.2995877Z       |                                   ~~~^              ~~~~~~~~~~~
+2026-10-30T00:39:36.2996276Z       |                                      |              |
+2026-10-30T00:39:36.2997391Z       |                                      |              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.2998198Z       |                                      long long unsigned int
+2026-10-30T00:39:36.2999110Z       |                                   %lu
+2026-10-30T00:39:36.3021839Z src/solver/Solver.cc: In member function ‘Minisat::CRef Minisat::Solver::simplepropagateForLK()’:
+2026-10-30T00:39:36.3023824Z src/solver/Solver.cc:5691:27: warning: comparison of integer expressions of different signedness: ‘unsigned int’ and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.3025139Z  5691 |         if (c.lastPoint() > c.size())
+2026-10-30T00:39:36.3025767Z       |             ~~~~~~~~~~~~~~^~~~~~~~~~
+2026-10-30T00:39:36.3027273Z src/solver/Solver.cc:5705:27: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+2026-10-30T00:39:36.3028579Z  5705 |         for (int k = 2; k < c.lastPoint(); k++) {
+2026-10-30T00:39:36.3029532Z       |                         ~~^~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3096612Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::addCardinalityConstraints()’:
+2026-10-30T00:39:36.3099580Z src/solver/Solver.cc:6235:64: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3101395Z  6235 |       printf("\nc Cardinality: off (soft-conflict only), UB %llu\n", UB);
+2026-10-30T00:39:36.3102313Z       |                                                             ~~~^     ~~
+2026-10-30T00:39:36.3103081Z       |                                                                |     |
+2026-10-30T00:39:36.3103933Z       |                                                                |     uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3104824Z       |                                                                long long unsigned int
+2026-10-30T00:39:36.3105619Z       |                                                             %lu
+2026-10-30T00:39:36.3107467Z src/solver/Solver.cc:6265:82: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint64_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+2026-10-30T00:39:36.3109558Z  6265 |   if (activeSoftLits.size() < 2 || UB - 1 - nbFalse < 1 || activeSoftLits.size() <= UB - 1 - nbFalse
+2026-10-30T00:39:36.3110727Z       |                                                            ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3112606Z src/solver/Solver.cc:6284:46: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3114346Z  6284 |   printf("\nc Cardinality: %d (%s) for UB %llu\n", cardinalityC.size(), enc, UB);
+2026-10-30T00:39:36.3115307Z       |                                           ~~~^                               ~~
+2026-10-30T00:39:36.3116071Z       |                                              |                               |
+2026-10-30T00:39:36.3117055Z       |                                              long long unsigned int          uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3117942Z       |                                           %lu
+2026-10-30T00:39:36.3146162Z src/solver/Solver.cc: In member function ‘Minisat::lbool Minisat::Solver::solve_()’:
+2026-10-30T00:39:36.3148246Z src/solver/Solver.cc:6633:79: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3150308Z  6633 |     printf("c fixedCost %d, nbSatLits %d, totalFixedVars %d, objForSearch: %llu\n\n",
+2026-10-30T00:39:36.3151316Z       |                                                                            ~~~^
+2026-10-30T00:39:36.3152097Z       |                                                                               |
+2026-10-30T00:39:36.3152949Z       |                                                                               long long unsigned int
+2026-10-30T00:39:36.3154178Z       |                                                                            %lu
+2026-10-30T00:39:36.3155010Z  6634 |                 fixedCost, nbSatLits, trail.size(), objForSearch);
+2026-10-30T00:39:36.3155863Z       |                                                     ~~~~~~~~~~~~               
+2026-10-30T00:39:36.3156591Z       |                                                     |
+2026-10-30T00:39:36.3157339Z       |                                                     uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3159481Z src/solver/Solver.cc:6662:35: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3161137Z  6662 |         printf("c provided UB: %llu\n", providedUB);
+2026-10-30T00:39:36.3161900Z       |                                ~~~^     ~~~~~~~~~~
+2026-10-30T00:39:36.3162562Z       |                                   |     |
+2026-10-30T00:39:36.3163305Z       |                                   |     uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3164084Z       |                                   long long unsigned int
+2026-10-30T00:39:36.3164781Z       |                                %lu
+2026-10-30T00:39:36.3166788Z src/solver/Solver.cc:6665:54: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3180828Z  6665 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+2026-10-30T00:39:36.3190229Z       |                                                   ~~~^                                                                           ~~~~~~
+2026-10-30T00:39:36.3191383Z       |                                                      |                                                                           |
+2026-10-30T00:39:36.3192585Z       |                                                      long long unsigned int                                                      uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3193587Z       |                                                   %lu
+2026-10-30T00:39:36.3195210Z src/solver/Solver.cc:6665:68: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3197272Z  6665 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+2026-10-30T00:39:36.3199129Z       |                                                                 ~~~^                                                                     ~~~~~~~~~~~~
+2026-10-30T00:39:36.3200044Z       |                                                                    |                                                                     |
+2026-10-30T00:39:36.3201078Z       |                                                                    long long unsigned int                                                uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3202008Z       |                                                                 %lu
+2026-10-30T00:39:36.3203501Z src/solver/Solver.cc:6665:87: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3205656Z  6665 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+2026-10-30T00:39:36.3207322Z       |                                                                                    ~~~^                                                                ~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3208700Z       |                                                                                       |                                                                |
+2026-10-30T00:39:36.3210169Z       |                                                                                       long long unsigned int                                           uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3211227Z       |                                                                                    %lu
+2026-10-30T00:39:36.3212900Z src/solver/Solver.cc:6665:105: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3215116Z  6665 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+2026-10-30T00:39:36.3216879Z       |                                                                                                      ~~~^                                                                 ~~~~~~~~~~~
+2026-10-30T00:39:36.3218236Z       |                                                                                                         |                                                                 |
+2026-10-30T00:39:36.3219800Z       |                                                                                                         long long unsigned int                                            uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3220966Z       |                                                                                                      %lu
+2026-10-30T00:39:36.3222680Z src/solver/Solver.cc:6665:124: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 6 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3225287Z  6665 |         printf("c provided UB is invalide: initUB %llu, solCost %llu, costbySearch %llu, derivedCost %llu, relaxedCost: %llu\n", initUB, solutionCost, fixedCostBySearch, derivedCost, relaxedCost);
+2026-10-30T00:39:36.3227109Z       |                                                                                                                         ~~~^                                                           ~~~~~~~~~~~
+2026-10-30T00:39:36.3228316Z       |                                                                                                                            |                                                           |
+2026-10-30T00:39:36.3229975Z       |                                                                                                                            long long unsigned int                                      uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3231178Z       |                                                                                                                         %lu
+2026-10-30T00:39:36.3232921Z src/solver/Solver.cc:6682:35: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3234441Z  6682 |         printf("c provided LB: %llu (search units %llu)\n", initLB, inf);
+2026-10-30T00:39:36.3235226Z       |                                ~~~^                         ~~~~~~
+2026-10-30T00:39:36.3235877Z       |                                   |                         |
+2026-10-30T00:39:36.3236683Z       |                                   long long unsigned int    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3237414Z       |                                %lu
+2026-10-30T00:39:36.3239137Z src/solver/Solver.cc:6682:54: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3240941Z  6682 |         printf("c provided LB: %llu (search units %llu)\n", initLB, inf);
+2026-10-30T00:39:36.3241754Z       |                                                   ~~~^              ~~~
+2026-10-30T00:39:36.3242436Z       |                                                      |              |
+2026-10-30T00:39:36.3243209Z       |                                                      |              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3243996Z       |                                                      long long unsigned int
+2026-10-30T00:39:36.3244663Z       |                                                   %lu
+2026-10-30T00:39:36.3246243Z src/solver/Solver.cc:6708:58: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3247852Z  6708 |       printf("c ends of initiationization by VSIDS at %llu conflicts with init %d\n\n",
+2026-10-30T00:39:36.3248747Z       |                                                       ~~~^
+2026-10-30T00:39:36.3249640Z       |                                                          |
+2026-10-30T00:39:36.3250314Z       |                                                          long long unsigned int
+2026-10-30T00:39:36.3251264Z       |                                                       %lu
+2026-10-30T00:39:36.3251891Z  6709 |              conflicts, init);
+2026-10-30T00:39:36.3252482Z       |              ~~~~~~~~~                                    
+2026-10-30T00:39:36.3253049Z       |              |
+2026-10-30T00:39:36.3253551Z       |              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3255136Z src/solver/Solver.cc:6738:50: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3256723Z  6738 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3257591Z       |                                               ~~~^
+2026-10-30T00:39:36.3258183Z       |                                                  |
+2026-10-30T00:39:36.3259068Z       |                                                  long long unsigned int
+2026-10-30T00:39:36.3259765Z       |                                               %lu
+2026-10-30T00:39:36.3260493Z  6739 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3261222Z       |                                ~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3261800Z       |                                         |
+2026-10-30T00:39:36.3262448Z       |                                         uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3264063Z src/solver/Solver.cc:6738:62: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3265625Z  6738 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3266503Z       |                                                           ~~~^
+2026-10-30T00:39:36.3267159Z       |                                                              |
+2026-10-30T00:39:36.3267866Z       |                                                              long long unsigned int
+2026-10-30T00:39:36.3268574Z       |                                                           %lu
+2026-10-30T00:39:36.3269558Z  6739 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3270330Z       |                                                      ~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3270985Z       |                                                      |
+2026-10-30T00:39:36.3271694Z       |                                                      uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3273371Z src/solver/Solver.cc:6738:75: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3275202Z  6738 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3276076Z       |                                                                        ~~~^
+2026-10-30T00:39:36.3276785Z       |                                                                           |
+2026-10-30T00:39:36.3277544Z       |                                                                           long long unsigned int
+2026-10-30T00:39:36.3278296Z       |                                                                        %lu
+2026-10-30T00:39:36.3279300Z  6739 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3280154Z  6740 |                  starts-savedRestarts, propagations-savedUP);
+2026-10-30T00:39:36.3280935Z       |                  ~~~~~~~~~~~~~~~~~~~~                                      
+2026-10-30T00:39:36.3281578Z       |                        |
+2026-10-30T00:39:36.3282159Z       |                        uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3284002Z src/solver/Solver.cc:6738:84: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 6 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3285597Z  6738 |           printf("c VSIDS phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3286485Z       |                                                                                 ~~~^
+2026-10-30T00:39:36.3287215Z       |                                                                                    |
+2026-10-30T00:39:36.3288016Z       |                                                                                    long long unsigned int
+2026-10-30T00:39:36.3289028Z       |                                                                                 %lu
+2026-10-30T00:39:36.3289851Z  6739 |                  nbVSIDSphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3290679Z  6740 |                  starts-savedRestarts, propagations-savedUP);
+2026-10-30T00:39:36.3291522Z       |                                        ~~~~~~~~~~~~~~~~~~~~                         
+2026-10-30T00:39:36.3292207Z       |                                                    |
+2026-10-30T00:39:36.3292878Z       |                                                    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3294494Z src/solver/Solver.cc:6744:48: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3296058Z  6744 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3296940Z       |                                             ~~~^
+2026-10-30T00:39:36.3297544Z       |                                                |
+2026-10-30T00:39:36.3298180Z       |                                                long long unsigned int
+2026-10-30T00:39:36.3299339Z       |                                             %lu
+2026-10-30T00:39:36.3300024Z  6745 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3300774Z       |                              ~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3301347Z       |                                       |
+2026-10-30T00:39:36.3302031Z       |                                       uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3303795Z src/solver/Solver.cc:6744:60: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3305467Z  6744 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3306209Z       |                                                         ~~~^
+2026-10-30T00:39:36.3306784Z       |                                                            |
+2026-10-30T00:39:36.3307416Z       |                                                            long long unsigned int
+2026-10-30T00:39:36.3308127Z       |                                                         %lu
+2026-10-30T00:39:36.3309304Z  6745 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3310134Z       |                                                    ~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3310825Z       |                                                    |
+2026-10-30T00:39:36.3311535Z       |                                                    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3313287Z src/solver/Solver.cc:6744:73: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3314933Z  6744 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3315899Z       |                                                                      ~~~^
+2026-10-30T00:39:36.3316665Z       |                                                                         |
+2026-10-30T00:39:36.3317337Z       |                                                                         long long unsigned int
+2026-10-30T00:39:36.3317842Z       |                                                                      %lu
+2026-10-30T00:39:36.3318311Z  6745 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3319108Z  6746 |                  starts-savedRestarts, propagations-savedUP);
+2026-10-30T00:39:36.3320237Z       |                  ~~~~~~~~~~~~~~~~~~~~                                    
+2026-10-30T00:39:36.3320953Z       |                        |
+2026-10-30T00:39:36.3321571Z       |                        uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3323380Z src/solver/Solver.cc:6744:82: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 6 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3325133Z  6744 |           printf("c LRB phase %d: conflicts %llu, phase %llu, starts %llu, UP %llu\n",
+2026-10-30T00:39:36.3326125Z       |                                                                               ~~~^
+2026-10-30T00:39:36.3326921Z       |                                                                                  |
+2026-10-30T00:39:36.3327779Z       |                                                                                  long long unsigned int
+2026-10-30T00:39:36.3328609Z       |                                                                               %lu
+2026-10-30T00:39:36.3329711Z  6745 |                  nbLRBphase, conflicts-savedConfl, phase_allotment,
+2026-10-30T00:39:36.3330627Z  6746 |                  starts-savedRestarts, propagations-savedUP);
+2026-10-30T00:39:36.3331498Z       |                                        ~~~~~~~~~~~~~~~~~~~~                       
+2026-10-30T00:39:36.3332491Z       |                                                    |
+2026-10-30T00:39:36.3332947Z       |                                                    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3334006Z src/solver/Solver.cc:6791:25: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3335866Z  6791 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+2026-10-30T00:39:36.3336897Z       |                      ~~~^
+2026-10-30T00:39:36.3337448Z       |                         |
+2026-10-30T00:39:36.3338039Z       |                         long long unsigned int
+2026-10-30T00:39:36.3338664Z       |                      %lu
+2026-10-30T00:39:36.3340295Z  6792 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.3341680Z       |                ~~        
+2026-10-30T00:39:36.3342224Z       |                |
+2026-10-30T00:39:36.3342795Z       |                uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3344868Z src/solver/Solver.cc:6791:43: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3346837Z  6791 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+2026-10-30T00:39:36.3347905Z       |                                        ~~~^
+2026-10-30T00:39:36.3348538Z       |                                           |
+2026-10-30T00:39:36.3349507Z       |                                           long long unsigned int
+2026-10-30T00:39:36.3350228Z       |                                        %lu
+2026-10-30T00:39:36.3351610Z  6792 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.3353013Z       |                    ~~~~~~~~~               
+2026-10-30T00:39:36.3353638Z       |                    |
+2026-10-30T00:39:36.3354256Z       |                    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3356014Z src/solver/Solver.cc:6791:56: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3357886Z  6791 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+2026-10-30T00:39:36.3359240Z       |                                                     ~~~^
+2026-10-30T00:39:36.3359956Z       |                                                        |
+2026-10-30T00:39:36.3360694Z       |                                                        long long unsigned int
+2026-10-30T00:39:36.3361498Z       |                                                     %lu
+2026-10-30T00:39:36.3362924Z  6792 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.3364352Z       |                               ~~~~~~~~~~~~~~~~~~~~~~~   
+2026-10-30T00:39:36.3365039Z       |                                        |
+2026-10-30T00:39:36.3365763Z       |                                        uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3367590Z src/solver/Solver.cc:6791:99: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 8 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3369771Z  6791 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+2026-10-30T00:39:36.3370984Z       |                                                                                                ~~~^
+2026-10-30T00:39:36.3372239Z       |                                                                                                   |
+2026-10-30T00:39:36.3373252Z       |                                                                                                   long long unsigned int
+2026-10-30T00:39:36.3374266Z       |                                                                                                %lu
+2026-10-30T00:39:36.3375803Z  6792 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.3377425Z       |                                                                                                                         ~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3378473Z       |                                                                                                                         |
+2026-10-30T00:39:36.3379921Z       |                                                                                                                         uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3382225Z src/solver/Solver.cc:6791:112: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 9 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3384158Z  6791 |         printf("c UB=%llu fails, cnfls=%llu, hcnfls=%llu, core %d, tier2 %d, local %d, quasiC: %llu (fixed: %llu)\n",
+2026-10-30T00:39:36.3385393Z       |                                                                                                             ~~~^
+2026-10-30T00:39:36.3386340Z       |                                                                                                                |
+2026-10-30T00:39:36.3387357Z       |                                                                                                                long long unsigned int
+2026-10-30T00:39:36.3388389Z       |                                                                                                             %lu
+2026-10-30T00:39:36.3390266Z  6792 |                UB, conflicts, conflicts-softConflicts, learnts_core.size(), learnts_tier2.size(), learnts_local.size(), quasiSoftConflicts, fixedByQuasiConfl);
+2026-10-30T00:39:36.3391355Z       |                                                                                                                                             ~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3391970Z       |                                                                                                                                             |
+2026-10-30T00:39:36.3392989Z       |                                                                                                                                             uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3395087Z src/solver/Solver.cc:6793:72: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3397307Z  6793 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.3398735Z       |                                                                     ~~~^
+2026-10-30T00:39:36.3399788Z       |                                                                        |
+2026-10-30T00:39:36.3400637Z       |                                                                        long long unsigned int
+2026-10-30T00:39:36.3401476Z       |                                                                     %lu
+2026-10-30T00:39:36.3402175Z  6794 |                meanLB, dev, succRate,
+2026-10-30T00:39:36.3403614Z  6795 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+2026-10-30T00:39:36.3405397Z       |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                             
+2026-10-30T00:39:36.3406088Z       |                           |
+2026-10-30T00:39:36.3406718Z       |                           uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3408393Z src/solver/Solver.cc:6793:98: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 7 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3410535Z  6793 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.3411949Z       |                                                                                               ~~~^
+2026-10-30T00:39:36.3412864Z       |                                                                                                  |
+2026-10-30T00:39:36.3413808Z       |                                                                                                  long long unsigned int
+2026-10-30T00:39:36.3414790Z       |                                                                                               %lu
+2026-10-30T00:39:36.3415565Z  6794 |                meanLB, dev, succRate,
+2026-10-30T00:39:36.3417285Z  6795 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+2026-10-30T00:39:36.3419202Z       |                                                         ~~~~~~~~~~~~~~                            
+2026-10-30T00:39:36.3420055Z       |                                                         |
+2026-10-30T00:39:36.3420833Z       |                                                         uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3422701Z src/solver/Solver.cc:6793:109: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 8 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3424951Z  6793 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.3426432Z       |                                                                                                          ~~~^
+2026-10-30T00:39:36.3427377Z       |                                                                                                             |
+2026-10-30T00:39:36.3428364Z       |                                                                                                             long long unsigned int
+2026-10-30T00:39:36.3429641Z       |                                                                                                          %lu
+2026-10-30T00:39:36.3430428Z  6794 |                meanLB, dev, succRate,
+2026-10-30T00:39:36.3431838Z  6795 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+2026-10-30T00:39:36.3433455Z       |                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~             
+2026-10-30T00:39:36.3434303Z       |                                                                                  |
+2026-10-30T00:39:36.3435209Z       |                                                                                  uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3437132Z src/solver/Solver.cc:6793:124: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 9 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3439578Z  6793 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.3441072Z       |                                                                                                                         ~~~^
+2026-10-30T00:39:36.3442356Z       |                                                                                                                            |
+2026-10-30T00:39:36.3443445Z       |                                                                                                                            long long unsigned int
+2026-10-30T00:39:36.3444500Z       |                                                                                                                         %lu
+2026-10-30T00:39:36.3445341Z  6794 |                meanLB, dev, succRate,
+2026-10-30T00:39:36.3446752Z  6795 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+2026-10-30T00:39:36.3448341Z       |                                                                                                   ~~~~~~~~~~~               
+2026-10-30T00:39:36.3449546Z       |                                                                                                   |
+2026-10-30T00:39:36.3450554Z       |                                                                                                   uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3452771Z src/solver/Solver.cc:6793:163: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 12 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3455073Z  6793 |         printf("c prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, nbHardens %d (fixed %llu), lk: %llu, shorten: %llu, pureSo %d, nbFlyRd %d, nbFixedLH %llu\n",
+2026-10-30T00:39:36.3456635Z       |                                                                                                                                                                ~~~^
+2026-10-30T00:39:36.3457769Z       |                                                                                                                                                                   |
+2026-10-30T00:39:36.3459339Z       |                                                                                                                                                                   long long unsigned int
+2026-10-30T00:39:36.3460577Z       |                                                                                                                                                                %lu
+2026-10-30T00:39:36.3461152Z  6794 |                meanLB, dev, succRate,
+2026-10-30T00:39:36.3461934Z  6795 |                nbLKsuccess-savednbLKsuccess, nbHardens, fixedByHardens, LOOKAHEAD-savedLOOKAHEAD, nbSavedLits, pureSoftConfl, nbFlyReduced, nbFixedByLH);
+2026-10-30T00:39:36.3463620Z       |                                                                                                                                             ~~~~~~~~~~~            
+2026-10-30T00:39:36.3464840Z       |                                                                                                                                             |
+2026-10-30T00:39:36.3466071Z       |                                                                                                                                             uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3468199Z src/solver/Solver.cc:6821:25: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3470183Z  6821 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+2026-10-30T00:39:36.3471563Z       |                      ~~~^
+2026-10-30T00:39:36.3472142Z       |                         |
+2026-10-30T00:39:36.3472722Z       |                         long long unsigned int
+2026-10-30T00:39:36.3473085Z       |                      %lu
+2026-10-30T00:39:36.3473811Z  6822 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+2026-10-30T00:39:36.3474329Z       |                ~~        
+2026-10-30T00:39:36.3474825Z       |                |
+2026-10-30T00:39:36.3475370Z       |                uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3476386Z src/solver/Solver.cc:6821:43: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3478067Z  6821 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+2026-10-30T00:39:36.3479248Z       |                                        ~~~^
+2026-10-30T00:39:36.3479616Z       |                                           |
+2026-10-30T00:39:36.3480425Z       |                                           long long unsigned int
+2026-10-30T00:39:36.3481155Z       |                                        %lu
+2026-10-30T00:39:36.3482126Z  6822 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+2026-10-30T00:39:36.3483088Z       |                    ~~~~~~~~~               
+2026-10-30T00:39:36.3483993Z       |                    |
+2026-10-30T00:39:36.3484665Z       |                    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3486509Z src/solver/Solver.cc:6821:60: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3489218Z  6821 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+2026-10-30T00:39:36.3490967Z       |                                                         ~~~^
+2026-10-30T00:39:36.3491767Z       |                                                            |
+2026-10-30T00:39:36.3492540Z       |                                                            long long unsigned int
+2026-10-30T00:39:36.3493308Z       |                                                         %lu
+2026-10-30T00:39:36.3494322Z  6822 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+2026-10-30T00:39:36.3495330Z       |                               ~~~~~~~~~~~~~~~~~~~~~~~       
+2026-10-30T00:39:36.3495943Z       |                                        |
+2026-10-30T00:39:36.3496357Z       |                                        uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3497408Z src/solver/Solver.cc:6821:189: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 11 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3499905Z  6821 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+2026-10-30T00:39:36.3501176Z       |                                                                                                                                                                                          ~~~^
+2026-10-30T00:39:36.3502092Z       |                                                                                                                                                                                             |
+2026-10-30T00:39:36.3503549Z       |                                                                                                                                                                                             long long unsigned int
+2026-10-30T00:39:36.3504887Z       |                                                                                                                                                                                          %lu
+2026-10-30T00:39:36.3505864Z  6822 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+2026-10-30T00:39:36.3506648Z  6823 |                meanLB, dev, succRate, nbLKsuccess, nbSavedLits);
+2026-10-30T00:39:36.3507855Z       |                                       ~~~~~~~~~~~                                                                                                                                            
+2026-10-30T00:39:36.3508530Z       |                                       |
+2026-10-30T00:39:36.3509267Z       |                                       uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3510638Z src/solver/Solver.cc:6821:207: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 12 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3537241Z  6821 |         printf("c UB=%llu succ, confls=%llu and hconfls=%llu with %d soft clauses unsat (%d at level 0) and %d fixed vars at level 0,  prunedLB %4.2f, dev %4.2f, succRate %4.2f, nbSucc %llu, shortened : %llu\n",
+2026-10-30T00:39:36.3539921Z       |                                                                                                                                                                                                            ~~~^
+2026-10-30T00:39:36.3541480Z       |                                                                                                                                                                                                               |
+2026-10-30T00:39:36.3543076Z       |                                                                                                                                                                                                               long long unsigned int
+2026-10-30T00:39:36.3544681Z       |                                                                                                                                                                                                            %lu
+2026-10-30T00:39:36.3545622Z  6822 |                UB, conflicts, conflicts-softConflicts, falseLits.size(), nbFalses, nbFixeds,
+2026-10-30T00:39:36.3546238Z  6823 |                meanLB, dev, succRate, nbLKsuccess, nbSavedLits);
+2026-10-30T00:39:36.3547144Z       |                                                    ~~~~~~~~~~~                                                                                                                                                 
+2026-10-30T00:39:36.3548212Z       |                                                    |
+2026-10-30T00:39:36.3549214Z       |                                                    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3551046Z src/solver/Solver.cc:6851:17: warning: comparison of integer expressions of different signedness: ‘uint64_t’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+2026-10-30T00:39:36.3552500Z  6851 |         if (inf > falseLits.size())
+2026-10-30T00:39:36.3553170Z       |             ~~~~^~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3554873Z src/solver/Solver.cc:6859:34: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3556578Z  6859 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+2026-10-30T00:39:36.3557473Z       |                               ~~~^                         ~~
+2026-10-30T00:39:36.3558228Z       |                                  |                         |
+2026-10-30T00:39:36.3559381Z       |                                  long long unsigned int    uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3560191Z       |                               %lu
+2026-10-30T00:39:36.3561948Z src/solver/Solver.cc:6859:44: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3564042Z  6859 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+2026-10-30T00:39:36.3564986Z       |                                         ~~~^                   ~~~
+2026-10-30T00:39:36.3565771Z       |                                            |                   |
+2026-10-30T00:39:36.3566645Z       |                                            |                   uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3567477Z       |                                            long long unsigned int
+2026-10-30T00:39:36.3568188Z       |                                         %lu
+2026-10-30T00:39:36.3570200Z src/solver/Solver.cc:6859:54: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3571913Z  6859 |       else printf("c error UB %llu, inf %llu, sup %llu\n", UB, inf, sup);
+2026-10-30T00:39:36.3572766Z       |                                                   ~~~^              ~~~
+2026-10-30T00:39:36.3573269Z       |                                                      |              |
+2026-10-30T00:39:36.3573752Z       |                                                      |              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3574452Z       |                                                      long long unsigned int
+2026-10-30T00:39:36.3574894Z       |                                                   %lu
+2026-10-30T00:39:36.3576320Z src/solver/Solver.cc:6881:57: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3577312Z  6881 |       printf("c no feasible solution, hardConflicts: %llu\n", conflicts - softConflicts);
+2026-10-30T00:39:36.3578112Z       |                                                      ~~~^     ~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3579206Z       |                                                         |               |
+2026-10-30T00:39:36.3580164Z       |                                                         |               uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3581022Z       |                                                         long long unsigned int
+2026-10-30T00:39:36.3581819Z       |                                                      %lu
+2026-10-30T00:39:36.3583692Z src/solver/Solver.cc:6884:30: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3585603Z  6884 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+2026-10-30T00:39:36.3586646Z       |                           ~~~^
+2026-10-30T00:39:36.3587241Z       |                              |
+2026-10-30T00:39:36.3587905Z       |                              long long unsigned int
+2026-10-30T00:39:36.3588568Z       |                           %lu
+2026-10-30T00:39:36.3589531Z  6885 |              solutionCost, fixedCostBySearch,
+2026-10-30T00:39:36.3590280Z       |              ~~~~~~~~~~~~     
+2026-10-30T00:39:36.3590846Z       |              |
+2026-10-30T00:39:36.3591405Z       |              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3593247Z src/solver/Solver.cc:6884:51: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3595232Z  6884 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+2026-10-30T00:39:36.3596338Z       |                                                ~~~^
+2026-10-30T00:39:36.3597027Z       |                                                   |
+2026-10-30T00:39:36.3597765Z       |                                                   long long unsigned int
+2026-10-30T00:39:36.3598524Z       |                                                %lu
+2026-10-30T00:39:36.3599947Z  6885 |              solutionCost, fixedCostBySearch,
+2026-10-30T00:39:36.3600692Z       |                            ~~~~~~~~~~~~~~~~~       
+2026-10-30T00:39:36.3601359Z       |                            |
+2026-10-30T00:39:36.3602035Z       |                            uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3603937Z src/solver/Solver.cc:6884:66: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3605897Z  6884 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+2026-10-30T00:39:36.3607060Z       |                                                               ~~~^
+2026-10-30T00:39:36.3607866Z       |                                                                  |
+2026-10-30T00:39:36.3608718Z       |                                                                  long long unsigned int
+2026-10-30T00:39:36.3609886Z       |                                                               %lu
+2026-10-30T00:39:36.3610693Z  6885 |              solutionCost, fixedCostBySearch,
+2026-10-30T00:39:36.3611412Z  6886 |              lastOptimalCost,
+2026-10-30T00:39:36.3612454Z       |              ~~~~~~~~~~~~~~~                                      
+2026-10-30T00:39:36.3613215Z       |              |
+2026-10-30T00:39:36.3613798Z       |              uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3615366Z src/solver/Solver.cc:6884:80: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3616429Z  6884 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+2026-10-30T00:39:36.3617048Z       |                                                                             ~~~^
+2026-10-30T00:39:36.3618087Z       |                                                                                |
+2026-10-30T00:39:36.3619371Z       |                                                                                long long unsigned int
+2026-10-30T00:39:36.3620314Z       |                                                                             %lu
+2026-10-30T00:39:36.3621038Z ......
+2026-10-30T00:39:36.3621481Z  6887 |              objForSearch-sup + nbSatLits, conflicts - softConflicts);
+2026-10-30T00:39:36.3621991Z       |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                       
+2026-10-30T00:39:36.3622385Z       |                               |
+2026-10-30T00:39:36.3623118Z       |                               uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3625263Z src/solver/Solver.cc:6884:101: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 6 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3627203Z  6884 |       printf("c initCost: %llu, fixedBySearch: %llu, optimal: %llu, maxsat: %llu, hardConflicts: %llu\n",
+2026-10-30T00:39:36.3628479Z       |                                                                                                  ~~~^
+2026-10-30T00:39:36.3629717Z       |                                                                                                     |
+2026-10-30T00:39:36.3630780Z       |                                                                                                     long long unsigned int
+2026-10-30T00:39:36.3631814Z       |                                                                                                  %lu
+2026-10-30T00:39:36.3632252Z ......
+2026-10-30T00:39:36.3632626Z  6887 |              objForSearch-sup + nbSatLits, conflicts - softConflicts);
+2026-10-30T00:39:36.3633169Z       |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~                                 
+2026-10-30T00:39:36.3633827Z       |                                                      |
+2026-10-30T00:39:36.3634967Z       |                                                      uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3636880Z src/solver/Solver.cc:6889:24: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3639180Z  6889 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+2026-10-30T00:39:36.3640355Z       |                     ~~~^
+2026-10-30T00:39:36.3640944Z       |                        |
+2026-10-30T00:39:36.3641549Z       |                        long long unsigned int
+2026-10-30T00:39:36.3642172Z       |                     %lu
+2026-10-30T00:39:36.3642646Z  6890 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+2026-10-30T00:39:36.3643127Z       |            ~~~~~~~~~    
+2026-10-30T00:39:36.3643419Z       |            |
+2026-10-30T00:39:36.3643719Z       |            uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3645228Z src/solver/Solver.cc:6889:40: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3646880Z  6889 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+2026-10-30T00:39:36.3647509Z       |                                     ~~~^
+2026-10-30T00:39:36.3648138Z       |                                        |
+2026-10-30T00:39:36.3649091Z       |                                        long long unsigned int
+2026-10-30T00:39:36.3649840Z       |                                     %lu
+2026-10-30T00:39:36.3650372Z  6890 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+2026-10-30T00:39:36.3650853Z       |                       ~~~~~~~~~~~       
+2026-10-30T00:39:36.3651182Z       |                       |
+2026-10-30T00:39:36.3651518Z       |                       uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3653368Z src/solver/Solver.cc:6889:63: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3655037Z  6889 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+2026-10-30T00:39:36.3655684Z       |                                                            ~~~^
+2026-10-30T00:39:36.3656081Z       |                                                               |
+2026-10-30T00:39:36.3656805Z       |                                                               long long unsigned int
+2026-10-30T00:39:36.3657640Z       |                                                            %lu
+2026-10-30T00:39:36.3658616Z  6890 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+2026-10-30T00:39:36.3659919Z       |                                                                 ~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.3660750Z       |                                                                 |
+2026-10-30T00:39:36.3661607Z       |                                                                 uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3662721Z src/solver/Solver.cc:6889:96: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 8 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3663777Z  6889 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+2026-10-30T00:39:36.3664981Z       |                                                                                             ~~~^
+2026-10-30T00:39:36.3665931Z       |                                                                                                |
+2026-10-30T00:39:36.3666922Z       |                                                                                                long long unsigned int
+2026-10-30T00:39:36.3668232Z       |                                                                                             %lu
+2026-10-30T00:39:36.3669549Z  6890 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+2026-10-30T00:39:36.3670439Z  6891 |            100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
+2026-10-30T00:39:36.3671118Z       |                                                           ~~~~~~~~~~~~~~                        
+2026-10-30T00:39:36.3671790Z       |                                                           |
+2026-10-30T00:39:36.3672621Z       |                                                           uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.3674581Z src/solver/Solver.cc:6889:124: warning: format ‘%llu’ expects argument of type ‘long long unsigned int’, but argument 10 has type ‘uint64_t’ {aka ‘long unsigned int’} [-Wformat=]
+2026-10-30T00:39:36.3676626Z  6889 |     printf("c nbLK: %llu, nbSuccLK: %llu(%4.2f%%), nbLKup: %llu(%4.2f%%), hardens %u (fixed %llu), dynVars %d, shorten: %llu\n",
+2026-10-30T00:39:36.3678326Z       |                                                                                                                         ~~~^
+2026-10-30T00:39:36.3679736Z       |                                                                                                                            |
+2026-10-30T00:39:36.3680872Z       |                                                                                                                            long long unsigned int
+2026-10-30T00:39:36.3681997Z       |                                                                                                                         %lu
+2026-10-30T00:39:36.3683159Z  6890 |            LOOKAHEAD, nbLKsuccess, 100.0*nbLKsuccess/LOOKAHEAD, lk_propagations,
+2026-10-30T00:39:36.3684573Z  6891 |            100.0*lk_propagations/propagations, nbHardens, fixedByHardens, nVars()-staticNbVars, nbSavedLits);
+2026-10-30T00:39:36.3685955Z       |                                                                                                 ~~~~~~~~~~~                 
+2026-10-30T00:39:36.3686987Z       |                                                                                                 |
+2026-10-30T00:39:36.3688029Z       |                                                                                                 uint64_t {aka long unsigned int}
+2026-10-30T00:39:36.4029350Z In file included from src/solver/mtl/Sort.h:24,
+2026-10-30T00:39:36.4030350Z                  from src/solver/Solver.cc:106:
+2026-10-30T00:39:36.4032273Z src/solver/mtl/Vec.h: In instantiation of ‘void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<Minisat::Solver::Watcher>]’:
+2026-10-30T00:39:36.4034374Z src/solver/mtl/Vec.h:115:13:   required from ‘void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<Minisat::Solver::Watcher>]’
+2026-10-30T00:39:36.4037220Z src/solver/SolverTypes.h:339:50:   required from ‘void Minisat::OccLists<Idx, Vec, Deleted>::init(const Idx&) [with Idx = Minisat::Lit; Vec = Minisat::vec<Minisat::Solver::Watcher>; Deleted = Minisat::Solver::WatcherDeleted]’
+2026-10-30T00:39:36.4039355Z src/solver/Solver.cc:1273:21:   required from here
+2026-10-30T00:39:36.4041661Z src/solver/mtl/Vec.h:99:54: warning: ‘void* realloc(void*, size_t)’ moving an object of non-trivially copyable type ‘class Minisat::vec<Minisat::Solver::Watcher>’; use ‘new’ and ‘delete’ instead [-Wclass-memaccess]
+2026-10-30T00:39:36.4043904Z    99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+2026-10-30T00:39:36.4045045Z       |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.4046413Z src/solver/mtl/Vec.h:38:7: note: ‘class Minisat::vec<Minisat::Solver::Watcher>’ declared here
+2026-10-30T00:39:36.4047396Z    38 | class vec {
+2026-10-30T00:39:36.4048411Z       |       ^~~
+2026-10-30T00:39:36.4050121Z src/solver/mtl/Vec.h: In instantiation of ‘void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<Minisat::Lit>]’:
+2026-10-30T00:39:36.4052107Z src/solver/mtl/Vec.h:115:13:   required from ‘void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<Minisat::Lit>]’
+2026-10-30T00:39:36.4054149Z src/solver/Solver.h:74:50:   required from ‘void Minisat::vec2<Idx, Vec>::init(const Idx&) [with Idx = Minisat::Lit; Vec = Minisat::vec<Minisat::Lit>]’
+2026-10-30T00:39:36.4055488Z src/solver/Solver.cc:1313:22:   required from here
+2026-10-30T00:39:36.4057622Z src/solver/mtl/Vec.h:99:54: warning: ‘void* realloc(void*, size_t)’ moving an object of non-trivially copyable type ‘class Minisat::vec<Minisat::Lit>’; use ‘new’ and ‘delete’ instead [-Wclass-memaccess]
+2026-10-30T00:39:36.4060039Z    99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+2026-10-30T00:39:36.4061169Z       |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.4062490Z src/solver/mtl/Vec.h:38:7: note: ‘class Minisat::vec<Minisat::Lit>’ declared here
+2026-10-30T00:39:36.4063366Z    38 | class vec {
+2026-10-30T00:39:36.4063863Z       |       ^~~
+2026-10-30T00:39:36.4065381Z src/solver/mtl/Vec.h: In instantiation of ‘void Minisat::vec<T>::capacity(int) [with T = Minisat::vec<int>]’:
+2026-10-30T00:39:36.4067178Z src/solver/mtl/Vec.h:115:13:   required from ‘void Minisat::vec<T>::growTo(int) [with T = Minisat::vec<int>]’
+2026-10-30T00:39:36.4069340Z src/solver/Solver.h:74:50:   required from ‘void Minisat::vec2<Idx, Vec>::init(const Idx&) [with Idx = int; Vec = Minisat::vec<int>]’
+2026-10-30T00:39:36.4070586Z src/solver/Solver.cc:4269:13:   required from here
+2026-10-30T00:39:36.4072702Z src/solver/mtl/Vec.h:99:54: warning: ‘void* realloc(void*, size_t)’ moving an object of non-trivially copyable type ‘class Minisat::vec<int>’; use ‘new’ and ‘delete’ instead [-Wclass-memaccess]
+2026-10-30T00:39:36.4074825Z    99 |     if (add > INT_MAX - cap || ((data = (T*)::realloc(data, (cap += add) * sizeof(T))) == NULL) && errno == ENOMEM)
+2026-10-30T00:39:36.4076001Z       |                                             ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.4077265Z src/solver/mtl/Vec.h:38:7: note: ‘class Minisat::vec<int>’ declared here
+2026-10-30T00:39:36.4078085Z    38 | class vec {
+2026-10-30T00:39:36.4078575Z       |       ^~~
+2026-10-30T00:39:36.5267076Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::emitBoundsUpdate()’:
+2026-10-30T00:39:36.5270734Z src/solver/Solver.cc:5226:24: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-10-30T00:39:36.5272604Z  5226 |             (void)write(bounds_pipe_w, buf, (size_t)n);
+2026-10-30T00:39:36.5273529Z       |                   ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.5275501Z src/solver/Solver.cc:5233:24: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-10-30T00:39:36.5277370Z  5233 |             (void)write(bounds_pipe_w, buf, (size_t)n);
+2026-10-30T00:39:36.5278263Z       |                   ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:36.5279707Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::emitTryUpdate(uint64_t)’:
+2026-10-30T00:39:36.5281746Z src/solver/Solver.cc:5243:20: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-10-30T00:39:36.5283375Z  5243 |         (void)write(bounds_pipe_w, buf, (size_t)n);
+2026-10-30T00:39:36.5284228Z       |               ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:37.8038654Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/Options.o src/solver/utils/Options.cc
+2026-10-30T00:39:37.8497986Z In file included from src/solver/utils/Options.cc:21:
+2026-10-30T00:39:37.8499892Z src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:37.8501558Z   285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+2026-10-30T00:39:37.8502466Z       |                             ^
+2026-10-30T00:39:37.8503851Z src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:37.8505139Z   291 |             fprintf(stderr, "%4"PRIi64, range.end);
+2026-10-30T00:39:37.8505769Z       |                             ^
+2026-10-30T00:39:37.8506904Z src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:37.8508186Z   293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+2026-10-30T00:39:37.8509132Z       |                         ^
+2026-10-30T00:39:38.0843372Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -c -o build/System.o src/solver/utils/System.cc
+2026-10-30T00:39:38.1468710Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -std=c++17 -c -o build/cc_half.o src/cc/cc_half.cc
+2026-10-30T00:39:39.3238493Z In file included from src/solver/Solver.h:56:
+2026-10-30T00:39:39.3240087Z In function ‘Minisat::Lit Minisat::operator~(Lit)’,
+2026-10-30T00:39:39.3241616Z     inlined from ‘void Minisat::Solver::analyze(Minisat::CRef, Minisat::vec<Minisat::Lit>&, int&, int&)’ at src/solver/Solver.cc:1760:22:
+2026-10-30T00:39:39.3243605Z src/solver/SolverTypes.h:73:64: warning: ‘p.Minisat::Lit::x’ may be used uninitialized [-Wmaybe-uninitialized]
+2026-10-30T00:39:39.3244895Z    73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+2026-10-30T00:39:39.3245936Z       |                                                            ~~~~^~~
+2026-10-30T00:39:39.3247495Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::analyze(Minisat::CRef, Minisat::vec<Minisat::Lit>&, int&, int&)’:
+2026-10-30T00:39:39.3249369Z src/solver/Solver.cc:1674:9: note: ‘p.Minisat::Lit::x’ was declared here
+2026-10-30T00:39:39.3250237Z  1674 |     Lit p; //     = lit_Undef;
+2026-10-30T00:39:39.3250805Z       |         ^
+2026-10-30T00:39:39.4273908Z In function ‘Minisat::Lit Minisat::operator~(Lit)’,
+2026-10-30T00:39:39.4275477Z     inlined from ‘void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)’ at src/solver/Solver.cc:4683:22:
+2026-10-30T00:39:39.4277331Z src/solver/SolverTypes.h:73:64: warning: ‘p.Minisat::Lit::x’ may be used uninitialized [-Wmaybe-uninitialized]
+2026-10-30T00:39:39.4278504Z    73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+2026-10-30T00:39:39.4279574Z       |                                                            ~~~~^~~
+2026-10-30T00:39:39.4281250Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::analyzeQuasiSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)’:
+2026-10-30T00:39:39.4310154Z src/solver/Solver.cc:4511:9: note: ‘p.Minisat::Lit::x’ was declared here
+2026-10-30T00:39:39.4310984Z  4511 |     Lit p;
+2026-10-30T00:39:39.4311347Z       |         ^
+2026-10-30T00:39:39.5322745Z In function ‘Minisat::Lit Minisat::operator~(Lit)’,
+2026-10-30T00:39:39.5324427Z     inlined from ‘void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)’ at src/solver/Solver.cc:2403:22:
+2026-10-30T00:39:39.5326313Z src/solver/SolverTypes.h:73:64: warning: ‘p.Minisat::Lit::x’ may be used uninitialized [-Wmaybe-uninitialized]
+2026-10-30T00:39:39.5327629Z    73 | inline  Lit  operator ~(Lit p)              { Lit q; q.x = p.x ^ 1; return q; }
+2026-10-30T00:39:39.5328438Z       |                                                            ~~~~^~~
+2026-10-30T00:39:39.5330680Z src/solver/Solver.cc: In member function ‘void Minisat::Solver::analyzeSoftConflict(Minisat::vec<Minisat::Lit>&, int&, int&)’:
+2026-10-30T00:39:39.5332089Z src/solver/Solver.cc:2200:9: note: ‘p.Minisat::Lit::x’ was declared here
+2026-10-30T00:39:39.5332720Z  2200 |     Lit p;
+2026-10-30T00:39:39.5333074Z       |         ^
+2026-10-30T00:39:40.4571945Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -std=c++17 -c -o build/cc_driver.o src/cc/cc_driver.cc
+2026-10-30T00:39:42.9676555Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -std=c++17 -c -o build/cc_ubsearch.o src/cc/cc_ubsearch.cc
+2026-10-30T00:39:43.4256612Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -std=c++17 -c -o build/cc_aut.o src/cc/cc_aut.cc
+2026-10-30T00:39:46.2073682Z g++ -Isrc/solver -Wall -Wno-parentheses -O3 -g -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG -o bin/distqldpc src/core/distqldpc.cc build/SimpSolver.o build/Solver.o build/Options.o build/System.o build/cc_half.o build/cc_driver.o build/cc_ubsearch.o build/cc_aut.o -lz
+2026-10-30T00:39:46.2900201Z In file included from src/solver/Solver.h:55,
+2026-10-30T00:39:46.2900966Z                  from src/solver/SimpSolver.h:37,
+2026-10-30T00:39:46.2901297Z                  from src/core/distqldpc.cc:47:
+2026-10-30T00:39:46.2901943Z src/solver/utils/Options.h:285:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:46.2902610Z   285 |             fprintf(stderr, "%4"PRIi64, range.begin);
+2026-10-30T00:39:46.2902918Z       |                             ^
+2026-10-30T00:39:46.2903505Z src/solver/utils/Options.h:291:29: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:46.2904138Z   291 |             fprintf(stderr, "%4"PRIi64, range.end);
+2026-10-30T00:39:46.2904443Z       |                             ^
+2026-10-30T00:39:46.2905043Z src/solver/utils/Options.h:293:25: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+2026-10-30T00:39:46.2905690Z   293 |         fprintf(stderr, "] (default: %"PRIi64")\n", value);
+2026-10-30T00:39:46.2906011Z       |                         ^
+2026-10-30T00:39:47.1008296Z src/core/distqldpc.cc: In function ‘void cc_sink_trap(void*)’:
+2026-10-30T00:39:47.1011727Z src/core/distqldpc.cc:1864:29: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-10-30T00:39:47.1013307Z  1864 |     if (pw >= 0) (void)write(pw, "RESULT -1 TRAP\n", 15);
+2026-10-30T00:39:47.1013956Z       |                        ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:47.1014884Z src/core/distqldpc.cc: In function ‘void pipe_bound(int, const char*, uint64_t)’:
+2026-10-30T00:39:47.1016837Z src/core/distqldpc.cc:1309:29: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-10-30T00:39:47.1018241Z  1309 |     if (len > 0) (void)write(pipe_w, buf, (size_t)len);
+2026-10-30T00:39:47.1019113Z       |                        ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:47.1263631Z src/core/distqldpc.cc: In function ‘void pipe_write_result(int, int, bool)’:
+2026-10-30T00:39:47.1265490Z src/core/distqldpc.cc:171:20: warning: ignoring return value of ‘ssize_t write(int, const void*, size_t)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+2026-10-30T00:39:47.1266760Z   171 |         (void)write(pipe_w, buf, (size_t)n);
+2026-10-30T00:39:47.1267294Z       |               ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+2026-10-30T00:39:52.2999872Z ##[group]Run python3 tests/test_schreier_cc500_diagnostic.py
+2026-10-30T00:39:52.3000352Z [36;1mpython3 tests/test_schreier_cc500_diagnostic.py[0m
+2026-10-30T00:39:52.3021228Z shell: /usr/bin/bash -e {0}
+2026-10-30T00:39:52.3021667Z ##[endgroup]
+2026-10-30T00:39:52.9597509Z ........
+2026-10-30T00:39:52.9598648Z ----------------------------------------------------------------------
+2026-10-30T00:39:52.9599990Z Ran 8 tests in 0.590s
+2026-10-30T00:39:52.9600435Z 
+2026-10-30T00:39:52.9600623Z OK
+2026-10-30T00:39:52.9743886Z ##[group]Run python3 optimization/experiments/GH-202/diagnostic/cc500.py --ci --out /tmp/gh202-cc500
+2026-10-30T00:39:52.9744652Z [36;1mpython3 optimization/experiments/GH-202/diagnostic/cc500.py --ci --out /tmp/gh202-cc500[0m
+2026-10-30T00:39:52.9764973Z shell: /usr/bin/bash -e {0}
+2026-10-30T00:39:52.9765232Z ##[endgroup]
+2026-10-30T00:39:53.3134422Z {
+2026-10-30T00:39:53.3134916Z   "stem": "TN_500_42_unknown",
+2026-10-30T00:39:53.3135433Z   "source_reference_exact": 6,
+2026-10-30T00:39:53.3135888Z   "original_maxsat": {
+2026-10-30T00:39:53.3136273Z     "lb": 8,
+2026-10-30T00:39:53.3136587Z     "ub": 8,
+2026-10-30T00:39:53.3136907Z     "status": "SOLVED"
+2026-10-30T00:39:53.3137295Z   },
+2026-10-30T00:39:53.3137605Z   "authorized_cc": {
+2026-10-30T00:39:53.3137963Z     "lb": 8,
+2026-10-30T00:39:53.3138276Z     "ub": 8,
+2026-10-30T00:39:53.3138605Z     "status": "SOLVED"
+2026-10-30T00:39:53.3139281Z   },
+2026-10-30T00:39:53.3139606Z   "cc_explicit_exact": 8,
+2026-10-30T00:39:53.3140119Z   "actual_verified_upper": 8,
+2026-10-30T00:39:53.3140565Z   "solver_conflict": false,
+2026-10-30T00:39:53.3140986Z   "source_exact_guard_raised": true,
+2026-10-30T00:39:53.3141727Z   "interpretation": "BOTH_ENGINES_AGREE_RECONSTRUCTED_INPUT8; SOURCE6_NOT_REPRODUCED",
+2026-10-30T00:39:53.3142572Z   "reconstructed_input_exact_crosschecked": 8,
+2026-10-30T00:39:53.3143173Z   "intended_published_code_identified": false,
+2026-10-30T00:39:53.3143726Z   "paper_erratum_claim": false,
+2026-10-30T00:39:53.3144188Z   "library_adoption": false,
+2026-10-30T00:39:53.3144647Z   "quarantine_preserved": true
+2026-10-30T00:39:53.3145036Z }
+2026-10-30T00:39:53.3244705Z ##[group]Run python3 - <<'PY'
+2026-10-30T00:39:53.3245056Z [36;1mpython3 - <<'PY'[0m
+2026-10-30T00:39:53.3245289Z [36;1mimport json[0m
+2026-10-30T00:39:53.3245512Z [36;1mfrom pathlib import Path[0m
+2026-10-30T00:39:53.3245785Z [36;1mp=Path('/tmp/gh202-cc500')[0m
+2026-10-30T00:39:53.3246367Z [36;1mprint('GH202_CC500_EVIDENCE_JSON='+json.dumps({f.name:f.read_text() for f in p.glob('*') if f.is_file()},separators=(',',':')))[0m
+2026-10-30T00:39:53.3246948Z [36;1mPY[0m
+2026-10-30T00:39:53.3266848Z shell: /usr/bin/bash -e {0}
+2026-10-30T00:39:53.3267107Z ##[endgroup]
+2026-10-30T00:39:53.3580662Z GH202_CC500_EVIDENCE_JSON={"identity.json":"{\n  \"cmd\": [\n    \"taskset\",\n    \"-c\",\n    \"0\",\n    \"prlimit\",\n    \"--as=4294967296\",\n    \"--\",\n    \"/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc\",\n    \"-engine=cc\",\n    \"-seed=0\",\n    \"-v\",\n    \"-cpu-lim=60\",\n    \"data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown\"\n  ],\n  \"source_head\": \"bf892dbc5113804b65fe822756b7457320dda68e\",\n  \"binary_sha256\": \"68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a\",\n  \"input_sha256\": {\n    \"Hx\": \"a350fdef721ff6accf99369d0cb36e141edeb7445168fe17baa8be03f06f9041\",\n    \"Hz\": \"f6c1c9afff5b15f7ca0de889390b0e1cf989162a9e1959ddc6b7f6523c191b7c\",\n    \"Gx\": \"d83b9967c4acfa18d95ffddf0e90f7c28a2136621e10abf4b9b24b8865e03507\",\n    \"Gz\": \"57e7c8941ee472f65953af26802abedc40633b40d3689cc32e9e371558e0c61f\"\n  },\n  \"engine\": \"cc\",\n  \"original_source\": \"e41bff4c327fa60a3467be5552509ea9ec9e496c\",\n  \"original_src_tree\": \"19cbea916c41b3918de87f86791da9f1c80abbbd\",\n  \"original_makefile_blob\": \"1951a24d5de920a651ad3919c672331862976365\",\n  \"original_binary_sha256\": \"68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a\",\n  \"platform\": \"Linux-7.0.0-1017-azure-x86_64-with-glibc2.39\",\n  \"cpu\": 0,\n  \"source_reference_exact\": 6,\n  \"authorization\": \"human chat2026-10-30; issue202 comment6510319434\",\n  \"address_space_limit\": 4294967296,\n  \"rc\": 0,\n  \"wall_seconds\": 0.05110420899998758,\n  \"runner_backstop\": false\n}\n","audit.json":"{\n  \"stem\": \"TN_500_42_unknown\",\n  \"source_reference_exact\": 6,\n  \"original_maxsat\": {\n    \"lb\": 8,\n    \"ub\": 8,\n    \"status\": \"SOLVED\"\n  },\n  \"authorized_cc\": {\n    \"lb\": 8,\n    \"ub\": 8,\n    \"status\": \"SOLVED\"\n  },\n  \"cc_explicit_exact\": 8,\n  \"actual_verified_upper\": 8,\n  \"witnesses\": [\n    {\n      \"half\": \"X\",\n      \"weight\": 8,\n      \"support\": [\n        15,\n        67,\n        72,\n        73,\n        122,\n        141,\n        144,\n        197\n      ],\n      \"origin\": \"original MaxSAT\"\n    },\n    {\n      \"half\": \"X\",\n      \"weight\": 8,\n      \"support\": [\n        15,\n        67,\n        72,\n        73,\n        122,\n        141,\n        144,\n        197\n      ],\n      \"origin\": \"authorized CC\"\n    }\n  ],\n  \"solver_conflict\": false,\n  \"source_exact_guard_raised\": true,\n  \"interpretation\": \"BOTH_ENGINES_AGREE_RECONSTRUCTED_INPUT8; SOURCE6_NOT_REPRODUCED\",\n  \"reconstructed_input_exact_crosschecked\": 8,\n  \"intended_published_code_identified\": false,\n  \"paper_erratum_claim\": false,\n  \"library_adoption\": false,\n  \"quarantine_preserved\": true\n}\n","cc500.log":"c DistQLDPC \u2014 QLDPC/CSS minimum distance (connected-cluster level search)\nc solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0\nc Hx: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Hx.txt\nc Hz: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Hz.txt\nc Gx: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Gx.txt\nc Gz: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Gz.txt\nc Hx: 240 x 500, Hz: 240 x 500, Gx: 42 x 500, Gz: 42 x 500, logicals: 84\nc cc: dual map detection: none (ranks Hz 228 Hx 230 [Hz;Gx] 270 [Hx;Gz] 272, 0 candidates, cpu 0.001s): both halves\nc cc aut: Tanner graph (qubits, Hx rows, Hz rows): 2 generator(s), 50 qubit orbit(s), group complete, point stabiliser trivial, swap map none, 4 test(s) (2 refuted, 0 undecided), work 47673, cpu 0.001s\nc cc aut: Tanner swap map: none\nc cc symbreak X: n=500 candidates=57 verified_generators=3 orbits=50 detect_cpu=0.001s clause=orbit-chain\nc cc symbreak X: generator: plain 2dshift-a L=125 (5x25)\nc cc symbreak X: generator: plain tanner-aut #1\nc cc symbreak X: generator: plain tanner-aut #2\nc cc symbreak X: orbit reps (size): 0(10) 1(10) 2(10) 3(10) 4(10) 7(10) 8(10) 9(10) 10(10) 11(10) 12(10) 13(10) 14(10) 15(10) 16(10) 17(10) 18(10) 19(10) 20(10) 21(10) 22(10) 23(10) 24(10) 125(10) 126(10) 135(10) 136(10) 137(10) 138(10) 139(10) 140(10) 141(10) 142(10) 143(10) 144(10) 145(10) 146(10) 147(10) 148(10) 149(10) 250(10) 251(10) 252(10) 253(10) 254(10) 257(10) 258(10) 259(10) 375(10) 376(10)\nc cc symbreak Z: n=500 candidates=57 verified_generators=3 orbits=50 detect_cpu=0.001s clause=orbit-chain\nc cc symbreak Z: generator: plain 2dshift-a L=125 (5x25)\nc cc symbreak Z: generator: plain tanner-aut #1\nc cc symbreak Z: generator: plain tanner-aut #2\nc cc symbreak Z: orbit reps (size): 0(10) 1(10) 2(10) 3(10) 4(10) 7(10) 8(10) 9(10) 10(10) 11(10) 12(10) 13(10) 14(10) 15(10) 16(10) 17(10) 18(10) 19(10) 20(10) 21(10) 22(10) 23(10) 24(10) 125(10) 126(10) 135(10) 136(10) 137(10) 138(10) 139(10) 140(10) 141(10) 142(10) 143(10) 144(10) 145(10) 146(10) 147(10) 148(10) 149(10) 250(10) 251(10) 252(10) 253(10) 254(10) 257(10) 258(10) 259(10) 375(10) 376(10)\nc cc: X half: n 500, rank H 228, rank [H;G] 270, rank S 230: detectors complete, 42 logical(s)\nc cc: Z half: n 500, rank H 230, rank [H;G] 272, rank S 228: detectors complete, 42 logical(s)\nc cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (no verified map: both halves), ub-basis on\nc cc: ub-basis: verified basis rows give UB 10 (X 10, Z 10)\nc cc: X half search: 50 seeds (orbit representatives)\nc cc: X half parity: off (column weights 2..12, an even weight present)\nc cc: X half overlap: on (240 stabilizer rows of Hx, weights 6..9, 0 forbidden from the start)\nc cc: Z half search: 50 seeds (orbit representatives)\nc cc: Z half parity: off (column weights 2..8, an even weight present)\nc cc: Z half overlap: on (240 stabilizer rows of Hz, weights 9..9, 0 forbidden from the start)\nc cc: X half ub-search: rank H 228, information set 272, triples off, slack 4, li-cap 64, collision stern p 2 l 13 walk 32 batch 1 refresh 0\nc cc: Z half ub-search: rank H 230, information set 270, triples off, slack 4, li-cap 64, collision stern p 2 l 13 walk 32 batch 1 refresh 0\nc cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none\nc cc: ub-search: X half word of weight 8 (iteration 1, wall 0.006s)\nc witness X (ub-search): 15 67 72 73 122 141 144 197\nc cc: X half level 1 EMPTY nodes 50 seeds 50 time 0.000s\nc cc: Z half level 1 EMPTY nodes 50 seeds 50 time 0.000s\nc cc: X half level 2 EMPTY nodes 50 seeds 50 time 0.000s\nc cc: Z half level 2 EMPTY nodes 50 seeds 50 time 0.000s\nc cc: X half level 3 EMPTY nodes 50 seeds 50 time 0.000s\nc cc: Z half level 3 EMPTY nodes 50 seeds 50 time 0.000s\nc cc: X half level 4 EMPTY nodes 167 seeds 50 time 0.000s\nc cc: Z half level 4 EMPTY nodes 139 seeds 50 time 0.000s\nc cc: Z half level 5 EMPTY nodes 383 seeds 50 time 0.000s\nc cc: X half level 5 EMPTY nodes 542 seeds 50 time 0.000s\nc cc: Z half level 6 EMPTY nodes 1235 seeds 50 time 0.000s\nc cc: X half level 6 EMPTY nodes 1406 seeds 50 time 0.000s\nc cc: Z half level 7 EMPTY nodes 3151 seeds 50 time 0.000s\nc cc: X half level 7 EMPTY nodes 3506 seeds 50 time 0.001s\nc cc: ub-search X: iterations 1, finder time 0.005s, kept 217, nontrivial 201, li-gain 5, improvements 1, rank 228, K 272, ub 8\nc cc: ub-search X collision: rounds 1, colliding pairs 489372 (nontrivial 487171)\nc cc: ub-search Z: iterations 0, finder time 0.000s, kept 0, nontrivial 0, li-gain 0, improvements 0, rank 230, K 270, ub 10\nc cc: ub-search Z collision: rounds 0, colliding pairs 0 (nontrivial 0)\nc cc: total nodes X 5771 Z 5058, search time X 0.001s Z 0.001s, wall 0.007s\nc cc: d = 8\nc DistQLDPC \u2014 QLDPC/CSS minimum distance (connected-cluster level search)\nc solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0\nc Hx: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Hx.txt\nc Hz: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Hz.txt\nc Gx: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Gx.txt\nc Gz: data/matrices/untiered/quarantine/GH-202/TN_500_42_unknown_Gz.txt\nc Hx: 240 x 500, Hz: 240 x 500, Gx: 42 x 500, Gz: 42 x 500, logicals: 84\nc d_lb: 8\nc d_ub: 8\nc d  : 8\no 8\n"}
+2026-10-30T00:39:53.3671925Z ##[group]Run actions/upload-artifact@v4
+2026-10-30T00:39:53.3672254Z with:
+2026-10-30T00:39:53.3672470Z   name: gh202-authorized-cc500
+2026-10-30T00:39:53.3672731Z   path: /tmp/gh202-cc500/
+2026-10-30T00:39:53.3672966Z   if-no-files-found: warn
+2026-10-30T00:39:53.3673192Z   retention-days: 14
+2026-10-30T00:39:53.3673402Z   compression-level: 6
+2026-10-30T00:39:53.3673624Z   overwrite: false
+2026-10-30T00:39:53.3673834Z   include-hidden-files: false
+2026-10-30T00:39:53.3674074Z ##[endgroup]
+2026-10-30T00:39:53.5517512Z (node:2503) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-30T00:39:53.5518772Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-30T00:39:53.5627908Z With the provided path, there will be 3 files uploaded
+2026-10-30T00:39:53.5634161Z Artifact name is valid!
+2026-10-30T00:39:53.5635661Z Root directory input is valid!
+2026-10-30T00:39:53.8713881Z Beginning upload of artifact content to blob storage
+2026-10-30T00:39:53.8956725Z (node:2503) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-30T00:39:54.1085454Z Uploaded bytes 3067
+2026-10-30T00:39:54.1706436Z Finished uploading artifact content to blob storage!
+2026-10-30T00:39:54.1707422Z SHA256 digest of uploaded artifact zip is 680308cbdaa14345516798e3aa3843f6b38e39eb6963af7f4a897ab9b67dbfb1
+2026-10-30T00:39:54.1708717Z Finalizing artifact upload
+2026-10-30T00:39:54.6365558Z Artifact gh202-authorized-cc500.zip successfully finalized. Artifact ID 12945410074
+2026-10-30T00:39:54.6366922Z Artifact gh202-authorized-cc500 has been successfully uploaded! Final size is 3067 bytes. Artifact ID is 12945410074
+2026-10-30T00:39:54.6374108Z Artifact download URL: https://github.com/guluchen/DistQLDPC/actions/runs/40981050751/artifacts/12945410074
+2026-10-30T00:39:54.6644503Z Post job cleanup.
+2026-10-30T00:39:54.7555768Z [command]/usr/bin/git version
+2026-10-30T00:39:54.7616583Z git version 2.56.0
+2026-10-30T00:39:54.7661191Z Temporarily overriding HOME='/home/runner/work/_temp/303e02ee-c3b7-4625-beb0-cc16dd1e9d60' before making global git config changes
+2026-10-30T00:39:54.7662782Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T00:39:54.7666759Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T00:39:54.7704848Z Removing SSH command configuration
+2026-10-30T00:39:54.7711377Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T00:39:54.7766612Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T00:39:54.8044450Z Removing HTTP extra header
+2026-10-30T00:39:54.8070928Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T00:39:54.8112976Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T00:39:54.8389418Z Removing includeIf entries pointing to credentials config files
+2026-10-30T00:39:54.8397717Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T00:39:54.8438403Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-30T00:39:54.8439848Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-30T00:39:54.8441106Z includeif.gitdir:/github/workspace/.git.path
+2026-10-30T00:39:54.8442118Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-30T00:39:54.8449589Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-30T00:39:54.8488724Z /home/runner/work/_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:54.8502835Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-6495e04d\-3f7a\-4a96\-a835\-07492b1ce814\.config
+2026-10-30T00:39:54.8559618Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-30T00:39:54.8603721Z /home/runner/work/_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:54.8611925Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-6495e04d\-3f7a\-4a96\-a835\-07492b1ce814\.config
+2026-10-30T00:39:54.8660440Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-30T00:39:54.8700035Z /github/runner_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:54.8708404Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-6495e04d\-3f7a\-4a96\-a835\-07492b1ce814\.config
+2026-10-30T00:39:54.8756269Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-30T00:39:54.8795668Z /github/runner_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config
+2026-10-30T00:39:54.8803226Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-6495e04d\-3f7a\-4a96\-a835\-07492b1ce814\.config
+2026-10-30T00:39:54.8854653Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T00:39:54.9128678Z Removing credentials config '/home/runner/work/_temp/git-credentials-6495e04d-3f7a-4a96-a835-07492b1ce814.config'
+2026-10-30T00:39:54.9314203Z Cleaning up orphan processes
+2026-10-30T00:39:54.9713136Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

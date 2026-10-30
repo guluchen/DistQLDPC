@@ -34,3 +34,13 @@ Source6/6/14 claims remain historical references; no distance is inherited
 by the original p11/19/29cases. PI decision required before further source-
 dependent scientific diagnosis or adoption; external author contact belongs
 to PI. GH200remains separately held. No main/tier/QDistSAT/solver changes.
+Authorized follow-up2026-10-30: after explicit PI approval, exactly one
+CC-only500 diagnostic (run40981050751/job123820926661) returned distance8,
+matching original MaxSAT8 on identical4matrix hashes and identical compiled
+binary. The actual weight8 word passes GF2 independently. Thus this frozen
+reconstructed input has cross-checked8, while source6 remains unreproduced;
+the intended local labeling is not identified and no paper erratum is claimed.
+All24files stay quarantined with zero accepted additions. No MaxSAT500 retry,
+other-case search, renaming, coordinate edit or adoption. Full evidence in
+optimization/experiments/GH-202/raw/authorized-cc500/ and diagnostic/REQUEST.md;
+subsequent workflow is retained replay only. GH200 remains separately held.

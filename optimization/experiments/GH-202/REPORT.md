@@ -207,3 +207,37 @@ and Makefile blob1951a24d5de920a651ad3919c672331862976365 equal current exactly.
 Guard is corrected to compare those immutable IDs plus a clean-source diff;
 8unit contracts including an ancestor-free snapshot pass. No scientific run
 was consumed or retried; the PI-authorized single CC attempt remains pending.
+
+## Completed authorized CC500 follow-up; source hold remains
+
+PI-authorized single CC run40981050751/job123820926661 SUCCESS at
+bf892dbc5113804b65fe822756b7457320dda68e. All8diagnostic input/interpretation
+contracts pass; CC returns [8,8]SOLVED with X word
+15/67/72/73/122/141/144/197, independently GF2-verified. Input4SHA256 values
+and compiled binary68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a
+match the original MaxSAT case exactly. Unchanged original src/Makefile tree
+identities are verified without shallow-history dependence. Source ordinary
+CI40981050760 SUCCESS.
+
+Result: exact8 for the frozen reconstructed input is now cross-checked by
+MaxSAT and CC with an actual GF2 minimum word. Published source6 remains a
+separate, unreproduced claim. No source distance, coordinates or files were
+silently edited; no erratum or intended-source-input identification is claimed.
+Agreement makes a MaxSAT-only discrepancy an insufficient explanation, but
+does not independently exclude every shared front-end assumption. Local-view
+label/source correspondence is the next unresolved scientific question.
+
+All24files remain quarantined; zero accepted additions, no main/PR/stem/tier/
+default/QDistSAT change. GH200 remains separately held. The first workflow
+was a preflight failure with zero CC execution; total actual CC attempts1,
+MaxSAT500 retries0, other new Schreier distance runs0. Full151605-character
+successful job and native log/meta/audit retained in raw/authorized-cc500/;
+original failed-source raw records are byte-identical. No original MaxSAT
+missing numeric fields are filled after the fact.
+
+Workflow-onlyeb7f7de9c26f5361cecf482fd86c83f93a6bc251 replaces the diagnostic
+with read-only retained replay. diagnostic/replay_cc500.py verifies all
+identities, original source6 guard, exact8 evidence, GF2 words and raw hashes
+without a solver. New label changes or distance runs would require separate
+PI authority. Scientific semantics changed:no. PI action required: unresolved
+source interpretation; no further scientific run automatically authorized.
