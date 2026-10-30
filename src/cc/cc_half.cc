@@ -42,7 +42,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
                        const Rules& rules, uint64_t relabel_seed, int mutant, const SparseRows* K)
     : n_(H.cols), m_(0), k_(0), kw_(1), mw_(1), maxrow_(1), rules_(rules), mutant_(mutant),
       orbit_mode_(false), allodd_(false), par_(false), mincw_(0), maxcw_(0), hmask_(0),
-      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), w_(0), nodd_(0),
+      ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ovtight_(0), ovforbid_(0), lbminr_(3), lbgap_(0), lbauto_(40), lbautomin_(100000), lbany_(false), lbraise_(true), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -253,10 +253,117 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         }
     }
 
+    if (rules_.charge) {   /* GH-157 scratch */
+        lbrs_.assign((size_t)m_ + 1, 0);
+        lbrq_.assign((size_t)rstart_[m_] + 1, 0);
+        lbw_.reset(n_, m_);
+        lbany_ = true;
+    }
+
     syn_.assign((size_t)mw_, 0);
     gpar_.assign((size_t)kw_, 0);
     blk_.assign((size_t)n_, 0);
     mark_.assign((size_t)n_, 0);
+}
+
+/* ---------------- GH-157: charge node lower bound ---------------- */
+
+LbWork::LbWork() : st(0) {
+    lcm[0] = 1;
+    for (int d = 1; d <= 32; d++) {
+        int64_t a = lcm[d - 1], b = d;
+        while (b) { const int64_t t = a % b; a = b; b = t; }
+        lcm[d] = lcm[d - 1] / a * d;   /* lcm(1..32) = 144403552893600 < 2^48 */
+    }
+}
+
+void LbWork::reset(int nq, int maxrows) {
+    cnt.assign((size_t)nq, 0);
+    load.assign((size_t)nq, 0);
+    mk.assign((size_t)nq, 0);
+    st = 0;
+    y.assign((size_t)(maxrows > 0 ? maxrows : 1), 0);
+}
+
+/* Charge (see cc_half.h). Pass 1: c_j = number of the k sets containing j (lazily reset by stamp), D = max c_j.
+ * Pass 2: y_u = L / max_{j in u} c_j (scaled by L = lcm(1..D)); loads. Pass 3: raise. Exact integer arithmetic:
+ * Y <= k L <= k 2^48, no overflow for k < 2^15 (k is at most the number of rows of H; checked). */
+int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise) {
+    const uint64_t st = ++w.st;
+    int D = 0;
+    for (int i = 0; i < k; i++) {
+        if (rs[i] == rs[i + 1]) return LB_DEAD;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) {
+            const uint32_t j = rq[t];
+            if (w.mk[j] != st) { w.mk[j] = st; w.cnt[j] = 0; w.load[j] = 0; }
+            if (++w.cnt[j] > D) D = w.cnt[j];
+        }
+    }
+    return lb_charge_counted(rs, rq, k, r, w, mutant, raise, D);
+}
+
+/* lb_charge after the counting pass: w.cnt[j] = c_j and w.load[j] = 0 for every j in the sets, D = max c_j, no empty set */
+int lb_charge_counted(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise, int D) {
+    if (D > 32 || k >= (1 << 15)) return 0;   /* idle: denominators too large for the scaled integers */
+    const int64_t L = w.lcm[D];
+    const int64_t R = r < 0 ? -1 : (int64_t)r * L;
+    int64_t Y = 0;
+    for (int i = 0; i < k; i++) {   /* local-degree charge; stops as soon as the sum exceeds r */
+        int dm = 0;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) if (w.cnt[rq[t]] > dm) dm = w.cnt[rq[t]];
+        int64_t yi = L / dm;
+        if (mutant == 15) yi += L / D;   /* mutant: charge inflated by 1/D (infeasible) */
+        w.y[i] = yi;
+        Y += yi;
+        if (R >= 0 && Y > R) return (int)((Y + L - 1) / L);
+    }
+    if (!raise) return (int)((Y + L - 1) / L);
+    for (int i = 0; i < k; i++)
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) w.load[rq[t]] += w.y[i];
+    for (int i = 0; i < k; i++) {   /* raise: y_u += min residual capacity of its qubits (keeps feasibility) */
+        int64_t s = L;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) { const int64_t res = L - w.load[rq[t]]; if (res < s) s = res; }
+        if (s <= 0) continue;
+        w.y[i] += s;
+        Y += s;
+        for (uint32_t t = rs[i]; t < rs[i + 1]; t++) w.load[rq[t]] += s;
+        if (R >= 0 && Y > R) break;
+    }
+    return (int)((Y + L - 1) / L);
+}
+
+/* GH-157: evaluate the charge at the current node (pack did not prune; the caller checked the budget, |U| and the gap
+ * gate). The candidate sets of the odd rows are copied once (index order, c_j counted on the way) and handed to
+ * lb_charge_counted, the second half of lb_charge, which the tests compare against brute force. Returns true if the node
+ * is empty (the bound exceeds the remaining budget, or an odd row has no available qubit). */
+bool HalfSearch::lb_prune(int size) {
+    const int r = w_ - size;
+    ++res_->lbeval;
+    int k = 0, D = 0;
+    uint32_t nq = 0;
+    const uint64_t st = ++lbw_.st;   /* counting stamp (the copy pass also counts c_j, as lb_charge's first pass) */
+    lbrs_[0] = 0;
+    for (int wi = 0; wi < mw_; wi++) {
+        uint64_t x = syn_[wi];
+        while (x) {
+            const int row = wi * 64 + __builtin_ctzll(x);
+            x &= x - 1;
+            for (uint32_t t = rstart_[row], e = rstart_[row + 1]; t < e; t++) {
+                const uint32_t qb = rq_[t];
+                if (blk_[qb]) continue;
+                lbrq_[nq++] = qb;
+                if (lbw_.mk[qb] != st) { lbw_.mk[qb] = st; lbw_.cnt[qb] = 0; lbw_.load[qb] = 0; }   /* lb_charge's counting */
+                if (++lbw_.cnt[qb] > D) D = lbw_.cnt[qb];
+            }
+            if (lbrs_[k] == nq) { ++res_->lbdead; return true; }   /* odd row without an available qubit */
+            lbrs_[++k] = nq;
+        }
+    }
+    if (rules_.charge) {
+        const int b = lb_charge_counted(&lbrs_[0], &lbrq_[0], k, r, lbw_, mutant_, lbraise_, D);
+        if (b > r) { ++res_->chgprune; ++res_->lbprune_by_budget[(size_t)r]; return true; }
+    }
+    return false;
 }
 
 inline void HalfSearch::toggle(int q) {
@@ -388,6 +495,9 @@ bool HalfSearch::dfs(int size) {
     const bool pack = rules_.pack, mrv = rules_.mrv;
     const uint64_t st = ++stamp_;
     int p = 0, brow = -1;
+    /* GH-157: charge only where a hitting-set bound can exceed the remaining budget (tau <= |U| = nodd_) */
+    const bool lbon = lbany_ && w_ - size >= lbminr_ && nodd_ > w_ - size;
+
     uint32_t bcnt = UINT32_MAX;
     for (int wi = 0; wi < mw_ && !(brow >= 0 && !pack && !mrv); wi++) {
         uint64_t x = syn_[wi];
@@ -433,6 +543,9 @@ bool HalfSearch::dfs(int size) {
         }
     }
     if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
+    /* gap gate: evaluated only when the packing is within lb-gap of pruning (r - p <= gap; prunes concentrate at
+     * r = p); without pack always. Skipping an evaluation only skips a sound prune. */
+    if (lbon && (!pack || w_ - size - p <= lbgap_) && lb_prune(size)) return false;
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int nc = 0;
@@ -516,6 +629,7 @@ LevelResult HalfSearch::run_level(int w) {
     cur_.assign((size_t)w, -1);
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
     r.by_budget.assign((size_t)w + 1, 0);
+    if (rules_.charge) r.lbprune_by_budget.assign((size_t)w + 1, 0);
     for (size_t i = 0; i < seed_.size(); i++) {
         const int s = seed_[i];
         /* mutant 3 (orbit seed rule off by one): the seed rule's forbidding of O_i is applied BEFORE the
@@ -551,7 +665,20 @@ LevelResult HalfSearch::run_level(int w) {
     r.ovtight = ovtight_;
     r.ovforbid = ovforbid_;
     res_ = NULL;
+    lb_auto_update(r);
     return r;
+}
+
+/* GH-157 -cc-lb-auto: after a completed EMPTY level with at least lbautomin_ evaluations, the node lower bound is
+ * switched off for the rest of this half when fewer than lbauto_ percent of the evaluations pruned (cost-benefit
+ * guard; skipping evaluations is always sound, and the decision depends only on deterministic counters). */
+void HalfSearch::lb_auto_update(LevelResult& r) {
+    if (!lbany_ || lbauto_ <= 0 || r.lbeval < lbautomin_) return;
+    const uint64_t pr = r.chgprune;
+    if (100 * pr < (uint64_t)lbauto_ * r.lbeval) {
+        lbany_ = false;
+        r.lbswitchoff = true;
+    }
 }
 
 } /* namespace distcc */

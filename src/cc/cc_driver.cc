@@ -217,7 +217,7 @@ bool verify_logical(const SparseRows& Hpar, const SparseRows& Sstab, const std::
 
 bool parse_rules(const char* s, Rules& out) {
     Rules r;
-    r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = false;
+    r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = r.charge = false;
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -231,6 +231,7 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "parity") r.parity = true;
         else if (tok == "leaf") r.leaf = true;
         else if (tok == "overlap") r.overlap = true;
+        else if (tok == "charge") r.charge = true;   /* GH-157 */
         else if (tok == "none") { /* nothing */ }
         else return false;
         pos = e + 1;
@@ -248,6 +249,7 @@ std::string rules_string(const Rules& r) {
     if (r.leaf) s += ",leaf";
     if (r.overlap) s += ",overlap";
     if (r.mrv) s += ",mrv";
+    if (r.charge) s += ",charge";
     return s.empty() ? std::string("none") : s.substr(1);
 }
 
@@ -306,6 +308,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                dual ? "on (verified map in use)" : opt.dual ? "on (no verified map: both halves)" : "off",
                opt.ub_basis ? "on" : "off",
                sequential ? ", schedule sequential (test)" : "");
+        if (opt.rules.charge)   /* GH-157 */
+            printf("c cc: node lower bound charge%s at remaining budget >= %d and budget - packing <= %d, auto off below %d %% (GH-157)\n",
+                   opt.lb_raise ? "" : " (no raise)", opt.lb_minr, opt.lb_gap, opt.lb_auto);
         if (dual)
             printf("c cc: dual map '%s' verified: dX = dZ, searching the X half only (Z bounds mirrored)\n",
                    in.dual_desc.c_str());
@@ -340,6 +345,10 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (!hs[k].searched) continue;
         /* GH-138: the half's stabilizer rows S (X half Hx, Z half Hz; verified by detector_check) feed rule overlap */
         hs[k].search.reset(new HalfSearch(*hs[k].H, *hs[k].G, in.orbit_of[k], opt.rules, opt.seed, opt.mutant, hs[k].S));
+        hs[k].search->set_lb_minr(opt.lb_minr);   /* GH-157 */
+        hs[k].search->set_lb_gap(opt.lb_gap);
+        hs[k].search->set_lb_raise(opt.lb_raise);
+        hs[k].search->set_lb_auto(opt.lb_auto);
         hs[k].par = hs[k].search->parity_active();
         if (verb > 0) {
             printf("c cc: %s half search: %d seeds (%s)\n", hs[k].tag, hs[k].search->num_seeds(),
@@ -586,6 +595,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         if (verb > 0)
             printf("c cc: %s half level %d %s nodes %llu seeds %llu time %.3fs\n", h.tag, w, vs,
                    (unsigned long long)r.nodes, (unsigned long long)r.seeds, dt);
+        if (r.lbswitchoff && (verb > 0 || opt.stats))   /* GH-157 -cc-lb-auto (only with charge on) */
+            printf("c cc: %s half node lower bound switched off after level %d (%llu of %llu evaluations pruned, below %d %%)\n",
+                   h.tag, w, (unsigned long long)r.chgprune, (unsigned long long)r.lbeval, opt.lb_auto);
         if (opt.stats) {
             printf("c cc-stats: %s level %d %s nodes %llu seeds %llu closed %llu nocand %llu packprune %llu parprune %llu "
                    "leaf1 %llu leaf2 %llu ovtight %llu ovforbid %llu time %.6fs\n",
@@ -597,6 +609,15 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 printf("c cc-stats: %s level %d nodes-by-budget", h.tag, w);
                 for (size_t b = 0; b < r.by_budget.size(); b++) printf(" %llu", (unsigned long long)r.by_budget[b]);
                 printf("\n");
+            }
+            if (opt.rules.charge) {   /* GH-157: printed only with charge on (identity otherwise) */
+                printf("c cc-stats: %s level %d lb lbeval %llu chgprune %llu lbdead %llu\n", h.tag, w,
+                       (unsigned long long)r.lbeval, (unsigned long long)r.chgprune, (unsigned long long)r.lbdead);
+                if (!r.lbprune_by_budget.empty()) {
+                    printf("c cc-stats: %s level %d lbprune-by-budget", h.tag, w);
+                    for (size_t b = 0; b < r.lbprune_by_budget.size(); b++) printf(" %llu", (unsigned long long)r.lbprune_by_budget[b]);
+                    printf("\n");
+                }
             }
         }
         fflush(stdout);
