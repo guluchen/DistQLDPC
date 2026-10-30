@@ -1,0 +1,58 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BCH_1365_1173_unknown_Hx.txt
+c Hz: data/matrices/untiered/BCH_1365_1173_unknown_Hz.txt
+c Gx: data/matrices/untiered/BCH_1365_1173_unknown_Gx.txt
+c Gz: data/matrices/untiered/BCH_1365_1173_unknown_Gz.txt
+c Hx: 96 x 1365, Hz: 96 x 1365, Gx: 1173 x 1365, Gz: 1173 x 1365, logicals: 2346
+c cc: dual map detection: 'identity' verified (rank Hz=Hx=96, [Hz;Gx]=[Hx;Gz]=1269, cpu 0.024s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 0 generator(s), 1365 qubit orbit(s), group complete, point stabiliser trivial, swap map not searched, 0 test(s) (0 refuted, 0 undecided), work 569764, cpu 0.011s
+c cc symbreak X: n=1365 candidates=65 verified_generators=15 orbits=1 detect_cpu=0.057s clause=unit
+c cc symbreak X: generator: plain stridedshift L=3
+c cc symbreak X: generator: plain stridedshift L=5
+c cc symbreak X: generator: plain stridedshift L=7
+c cc symbreak X: generator: plain stridedshift L=13
+c cc symbreak X: generator: plain stridedshift L=15
+c cc symbreak X: generator: plain stridedshift L=21
+c cc symbreak X: generator: plain stridedshift L=35
+c cc symbreak X: generator: plain stridedshift L=39
+c cc symbreak X: generator: plain stridedshift L=65
+c cc symbreak X: generator: plain stridedshift L=91
+c cc symbreak X: generator: plain stridedshift L=105
+c cc symbreak X: generator: plain stridedshift L=195
+c cc symbreak X: generator: plain stridedshift L=273
+c cc symbreak X: generator: plain stridedshift L=455
+c cc symbreak X: generator: plain blockshift L=1365
+c cc symbreak X: orbit reps (size): 0(1365)
+c cc: X half: n 1365, rank H 96, rank [H;G] 1269, rank S 96: detectors complete, 1173 logical(s)
+c cc: Z half: n 1365, rank H 96, rank [H;G] 1269, rank S 96: detectors complete, 1173 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'identity' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 36 (X 36, Z 36)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 1..58, an even weight present)
+c cc: X half overlap: on (96 stabilizer rows of Hx, weights 612..612, 0 forbidden from the start)
+c cc: X half ub-search: rank H 96, information set 1269, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 24 (iteration 1, wall 0.071s)
+c witness X (ub-search): 43 47 160 191 225 261 289 313 343 445 630 777 808 827 1008 1029 1038 1081 1106 1129 1217 1226 1261 1364
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 3 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 4 EMPTY nodes 612 seeds 1 time 0.155s
+c cc: ub-search: X half word of weight 23 (iteration 2, wall 4.501s)
+c witness X (ub-search): 1 10 45 74 85 187 316 350 503 615 699 731 864 887 1012 1038 1043 1129 1139 1141 1206 1260 1331
+c cc: ub-search: X half word of weight 22 (iteration 5, wall 4.637s)
+c witness X (ub-search): 7 33 40 74 174 184 289 471 490 497 520 593 608 683 769 788 890 990 1070 1260 1345 1364
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BCH_1365_1173_unknown_Hx.txt
+c Hz: data/matrices/untiered/BCH_1365_1173_unknown_Hz.txt
+c Gx: data/matrices/untiered/BCH_1365_1173_unknown_Gx.txt
+c Gz: data/matrices/untiered/BCH_1365_1173_unknown_Gz.txt
+c Hx: 96 x 1365, Hz: 96 x 1365, Gx: 1173 x 1365, Gz: 1173 x 1365, logicals: 2346
+c d_lb: 5
+c d_ub: 22
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

@@ -1,0 +1,60 @@
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/BCH_1365_1173_unknown_Hx.txt
+c Hz: data/matrices/untiered/BCH_1365_1173_unknown_Hz.txt
+c Gx: data/matrices/untiered/BCH_1365_1173_unknown_Gx.txt
+c Gz: data/matrices/untiered/BCH_1365_1173_unknown_Gz.txt
+c Hx: 96 x 1365, Hz: 96 x 1365, Gx: 1173 x 1365, Gz: 1173 x 1365, logicals: 2346
+c frontier auto X: 1951081.39 Tanner 4-cycles per row (threshold 3.00) -> off
+c frontier auto Z: 1951081.39 Tanner 4-cycles per row (threshold 3.00) -> off
+c dualshare: dual map 'identity' verified (rank Hz=Hx=96, [Hz;Gx]=[Hx;Gz]=1269, cpu 0.023s): dX = dZ, both halves kept, lower bounds shared
+c oddcap X: column weights 1..58 (an even weight present) -> odd caps kept
+c oddcap Z: column weights 1..58 (an even weight present) -> odd caps kept
+c symbreak X: n=1365 candidates=65 verified_generators=15 orbits=1 detect_cpu=0.057s clause=unit
+c symbreak X: generator: plain stridedshift L=3
+c symbreak X: generator: plain stridedshift L=5
+c symbreak X: generator: plain stridedshift L=7
+c symbreak X: generator: plain stridedshift L=13
+c symbreak X: generator: plain stridedshift L=15
+c symbreak X: generator: plain stridedshift L=21
+c symbreak X: generator: plain stridedshift L=35
+c symbreak X: generator: plain stridedshift L=39
+c symbreak X: generator: plain stridedshift L=65
+c symbreak X: generator: plain stridedshift L=91
+c symbreak X: generator: plain stridedshift L=105
+c symbreak X: generator: plain stridedshift L=195
+c symbreak X: generator: plain stridedshift L=273
+c symbreak X: generator: plain stridedshift L=455
+c symbreak X: generator: plain blockshift L=1365
+c symbreak X: orbit reps (size): 0(1365)
+c symbreak Z: n=1365 candidates=65 verified_generators=15 orbits=1 detect_cpu=0.057s clause=unit
+c symbreak Z: generator: plain stridedshift L=3
+c symbreak Z: generator: plain stridedshift L=5
+c symbreak Z: generator: plain stridedshift L=7
+c symbreak Z: generator: plain stridedshift L=13
+c symbreak Z: generator: plain stridedshift L=15
+c symbreak Z: generator: plain stridedshift L=21
+c symbreak Z: generator: plain stridedshift L=35
+c symbreak Z: generator: plain stridedshift L=39
+c symbreak Z: generator: plain stridedshift L=65
+c symbreak Z: generator: plain stridedshift L=91
+c symbreak Z: generator: plain stridedshift L=105
+c symbreak Z: generator: plain stridedshift L=195
+c symbreak Z: generator: plain stridedshift L=273
+c symbreak Z: generator: plain stridedshift L=455
+c symbreak Z: generator: plain blockshift L=1365
+c symbreak Z: orbit reps (size): 0(1365)
+c stab-overlap X: 96 of 96 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 612:96 (<= 306); native propagator rows 96 (no clauses)
+c stab-overlap Z: 96 of 96 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 612:96 (<= 306); native propagator rows 96 (no clauses)
+c DistQLDPC — QLDPC/CSS minimum distance (symplectic MaxSAT)
+c solver: MaxCDCL, cardinality encoding: Sinz+MTO (default, Sinz if n<=100)
+c Hx: data/matrices/untiered/BCH_1365_1173_unknown_Hx.txt
+c Hz: data/matrices/untiered/BCH_1365_1173_unknown_Hz.txt
+c Gx: data/matrices/untiered/BCH_1365_1173_unknown_Gx.txt
+c Gz: data/matrices/untiered/BCH_1365_1173_unknown_Gz.txt
+c Hx: 96 x 1365, Hz: 96 x 1365, Gx: 1173 x 1365, Gz: 1173 x 1365, logicals: 2346
+c d_lb: -
+c d_ub: -
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

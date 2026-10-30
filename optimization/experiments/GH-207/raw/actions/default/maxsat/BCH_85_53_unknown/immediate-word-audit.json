@@ -1,0 +1,90 @@
+{
+  "stem": "BCH_85_53_unknown",
+  "published_lower": 5,
+  "published_exact": 5,
+  "engines": {
+    "maxsat": {
+      "lb": 5,
+      "ub": 5,
+      "status": "SOLVED"
+    }
+  },
+  "explicit_exact_answers": {
+    "maxsat": 5
+  },
+  "confirmed_exact": null,
+  "actual_verified_upper": 5,
+  "actual_verified_half_uppers": {
+    "X": 5,
+    "Z": 5
+  },
+  "witnesses": [
+    {
+      "half": "Z",
+      "weight": 6,
+      "support": [
+        0,
+        2,
+        9,
+        10,
+        11,
+        17
+      ],
+      "origin": "actual logical basis"
+    },
+    {
+      "half": "X",
+      "weight": 6,
+      "support": [
+        0,
+        2,
+        9,
+        10,
+        11,
+        17
+      ],
+      "origin": "actual logical basis"
+    },
+    {
+      "half": "X",
+      "weight": 5,
+      "support": [
+        0,
+        17,
+        34,
+        51,
+        68
+      ],
+      "origin": "explicit cyclic subgroup construction"
+    },
+    {
+      "half": "Z",
+      "weight": 5,
+      "support": [
+        0,
+        17,
+        34,
+        51,
+        68
+      ],
+      "origin": "explicit cyclic subgroup construction"
+    },
+    {
+      "half": "X",
+      "weight": 5,
+      "support": [
+        25,
+        38,
+        39,
+        63,
+        79
+      ],
+      "origin": "maxsat"
+    }
+  ],
+  "numeric_smoke_gate": "INCOMPLETE",
+  "reported_upper_word_gate": "PASS",
+  "source_upper_word_gate": "PASS",
+  "scientific_status": "PUBLISHED_EXACT_REPRODUCED_ONE_ENGINE_AND_GF2",
+  "independent_search_lower_corrob": null
+}

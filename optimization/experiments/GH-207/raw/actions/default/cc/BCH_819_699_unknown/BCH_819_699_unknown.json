@@ -1,0 +1,28 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-cpu-lim=60",
+    "-engine=cc",
+    "-v",
+    "data/matrices/untiered/BCH_819_699_unknown"
+  ],
+  "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "input_sha256": {
+    "Hx": "08e0481dc09f304825fcd9ea7cf1c2567515d0b358ef62c803b775f6a53eb1ec",
+    "Hz": "bb342afceec87f69ffbddd6dc2628732bcef251cb80cafcd7d528498b5827a27",
+    "Gx": "e12027d79c1942dd4a26996722e7522c0c8e3f59104700e9c88889547b661340",
+    "Gz": "e17300b37883f1fbe239513dff01ab5218768bc7c2290072e84b37bde77eec76"
+  },
+  "source_head": "25936e3f36aad13fa47ba85708af68b01c274b0a",
+  "rc": 1,
+  "wall_seconds": 60.05,
+  "lb": 6,
+  "ub": 11,
+  "status": "BOUNDED"
+}

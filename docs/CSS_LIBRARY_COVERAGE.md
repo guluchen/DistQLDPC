@@ -60,7 +60,7 @@ GH-167 has six pair-partition CPM inputs on its separate work branch. GH-168 has
 | Construction class / specialization | Coverage and remaining work | Evidence |
 |---|---|---|
 | Repeated-cyclic multi-block CSS hyperbicycle | GH205 six fixed inputs N420..2700,K30/50; local full GF2/logicals/independent physical incidence/complete small classical kernels/source hypotheses/connected stabilizer support and24-file reproduction pass. Source900 exact14 control; five original finite specializations retain theorem intervals and actual words separately. Linux40961747658 passes53units/24-file byte reproduction and all12numeric gates; both engines+GF2 confirm global8/11/11 at N420/840/1260. Source900 CC14 reproduces known exact14; N1800/2700 CC14 remains PLAUSIBLE with MaxSAT[9,14]. Three unexecuted MaxSAT proof completions packaged, zero optionalCC/numeric/source-word jobs. Preserve easy symmetric outcomes; no distance-growth or global novelty assertion. This is a lifted-product specialization, not a disjoint-family increment | Kovalev–Pryadko [1212.6703v2](https://arxiv.org/abs/1212.6703v2), Eq19/Theorem9/Examples5–6; scripts/codegen/HYPERBICYCLE.md, GH205 report |
-| Dual-containing quantum BCH, generally non-LDPC CSS | GH207 supplies five fixed nonprimitive binary CSS inputs n85/341/819/1365/1365,k53/261/699/1173/1149. Exact5 control and four construction lower-only references9/11/17/19, with actual upper words5/13/21/36/41 kept separate. Full independent field/root-parity/physical dual-polynomial/complete logical/GF2/identityXZ/source hypothesis/connectivity gates,57local units,20matrix byte regeneration and41pinned peer scans PASS; Linux short gates PENDING. These stored checks are dense, not qLDPC; exact distances unconfirmed in reviewed sources is not global openness. Earlier six primitive choices remain known-exact controls, not open targets | Aly–Klappenecker–Sarvepalli [quant-ph/0604102v1](https://arxiv.org/abs/quant-ph/0604102v1), Lemmas12/17(b)/Theorem19; Ding–Du–Zhou2015 DOI[10.1109/TIT.2015.2409838](https://doi.org/10.1109/TIT.2015.2409838) Theorems4/8; GH205 raw/bch-triage.json |
+| Dual-containing quantum BCH, generally non-LDPC CSS | GH207 five fixed nonprimitive binary CSS inputs n85/341/819/1365/1365,k53/261/699/1173/1149. Terminal short gates retained; independent finite physical-root certificates prove exact5/9/11 and bounds17..22/19..24 with actual words. Raw MaxSAT5..5/5..9/3..11/null/null and CC5..5/7..9/6..11/5..22/5..24 remain separate. Last2 numeric/proof gates need guarded unexecuted server jobs.73local contracts,20byte regeneration and41pinned peer scans PASS; certificate Linux contracts pending. Dense CSS, not qLDPC; no global openness/novelty claim | Aly–Klappenecker–Sarvepalli [quant-ph/0604102v1](https://arxiv.org/abs/quant-ph/0604102v1), Theorem19; GH207 REPORT and raw/certificates |
 | Bivariate bicycle (BB), ordinary weight-6 | Existing tiered family | `NOTICE` section 5, tier0..tier5 |
 | Generalized bicycle (GB), cyclic two-block | Existing tiered family; GH-171 adds four fixed divisor-driven cyclic examples n46/66/90/170, independent source/algebra/logical/duplicate checks and all numeric Linux smoke gates pass; both engines reproduce exact8/7/10/8 with GF(2) words; separate work branch only | `NOTICE` section 5; Lu et al. [2608.09115](https://arxiv.org/abs/2608.09115) supplies these fixed cases (v3) |
 | Lifted products (LP), existing cyclic lifts | Existing tiered family; not a substitute for nonabelian group examples | `NOTICE` section 5 |
@@ -340,3 +340,15 @@ quotients/pairings and source hypotheses pass. This fills a missing CSS
 construction prescription without claiming LDPC density or globally-open
 problems. No source word at the lower endpoint is required. GH200/GH202
 remain held; prior unfinished/server/integration/stronger family gaps remain.
+
+
+GH207 terminal update supersedes the earlier pending construction checkpoint:
+exact5/9/11 now have independent finite physical-root lower certificates plus
+actual nontrivial GF2 upper words. Two genuine gaps17..22/19..24 remain, with
+default MaxSAT numeric gate incomplete. Original search fields are immutable.
+Source claims remain distinct, no globally novel/open assertion, no main move.
+GH202 latest PI-authorized single CC500 also exact8 with same verified word
+and same compiled binary as MaxSAT. Reconstructed input8 is cross-checked;
+source6 remains unreproduced, intended local labeling unresolved, no erratum
+or blanket solver-exoneration inference. All24 source inputs remain quarantined.
+Authoritative archive4ed02242f04d4cf9ae0e2f1966f795d209e5a83c and issue202.

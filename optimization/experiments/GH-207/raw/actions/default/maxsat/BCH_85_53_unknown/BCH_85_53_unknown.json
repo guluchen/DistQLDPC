@@ -1,0 +1,27 @@
+{
+  "cmd": [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/home/runner/work/DistQLDPC/DistQLDPC/bin/distqldpc",
+    "-cpu-lim=60",
+    "-v",
+    "data/matrices/untiered/BCH_85_53_unknown"
+  ],
+  "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a",
+  "input_sha256": {
+    "Hx": "e003bf0acbfa76520a9d64ec3fdc3326a9d6aac942e8559fdb0a16b7fa24b828",
+    "Hz": "b10b1ce313938f994e1f878352780f9fc03772832b4d2b6ffb683baa2aa651f4",
+    "Gx": "ab22184e82f666f5b96252b6a0b68e74a689de852b6f6e44c1a8ac2b872a5861",
+    "Gz": "d67e199c09fc7c29cfdd1eb2e18ecfe5fd5f304c295d49f6dd08ebedc9332e1f"
+  },
+  "source_head": "25936e3f36aad13fa47ba85708af68b01c274b0a",
+  "rc": 0,
+  "wall_seconds": 0.521,
+  "lb": 5,
+  "ub": 5,
+  "status": "SOLVED"
+}

@@ -453,3 +453,16 @@ complete logical bases and actual GF2 upper words are detailed in
 data/matrices/untiered/BCH.md. Existing smoke helper extensions are reused
 from GH205; only an explicit BCH family selector is added, default HGP unchanged.
 No pruning, solver-result reinterpretation, performance or qLDPC claim.
+
+
+GH207 finite certificates add no solver behavior. Standalone bch_certificate.py
+uses independent coefficient-list field products, Rabin irreducibility, distinct
+nonzero roots and explicit binary XOR combinations of stored Hx=Hz rows. For
+weight w<delta, equations j=1..w give V*diag(beta^i) on w distinct positions;
+the determinant is nonzero, so no such nonzero kernel word exists. A checked
+kernel word v and kernel detector u with dot(u,v)=1 prove v outside rowspace(H):
+every stabilizer has zero dot with u. This certifies lower5/9/11/17/19 and
+actual uppers5/9/11/22/24 on the frozen physical files; exact5/9/11 follow.
+No source endpoint fills raw engine fields; no bundled logical correctness is
+assumed for this detector proof. Fourteen additional tests catch broken proof
+objects, including omitted/mutated equations and invalid/even-pairing detectors.

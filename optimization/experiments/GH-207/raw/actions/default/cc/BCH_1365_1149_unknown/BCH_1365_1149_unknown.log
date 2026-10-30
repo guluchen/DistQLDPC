@@ -1,0 +1,60 @@
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BCH_1365_1149_unknown_Hx.txt
+c Hz: data/matrices/untiered/BCH_1365_1149_unknown_Hz.txt
+c Gx: data/matrices/untiered/BCH_1365_1149_unknown_Gx.txt
+c Gz: data/matrices/untiered/BCH_1365_1149_unknown_Gz.txt
+c Hx: 108 x 1365, Hz: 108 x 1365, Gx: 1149 x 1365, Gz: 1149 x 1365, logicals: 2298
+c cc: dual map detection: 'identity' verified (rank Hz=Hx=108, [Hz;Gx]=[Hx;Gz]=1257, cpu 0.025s)
+c cc aut: Tanner graph (qubits, Hx rows, Hz rows): 0 generator(s), 1365 qubit orbit(s), group complete, point stabiliser trivial, swap map not searched, 0 test(s) (0 refuted, 0 undecided), work 659890, cpu 0.012s
+c cc symbreak X: n=1365 candidates=65 verified_generators=15 orbits=1 detect_cpu=0.060s clause=unit
+c cc symbreak X: generator: plain stridedshift L=3
+c cc symbreak X: generator: plain stridedshift L=5
+c cc symbreak X: generator: plain stridedshift L=7
+c cc symbreak X: generator: plain stridedshift L=13
+c cc symbreak X: generator: plain stridedshift L=15
+c cc symbreak X: generator: plain stridedshift L=21
+c cc symbreak X: generator: plain stridedshift L=35
+c cc symbreak X: generator: plain stridedshift L=39
+c cc symbreak X: generator: plain stridedshift L=65
+c cc symbreak X: generator: plain stridedshift L=91
+c cc symbreak X: generator: plain stridedshift L=105
+c cc symbreak X: generator: plain stridedshift L=195
+c cc symbreak X: generator: plain stridedshift L=273
+c cc symbreak X: generator: plain stridedshift L=455
+c cc symbreak X: generator: plain blockshift L=1365
+c cc symbreak X: orbit reps (size): 0(1365)
+c cc: X half: n 1365, rank H 108, rank [H;G] 1257, rank S 108: detectors complete, 1149 logical(s)
+c cc: Z half: n 1365, rank H 108, rank [H;G] 1257, rank S 108: detectors complete, 1149 logical(s)
+c cc: rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0, dual on (verified map in use), ub-basis on
+c cc: dual map 'identity' verified: dX = dZ, searching the X half only (Z bounds mirrored)
+c cc: ub-basis: verified basis rows give UB 41 (X 41, Z 41)
+c cc: X half search: 1 seeds (orbit representatives)
+c cc: X half parity: off (column weights 1..65, an even weight present)
+c cc: X half overlap: on (108 stabilizer rows of Hx, weights 624..624, 0 forbidden from the start)
+c cc: X half ub-search: rank H 108, information set 1257, triples off, slack 4, li-cap 64, collision stern p 2 l 18 walk 32 batch 1 refresh 0
+c cc: ub-search: pre-pass 0.000s, share 0.050 of wall time (/16 after 16 re-hits of U or a plateau), cap none
+c cc: ub-search: X half word of weight 28 (iteration 1, wall 0.064s)
+c witness X (ub-search): 29 128 144 187 191 203 220 252 289 334 379 395 453 464 575 593 605 630 646 679 716 730 1126 1129 1139 1239 1299 1364
+c cc: X half level 1 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 2 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 3 EMPTY nodes 1 seeds 1 time 0.000s
+c cc: X half level 4 EMPTY nodes 624 seeds 1 time 0.177s
+c cc: ub-search: X half word of weight 27 (iteration 10, wall 10.140s)
+c witness X (ub-search): 11 30 32 58 109 116 274 306 405 409 559 567 569 586 676 777 780 811 843 952 1041 1095 1106 1135 1207 1259 1263
+c cc: ub-search: X half word of weight 26 (iteration 32, wall 29.108s)
+c witness X (ub-search): 47 66 162 237 255 302 338 340 405 510 573 626 685 730 783 846 852 867 883 889 904 945 1069 1225 1236 1315
+c cc: ub-search: X half word of weight 24 (iteration 37, wall 33.439s)
+c witness X (ub-search): 26 167 237 275 281 319 434 512 522 539 543 656 689 726 756 849 878 904 976 983 1082 1127 1207 1330
+c DistQLDPC — QLDPC/CSS minimum distance (connected-cluster level search)
+c solver: CC connected-cluster level search (GH-124, experimental), rules excl,pack,orbf,parity,leaf,overlap, cc-seed 0
+c Hx: data/matrices/untiered/BCH_1365_1149_unknown_Hx.txt
+c Hz: data/matrices/untiered/BCH_1365_1149_unknown_Hz.txt
+c Gx: data/matrices/untiered/BCH_1365_1149_unknown_Gx.txt
+c Gz: data/matrices/untiered/BCH_1365_1149_unknown_Gz.txt
+c Hx: 108 x 1365, Hz: 108 x 1365, Gx: 1149 x 1365, Gz: 1149 x 1365, logicals: 2298
+c d_lb: 5
+c d_ub: 24
+c status: TIMEOUT (child killed after -cpu-lim)
+c d  : UNKNOWN
+s UNKNOWN

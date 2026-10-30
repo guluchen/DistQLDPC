@@ -1,0 +1,82 @@
+{
+  "stem": "BCH_341_261_unknown",
+  "published_lower": 9,
+  "published_exact": null,
+  "engines": {
+    "maxsat": {
+      "lb": 5,
+      "ub": 9,
+      "status": "BOUNDED"
+    }
+  },
+  "explicit_exact_answers": {},
+  "confirmed_exact": null,
+  "actual_verified_upper": 9,
+  "actual_verified_half_uppers": {
+    "X": 9,
+    "Z": 13
+  },
+  "witnesses": [
+    {
+      "half": "Z",
+      "weight": 13,
+      "support": [
+        0,
+        5,
+        7,
+        18,
+        21,
+        23,
+        24,
+        27,
+        31,
+        32,
+        34,
+        35,
+        70
+      ],
+      "origin": "actual logical basis"
+    },
+    {
+      "half": "X",
+      "weight": 13,
+      "support": [
+        0,
+        5,
+        7,
+        18,
+        21,
+        23,
+        24,
+        27,
+        31,
+        32,
+        34,
+        35,
+        70
+      ],
+      "origin": "actual logical basis"
+    },
+    {
+      "half": "X",
+      "weight": 9,
+      "support": [
+        5,
+        8,
+        35,
+        116,
+        123,
+        125,
+        199,
+        285,
+        313
+      ],
+      "origin": "maxsat"
+    }
+  ],
+  "numeric_smoke_gate": "INCOMPLETE",
+  "reported_upper_word_gate": "PASS",
+  "source_upper_word_gate": "NOT_APPLICABLE",
+  "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; source-construction lower independently checked",
+  "independent_search_lower_corrob": null
+}

@@ -1,0 +1,119 @@
+{
+  "stem": "BCH_819_699_unknown",
+  "published_lower": 11,
+  "published_exact": null,
+  "engines": {
+    "maxsat": {
+      "lb": 3,
+      "ub": 11,
+      "status": "BOUNDED"
+    }
+  },
+  "explicit_exact_answers": {},
+  "confirmed_exact": null,
+  "actual_verified_upper": 11,
+  "actual_verified_half_uppers": {
+    "X": 12,
+    "Z": 11
+  },
+  "witnesses": [
+    {
+      "half": "Z",
+      "weight": 21,
+      "support": [
+        0,
+        1,
+        5,
+        10,
+        13,
+        16,
+        19,
+        22,
+        23,
+        28,
+        29,
+        35,
+        39,
+        41,
+        43,
+        44,
+        46,
+        50,
+        54,
+        56,
+        197
+      ],
+      "origin": "actual logical basis"
+    },
+    {
+      "half": "X",
+      "weight": 21,
+      "support": [
+        0,
+        1,
+        5,
+        10,
+        13,
+        16,
+        19,
+        22,
+        23,
+        28,
+        29,
+        35,
+        39,
+        41,
+        43,
+        44,
+        46,
+        50,
+        54,
+        56,
+        197
+      ],
+      "origin": "actual logical basis"
+    },
+    {
+      "half": "X",
+      "weight": 12,
+      "support": [
+        11,
+        32,
+        114,
+        129,
+        147,
+        220,
+        328,
+        357,
+        504,
+        588,
+        662,
+        692
+      ],
+      "origin": "maxsat"
+    },
+    {
+      "half": "Z",
+      "weight": 11,
+      "support": [
+        84,
+        149,
+        266,
+        409,
+        448,
+        500,
+        513,
+        539,
+        591,
+        604,
+        812
+      ],
+      "origin": "maxsat"
+    }
+  ],
+  "numeric_smoke_gate": "INCOMPLETE",
+  "reported_upper_word_gate": "PASS",
+  "source_upper_word_gate": "NOT_APPLICABLE",
+  "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; source-construction lower independently checked",
+  "independent_search_lower_corrob": null
+}
