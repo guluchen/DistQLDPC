@@ -1,0 +1,1258 @@
+﻿2026-10-30T06:14:35.7106043Z Current runner version: '2.338.0'
+2026-10-30T06:14:35.7131068Z ##[group]Runner Image Provisioner
+2026-10-30T06:14:35.7131846Z Hosted Compute Agent
+2026-10-30T06:14:35.7132423Z Version: 20261021.618
+2026-10-30T06:14:35.7133008Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-30T06:14:35.7133644Z Build Date: 2026-10-21T00:45:21Z
+2026-10-30T06:14:35.7134287Z Worker ID: {c3412518-46a9-48f6-9c91-ed5cf2a7639c}
+2026-10-30T06:14:35.7134917Z Region: westus3
+2026-10-30T06:14:35.7135419Z Cloud: Azure
+2026-10-30T06:14:35.7135968Z ##[endgroup]
+2026-10-30T06:14:35.7137323Z ##[group]Operating System
+2026-10-30T06:14:35.7137935Z Ubuntu
+2026-10-30T06:14:35.7138395Z 24.04.5
+2026-10-30T06:14:35.7138858Z LTS
+2026-10-30T06:14:35.7139350Z ##[endgroup]
+2026-10-30T06:14:35.7140038Z ##[group]Runner Image
+2026-10-30T06:14:35.7140611Z Image: ubuntu-24.04
+2026-10-30T06:14:35.7141119Z Version: 20261025.353.1
+2026-10-30T06:14:35.7142297Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-30T06:14:35.7143680Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-10-30T06:14:35.7144531Z ##[endgroup]
+2026-10-30T06:14:35.7145544Z ##[group]GITHUB_TOKEN Permissions
+2026-10-30T06:14:35.7147725Z Contents: read
+2026-10-30T06:14:35.7148315Z Metadata: read
+2026-10-30T06:14:35.7149143Z ##[endgroup]
+2026-10-30T06:14:35.7151441Z Secret source: Actions
+2026-10-30T06:14:35.7152231Z Cache mode: write
+2026-10-30T06:14:35.7152959Z Prepare workflow directory
+2026-10-30T06:14:35.7537138Z Prepare all required actions
+2026-10-30T06:14:35.7588240Z Getting action download info
+2026-10-30T06:14:36.0531600Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-30T06:14:36.2351574Z Complete job name: validate
+2026-10-30T06:14:36.3260646Z ##[group]Run actions/checkout@v7
+2026-10-30T06:14:36.3261904Z with:
+2026-10-30T06:14:36.3262407Z   repository: guluchen/DistQLDPC
+2026-10-30T06:14:36.3266436Z   token: ***
+2026-10-30T06:14:36.3266960Z   ssh-strict: true
+2026-10-30T06:14:36.3267521Z   ssh-user: git
+2026-10-30T06:14:36.3268044Z   persist-credentials: true
+2026-10-30T06:14:36.3268594Z   clean: true
+2026-10-30T06:14:36.3269076Z   sparse-checkout-cone-mode: true
+2026-10-30T06:14:36.3269961Z   fetch-depth: 1
+2026-10-30T06:14:36.3270478Z   fetch-tags: false
+2026-10-30T06:14:36.3270993Z   show-progress: true
+2026-10-30T06:14:36.3271487Z   lfs: false
+2026-10-30T06:14:36.3272017Z   submodules: false
+2026-10-30T06:14:36.3272577Z   set-safe-directory: true
+2026-10-30T06:14:36.3273118Z   allow-unsafe-pr-checkout: false
+2026-10-30T06:14:36.3274124Z ##[endgroup]
+2026-10-30T06:14:36.7707540Z Syncing repository: guluchen/DistQLDPC
+2026-10-30T06:14:36.7711562Z ##[group]Getting Git version info
+2026-10-30T06:14:36.7713382Z Working directory is '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-30T06:14:36.7716009Z [command]/usr/bin/git version
+2026-10-30T06:14:36.7801990Z git version 2.56.0
+2026-10-30T06:14:36.7829054Z ##[endgroup]
+2026-10-30T06:14:36.7851851Z Temporarily overriding HOME='/home/runner/work/_temp/bb5a53bc-543d-4976-b127-58edcbc4a4c4' before making global git config changes
+2026-10-30T06:14:36.7855179Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T06:14:36.7863700Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T06:14:36.7938474Z Deleting the contents of '/home/runner/work/DistQLDPC/DistQLDPC'
+2026-10-30T06:14:36.7958831Z ##[group]Determining repository object format
+2026-10-30T06:14:36.7961853Z ##[endgroup]
+2026-10-30T06:14:36.8158792Z ##[group]Initializing the repository
+2026-10-30T06:14:36.8169341Z [command]/usr/bin/git init /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T06:14:36.8171847Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-30T06:14:36.8173941Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-30T06:14:36.8176546Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-30T06:14:36.8178244Z hint: call:
+2026-10-30T06:14:36.8179235Z hint:
+2026-10-30T06:14:36.8180651Z hint: 	git config --global init.defaultBranch <name>
+2026-10-30T06:14:36.8182068Z hint:
+2026-10-30T06:14:36.8183410Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-30T06:14:36.8185473Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-30T06:14:36.8187186Z hint:
+2026-10-30T06:14:36.8188302Z hint: 	git branch -m <name>
+2026-10-30T06:14:36.8189481Z hint:
+2026-10-30T06:14:36.8191073Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-30T06:14:36.8193333Z Initialized empty Git repository in /home/runner/work/DistQLDPC/DistQLDPC/.git/
+2026-10-30T06:14:36.8199040Z [command]/usr/bin/git remote add origin https://github.com/guluchen/DistQLDPC
+2026-10-30T06:14:36.8212023Z ##[endgroup]
+2026-10-30T06:14:36.8221431Z ##[group]Disabling automatic garbage collection
+2026-10-30T06:14:36.8223492Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-30T06:14:36.8273115Z ##[endgroup]
+2026-10-30T06:14:36.8274842Z ##[group]Setting up auth
+2026-10-30T06:14:36.8276540Z Removing SSH command configuration
+2026-10-30T06:14:36.8278554Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T06:14:36.8313933Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T06:14:36.8772812Z Removing HTTP extra header
+2026-10-30T06:14:36.8778690Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T06:14:36.8827609Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T06:14:36.9026344Z Removing includeIf entries pointing to credentials config files
+2026-10-30T06:14:36.9032141Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T06:14:36.9074574Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T06:14:36.9272109Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-30T06:14:36.9309975Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path /home/runner/work/_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:14:36.9342703Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:14:36.9378664Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:14:36.9411598Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:14:36.9440375Z ##[endgroup]
+2026-10-30T06:14:36.9441237Z ##[group]Fetching the repository
+2026-10-30T06:14:36.9446782Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +deaae43c8cf57e1ea188b5e729a7025f32a4079e:refs/remotes/origin/codex/polynomial-minors-library
+2026-10-30T06:14:39.1810724Z From https://github.com/guluchen/DistQLDPC
+2026-10-30T06:14:39.1814510Z  * [new ref]         deaae43c8cf57e1ea188b5e729a7025f32a4079e -> origin/codex/polynomial-minors-library
+2026-10-30T06:14:39.1820912Z [command]/usr/bin/git branch --list --remote origin/codex/polynomial-minors-library
+2026-10-30T06:14:39.1846531Z   origin/codex/polynomial-minors-library
+2026-10-30T06:14:39.1854024Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/polynomial-minors-library
+2026-10-30T06:14:39.1879801Z deaae43c8cf57e1ea188b5e729a7025f32a4079e
+2026-10-30T06:14:39.1883922Z ##[endgroup]
+2026-10-30T06:14:39.1885472Z ##[group]Determining the checkout info
+2026-10-30T06:14:39.1887414Z ##[endgroup]
+2026-10-30T06:14:39.1888736Z [command]/usr/bin/git sparse-checkout disable
+2026-10-30T06:14:39.1943086Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-30T06:14:39.1972841Z ##[group]Checking out the ref
+2026-10-30T06:14:39.1976886Z [command]/usr/bin/git checkout --progress --force -B codex/polynomial-minors-library refs/remotes/origin/codex/polynomial-minors-library
+2026-10-30T06:14:39.5106855Z Switched to a new branch 'codex/polynomial-minors-library'
+2026-10-30T06:14:39.5111571Z branch 'codex/polynomial-minors-library' set up to track 'origin/codex/polynomial-minors-library'.
+2026-10-30T06:14:39.5172801Z ##[endgroup]
+2026-10-30T06:14:39.5234682Z [command]/usr/bin/git log -1 --format=%H
+2026-10-30T06:14:39.5262504Z deaae43c8cf57e1ea188b5e729a7025f32a4079e
+2026-10-30T06:14:39.5476172Z ##[group]Run python3 -m unittest discover -s tests -p 'test_codegen_*.py'
+2026-10-30T06:14:39.5476871Z [36;1mpython3 -m unittest discover -s tests -p 'test_codegen_*.py'[0m
+2026-10-30T06:14:39.5477474Z [36;1mpython3 scripts/codegen/validate_css.py --output /tmp/gh209-css.json[0m
+2026-10-30T06:14:39.5478063Z [36;1mcmp data/matrices/untiered/validation.json /tmp/gh209-css.json[0m
+2026-10-30T06:14:39.5478744Z [36;1mpython3 scripts/codegen/validate_polynomial_minors.py --out /tmp/gh209-construction.json[0m
+2026-10-30T06:14:39.5479501Z [36;1mcmp optimization/experiments/GH-209/raw/construction.json /tmp/gh209-construction.json[0m
+2026-10-30T06:14:39.5497139Z shell: /usr/bin/bash -e {0}
+2026-10-30T06:14:39.5497444Z ##[endgroup]
+2026-10-30T06:14:39.9333245Z wrote /tmp/tmpf0h50irx/COLOR_19_1_unknown_Gx.txt (1 rows), /tmp/tmpf0h50irx/COLOR_19_1_unknown_Gz.txt (1 rows)
+2026-10-30T06:14:39.9751875Z wrote /tmp/tmpcz5jd9ox/COLOR_19_1_unknown_Gx.txt (1 rows), /tmp/tmpcz5jd9ox/COLOR_19_1_unknown_Gz.txt (1 rows)
+2026-10-30T06:14:57.2917124Z wrote /tmp/tmppbtt93b3/PM_27_4_unknown_Gx.txt (4 rows), /tmp/tmppbtt93b3/PM_27_4_unknown_Gz.txt (4 rows)
+2026-10-30T06:15:31.0189148Z wrote /tmp/tmpzm2wr3so/BB_30_4_unknown_Gx.txt (4 rows), /tmp/tmpzm2wr3so/BB_30_4_unknown_Gz.txt (4 rows)
+2026-10-30T06:15:31.0590803Z wrote /tmp/tmpeqwrzhja/BB_30_4_unknown_Gx.txt (4 rows), /tmp/tmpeqwrzhja/BB_30_4_unknown_Gz.txt (4 rows)
+2026-10-30T06:15:31.2350829Z ..............................................................
+2026-10-30T06:15:31.2351399Z ----------------------------------------------------------------------
+2026-10-30T06:15:31.2351876Z Ran 62 tests in 51.518s
+2026-10-30T06:15:31.2352069Z 
+2026-10-30T06:15:31.2352173Z OK
+2026-10-30T06:15:42.6255731Z {
+2026-10-30T06:15:42.6257980Z   "codes_checked": 30,
+2026-10-30T06:15:42.6258416Z   "inventory_codes": 81,
+2026-10-30T06:15:42.6258725Z   "results": [
+2026-10-30T06:15:42.6258946Z     {
+2026-10-30T06:15:42.6259173Z       "n": 13,
+2026-10-30T06:15:42.6260066Z       "k": 1,
+2026-10-30T06:15:42.6261048Z       "rank_Hx": 6,
+2026-10-30T06:15:42.6261356Z       "rank_Hz": 6,
+2026-10-30T06:15:42.6261669Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6261997Z       "checks": "PASS",
+2026-10-30T06:15:42.6262677Z       "stem": "HGP_13_1_unknown",
+2026-10-30T06:15:42.6263364Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6263915Z       "duplicates": [],
+2026-10-30T06:15:42.6264757Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6266042Z       "sha256": {
+2026-10-30T06:15:42.6266821Z         "Hx": "0cb58ca3272ec7044292e6d4cf13b96a7778c2ee36f162a31a00a94cec190a59",
+2026-10-30T06:15:42.6268181Z         "Hz": "57cc48638fa610ed719caa050089772c471c7b830f96095314a00bd049ce32f9",
+2026-10-30T06:15:42.6268851Z         "Gx": "788801efbe7285e805f402b475a13ade78f25ed6d469368e645856628da4b6d9",
+2026-10-30T06:15:42.6271132Z         "Gz": "7e004ea9c8a1f3d4315db7ab930c72a1a61bcad776af64ad258f1cb06303c1b6"
+2026-10-30T06:15:42.6271841Z       }
+2026-10-30T06:15:42.6272161Z     },
+2026-10-30T06:15:42.6272472Z     {
+2026-10-30T06:15:42.6272788Z       "n": 41,
+2026-10-30T06:15:42.6273102Z       "k": 1,
+2026-10-30T06:15:42.6273432Z       "rank_Hx": 20,
+2026-10-30T06:15:42.6273785Z       "rank_Hz": 20,
+2026-10-30T06:15:42.6274141Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6274538Z       "checks": "PASS",
+2026-10-30T06:15:42.6274932Z       "stem": "HGP_41_1_unknown",
+2026-10-30T06:15:42.6275297Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6275529Z       "duplicates": [],
+2026-10-30T06:15:42.6275863Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6276212Z       "sha256": {
+2026-10-30T06:15:42.6276531Z         "Hx": "fff0bbddda67fe0967ccaac7f3e2874459d5d6e3564418664732adc9ceac7c98",
+2026-10-30T06:15:42.6277023Z         "Hz": "49fe498adf5b42c61533a8366f829c3f6b3b6603a2ddcfe0e3c098a7c701304b",
+2026-10-30T06:15:42.6278259Z         "Gx": "6773ce6433d9e181dc1e56e1c1f1d4119e62d88e83024c7eb9803352623d555e",
+2026-10-30T06:15:42.6279360Z         "Gz": "3101aa3784cd8cd80e0547bc934b91e9e2e27b26e17dc1c645ea5566dda0d818"
+2026-10-30T06:15:42.6280243Z       }
+2026-10-30T06:15:42.6280825Z     },
+2026-10-30T06:15:42.6281000Z     {
+2026-10-30T06:15:42.6281554Z       "n": 113,
+2026-10-30T06:15:42.6281744Z       "k": 1,
+2026-10-30T06:15:42.6281929Z       "rank_Hx": 56,
+2026-10-30T06:15:42.6282139Z       "rank_Hz": 56,
+2026-10-30T06:15:42.6282348Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6283003Z       "checks": "PASS",
+2026-10-30T06:15:42.6283335Z       "stem": "HGP_113_1_unknown",
+2026-10-30T06:15:42.6283757Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6283991Z       "duplicates": [],
+2026-10-30T06:15:42.6284294Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6284654Z       "sha256": {
+2026-10-30T06:15:42.6315932Z         "Hx": "3a4bc166306ce7b3cc3a3eb7f1ff345bc9c9875b89cb32304c55d5e9871b1d1f",
+2026-10-30T06:15:42.6316740Z         "Hz": "ae2ebfc6b0ab71be7fdb1ddd3334f1d63f185159392d26ac31a2106ae91b924b",
+2026-10-30T06:15:42.6317380Z         "Gx": "a5289983a87c8d21bab42c8a2bdf379e77e7891afe72695c6079fc4f0eac48ba",
+2026-10-30T06:15:42.6317995Z         "Gz": "9c97633ee16c9cf045698c9fa24079713eda0c28c23b0820112644b3d8fab27b"
+2026-10-30T06:15:42.6318458Z       }
+2026-10-30T06:15:42.6318678Z     },
+2026-10-30T06:15:42.6318896Z     {
+2026-10-30T06:15:42.6319118Z       "n": 265,
+2026-10-30T06:15:42.6319362Z       "k": 1,
+2026-10-30T06:15:42.6319871Z       "rank_Hx": 132,
+2026-10-30T06:15:42.6320152Z       "rank_Hz": 132,
+2026-10-30T06:15:42.6320422Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6320761Z       "checks": "PASS",
+2026-10-30T06:15:42.6321103Z       "stem": "HGP_265_1_unknown",
+2026-10-30T06:15:42.6321516Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6321838Z       "duplicates": [],
+2026-10-30T06:15:42.6322247Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6322698Z       "sha256": {
+2026-10-30T06:15:42.6323100Z         "Hx": "f851afe742a6a5e6031675ed628ead46ea9b9ecdb55ac9adbade2dd0a98ccbae",
+2026-10-30T06:15:42.6323576Z         "Hz": "b443d8671803271ac1a14bcd4c5a34eba2b586c205ebcb345694b42b99ac002a",
+2026-10-30T06:15:42.6324047Z         "Gx": "65fe0419f4a5682571a697df9b17061986b1dcdc38e6ebd54d560eadb347afdd",
+2026-10-30T06:15:42.6324501Z         "Gz": "0ca8b17c5e13a62a1172eb2700b32b0f9107aeb9e090a49f837001167d48be0f"
+2026-10-30T06:15:42.6324846Z       }
+2026-10-30T06:15:42.6325016Z     },
+2026-10-30T06:15:42.6325180Z     {
+2026-10-30T06:15:42.6325342Z       "n": 481,
+2026-10-30T06:15:42.6325520Z       "k": 1,
+2026-10-30T06:15:42.6325700Z       "rank_Hx": 240,
+2026-10-30T06:15:42.6325909Z       "rank_Hz": 240,
+2026-10-30T06:15:42.6326109Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6326336Z       "checks": "PASS",
+2026-10-30T06:15:42.6326812Z       "stem": "HGP_481_1_unknown",
+2026-10-30T06:15:42.6327057Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6327282Z       "duplicates": [],
+2026-10-30T06:15:42.6327592Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6327933Z       "sha256": {
+2026-10-30T06:15:42.6328229Z         "Hx": "8cc83621ce5be83f462710a87f44ea914f239b8ec3a0d862774eec21a0e34278",
+2026-10-30T06:15:42.6328689Z         "Hz": "8ce8ed5a18653ba73a3d09a758b47c2698df2b37af31c5f269a389ac16f86f6e",
+2026-10-30T06:15:42.6329145Z         "Gx": "35bdb8aa7d8233ab5c2bd867916c3b707be65751f0c89a508233628ee6fbd0e8",
+2026-10-30T06:15:42.6329699Z         "Gz": "5492575abe42ba18100fcf2f4f733c67b67d6457c15ec228c80a47a96de9c007"
+2026-10-30T06:15:42.6330044Z       }
+2026-10-30T06:15:42.6330221Z     },
+2026-10-30T06:15:42.6330386Z     {
+2026-10-30T06:15:42.6330564Z       "n": 1105,
+2026-10-30T06:15:42.6330750Z       "k": 1,
+2026-10-30T06:15:42.6330933Z       "rank_Hx": 552,
+2026-10-30T06:15:42.6331134Z       "rank_Hz": 552,
+2026-10-30T06:15:42.6331343Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6331556Z       "checks": "PASS",
+2026-10-30T06:15:42.6331922Z       "stem": "HGP_1105_1_unknown",
+2026-10-30T06:15:42.6332209Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6332447Z       "duplicates": [],
+2026-10-30T06:15:42.6332759Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6333108Z       "sha256": {
+2026-10-30T06:15:42.6333417Z         "Hx": "547ef907e916658c4b9dbbae787706ae7a8cac62320ef6eeb5f8cea50e3c68db",
+2026-10-30T06:15:42.6333889Z         "Hz": "d7ffe62bd3ae8644a1f45025ae23470d9c59528b32f26779c2a0a0be78d63897",
+2026-10-30T06:15:42.6334355Z         "Gx": "4fee3ed02aef2291c5959540d6c5f1fa23ac7e632502543342724a00b0a53f89",
+2026-10-30T06:15:42.6334816Z         "Gz": "390b41f95173d76ab483a26dc011979af31099214952d3de0b4d7d9e3b11f772"
+2026-10-30T06:15:42.6335154Z       }
+2026-10-30T06:15:42.6335316Z     },
+2026-10-30T06:15:42.6335483Z     {
+2026-10-30T06:15:42.6335645Z       "n": 45,
+2026-10-30T06:15:42.6335817Z       "k": 9,
+2026-10-30T06:15:42.6335995Z       "rank_Hx": 18,
+2026-10-30T06:15:42.6336198Z       "rank_Hz": 18,
+2026-10-30T06:15:42.6336405Z       "rank_pairing": 9,
+2026-10-30T06:15:42.6336611Z       "checks": "PASS",
+2026-10-30T06:15:42.6336881Z       "stem": "HGP_45_9_unknown",
+2026-10-30T06:15:42.6337115Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6337347Z       "duplicates": [],
+2026-10-30T06:15:42.6337647Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6337985Z       "sha256": {
+2026-10-30T06:15:42.6338279Z         "Hx": "3d97766a8b5ef89850847ee994202a70e51b68076e0f7327b6c5da06548e0ebc",
+2026-10-30T06:15:42.6338730Z         "Hz": "06f713d5e98dc403febd00f6b981a26447c7fa151577cac0ac96e85f8d83f86a",
+2026-10-30T06:15:42.6339187Z         "Gx": "396bac0b1785d50fb631aeac369fa69199782700000973469a1f2dd0443c58f5",
+2026-10-30T06:15:42.6339761Z         "Gz": "2af13f46eb441c5955f5f28780ff306950e987c42778fc79490422d98598e326"
+2026-10-30T06:15:42.6340105Z       }
+2026-10-30T06:15:42.6340274Z     },
+2026-10-30T06:15:42.6340444Z     {
+2026-10-30T06:15:42.6340618Z       "n": 106,
+2026-10-30T06:15:42.6340807Z       "k": 16,
+2026-10-30T06:15:42.6340994Z       "rank_Hx": 45,
+2026-10-30T06:15:42.6341314Z       "rank_Hz": 45,
+2026-10-30T06:15:42.6341515Z       "rank_pairing": 16,
+2026-10-30T06:15:42.6341728Z       "checks": "PASS",
+2026-10-30T06:15:42.6341939Z       "stem": "HGP_106_16_unknown",
+2026-10-30T06:15:42.6342184Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6342405Z       "duplicates": [],
+2026-10-30T06:15:42.6342709Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6343062Z       "sha256": {
+2026-10-30T06:15:42.6343356Z         "Hx": "eb12dfd59b2809867488319673737f440b1a6335d4eb55e7f8318d4d55aab769",
+2026-10-30T06:15:42.6343813Z         "Hz": "a6ec477e82f857793aa9ea888d26465c605ee4ccce7a94ca1976e1411a97a6bc",
+2026-10-30T06:15:42.6344433Z         "Gx": "ccc9bab994812bcd2bdb9142ee08e588b8ccdce451ce2ffaa750a359c2a91b99",
+2026-10-30T06:15:42.6344914Z         "Gz": "eca06fb6cf533f142d0bdc8a2b05f13ac4be82f4d298092377125fe0e74d63af"
+2026-10-30T06:15:42.6345272Z       }
+2026-10-30T06:15:42.6345444Z     },
+2026-10-30T06:15:42.6345613Z     {
+2026-10-30T06:15:42.6345782Z       "n": 306,
+2026-10-30T06:15:42.6345999Z       "k": 36,
+2026-10-30T06:15:42.6346187Z       "rank_Hx": 135,
+2026-10-30T06:15:42.6346500Z       "rank_Hz": 135,
+2026-10-30T06:15:42.6346711Z       "rank_pairing": 36,
+2026-10-30T06:15:42.6346929Z       "checks": "PASS",
+2026-10-30T06:15:42.6347145Z       "stem": "HGP_306_36_unknown",
+2026-10-30T06:15:42.6347389Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6347613Z       "duplicates": [],
+2026-10-30T06:15:42.6347914Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6348254Z       "sha256": {
+2026-10-30T06:15:42.6348551Z         "Hx": "728c72f3ce9c491d496d37077ffd68cf2569422c35f52480ac3cdcb76cf79395",
+2026-10-30T06:15:42.6349007Z         "Hz": "59cd8c430c89071053679380b6bc2f37347bcdf51a927fbd1fdaffdd039ab8ca",
+2026-10-30T06:15:42.6349672Z         "Gx": "23a87c33f38a8a289ccf30ddb158daca4225db4e7220c26969b417fba45dfe59",
+2026-10-30T06:15:42.6350136Z         "Gz": "ac415e21e958c224deb269f0b71508096bf43caf3f597a196c044ade5d5029e8"
+2026-10-30T06:15:42.6350477Z       }
+2026-10-30T06:15:42.6350643Z     },
+2026-10-30T06:15:42.6350810Z     {
+2026-10-30T06:15:42.6350979Z       "n": 610,
+2026-10-30T06:15:42.6351159Z       "k": 64,
+2026-10-30T06:15:42.6351374Z       "rank_Hx": 273,
+2026-10-30T06:15:42.6351577Z       "rank_Hz": 273,
+2026-10-30T06:15:42.6351777Z       "rank_pairing": 64,
+2026-10-30T06:15:42.6351993Z       "checks": "PASS",
+2026-10-30T06:15:42.6352212Z       "stem": "HGP_610_64_unknown",
+2026-10-30T06:15:42.6352485Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6352804Z       "duplicates": [],
+2026-10-30T06:15:42.6353226Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6353736Z       "sha256": {
+2026-10-30T06:15:42.6354194Z         "Hx": "b5441af8f9308d8992e71e802a60ce93fe3b722e4230b4e0270d6c89ee5ad2ec",
+2026-10-30T06:15:42.6354903Z         "Hz": "11cbb0b14d50ef7e9434ba905056b699322ed5085b17db9259eb872be306aa87",
+2026-10-30T06:15:42.6355602Z         "Gx": "217074a250e1c2e1d769161fae2919874ecb9648cb403b7172f90dca9ad04e42",
+2026-10-30T06:15:42.6356300Z         "Gz": "420f6609942f7ee1809053309a4ca0577f2a083a9bca67587a717e9e6e2542e7"
+2026-10-30T06:15:42.6356829Z       }
+2026-10-30T06:15:42.6356998Z     },
+2026-10-30T06:15:42.6357164Z     {
+2026-10-30T06:15:42.6357328Z       "n": 1261,
+2026-10-30T06:15:42.6357509Z       "k": 121,
+2026-10-30T06:15:42.6357696Z       "rank_Hx": 570,
+2026-10-30T06:15:42.6357889Z       "rank_Hz": 570,
+2026-10-30T06:15:42.6358093Z       "rank_pairing": 121,
+2026-10-30T06:15:42.6358306Z       "checks": "PASS",
+2026-10-30T06:15:42.6358523Z       "stem": "HGP_1261_121_unknown",
+2026-10-30T06:15:42.6358764Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6359025Z       "duplicates": [],
+2026-10-30T06:15:42.6359320Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6359883Z       "sha256": {
+2026-10-30T06:15:42.6360217Z         "Hx": "91b8ea2747183a9fa6d3531ea72c0e73c71cd5762dcf8429894dcd23ee57c4d2",
+2026-10-30T06:15:42.6360671Z         "Hz": "894e7dce8df14ca46b677898246092a5b106c98476f3357475aad0fdad0a5239",
+2026-10-30T06:15:42.6361144Z         "Gx": "a8185dd6fea1e2d0ad2acc1d12eba2fdc9d863ab5d63c8659e9052270b00b612",
+2026-10-30T06:15:42.6361610Z         "Gz": "70b5756dba0d1595117fac1a9cca22db00af1fc914280deb47cf354b8ebe3009"
+2026-10-30T06:15:42.6361953Z       }
+2026-10-30T06:15:42.6362124Z     },
+2026-10-30T06:15:42.6362284Z     {
+2026-10-30T06:15:42.6362445Z       "n": 2866,
+2026-10-30T06:15:42.6362625Z       "k": 256,
+2026-10-30T06:15:42.6362810Z       "rank_Hx": 1305,
+2026-10-30T06:15:42.6363005Z       "rank_Hz": 1305,
+2026-10-30T06:15:42.6363209Z       "rank_pairing": 256,
+2026-10-30T06:15:42.6363617Z       "checks": "PASS",
+2026-10-30T06:15:42.6363839Z       "stem": "HGP_2866_256_unknown",
+2026-10-30T06:15:42.6364099Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6364338Z       "duplicates": [],
+2026-10-30T06:15:42.6364646Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6364983Z       "sha256": {
+2026-10-30T06:15:42.6365293Z         "Hx": "a6bce48f3f27a34e16a2bc84caf227850619ff7337c427acde99d090673becdb",
+2026-10-30T06:15:42.6365758Z         "Hz": "1029bbf8bb1a4551f0aaededcf30c2612b8d0083c0d53d8f0c4e1d29d23f392c",
+2026-10-30T06:15:42.6366216Z         "Gx": "28b26d4096e881be18a56f2a8cbf07b313b5405b5e42a476d1d77b8a73a6ffea",
+2026-10-30T06:15:42.6366660Z         "Gz": "ac1818a79e71454c01321651131b5997b746b96f58630726e986890f8debd5b9"
+2026-10-30T06:15:42.6366995Z       }
+2026-10-30T06:15:42.6367167Z     },
+2026-10-30T06:15:42.6367330Z     {
+2026-10-30T06:15:42.6367495Z       "n": 7,
+2026-10-30T06:15:42.6367673Z       "k": 1,
+2026-10-30T06:15:42.6367856Z       "rank_Hx": 3,
+2026-10-30T06:15:42.6368048Z       "rank_Hz": 3,
+2026-10-30T06:15:42.6368242Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6368586Z       "checks": "PASS",
+2026-10-30T06:15:42.6368825Z       "stem": "COLOR_7_1_unknown",
+2026-10-30T06:15:42.6369079Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6369318Z       "duplicates": [],
+2026-10-30T06:15:42.6369824Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6370323Z       "sha256": {
+2026-10-30T06:15:42.6370794Z         "Hx": "50a1337bcf05108a3c4f74f11f2075813ccb3da4e8155f46ad0a0bbbe06c58d7",
+2026-10-30T06:15:42.6371523Z         "Hz": "5eb1ad5b5e44de8417caaa7fa2775cc6b7300b2cbd59698a37e36b142010062e",
+2026-10-30T06:15:42.6372239Z         "Gx": "350841e3e975ace8d5bbd8aa525b71bb27f204a841b8ca5587188300ff1992c3",
+2026-10-30T06:15:42.6372930Z         "Gz": "a23c23dc5a089264be793f1ab3e4a62abbd2c866474ed5d1a79370a7b9d4fc74"
+2026-10-30T06:15:42.6373276Z       }
+2026-10-30T06:15:42.6373454Z     },
+2026-10-30T06:15:42.6373615Z     {
+2026-10-30T06:15:42.6373778Z       "n": 19,
+2026-10-30T06:15:42.6373966Z       "k": 1,
+2026-10-30T06:15:42.6374140Z       "rank_Hx": 9,
+2026-10-30T06:15:42.6374342Z       "rank_Hz": 9,
+2026-10-30T06:15:42.6374542Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6374750Z       "checks": "PASS",
+2026-10-30T06:15:42.6375024Z       "stem": "COLOR_19_1_unknown",
+2026-10-30T06:15:42.6375266Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6375488Z       "duplicates": [],
+2026-10-30T06:15:42.6375785Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6376124Z       "sha256": {
+2026-10-30T06:15:42.6376423Z         "Hx": "8d786bb60aad6f2c4b65fe792a6fe2374b803cc27068ab69e3b16c310e7a638e",
+2026-10-30T06:15:42.6376890Z         "Hz": "9a6464db11a025eea60e410e139078c604a56e9b35ed14cbe22712e0d0505660",
+2026-10-30T06:15:42.6377343Z         "Gx": "7091e60c8138c61e745568e9dc792ea1b6cdd7ea2e936cb3816e767ac6b95dcc",
+2026-10-30T06:15:42.6377804Z         "Gz": "fdcc171fbe6709eba530533064732075f6cef72212cb125749eb2aff4450b897"
+2026-10-30T06:15:42.6378145Z       }
+2026-10-30T06:15:42.6378312Z     },
+2026-10-30T06:15:42.6378481Z     {
+2026-10-30T06:15:42.6378650Z       "n": 127,
+2026-10-30T06:15:42.6378833Z       "k": 1,
+2026-10-30T06:15:42.6379011Z       "rank_Hx": 63,
+2026-10-30T06:15:42.6379204Z       "rank_Hz": 63,
+2026-10-30T06:15:42.6379406Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6379790Z       "checks": "PASS",
+2026-10-30T06:15:42.6380017Z       "stem": "COLOR_127_1_unknown",
+2026-10-30T06:15:42.6380263Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6380605Z       "duplicates": [],
+2026-10-30T06:15:42.6380950Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6381301Z       "sha256": {
+2026-10-30T06:15:42.6381607Z         "Hx": "315bf73c786416e6edb0c5cc90b82c7730be81391a0f49545babd4e1f342ae9c",
+2026-10-30T06:15:42.6382090Z         "Hz": "2dab6c9fd153101482facd22ecd26334fadbc51f96d2198a36f41393146ee192",
+2026-10-30T06:15:42.6382779Z         "Gx": "49c8bc90f7b52dfc33b325b855f884fa619d7ab2483de7e52e26e33e5f24369f",
+2026-10-30T06:15:42.6383265Z         "Gz": "14b75d75537cf4c4c7586e4f73a241b988ef7ddb92f2fffca31b05487ca6914c"
+2026-10-30T06:15:42.6383611Z       }
+2026-10-30T06:15:42.6383776Z     },
+2026-10-30T06:15:42.6383940Z     {
+2026-10-30T06:15:42.6384110Z       "n": 331,
+2026-10-30T06:15:42.6384328Z       "k": 1,
+2026-10-30T06:15:42.6384506Z       "rank_Hx": 165,
+2026-10-30T06:15:42.6384707Z       "rank_Hz": 165,
+2026-10-30T06:15:42.6384911Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6385113Z       "checks": "PASS",
+2026-10-30T06:15:42.6385321Z       "stem": "COLOR_331_1_unknown",
+2026-10-30T06:15:42.6385562Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6385791Z       "duplicates": [],
+2026-10-30T06:15:42.6386084Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6386418Z       "sha256": {
+2026-10-30T06:15:42.6386724Z         "Hx": "5f3daca3228be9a4e732595c7cea1d4f798ec6bab398f11662251e87e7b369fe",
+2026-10-30T06:15:42.6387189Z         "Hz": "6f1ea0881d43136d3b3c9fd8a7c6acee2ec0593fcc801c5badc26584b7441349",
+2026-10-30T06:15:42.6387726Z         "Gx": "1c179130c6dca3ada978530db3f0824932c12a90471a01f40b632defa16f468c",
+2026-10-30T06:15:42.6388184Z         "Gz": "811e3409aa85bcb8c252d490e1fa6cfb5b44bcc7e5602bfec51f25388bf4a6aa"
+2026-10-30T06:15:42.6388527Z       }
+2026-10-30T06:15:42.6388688Z     },
+2026-10-30T06:15:42.6388854Z     {
+2026-10-30T06:15:42.6389025Z       "n": 1027,
+2026-10-30T06:15:42.6389207Z       "k": 1,
+2026-10-30T06:15:42.6389479Z       "rank_Hx": 513,
+2026-10-30T06:15:42.6389843Z       "rank_Hz": 513,
+2026-10-30T06:15:42.6390047Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6390268Z       "checks": "PASS",
+2026-10-30T06:15:42.6390484Z       "stem": "COLOR_1027_1_unknown",
+2026-10-30T06:15:42.6390729Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6390952Z       "duplicates": [],
+2026-10-30T06:15:42.6391260Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6391600Z       "sha256": {
+2026-10-30T06:15:42.6391914Z         "Hx": "9905d528d233a8773dacf71ef0b4758bd36b9a6133ae318892989234bcc5dbea",
+2026-10-30T06:15:42.6392379Z         "Hz": "1601cb663e79ed6a00e3a80c8d7c5edf1ae6e62d2ed96f0a4dac38a7799887d6",
+2026-10-30T06:15:42.6392829Z         "Gx": "b6830920e2c172989591a2817ce56b693d3130353467386eb6c72ef834b1c12e",
+2026-10-30T06:15:42.6393276Z         "Gz": "fbf3b453a89d4811540951f704ea53c34cd35a0efedcfa2db9653ddced749797"
+2026-10-30T06:15:42.6393625Z       }
+2026-10-30T06:15:42.6393792Z     },
+2026-10-30T06:15:42.6393956Z     {
+2026-10-30T06:15:42.6394123Z       "n": 2791,
+2026-10-30T06:15:42.6394304Z       "k": 1,
+2026-10-30T06:15:42.6394488Z       "rank_Hx": 1395,
+2026-10-30T06:15:42.6394701Z       "rank_Hz": 1395,
+2026-10-30T06:15:42.6394902Z       "rank_pairing": 1,
+2026-10-30T06:15:42.6395115Z       "checks": "PASS",
+2026-10-30T06:15:42.6395322Z       "stem": "COLOR_2791_1_unknown",
+2026-10-30T06:15:42.6395574Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6395798Z       "duplicates": [],
+2026-10-30T06:15:42.6396101Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6396433Z       "sha256": {
+2026-10-30T06:15:42.6396729Z         "Hx": "20a4eac60254e3703e75c05ac26a137199eae0f0d85aaf53ad29defc1a5df1c0",
+2026-10-30T06:15:42.6397184Z         "Hz": "4b537908c20851e9addd0d14ae593e6f3b01c024cae692743dc4a77e0f56795a",
+2026-10-30T06:15:42.6397643Z         "Gx": "6799ddbf13742363cdee4512f65b8edfed497ba8855821cc121245095fd896ca",
+2026-10-30T06:15:42.6398107Z         "Gz": "49e0ef25b2ade849312cd7d2e1d7aefea2bd60abb1af6f8a241c1e528a7e47d7"
+2026-10-30T06:15:42.6398456Z       }
+2026-10-30T06:15:42.6398621Z     },
+2026-10-30T06:15:42.6398783Z     {
+2026-10-30T06:15:42.6398950Z       "n": 30,
+2026-10-30T06:15:42.6399124Z       "k": 4,
+2026-10-30T06:15:42.6399299Z       "rank_Hx": 13,
+2026-10-30T06:15:42.6399496Z       "rank_Hz": 13,
+2026-10-30T06:15:42.6400090Z       "rank_pairing": 4,
+2026-10-30T06:15:42.6400309Z       "checks": "PASS",
+2026-10-30T06:15:42.6400528Z       "stem": "BB_30_4_unknown",
+2026-10-30T06:15:42.6400783Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6401012Z       "duplicates": [],
+2026-10-30T06:15:42.6401310Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6401650Z       "sha256": {
+2026-10-30T06:15:42.6401953Z         "Hx": "32629bd267b1102b4d932b9df45524c7e2e4fde02db0b82d0eb19b89fcba679c",
+2026-10-30T06:15:42.6402416Z         "Hz": "6974cff8b469d5ea212dc268311a3745d17e6c9d712bbc32237a2dfda143e85d",
+2026-10-30T06:15:42.6402869Z         "Gx": "4e22e180d2988a96e4320312fdab4d187e561103902f13cd149f2e732a2b6e99",
+2026-10-30T06:15:42.6403439Z         "Gz": "ff37d36be834fcce33fdd67a2760f749da4297c5920f63c3e79875c23e376bd6"
+2026-10-30T06:15:42.6403792Z       }
+2026-10-30T06:15:42.6403972Z     },
+2026-10-30T06:15:42.6404144Z     {
+2026-10-30T06:15:42.6404314Z       "n": 120,
+2026-10-30T06:15:42.6404503Z       "k": 8,
+2026-10-30T06:15:42.6404688Z       "rank_Hx": 56,
+2026-10-30T06:15:42.6404882Z       "rank_Hz": 56,
+2026-10-30T06:15:42.6405086Z       "rank_pairing": 8,
+2026-10-30T06:15:42.6405400Z       "checks": "PASS",
+2026-10-30T06:15:42.6405613Z       "stem": "BB_120_8_unknown",
+2026-10-30T06:15:42.6405855Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6406093Z       "duplicates": [],
+2026-10-30T06:15:42.6406402Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6406751Z       "sha256": {
+2026-10-30T06:15:42.6407053Z         "Hx": "db433f1dd394e45eb1b8da5e23582f3f275b296f9c290e8ebe95e5c28560a6ac",
+2026-10-30T06:15:42.6407524Z         "Hz": "5a0d048a5b773ac45c38e42c15cff04633459cc1f99a4b5662a6c9da6add70db",
+2026-10-30T06:15:42.6407979Z         "Gx": "b1148471740843b796aacb73c0941d9e38395742652cae5fd308635dfeb9faf2",
+2026-10-30T06:15:42.6408428Z         "Gz": "f857a2561ccc80873710f161a147393ea336aad5e5f122b327d570dfe22a8c86"
+2026-10-30T06:15:42.6408772Z       }
+2026-10-30T06:15:42.6408934Z     },
+2026-10-30T06:15:42.6409095Z     {
+2026-10-30T06:15:42.6409259Z       "n": 186,
+2026-10-30T06:15:42.6409437Z       "k": 10,
+2026-10-30T06:15:42.6409796Z       "rank_Hx": 88,
+2026-10-30T06:15:42.6409991Z       "rank_Hz": 88,
+2026-10-30T06:15:42.6410197Z       "rank_pairing": 10,
+2026-10-30T06:15:42.6410414Z       "checks": "PASS",
+2026-10-30T06:15:42.6410621Z       "stem": "BB_186_10_unknown",
+2026-10-30T06:15:42.6410864Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6411092Z       "duplicates": [],
+2026-10-30T06:15:42.6411394Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6411728Z       "sha256": {
+2026-10-30T06:15:42.6412033Z         "Hx": "8d92ee8af1fa64737ec4efa52c082c752feb6b8418a9c8a52d70febb5a8d5b9f",
+2026-10-30T06:15:42.6412506Z         "Hz": "ed74b08b38d9421a41546c8d3194c53a10d348970fb9bf71a3e6fbbbe471335a",
+2026-10-30T06:15:42.6412960Z         "Gx": "53ebac85b8438d0019f71490d4b52e77385deb24b4ddedd26158985b305cda06",
+2026-10-30T06:15:42.6413414Z         "Gz": "47843578d13e2e50618c3b2f5529564d36f1cdb5d79c73cb5d50e62b1a242290"
+2026-10-30T06:15:42.6413751Z       }
+2026-10-30T06:15:42.6413921Z     },
+2026-10-30T06:15:42.6414085Z     {
+2026-10-30T06:15:42.6414251Z       "n": 248,
+2026-10-30T06:15:42.6414428Z       "k": 10,
+2026-10-30T06:15:42.6414608Z       "rank_Hx": 119,
+2026-10-30T06:15:42.6414807Z       "rank_Hz": 119,
+2026-10-30T06:15:42.6415007Z       "rank_pairing": 10,
+2026-10-30T06:15:42.6415235Z       "checks": "PASS",
+2026-10-30T06:15:42.6415444Z       "stem": "BB_248_10_unknown",
+2026-10-30T06:15:42.6415682Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6415906Z       "duplicates": [],
+2026-10-30T06:15:42.6416205Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6416534Z       "sha256": {
+2026-10-30T06:15:42.6416829Z         "Hx": "8df252a3360e15cb16ab8244d4e0940e9e9e0e1fc300f922b4c20e4cc7858e24",
+2026-10-30T06:15:42.6417434Z         "Hz": "1ddc39cfdb866fcfe4346aaabf58e3d7218d6f6f3432c69e16e54b429c45ca40",
+2026-10-30T06:15:42.6417901Z         "Gx": "e32a4fea9bae2158b66ad476d358497004ac7b390ade25f52801e916e62f87cc",
+2026-10-30T06:15:42.6418398Z         "Gz": "a718eeda232e656b9c08aebfbaebdb743d4cfdb78ab94a20eeffac1338bdb4e4"
+2026-10-30T06:15:42.6418756Z       }
+2026-10-30T06:15:42.6418925Z     },
+2026-10-30T06:15:42.6419090Z     {
+2026-10-30T06:15:42.6419254Z       "n": 294,
+2026-10-30T06:15:42.6419440Z       "k": 10,
+2026-10-30T06:15:42.6419757Z       "rank_Hx": 142,
+2026-10-30T06:15:42.6419953Z       "rank_Hz": 142,
+2026-10-30T06:15:42.6420154Z       "rank_pairing": 10,
+2026-10-30T06:15:42.6420374Z       "checks": "PASS",
+2026-10-30T06:15:42.6420581Z       "stem": "BB_294_10_unknown",
+2026-10-30T06:15:42.6420817Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6421052Z       "duplicates": [],
+2026-10-30T06:15:42.6421349Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6421685Z       "sha256": {
+2026-10-30T06:15:42.6421967Z         "Hx": "7718661737a9ac0d846691b8cb4a170840e04b1d20976a2564edfe6e956b0327",
+2026-10-30T06:15:42.6422497Z         "Hz": "e194d205f8bb439c878ff4fbf4e35cdc16a7afa145a9158f982900d461dae02b",
+2026-10-30T06:15:42.6422966Z         "Gx": "1dac92a1a0a153b17be9eba3947f5be59521a77d33113f6277d0b6d5b3bc3e2b",
+2026-10-30T06:15:42.6423424Z         "Gz": "a49ea5c20df940d5003b22c5a686674a3879a08f0652d93c9e479d256f438453"
+2026-10-30T06:15:42.6423765Z       }
+2026-10-30T06:15:42.6423933Z     },
+2026-10-30T06:15:42.6424108Z     {
+2026-10-30T06:15:42.6424293Z       "n": 340,
+2026-10-30T06:15:42.6424479Z       "k": 16,
+2026-10-30T06:15:42.6424671Z       "rank_Hx": 162,
+2026-10-30T06:15:42.6424878Z       "rank_Hz": 162,
+2026-10-30T06:15:42.6425080Z       "rank_pairing": 16,
+2026-10-30T06:15:42.6425305Z       "checks": "PASS",
+2026-10-30T06:15:42.6425514Z       "stem": "BB_340_16_unknown",
+2026-10-30T06:15:42.6425757Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6425985Z       "duplicates": [],
+2026-10-30T06:15:42.6426296Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6426638Z       "sha256": {
+2026-10-30T06:15:42.6426957Z         "Hx": "3c487b46bd6e25d747b873eb9c0363b34c458b481bd50efd0159b4a577c3556d",
+2026-10-30T06:15:42.6427445Z         "Hz": "b54b64abfe59767a8dda1c625c7279de2eacda688174f421b04f6976db31f5c1",
+2026-10-30T06:15:42.6427917Z         "Gx": "1a3a81fbf4d3d3fe8818c1dacbb144c79c5da0161f29472b0b8ecbd6362ab9b2",
+2026-10-30T06:15:42.6428380Z         "Gz": "386901bb918f130b175a4da82b5200bec2c3a1ea208b91fb6dde7bcaadc98031"
+2026-10-30T06:15:42.6428727Z       }
+2026-10-30T06:15:42.6428895Z     },
+2026-10-30T06:15:42.6429060Z     {
+2026-10-30T06:15:42.6429230Z       "n": 27,
+2026-10-30T06:15:42.6429410Z       "k": 4,
+2026-10-30T06:15:42.6429731Z       "rank_Hx": 16,
+2026-10-30T06:15:42.6429937Z       "rank_Hz": 7,
+2026-10-30T06:15:42.6430141Z       "rank_pairing": 4,
+2026-10-30T06:15:42.6430350Z       "checks": "PASS",
+2026-10-30T06:15:42.6430567Z       "stem": "PM_27_4_unknown",
+2026-10-30T06:15:42.6430810Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6431033Z       "duplicates": [],
+2026-10-30T06:15:42.6431332Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6431665Z       "sha256": {
+2026-10-30T06:15:42.6431961Z         "Hx": "91cea9af44fe58a1e4280045d88ac21498af42f82ef7ada4f8a28e10d9492636",
+2026-10-30T06:15:42.6432460Z         "Hz": "6f109e2ffb31a739d2c79e3f0f902e98f3088d8fb9235c10f0ce829742458d89",
+2026-10-30T06:15:42.6432916Z         "Gx": "790e839154b50d8b6e5ce691d22a97e384c50aaf54dba4ad943e65cf9ee09d05",
+2026-10-30T06:15:42.6433373Z         "Gz": "107f512374cbde37bc5102d636ad79fa0feadfbb6c7638bd505d928dcde6d76a"
+2026-10-30T06:15:42.6433711Z       }
+2026-10-30T06:15:42.6433875Z     },
+2026-10-30T06:15:42.6434036Z     {
+2026-10-30T06:15:42.6434248Z       "n": 255,
+2026-10-30T06:15:42.6434431Z       "k": 80,
+2026-10-30T06:15:42.6434614Z       "rank_Hx": 118,
+2026-10-30T06:15:42.6435104Z       "rank_Hz": 57,
+2026-10-30T06:15:42.6435313Z       "rank_pairing": 80,
+2026-10-30T06:15:42.6435527Z       "checks": "PASS",
+2026-10-30T06:15:42.6435754Z       "stem": "PM_255_80_unknown",
+2026-10-30T06:15:42.6436004Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6436232Z       "duplicates": [],
+2026-10-30T06:15:42.6436528Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6436865Z       "sha256": {
+2026-10-30T06:15:42.6437165Z         "Hx": "dade3e686ec5142dcc54837d5ef55ca43f13459b318a5a98a5f33b05072ea419",
+2026-10-30T06:15:42.6437641Z         "Hz": "c1d052ac5fcdda31b0e7f36c6be857e5c9a6b74354fbdaaa6641ca24bbed7f5a",
+2026-10-30T06:15:42.6438105Z         "Gx": "376746a4f98086b43fef1b716bc72e5ff0ee50ad01b54e3b8475eae2b34e45ba",
+2026-10-30T06:15:42.6438558Z         "Gz": "73a2de81814e183bb7b103da90865800284cc971ec20a8c35a7458590a323db0"
+2026-10-30T06:15:42.6438915Z       }
+2026-10-30T06:15:42.6439087Z     },
+2026-10-30T06:15:42.6439257Z     {
+2026-10-30T06:15:42.6439432Z       "n": 765,
+2026-10-30T06:15:42.6439806Z       "k": 88,
+2026-10-30T06:15:42.6440049Z       "rank_Hx": 454,
+2026-10-30T06:15:42.6440244Z       "rank_Hz": 223,
+2026-10-30T06:15:42.6440684Z       "rank_pairing": 88,
+2026-10-30T06:15:42.6440919Z       "checks": "PASS",
+2026-10-30T06:15:42.6441144Z       "stem": "PM_765_88_unknown",
+2026-10-30T06:15:42.6441390Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6441629Z       "duplicates": [],
+2026-10-30T06:15:42.6441944Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6442288Z       "sha256": {
+2026-10-30T06:15:42.6442582Z         "Hx": "3b4ab7c2e1736378a77942eda053b18f20c90e248c5263a328256ea492742563",
+2026-10-30T06:15:42.6443049Z         "Hz": "aa1eed8f8ff4caa945b0720474fb73cf85a748baeac447b6c68c098729ad49e9",
+2026-10-30T06:15:42.6443518Z         "Gx": "c34a7d894ccb8e6a64788845056df6fe0fdbebb8492f9635ce83cf2ab3e73eef",
+2026-10-30T06:15:42.6443988Z         "Gz": "e3bd3dae138661801e1a8618bc57e03ca6ca1bd3a9cc454c8084f5153fffdf28"
+2026-10-30T06:15:42.6444336Z       }
+2026-10-30T06:15:42.6444499Z     },
+2026-10-30T06:15:42.6444667Z     {
+2026-10-30T06:15:42.6444831Z       "n": 1275,
+2026-10-30T06:15:42.6445029Z       "k": 80,
+2026-10-30T06:15:42.6445210Z       "rank_Hx": 798,
+2026-10-30T06:15:42.6445441Z       "rank_Hz": 397,
+2026-10-30T06:15:42.6445641Z       "rank_pairing": 80,
+2026-10-30T06:15:42.6445854Z       "checks": "PASS",
+2026-10-30T06:15:42.6446066Z       "stem": "PM_1275_80_unknown",
+2026-10-30T06:15:42.6446304Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6446528Z       "duplicates": [],
+2026-10-30T06:15:42.6446838Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6447168Z       "sha256": {
+2026-10-30T06:15:42.6447464Z         "Hx": "119f62b045964ecaa1a4df312e53dd459c24393173cfe9b132a93123cf4b9c65",
+2026-10-30T06:15:42.6447930Z         "Hz": "0556c63dd4aaa17caaf4bce5043c468e6f43313a45fd2b375c6fb8676d1b49a9",
+2026-10-30T06:15:42.6448403Z         "Gx": "ddb9133e59ec419d6c8f6674f6fe173a962a30cc0f3fc76c9d45921736e11849",
+2026-10-30T06:15:42.6448858Z         "Gz": "de8375492624de074b55cb26a6b9c1b8c11a3dc6c63b3584ddb25f8b9a6515a8"
+2026-10-30T06:15:42.6449197Z       }
+2026-10-30T06:15:42.6449363Z     },
+2026-10-30T06:15:42.6449692Z     {
+2026-10-30T06:15:42.6449909Z       "n": 1785,
+2026-10-30T06:15:42.6450093Z       "k": 80,
+2026-10-30T06:15:42.6450279Z       "rank_Hx": 1138,
+2026-10-30T06:15:42.6450488Z       "rank_Hz": 567,
+2026-10-30T06:15:42.6450697Z       "rank_pairing": 80,
+2026-10-30T06:15:42.6450927Z       "checks": "PASS",
+2026-10-30T06:15:42.6451148Z       "stem": "PM_1785_80_unknown",
+2026-10-30T06:15:42.6451391Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6451627Z       "duplicates": [],
+2026-10-30T06:15:42.6451931Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6452261Z       "sha256": {
+2026-10-30T06:15:42.6452563Z         "Hx": "08ffac5eaa013e99c0a97fa80879afe93fd7efc15654bf2fd5bd997ae36c6d6e",
+2026-10-30T06:15:42.6453156Z         "Hz": "44c6dc1d3de53a55fceb51d7beb57e9ff098977ab9335b79628ad957a4a50ec6",
+2026-10-30T06:15:42.6453614Z         "Gx": "27819a8a013688b79524aa1512260fa2db9ee3093728cb7b41695cf9c3a7c574",
+2026-10-30T06:15:42.6454077Z         "Gz": "c42353c8af5118f821087cce3ae96dad1e3ceaedf5f0c55e2917971c147e2744"
+2026-10-30T06:15:42.6454429Z       }
+2026-10-30T06:15:42.6454593Z     },
+2026-10-30T06:15:42.6454763Z     {
+2026-10-30T06:15:42.6454929Z       "n": 2805,
+2026-10-30T06:15:42.6455105Z       "k": 80,
+2026-10-30T06:15:42.6455280Z       "rank_Hx": 1818,
+2026-10-30T06:15:42.6455473Z       "rank_Hz": 907,
+2026-10-30T06:15:42.6455677Z       "rank_pairing": 80,
+2026-10-30T06:15:42.6455887Z       "checks": "PASS",
+2026-10-30T06:15:42.6456096Z       "stem": "PM_2805_80_unknown",
+2026-10-30T06:15:42.6456334Z       "same_n_k_compared": [],
+2026-10-30T06:15:42.6456560Z       "duplicates": [],
+2026-10-30T06:15:42.6456854Z       "column_permutation_equivalence": "not tested; no same-(n,k) peers",
+2026-10-30T06:15:42.6457188Z       "sha256": {
+2026-10-30T06:15:42.6457479Z         "Hx": "47a4c0102989c87bfb14ac4ea05a28e79a15fa813227935a4efd5401001fedb0",
+2026-10-30T06:15:42.6458015Z         "Hz": "c7b888139773ff843d05a372fcba1fcd65e68ca45b75a8e8141200adb40a21f2",
+2026-10-30T06:15:42.6458473Z         "Gx": "8129cc6e6b6859b6a8c0b24f927d9974ff910e6210fa69dbd411d7c79773a297",
+2026-10-30T06:15:42.6458931Z         "Gz": "e906a5cdc67fbe424a0223ffb81b561f39735aa087523262dc6de7fd2aef6eb1"
+2026-10-30T06:15:42.6459277Z       }
+2026-10-30T06:15:42.6459440Z     }
+2026-10-30T06:15:42.6459786Z   ]
+2026-10-30T06:15:42.6459956Z }
+2026-10-30T06:15:58.1935629Z [
+2026-10-30T06:15:58.1936075Z   {
+2026-10-30T06:15:58.1936586Z     "n": 27,
+2026-10-30T06:15:58.1936896Z     "k": 4,
+2026-10-30T06:15:58.1937306Z     "rank_Hx": 16,
+2026-10-30T06:15:58.1937817Z     "rank_Hz": 7,
+2026-10-30T06:15:58.1938232Z     "rank_pairing": 4,
+2026-10-30T06:15:58.1938570Z     "checks": "PASS",
+2026-10-30T06:15:58.1938977Z     "id": "source27",
+2026-10-30T06:15:58.1939304Z     "stem": "PM_27_4_unknown",
+2026-10-30T06:15:58.1940008Z     "lift": 9,
+2026-10-30T06:15:58.1940315Z     "row_weights_Hx_Hz": [
+2026-10-30T06:15:58.1940661Z       [
+2026-10-30T06:15:58.1940912Z         8
+2026-10-30T06:15:58.1941429Z       ],
+2026-10-30T06:15:58.1941881Z       [
+2026-10-30T06:15:58.1942192Z         11
+2026-10-30T06:15:58.1942723Z       ]
+2026-10-30T06:15:58.1942964Z     ],
+2026-10-30T06:15:58.1943255Z     "independent_tiny_anchor_exact": 4,
+2026-10-30T06:15:58.1943711Z     "canonical_support_components": [
+2026-10-30T06:15:58.1944119Z       27
+2026-10-30T06:15:58.1944393Z     ],
+2026-10-30T06:15:58.1944932Z     "physical_XZ_dual_map": "not assumed; unequal ranks obstruct pure permutation XZ",
+2026-10-30T06:15:58.1945587Z     "actual_verified_half_uppers": {
+2026-10-30T06:15:58.1945979Z       "X": 4,
+2026-10-30T06:15:58.1946272Z       "Z": 7
+2026-10-30T06:15:58.1946551Z     },
+2026-10-30T06:15:58.1946865Z     "actual_verified_upper": 4
+2026-10-30T06:15:58.1947254Z   },
+2026-10-30T06:15:58.1947521Z   {
+2026-10-30T06:15:58.1947793Z     "n": 255,
+2026-10-30T06:15:58.1948129Z     "k": 80,
+2026-10-30T06:15:58.1948435Z     "rank_Hx": 118,
+2026-10-30T06:15:58.1948896Z     "rank_Hz": 57,
+2026-10-30T06:15:58.1949361Z     "rank_pairing": 80,
+2026-10-30T06:15:58.1949990Z     "checks": "PASS",
+2026-10-30T06:15:58.1950413Z     "id": "source255",
+2026-10-30T06:15:58.1950859Z     "stem": "PM_255_80_unknown",
+2026-10-30T06:15:58.1951500Z     "lift": 85,
+2026-10-30T06:15:58.1951891Z     "row_weights_Hx_Hz": [
+2026-10-30T06:15:58.1952208Z       [
+2026-10-30T06:15:58.1952459Z         22
+2026-10-30T06:15:58.1952797Z       ],
+2026-10-30T06:15:58.1953093Z       [
+2026-10-30T06:15:58.1953365Z         61
+2026-10-30T06:15:58.1953633Z       ]
+2026-10-30T06:15:58.1953894Z     ],
+2026-10-30T06:15:58.1954339Z     "independent_tiny_anchor_exact": null,
+2026-10-30T06:15:58.1954988Z     "canonical_support_components": [
+2026-10-30T06:15:58.1955411Z       255
+2026-10-30T06:15:58.1956091Z     ],
+2026-10-30T06:15:58.1956645Z     "physical_XZ_dual_map": "not assumed; unequal ranks obstruct pure permutation XZ",
+2026-10-30T06:15:58.1957349Z     "actual_verified_half_uppers": {
+2026-10-30T06:15:58.1957778Z       "X": 12,
+2026-10-30T06:15:58.1958089Z       "Z": 28
+2026-10-30T06:15:58.1958380Z     },
+2026-10-30T06:15:58.1958701Z     "actual_verified_upper": 12
+2026-10-30T06:15:58.1959098Z   },
+2026-10-30T06:15:58.1959382Z   {
+2026-10-30T06:15:58.1959930Z     "n": 765,
+2026-10-30T06:15:58.1960212Z     "k": 88,
+2026-10-30T06:15:58.1960484Z     "rank_Hx": 454,
+2026-10-30T06:15:58.1960784Z     "rank_Hz": 223,
+2026-10-30T06:15:58.1961127Z     "rank_pairing": 88,
+2026-10-30T06:15:58.1961494Z     "checks": "PASS",
+2026-10-30T06:15:58.1961850Z     "id": "lift255",
+2026-10-30T06:15:58.1962294Z     "stem": "PM_765_88_unknown",
+2026-10-30T06:15:58.1962744Z     "lift": 255,
+2026-10-30T06:15:58.1963216Z     "row_weights_Hx_Hz": [
+2026-10-30T06:15:58.1963675Z       [
+2026-10-30T06:15:58.1963963Z         22
+2026-10-30T06:15:58.1964320Z       ],
+2026-10-30T06:15:58.1964655Z       [
+2026-10-30T06:15:58.1964941Z         75
+2026-10-30T06:15:58.1965232Z       ]
+2026-10-30T06:15:58.1965519Z     ],
+2026-10-30T06:15:58.1966105Z     "independent_tiny_anchor_exact": null,
+2026-10-30T06:15:58.1966597Z     "canonical_support_components": [
+2026-10-30T06:15:58.1967095Z       765
+2026-10-30T06:15:58.1967347Z     ],
+2026-10-30T06:15:58.1967863Z     "physical_XZ_dual_map": "not assumed; unequal ranks obstruct pure permutation XZ",
+2026-10-30T06:15:58.1968513Z     "actual_verified_half_uppers": {
+2026-10-30T06:15:58.1968911Z       "X": 54,
+2026-10-30T06:15:58.1969204Z       "Z": 84
+2026-10-30T06:15:58.1969481Z     },
+2026-10-30T06:15:58.1969946Z     "actual_verified_upper": 54
+2026-10-30T06:15:58.1970313Z   },
+2026-10-30T06:15:58.1970569Z   {
+2026-10-30T06:15:58.1970826Z     "n": 1275,
+2026-10-30T06:15:58.1971108Z     "k": 80,
+2026-10-30T06:15:58.1971398Z     "rank_Hx": 798,
+2026-10-30T06:15:58.1971711Z     "rank_Hz": 397,
+2026-10-30T06:15:58.1972046Z     "rank_pairing": 80,
+2026-10-30T06:15:58.1972385Z     "checks": "PASS",
+2026-10-30T06:15:58.1972720Z     "id": "lift425",
+2026-10-30T06:15:58.1973089Z     "stem": "PM_1275_80_unknown",
+2026-10-30T06:15:58.1973485Z     "lift": 425,
+2026-10-30T06:15:58.1973808Z     "row_weights_Hx_Hz": [
+2026-10-30T06:15:58.1974159Z       [
+2026-10-30T06:15:58.1974437Z         22
+2026-10-30T06:15:58.1974713Z       ],
+2026-10-30T06:15:58.1974983Z       [
+2026-10-30T06:15:58.1975257Z         75
+2026-10-30T06:15:58.1975537Z       ]
+2026-10-30T06:15:58.1975802Z     ],
+2026-10-30T06:15:58.1976120Z     "independent_tiny_anchor_exact": null,
+2026-10-30T06:15:58.1976577Z     "canonical_support_components": [
+2026-10-30T06:15:58.1976994Z       1275
+2026-10-30T06:15:58.1977287Z     ],
+2026-10-30T06:15:58.1977845Z     "physical_XZ_dual_map": "not assumed; unequal ranks obstruct pure permutation XZ",
+2026-10-30T06:15:58.1978527Z     "actual_verified_half_uppers": {
+2026-10-30T06:15:58.1979062Z       "X": 54,
+2026-10-30T06:15:58.1979409Z       "Z": 140
+2026-10-30T06:15:58.1979868Z     },
+2026-10-30T06:15:58.1980187Z     "actual_verified_upper": 54
+2026-10-30T06:15:58.1980581Z   },
+2026-10-30T06:15:58.1980874Z   {
+2026-10-30T06:15:58.1981176Z     "n": 1785,
+2026-10-30T06:15:58.1981481Z     "k": 80,
+2026-10-30T06:15:58.1981786Z     "rank_Hx": 1138,
+2026-10-30T06:15:58.1982173Z     "rank_Hz": 567,
+2026-10-30T06:15:58.1982598Z     "rank_pairing": 80,
+2026-10-30T06:15:58.1982987Z     "checks": "PASS",
+2026-10-30T06:15:58.1983367Z     "id": "lift595",
+2026-10-30T06:15:58.1983720Z     "stem": "PM_1785_80_unknown",
+2026-10-30T06:15:58.1984141Z     "lift": 595,
+2026-10-30T06:15:58.1984468Z     "row_weights_Hx_Hz": [
+2026-10-30T06:15:58.1984810Z       [
+2026-10-30T06:15:58.1985085Z         22
+2026-10-30T06:15:58.1985369Z       ],
+2026-10-30T06:15:58.1985651Z       [
+2026-10-30T06:15:58.1985929Z         75
+2026-10-30T06:15:58.1986177Z       ]
+2026-10-30T06:15:58.1986535Z     ],
+2026-10-30T06:15:58.1986896Z     "independent_tiny_anchor_exact": null,
+2026-10-30T06:15:58.1987725Z     "canonical_support_components": [
+2026-10-30T06:15:58.1988224Z       1785
+2026-10-30T06:15:58.1988544Z     ],
+2026-10-30T06:15:58.1989121Z     "physical_XZ_dual_map": "not assumed; unequal ranks obstruct pure permutation XZ",
+2026-10-30T06:15:58.1989937Z     "actual_verified_half_uppers": {
+2026-10-30T06:15:58.1990336Z       "X": 54,
+2026-10-30T06:15:58.1990645Z       "Z": 196
+2026-10-30T06:15:58.1990953Z     },
+2026-10-30T06:15:58.1991257Z     "actual_verified_upper": 54
+2026-10-30T06:15:58.1991632Z   },
+2026-10-30T06:15:58.1991908Z   {
+2026-10-30T06:15:58.1992183Z     "n": 2805,
+2026-10-30T06:15:58.1992503Z     "k": 80,
+2026-10-30T06:15:58.1992800Z     "rank_Hx": 1818,
+2026-10-30T06:15:58.1993132Z     "rank_Hz": 907,
+2026-10-30T06:15:58.1993459Z     "rank_pairing": 80,
+2026-10-30T06:15:58.1993811Z     "checks": "PASS",
+2026-10-30T06:15:58.1994136Z     "id": "lift935",
+2026-10-30T06:15:58.1994495Z     "stem": "PM_2805_80_unknown",
+2026-10-30T06:15:58.1994936Z     "lift": 935,
+2026-10-30T06:15:58.1995276Z     "row_weights_Hx_Hz": [
+2026-10-30T06:15:58.1995602Z       [
+2026-10-30T06:15:58.1995848Z         22
+2026-10-30T06:15:58.1996213Z       ],
+2026-10-30T06:15:58.1996792Z       [
+2026-10-30T06:15:58.1997051Z         75
+2026-10-30T06:15:58.1997309Z       ]
+2026-10-30T06:15:58.1997586Z     ],
+2026-10-30T06:15:58.1997927Z     "independent_tiny_anchor_exact": null,
+2026-10-30T06:15:58.1998407Z     "canonical_support_components": [
+2026-10-30T06:15:58.1998802Z       2805
+2026-10-30T06:15:58.1999031Z     ],
+2026-10-30T06:15:58.1999510Z     "physical_XZ_dual_map": "not assumed; unequal ranks obstruct pure permutation XZ",
+2026-10-30T06:15:58.2000379Z     "actual_verified_half_uppers": {
+2026-10-30T06:15:58.2000759Z       "X": 54,
+2026-10-30T06:15:58.2001023Z       "Z": 308
+2026-10-30T06:15:58.2001271Z     },
+2026-10-30T06:15:58.2001528Z     "actual_verified_upper": 54
+2026-10-30T06:15:58.2001861Z   }
+2026-10-30T06:15:58.2002109Z ]
+2026-10-30T06:15:58.2179865Z ##[group]Run python3 scripts/codegen/polynomial_minors.py --all --out /tmp/gh209-rebuilt
+2026-10-30T06:15:58.2180506Z [36;1mpython3 scripts/codegen/polynomial_minors.py --all --out /tmp/gh209-rebuilt[0m
+2026-10-30T06:15:58.2180911Z [36;1mpython3 - <<'PY'[0m
+2026-10-30T06:15:58.2181155Z [36;1mfrom pathlib import Path[0m
+2026-10-30T06:15:58.2181468Z [36;1mfiles=list(Path('/tmp/gh209-rebuilt').glob('*.txt'))[0m
+2026-10-30T06:15:58.2181789Z [36;1massert len(files)==24[0m
+2026-10-30T06:15:58.2182026Z [36;1mfor p in files:[0m
+2026-10-30T06:15:58.2182388Z [36;1m    assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p[0m
+2026-10-30T06:15:58.2182810Z [36;1mprint('PASS24matrixbyteidentical')[0m
+2026-10-30T06:15:58.2183074Z [36;1mPY[0m
+2026-10-30T06:15:58.2196584Z shell: /usr/bin/bash -e {0}
+2026-10-30T06:15:58.2196842Z ##[endgroup]
+2026-10-30T06:15:58.2898566Z wrote /tmp/gh209-rebuilt/PM_27_4_unknown_Gx.txt (4 rows), /tmp/gh209-rebuilt/PM_27_4_unknown_Gz.txt (4 rows)
+2026-10-30T06:15:58.3824441Z wrote /tmp/gh209-rebuilt/PM_255_80_unknown_Gx.txt (80 rows), /tmp/gh209-rebuilt/PM_255_80_unknown_Gz.txt (80 rows)
+2026-10-30T06:15:58.8716930Z wrote /tmp/gh209-rebuilt/PM_765_88_unknown_Gx.txt (88 rows), /tmp/gh209-rebuilt/PM_765_88_unknown_Gz.txt (88 rows)
+2026-10-30T06:16:00.1321180Z wrote /tmp/gh209-rebuilt/PM_1275_80_unknown_Gx.txt (80 rows), /tmp/gh209-rebuilt/PM_1275_80_unknown_Gz.txt (80 rows)
+2026-10-30T06:16:02.6143306Z wrote /tmp/gh209-rebuilt/PM_1785_80_unknown_Gx.txt (80 rows), /tmp/gh209-rebuilt/PM_1785_80_unknown_Gz.txt (80 rows)
+2026-10-30T06:16:09.0831843Z wrote /tmp/gh209-rebuilt/PM_2805_80_unknown_Gx.txt (80 rows), /tmp/gh209-rebuilt/PM_2805_80_unknown_Gz.txt (80 rows)
+2026-10-30T06:16:09.0900280Z [
+2026-10-30T06:16:09.0900954Z   {
+2026-10-30T06:16:09.0901523Z     "id": "source27",
+2026-10-30T06:16:09.0902241Z     "stem": "PM_27_4_unknown",
+2026-10-30T06:16:09.0902759Z     "n": 27,
+2026-10-30T06:16:09.0903103Z     "k": 4,
+2026-10-30T06:16:09.0903469Z     "lift": 9,
+2026-10-30T06:16:09.0904293Z     "rank_Hx": 16,
+2026-10-30T06:16:09.0904658Z     "rank_Hz": 7,
+2026-10-30T06:16:09.0904990Z     "g": 1,
+2026-10-30T06:16:09.0905304Z     "g1": 7,
+2026-10-30T06:16:09.0905631Z     "minors": [
+2026-10-30T06:16:09.0905975Z       392,
+2026-10-30T06:16:09.0906281Z       7,
+2026-10-30T06:16:09.0906582Z       233
+2026-10-30T06:16:09.0906890Z     ],
+2026-10-30T06:16:09.0907223Z     "row_weights_Hx": [
+2026-10-30T06:16:09.0907625Z       8
+2026-10-30T06:16:09.0907916Z     ],
+2026-10-30T06:16:09.0908247Z     "row_weights_Hz": [
+2026-10-30T06:16:09.0908630Z       11
+2026-10-30T06:16:09.0908941Z     ]
+2026-10-30T06:16:09.0909254Z   },
+2026-10-30T06:16:09.0909823Z   {
+2026-10-30T06:16:09.0910161Z     "id": "source255",
+2026-10-30T06:16:09.0910565Z     "stem": "PM_255_80_unknown",
+2026-10-30T06:16:09.0911045Z     "n": 255,
+2026-10-30T06:16:09.0911403Z     "k": 80,
+2026-10-30T06:16:09.0911769Z     "lift": 85,
+2026-10-30T06:16:09.0912148Z     "rank_Hx": 118,
+2026-10-30T06:16:09.0912580Z     "rank_Hz": 57,
+2026-10-30T06:16:09.0912971Z     "g": 23315577,
+2026-10-30T06:16:09.0913345Z     "g1": 453589303,
+2026-10-30T06:16:09.0913734Z     "minors": [
+2026-10-30T06:16:09.0914106Z       33303322863920367933915139,
+2026-10-30T06:16:09.0914571Z       14592121664482173981296037,
+2026-10-30T06:16:09.0915002Z       29656618311462886462227538
+2026-10-30T06:16:09.0915431Z     ],
+2026-10-30T06:16:09.0915789Z     "row_weights_Hx": [
+2026-10-30T06:16:09.0916212Z       22
+2026-10-30T06:16:09.0916553Z     ],
+2026-10-30T06:16:09.0917024Z     "row_weights_Hz": [
+2026-10-30T06:16:09.0917576Z       61
+2026-10-30T06:16:09.0917987Z     ]
+2026-10-30T06:16:09.0918369Z   },
+2026-10-30T06:16:09.0918780Z   {
+2026-10-30T06:16:09.0919197Z     "id": "lift255",
+2026-10-30T06:16:09.0920120Z     "stem": "PM_765_88_unknown",
+2026-10-30T06:16:09.0920711Z     "n": 765,
+2026-10-30T06:16:09.0921067Z     "k": 88,
+2026-10-30T06:16:09.0921405Z     "lift": 255,
+2026-10-30T06:16:09.0921849Z     "rank_Hx": 454,
+2026-10-30T06:16:09.0922814Z     "rank_Hz": 223,
+2026-10-30T06:16:09.0923267Z     "g": 23315577,
+2026-10-30T06:16:09.0923659Z     "g1": 6937958441,
+2026-10-30T06:16:09.0924072Z     "minors": [
+2026-10-30T06:16:09.0924485Z       1042802122131829070129934876126212260866,
+2026-10-30T06:16:09.0925113Z       374144775969995454315926063202481889526202457128996,
+2026-10-30T06:16:09.0925737Z       33369667958962629371689930027163996651585
+2026-10-30T06:16:09.0926271Z     ],
+2026-10-30T06:16:09.0926644Z     "row_weights_Hx": [
+2026-10-30T06:16:09.0927082Z       22
+2026-10-30T06:16:09.0927439Z     ],
+2026-10-30T06:16:09.0927815Z     "row_weights_Hz": [
+2026-10-30T06:16:09.0928217Z       75
+2026-10-30T06:16:09.0928535Z     ]
+2026-10-30T06:16:09.0928845Z   },
+2026-10-30T06:16:09.0929176Z   {
+2026-10-30T06:16:09.0929757Z     "id": "lift425",
+2026-10-30T06:16:09.0930216Z     "stem": "PM_1275_80_unknown",
+2026-10-30T06:16:09.0930721Z     "n": 1275,
+2026-10-30T06:16:09.0931204Z     "k": 80,
+2026-10-30T06:16:09.0931644Z     "lift": 425,
+2026-10-30T06:16:09.0932213Z     "rank_Hx": 798,
+2026-10-30T06:16:09.0932730Z     "rank_Hz": 397,
+2026-10-30T06:16:09.0933126Z     "g": 23315577,
+2026-10-30T06:16:09.0933569Z     "g1": 453589303,
+2026-10-30T06:16:09.0934024Z     "minors": [
+2026-10-30T06:16:09.0934458Z       1042802122131829070129934876126212260866,
+2026-10-30T06:16:09.0935083Z       374144775969995454315926063202481889526202457128996,
+2026-10-30T06:16:09.0935712Z       33369667958962629371689930027163996651585
+2026-10-30T06:16:09.0936218Z     ],
+2026-10-30T06:16:09.0936618Z     "row_weights_Hx": [
+2026-10-30T06:16:09.0937094Z       22
+2026-10-30T06:16:09.0937432Z     ],
+2026-10-30T06:16:09.0937773Z     "row_weights_Hz": [
+2026-10-30T06:16:09.0938172Z       75
+2026-10-30T06:16:09.0938486Z     ]
+2026-10-30T06:16:09.0938813Z   },
+2026-10-30T06:16:09.0939134Z   {
+2026-10-30T06:16:09.0939464Z     "id": "lift595",
+2026-10-30T06:16:09.0940041Z     "stem": "PM_1785_80_unknown",
+2026-10-30T06:16:09.0940497Z     "n": 1785,
+2026-10-30T06:16:09.0940863Z     "k": 80,
+2026-10-30T06:16:09.0941472Z     "lift": 595,
+2026-10-30T06:16:09.0941846Z     "rank_Hx": 1138,
+2026-10-30T06:16:09.0942238Z     "rank_Hz": 567,
+2026-10-30T06:16:09.0942608Z     "g": 23315577,
+2026-10-30T06:16:09.0942979Z     "g1": 453589303,
+2026-10-30T06:16:09.0943381Z     "minors": [
+2026-10-30T06:16:09.0943792Z       1042802122131829070129934876126212260866,
+2026-10-30T06:16:09.0944408Z       374144775969995454315926063202481889526202457128996,
+2026-10-30T06:16:09.0944993Z       33369667958962629371689930027163996651585
+2026-10-30T06:16:09.0945511Z     ],
+2026-10-30T06:16:09.0945885Z     "row_weights_Hx": [
+2026-10-30T06:16:09.0946306Z       22
+2026-10-30T06:16:09.0946639Z     ],
+2026-10-30T06:16:09.0946986Z     "row_weights_Hz": [
+2026-10-30T06:16:09.0947351Z       75
+2026-10-30T06:16:09.0947693Z     ]
+2026-10-30T06:16:09.0948019Z   },
+2026-10-30T06:16:09.0948344Z   {
+2026-10-30T06:16:09.0948669Z     "id": "lift935",
+2026-10-30T06:16:09.0949082Z     "stem": "PM_2805_80_unknown",
+2026-10-30T06:16:09.0949736Z     "n": 2805,
+2026-10-30T06:16:09.0950069Z     "k": 80,
+2026-10-30T06:16:09.0950385Z     "lift": 935,
+2026-10-30T06:16:09.0950723Z     "rank_Hx": 1818,
+2026-10-30T06:16:09.0951053Z     "rank_Hz": 907,
+2026-10-30T06:16:09.0951354Z     "g": 23315577,
+2026-10-30T06:16:09.0951767Z     "g1": 453589303,
+2026-10-30T06:16:09.0952140Z     "minors": [
+2026-10-30T06:16:09.0952484Z       1042802122131829070129934876126212260866,
+2026-10-30T06:16:09.0952991Z       374144775969995454315926063202481889526202457128996,
+2026-10-30T06:16:09.0953515Z       33369667958962629371689930027163996651585
+2026-10-30T06:16:09.0953966Z     ],
+2026-10-30T06:16:09.0954274Z     "row_weights_Hx": [
+2026-10-30T06:16:09.0954648Z       22
+2026-10-30T06:16:09.0954969Z     ],
+2026-10-30T06:16:09.0955340Z     "row_weights_Hz": [
+2026-10-30T06:16:09.0955714Z       75
+2026-10-30T06:16:09.0955994Z     ]
+2026-10-30T06:16:09.0956275Z   }
+2026-10-30T06:16:09.0956579Z ]
+2026-10-30T06:16:09.1418722Z PASS24matrixbyteidentical
+2026-10-30T06:16:09.1495386Z ##[group]Run python3 scripts/codegen/audit_polynomial_minors_smoke.py --maxsat optimization/experiments/GH-209/raw/actions/default/maxsat --cc optimization/experiments/GH-209/raw/actions/default/cc --construction optimization/experiments/GH-209/raw/construction.json --out /tmp/gh209-replayed.json
+2026-10-30T06:16:09.1497319Z [36;1mpython3 scripts/codegen/audit_polynomial_minors_smoke.py --maxsat optimization/experiments/GH-209/raw/actions/default/maxsat --cc optimization/experiments/GH-209/raw/actions/default/cc --construction optimization/experiments/GH-209/raw/construction.json --out /tmp/gh209-replayed.json[0m
+2026-10-30T06:16:09.1498563Z [36;1mcmp optimization/experiments/GH-209/raw/actions/default/audit.json /tmp/gh209-replayed.json[0m
+2026-10-30T06:16:09.1511472Z shell: /usr/bin/bash -e {0}
+2026-10-30T06:16:09.1511737Z ##[endgroup]
+2026-10-30T06:16:20.3045123Z [
+2026-10-30T06:16:20.3045735Z   {
+2026-10-30T06:16:20.3046231Z     "stem": "PM_27_4_unknown",
+2026-10-30T06:16:20.3047018Z     "published_lower": 4,
+2026-10-30T06:16:20.3047414Z     "published_exact": 4,
+2026-10-30T06:16:20.3047738Z     "engines": {
+2026-10-30T06:16:20.3048030Z       "maxsat": {
+2026-10-30T06:16:20.3048324Z         "lb": 4,
+2026-10-30T06:16:20.3048603Z         "ub": 4,
+2026-10-30T06:16:20.3048893Z         "status": "SOLVED"
+2026-10-30T06:16:20.3049204Z       },
+2026-10-30T06:16:20.3049452Z       "cc": {
+2026-10-30T06:16:20.3050133Z         "lb": 4,
+2026-10-30T06:16:20.3050433Z         "ub": 4,
+2026-10-30T06:16:20.3050704Z         "status": "SOLVED"
+2026-10-30T06:16:20.3051069Z       }
+2026-10-30T06:16:20.3051326Z     },
+2026-10-30T06:16:20.3051612Z     "explicit_exact_answers": {
+2026-10-30T06:16:20.3051980Z       "maxsat": 4,
+2026-10-30T06:16:20.3052262Z       "cc": 4
+2026-10-30T06:16:20.3052531Z     },
+2026-10-30T06:16:20.3052800Z     "confirmed_exact": 4,
+2026-10-30T06:16:20.3053151Z     "exact_minimum_word_gate": "PASS",
+2026-10-30T06:16:20.3053554Z     "actual_verified_upper": 4,
+2026-10-30T06:16:20.3053943Z     "actual_verified_half_uppers": {
+2026-10-30T06:16:20.3054695Z       "X": 4,
+2026-10-30T06:16:20.3054952Z       "Z": 7
+2026-10-30T06:16:20.3055233Z     },
+2026-10-30T06:16:20.3055538Z     "numeric_smoke_gate": "PASS",
+2026-10-30T06:16:20.3055948Z     "reported_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3056377Z     "source_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3056935Z     "scientific_status": "CROSS_CHECKED_TWO_ENGINES_AND_GF2_WITNESS",
+2026-10-30T06:16:20.3057536Z     "independent_search_lower_corrob": 4,
+2026-10-30T06:16:20.3058079Z     "source_head": "b859a70a30b0be63a26d2d2df68024a406927d54",
+2026-10-30T06:16:20.3058834Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T06:16:20.3059479Z   },
+2026-10-30T06:16:20.3059928Z   {
+2026-10-30T06:16:20.3060232Z     "stem": "PM_255_80_unknown",
+2026-10-30T06:16:20.3060650Z     "published_lower": 12,
+2026-10-30T06:16:20.3061131Z     "published_exact": 12,
+2026-10-30T06:16:20.3061647Z     "engines": {
+2026-10-30T06:16:20.3062052Z       "maxsat": {
+2026-10-30T06:16:20.3062433Z         "lb": 5,
+2026-10-30T06:16:20.3062820Z         "ub": 12,
+2026-10-30T06:16:20.3063220Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3063805Z       },
+2026-10-30T06:16:20.3064228Z       "cc": {
+2026-10-30T06:16:20.3064520Z         "lb": 8,
+2026-10-30T06:16:20.3064793Z         "ub": 12,
+2026-10-30T06:16:20.3065199Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3065542Z       }
+2026-10-30T06:16:20.3065791Z     },
+2026-10-30T06:16:20.3066115Z     "explicit_exact_answers": {},
+2026-10-30T06:16:20.3066534Z     "confirmed_exact": null,
+2026-10-30T06:16:20.3066909Z     "exact_minimum_word_gate": "PASS",
+2026-10-30T06:16:20.3067361Z     "actual_verified_upper": 12,
+2026-10-30T06:16:20.3067763Z     "actual_verified_half_uppers": {
+2026-10-30T06:16:20.3068156Z       "X": 12,
+2026-10-30T06:16:20.3068437Z       "Z": 28
+2026-10-30T06:16:20.3068742Z     },
+2026-10-30T06:16:20.3069189Z     "numeric_smoke_gate": "PASS",
+2026-10-30T06:16:20.3070400Z     "reported_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3070915Z     "source_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3071653Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; actual GF2 words independently checked",
+2026-10-30T06:16:20.3072427Z     "independent_search_lower_corrob": 5,
+2026-10-30T06:16:20.3072983Z     "source_head": "b859a70a30b0be63a26d2d2df68024a406927d54",
+2026-10-30T06:16:20.3073766Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T06:16:20.3074478Z   },
+2026-10-30T06:16:20.3074764Z   {
+2026-10-30T06:16:20.3075049Z     "stem": "PM_765_88_unknown",
+2026-10-30T06:16:20.3075426Z     "published_lower": null,
+2026-10-30T06:16:20.3075788Z     "published_exact": null,
+2026-10-30T06:16:20.3076155Z     "engines": {
+2026-10-30T06:16:20.3076476Z       "maxsat": {
+2026-10-30T06:16:20.3076800Z         "lb": 3,
+2026-10-30T06:16:20.3077165Z         "ub": 64,
+2026-10-30T06:16:20.3077581Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3077999Z       },
+2026-10-30T06:16:20.3078436Z       "cc": {
+2026-10-30T06:16:20.3078820Z         "lb": 8,
+2026-10-30T06:16:20.3079131Z         "ub": 76,
+2026-10-30T06:16:20.3079500Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3080146Z       }
+2026-10-30T06:16:20.3080430Z     },
+2026-10-30T06:16:20.3080758Z     "explicit_exact_answers": {},
+2026-10-30T06:16:20.3081193Z     "confirmed_exact": null,
+2026-10-30T06:16:20.3081612Z     "exact_minimum_word_gate": "PASS",
+2026-10-30T06:16:20.3082078Z     "actual_verified_upper": 54,
+2026-10-30T06:16:20.3082478Z     "actual_verified_half_uppers": {
+2026-10-30T06:16:20.3082982Z       "X": 54,
+2026-10-30T06:16:20.3083276Z       "Z": 84
+2026-10-30T06:16:20.3083565Z     },
+2026-10-30T06:16:20.3083872Z     "numeric_smoke_gate": "PASS",
+2026-10-30T06:16:20.3084282Z     "reported_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3084764Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T06:16:20.3085507Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; actual GF2 words independently checked",
+2026-10-30T06:16:20.3086448Z     "independent_search_lower_corrob": 3,
+2026-10-30T06:16:20.3086985Z     "source_head": "b859a70a30b0be63a26d2d2df68024a406927d54",
+2026-10-30T06:16:20.3087732Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T06:16:20.3088411Z   },
+2026-10-30T06:16:20.3088703Z   {
+2026-10-30T06:16:20.3089001Z     "stem": "PM_1275_80_unknown",
+2026-10-30T06:16:20.3089413Z     "published_lower": null,
+2026-10-30T06:16:20.3089956Z     "published_exact": null,
+2026-10-30T06:16:20.3090332Z     "engines": {
+2026-10-30T06:16:20.3090643Z       "maxsat": {
+2026-10-30T06:16:20.3090955Z         "lb": 5,
+2026-10-30T06:16:20.3091260Z         "ub": 138,
+2026-10-30T06:16:20.3091577Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3091931Z       },
+2026-10-30T06:16:20.3092202Z       "cc": {
+2026-10-30T06:16:20.3092491Z         "lb": 8,
+2026-10-30T06:16:20.3092793Z         "ub": 100,
+2026-10-30T06:16:20.3093130Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3093478Z       }
+2026-10-30T06:16:20.3093741Z     },
+2026-10-30T06:16:20.3094042Z     "explicit_exact_answers": {},
+2026-10-30T06:16:20.3094455Z     "confirmed_exact": null,
+2026-10-30T06:16:20.3094872Z     "exact_minimum_word_gate": "PASS",
+2026-10-30T06:16:20.3095345Z     "actual_verified_upper": 54,
+2026-10-30T06:16:20.3095780Z     "actual_verified_half_uppers": {
+2026-10-30T06:16:20.3096185Z       "X": 54,
+2026-10-30T06:16:20.3096591Z       "Z": 140
+2026-10-30T06:16:20.3096922Z     },
+2026-10-30T06:16:20.3097248Z     "numeric_smoke_gate": "PASS",
+2026-10-30T06:16:20.3097692Z     "reported_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3098191Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T06:16:20.3098979Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; actual GF2 words independently checked",
+2026-10-30T06:16:20.3100007Z     "independent_search_lower_corrob": 5,
+2026-10-30T06:16:20.3100855Z     "source_head": "b859a70a30b0be63a26d2d2df68024a406927d54",
+2026-10-30T06:16:20.3101668Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T06:16:20.3102339Z   },
+2026-10-30T06:16:20.3102628Z   {
+2026-10-30T06:16:20.3102931Z     "stem": "PM_1785_80_unknown",
+2026-10-30T06:16:20.3103347Z     "published_lower": null,
+2026-10-30T06:16:20.3103742Z     "published_exact": null,
+2026-10-30T06:16:20.3104184Z     "engines": {
+2026-10-30T06:16:20.3104508Z       "maxsat": {
+2026-10-30T06:16:20.3104856Z         "lb": null,
+2026-10-30T06:16:20.3105198Z         "ub": null,
+2026-10-30T06:16:20.3105611Z         "status": "TIMEOUT_NO_BOUNDS"
+2026-10-30T06:16:20.3106049Z       },
+2026-10-30T06:16:20.3106350Z       "cc": {
+2026-10-30T06:16:20.3106676Z         "lb": 8,
+2026-10-30T06:16:20.3106976Z         "ub": 140,
+2026-10-30T06:16:20.3107292Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3107655Z       }
+2026-10-30T06:16:20.3107942Z     },
+2026-10-30T06:16:20.3108252Z     "explicit_exact_answers": {},
+2026-10-30T06:16:20.3108681Z     "confirmed_exact": null,
+2026-10-30T06:16:20.3109096Z     "exact_minimum_word_gate": "PASS",
+2026-10-30T06:16:20.3109689Z     "actual_verified_upper": 54,
+2026-10-30T06:16:20.3110160Z     "actual_verified_half_uppers": {
+2026-10-30T06:16:20.3110586Z       "X": 54,
+2026-10-30T06:16:20.3110890Z       "Z": 196
+2026-10-30T06:16:20.3111185Z     },
+2026-10-30T06:16:20.3111498Z     "numeric_smoke_gate": "INCOMPLETE",
+2026-10-30T06:16:20.3111980Z     "reported_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3112486Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T06:16:20.3113150Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; actual GF2 words independently checked",
+2026-10-30T06:16:20.3113965Z     "independent_search_lower_corrob": null,
+2026-10-30T06:16:20.3114463Z     "source_head": "b859a70a30b0be63a26d2d2df68024a406927d54",
+2026-10-30T06:16:20.3115198Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T06:16:20.3115910Z   },
+2026-10-30T06:16:20.3116182Z   {
+2026-10-30T06:16:20.3119121Z     "stem": "PM_2805_80_unknown",
+2026-10-30T06:16:20.3119503Z     "published_lower": null,
+2026-10-30T06:16:20.3120027Z     "published_exact": null,
+2026-10-30T06:16:20.3120374Z     "engines": {
+2026-10-30T06:16:20.3120656Z       "maxsat": {
+2026-10-30T06:16:20.3120939Z         "lb": null,
+2026-10-30T06:16:20.3121233Z         "ub": null,
+2026-10-30T06:16:20.3121547Z         "status": "TIMEOUT_NO_BOUNDS"
+2026-10-30T06:16:20.3121919Z       },
+2026-10-30T06:16:20.3122187Z       "cc": {
+2026-10-30T06:16:20.3122475Z         "lb": 8,
+2026-10-30T06:16:20.3122765Z         "ub": 220,
+2026-10-30T06:16:20.3123080Z         "status": "BOUNDED"
+2026-10-30T06:16:20.3123461Z       }
+2026-10-30T06:16:20.3123760Z     },
+2026-10-30T06:16:20.3124098Z     "explicit_exact_answers": {},
+2026-10-30T06:16:20.3124508Z     "confirmed_exact": null,
+2026-10-30T06:16:20.3124926Z     "exact_minimum_word_gate": "PASS",
+2026-10-30T06:16:20.3125404Z     "actual_verified_upper": 54,
+2026-10-30T06:16:20.3125846Z     "actual_verified_half_uppers": {
+2026-10-30T06:16:20.3126266Z       "X": 54,
+2026-10-30T06:16:20.3126551Z       "Z": 308
+2026-10-30T06:16:20.3126827Z     },
+2026-10-30T06:16:20.3127106Z     "numeric_smoke_gate": "INCOMPLETE",
+2026-10-30T06:16:20.3127505Z     "reported_upper_word_gate": "PASS",
+2026-10-30T06:16:20.3127928Z     "source_upper_word_gate": "NOT_APPLICABLE",
+2026-10-30T06:16:20.3128638Z     "scientific_status": "PLAUSIBLE_SEARCH_BOUNDS; actual GF2 words independently checked",
+2026-10-30T06:16:20.3129394Z     "independent_search_lower_corrob": null,
+2026-10-30T06:16:20.3130067Z     "source_head": "b859a70a30b0be63a26d2d2df68024a406927d54",
+2026-10-30T06:16:20.3130749Z     "binary_sha256": "68f4157e2fb10371d6d35321cb53bd86151fac185172d98936d093a41203aa3a"
+2026-10-30T06:16:20.3131355Z   }
+2026-10-30T06:16:20.3131653Z ]
+2026-10-30T06:16:20.3210379Z ##[group]Run python3 - <<'PY'
+2026-10-30T06:16:20.3210691Z [36;1mpython3 - <<'PY'[0m
+2026-10-30T06:16:20.3210926Z [36;1mfrom pathlib import Path[0m
+2026-10-30T06:16:20.3211186Z [36;1mimport hashlib,json[0m
+2026-10-30T06:16:20.3211636Z [36;1mhashes=json.loads(Path('optimization/experiments/GH-209/raw/retained-sha256.json').read_text())[0m
+2026-10-30T06:16:20.3212109Z [36;1mfor p,h in hashes.items():[0m
+2026-10-30T06:16:20.3212470Z [36;1m    assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==h,p[0m
+2026-10-30T06:16:20.3212873Z [36;1mprint('PASS retained SHA256 identities',len(hashes))[0m
+2026-10-30T06:16:20.3213175Z [36;1mPY[0m
+2026-10-30T06:16:20.3225656Z shell: /usr/bin/bash -e {0}
+2026-10-30T06:16:20.3225911Z ##[endgroup]
+2026-10-30T06:16:20.3698799Z PASS retained SHA256 identities 101
+2026-10-30T06:16:20.3863498Z Post job cleanup.
+2026-10-30T06:16:20.4707518Z [command]/usr/bin/git version
+2026-10-30T06:16:20.4758640Z git version 2.56.0
+2026-10-30T06:16:20.4796899Z Temporarily overriding HOME='/home/runner/work/_temp/6569fe1b-acd5-4355-b3ca-1a5fb4ecbd41' before making global git config changes
+2026-10-30T06:16:20.4798243Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-30T06:16:20.4803782Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DistQLDPC/DistQLDPC
+2026-10-30T06:16:20.4834292Z Removing SSH command configuration
+2026-10-30T06:16:20.4841918Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-30T06:16:20.4875897Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-30T06:16:20.5152325Z Removing HTTP extra header
+2026-10-30T06:16:20.5159805Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-30T06:16:20.5206290Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-30T06:16:20.5423128Z Removing includeIf entries pointing to credentials config files
+2026-10-30T06:16:20.5430929Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-30T06:16:20.5477999Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-30T06:16:20.5478950Z includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-30T06:16:20.5480086Z includeif.gitdir:/github/workspace/.git.path
+2026-10-30T06:16:20.5480789Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-30T06:16:20.5482283Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path
+2026-10-30T06:16:20.5508697Z /home/runner/work/_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:16:20.5520568Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-0ff61930\-854d\-4727\-a5b9\-12daf5d2f76e\.config
+2026-10-30T06:16:20.5565553Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path
+2026-10-30T06:16:20.5635650Z /home/runner/work/_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:16:20.5646338Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DistQLDPC/DistQLDPC/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-0ff61930\-854d\-4727\-a5b9\-12daf5d2f76e\.config
+2026-10-30T06:16:20.5680251Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-30T06:16:20.5704445Z /github/runner_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:16:20.5712647Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-0ff61930\-854d\-4727\-a5b9\-12daf5d2f76e\.config
+2026-10-30T06:16:20.5743407Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-30T06:16:20.5764876Z /github/runner_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config
+2026-10-30T06:16:20.5772168Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-0ff61930\-854d\-4727\-a5b9\-12daf5d2f76e\.config
+2026-10-30T06:16:20.5806349Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-30T06:16:20.5996462Z Removing credentials config '/home/runner/work/_temp/git-credentials-0ff61930-854d-4727-a5b9-12daf5d2f76e.config'
+2026-10-30T06:16:20.6138937Z Cleaning up orphan processes

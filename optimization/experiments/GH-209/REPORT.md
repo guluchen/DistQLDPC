@@ -159,7 +159,7 @@ and data CI41009227430 SUCCESS. No scientific retry. Identical compiled binary
 
 Every actual source/basis/primitive/native word independently GF2 verified.
 Reported-upper-word and exact-minimum-word gates PASS for every case; no
-missing-word job. Both source controls have actual minimum-weight upper words,
+missing-word job. Both source controls have actual words matching their published distances,
 but the255source lower12 has not been reproduced by either native search in
 60seconds. This is an INCOMPLETE control proof, not a contradiction or an
 erratum. Its source exact12 claim remains a source field, never injected into
@@ -186,7 +186,7 @@ Transport decoder/receipt persisted so no evidence relies on expiring artifacts.
 
 Retained-only transitionf8e399c215b0ea11a3b48c4506b4f9187137573a removed native
 commands BEFORE follow-up edits.62local contracts (53original+9server-gate
-planning/allocation/source/queue guards) PASS. Final static Linux pending.
+planning/allocation/source/queue guards) PASS. Final static Linux PASS (run41012928616/job123922652325).
 No additional native searches. Every frozen matrix unchanged; prior300matrix/
 40source-build files and24prior manifest rows unchanged; main/default/tier/
 stem/QDistSAT untouched and no PR. Existing GH200/GH202 holds remain separate.
@@ -207,3 +207,13 @@ unconfirmed targets retain verified upper54 and provisionalCC8. Unresolved:
 server/integration backlog. Scientific semantics changed:no. PI action required:
 future core allocation/integration/held source decisions; routine archive needs
 no extra permission. Whole-library objective remains incomplete.
+
+Final retained-evidence acceptance: source deaae43c8cf57e1ea188b5e729a7025f32a4079e,
+Linux run 41012928616 / job 123922652325, SUCCESS. All 62 contracts passed,
+24 matrix files reproduced byte for byte, the complete original twelve-run
+audit replayed byte for byte, and all 101 then-retained SHA256 identities
+matched. Full 80,652-character acceptance job log is retained. General CI
+41012928576 / job 123922651421 also passed. No solver invocation occurred
+in this acceptance workflow. Original scientific attempts remain exactly 12.
+The four required server jobs and six optional research jobs remain unexecuted;
+scientific limitations and provisional bounds above are unchanged.

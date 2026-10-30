@@ -374,7 +374,7 @@ Final54static Linux replay PASS40995422015; no native reruns/main changes.
 GH209 adds the missing polynomial-minor2x3 cyclic CSS prescription with two
 known controls and four original unconfirmed-distance finite lifts. All13
 paper examples are exact labels; none is misrepresented as published open.
-Current local gates pass; Linux pending. Existing source holds, numeric/server
+Local and Linux static gates pass. Existing source holds, numeric/server
 queues, practical stronger family gaps and main integration remain open.
 
 
@@ -383,4 +383,4 @@ results and all actual words. New targets765/1275/1785/2805 keep upper54,
 CC8PLAU; no independently certified8..54 claim.27control exact4 reproduced;
 255source12proof and two missing default numeric gates give4required jobs.
 Six optional unknown-distance searches do not force exact target completion.
-Final62Linux static replay pending; no native retries or main integration.
+Final62Linux static replay PASS41012928616/job123922652325; no native retries or main integration.

@@ -125,7 +125,7 @@ and data CI41009227430 SUCCESS. No scientific retry. Identical compiled binary
 
 Every actual source/basis/primitive/native word independently GF2 verified.
 Reported-upper-word and exact-minimum-word gates PASS for every case; no
-missing-word job. Both source controls have actual minimum-weight upper words,
+missing-word job. Both source controls have actual words matching their published distances,
 but the255source lower12 has not been reproduced by either native search in
 60seconds. This is an INCOMPLETE control proof, not a contradiction or an
 erratum. Its source exact12 claim remains a source field, never injected into
@@ -134,3 +134,8 @@ or advertised as independently certified8..54. Both-engine conservative new
 intervals are3..54 and5..54 on n765/1275; larger two have no independent search
 lower beyond the trivial positive-weight floor1. Actual upper54 is rigorous.
 No global openness/novelty claim. Original raw fields/audit remain unchanged.
+
+Final Linux retained-evidence contracts passed (run 41012928616): 62 tests,
+24 byte-identical matrix reproductions, all twelve original result/word
+replays, and every retained raw-evidence SHA256 identity. This static
+acceptance adds no native distance search or scientific claim.
