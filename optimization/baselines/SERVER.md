@@ -61,14 +61,14 @@ Binary: main c914ef5 (PR #137: -oddcap-skip=on default; PR #136 re-tier) built o
 
 | Case | Mode | Wall s | Result | Final lb | Final ub | lb reached at (s) | vs cbb0642 (result, lb/ub, wall) |
 |---|---|---:|---|---:|---:|---|---|
-| BB_1080_4_30to48 | card-mto | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@1, 18@2720, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
-| BB_1080_4_30to48 | no-card | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@1, 18@3516, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
+| BB_1080_4_32to48 | card-mto | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@1, 18@2720, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
+| BB_1080_4_32to48 | no-card | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@1, 18@3516, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
 | BB_360_12_24 | card-mto | 21600 | TIMEOUT | 18 | 24 | 2@0, 4@0, 6@0, 10@0, 18@89, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
 | BB_360_12_24 | no-card | 21600 | TIMEOUT | 18 | 24 | 2@0, 4@0, 6@0, 10@0, 18@88, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
-| BB_756_16_30to34 | card-mto | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@0, 18@695, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
-| BB_756_16_30to34 | no-card | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@1, 18@752, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
-| BB_864_4_30to40 | card-mto | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@0, 18@941, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
-| BB_864_4_30to40 | no-card | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@0, 18@904, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
+| BB_756_16_32to34 | card-mto | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@0, 18@695, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
+| BB_756_16_32to34 | no-card | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@1, 18@752, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
+| BB_864_4_32to40 | card-mto | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@0, 18@941, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
+| BB_864_4_32to40 | no-card | 21600 | TIMEOUT | 18 | - | 2@0, 4@0, 6@0, 10@0, 18@904, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
 | LP_1020_136_16 | card-mto | 1309 | solved | 16 | 16 | 2@0, 4@1, 6@2, 10@7, 15@1309, 16@1309 | solved 2316 s -> 1309 s (0.57x) |
 | LP_1020_136_16 | no-card | 1331 | solved | 16 | 16 | 2@0, 4@1, 6@2, 10@12, 15@1331, 16@1331 | solved 8955 s -> 1331 s (0.15x) |
 | LP_1054_140_20 | card-mto | 21600 | TIMEOUT | 18 | 32 | 2@0, 4@1, 6@2, 10@10, 18@9275, 18@21600 | TIMEOUT both; lb 17 -> 18, ub = |
@@ -91,26 +91,26 @@ Binary: main c914ef5 (PR #137: -oddcap-skip=on default; PR #136 re-tier) built o
 | TN_288_2_22to24 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@1, 9@14, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_324_4_22to25 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@1, 9@17, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_324_4_22to25 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@1, 9@14, 9@21600 | TIMEOUT both; lb =, ub = |
-| TN_360_4_17to24 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@6, 17@5435, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_360_4_17to24 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@5, 17@5672, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_396_4_17to26 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@8, 17@4423, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_396_4_17to26 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@10, 17@4649, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_360_4_23to24 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@6, 17@5435, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_360_4_23to24 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@5, 17@5672, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_396_4_23to26 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@8, 17@4423, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_396_4_23to26 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@10, 17@4649, 17@21600 | TIMEOUT both; lb =, ub = |
 | TN_432_8_23to29 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@2, 9@22, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_432_8_23to29 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@3, 9@22, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_468_4_17to29 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@10, 17@10900, 17@21600 | TIMEOUT both; lb =, ub = |
 | TN_468_4_17to29 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@10, 17@9129, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_496_2_23to30 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@6, 17@11949, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_496_2_23to30 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@6, 17@10690, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_504_2_17to34 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@10, 17@5416, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_504_2_17to34 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@1, 9@7, 17@5210, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_496_2_27to30 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@6, 17@11949, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_496_2_27to30 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@6, 17@10690, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_504_2_24to34 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@0, 9@10, 17@5416, 17@21600 | TIMEOUT both; lb =, ub = |
+| TN_504_2_24to34 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@1, 9@7, 17@5210, 17@21600 | TIMEOUT both; lb =, ub = |
 | TN_540_4_23to34 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@4, 9@31, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_540_4_23to34 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@3, 9@34, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_576_2_24to37 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@5, 9@34, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_576_2_24to37 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@6, 9@39, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_612_2_17to40 | card-mto | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@1, 9@9, 17@5635, 17@21600 | TIMEOUT both; lb =, ub = |
 | TN_612_2_17to40 | no-card | 21600 | TIMEOUT | 17 | - | 2@0, 3@0, 5@1, 9@10, 17@4640, 17@21600 | TIMEOUT both; lb =, ub = |
-| TN_648_10_9to32 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@6, 9@64, 9@21600 | TIMEOUT both; lb =, ub = |
-| TN_648_10_9to32 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@1, 5@8, 9@70, 9@21600 | TIMEOUT both; lb =, ub = |
+| TN_648_10_22to32 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@6, 9@64, 9@21600 | TIMEOUT both; lb =, ub = |
+| TN_648_10_22to32 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@1, 5@8, 9@70, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_648_14_9to28 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@8, 9@62, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_648_14_9to28 | no-card | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@6, 9@74, 9@21600 | TIMEOUT both; lb =, ub = |
 | TN_684_2_9to29 | card-mto | 21600 | TIMEOUT | 9 | - | 2@0, 3@0, 5@1, 9@15, 9@21600 | TIMEOUT both; lb =, ub = |
@@ -144,10 +144,10 @@ Binary: main c914ef5 (PR #137: -oddcap-skip=on default; PR #136 re-tier) built o
 | TN_144_2_13 | 3 | card-mto | 514.77 | 3 | no |
 | LP_714_100_16 | 4 | card-mto | 626.02 | 3 | tier4 -> tier3 |
 | TN_250_10_15 | 4 | card-mto | 2865.61 | 4 | no |
-| BB_1080_4_30to48 | 5 | card-mto | unsolved | 5 | no |
+| BB_1080_4_32to48 | 5 | card-mto | unsolved | 5 | no |
 | BB_360_12_24 | 5 | card-mto | unsolved | 5 | no |
-| BB_756_16_30to34 | 5 | card-mto | unsolved | 5 | no |
-| BB_864_4_30to40 | 5 | card-mto | unsolved | 5 | no |
+| BB_756_16_32to34 | 5 | card-mto | unsolved | 5 | no |
+| BB_864_4_32to40 | 5 | card-mto | unsolved | 5 | no |
 | LP_1020_136_16 | 5 | no-card | 1331.10 | 3 | tier5 -> tier3 |
 | LP_1054_140_20 | 5 | card-mto | unsolved | 5 | no |
 | LP_1122_148_20 | 5 | card-mto | unsolved | 5 | no |
@@ -159,16 +159,16 @@ Binary: main c914ef5 (PR #137: -oddcap-skip=on default; PR #136 re-tier) built o
 | TN_252_2_21 | 5 | card-mto | unsolved | 5 | no |
 | TN_288_2_22to24 | 5 | card-mto | unsolved | 5 | no |
 | TN_324_4_22to25 | 5 | card-mto | unsolved | 5 | no |
-| TN_360_4_17to24 | 5 | card-mto | unsolved | 5 | no |
-| TN_396_4_17to26 | 5 | card-mto | unsolved | 5 | no |
+| TN_360_4_23to24 | 5 | card-mto | unsolved | 5 | no |
+| TN_396_4_23to26 | 5 | card-mto | unsolved | 5 | no |
 | TN_432_8_23to29 | 5 | card-mto | unsolved | 5 | no |
 | TN_468_4_17to29 | 5 | card-mto | unsolved | 5 | no |
-| TN_496_2_23to30 | 5 | card-mto | unsolved | 5 | no |
-| TN_504_2_17to34 | 5 | card-mto | unsolved | 5 | no |
+| TN_496_2_27to30 | 5 | card-mto | unsolved | 5 | no |
+| TN_504_2_24to34 | 5 | card-mto | unsolved | 5 | no |
 | TN_540_4_23to34 | 5 | card-mto | unsolved | 5 | no |
 | TN_576_2_24to37 | 5 | card-mto | unsolved | 5 | no |
 | TN_612_2_17to40 | 5 | card-mto | unsolved | 5 | no |
-| TN_648_10_9to32 | 5 | card-mto | unsolved | 5 | no |
+| TN_648_10_22to32 | 5 | card-mto | unsolved | 5 | no |
 | TN_648_14_9to28 | 5 | card-mto | unsolved | 5 | no |
 | TN_684_2_9to29 | 5 | card-mto | unsolved | 5 | no |
 
