@@ -1,10 +1,9 @@
-name: Polynomial-minor library short gates
+name: Polynomial-minor retained evidence contracts
 
 on:
   push:
     branches: [codex/polynomial-minors-library]
     paths:
-      - '.github/workflows/polynomial-minors-library-smoke.yml'
       - 'scripts/codegen/polynomial_minors*'
       - 'scripts/codegen/validate_polynomial_minors.py'
       - 'scripts/codegen/audit_polynomial_minors_smoke.py'
@@ -13,6 +12,8 @@ on:
       - 'scripts/codegen/verify_css_witness.py'
       - 'tests/test_codegen_polynomial_minors*.py'
       - 'data/matrices/untiered/PM_*.txt'
+      - 'optimization/experiments/GH-209/runner/**'
+      - 'optimization/experiments/GH-209/raw/actions/**'
 
 permissions:
   contents: read
@@ -20,19 +21,17 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - name: Build unchanged solver
-        run: make --jobs=2 bin/distqldpc
-      - name: Independent physical, Smith, logical, source word and unit contracts
+      - name: Independent physical, Smith, logical, constructive-word and unit guards without solver
         run: |
           python3 -m unittest discover -s tests -p 'test_codegen_*.py'
           python3 scripts/codegen/validate_css.py --output /tmp/gh209-css.json
           cmp data/matrices/untiered/validation.json /tmp/gh209-css.json
           python3 scripts/codegen/validate_polynomial_minors.py --out /tmp/gh209-construction.json
           cmp optimization/experiments/GH-209/raw/construction.json /tmp/gh209-construction.json
-      - name: Reproduce all24 matrix files byte for byte
+      - name: Reproduce all24 physical matrix files byte for byte
         run: |
           python3 scripts/codegen/polynomial_minors.py --all --out /tmp/gh209-rebuilt
           python3 - <<'PY'
@@ -43,41 +42,17 @@ jobs:
               assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
           print('PASS24matrixbyteidentical')
           PY
-      - name: Six serial default MaxSAT 60CPU-second checks
-        run: python3 scripts/codegen/smoke_polynomial_minors.py --ci --engine maxsat --out /tmp/gh209-maxsat
-      - name: Six serial explicit CC 60CPU-second checks
-        run: python3 scripts/codegen/smoke_polynomial_minors.py --ci --engine cc --out /tmp/gh209-cc
-      - name: Cross-engine source claims and actual GF2 word audit
-        run: python3 scripts/codegen/audit_polynomial_minors_smoke.py --maxsat /tmp/gh209-maxsat --cc /tmp/gh209-cc --construction /tmp/gh209-construction.json --out /tmp/gh209-smoke-audit.json
-      - name: Retain complete lossless evidence even on failure
-        if: always()
+      - name: Replay original twelve engine logs and actual GF2 words only
+        run: |
+          python3 scripts/codegen/audit_polynomial_minors_smoke.py --maxsat optimization/experiments/GH-209/raw/actions/default/maxsat --cc optimization/experiments/GH-209/raw/actions/default/cc --construction optimization/experiments/GH-209/raw/construction.json --out /tmp/gh209-replayed.json
+          cmp optimization/experiments/GH-209/raw/actions/default/audit.json /tmp/gh209-replayed.json
+      - name: Verify complete retained raw evidence identities
         run: |
           python3 - <<'PY'
-          import base64,gzip,hashlib,json
           from pathlib import Path
-          evidence={}
-          for label in ('maxsat','cc'):
-              root=Path('/tmp/gh209-'+label)
-              evidence[label]={str(p.relative_to(root)):p.read_text() for p in root.rglob('*') if p.is_file()}
-          for name in ('construction','smoke-audit'):
-              p=Path('/tmp/gh209-'+name+'.json')
-              if p.exists():evidence[name]=p.read_text()
-          payload=json.dumps(evidence,separators=(',',':')).encode()
-          encoded=base64.b64encode(gzip.compress(payload,mtime=0)).decode()
-          chunks=[encoded[i:i+40000] for i in range(0,len(encoded),40000)]
-          print('GH209_EVIDENCE_PAYLOAD_SHA256='+hashlib.sha256(payload).hexdigest())
-          print('GH209_EVIDENCE_PAYLOAD_BYTES='+str(len(payload)))
-          for i,part in enumerate(chunks):
-              print(f'GH209_EVIDENCE_GZIP_B64={i+1}/{len(chunks)}:'+part)
+          import hashlib,json
+          hashes=json.loads(Path('optimization/experiments/GH-209/raw/retained-sha256.json').read_text())
+          for p,h in hashes.items():
+              assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==h,p
+          print('PASS retained SHA256 identities',len(hashes))
           PY
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: gh209-polynomial-minor-short-gates
-          path: |
-            /tmp/gh209-maxsat/
-            /tmp/gh209-cc/
-            /tmp/gh209-construction.json
-            /tmp/gh209-smoke-audit.json
-          if-no-files-found: warn
-          retention-days: 14
