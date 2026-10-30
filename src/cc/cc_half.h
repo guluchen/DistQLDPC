@@ -78,6 +78,30 @@
  *         it would drop both e and e + g (mutant 10). With the leaf rule, children of remaining budget 1 or 2
  *         (whose subtrees are lookups only) skip the counter updates: a closure found there is a weight-w element
  *         of F and meets every limit by itself. Full proof: MODIFICATIONS.md (GH-138).
+ *   tiebreak (GH-162, default off, acts only with overlap; the first(g) tie-break idea of Qubitserf 04b9349, S.
+ *         Cercelescu, MIT, re-derived here) cuts the even-|g| tie soundly. Seeds r_1, r_2, .. with blocks O_1, O_2, ..
+ *         (orbits, or single qubits under the index rule); while r_i is searched, O_1..O_{i-1} are forbidden. For each
+ *         seed fix a total order pi_i whose FIRST qubit is r_i (here: r_i, then the qubits of O_1..O_{i-1} in block
+ *         order, then the rest in descending relabeled label), and compare supports by e <_i e' iff the pi_i-first qubit
+ *         of e (+) e' lies in e. (A) Let j be the smallest index such that some weight-w element of F contains r_j and
+ *         avoids O_1..O_{j-1} (j exists: move any element by a verified automorphism so that its first met block's
+ *         member becomes the representative). Then EVERY weight-w element of F avoids O_1..O_{j-1}: an element meeting
+ *         O_i, i < j, could be moved into the set of index i (its first met block), contradicting the choice of j.
+ *         (B) Let e* be the <_j-least weight-w element of F. Some element contains r_j, the pi_j-first qubit, so e* does;
+ *         by (A) e* avoids O_1..O_{j-1}: e* is a target of seed r_j. (C) For every even row g of K with
+ *         |e* & g| = |g|/2, first_j(g) is in e*: otherwise e* + g (in F, weight w, differs from e* exactly on g) contains
+ *         first_j(g) and is <_j e*. Hence |e* & g'| <= |g|/2 - 1 = floor(|g'|/2) for g' = g \ {first_j(g)}: while r_j is
+ *         searched, the rule counts g' with the limit |g|/2 - 1 and the ordinary overlap forbidding (g' \ S once
+ *         tight; first(g) stays free); no node S inside e* is pruned and no qubit of e* is forbidden. A first(g) in
+ *         O_1..O_{j-1} (forbidden) makes the tie impossible, which (C) also covers. Every other rule keeps an ARBITRARY
+ *         fixed weight-w target reachable (excl: only siblings outside the target before its first candidate are
+ *         forbidden; pack/leaf/mrv/parity: counting and lookups over free qubits; overlap: every weight-w element
+ *         satisfies the limits) except the seed rule, which needs (A)+(B). So seed r_j finds an element of weight w
+ *         (unless an earlier seed already did; every hit is a genuine element, checked). Seeds other than r_j may prune
+ *         anything: a FOUND is always genuine and the level is decided by r_j's search. The orders differ between seeds
+ *         (one global order is not needed); the relabeling (-cc-seed) only changes the labels. The dual map and the stop
+ *         rule act between halves and are unaffected. An order that does not put r_i first breaks (B) (mutant 18).
+ *         Full proof: MODIFICATIONS.md (GH-162).
  *   charge (GH-157, default on since the PI's adoption decision of 2026-10-29; Banfi, Ferrari, Favano, Tarable, Barletta, arXiv:2610.28008, detector charges; Okada-Kasai,
  *         cpm-ldpc-distance, scaled feasible dual of set cover) node lower bound from a feasible dual of the hitting-set
  *         LP. At a node with odd rows U and available qubits A (not in S, not forbidden), every extension e of weight w
@@ -114,8 +138,9 @@ struct SparseRows {
 
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
-    bool charge;   /* GH-157 node lower bound, default on (PI, 2026-10-29) */
-    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true) {}
+    bool charge;     /* GH-157 node lower bound, default on (PI, 2026-10-29) */
+    bool tiebreak;   /* GH-162 (default off; acts only with overlap) */
+    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true), tiebreak(false) {}
 };
 
 /* GH-157: node lower bound on the hitting set tau of the candidate sets of the odd rows, exposed for tests. The k
@@ -178,7 +203,9 @@ struct LevelResult {
  * mutants: 8 limit off by one (floor(|g|/2) - 1: a row is tight one qubit early), 9 the parity checks H used as K
  * (rows of H are not in ker H in general), 10 the even-|g| tie cut (limit |g|/2 - 1 for even |g|, which loses
  * both e and e + g when |e & g| = |g|/2). GH-157 (13 and 14 are GH-152's): 15 charge inflated by 1/D (every y_u gets
- * an extra L/D).
+ * an extra L/D). GH-162 tiebreak (16 is reserved for GH-157): 17 the naive tie cut through the tiebreak rule (every
+ * even row keeps first(g) and gets the limit |g|/2 - 1), 18 the seed is not put first in the tie-break order (first(g)
+ * is taken in the base order also on the rows through the seed, where the seed comes last: an orbit-incompatible order).
  * (GH-124 fix round 1: the S0 spec's literal mutant 3, "orbit seeds without forbidding earlier orbits", only
  * drops a restriction and is a sound weakening that can never change a level verdict, so it was replaced by
  * this non-equivalent orbit-rule mutant. GH-133: the spec's literal leaf mutant, "leaf lookup ignoring the
@@ -230,6 +257,8 @@ public:
     int overlap_min_weight() const { return kminw_; }
     int overlap_max_weight() const { return kmaxw_; }
     int overlap_zero_rows() const { return kzero_; }
+    /* tiebreak (GH-162): even rows replaced by g \ {first(g)} (before deduplication) */
+    int tiebreak_rows() const { return ktie_; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;
@@ -251,11 +280,16 @@ private:
     uint64_t hmask_;
     /* overlap (GH-138): stabilizer rows (relabeled, ascending), qubit -> rows, per-row limit and counter */
     bool ovr_;
-    int nk_, kminw_, kmaxw_, kzero_;
+    int nk_, kminw_, kmaxw_, kzero_, ktie_;
     std::vector<uint32_t> kstart_, kq_;
     std::vector<uint32_t> kcstart_, kcr_;
     std::vector<int> klim_;
     std::vector<int32_t> slack_;            /* per row: lim_g - |S & g| (0: tight, the rest of g forbidden) */
+    /* tiebreak (GH-162): rule in force (not under mutant 17); base order rank per qubit (smaller = earlier); per row the
+     * exempt qubit first(g) for the current seed and in the base order (-1: odd row or rule off) */
+    bool tb_;
+    std::vector<uint32_t> tbrank_;
+    std::vector<int32_t> kex_, kexbase_, kexfb_;   /* kexfb_: exempt qubit in an exhausted seed block (-1: none yet) */
     uint64_t ovtight_, ovforbid_;           /* per-level counters (copied into the LevelResult) */
     /* GH-157 charge: minimum remaining budget, candidate CSR of the odd rows, scratch */
     int lbminr_, lbgap_, lbauto_;
@@ -287,6 +321,11 @@ private:
     void toggle(int q);
     void ov_add(int q);
     void ov_del(int q);
+    void ov_add_tb(int q);
+    void ov_del_tb(int q);
+    void tb_set(uint32_t g, int32_t x);
+    void tb_seed(int s, bool on);
+    void tb_block_done(size_t bi);
     bool gpar_nonzero() const;
     bool gpar_nonzero_with(int q) const;
     bool column_is_syndrome(int q) const;

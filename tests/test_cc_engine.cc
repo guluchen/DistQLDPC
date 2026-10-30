@@ -64,7 +64,8 @@
 //   symmetry) with orbits from the Tanner generators under the GF(2) checks, all 128 rule subsets x seeds 0..2 vs brute force;
 //   Part H = driver with -cc-aut=on on relabeled hypergraph products (hidden transpose XZ duality) and relabeled random codes;
 //   mutants 13 (candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and 14 (swap map / identity used as dual map
-//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH]]]].
+//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT]]]]].
+// GH-162 (rule tiebreak): Part T (half level, below), and tiebreak driver configurations in Parts B and H.
 // Part G (GH-148, -stab-overlap on the MaxSAT path): (a) encoding check: on one row g of weight w = 1..14 with the
 //   objective "maximize the true qubits" (soft clauses x_i), MaxCDCL's optimum must be w - floor(|g|/2) for the
 //   binomial and the sequential-counter encodings and the native MaxCDCL propagator (at most floor(|g|/2) true, and that many reachable). (b) The MaxSAT
@@ -181,13 +182,14 @@ static std::vector<int> orbits_of(const std::vector<Mask>& H, const std::vector<
 static distcc::Rules rules_of(int mask) {
     distcc::Rules r; r.excl = mask & 1; r.pack = mask & 2; r.orbf = mask & 4; r.mrv = mask & 8; r.parity = mask & 16; r.leaf = mask & 32;
     r.overlap = mask & 64; r.charge = mask & 128;   // GH-157
+    r.tiebreak = mask & 256;   // GH-162 (Part T and the tiebreak driver configurations; the older parts use masks < 128)
     return r;
 }
 static const int RM_CHG = 128;   // GH-157
 static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule set (excl,pack,orbf,parity,leaf,overlap,charge)
-static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128;
+static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 256;   // RM_TB: GH-162
 static const char* rules_name(int mask) {
-    static char buf[64];
+    static char buf[128];
     distcc::Rules r = rules_of(mask);
     snprintf(buf, sizeof(buf), "%s", distcc::rules_string(r).c_str());
     return buf;
@@ -468,7 +470,7 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[13] = {0}, mut_runs[13] = {0};
+    long mut_bad[19] = {0}, mut_runs[19] = {0};
     long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
         const int n = 4 + (int)rnd(15);
@@ -659,6 +661,9 @@ int main(int argc, char** argv) {
             {"oldrules", RM_OLD, true, false, 0, true}, {"oldrules-seed1", RM_OLD, false, false, 1, true},
             {"gh133rules", RM_133, true, false, 0, true}, {"overlap-only", 64, true, false, 0, true},
             {"overlap-index", 1 | 2 | 64, true, true, 2, false},
+            {"tiebreak", RM_DEF | RM_TB, true, false, 0, true}, {"tiebreak-dual-off-seed1", RM_DEF | RM_TB, false, false, 1, true},   // GH-162 (default rules + tiebreak)
+            {"tiebreak-mrv-seed2", RM_ALL | RM_CHG | RM_TB, true, true, 2, true}, {"tiebreak-index", 1 | 2 | 64 | RM_TB, false, false, 3, false},
+            {"tiebreak-overlap-orbf", 4 | 64 | RM_TB, true, false, 0, true}, {"tiebreak-nocharge", RM_NEW | RM_TB, true, false, 1, true},
             {"charge", RM_NEW | RM_CHG, true, false, 0, true, 3, 0}, {"charge-minr1-gapinf", RM_NEW | RM_CHG, false, true, 1, true, 1, 1000},
             {"charge-minr1", RM_NEW | RM_CHG, true, false, 2, false, 1, 1}, {"charge-nopack-minr1", 1 | 4 | 16 | 32 | 64 | RM_CHG, true, false, 0, true, 1, 0},
         };
@@ -1290,6 +1295,8 @@ int main(int argc, char** argv) {
             {"aut-oldrules", RM_OLD, true, false, 0, true, 0}, {"aut-133-seed2", RM_133, false, true, 2, true, 0},
             {"aut-mrv", RM_ALL, true, false, 0, true, 0}, {"aut-overlap-only", 64, true, false, 0, true, 0},
             {"aut-orbf-only", 4, true, true, 3, true, 0}, {"aut-excl-orbf", 1 | 4, false, false, 0, true, 0},
+            {"aut-tiebreak", RM_DEF | RM_TB, true, false, 0, true, 0}, {"aut-tiebreak-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0},   // GH-162
+            {"aut-tiebreak-excl-orbf-overlap", 1 | 4 | 64 | RM_TB, false, false, 2, true, 0},
             {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
             {"mutant14", RM_NEW, true, false, 0, true, 14},
         };
@@ -1319,6 +1326,114 @@ int main(int argc, char** argv) {
            h_m14_bad, h_m14_runs);
     if (h_newdual == 0 || h_coarser == 0) { fprintf(stderr, "CC_FAIL GH-152 partH: the new dual-map / orbit paths were not exercised\n"); fails++; }
     if (g_m13_bad == 0 || h_m13_bad == 0 || h_m14_bad == 0) { fprintf(stderr, "CC_FAIL GH-152 mutant expectations not met\n"); fails++; }
+
+    // ---------------- GH-162 Part T: tiebreak (orbit-compatible even-weight overlap tie-break) at half level ----------------
+    // Random halves as in Parts A and G: a third with a planted GH-75 shift (family orbits), a third closed under a planted
+    // shift and RELABELED (orbits from the -cc-aut Tanner generators under the GF(2) checks), a third without symmetry;
+    // every fourth with all column weights odd. K: a basis of ker [H; G], its elements of weight <= 6 (at most 60), only
+    // its EVEN elements of weight <= 8 (at most 80; weight-2 rows included: limit 0 after the cut), or random sums. Ladders for the 64
+    // subsets of {excl, pack, orbf, mrv, parity, leaf} with overlap+tiebreak x relabeling seeds 0..3 vs brute force (every
+    // witness checked in GF(2) by ladder_ok). Counted: instances where the cut binds, i.e. some minimum element e of F has a
+    // tie |e & g| = |g|/2 on an even row g with first(g) not in e in the base order (descending label, seed ignored), so the
+    // rule removes elements of F of weight d_h. Mutants 17 (naive tie cut through the tiebreak path: limit |g|/2 - 1 on the
+    // full row) and 18 (the seed is not put first: orbit-incompatible order) must give wrong ladders on some instance.
+    const int NT = argc > 5 ? atoi(argv[5]) : 300;
+    long t_inst = 0, t_orb = 0, t_hidden = 0, t_runs = 0, t_bad = 0, t_bind = 0, t_bind_orb = 0, t_odd = 0, t_k2 = 0, t_m18_orb = 0;
+    for (int inst = 0; inst < NT; inst++) {
+        const int n = 4 + (int)rnd(15);
+        const int kind = inst % 3;   // 0 planted shift, 1 relabeled planted shift (-cc-aut), 2 none
+        std::vector<std::vector<int> > gens;
+        if (kind != 2) {
+            std::vector<int> divs;
+            for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+            const int L = divs[rnd((unsigned)divs.size())];
+            gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+        }
+        std::vector<Mask> h0, g0;
+        const int nh = 1 + (int)rnd((unsigned)(n / 2 + 2)), ng = 1 + (int)rnd(3);
+        for (int k = 0; k < nh; k++) h0.push_back(rand_vec(n, 2, 5));
+        for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+        std::vector<Mask> H = closure(h0, gens, 64), G = closure(g0, gens, 32);
+        if (G.empty()) G.push_back(1u << rnd(n));
+        if (inst % 4 == 0) make_columns_odd(H, n);
+        if (kind == 1) {
+            std::vector<int> rho(n);
+            for (int i = 0; i < n; i++) rho[i] = i;
+            for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+            for (Mask& v : H) v = perm_apply(rho, v);
+            for (Mask& v : G) v = perm_apply(rho, v);
+        }
+        const int dh = half_opt(H, G, n);
+        std::vector<Mask> kerHG, basis, K;
+        {
+            Span sp;
+            for (Mask v = 1; v < (1u << n); v++) {
+                if (!in_kernel(H, v) || detected(G, v)) continue;
+                kerHG.push_back(v);
+                if (sp.add(v)) basis.push_back(v);
+            }
+        }
+        const int kk = (inst / 3) % 4;
+        if (kk == 0) K = basis;
+        else if (kk == 1) { for (Mask v : kerHG) if (popc(v) <= 6 && K.size() < 60) K.push_back(v); }
+        else if (kk == 2) { for (Mask v : kerHG) if (popc(v) <= 8 && !odd(v) && K.size() < 80) K.push_back(v); }
+        else if (!basis.empty())
+            for (int t = 0, T = 1 + (int)rnd(8); t < T; t++) {
+                Mask v = 0;
+                for (Mask b : basis) if (rnd(2)) v ^= b;
+                if (v) K.push_back(v);
+            }
+        for (Mask g : K) if (popc(g) == 2) { t_k2++; break; }
+        std::vector<int> orb;
+        if (kind == 0) orb = orbits_of(H, G, n);
+        else if (kind == 1) {
+            const distcc::SparseRows Hr = to_rows(H, n), Gr = to_rows(G, n);
+            const std::vector<const distcc::SparseRows*> cls = {&Hr, &Gr};
+            const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, false);
+            const HalfSymInfo ext = find_half_symmetry(to_matrix(H, n), to_matrix(G, n), &ar.gens);
+            if ((int)ext.reps.size() < n) { orb = ext.orbit_of; t_hidden++; }
+        }
+        t_inst++; if (!orb.empty()) t_orb++; if (all_odd(H, n)) t_odd++;
+        if (getenv("CC_TEST_PROGRESS")) fprintf(stderr, "partT inst %d n %d kind %d d_h %d |K| %zu orbits %d\n", inst, n, kind, dh, K.size(), (int)!orb.empty());
+        bool bind = false;   // the cut removes a minimum element in the base order
+        if (dh > 0)
+            for (Mask v = 1; v < (1u << n) && !bind; v++) {
+                if (popc(v) != dh || !in_kernel(H, v) || !detected(G, v)) continue;
+                for (Mask g : K) {
+                    if (popc(g) < 2 || odd(g) || 2 * popc(g & v) != popc(g)) continue;
+                    const int f = 31 - __builtin_clz(g);   // first(g) in the base order = largest label
+                    if (!((v >> f) & 1)) { bind = true; break; }
+                }
+            }
+        if (bind) { t_bind++; if (!orb.empty()) t_bind_orb++; }
+        for (int sub = 0; sub < 64; sub++) {
+            for (uint64_t seed = 0; seed < 4; seed++) {
+                const int rm = sub | 64 | RM_TB | (seed & 1 ? RM_CHG : 0);   // odd seeds add the default rule charge (GH-157)
+                std::string why;
+                t_runs++;
+                if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, 0, NULL, why)) {
+                    t_bad++; fails++;
+                    if (t_bad <= 10) fprintf(stderr, "CC_FAIL GH-162 partT inst=%d n=%d kind=%d rules=%s seed=%llu: %s\n", inst, n, kind,
+                                             rules_name(rm), (unsigned long long)seed, why.c_str());
+                }
+            }
+            for (int mt = 17; mt <= 18; mt++)
+                for (uint64_t seed = 0; seed < 4; seed++) {
+                    const int rm = sub | 64 | RM_TB | (seed & 1 ? RM_CHG : 0);
+                    std::string why;
+                    mut_runs[mt]++;
+                    if (!ladder_ok(H, G, K, n, dh, orb, rm, seed, mt, NULL, why)) { mut_bad[mt]++; if (mt == 18 && !orb.empty() && (sub & 4)) t_m18_orb++; }
+                }
+        }
+    }
+    printf("GH-162 partT: %ld half instances (%ld with orbits, %ld of them hidden -cc-aut orbits; %ld all-odd; %ld with a weight-2 row in K), "
+           "%ld where the cut removes a minimum element (%ld with orbits), %ld ladder runs (64 rule subsets with overlap,tiebreak x 4 seeds; charge on seeds 1 and 3), %ld bad\n",
+           t_inst, t_orb, t_hidden, t_odd, t_k2, t_bind, t_bind_orb, t_runs, t_bad);
+    printf("mutant 17 (tiebreak without the first(g) exemption: naive tie cut): %ld/%ld half ladders wrong\n", mut_bad[17], mut_runs[17]);
+    printf("mutant 18 (tiebreak order without the seed first: orbit-incompatible): %ld/%ld half ladders wrong (%ld with orbit seeds)\n",
+           mut_bad[18], mut_runs[18], t_m18_orb);
+    if (NT > 0 && (t_bind == 0 || t_bind_orb == 0)) { fprintf(stderr, "CC_FAIL GH-162 partT: the cut never binds\n"); fails++; }
+    if (NT > 0 && (mut_bad[17] == 0 || mut_bad[18] == 0)) { fprintf(stderr, "CC_FAIL GH-162 mutant expectations not met\n"); fails++; }
 
     // ---------------- Part C: mutants ----------------
     printf("mutant 1 (forbidden set not restored): %ld/%ld half ladders wrong\n", mut_bad[1], mut_runs[1]);
