@@ -113,7 +113,8 @@ done
 for f in -ub-basis -ub-basis=on -ub-basis=off -cc-rules=mrv -cc-rules=none -cc-rules=parity,leaf -cc-dual=on -cc-dual=off -cc-seed=1 \
          "-cc-trace=$tmp/trace.txt" -cc-stats -cc-mutant=2 -cc-mutant=0 -cc-mutant=7 -cc-mutant=10 -cc-schedule=sequential \
          -cc-schedule=lockstep -cc-rules=overlap -ub-search=on -ub-search=off -ub-search=budget:5 -cc-ub-only -cc-ub-pre=1 \
-         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12 -cc-aut=on -cc-aut=off -cc-mutant=13 -cc-mutant=14; do
+         -cc-ub-share=0.2 -cc-ub-triples=10 -cc-ub-slack=2 -cc-mutant=11 -cc-mutant=12 -cc-aut=on -cc-aut=off -cc-mutant=13 -cc-mutant=14 \
+         -cc-rules=charge -cc-lb-minr=2 -cc-lb-gap=1 -cc-lb-raise=off -cc-lb-auto=0 -cc-mutant=15; do
     reject "need -engine=cc or -engine=auto" "$f" $L $M
     reject "need -engine=cc or -engine=auto" -engine=maxsat "$f" $L $M
 done
@@ -121,9 +122,11 @@ reject "need -engine=cc or -engine=auto" -cc-rules=mrv -cc-mutant=2 -engine=maxs
 reject "need -engine=cc or -engine=auto" -engine=cc -engine=maxsat -ub-basis $L $M   # the last -engine= wins
 
 # 4. invalid values
-for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=15 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
+for f in -cc-seed=abc -cc-seed=-1 -cc-seed= -cc-seed=1x -cc-mutant=16 -cc-mutant=-1 -cc-mutant=x -cc-mutant= \
          -cc-trace= -cc-schedule=fast -ub-basis=maybe -cc-rules=bogus -cc-rules= -cc-rules=excl,,pack -cc-rules=excl, \
-         -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-dual=maybe -cc-aut -cc-aut= -cc-aut=maybe -cc-aut=ON -cc-autx -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
+         -cc-rules=parity, -cc-rules=Leaf -cc-rules=overlap, -cc-rules=Overlap -cc-rules=ovl -cc-rules=Charge -cc-rules=charge, -cc-dual=maybe \
+         -cc-aut -cc-aut= -cc-aut=maybe -cc-aut=ON -cc-autx -cc-rules=ecover -cc-lb-minr=0 -cc-lb-minr= -cc-lb-minr=x -cc-lb-minr=1001 -cc-lb-gap= -cc-lb-gap=-1 \
+         -cc-lb-gap=x -cc-lb-gap=1001 -cc-lb-raise= -cc-lb-raise=no -cc-lb-auto= -cc-lb-auto=101 -cc-lb-auto=x -cc-unknown -engine=fast -seed=abc -seed=-1 -seed= -seed=1x; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 # GH-140: -ub-search values and the finder's tuning flags
@@ -160,6 +163,13 @@ accept 2 "" -engine=cc -cc-rules=excl,pack,orbf $L $C                           
 accept 2 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C                                       # GH-133 rule set
 accept 3 "" -engine=cc -cc-rules=overlap $L $M                                                          # GH-138 rule alone
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,mrv -cc-seed=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge $L $M                         # GH-157 rules
+accept 2 "" -engine=cc -cc-rules=charge -cc-lb-minr=1 $L $C
+accept 2 "" -engine=cc -cc-rules=charge,mrv -cc-lb-minr=2 -cc-seed=2 $L $C
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-gap=2 -cc-lb-minr=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-raise=off -cc-lb-minr=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-auto=0 -cc-lb-minr=1 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-lb-auto=100 $L $M
 accept 2 "" -oddcap-skip=on $L $C                                                                       # GH-133 MaxSAT flag
 accept 2 "" -oddcap-skip=off -card-mto $L $C
 accept 3 "" -oddcap-skip=on -no-card $L $M
@@ -243,7 +253,8 @@ vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
 # 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
-vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,charge, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf, " -v -engine=cc -cc-rules=excl,pack,orbf $L $C
 vgrep 2 "^c cc: X half parity: on (column weights 3..5, all odd)" -v -engine=cc $L $C
@@ -254,6 +265,13 @@ vgrep 2 "^c cc: X half level 1 skipped\|^c d_lb: 2" -v -engine=cc $L $C
 vgrep 2 "^c cc-stats: X level 2 FOUND nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 [0-9]* ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats -ub-basis=off -ub-search=off $L $C
 vgrep 3 "^c cc-stats: X level 1 EMPTY nodes [0-9]* seeds [0-9]* closed [0-9]* nocand [0-9]* packprune [0-9]* parprune 0 leaf1 [0-9]* leaf2 0 ovtight [0-9]* ovforbid [0-9]* time" -engine=cc -cc-stats $L $M
 vgrep 3 "^c cc-stats: X level 2 EMPTY .* ovtight 0 ovforbid 0 time" -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf $L $M
+# 7b'. GH-157: the node-lower-bound line and stats lines appear only with the new rules
+vgrep 3 "^c cc: node lower bound charge at remaining budget >= 3 and budget - packing <= 0, auto off below 40 % (GH-157)" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge $L $M
+vgrep 3 "^c cc-stats: X level 2 lb lbeval [0-9]* chgprune [0-9]* lbdead [0-9]*" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 -cc-lb-gap=5 $L $M
+vgrep 3 "^c cc-stats: X level 2 lbprune-by-budget" -engine=cc -cc-stats -cc-rules=charge -cc-lb-minr=1 $L $M
+runs=$((runs + 1)); run -v -engine=cc -cc-stats -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $M
+if grep -q "node lower bound\|lbeval\|lbprune" <<<"$out"; then echo "FAIL (GH-157 lines printed without charge)" >&2; fails=$((fails + 1)); fi
+vgrep 3 "^c cc: node lower bound charge at remaining budget >= 3" -v -engine=cc $L $M   # GH-157: charge is a default rule
 # 7c. GH-138: overlap decision per half (K = same-type stabilizer rows; TN_36_8_3 rows have weight 4..6)
 vgrep 3 "^c cc: X half overlap: on ([0-9]* stabilizer rows of Hx, weights [0-9]*\.\.[0-9]*, 0 forbidden from the start)" -v -engine=cc $L $M
 vgrep 3 "^c cc: Z half overlap: on ([0-9]* stabilizer rows of Hz, weights " -v -engine=cc $L $M
@@ -416,10 +434,94 @@ if [[ $rc -ne 1 ]] || ! grep -q "^c d_lb: [0-9]" <<<"$out" || [[ "$(grep '^c d_l
     fails=$((fails + 1))
 fi
 
-# 7h. GH-181 sparse / sparseov / sparsemrv / xorunit (opt-in -cc-rules tokens): values, -v lines, mutants 19-21, no line without them
+# 7g. GH-162 tiebreak (opt-in -cc-rules token; needs overlap): values, -v lines, mutants 17/18 accepted, no line without it
+reject "need -engine=cc or -engine=auto" -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=25; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+accept 3 "" -engine=cc -cc-rules=overlap,tiebreak -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-aut=off -no-symbreak $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak $L $M                  # default rules (GH-157) + tiebreak
+vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,charge, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak $L $M
+vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: on$" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: [0-9]* of [0-9]* rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then descending label)" \
+    -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: idle (needs overlap rows)" -v -engine=cc -cc-rules=excl,pack,orbf,tiebreak $L $M
+vgrep 3 "^c cc: X half tiebreak: on \[TEST MUTANT 17: naive tie cut\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-mutant=17 $L $M
+vgrep 3 "^c cc: X half tiebreak: on \[TEST MUTANT 18: seed not first\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-mutant=18 $L $M
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $L $M
+if [[ $rc -ne 0 ]] || grep -q "tiebreak" <<<"$out"; then
+    echo "FAIL (GH-162: a tiebreak line without the token): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
+# 7h. GH-183 -cc-roworder=index|bfs and -cc-tbbase=desc|asc: values, -v lines, mutants 19/20 accepted, no line with the defaults
+reject "need -engine=cc or -engine=auto" -cc-roworder=bfs $L $M
+reject "need -engine=cc or -engine=auto" -cc-tbbase=asc $L $M
+for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=25; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-roworder=bfs $L $M
+accept 3 "" -engine=cc -cc-roworder=index -cc-tbbase=desc $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,mrv -cc-roworder=bfs $L $M   # default rules (GH-157) + tiebreak,mrv
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs -cc-tbbase=asc -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,mrv -cc-roworder=bfs -cc-aut=off -no-symbreak $L $M
+accept 2 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs $L $C
+vgrep 3 "^c cc: X half row order: reversed BFS from the rows of the first seed ([0-9]* rows; packing scan and mrv ties)$" \
+    -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=bfs $L $M
+vgrep 3 "^c cc: X half tiebreak: [0-9]* of [0-9]* rows even: limit |g|/2 - 1 on g minus first(g) (order: the seed, then earlier orbits, then ascending label)" \
+    -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-tbbase=asc $L $M
+for mt in 19 20; do
+    runs=$((runs + 1)); run -v -engine=cc -cc-roworder=bfs -cc-mutant=$mt $L $M
+    if ! grep -q "^c cc: X half row order: .*\[TEST MUTANT $mt" <<<"$out" || ! grep -q "^warning: cc: test mutant $mt active" <<<"$err"; then
+        echo "FAIL (GH-183: mutant $mt not reported): rc=$rc" >&2; fails=$((fails + 1))
+    fi
+done
+for a in "" "-cc-roworder=index" "-cc-tbbase=desc" "-cc-roworder=index -cc-tbbase=desc"; do
+    runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $a $L $M
+    if [[ $rc -ne 0 ]] || grep -q "row order\|ascending" <<<"$out"; then
+        echo "FAIL (GH-183: a row-order line with the defaults: $a): rc=$rc" >&2; fails=$((fails + 1))
+    fi
+done
+
+# 7i. GH-206 -cc-roworder=auto, -cc-probe=S|switch|stay, -cc-probe-growth=F: values, -v lines, probe lines, mutant 21 accepted
+reject "need -engine=cc or -engine=auto" -cc-roworder=auto $L $M
+reject "need -engine=cc or -engine=auto" -cc-probe=2 $L $M
+reject "need -engine=cc or -engine=auto" -cc-probe-growth=10 $L $M
+for f in -cc-roworder=Auto -cc-probe -cc-probe= -cc-probe=-1 -cc-probe=x -cc-probe=1s -cc-probe=SWITCH -cc-probe-growth= \
+         -cc-probe-growth=0.5 -cc-probe-growth=-2 -cc-probe-growth=x -cc-mutant=25; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+NB="-ub-basis=off -ub-search=off"   # no upper bound before the hit, so a probe is not skipped for lb >= U
+accept 3 "" -engine=cc -cc-roworder=auto $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak -cc-roworder=auto -cc-probe=0 $L $M   # default rules (GH-157) + tiebreak
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-roworder=auto -cc-probe=0 $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-roworder=auto -cc-probe=switch -cc-seed=2 -cc-dual=off $L $M
+accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak,mrv -cc-roworder=auto -cc-probe=stay -cc-tbbase=asc $L $M
+accept 3 "" -engine=cc -cc-roworder=auto -cc-probe=0 -cc-probe-growth=0 $NB $L $M
+accept 3 "" -engine=cc -cc-roworder=auto -cc-probe=0 -cc-probe-growth=1 $NB $L $M
+accept 2 "" -engine=cc -cc-roworder=auto -cc-probe=0.5 -cc-probe-growth=100 $L $C
+vgrep 3 "^c cc: X half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, [0-9]* rows; probe at the first refuted level taking >= 0.1s (one probe))$" \
+    -v -engine=cc -cc-roworder=auto $L $M
+vgrep 3 "^c cc: X half auto probe at level [0-9]*: current A [0-9.]*s, B [A-Z]* nodes [0-9]* [0-9.]*s -> B (A = index, no mrv; B = bfs, mrv)$" \
+    -v -engine=cc -cc-roworder=auto -cc-probe=switch $NB $L $M
+vgrep 3 "^c cc-probe: X level [0-9]* B [A-Z]* nodes [0-9]* time [0-9.]*s A [0-9.]*s -> A$" -cc-stats -engine=cc -cc-roworder=auto -cc-probe=stay $NB $L $M
+vgrep 3 "^c cc: X half row order: auto (.* probe at the first refuted level taking >= 0.5s, then >= 30 x the last probe level)$" \
+    -v -engine=cc -cc-roworder=auto -cc-probe=0.5 -cc-probe-growth=30 $L $M
+runs=$((runs + 1)); run -v -engine=cc -cc-roworder=auto -cc-mutant=21 $L $M
+if ! grep -q "TEST MUTANT 21" <<<"$out" || ! grep -q "^warning: cc: test mutant 21 active" <<<"$err"; then
+    echo "FAIL (GH-206: mutant 21 not reported): rc=$rc" >&2; fails=$((fails + 1))
+fi
+runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-roworder=bfs $L $M
+if [[ $rc -ne 0 ]] || grep -q "probe" <<<"$out"; then
+    echo "FAIL (GH-206: a probe line without auto): rc=$rc" >&2; fails=$((fails + 1))
+# 7j. GH-181 sparse / sparseov / sparsemrv / xorunit (opt-in -cc-rules tokens): values, -v lines, mutants 22-24 (19-21 before the
+#     merge with GH-162/183/206), no line without them
 G=excl,pack,orbf,parity,leaf,overlap
 reject "need -engine=cc or -engine=auto" -cc-rules=$G,sparse $L $M
-for f in -cc-rules=Sparse -cc-rules=sparse, -cc-rules=sparseOV -cc-rules=xor -cc-rules=sparse-mrv -cc-mutant=22 -cc-mutant=18; do
+for f in -cc-rules=Sparse -cc-rules=sparse, -cc-rules=sparseOV -cc-rules=xor -cc-rules=sparse-mrv -cc-mutant=16 -cc-mutant=25; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-rules=$G,sparse $L $M
@@ -435,7 +537,14 @@ vgrep 3 "^c cc: X half sparsemrv: on (fewest-candidate branching" -v -engine=cc 
 vgrep 3 "^c cc: X half sparsemrv: idle (no redundant rows)" -v -engine=cc -cc-rules=$G,sparsemrv $L $M
 vgrep 3 "^c cc: X half xorunit: on (rows of H and the redundant rows)" -v -engine=cc -cc-rules=$G,sparse,xorunit $L $M
 vgrep 3 "^c cc-stats: X level 2 gh181 spack " -cc-stats -engine=cc -cc-rules=$G,sparse $L $M
-for mt in 19 20 21; do   # mutants are accepted values (answers may be wrong by design): the -v line names them
+# merge with GH-157/162/183/206: the new default rules + the GH-181 tokens, with tiebreak, mrv + bfs, and auto
+accept 3 "" -engine=cc -cc-rules=$G,charge,sparse,sparseov,sparsemrv $L $M
+accept 3 "" -engine=cc -cc-rules=$G,charge,tiebreak,sparse,sparseov,sparsemrv $L $M
+accept 3 "" -engine=cc -cc-rules=$G,charge,tiebreak,mrv,sparse,sparseov,sparsemrv -cc-roworder=bfs $L $M
+accept 3 "" -engine=cc -cc-rules=$G,charge,tiebreak,sparse,sparseov,sparsemrv,xorunit -cc-roworder=auto -cc-probe=0 $L $M
+vgrep 3 "^c cc: rules $G,tiebreak,sparse,sparseov,sparsemrv,charge, " -v -engine=cc -cc-rules=$G,charge,tiebreak,sparse,sparseov,sparsemrv $L $M
+vgrep 3 "^c cc: X half sparsemrv: on (mrv is on everywhere)" -v -engine=cc -cc-rules=$G,sparse,sparsemrv,mrv $L $M   # sparsemrv + mrv = mrv
+for mt in 22 23 24; do   # mutants are accepted values (answers may be wrong by design): the -v line names them
     runs=$((runs + 1)); run -v -engine=cc -cc-rules=$G,sparse,sparseov,xorunit -cc-mutant=$mt -ub-search=off $L $M
     if ! grep -q "TEST MUTANT $mt" <<<"$out" || ! grep -q "^warning: cc: test mutant $mt" <<<"$err"; then
         echo "FAIL (GH-181: mutant $mt not reported)" >&2; fails=$((fails + 1))

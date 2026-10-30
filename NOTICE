@@ -91,6 +91,13 @@ Modified files (partial list): Solver.h, Solver.cc
   the GH-87/GH-107 verified XZ-dual maps, the stop rule, independent
   witness verification and the verified basis-row upper bound (see
   README, "Connected-cluster (CC) engine").
+  The CC node lower bound `charge` (GH-157, a default CC rule since the
+  PI's decision of 2026-10-29) was implemented from published mathematics
+  only: the detector-charge bound of F. Banfi, G. Ferrari, A. Favano,
+  A. Tarable, R. Barletta, arXiv:2610.28008 (2026), and the scaled
+  feasible set-cover dual of K. Okada and K. Kasai, cpm-ldpc-distance
+  (https://github.com/kasaikenta/cpm-ldpc-distance). No third-party code
+  was read or copied.
 
   src/cc/cc_aut.h, src/cc/cc_aut.cc (GH-152, -cc-aut=on, the CC default
   since 2026-10-28) find candidate automorphisms of the coloured Tanner
@@ -104,6 +111,18 @@ Modified files (partial list): Solver.h, Solver.cc
   descriptions; no nauty, Traces, bliss or other third-party code was
   read, copied or linked. Every candidate is accepted only after
   DistQLDPC's own GF(2) checks (GH-75/GH-85/GH-87).
+
+  The CC rule "tiebreak" (GH-162, -cc-rules=...,overlap,tiebreak,
+  opt-in) cuts the even-weight stabilizer-overlap tie |e & g| = |g|/2
+  unless the first qubit of g lies in e. The first(g) tie-break idea
+  is from Qubitserf (https://github.com/Quantinuum/Qubitserf, commit
+  04b9349, Copyright (c) 2026 Serban Cercelescu and the qubitserf
+  contributors, MIT License). It was re-derived from the mathematics
+  and implemented from scratch; no Qubitserf code was copied. The
+  per-seed qubit orders that make it compatible with DistQLDPC's orbit
+  seeds, and the proof, are DistQLDPC's (MODIFICATIONS.md, GH-162).
+
+  The CC option -cc-roworder=bfs (GH-183) uses the reversed-BFS row ordering idea of Qubitserf 04b9349 (S. Cercelescu, MIT); re-implemented from scratch, no code copied.
 
   The CC rules "sparse", "sparseov" and "sparsemrv" (GH-181, opt-in)
   add redundant parity rows (sparse sums of two rows of the half's
