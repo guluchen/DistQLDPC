@@ -175,3 +175,9 @@ intended4exact-distance research targets, global mainstream/source/server/
 integration backlog. Scientific semantics changed:no. PI action required:
 future server allocation/integration/source decisions; routine evidence work
 needs no further approval. Whole-library goal remains incomplete.
+
+Final test hardening: the exact-answer-without-minimum-word fixture now supplies
+both native numeric fields, so rejection specifically exercises the missing
+physical minimum-word contract. Targeted local test PASS; no input, validator,
+solver or native observation changed. Known exact controls must still reproduce;
+only intended unknown targets have no exact-answer acceptance prerequisite.

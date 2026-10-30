@@ -114,7 +114,7 @@ class QRTests(unittest.TestCase):
         case=qr.CASES[1]
         n,matrices=css.read_code(ROOT/'data/matrices/untiered','QR_431_1_unknown')
         construction=audit.audit_case(case,ROOT/'data/matrices/untiered')
-        with self.assertRaises(ValueError):logs.assess(case,n,matrices,construction,{'maxsat':'o 23\n'})
+        with self.assertRaises(ValueError):logs.assess(case,n,matrices,construction,{'maxsat':'c d_lb: 23\nc d_ub: 23\no 23\n'})
 
 
 if __name__=='__main__':unittest.main()
