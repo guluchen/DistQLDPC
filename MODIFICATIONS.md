@@ -438,3 +438,18 @@ in `src/core/` under GPL.
 
 Generic solver improvements that could benefit MaxCDCL users may be
 offered to upstream under MIT, consistent with `src/solver/LICENSE`.
+GH208 adds original dense binary prime QR CSS library scripts/data only;
+src/solver, solver behavior, flags and defaults are unchanged. Physical Hx=Hz
+span the even expurgated QR cyclic ideal e=1+sum(X^a,a nonzero square mod p),
+p prime7mod8. Independent Euler incidence, polynomial gcd/ideal equality,
+full physical CSS/logicals and literal integer cyclic correlation validate it.
+Soundness: actual even rank(p-1)/2 stabilizers D yield ker(H)=D+<J>. The
+checked cyclic correlation e*reverse(e)=0 extends bilinearly to D; every
+nontrivial logical v=J+s satisfies v*reverse(v)=J. All n-1 nonzero difference
+coefficients are odd/positive, hence wt(v)*(wt(v)-1)>=n-1. Doubly-even cyclic
+generators and pairwise orthogonality imply D doubly even; wt(v)=3mod4.
+The resulting floors7/23/31/35/47 are construction certificates, never native
+search fields. Tiny Golay2048-coset independent exact7 and actual GF2 words
+are kept separate. Source equivalence via Frobenius-fixed quadratic Gauss
+periods and attribution are documented in data/matrices/untiered/QR.md/NOTICE.
+No new pruning, external solver, performance/adoption or global openness claim.

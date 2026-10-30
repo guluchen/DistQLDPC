@@ -1,0 +1,38 @@
+......wrote /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmp90mw1rfx/COLOR_19_1_unknown_Gx.txt (1 rows), /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmp90mw1rfx/COLOR_19_1_unknown_Gz.txt (1 rows)
+wrote /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpyszw2q1o/COLOR_19_1_unknown_Gx.txt (1 rows), /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpyszw2q1o/COLOR_19_1_unknown_Gz.txt (1 rows)
+......................wrote /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpwvq1sxz1/QR_7_1_unknown_Gx.txt (1 rows), /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpwvq1sxz1/QR_7_1_unknown_Gz.txt (1 rows)
+...E...E.........wrote /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpibg3mvt4/BB_30_4_unknown_Gx.txt (4 rows), /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmpibg3mvt4/BB_30_4_unknown_Gz.txt (4 rows)
+wrote /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmph_dwp60e/BB_30_4_unknown_Gx.txt (4 rows), /private/var/folders/8c/lfggwybd5f5_pjv4tgj8zv8m0000gn/T/tmph_dwp60e/BB_30_4_unknown_Gz.txt (4 rows)
+....
+======================================================================
+ERROR: test_missing_numeric_and_source_upper_target_separate (test_codegen_qr.QRTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/yfc/Documents/PCM/DistQLDPC/tests/test_codegen_qr.py", line 106, in test_missing_numeric_and_source_upper_target_separate
+    observed=logs.assess(case,n,matrices,construction,{'maxsat':'s UNKNOWN\n'})
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/audit_qr_smoke.py", line 28, in assess
+    results[engine]=parse_claim(raw,claim(case),n)
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/smoke_untiered.py", line 79, in parse_claim
+    result=parse(text,n,exact=False)
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/smoke_untiered.py", line 51, in parse
+    raise ValueError('missing bounds; inspect load/run failure')
+ValueError: missing bounds; inspect load/run failure
+
+======================================================================
+ERROR: test_search_lower_never_filled_from_theorem (test_codegen_qr.QRTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/yfc/Documents/PCM/DistQLDPC/tests/test_codegen_qr.py", line 96, in test_search_lower_never_filled_from_theorem
+    observed=logs.assess(case,n,matrices,construction,{'maxsat':'c bounds: 3 <= d <= 107\ns UNKNOWN\n'})
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/audit_qr_smoke.py", line 28, in assess
+    results[engine]=parse_claim(raw,claim(case),n)
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/smoke_untiered.py", line 79, in parse_claim
+    result=parse(text,n,exact=False)
+  File "/Users/yfc/Documents/PCM/DistQLDPC/scripts/codegen/smoke_untiered.py", line 51, in parse
+    raise ValueError('missing bounds; inspect load/run failure')
+ValueError: missing bounds; inspect load/run failure
+
+----------------------------------------------------------------------
+Ran 49 tests in 17.066s
+
+FAILED (errors=2)
