@@ -186,3 +186,14 @@ baseCI40958893059/job123746155357 SUCCESS. These are engineering guard checks,
 not a scientific retry or replacement for FAILED source-distance gate
 40957668835. No CC/686/original distance run occurred after failure.
 PI decision still pending;0accepted additions, goal ACTIVE and incomplete.
+## Authorized follow-up scope (2026-10-30 Asia/Taipei)
+
+The PI directly approved a second-engine diagnosis of the500-qubit case in
+chat; issue202 comment6510319434 records scope. Exactly one60CPU/90wall/4GiB
+Linux CC-only attempt on original quarantined bytes, unchanged solver sources,
+defaultseed0,-v. No MaxSAT repeat/other case/label changes/renaming/adoption.
+Seven no-solver preflight/interpretation/resource guards pass locally. Details
+in diagnostic/REQUEST.md and diagnostic/cc500.py. The source-distance hold,
+original reference6 and all prior raw fields remain unchanged. A cross-engine
+input8 would not prove a paper erratum or intended-coordinate identification.
+Status: authorized diagnostic PENDING; accepted library additions remain zero.
