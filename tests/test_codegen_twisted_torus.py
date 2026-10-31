@@ -98,7 +98,8 @@ class TwistedTests(unittest.TestCase):
 
     def test_smoke_family_isolation(self):
         argv=[sys.executable,str(ROOT/'scripts/codegen/smoke_untiered.py'),
-              '--cpu','0','--dry-run','--out','/tmp/unused-twisted-smoke','--family','BB']
+              '--cpu','0','--dry-run','--out','/tmp/unused-twisted-smoke','--family','BB',
+              '--stems']+[f'BB_{c["n"]}_{c["k"]}_unknown' for c in gen.CASES]
         jobs=json.loads(subprocess.check_output(argv,cwd=ROOT,text=True))
         self.assertEqual(len(jobs),6)
         self.assertEqual({a[-1].split('/')[-1] for a in jobs},

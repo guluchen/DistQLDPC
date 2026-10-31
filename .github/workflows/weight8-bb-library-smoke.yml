@@ -1,0 +1,76 @@
+name: Weight-8 BB library smoke
+
+on:
+  push:
+    branches: [codex/weight8-bb-library]
+    paths:
+      - '.github/workflows/weight8-bb-library-smoke.yml'
+      - 'scripts/codegen/weight8_bb*'
+      - 'scripts/codegen/validate_weight8_bb.py'
+      - 'scripts/codegen/audit_exact_smoke.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'tests/test_codegen_weight8_bb.py'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build current main solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Units, independent algebra and duplicate checks
+        run: |
+          python3 tests/test_codegen_weight8_bb.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/weight8-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/weight8-validation.json
+          python3 scripts/codegen/validate_weight8_bb.py --output /tmp/weight8-construction.json
+          cmp optimization/experiments/GH-164/raw/construction.json /tmp/weight8-construction.json
+      - name: Byte-identical regeneration
+        run: |
+          python3 scripts/codegen/weight8_bb.py --all --out /tmp/weight8-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/weight8-rebuilt').glob('*.txt'));assert len(files)==24
+          for p in files:assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS: all 24 weight-8 matrices reproduced')
+          PY
+      - name: Six default MaxSAT smoke checks
+        run: >-
+          python3 scripts/codegen/smoke_untiered.py --ci --family BB --verbose --out /tmp/weight8-maxsat
+          --stems BB_72_14_unknown BB_72_4_unknown BB_144_16_unknown BB_144_10_unknown BB_200_20_unknown BB_200_8_unknown
+      - name: Six independent CC smoke checks
+        run: >-
+          python3 scripts/codegen/smoke_untiered.py --ci --family BB --engine cc --verbose --out /tmp/weight8-cc
+          --stems BB_72_14_unknown BB_72_4_unknown BB_144_16_unknown BB_144_10_unknown BB_200_20_unknown BB_200_8_unknown
+      - name: Verify all emitted witnesses and engine agreement
+        run: python3 scripts/codegen/audit_exact_smoke.py --maxsat /tmp/weight8-maxsat --cc /tmp/weight8-cc --out /tmp/weight8-audit.json
+      - name: Retain raw evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ('weight8-maxsat','weight8-cc'):
+              root=Path('/tmp')/name
+              print('GH164_EVIDENCE_JSON='+json.dumps({'configuration':name,'files':{p.name:p.read_text() for p in root.glob('*') if p.is_file()}},separators=(',',':')))
+          p=Path('/tmp/weight8-audit.json')
+          if p.exists():print('GH164_AUDIT_JSON='+p.read_text().replace('\n',''))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh164-weight8-smoke
+          path: |
+            /tmp/weight8-maxsat/
+            /tmp/weight8-cc/
+            /tmp/weight8-audit.json
+          if-no-files-found: warn
+          retention-days: 14
