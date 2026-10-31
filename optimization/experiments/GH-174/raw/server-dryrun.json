@@ -1,0 +1,28 @@
+[
+  [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/Users/yfc/Documents/PCM/DistQLDPC/bin/distqldpc",
+    "-seed=0",
+    "-v",
+    "-cpu-lim=21600",
+    "data/matrices/untiered/HGP_1508_100_unknown"
+  ],
+  [
+    "taskset",
+    "-c",
+    "0",
+    "prlimit",
+    "--as=4294967296",
+    "--",
+    "/Users/yfc/Documents/PCM/DistQLDPC/bin/distqldpc",
+    "-seed=0",
+    "-v",
+    "-cpu-lim=21600",
+    "data/matrices/untiered/HGP_2384_144_unknown"
+  ]
+]

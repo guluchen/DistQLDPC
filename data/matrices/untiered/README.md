@@ -130,3 +130,14 @@ For a solved case require d=L; any numeric bounds must contain L. A missing
 numeric bound remains unknown, and is never filled from the claimed distance.
 A contradiction is a scientific escalation. The runner does not rename codes,
 modify the manifest, assign tiers or mirror QDistSAT.
+
+GH-174 adds four first-distinct-column Gallager-HGP inputs N356..2384 on its
+work branch. [EXPURGATED_HGP.md](EXPURGATED_HGP.md) gives the explicit structural
+selection, conditioning proof and mathematical provenance. GH-173's unexpurgated
+controls are separate and unchanged. Linux results are recorded in GH-174.
+
+GH-174 results: independent classical-product proof and CC certify4,4,6,6,
+with actual GF(2) words; all numeric smokes pass. MaxSAT proves the first two
+and returns[5,6] on the last two. Two optional engine-only completion jobs
+are packaged, unexecuted; exact distances are already independently checked.
+No deterministic/asymptotic distance-growth claim follows from these samples.
