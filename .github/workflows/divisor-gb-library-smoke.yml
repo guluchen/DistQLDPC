@@ -1,0 +1,81 @@
+name: Divisor-driven GB library smoke
+
+on:
+  push:
+    branches: [codex/divisor-gb-library]
+    paths:
+      - '.github/workflows/divisor-gb-library-smoke.yml'
+      - 'scripts/codegen/divisor_gb*'
+      - 'scripts/codegen/validate_divisor_gb.py'
+      - 'scripts/codegen/audit_divisor_gb_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_divisor_gb.py'
+      - 'data/matrices/untiered/GB_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Independent algebra, complete logicals, tiny units and retained inventory
+        run: |
+          python3 tests/test_codegen_divisor_gb.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+          python3 scripts/codegen/validate_divisor_gb.py --output /tmp/gb-construction.json
+          cmp optimization/experiments/GH-171/raw/construction.json /tmp/gb-construction.json
+      - name: Reproduce all16 new matrix files
+        run: |
+          python3 scripts/codegen/divisor_gb.py --all --out /tmp/gb-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/gb-rebuilt').glob('*.txt'))
+          assert len(files)==16
+          for p in files:
+              assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS:16 GB matrix files reproduced byte for byte')
+          PY
+      - name: Four default MaxSAT60s serial smoke checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family GB --verbose --out /tmp/gb-maxsat
+      - name: Four CC60s serial independent-engine checks
+        if: success() || failure()
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family GB --engine cc --verbose --out /tmp/gb-cc
+      - name: Audit actual words, source/binary/input identity and independent results
+        if: success() || failure()
+        run: python3 scripts/codegen/audit_divisor_gb_smoke.py --maxsat /tmp/gb-maxsat --cc /tmp/gb-cc --out /tmp/gb-audit.json
+      - name: Retain every raw result even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ('gb-maxsat','gb-cc'):
+              root=Path('/tmp')/label
+              result[label]={p.name:p.read_text() for p in root.glob('*') if p.is_file()}
+          print('GH171_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          audit=Path('/tmp/gb-audit.json')
+          if audit.exists():print('GH171_AUDIT_JSON='+json.dumps(json.loads(audit.read_text()),separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh171-divisor-gb-smoke
+          path: |
+            /tmp/gb-maxsat/
+            /tmp/gb-cc/
+            /tmp/gb-audit.json
+          if-no-files-found: warn
+          retention-days: 14
