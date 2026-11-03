@@ -600,7 +600,8 @@ re-verifies witnesses in GF(2)). The rule adds no forbidden qubit and does not i
 (`optimization/experiments/GH-195/explore`). A test costs microseconds (several node expansions), so on small levels it
 does not pay: the tests start at the level after the first level of the half with at least `-cc-erasure-start=N` nodes
 (default 16384; 0 = from the first level). Node counts are deterministic, so the switch is too. Any per-node choice of
-running the test keeps the theorem.
+running the test keeps the theorem. With `-cc-roworder=auto` (GH-206) the probe runs the other configuration with the current
+configuration's erasure state (tests on if they are on), so the two orders are compared under the same rule set.
 
 *Mutants (must fail; `make test-cc` Part U).* 25: the bound weakened by one (at most extra - 1 outside qubits are
 enumerated, with the gate admitting extra <= 3). 26: the fixed support S ignored (a completion is sought without S).
