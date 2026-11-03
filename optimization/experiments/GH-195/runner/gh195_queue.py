@@ -18,7 +18,7 @@ os.makedirs(a.out + '/logs', exist_ok=True)
 cpus = []
 for part in a.cpus.split(','):
     lo, _, hi = part.partition('-'); cpus += list(range(int(lo), int(hi or lo) + 1))
-assert all(44 <= c <= 59 for c in cpus)   # GH-195: cores 44-59 only (1-3 GH-162, 4-23 GH-181, 28-43 GH-183)
+assert all(120 <= c <= 127 for c in cpus)   # GH-195 (since 2026-11-04): logical CPUs 120-127 only (128-255 are SMT siblings; 0-119 other agents)
 jobs = [json.loads(l) for l in open(a.jobs) if l.strip()]
 done_ids = set()
 if os.path.exists(f'{a.out}/results.jsonl'):

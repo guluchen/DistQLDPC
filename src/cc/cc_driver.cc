@@ -745,6 +745,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 const double p0 = now_seconds();
                 probe_deadline = p0 + cap;
                 if (probe_deadline <= 0) probe_deadline = 1e-9;
+                if (h.search->erasure_live()) h.alt->erasure_go_live();   /* GH-195: probe with the same erasure state */
                 LevelResult pr = pw <= n ? h.alt->run_level(pw) : LevelResult();
                 probe_deadline = 0;
                 const double pdt = now_seconds() - p0;

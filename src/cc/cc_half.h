@@ -377,6 +377,10 @@ public:
     /* test hooks: sizegate = run the test only when also 2|S| + 2 <= w (a cost gate; fewer prunes, still sound);
      * verify = check phi H_R = 0 and F H_R = G_R on every region column (fatal on failure); both start the tests at once */
     void set_erasure_test(bool sizegate, bool verify) { er_sizegate_ = sizegate; er_verify_ = verify; er_live_ = er_; }
+    /* erasure tests running (the start level was reached); erasure_go_live: start them now (GH-206 auto probe: the other
+     * configuration takes over the state of the current one, so both are compared with the same rule set) */
+    bool erasure_live() const { return er_live_; }
+    void erasure_go_live() { er_live_ = er_; }
 
 private:
     int n_, m_, k_, kw_, mw_, maxrow_;

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""GH-195 panel (template GH-162 analyze_panel.py). Arms: main (main 6083e66 CC default), er (+erasure), tb (+tiebreak,
-= PR #180), tber (+tiebreak,erasure). Two comparisons, each per cell (tier, code) over seeds 0-4: (a) er / main, (b) tber / tb:
+"""GH-195 panel (template GH-162 analyze_panel.py). Arms (since 2026-11-04): def (main 02879a9 CC default), defer (+erasure),
+tbra (+tiebreak, -cc-roworder=auto), tbraer (+tiebreak,erasure, auto). Two comparisons, each per cell (tier, code) over seeds 0-4: (a) er / main, (b) tber / tb:
 wall median ratio, total CC nodes (sum over levels, deterministic per seed) median ratio, search time median ratio, and the
 erasure calls/prunes of the new arm. Verdict per tier: geomean of the wall ratios < 1 and no cell > 1.25.
 usage: analyze_panel.py results.jsonl"""
@@ -19,7 +19,7 @@ for r in P:
                                                            ec=ec, ep=ep)
 gm = lambda v: math.exp(sum(map(math.log, v)) / len(v))
 verdict = {}
-for old, new, title in (('main', 'er', '(a) main default -> +erasure'), ('tb', 'tber', '(b) main default + tiebreak -> + tiebreak + erasure')):
+for old, new, title in (('def', 'defer', '(a) main default -> +erasure'), ('tbra', 'tbraer', '(b) main default + tiebreak + roworder auto -> + erasure')):
     print(f'### {title}\n')
     print(f'| Tier | Code | {old} wall median (range) s | {new} wall median (range) s | wall ratio | nodes ratio (median) | search-time ratio (median) | {new} erasure calls / prunes (median) | answers |')
     print('|---:|---|---|---|---:|---:|---:|---|---|')
