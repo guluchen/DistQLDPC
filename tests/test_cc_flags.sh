@@ -405,8 +405,8 @@ runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -stab-overlap-enc=bin $
 if grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (no c OVERLAP line with clause encodings)" >&2; fails=$((fails + 1)); fi
 accept 2 "" -engine=auto -stab-overlap=on $L $D1                                                        # auto -> maxsat: applies
 accept 2 "selected cc .*ignoring -stab-overlap=on" -engine=auto -stab-overlap=on $L $C
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); binomial rows 45, counter rows 0; per probe 675 clauses, 0 aux vars$" -v -stab-overlap=on -stab-overlap-enc=clauses $L BB_90_8_10
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap=on $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 on more than 11 Tanner 4-cycles); |g| -> rows: 6:45 (<= 3); binomial rows 45, counter rows 0; per probe 675 clauses, 0 aux vars$" -v -stab-overlap=on -stab-overlap-enc=clauses $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 on more than 11 Tanner 4-cycles); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap=on $L BB_90_8_10
 vgrep 10 "^c stab-overlap X: 45 of 45 rows used .* binomial rows 45, counter rows 0" -v -stab-overlap=auto -stab-overlap-enc=bin $L BB_90_8_10
 vgrep 10 "^c stab-overlap Z: 45 of 45 rows used .* binomial rows 0, counter rows 45; per probe 1440 clauses, 675 aux vars$" -v -stab-overlap=on -stab-overlap-enc=seq $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v -stab-overlap=auto $L BB_90_8_10
@@ -415,13 +415,33 @@ vgrep 10 "^c stab-overlap X cap 4: 45 of 45 rows active (ratio 0.00)$" -v -stab-
 runs=$((runs + 1)); run -v -stab-overlap=off $L BB_90_8_10
 if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (-stab-overlap=off must not print stab-overlap lines)" >&2; fails=$((fails + 1)); fi
 # default (auto since the PI's adoption decision): the same lines as -stab-overlap=auto
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 on more than 11 Tanner 4-cycles); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 4: 0 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
 runs=$((runs + 1)); run -frontier-stats $L BB_90_8_10
 if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP X cap 8: rows 45 props [0-9]* conflicts [0-9]* cached_clauses [0-9]*$" <<<"$err"; then echo "FAIL (default: c OVERLAP line expected with -frontier-stats)" >&2; fails=$((fails + 1)); fi
 runs=$((runs + 1)); run -v -joint $L $M
 if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (default auto is silently off with -joint: no stab-overlap lines expected)" >&2; fails=$((fails + 1)); fi
+
+# 7g. GH-218 -stab-overlap-c4=N|off (4-cycle row gate, default 11): values, conflicts, selection, off = GH-148's row set
+for f in -stab-overlap-c4= -stab-overlap-c4=x -stab-overlap-c4=-1 -stab-overlap-c4=1.5 -stab-overlap-c4=OFF -stab-overlap-c4=2000000; do
+    reject "invalid -stab-overlap-c4" $f $L $M
+done
+reject "needs -stab-overlap=on or -stab-overlap=auto" -stab-overlap=off -stab-overlap-c4=3 $L $M
+reject "no effect with -engine=cc" -engine=cc -stab-overlap-c4=3 $L $C
+accept 3 "" -stab-overlap-c4=0 $L $M
+accept 3 "" -stab-overlap-c4=off -card-mto $L $M
+accept 8 "" -stab-overlap-c4=0 $L TN_72_8_8
+accept 8 "" -stab-overlap=on -stab-overlap-c4=1000 -card-mto $L TN_72_8_8
+accept 10 "" -stab-overlap=on -stab-overlap-c4=off -stab-overlap-enc=seq $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap-c4=off $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 on more than 0 Tanner 4-cycles); |g|" -v -stab-overlap-c4=0 $L BB_90_8_10
+vgrep 8 "^c stab-overlap X: 0 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 on more than 11 Tanner 4-cycles); |g| -> rows:; native propagator rows 0 (no clauses)$" -v $L TN_72_8_8
+vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 9:36 (<= 4)" -v -stab-overlap-c4=off $L TN_72_8_8
+runs=$((runs + 1)); run -frontier-stats $L TN_72_8_8
+if [[ $rc -ne 0 ]] || grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (TN_72_8_8 default: every row gated, no c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -frontier-stats -stab-overlap-c4=off $L TN_72_8_8
+if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (TN_72_8_8 -stab-overlap-c4=off: c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)
