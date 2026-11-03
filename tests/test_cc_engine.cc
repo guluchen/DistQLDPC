@@ -320,7 +320,8 @@ static RunOut run_driver(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
 // GH-133 Part D: the production MaxSAT split driver (fresh solver per probe, -no-card) with -oddcap-skip off/on
 struct PreCfg { const char* name; double pre; uint64_t iters; bool oddcap; uint64_t seed; int dualmode; bool symbreak; int card; int mutant;
                 int ovl; int ovl_enc; int ovl_mutant; double ovl_ratio;   /* GH-148 (0 = -stab-overlap off) */
-                int isd = 0; int isd_p = 2; };   // GH-146: collision mode of the pre-pass finder
+                int isd = 0; int isd_p = 2;   // GH-146: collision mode of the pre-pass finder
+                int ovl_c4 = -1; };            // GH-218: -stab-overlap-c4 (-1 = no gate, the GH-148 row set)
 static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool oddcap, const PreCfg* pc = NULL) {
     RunOut r; r.ok = false; r.d = -2;
     int fd[2];
@@ -337,6 +338,7 @@ static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
             g_ub_pre = pc->pre; g_ub_pre_max_iters = pc->iters; g_seed = pc->seed; g_ub_pre_mutant = pc->mutant;
             g_ub_isd.isd = pc->isd; g_ub_isd.isd_p = pc->isd_p;   // GH-146 (child process only)
             g_stab_overlap = pc->ovl != 0; g_stab_overlap_enc = pc->ovl_enc; g_stab_overlap_mutant = pc->ovl_mutant; g_stab_overlap_ratio = pc->ovl_ratio;   // GH-148
+            g_stab_overlap_c4 = pc->ovl_c4;   // GH-218
             (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], pc->card, pc->symbreak, pc->dualmode, false);
         } else
         (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], 0, true, DUALMODE_SHARE, false);
@@ -1014,6 +1016,11 @@ int main(int argc, char** argv) {
                 {"ovl-ratio1-pre-iter1-mto", 1.0, 1, true, 1, DUALMODE_SHARE, true, 3, 0, 1, 0, 0, 1.0},
                 {"ovl-mutant1", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 1},
                 {"ovl-mutant2", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 2},
+                // GH-218: the 4-cycle row gate (subsets of the verified rows; answers must not change)
+                {"ovl-native-auto-c4-11", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 0, 2.0, 0, 2, 11},
+                {"ovl-native-c4-0-mto", -1.0, 0, true, 1, DUALMODE_SHARE, true, 3, 0, 1, 3, 0, 0.0, 0, 2, 0},
+                {"ovl-native-c4-2-pre-iter1", 1.0, 1, true, 2, DUALMODE_SKIP, true, 0, 0, 1, 3, 0, 0.0, 0, 2, 2},
+                {"ovl-seq-c4-4-nosymbreak", -1.0, 0, false, 0, DUALMODE_OFF, false, 0, 0, 1, 2, 0, 0.0, 0, 2, 4},
             };
             for (const PreCfg& c : gcfg) {
                 RunOut r = run_maxsat(mHx, mHz, mGx, mGz, c.oddcap, &c);
@@ -1174,6 +1181,78 @@ int main(int argc, char** argv) {
         printf("partG mutant 2 (parity rows of the half as g, unverified): %ld/%ld runs failed, %ld with a wrong RESULT d OPTIMAL (%ld on surface codes)\n",
                g_m_failed[2], g_m_runs[2], g_m_wrong[2], g_surf_mwrong[2]);
         if (g_codes_removing == 0 || g_m_wrong[1] == 0 || g_m_wrong[2] == 0 || g_m_wrong_nat[1] == 0) { fprintf(stderr, "CC_FAIL GH-148 mutant/coverage expectations not met\n"); fails++; }
+    }
+    {   // GH-218 Part G (c): the 4-cycle row gate selects exactly the verified distinct rows with c4(g) <= K, where
+        // c4(g) = sum over the other distinct rows g' of the same-type stabilizer matrix of C(|g & g'|, 2), recomputed
+        // here by brute force over row pairs. Codes: every tier0 code (both halves) and the tier2 / tier4 TN codes
+        // (weight-6..12 rows with 7..33 4-cycles); K = -1 (no gate), 0, 2, 7, 11, 12, 1000. Mutant 3 (test only)
+        // counts overlaps instead of qubit pairs and must change some selection.
+        static const char* stems[] = {"tier0/BB_72_12_6", "tier0/BB_90_8_10", "tier0/BB_108_8_10", "tier0/BB_144_12_12",
+            "tier0/GB_144_12_8", "tier0/LP_34_20_2", "tier0/LP_136_32_4", "tier0/LP_238_44_6", "tier0/TN_36_8_3",
+            "tier0/TN_36_8_4", "tier0/TN_54_11_4", "tier0/TN_72_14_4", "tier0/TN_72_8_8", "tier2/TN_108_2_12",
+            "tier2/TN_200_10_10", "tier4/TN_250_10_15"};
+        static const int Ks[] = {-1, 0, 2, 7, 11, 12, 1000};
+        long c_checks = 0, c_bad = 0, c_gated = 0, c_kept = 0, c_m3_diff = 0;
+        const int saved_c4 = g_stab_overlap_c4, saved_mut = g_stab_overlap_mutant;
+        for (const char* st : stems) {
+            const std::string base = std::string("data/matrices/") + st;
+            FILE* probe = fopen((base + "_Hx.txt").c_str(), "r");
+            if (!probe) { fprintf(stderr, "CC_FAIL GH-218 partG (c): missing %s_Hx.txt (run from the repository root)\n", base.c_str()); fails++; continue; }
+            fclose(probe);
+            const Matrix Hx = load_matrix((base + "_Hx.txt").c_str()), Hz = load_matrix((base + "_Hz.txt").c_str());
+            const Matrix Gx = load_matrix((base + "_Gx.txt").c_str()), Gz = load_matrix((base + "_Gz.txt").c_str());
+            for (int half = 0; half < 2; half++) {
+                const Matrix& Hp = half == 0 ? Hz : Hx; const Matrix& Gl = half == 0 ? Gx : Gz; const Matrix& Sm = half == 0 ? Hx : Hz;
+                g_stab_overlap_mutant = 0; g_stab_overlap_c4 = -1;
+                OvlInfo all_info;
+                const OvlRows all = stab_overlap_rows(Hp, Gl, Sm, all_info);   // verified distinct rows, no gate
+                std::vector<std::set<int> > dist;   // distinct nonzero rows of the stabilizer matrix
+                {
+                    std::set<std::vector<int> > seen;
+                    for (int r = 0; r < Sm.rows; r++) {
+                        std::vector<int> g;
+                        for (int c = 0; c < Sm.cols; c++) if (getm(Sm, r, c)) g.push_back(c);
+                        if (!g.empty() && seen.insert(g).second) dist.push_back(std::set<int>(g.begin(), g.end()));
+                    }
+                }
+                std::vector<long long> c4(all.size(), 0);
+                for (size_t i = 0; i < all.size(); i++) {
+                    const std::set<int> gi(all[i].begin(), all[i].end());
+                    for (size_t j = 0; j < dist.size(); j++) {
+                        if (dist[j] == gi) continue;
+                        long long o = 0;
+                        for (int q : dist[j]) o += gi.count(q);
+                        c4[i] += o * (o - 1) / 2;
+                    }
+                }
+                for (int K : Ks) {
+                    std::set<std::vector<int> > want;
+                    for (size_t i = 0; i < all.size(); i++) if (K < 0 || c4[i] <= K) want.insert(all[i]);
+                    g_stab_overlap_c4 = K; g_stab_overlap_mutant = 0;
+                    OvlInfo info;
+                    const OvlRows got = stab_overlap_rows(Hp, Gl, Sm, info);
+                    const std::set<std::vector<int> > gotset(got.begin(), got.end());
+                    c_checks++;
+                    if (gotset != want || (int)got.size() + info.c4_gated != (int)all.size()) {
+                        c_bad++; fails++;
+                        fprintf(stderr, "CC_FAIL GH-218 partG (c) %s half %d K=%d: %zu rows selected, want %zu (gated %d of %zu)\n",
+                                st, half, K, got.size(), want.size(), info.c4_gated, all.size());
+                    }
+                    if (K >= 0) { c_gated += info.c4_gated; c_kept += (long)got.size(); }
+                    if (K >= 0) {   // mutant 3 must select differently on some (code, half, K)
+                        g_stab_overlap_mutant = 3;
+                        OvlInfo mi;
+                        const OvlRows m3 = stab_overlap_rows(Hp, Gl, Sm, mi);
+                        if (std::set<std::vector<int> >(m3.begin(), m3.end()) != want) c_m3_diff++;
+                    }
+                }
+            }
+        }
+        g_stab_overlap_c4 = saved_c4; g_stab_overlap_mutant = saved_mut;
+        printf("partG (c) GH-218 4-cycle row gate: %ld selections on %zu codes x 2 halves, %ld bad (gated %ld, kept %ld rows over K >= 0); "
+               "mutant 3 (overlaps counted instead of pairs) changes %ld selections\n",
+               c_checks, sizeof(stems) / sizeof(stems[0]), c_bad, c_gated, c_kept, c_m3_diff);
+        if (c_gated == 0 || c_kept == 0 || c_m3_diff == 0) { fprintf(stderr, "CC_FAIL GH-218 partG (c) coverage/mutant expectations not met\n"); fails++; }
     }
     printf("partB: %ld CSS codes (%ld with a verified dual map, %ld with X-half orbits, %ld with dX != dZ, %ld with all-odd Hz), %ld driver runs, %ld bad, %ld RESULT -1\n",
            b_inst, b_dual, b_xorb, b_dxdz, b_odd, b_runs, b_bad, b_traps);

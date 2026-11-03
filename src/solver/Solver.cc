@@ -2067,7 +2067,7 @@ CRef Solver::propagate()
 NextClause:;
         }
         ws.shrink(i - j);
-        if (!ovRows.empty() && confl == CRef_Undef) {   // GH-148 native overlap rows (inactive when empty)
+        if (!ovRows.empty() && confl == CRef_Undef && ovWatched(p)) {   // GH-148 native overlap rows (inactive when empty)
             CRef oc = ovPropagate(p, false);
             if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
         }
@@ -4053,7 +4053,7 @@ CRef Solver::propagateForLK() {
     NextClause:;
     }
     ws.shrink(i - j);
-    if (!ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef) {   // GH-148 (inactive when empty)
+    if (ovInLK && !ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef && ovWatched(p)) {   // GH-148 (inactive when empty)
       CRef oc = ovPropagate(p, true);
       if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
       else if (falseVar != var_Undef) qhead = trail.size();
@@ -7379,6 +7379,8 @@ void Solver::setOverlapRows(const std::vector<std::vector<int> >& rows, const st
         ovLim.push_back(lims[r] < 0 ? 0 : lims[r]);
         for (size_t t = 0; t < rows[r].size(); t++) ovColRows[(size_t)rows[r][t]].push_back(id);
     }
+    ovHas.assign((size_t)nQubits, 0);   // GH-218: qubits on at least one row (call-site filter)
+    for (int q = 0; q < nQubits; q++) ovHas[(size_t)q] = !ovColRows[(size_t)q].empty();
     ovCacheIdx.assign(1024, -1);
 }
 

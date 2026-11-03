@@ -934,6 +934,16 @@ static int g_stab_overlap_enc = 3;       /* -stab-overlap-enc=native|bin|seq|cla
 static int g_stab_overlap_mutant = 0;    /* test only (no flag): 1 = limit floor(|g|/2) - 1 (cuts minimum logicals);
                                             2 = the half's parity rows (Hpar) used as g without the GF(2) check */
 static const double STAB_OVL_BIN_MAX = 126.0;   /* auto: binomial up to |g| = 9 (C(9,5) = 126), counter above */
+/* GH-218: 4-cycle row gate. A verified row g is used only if it lies on at most g_stab_overlap_c4 Tanner-graph 4-cycles
+ * of the same-type stabilizer matrix, c4(g) = sum over the other distinct rows g' of C(|g & g'|, 2) (the 4-cycles through
+ * g's check node). Every subset of the verified rows is sound (each row alone keeps every minimum-weight element of F),
+ * so the gate changes no probe answer, only which valid constraints the probes carry. Measured in GH-218: on the
+ * weight-9 rows of the TN codes (c4 >= 12 on every TN code in data/matrices) the rows rarely prune and change the
+ * search by 0.9-1.35x in conflicts (TN_216 Z half 1.33x, the GH-148 regression), while the useful rows have few
+ * 4-cycles (BB / LP / GB rows c4 <= 4; TN_250's weight-6 rows c4 7 and 10 carry its whole gain, its weight-9 rows
+ * c4 22-24 none). -1 = no gate (every verified row, the search of GH-148). */
+static const int STAB_OVL_C4_DEFAULT = 11;
+static int g_stab_overlap_c4 = STAB_OVL_C4_DEFAULT;   /* -stab-overlap-c4=N|off (default 11) */
 
 typedef std::vector<std::vector<int> > OvlRows;
 
@@ -944,6 +954,7 @@ struct OvlInfo {
     int duplicates;
     long long clauses, auxvars;   /* per probe */
     int bin_rows, seq_rows, native_rows;
+    int c4_gated;     /* GH-218: verified rows not used because they lie on more than g_stab_overlap_c4 4-cycles */
     std::map<int, int> weights;   /* |g| -> rows */
 };
 
@@ -971,6 +982,7 @@ static OvlRows stab_overlap_rows(const Matrix& Hpar, const Matrix& Glog, const M
 {
     info = OvlInfo();
     info.candidates = info.kept = info.rejected = info.duplicates = info.bin_rows = info.seq_rows = info.native_rows = 0;
+    info.c4_gated = 0;
     info.clauses = info.auxvars = 0;
     OvlRows out;
     const int n = Hpar.cols;
@@ -981,6 +993,20 @@ static OvlRows stab_overlap_rows(const Matrix& Hpar, const Matrix& Glog, const M
     for (int r = 0; r < Glog.rows; r++) for (int c = 0; c < n; c++) if (getm(Glog, r, c)) colG[c].push_back(r);
     std::vector<uint8_t> parH((size_t)Hpar.rows, 0), parG((size_t)Glog.rows, 0);
     std::set<std::vector<int> > seen;
+    /* GH-218: distinct nonzero rows of Src and their column incidence, for the 4-cycle gate */
+    std::vector<std::vector<int> > srows;
+    std::vector<std::vector<int> > scol;
+    if (g_stab_overlap_c4 >= 0) {
+        std::set<std::vector<int> > distinct;
+        for (int r = 0; r < Src.rows; r++) {
+            std::vector<int> g;
+            for (int c = 0; c < n; c++) if (getm(Src, r, c)) g.push_back(c);
+            if (!g.empty() && distinct.insert(g).second) srows.push_back(g);
+        }
+        scol.assign((size_t)n, std::vector<int>());
+        for (size_t r = 0; r < srows.size(); r++) for (size_t t = 0; t < srows[r].size(); t++) scol[(size_t)srows[r][t]].push_back((int)r);
+    }
+    std::vector<int> shared(srows.size(), 0);
     for (int r = 0; r < Src.rows; r++) {
         std::vector<int> g;
         for (int c = 0; c < n; c++) if (getm(Src, r, c)) g.push_back(c);
@@ -1000,6 +1026,23 @@ static OvlRows stab_overlap_rows(const Matrix& Hpar, const Matrix& Glog, const M
         }
         if (!ok) { info.rejected++; continue; }
         if (!seen.insert(g).second) { info.duplicates++; continue; }
+        if (g_stab_overlap_c4 >= 0) {   /* GH-218: c4(g) = sum over the other distinct rows of C(|g & g'|, 2) */
+            std::vector<int> touched;
+            for (size_t t = 0; t < g.size(); t++)
+                for (size_t u = 0; u < scol[(size_t)g[t]].size(); u++) {
+                    const int q = scol[(size_t)g[t]][u];
+                    if (shared[(size_t)q]++ == 0) touched.push_back(q);
+                }
+            long long c4 = 0;
+            for (size_t u = 0; u < touched.size(); u++) {
+                const long long o = shared[(size_t)touched[u]];
+                c4 += g_stab_overlap_mutant == 3 ? o : o * (o - 1) / 2;   /* mutant 3 (test only): overlaps, not pairs */
+                shared[(size_t)touched[u]] = 0;
+            }
+            const long long self = (long long)g.size();   /* g itself is one of the distinct rows: remove its own term */
+            c4 -= g_stab_overlap_mutant == 3 ? self : self * (self - 1) / 2;
+            if (c4 > g_stab_overlap_c4) { info.c4_gated++; continue; }
+        }
         const int w = (int)g.size(), k = ovl_limit(w);
         if (k >= w) continue;   /* no constraint (cannot happen for w >= 1 with the true limit) */
         info.kept++;
@@ -1671,8 +1714,10 @@ static int min_distance_css_interleaved(
             fprintf(stderr, "warning: stab-overlap: %s half: %d of %d stabilizer rows fail H g = 0 or G g = 0 (not used)\n",
                     hs[k].tag, oi.rejected, oi.candidates);
         if (verb > 0) {
-            printf("c stab-overlap %s: %d of %d rows used (%d rejected: H g != 0 or G g != 0; %d duplicates); |g| -> rows:",
-                   hs[k].tag, oi.kept, oi.candidates, oi.rejected, oi.duplicates);
+            printf("c stab-overlap %s: %d of %d rows used (%d rejected: H g != 0 or G g != 0; %d duplicates", hs[k].tag, oi.kept,
+                   oi.candidates, oi.rejected, oi.duplicates);
+            if (g_stab_overlap_c4 >= 0) printf("; %d on more than %d Tanner 4-cycles", oi.c4_gated, g_stab_overlap_c4);   /* GH-218 */
+            printf("); |g| -> rows:");
             for (std::map<int, int>::const_iterator it = oi.weights.begin(); it != oi.weights.end(); ++it)
                 printf(" %d:%d (<= %d)", it->first, it->second, ovl_limit(it->first));
             if (g_stab_overlap_enc == 3) printf("; native propagator rows %d (no clauses)%s\n", oi.native_rows, g_stab_overlap_mutant ? " [TEST MUTANT]" : "");
@@ -2477,6 +2522,14 @@ int main(int argc, char** argv) {
             if (!cc_parse_seconds(argv[i] + 20, &v) || v < 0 || v > 1000) die("invalid -stab-overlap-ratio (0..1000)");
             g_stab_overlap_ratio = v; stab_ratio_given = true;
         }
+        else if (!strncmp(argv[i], "-stab-overlap-c4=", 17)) {   /* GH-218 */
+            const char* v = argv[i] + 17;
+            char* end = NULL;
+            long k = strtol(v, &end, 10);
+            if (!strcmp(v, "off")) g_stab_overlap_c4 = -1;
+            else if (*v && end && !*end && k >= 0 && k <= 1000000) g_stab_overlap_c4 = (int)k;
+            else die("invalid -stab-overlap-c4 (N = 0..1000000 | off)");
+        }
         else if (!strcmp(argv[i], "-stab-overlap-enc=clauses"))
             g_stab_overlap_enc = 0;
         else if (!strcmp(argv[i], "-stab-overlap-enc=bin"))
@@ -2755,6 +2808,8 @@ int main(int argc, char** argv) {
             printf("            probes of a half also require |x & g| <= floor(|g|/2) for same-type stabilizer rows g (verified\n");
             printf("            H g = 0, G g = 0; a minimum-weight logical always satisfies it, else x + g is lighter); on: every\n");
             printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
+            printf("            -stab-overlap-c4=N|off (GH-218, default 11): use only rows g on at most N Tanner 4-cycles of the\n");
+            printf("            stabilizer matrix (sum over the other rows g' of C(|g & g'|, 2)); off = every verified row (GH-148's set)\n");
             printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");
             printf("            clauses up to |g| = 9, sequential counter above; bin / seq: one of them for every row)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
