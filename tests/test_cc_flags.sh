@@ -438,10 +438,10 @@ vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 
 vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 on more than 0 Tanner 4-cycles); |g|" -v -stab-overlap-c4=0 $L BB_90_8_10
 vgrep 8 "^c stab-overlap X: 0 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 on more than 11 Tanner 4-cycles); |g| -> rows:; native propagator rows 0 (no clauses)$" -v $L TN_72_8_8
 vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 9:36 (<= 4)" -v -stab-overlap-c4=off $L TN_72_8_8
-runs=$((runs + 1)); run -frontier-stats $L TN_72_8_8
-if [[ $rc -ne 0 ]] || grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (TN_72_8_8 default: every row gated, no c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
-runs=$((runs + 1)); run -frontier-stats -stab-overlap-c4=off $L TN_72_8_8
-if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (TN_72_8_8 -stab-overlap-c4=off: c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -frontier-stats -stab-overlap=on $L TN_72_8_8
+if [[ $rc -ne 0 ]] || grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (TN_72_8_8 -stab-overlap=on: every row gated, no c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -stab-overlap-c4=off $L TN_72_8_8
+if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (TN_72_8_8 -stab-overlap=on -stab-overlap-c4=off: c OVERLAP line expected)" >&2; fails=$((fails + 1)); fi
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)
