@@ -186,10 +186,12 @@ struct SparseRows {
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
     bool charge;     /* GH-157 node lower bound, default on (PI, 2026-10-29) */
-    bool tiebreak;   /* GH-162 (default off; acts only with overlap) */
-    bool sparse, sparseov, sparsemrv, xorunit;   /* GH-181 (default off) */
-    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true), tiebreak(false),
-              sparse(false), sparseov(false), sparsemrv(false), xorunit(false) {}
+    bool tiebreak;   /* GH-162 (acts only with overlap); default on since GH-217 */
+    bool sparse, sparseov, sparsemrv, xorunit;   /* GH-181; sparse, sparseov, sparsemrv default on since GH-217, xorunit off */
+    /* Default = the CC default rule set (GH-217): excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv.
+     * -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge (with -cc-roworder=index) = the CC default before GH-217. */
+    Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true), tiebreak(true),
+              sparse(true), sparseov(true), sparsemrv(true), xorunit(false) {}
 };
 
 /* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment).

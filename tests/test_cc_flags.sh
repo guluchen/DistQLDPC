@@ -253,7 +253,10 @@ vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
 # 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
-vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,charge, " -v -engine=cc $L $C
+#     (GH-217: default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv; OLD = the default before)
+OLD="-cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-roworder=index"
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,charge, " -v -engine=cc $OLD $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf, " -v -engine=cc -cc-rules=excl,pack,orbf $L $C
@@ -451,7 +454,7 @@ vgrep 3 "^c cc: X half tiebreak: [0-9]* of [0-9]* rows even: limit |g|/2 - 1 on 
 vgrep 3 "^c cc: X half tiebreak: idle (needs overlap rows)" -v -engine=cc -cc-rules=excl,pack,orbf,tiebreak $L $M
 vgrep 3 "^c cc: X half tiebreak: on \[TEST MUTANT 17: naive tie cut\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-mutant=17 $L $M
 vgrep 3 "^c cc: X half tiebreak: on \[TEST MUTANT 18: seed not first\]" -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak -cc-mutant=18 $L $M
-runs=$((runs + 1)); run -v -cc-stats -engine=cc $L $M
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $OLD $L $M   # GH-217: tiebreak is a default rule; the pre-GH-217 default prints no line
 if [[ $rc -ne 0 ]] || grep -q "tiebreak" <<<"$out"; then
     echo "FAIL (GH-162: a tiebreak line without the token): rc=$rc" >&2; fails=$((fails + 1))
 fi
@@ -479,7 +482,7 @@ for mt in 19 20; do
         echo "FAIL (GH-183: mutant $mt not reported): rc=$rc" >&2; fails=$((fails + 1))
     fi
 done
-for a in "" "-cc-roworder=index" "-cc-tbbase=desc" "-cc-roworder=index -cc-tbbase=desc"; do
+for a in "-cc-roworder=index" "-cc-roworder=index -cc-tbbase=desc"; do   # GH-217: the default order is auto (7k)
     runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $a $L $M
     if [[ $rc -ne 0 ]] || grep -q "row order\|ascending" <<<"$out"; then
         echo "FAIL (GH-183: a row-order line with the defaults: $a): rc=$rc" >&2; fails=$((fails + 1))
@@ -552,9 +555,23 @@ for mt in 22 23 24; do   # mutants are accepted values (answers may be wrong by 
         echo "FAIL (GH-181: mutant $mt not reported)" >&2; fails=$((fails + 1))
     fi
 done
-runs=$((runs + 1)); run -v -cc-stats -engine=cc $L $M
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $OLD $L $M   # GH-217: sparse tokens are default rules; none with the pre-GH-217 default
 if [[ $rc -ne 0 ]] || grep -q "sparse\|xorunit\|gh181" <<<"$out"; then
     echo "FAIL (GH-181: a sparse/xorunit line without the tokens): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
+# 7k. GH-217 default flip: the default -v lines name tiebreak, the sparse tokens and the auto row order; the explicit
+#     pre-GH-217 default (OLD) answers and prints none of them
+vgrep 3 "^c cc: X half tiebreak: on$" -v -engine=cc $L $M
+vgrep 3 "^c cc: X half sparse: [1-9][0-9]* redundant rows" -v -engine=cc $L $M
+vgrep 3 "^c cc: X half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, [0-9]* rows; probe at the first refuted level taking >= 0.1s (one probe))$" \
+    -v -engine=cc $L $M
+vgrep 3 "^c solver: CC connected-cluster level search .*rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge," -v -engine=cc $L $M
+accept 3 "" -engine=cc $OLD $L $M
+accept 2 "" -engine=cc $OLD $L $C
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $OLD $L $M
+if [[ $rc -ne 0 ]] || grep -q "tiebreak\|sparse\|row order\|probe" <<<"$out"; then
+    echo "FAIL (GH-217: a tiebreak/sparse/row-order/probe line with the pre-GH-217 default flags): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
 echo "test_cc_flags: $runs checks, $fails failed"

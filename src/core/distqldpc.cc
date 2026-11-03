@@ -2683,7 +2683,8 @@ int main(int argc, char** argv) {
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge[,tiebreak][,sparse,sparseov,sparsemrv,xorunit][,mrv]\n");
-            printf("            (default excl,pack,orbf,parity,leaf,overlap,charge;\n");
+            printf("            (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv since GH-217;\n");
+            printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-roworder=index = the CC default before GH-217;\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap = the CC search before GH-157;\n");
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
             printf("            leaf = hash lookup of the closing qubit at budget 1 and 2; overlap = a minimum logical meets\n");
@@ -2693,14 +2694,14 @@ int main(int argc, char** argv) {
             printf("            packing is within -cc-lb-gap=G of pruning (default 0); -cc-lb-raise=off: charge without the raise;\n");
             printf("            -cc-lb-auto=P switches it off for a half after a level where < P %% of >= 100000 evaluations\n");
             printf("            pruned (default 40; 0 = never);\n");
-            printf("            tiebreak (GH-162, opt-in) = with overlap, an even row g is replaced by g minus its first qubit in\n");
+            printf("            tiebreak (GH-162, default since GH-217) = with overlap, an even row g is replaced by g minus its first qubit in\n");
             printf("            the orbit seed order, which cuts the tie |e & g| = |g|/2 for the lex-least minimum logical;\n");
-            printf("            GH-181, opt-in: sparse = redundant parity rows (sparse pair sums of the half's rows) in pack and mrv;\n");
+            printf("            GH-181 (default since GH-217 except xorunit): sparse = redundant parity rows (sparse pair sums of the half's rows) in pack and mrv;\n");
             printf("            sparsemrv = fewest-candidate branching over the parity and redundant rows on halves with redundant rows\n");
             printf("            (with mrv it adds nothing: mrv branches that way on every half);\n");
             printf("            sparseov = sparse pair sums of the stabilizer rows as extra overlap rows; xorunit = an even row with\n");
             printf("            one free qubit forbids it, an odd row with one free qubit is branched on first)\n");
-            printf("            -cc-roworder=index|bfs|auto (GH-183, default index): internal row order = packing scan order and mrv\n");
+            printf("            -cc-roworder=index|bfs|auto (GH-183; default auto since GH-217, index before): internal row order = packing scan order and mrv\n");
             printf("            tie-break; bfs = reversed BFS over the Tanner graph from the rows of the first seed (a row relabeling);\n");
             printf("            auto (GH-206) = per half, index order without mrv first; a refuted level taking >= S s (-cc-probe=S,\n");
             printf("            default 0.1) is re-run with the other configuration (bfs + mrv), capped at the first run's time, and\n");

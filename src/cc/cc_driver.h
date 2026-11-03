@@ -56,7 +56,8 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap,charge since GH-157) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv since
+                                GH-217; excl,pack,orbf,parity,leaf,overlap,charge from GH-157 to GH-217) */
     int lb_minr;             /* GH-157 -cc-lb-minr=K: charge evaluated at remaining budget >= K (default 3) */
     int lb_gap;              /* GH-157 -cc-lb-gap=G: ... and only where remaining budget - packing <= G (default 0) */
     bool lb_raise;           /* GH-157 -cc-lb-raise=on|off: charge raise step (default on) */
@@ -96,7 +97,7 @@ struct DriverOptions {
                                 driver itself does not read it. Test mutants (wrapper): 13 = candidates kept without the
                                 GF(2) checks plus the cyclic shift i -> i+1 mod n (not an automorphism in general); 14 = swap map used without the check, the identity
                                 when none was found. */
-    int roworder;            /* GH-183 -cc-roworder=index|bfs (default index): internal row order of each half search, i.e. the
+    int roworder;            /* GH-183 -cc-roworder=index|bfs|auto (default auto since GH-217, index before): internal row order of each half search, i.e. the
                                 packing scan order and the mrv tie-break (cc_half.h); a row permutation. Mutants 19 / 20 (bfs only):
                                 the order drops a row / is not restarted for rows unreachable from the seed */
     bool tb_asc;             /* GH-183 -cc-tbbase=desc|asc (default desc): base order of the tiebreak rule (test variant) */
@@ -115,7 +116,7 @@ struct DriverOptions {
     int probe_force;         /* -cc-probe=switch|stay (test only) */
     DriverOptions() : lb_minr(3), lb_gap(0), lb_raise(true), lb_auto(40), dual(true), ub_basis(true), seed(0), mutant(0), stats(false), verb(0), sequential(false),
                       ub_search(true), ub_cap(-1), ub_pre(0), ub_share(0.05), ub_hits(16), ub_only(false), ub_poll_mask(0x3FFF), ub_skip_polls(0),
-                      aut(true), roworder(ROWORDER_INDEX), tb_asc(false), probe_sec(0.1), probe_growth(0), probe_force(0) {}
+                      aut(true), roworder(ROWORDER_AUTO), tb_asc(false), probe_sec(0.1), probe_growth(0), probe_force(0) {}
 };
 
 /* Bound output: kind is "TRY", "LB" or "UB"; result(d, true) = RESULT d OPTIMAL, result(-1, false).
