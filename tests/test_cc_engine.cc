@@ -203,7 +203,7 @@ static distcc::Rules rules_of(int mask) {
     return r;
 }
 static const int RM_CHG = 128;   // GH-157
-static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule set (excl,pack,orbf,parity,leaf,overlap,charge)
+static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule set from GH-157 to GH-217 (excl,pack,orbf,parity,leaf,overlap,charge)
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 256;   // RM_TB: GH-162
 static const int RM_SP = 512, RM_SPOV = 1024, RM_XU = 2048, RM_SPMRV = 4096;   // GH-181 sparse, sparseov, xorunit, sparsemrv
 static const int RM_ER = 8192;   // GH-195 erasure
@@ -501,6 +501,27 @@ int main(int argc, char** argv) {
     const int NA = argc > 1 ? atoi(argv[1]) : 300;   // part A instances
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
     int fails = 0;
+
+    // ---------------- GH-217: the CC defaults (no random numbers drawn) ----------------
+    // Default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv and -cc-roworder=auto; every
+    // driver configuration below that keeps DriverOptions' rules / roworder (sequential schedule, mutant 4, Parts E/F finder
+    // runs) therefore exercises the new default against enumeration.
+    {
+        const distcc::DriverOptions o;
+        const std::string want = "excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge";
+        if (distcc::rules_string(o.rules) != want || distcc::rules_string(distcc::Rules()) != want || o.roworder != distcc::ROWORDER_AUTO ||
+            o.tb_asc || o.rules.mrv || o.rules.xorunit) {
+            fails++;
+            fprintf(stderr, "CC_FAIL GH-217 defaults: rules %s, roworder %d, tbbase %s\n", distcc::rules_string(o.rules).c_str(), o.roworder,
+                    o.tb_asc ? "asc" : "desc");
+        }
+        distcc::Rules old;
+        if (!distcc::parse_rules("excl,pack,orbf,parity,leaf,overlap,charge", old) || old.tiebreak || old.sparse || old.sparseov || old.sparsemrv ||
+            distcc::rules_string(old) != "excl,pack,orbf,parity,leaf,overlap,charge") {
+            fails++;
+            fprintf(stderr, "CC_FAIL GH-217 pre-flip rule list does not parse to the old default\n");
+        }
+    }
 
     // ---------------- Part I (a), GH-157: bound functions vs brute force ----------------
     const unsigned long long rng_saved = rng_state;   // GH-157: Part I (a) must not shift the instance stream of the other parts

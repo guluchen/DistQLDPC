@@ -463,7 +463,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 (unsigned long long)opt.seed, dual ? in.dual_desc.c_str() : "off", opt.mutant,
                 hs[0].searched ? (hs[0].par ? "on" : "off") : "-", hs[1].searched ? (hs[1].par ? "on" : "off") : "-");
         if (opt.roworder != ROWORDER_INDEX || opt.tb_asc)   /* GH-183 (no line with the defaults) */
-            fprintf(trace, "# roworder %s tbbase %s\n", opt.roworder == ROWORDER_BFS ? "bfs" : "index", opt.tb_asc ? "asc" : "desc");
+            fprintf(trace, "# roworder %s tbbase %s\n", opt.roworder == ROWORDER_BFS ? "bfs" : opt.roworder == ROWORDER_AUTO ? "auto" : "index",
+                    opt.tb_asc ? "asc" : "desc");
         fflush(trace);
     }
 
