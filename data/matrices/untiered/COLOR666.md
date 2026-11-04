@@ -1,5 +1,9 @@
 # Triangular 6.6.6 color-code library
 
+> **Placed 2026-11-04.** These matrices now live in `data/matrices/tier0` … `tier5` under the stems of the
+> [placement table](README.md#placement-2026-11-04); the `_unknown` names below are the generator stems kept
+> for provenance (mapped in `MANIFEST.csv`).
+
 Issue: [GH-156](https://github.com/guluchen/DistQLDPC/issues/156).
 Prefix: `COLOR`, approved for this batch to avoid confusion with the connected-cluster
 (`cc`) engine. All files remain untiered and retain `unknown`; no tiered code,

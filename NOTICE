@@ -242,10 +242,11 @@ When you receive DistQLDPC as a whole (source or binary):
 For questions about upstream MaxCDCL, contact the original authors
 (see src/solver/ file headers).
 
-7. Repetition-product hypergraph-product matrices (GH-153, untiered)
------------------------------------------------------------------
+7. Repetition-product hypergraph-product matrices (GH-153; tiered 2026-11-04)
+---------------------------------------------------------------------------
 
-Location: data/matrices/untiered/HGP_*; generator scripts/codegen/hgp_repetition.py.
+Location: data/matrices/tier0 .. tier5 since 2026-11-04 (placement table and provenance in
+data/matrices/untiered/README.md); generator scripts/codegen/hgp_repetition.py.
 Original clean-room implementation and generated matrices, GPL-3.0-or-later.
 No third-party code, matrix files, or paper text were copied.
 
@@ -256,13 +257,13 @@ IEEE Transactions on Information Theory (2014), DOI 10.1109/TIT.2013.2292061.
 The repetition-code specializations have claimed parameters
 [[13,1,3]], [[41,1,5]], [[113,1,8]], [[265,1,12]], [[481,1,16]], [[1105,1,24]].
 These are mathematical ground-truth claims, not DistQLDPC solver results.
-All stems remain _unknown pending PI naming/tier approval. Short smoke runs
-are recorded in GH-153: four exact reproductions, one bounded timeout, and
-one default timeout without bounds (supplemental -ub-pre=1 gives 9..26).
+Placed and renamed 2026-11-04 (PI plan; distances found by DistQLDPC main 02879a93 with
+GF(2)-verified witnesses, all equal to the claims): HGP_13_1_3 (tier0), HGP_41_1_5 (tier0), HGP_113_1_8 (tier0), HGP_265_1_12 (tier1), HGP_481_1_16 (tier3), HGP_1105_1_24 (tier5).
+The earlier 60 s smoke runs remain recorded in GH-153.
 See data/matrices/untiered/MANIFEST.csv and README.md for full provenance.
 
-8. Nonzero-rate cycle-factor HGP matrices (GH-154, untiered)
-----------------------------------------------------------
+8. Nonzero-rate cycle-factor HGP matrices (GH-154; tiered 2026-11-04)
+--------------------------------------------------------------------
 
 Original clean-room generator scripts/codegen/hgp_cycle.py and generated
 HGP_{45,106,306,610,1261,2866}_* matrices, GPL-3.0-or-later. No graph data,
@@ -272,6 +273,7 @@ Graph mathematics is credited to the standard complete graph, Petersen,
 Fano-plane/Heawood, Desargues double and GQ(2,2)/Tutte-Coxeter constructions;
 Andries E. Brouwer's graph descriptions at https://aeb.win.tue.nl/graphs/
 provide construction provenance. See data/matrices/untiered/CYCLE_HGP.md.
+Placed and renamed 2026-11-04: HGP_45_9_3 (tier0), HGP_106_16_4 (tier0), HGP_306_36_5 (tier0), HGP_610_64_6 (tier1), HGP_1261_121_6 (tier3), HGP_2866_256_8 (tier3).
 Claimed distances are derived from the theorem and independently checked
 classical girths; solver observations are recorded separately in the manifest.
 scripts/compute_logicals.py gains an original opt-in bitset backend; its
@@ -330,8 +332,8 @@ TN_396_4_23to26 (was TN_396_4_17to26), TN_504_2_24to34 (was TN_504_2_17to34), TN
 GH-183]; BB_756_16_32to34 (was BB_756_16_30to34), BB_864_4_32to40 (was BB_864_4_30to40) [GH-183];
 TN_496_2_27to30 (was TN_496_2_23to30) [GH-181].
 
-9. Triangular 6.6.6 color-code matrices (GH-156, untiered)
---------------------------------------------------------
+9. Triangular 6.6.6 color-code matrices (GH-156; tiered 2026-11-04)
+------------------------------------------------------------------
 
 Original clean-room generator scripts/codegen/color666.py and generated
 COLOR_{7,19,127,331,1027,2791}_1_unknown_* matrices, GPL-3.0-or-later.
@@ -344,9 +346,10 @@ color code by matching on a Mobius strip", arXiv:2108.11395v3, Sec. II,
 Fig. 1, Eqs. (1)-(2). Claimed distances use the published family formula;
 DistQLDPC smoke observations are recorded separately. See
 data/matrices/untiered/COLOR666.md and optimization/experiments/GH-156/.
+Placed and renamed 2026-11-04: COLOR_7_1_3 (tier0), COLOR_19_1_5 (tier0), COLOR_127_1_13 (tier1), COLOR_331_1_21 (tier5), COLOR_1027_1_28to37 (tier5), COLOR_2791_1_26to61 (tier5).
 
-10. Twisted-torus generalized toric / BB matrices (GH-159, untiered)
-----------------------------------------------------------------
+10. Twisted-torus generalized toric / BB matrices (GH-159; tiered 2026-11-04)
+--------------------------------------------------------------------------
 
 Original generator scripts/codegen/twisted_torus.py, independent congruence
 validator and generated BB_{30,120,186,248,294,340}_*_unknown_* matrices,
@@ -357,3 +360,4 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+Placed and renamed 2026-11-04: BB_30_4_6 (tier0), BB_120_8_12 (tier0), BB_186_10_14 (tier1), BB_248_10_18 (tier2), BB_294_10_20 (tier3), BB_340_16_18 (tier2).
