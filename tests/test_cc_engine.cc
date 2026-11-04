@@ -321,7 +321,8 @@ static RunOut run_driver(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
 struct PreCfg { const char* name; double pre; uint64_t iters; bool oddcap; uint64_t seed; int dualmode; bool symbreak; int card; int mutant;
                 int ovl; int ovl_enc; int ovl_mutant; double ovl_ratio;   /* GH-148 (0 = -stab-overlap off) */
                 int isd = 0; int isd_p = 2;   // GH-146: collision mode of the pre-pass finder
-                int ovl_c4 = -1; };            // GH-218: -stab-overlap-c4 (-1 = no gate, the GH-148 row set)
+                int ovl_c4 = -1;               // GH-218: -stab-overlap-c4 (-1 = no classification, the GH-148 search)
+                int ovl_pilot = 3; int ovl_pilot_cap = 12; int ovl_margin = 4; };   // GH-218 pilot (seeds, cap, margin)
 static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, const Matrix& Gz, bool oddcap, const PreCfg* pc = NULL) {
     RunOut r; r.ok = false; r.d = -2;
     int fd[2];
@@ -339,6 +340,8 @@ static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
             g_ub_isd.isd = pc->isd; g_ub_isd.isd_p = pc->isd_p;   // GH-146 (child process only)
             g_stab_overlap = pc->ovl != 0; g_stab_overlap_enc = pc->ovl_enc; g_stab_overlap_mutant = pc->ovl_mutant; g_stab_overlap_ratio = pc->ovl_ratio;   // GH-148
             g_stab_overlap_c4 = pc->ovl_c4;   // GH-218
+            g_stab_overlap_pilot = pc->ovl_pilot; g_stab_overlap_pilot_cap = (uint64_t)pc->ovl_pilot_cap;
+            g_stab_overlap_pilot_margin = (uint64_t)pc->ovl_margin;
             (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], pc->card, pc->symbreak, pc->dualmode, false);
         } else
         (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], 0, true, DUALMODE_SHARE, false);
@@ -1016,11 +1019,13 @@ int main(int argc, char** argv) {
                 {"ovl-ratio1-pre-iter1-mto", 1.0, 1, true, 1, DUALMODE_SHARE, true, 3, 0, 1, 0, 0, 1.0},
                 {"ovl-mutant1", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 1},
                 {"ovl-mutant2", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 0, 2},
-                // GH-218: the 4-cycle row gate (subsets of the verified rows; answers must not change)
+                // GH-218: dense rows (4-cycle classification) under the pilot; margin 1 / pilot cap 1 reach the pilot on
+                // these small codes (answers must not change: every row subset is sound)
                 {"ovl-native-auto-c4-11", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 0, 2.0, 0, 2, 11},
-                {"ovl-native-c4-0-mto", -1.0, 0, true, 1, DUALMODE_SHARE, true, 3, 0, 1, 3, 0, 0.0, 0, 2, 0},
-                {"ovl-native-c4-2-pre-iter1", 1.0, 1, true, 2, DUALMODE_SKIP, true, 0, 0, 1, 3, 0, 0.0, 0, 2, 2},
-                {"ovl-seq-c4-4-nosymbreak", -1.0, 0, false, 0, DUALMODE_OFF, false, 0, 0, 1, 2, 0, 0.0, 0, 2, 4},
+                {"ovl-native-c4-0-pilot-m1", -1.0, 0, true, 1, DUALMODE_SHARE, true, 3, 0, 1, 3, 0, 0.0, 0, 2, 0, 3, 1, 1},
+                {"ovl-native-c4-0-pilot1-m1-pre", 1.0, 1, true, 2, DUALMODE_SKIP, true, 0, 0, 1, 3, 0, 0.0, 0, 2, 0, 1, 1, 1},
+                {"ovl-native-c4-2-nopilot-m1", -1.0, 0, true, 0, DUALMODE_SHARE, true, 0, 0, 1, 3, 0, 0.0, 0, 2, 2, 0, 1, 1},
+                {"ovl-seq-c4-0-pilot-m1-nosymbreak", -1.0, 0, false, 0, DUALMODE_OFF, false, 0, 0, 1, 2, 0, 0.0, 0, 2, 0, 2, 1, 1},
             };
             for (const PreCfg& c : gcfg) {
                 RunOut r = run_maxsat(mHx, mHz, mGx, mGz, c.oddcap, &c);
@@ -1248,7 +1253,59 @@ int main(int argc, char** argv) {
                 }
             }
         }
+        // dense flags: with the output vector every verified row is returned, flagged iff c4 > K
+        long dense_checks = 0, dense_bad = 0, pilot_runs = 0, pilot_bad = 0, pilot_kept = 0, force_checks = 0, force_bad = 0;
+        for (const char* st : stems) {
+            const std::string base = std::string("data/matrices/") + st;
+            FILE* probe = fopen((base + "_Hx.txt").c_str(), "r");
+            if (!probe) continue;
+            fclose(probe);
+            const Matrix Hx = load_matrix((base + "_Hx.txt").c_str()), Hz = load_matrix((base + "_Hz.txt").c_str());
+            const Matrix Gx = load_matrix((base + "_Gx.txt").c_str()), Gz = load_matrix((base + "_Gz.txt").c_str());
+            for (int half = 0; half < 2; half++) {
+                const Matrix& Hp = half == 0 ? Hz : Hx; const Matrix& Gl = half == 0 ? Gx : Gz; const Matrix& Sm = half == 0 ? Hx : Hz;
+                g_stab_overlap_mutant = 0; g_stab_overlap_c4 = -1;
+                OvlInfo ai; const OvlRows all = stab_overlap_rows(Hp, Gl, Sm, ai);
+                g_stab_overlap_c4 = 11;
+                OvlInfo si; const OvlRows sparse = stab_overlap_rows(Hp, Gl, Sm, si);
+                OvlInfo di; std::vector<char> dense; const OvlRows withd = stab_overlap_rows(Hp, Gl, Sm, di, &dense);
+                dense_checks++;
+                OvlRows sp2;
+                for (size_t i = 0; i < withd.size() && i < dense.size(); i++) if (!dense[i]) sp2.push_back(withd[i]);
+                long nd = 0; for (char c : dense) nd += c;
+                if (withd != all || dense.size() != withd.size() || sp2 != sparse || nd != di.c4_gated) {
+                    dense_bad++; fails++;
+                    fprintf(stderr, "CC_FAIL GH-218 partG (c) dense flags %s half %d\n", st, half);
+                }
+                // pilot unit check on the TN codes of tier0 (small d): forced with/without dense rows the probe answers
+                // agree at caps d - 1 and d (NONE / FOUND), and the pilot decision is reproducible
+                if (strncmp(st, "tier0/TN_", 9) || nd == 0) continue;
+                CssHalf h = { half == 0 ? "X" : "Z", &Hp, &Gl, Gl.rows > 0, 1, UINT64_MAX };
+                h.ovl_dense_mode = -1; h.ovl = withd; h.ovl_dense = dense; h.frontier = 0; h.par = false; h.pre = false;
+                const int d = atoi(strrchr(st, '_') + 1);
+                for (int cap = d - 1; cap <= d; cap++) {
+                    uint64_t v = 0, c1 = 0, c0 = 0;
+                    const HalfStatus s1 = run_css_half(h, (uint64_t)cap, true, 0, 0, -1, UINT64_MAX, UINT64_MAX, true, v, 1, &c1);
+                    const HalfStatus s0 = run_css_half(h, (uint64_t)cap, true, 0, 0, -1, UINT64_MAX, UINT64_MAX, true, v, 0, &c0);
+                    force_checks++;
+                    // the half's own minimum may exceed d (d = min over both halves): only agreement is required
+                    if (s1 != s0 || (s1 != HALF_FOUND && s1 != HALF_NONE)) {
+                        force_bad++; fails++;
+                        fprintf(stderr, "CC_FAIL GH-218 partG (c) forced dense %s half %d cap %d: %d vs %d\n", st, half, cap, (int)s1, (int)s0);
+                    }
+                }
+                g_stab_overlap_pilot_cap = 1;
+                int dec[2];
+                for (int rep2 = 0; rep2 < 2; rep2++) { h.ovl_dense_mode = -1; ovl_pilot(h, 0, 0); dec[rep2] = h.ovl_dense_mode; pilot_runs++; }
+                if (dec[0] != dec[1] || dec[0] < 0) { pilot_bad++; fails++; fprintf(stderr, "CC_FAIL GH-218 partG (c) pilot %s half %d: %d / %d\n", st, half, dec[0], dec[1]); }
+                pilot_kept += dec[0] == 1;
+                g_stab_overlap_pilot_cap = 12;
+            }
+        }
         g_stab_overlap_c4 = saved_c4; g_stab_overlap_mutant = saved_mut;
+        printf("partG (c) GH-218 dense flags: %ld checks, %ld bad; forced dense on/off probe answers on tier0 TN halves: %ld checks, %ld bad; "
+               "pilot decisions: %ld runs, %ld not reproducible (kept on %ld)\n", dense_checks, dense_bad, force_checks, force_bad, pilot_runs, pilot_bad, pilot_kept);
+        if (force_checks == 0 || pilot_runs == 0) { fprintf(stderr, "CC_FAIL GH-218 partG (c) pilot coverage\n"); fails++; }
         printf("partG (c) GH-218 4-cycle row gate: %ld selections on %zu codes x 2 halves, %ld bad (gated %ld, kept %ld rows over K >= 0); "
                "mutant 3 (overlaps counted instead of pairs) changes %ld selections\n",
                c_checks, sizeof(stems) / sizeof(stems[0]), c_bad, c_gated, c_kept, c_m3_diff);
