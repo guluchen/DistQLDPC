@@ -253,9 +253,12 @@ vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
 # 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
-#     (GH-217: default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv; OLD = the default before)
+#     (GH-217: default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv; OLD = the default before;
+#      GH-225 added erasure to the default; A17 = the GH-217 default)
 OLD="-cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-roworder=index"
-vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge, " -v -engine=cc $L $C
+A17="-cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv"
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge,erasure, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge, " -v -engine=cc $A17 $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,charge, " -v -engine=cc $OLD $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C
@@ -560,8 +563,8 @@ if [[ $rc -ne 0 ]] || grep -q "sparse\|xorunit\|gh181" <<<"$out"; then
     echo "FAIL (GH-181: a sparse/xorunit line without the tokens): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
-# 7k. GH-195 erasure (opt-in -cc-rules token; needs pack): values, -cc-erasure-start, -v and -cc-stats lines, mutants 25/26
-#     accepted (27 rejected), no erasure line without the token
+# 7k. GH-195 erasure (-cc-rules token, default since GH-225; needs pack): values, -cc-erasure-start, -v and -cc-stats lines,
+#     mutants 25/26 accepted (27 rejected), no erasure line without the token
 D7=excl,pack,orbf,parity,leaf,overlap,charge
 reject "need -engine=cc or -engine=auto" -cc-rules=$D7,erasure $L $M
 reject "need -engine=cc or -engine=auto" -cc-erasure-start=0 $L $M
@@ -590,12 +593,27 @@ vgrep 3 "^c cc: X half tiebreak: on$" -v -engine=cc $L $M
 vgrep 3 "^c cc: X half sparse: [1-9][0-9]* redundant rows" -v -engine=cc $L $M
 vgrep 3 "^c cc: X half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, [0-9]* rows; probe at the first refuted level taking >= 0.1s (one probe))$" \
     -v -engine=cc $L $M
-vgrep 3 "^c solver: CC connected-cluster level search .*rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge," -v -engine=cc $L $M
+vgrep 3 "^c solver: CC connected-cluster level search .*rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge,erasure," -v -engine=cc $L $M
 accept 3 "" -engine=cc $OLD $L $M
 accept 2 "" -engine=cc $OLD $L $C
 runs=$((runs + 1)); run -v -cc-stats -engine=cc $OLD $L $M
-if [[ $rc -ne 0 ]] || grep -q "tiebreak\|sparse\|row order\|probe" <<<"$out"; then
-    echo "FAIL (GH-217: a tiebreak/sparse/row-order/probe line with the pre-GH-217 default flags): rc=$rc" >&2; fails=$((fails + 1))
+if [[ $rc -ne 0 ]] || grep -q "tiebreak\|sparse\|row order\|probe\|erasure" <<<"$out"; then
+    echo "FAIL (GH-217: a tiebreak/sparse/row-order/probe/erasure line with the pre-GH-217 default flags): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
+# 7m. GH-225 default flip: erasure is a default rule (start 16384); -cc-erasure-start applies to the default rules; the
+#     GH-217 default list (A17) answers and prints no erasure line
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 16384 nodes), pair table (lazy)$" -v -engine=cc $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 7 nodes)" -v -engine=cc -cc-erasure-start=7 $L $M
+vgrep 3 "^c cc-stats: X level [0-9]* erasure calls [0-9]* prune [0-9]* giveup [0-9]*$" -cc-stats -engine=cc -cc-erasure-start=0 $L $M
+vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 25: bound weakened by one\]" -v -engine=cc -cc-mutant=25 $L $M
+accept 3 "" -engine=cc -cc-erasure-start=0 $L $M
+accept 2 "" -engine=cc -cc-erasure-start=0 $L $C
+accept 3 "" -engine=cc $A17 $L $M
+accept 2 "" -engine=cc $A17 $L $C
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $A17 $L $M
+if [[ $rc -ne 0 ]] || grep -q "erasure" <<<"$out" || ! grep -q "tiebreak" <<<"$out"; then
+    echo "FAIL (GH-225: an erasure line (or no tiebreak line) with the GH-217 default rules): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
 echo "test_cc_flags: $runs checks, $fails failed"

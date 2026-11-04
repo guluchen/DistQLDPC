@@ -2687,7 +2687,8 @@ int main(int argc, char** argv) {
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge[,tiebreak][,sparse,sparseov,sparsemrv,xorunit][,mrv][,erasure]\n");
-            printf("            (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv since GH-217;\n");
+            printf("            (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure since GH-225;\n");
+            printf("            the same without erasure = the CC default from GH-217 to GH-225;\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-roworder=index = the CC default before GH-217;\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap = the CC search before GH-157;\n");
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
@@ -2705,7 +2706,7 @@ int main(int argc, char** argv) {
             printf("            (with mrv it adds nothing: mrv branches that way on every half);\n");
             printf("            sparseov = sparse pair sums of the stabilizer rows as extra overlap rows; xorunit = an even row with\n");
             printf("            one free qubit forbids it, an odd row with one free qubit is branched on first;\n");
-            printf("            erasure (GH-195, opt-in) = with pack, when at most 2 added qubits are not charged to a packed row,\n");
+            printf("            erasure (GH-195, default since GH-225) = with pack, when at most 2 added qubits are not charged to a packed row,\n");
             printf("            a node is cut if no logical extends it inside the packed rows' candidates plus <= 2 more qubits;\n");
             printf("            the tests start at the level after the first one with >= N nodes, -cc-erasure-start=N, default 16384)\n");
             printf("            -cc-roworder=index|bfs|auto (GH-183; default auto since GH-217, index before): internal row order = packing scan order and mrv\n");

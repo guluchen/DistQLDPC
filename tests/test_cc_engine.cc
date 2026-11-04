@@ -502,15 +502,15 @@ int main(int argc, char** argv) {
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
     int fails = 0;
 
-    // ---------------- GH-217: the CC defaults (no random numbers drawn) ----------------
-    // Default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv and -cc-roworder=auto; every
-    // driver configuration below that keeps DriverOptions' rules / roworder (sequential schedule, mutant 4, Parts E/F finder
-    // runs) therefore exercises the new default against enumeration.
+    // ---------------- GH-217 / GH-225: the CC defaults (no random numbers drawn) ----------------
+    // Default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure (GH-225 added erasure,
+    // start 16384) and -cc-roworder=auto; every driver configuration below that keeps DriverOptions' rules / roworder
+    // (sequential schedule, mutant 4, Parts E/F finder runs) therefore exercises the new default against enumeration.
     {
         const distcc::DriverOptions o;
-        const std::string want = "excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge";
+        const std::string want = "excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge,erasure";
         if (distcc::rules_string(o.rules) != want || distcc::rules_string(distcc::Rules()) != want || o.roworder != distcc::ROWORDER_AUTO ||
-            o.tb_asc || o.rules.mrv || o.rules.xorunit) {
+            o.tb_asc || o.rules.mrv || o.rules.xorunit || !o.rules.erasure || o.rules.erasure_start != 16384) {
             fails++;
             fprintf(stderr, "CC_FAIL GH-217 defaults: rules %s, roworder %d, tbbase %s\n", distcc::rules_string(o.rules).c_str(), o.roworder,
                     o.tb_asc ? "asc" : "desc");
@@ -520,6 +520,12 @@ int main(int argc, char** argv) {
             distcc::rules_string(old) != "excl,pack,orbf,parity,leaf,overlap,charge") {
             fails++;
             fprintf(stderr, "CC_FAIL GH-217 pre-flip rule list does not parse to the old default\n");
+        }
+        distcc::Rules a17;   // GH-225: the GH-217 default list (no erasure token) parses to erasure off, start kept
+        if (!distcc::parse_rules("excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv", a17) || a17.erasure ||
+            a17.erasure_start != 16384 || distcc::rules_string(a17) != "excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge") {
+            fails++;
+            fprintf(stderr, "CC_FAIL GH-225 GH-217 rule list does not parse to the GH-217 default (erasure off)\n");
         }
     }
 

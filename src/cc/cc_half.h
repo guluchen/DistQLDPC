@@ -211,13 +211,14 @@ struct Rules {
     bool charge;     /* GH-157 node lower bound, default on (PI, 2026-10-29) */
     bool tiebreak;   /* GH-162 (acts only with overlap); default on since GH-217 */
     bool sparse, sparseov, sparsemrv, xorunit;   /* GH-181; sparse, sparseov, sparsemrv default on since GH-217, xorunit off */
-    bool erasure;    /* GH-195 (default off; acts only with pack) */
+    bool erasure;    /* GH-195 (acts only with pack); default on since GH-225 */
     uint64_t erasure_start;   /* GH-195: erasure tests start at the level after the first level of this half with at least
                                * this many nodes (0: from the first level; -cc-erasure-start) */
-    /* Default = the CC default rule set (GH-217): excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv.
+    /* Default = the CC default rule set (GH-225): excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure.
+     * -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv = the GH-217 default (before GH-225);
      * -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge (with -cc-roworder=index) = the CC default before GH-217. */
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true), tiebreak(true),
-              sparse(true), sparseov(true), sparsemrv(true), xorunit(false), erasure(false), erasure_start(16384) {}
+              sparse(true), sparseov(true), sparsemrv(true), xorunit(false), erasure(true), erasure_start(16384) {}
 };
 
 /* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment).
