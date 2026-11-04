@@ -11,6 +11,7 @@ def load(path):
     rows = []
     for line in open(path):
         t = line.split()
+        if t and t[0].startswith('#'): continue   # GH-217: header comments in some matrix files
         if t: rows.append(int(''.join(t[::-1]), 2) if set(t) <= {'0', '1'} else None)
     return rows
 
