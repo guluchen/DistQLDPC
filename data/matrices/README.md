@@ -52,6 +52,14 @@ section 5.
 
 ## Rename history
 
+**Independent validation credit (GH-150):** PolyLabs Research reported a separate,
+clean-room check-driven cluster-search implementation confirming the earlier
+`30 <= d <= 34` bounds for `BB_756_16` and `d = 24` for `BB_360_12`, with
+independently GF(2)-checked witnesses. This checks the implementations within the
+same method family, not an independent method, and does not validate the later
+`BB_756_16` lower bound of 32. See the [original report](https://github.com/guluchen/DistQLDPC/issues/150)
+and [credit request and per-pass records](https://github.com/guluchen/DistQLDPC/issues/150#issuecomment-6631689406).
+
 | Date | Old | New | Note |
 |------|-----|-----|------|
 | 2026-10-31 | TN_360_4_17to24 | TN_360_4_23to24 | lb 23: CC lower bound from GH-157 (issue #157, PR #161): DistQLDPC's optional CC engine with the `charge` rule (fractional LP-dual node bound; opt-in when found, default CC rule on main since PR #161); levels up to 22 completed EMPTY on both halves (yfclab2, 6 h, binary c3c315d). Reproduction: same binary c3c315d and labels, different search order (`-cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,mrv`, 12 h), every level EMPTY, same lb; same engine and rule, not an independent second method; `optimization/experiments/GH-157/REPRODUCTION.md`. ub unchanged (GH-146 witness; copy under the new stem in `optimization/experiments/GH-146/witnesses/renamed-2026-10-31/`) (PI 2026-10-31) |
