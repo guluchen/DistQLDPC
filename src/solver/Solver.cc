@@ -4053,7 +4053,7 @@ CRef Solver::propagateForLK() {
     NextClause:;
     }
     ws.shrink(i - j);
-    if (ovInLK && !ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef && ovWatched(p)) {   // GH-148 (inactive when empty)
+    if (!ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef && ovWatched(p)) {   // GH-148 (inactive when empty)
       CRef oc = ovPropagate(p, true);
       if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
       else if (falseVar != var_Undef) qhead = trail.size();

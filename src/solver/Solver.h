@@ -604,10 +604,8 @@ public:
     bool     ovIsClause(CRef cr) const { return !ovRows.empty() && ovCrefs.count((uint32_t)cr) > 0; }
     void     setOverlapRows(const std::vector<std::vector<int> >& rows, const std::vector<int>& lims, int nQubits);
     // DistQLDPC GH-218: ovPropagate acts only on a qubit var becoming true that lies on a row; the call sites test this
-    // first (same propagation, no call per literal). ovInLK = false: the rows are not propagated inside the lookahead
-    // (propagateForLK); the search's own propagate() still enforces them.
+    // first (same propagation, no call per literal).
     std::vector<char> ovHas;
-    bool     ovInLK = true;
     bool     ovWatched(Lit p) const { return !sign(p) && (size_t)var(p) < ovHas.size() && ovHas[(size_t)var(p)]; }
     CRef     ovClause(int r, uint32_t mask, int impliedPos);
     CRef     ovPropagate(Lit p, bool lk);
