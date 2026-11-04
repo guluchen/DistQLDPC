@@ -4,8 +4,9 @@ The 24 library codes of GH-153/154/156/159 (repetition and cycle HGP, triangular
 which lived in [untiered/](untiered/README.md), were measured with main 02879a93 on yfclab2 together with every
 bundled code and placed into the tiers on 2026-11-04 (PI plan of 2026-11-04; placement table in
 [untiered/README.md](untiered/README.md#placement-2026-11-04)). Their generators, MANIFEST.csv (now with
-`placed_tier` / `placed_stem` columns), validation evidence and provenance documents stay in untiered/, which
-holds no matrices any more. New, unmeasured codes are added there first and stay out of the tier sets and the
+`placed_tier` / `placed_stem` columns), validation evidence and provenance documents stay in untiered/, which now holds
+only codes that are not placed yet (the five AMC codes of #214, merged after this panel; measured in the
+same panel for the #214 review, placement left to a PI decision). New, unmeasured codes are added there first and stay out of the tier sets and the
 QDistSAT mirror until a PI-approved tier assignment; use their full path when invoking DistQLDPC.
 
 Each code `<stem>` is four text files `<stem>_Hx.txt`, `<stem>_Hz.txt`, `<stem>_Gx.txt`,
@@ -228,3 +229,7 @@ section 5.
   or binary of the same engine. This is not an independent second method. Records: issues
   #157, #162, #183, #181 and the rename-history rows above.
 - **BB_288_12_18 / LP_714_100_16:** distances from main's solver (PI 2026-10-11: no strict cross-verification; partial internal checks agreed so far — `-no-symbreak` reached lb 17 / ub 18 on BB_288 and ub 16 on LP_714; re-check if a later run disagrees).
+
+GH-199 cyclic collapsed4D AMC finite prescriptions (untiered work branch):
+see [COLLAPSED_AMC.md](untiered/COLLAPSED_AMC.md). Source randomized
+distance estimates remain distinct from exact claims and actual bounds.
