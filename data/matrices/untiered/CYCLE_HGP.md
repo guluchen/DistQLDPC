@@ -1,5 +1,9 @@
 # Nonzero-rate HGP cycle-factor ladder (GH-154)
 
+> **Placed 2026-11-04.** These matrices now live in `data/matrices/tier0` … `tier5` under the stems of the
+> [placement table](README.md#placement-2026-11-04); the `_unknown` names below are the generator stems kept
+> for provenance (mapped in `MANIFEST.csv`).
+
 All codes retain the approved `HGP_{n}_{k}_unknown` stem convention. This is
 a separate batch from the repetition-factor HGPs of GH-153. It is stacked
 on that branch's common infrastructure and is pushed directly without a PR,

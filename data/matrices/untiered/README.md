@@ -8,8 +8,8 @@ and validation.json cover all batches. The table below describes the original
 repetition-factor HGP batch only.
 
 Issue: [GH-153](https://github.com/guluchen/DistQLDPC/issues/153).
-Proposed prefix: **HGP**. All six codes have k=1; stems retain `unknown`
-until DistQLDPC evidence and PI naming approval are available.
+Prefix: **HGP**. All six codes have k=1; the `unknown` generator stems were
+replaced by the measured distances on 2026-11-04 ([placement](#placement-2026-11-04)).
 
 | Factor length L | n | k | Claimed exact d |
 |---|---|---|---|
@@ -23,8 +23,54 @@ until DistQLDPC evidence and PI naming approval are available.
 The small cases provide correctness anchors; the larger cases form a scaling
 ladder. These are the surface-code specialization of the HGP family, with
 vanishing rate. Nonzero-rate cycle-factor HGP codes are documented separately above.
-These files do not enter the existing tier suites or the QDistSAT mirror.
-Run by path, e.g. `./bin/distqldpc -cpu-lim=60 data/matrices/untiered/HGP_13_1_unknown`.
+Since 2026-11-04 the matrices live in the tier directories under the stems of the
+[placement table](#placement-2026-11-04) and are mirrored to QDistSAT, e.g. `./bin/distqldpc HGP_13_1_3`.
+
+## Placement (2026-11-04)
+
+All 29 codes of the five batches were measured with main 02879a93 on yfclab2 (2026-11-04, PI plan of the same day;
+runner, raw records and tables in `optimization/baselines/` and its `raw/main-02879a93/`) and moved into
+`data/matrices/tier0` … `tier5` by the tier rule (slower of `-no-card` / `-card-mto`, 5-seed median, 5000 s limit).
+Solved codes carry the distance DistQLDPC found; unsolved ones carry DistQLDPC's own proven bounds, never a
+literature claim. The generators still write the `_unknown` generator stems below; `MANIFEST.csv` maps them to the
+bundled files (`placed_tier`, `placed_stem`), and `scripts/codegen/validate_css.py` (`locate`, `same_as_bundled`)
+resolves them, so the regeneration checks compare against the placed files (only the Gx/Gz header comment,
+which names the parity file, differs). Every solved distance has a GF(2)-verified logical of that weight
+(independent pure-Python check of x ∈ ker H_other \ rowspan H_same). No result disagrees with a claimed distance.
+
+| Generator stem | Placed as | Tier | Claimed d | MaxSAT slower-mode median (s) | CC default median (s) | CC opt-in full median (s) | DistQLDPC result | Agrees |
+|---|---|---:|---:|---:|---:|---:|---|---|
+| AMC_108_6_unknown | AMC_108_6_9 | 0 | 9 | 0.14 | 0.08 | 0.09 | d = 9 | yes |
+| AMC_216_6_unknown | AMC_216_6_12 | 0 | ≈12 (est.) | 0.37 | 0.08 | 0.07 | d = 12 | yes |
+| AMC_330_6_unknown | AMC_330_6_14 | 0 | ≈14 (est.) | 0.82 | 0.07 | 0.07 | d = 14 | yes |
+| AMC_438_6_unknown | AMC_438_6_17 | 1 | ≈17 (est.) | 9.08 | 0.12 | 0.10 | d = 17 | yes |
+| AMC_522_6_unknown | AMC_522_6_20 | 2 | ≈20 (est.) | 55.43 | 0.57 | 0.26 | d = 20 | yes |
+| BB_30_4_unknown | BB_30_4_6 | 0 | 6 | 0.05 | 0.08 | 0.09 | d = 6 | yes |
+| BB_120_8_unknown | BB_120_8_12 | 0 | 12 | 0.59 | 0.08 | 0.10 | d = 12 | yes |
+| BB_186_10_unknown | BB_186_10_14 | 1 | 14 | 1.22 | 0.08 | 0.09 | d = 14 | yes |
+| BB_248_10_unknown | BB_248_10_18 | 2 | 18 | 33.00 | 0.55 | 0.43 | d = 18 | yes |
+| BB_294_10_unknown | BB_294_10_20 | 3 | 20 | 610 | 2.34 | 1.22 | d = 20 | yes |
+| BB_340_16_unknown | BB_340_16_18 | 2 | 18 | 28.85 | 0.32 | 0.26 | d = 18 | yes |
+| COLOR_7_1_unknown | COLOR_7_1_3 | 0 | 3 | 0.04 | 0.06 | 0.06 | d = 3 | yes |
+| COLOR_19_1_unknown | COLOR_19_1_5 | 0 | 5 | 0.06 | 0.09 | 0.09 | d = 5 | yes |
+| COLOR_127_1_unknown | COLOR_127_1_13 | 1 | 13 | 1.60 | 0.08 | 0.07 | d = 13 | yes |
+| COLOR_331_1_unknown | COLOR_331_1_21 | 5 | 21 | > 5000 | 122 | 13.65 | d = 21 | yes |
+| COLOR_1027_1_unknown | COLOR_1027_1_28to37 | 5 | 37 | > 5000 | > 5000 | > 5000 | bounds 28–37 | consistent (open) |
+| COLOR_2791_1_unknown | COLOR_2791_1_26to61 | 5 | 61 | > 5000 | > 5000 | > 5000 | bounds 26–61 | consistent (open) |
+| HGP_13_1_unknown | HGP_13_1_3 | 0 | 3 | 0.05 | 0.08 | 0.08 | d = 3 | yes |
+| HGP_41_1_unknown | HGP_41_1_5 | 0 | 5 | 0.08 | 0.09 | 0.08 | d = 5 | yes |
+| HGP_45_9_unknown | HGP_45_9_3 | 0 | 3 | 0.06 | 0.08 | 0.09 | d = 3 | yes |
+| HGP_106_16_unknown | HGP_106_16_4 | 0 | 4 | 0.11 | 0.08 | 0.08 | d = 4 | yes |
+| HGP_113_1_unknown | HGP_113_1_8 | 0 | 8 | 0.11 | 0.07 | 0.07 | d = 8 | yes |
+| HGP_265_1_unknown | HGP_265_1_12 | 1 | 12 | 1.93 | 0.09 | 0.08 | d = 12 | yes |
+| HGP_306_36_unknown | HGP_306_36_5 | 0 | 5 | 0.42 | 0.06 | 0.06 | d = 5 | yes |
+| HGP_481_1_unknown | HGP_481_1_16 | 3 | 16 | 120 | 0.24 | 0.13 | d = 16 | yes |
+| HGP_610_64_unknown | HGP_610_64_6 | 1 | 6 | 9.53 | 0.19 | 0.19 | d = 6 | yes |
+| HGP_1105_1_unknown | HGP_1105_1_24 | 5 | 24 | > 5000 | 181 | 3.86 | d = 24 | yes |
+| HGP_1261_121_unknown | HGP_1261_121_6 | 3 | 6 | 107 | 3.40 | 3.37 | d = 6 | yes |
+| HGP_2866_256_unknown | HGP_2866_256_8 | 3 | 8 | 562 | 257 | 191 | d = 8 | yes |
+
+Notes: HGP_1105 (d = 24) and the color codes show the largest MaxSAT/CC gap: MaxSAT does not solve HGP_1105 in 6 h (CC default 72-189 s, CC opt-in full 3-7 s) and needs 4300-7900 s for COLOR_331 (CC default 21-148 s, opt-in 5-20 s). COLOR_1027 and COLOR_2791 stay open: their stems carry DistQLDPC's reproduced lower bounds (28 and 26) and the weights of verified basis logicals (37 and 61), which equal the claimed distances; nothing contradicts the claims.
 
 ## Construction and distance provenance
 

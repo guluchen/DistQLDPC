@@ -13,7 +13,7 @@ sys.path.insert(0,str(ROOT/'scripts/codegen'))
 import amc
 import validate_amc as va
 import audit_amc_smoke as aa
-from validate_css import validate,read_code,dot
+from validate_css import validate,read_code,dot,locate,same_as_bundled
 
 
 class AMC(unittest.TestCase):
@@ -68,7 +68,7 @@ class AMC(unittest.TestCase):
         c=dict(self.cases[0]);c['k']=5
         with tempfile.TemporaryDirectory() as temp:
             for kind in ['Hx','Hz','Gx','Gz']:
-                source=ROOT/'data/matrices/untiered'/('AMC_108_6_unknown_'+kind+'.txt')
+                source=Path(f"{locate(ROOT/'data/matrices/untiered','AMC_108_6_unknown')}_{kind}.txt")
                 (Path(temp)/('AMC_108_5_unknown_'+kind+'.txt')).write_bytes(source.read_bytes())
             with self.assertRaisesRegex(ValueError,'source n/k mismatch'):va.audit(c,Path(temp))
 
@@ -95,7 +95,7 @@ class AMC(unittest.TestCase):
             for c in self.cases:
                 stem=amc.generate(c,d)
                 for kind in ['Hx','Hz','Gx','Gz']:
-                    name=stem+'_'+kind+'.txt';self.assertEqual((d/name).read_bytes(),(ROOT/'data/matrices/untiered'/name).read_bytes())
+                    name=stem+'_'+kind+'.txt';self.assertTrue(same_as_bundled(d/name),name)
                 with self.assertRaises(FileExistsError):amc.generate(c,d)
 
     def test_only_source_cli_cases(self):
