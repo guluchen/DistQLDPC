@@ -937,7 +937,8 @@ static const double STAB_OVL_BIN_MAX = 126.0;   /* auto: binomial up to |g| = 9 
 /* GH-218: per-half pilot for the rows on many Tanner 4-cycles. A verified row g is "dense" if it lies on more than
  * g_stab_overlap_c4 Tanner-graph 4-cycles of the same-type stabilizer matrix, c4(g) = sum over the other distinct rows g'
  * of C(|g & g'|, 2) (the 4-cycles through g's check node). Sparse rows are always used (as in GH-148). The dense rows of a
- * half are used as in GH-148 until the half's first probe with cap >= P + 4, P = max(pilot cap, the half's lb); before
+ * half are used as in GH-148 until the half's first probe with cap >= P + 4, P = max(pilot cap, the half's lb, the cap
+ * from which the -stab-overlap ratio activates every dense row: 10 for weight 9 under auto); before
  * that probe a pilot decides, once per half, whether they stay: the probe "weight <= P?" (first solution stops it) is
  * run with and without the dense rows for g_stab_overlap_pilot solver seeds (the run's seed + 0, 1, ...); the dense rows
  * stay iff the median of conflicts(with) / conflicts(without) is <= 1. The decision depends only on conflict counts, so it
@@ -1296,10 +1297,25 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
                                int pipe_w, uint64_t lb_cap, uint64_t ub_cap, bool hide_lb, uint64_t& value,
                                int dense_force = -2, uint64_t* conflicts_out = NULL);
 
+/* GH-218: the pilot cap of half h: max(-stab-overlap-pilot-cap, lb, the smallest cap at which every dense row is active
+ * under the -stab-overlap ratio), so that the two pilot probes differ exactly by the dense rows. */
+static uint64_t ovl_pilot_cap(const CssHalf& h)
+{
+    uint64_t P = g_stab_overlap_pilot_cap > h.lb ? g_stab_overlap_pilot_cap : h.lb;
+    for (size_t r = 0; r < h.ovl.size() && r < h.ovl_dense.size(); r++) {
+        if (!h.ovl_dense[r] || g_stab_overlap_ratio <= 0.0) continue;
+        const double need = g_stab_overlap_ratio * (double)(h.ovl[r].size() / 2 + 1);
+        uint64_t c = (uint64_t)need;
+        if ((double)c < need) c++;
+        if (c > P) P = c;
+    }
+    return P;
+}
+
 /* GH-218: the pilot of half h (see g_stab_overlap_c4). Sets h.ovl_dense_mode to 0 or 1. */
 static void ovl_pilot(CssHalf& h, int verb, int card_mode)
 {
-    const uint64_t P = g_stab_overlap_pilot_cap > h.lb ? g_stab_overlap_pilot_cap : h.lb;
+    const uint64_t P = ovl_pilot_cap(h);
     const uint64_t saved_seed = g_seed, saved_probes = h.probes, saved_conf = h.conflicts;
     std::vector<double> ratio;
     std::string detail;
@@ -1346,7 +1362,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
      * dense rows (no output, no pipe) */
     const bool pilot_probe = dense_force >= 0;
     if (!pilot_probe && h.ovl_dense_mode < 0 && !h.ovl_dense.empty() &&
-        cap >= (g_stab_overlap_pilot_cap > h.lb ? g_stab_overlap_pilot_cap : h.lb) + g_stab_overlap_pilot_margin) {
+        cap >= ovl_pilot_cap(h) + g_stab_overlap_pilot_margin) {
         if (g_stab_overlap_pilot > 0) ovl_pilot(h, verb, card_mode);
         else h.ovl_dense_mode = 0;
     }
@@ -1802,7 +1818,7 @@ static int min_distance_css_interleaved(
                    oi.candidates, oi.rejected, oi.duplicates);
             if (g_stab_overlap_c4 >= 0)   /* GH-218 */
                 printf("; %d dense: on more than %d Tanner 4-cycles, pilot %s", oi.c4_gated, g_stab_overlap_c4,
-                       oi.c4_gated == 0 ? "not needed" : g_stab_overlap_pilot > 0 ? "at cap max(P, lb) before the first probe with cap >= that + 4" : "off: dropped from that probe on");
+                       oi.c4_gated == 0 ? "not needed" : g_stab_overlap_pilot > 0 ? "at cap max(P, lb, activation) before the first probe with cap >= that + 4" : "off: dropped from that probe on");
             printf("); |g| -> rows:");
             for (std::map<int, int>::const_iterator it = oi.weights.begin(); it != oi.weights.end(); ++it)
                 printf(" %d:%d (<= %d)", it->first, it->second, ovl_limit(it->first));
@@ -2908,7 +2924,7 @@ int main(int argc, char** argv) {
             printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
             printf("            -stab-overlap-c4=N|off (GH-218, default 11): rows g on more than N Tanner 4-cycles of the stabilizer\n");
             printf("            matrix (sum over the other rows g' of C(|g & g'|, 2)) are dense; before a half's first probe with cap >= P + 4\n");
-            printf("            a pilot runs \"weight <= P?\" with and without its dense rows for -stab-overlap-pilot=N seeds (default 3;\n");
+            printf("            a pilot runs \"weight <= max(P, lb, row activation cap)?\" with and without its dense rows for -stab-overlap-pilot=N seeds (default 3;\n");
             printf("            0 = drop them without a pilot) and keeps them iff the median conflict ratio is <= 1\n");
             printf("            (-stab-overlap-pilot-cap=P, default 12); off = every verified row in every probe (GH-148's search)\n");
             printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");

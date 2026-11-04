@@ -443,16 +443,16 @@ accept 8 "" -stab-overlap=on -stab-overlap-pilot=1 -stab-overlap-pilot-cap=1 $L 
 accept 10 "" -stab-overlap=on -stab-overlap-c4=off -stab-overlap-enc=seq $L BB_90_8_10
 vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap-c4=off $L BB_90_8_10
 vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense: on more than 0 Tanner 4-cycles, pilot not needed); |g|" -v -stab-overlap-c4=0 $L BB_90_8_10
-vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 dense: on more than 11 Tanner 4-cycles, pilot at cap max(P, lb) before the first probe with cap >= that + 4); |g| -> rows: 9:36 (<= 4)" -v $L TN_72_8_8
+vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 dense: on more than 11 Tanner 4-cycles, pilot at cap max(P, lb, activation) before the first probe with cap >= that + 4); |g| -> rows: 9:36 (<= 4)" -v $L TN_72_8_8
 vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 dense: on more than 11 Tanner 4-cycles, pilot off: dropped from that probe on); |g|" -v -stab-overlap-pilot=0 $L TN_72_8_8
 vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 9:36 (<= 4)" -v -stab-overlap-c4=off $L TN_72_8_8
-# TN_72_8_8 (d = 8, ub-pre off: caps 1, 2, 4, 8): pilot cap 1 -> P = max(1, lb) = 5 at cap 8 < 9: no pilot, dense rows used
+# TN_72_8_8 (d = 8, ub-pre off: caps 1, 2, 4, 8): P >= 10 (weight-9 rows active from cap 10): no pilot, dense rows used
 runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -ub-pre=off $L TN_72_8_8
 if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP" <<<"$err" || grep -q "OVERLAP-PILOT" <<<"$err"; then echo "FAIL (TN_72_8_8 -stab-overlap=on: dense rows used, no pilot expected)" >&2; fails=$((fails + 1)); fi
-# TN_108_2_12 with -ub-pre=off: caps 1, 2, 4, 8, 16; at cap 16 lb = 9, pilot cap 1 -> P = max(1, 9) = 9, 16 >= 13:
+# TN_108_2_12 with -ub-pre=off: caps 1, 2, 4, 8, 16; at cap 16 lb = 9, pilot cap 1 -> P = max(1, 9, 10) = 10, 16 >= 14:
 # one pilot per half (3 seeds)
 runs=$((runs + 1)); run -frontier-stats -ub-pre=off -stab-overlap-pilot-cap=1 -cpu-lim=15 TN_108_2_12
-if ! grep -Eq "^c OVERLAP-PILOT X cap 9: dense_rows 54 seed 0 [0-9]+/[0-9]+, seed 1 [0-9]+/[0-9]+, seed 2 [0-9]+/[0-9]+ median [0-9.]+ -> (kept|dropped)$" <<<"$err"; then
+if ! grep -Eq "^c OVERLAP-PILOT X cap 10: dense_rows 54 seed 0 [0-9]+/[0-9]+, seed 1 [0-9]+/[0-9]+, seed 2 [0-9]+/[0-9]+ median [0-9.]+ -> (kept|dropped)$" <<<"$err"; then
     echo "FAIL (TN_108_2_12 -ub-pre=off: c OVERLAP-PILOT X line expected): $(grep PILOT <<<"$err")" >&2; fails=$((fails + 1)); fi
 runs=$((runs + 1)); run -frontier-stats -ub-pre=off -stab-overlap-pilot=0 -cpu-lim=5 TN_108_2_12
 if grep -q "OVERLAP-PILOT" <<<"$err"; then echo "FAIL (-stab-overlap-pilot=0: no pilot line expected)" >&2; fails=$((fails + 1)); fi
