@@ -591,8 +591,8 @@ the pilot runs on the small Part B codes; also pilot off and one seed); Part G (
 a brute-force 4-cycle count on every tier0 code and the tier2 / tier4 TN codes for 7 values of N, the dense flags
 partition the verified rows, forced with / without dense rows the probe answers agree at caps d - 1 and d on the tier0
 TN halves, and pilot decisions are reproducible; test mutant 3 (overlaps counted instead of qubit pairs) changes
-selections and is caught. `make test-cc-flags`: values, conflicts, `-v` lines, a pilot line on TN_108_2_12 with
-`-ub-pre=off`, none with `-stab-overlap-pilot=0`. *Evidence.* `optimization/experiments/GH-218/REPORT.md`.
+selections and is caught. `make test-cc-flags`: values, conflicts, `-v` lines; on TN_108_2_12 with `-ub-pre=off` (caps up to 16) a
+`c OVERLAP-DROP X cap 16` line by default and a pilot line with `-stab-overlap-pilot=3`; with `-ub-pre` no line. *Evidence.* `optimization/experiments/GH-218/` and the PR for issue #218.
 
 Fix round 1 (S0a): the S0 spec's literal mutants 3 ("orbit seeds without forbidding earlier orbits") and 4 ("stop
 rule without checking the other half's lower bound") are equivalent mutants as built: the first only drops a
