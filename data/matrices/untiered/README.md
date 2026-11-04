@@ -28,7 +28,7 @@ Since 2026-11-04 the matrices live in the tier directories under the stems of th
 
 ## Placement (2026-11-04)
 
-All 24 codes of the four batches were measured with main 02879a93 on yfclab2 (2026-11-04, PI plan of the same day;
+All 29 codes of the five batches were measured with main 02879a93 on yfclab2 (2026-11-04, PI plan of the same day;
 runner, raw records and tables in `optimization/baselines/` and its `raw/main-02879a93/`) and moved into
 `data/matrices/tier0` … `tier5` by the tier rule (slower of `-no-card` / `-card-mto`, 5-seed median, 5000 s limit).
 Solved codes carry the distance DistQLDPC found; unsolved ones carry DistQLDPC's own proven bounds, never a
@@ -40,6 +40,11 @@ which names the parity file, differs). Every solved distance has a GF(2)-verifie
 
 | Generator stem | Placed as | Tier | Claimed d | MaxSAT slower-mode median (s) | CC default median (s) | CC opt-in full median (s) | DistQLDPC result | Agrees |
 |---|---|---:|---:|---:|---:|---:|---|---|
+| AMC_108_6_unknown | AMC_108_6_9 | 0 | 9 | 0.14 | 0.08 | 0.09 | d = 9 | yes |
+| AMC_216_6_unknown | AMC_216_6_12 | 0 | ≈12 (est.) | 0.37 | 0.08 | 0.07 | d = 12 | yes |
+| AMC_330_6_unknown | AMC_330_6_14 | 0 | ≈14 (est.) | 0.82 | 0.07 | 0.07 | d = 14 | yes |
+| AMC_438_6_unknown | AMC_438_6_17 | 1 | ≈17 (est.) | 9.08 | 0.12 | 0.10 | d = 17 | yes |
+| AMC_522_6_unknown | AMC_522_6_20 | 2 | ≈20 (est.) | 55.43 | 0.57 | 0.26 | d = 20 | yes |
 | BB_30_4_unknown | BB_30_4_6 | 0 | 6 | 0.05 | 0.08 | 0.09 | d = 6 | yes |
 | BB_120_8_unknown | BB_120_8_12 | 0 | 12 | 0.59 | 0.08 | 0.10 | d = 12 | yes |
 | BB_186_10_unknown | BB_186_10_14 | 1 | 14 | 1.22 | 0.08 | 0.09 | d = 14 | yes |
