@@ -1,0 +1,223 @@
+diff --git a/src/core/distqldpc.cc b/src/core/distqldpc.cc
+index a308a959..09a3a0d7 100644
+--- a/src/core/distqldpc.cc
++++ b/src/core/distqldpc.cc
+@@ -1240,8 +1240,14 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
+     OvlRows ovl_active;   /* GH-148: rows active in this probe (any subset of the verified rows is sound) */
+     if (!h.ovl.empty()) {
+         for (size_t r = 0; r < h.ovl.size(); r++)
+-            if (g_stab_overlap_ratio <= 0.0 || (double)cap >= g_stab_overlap_ratio * (double)(h.ovl[r].size() / 2 + 1))
++            if (g_stab_overlap_ratio <= 0.0 || (double)cap >= g_stab_overlap_ratio * (double)(h.ovl[r].size() / 2 + 1)) {
++                const int w = (int)h.ovl[r].size();
++                if (getenv("DQ_OV_MINW") && w < atoi(getenv("DQ_OV_MINW"))) continue;
++                if (getenv("DQ_OV_MAXW") && w > atoi(getenv("DQ_OV_MAXW"))) continue;
++                if (getenv("DQ_OV_EVEN") && (w & 1)) continue;
++                if (getenv("DQ_OV_ODD") && !(w & 1)) continue;
+                 ovl_active.push_back(h.ovl[r]);
++            }
+         if (verb > 0) {
+             printf("c stab-overlap %s cap %llu: %zu of %zu rows active (ratio %.2f)\n", h.tag, (unsigned long long)cap,
+                    ovl_active.size(), h.ovl.size(), g_stab_overlap_ratio);
+@@ -1275,7 +1281,24 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
+         S.frontierCheck = g_frontier_check;
+     }
+     vec<Lit> dummy;
++    if (getenv("DQ_OV_VARIANT")) S.dgVariant = atoi(getenv("DQ_OV_VARIANT"));
++    const double dg_t0 = cpuTime();
+     lbool ret = S.solveLimited(dummy);
++    if (getenv("DQ_DIAG")) {
++        const double dg_ticks_scale = 1.0 / 2.25e9;   /* EPYC 7742 base clock (rdtsc rate) */
++        fprintf(stderr, "c DIAG %s cap %llu %s: cpu %.3f conflicts %llu decisions %llu props %llu lkprops %llu lookahead %llu lksucc %llu "
++                "rows %zu ovcallsM %llu ovcallsL %llu ovrows %llu ovprops %llu ovpropsL %llu ovconfl %llu ovconflL %llu ovfalseL %llu "
++                "anares %llu anaov %llu learntlits %llu tM %.3f tL %.3f cached %zu redcalls %llu\n", h.tag, (unsigned long long)cap,
++                first_only ? "feasibility" : "optimize", cpuTime() - dg_t0, (unsigned long long)S.conflicts,
++                (unsigned long long)S.decisions, (unsigned long long)S.propagations, (unsigned long long)S.lk_propagations,
++                (unsigned long long)S.LOOKAHEAD, (unsigned long long)S.nbLKsuccess, ovl_active.size(),
++                (unsigned long long)S.dgCallsM, (unsigned long long)S.dgCallsL, (unsigned long long)S.dgRows,
++                (unsigned long long)S.ovProps, (unsigned long long)S.dgPropsL, (unsigned long long)S.ovConfls,
++                (unsigned long long)S.dgConflL, (unsigned long long)S.dgFalseL, (unsigned long long)S.dgAnaRes,
++                (unsigned long long)S.dgAnaOv, (unsigned long long)S.dgLearntLits, S.dgTicksM * dg_ticks_scale,
++                S.dgTicksL * dg_ticks_scale, S.ovCacheList.size(), (unsigned long long)S.dgRedCalls);
++        fflush(stderr);
++    }
+     if (g_frontier_stats || (h.frontier && g_frontier_check)) {   /* stats also with -frontier=off (main's search) */
+         fprintf(stderr, "c FRONTIER %s cap %llu %s: conflicts %llu decisions %llu frontier_picks %llu fallbacks %llu "
+                 "no_eligible %llu mean_odd_rows %.2f check_fails %llu\n", h.tag, (unsigned long long)cap,
+@@ -1682,6 +1705,17 @@ static int min_distance_css_interleaved(
+         }
+     }
+     uint64_t U = INF, v = 0, lastLB = 0;
++    if (getenv("DQ_DIAG_PROBE")) {   /* DIAG: HALF:CAP:LB, one feasibility probe, then exit */
++        char hc = 'X'; unsigned long long dcap = 0, dlb = 0;
++        if (sscanf(getenv("DQ_DIAG_PROBE"), "%c:%llu:%llu", &hc, &dcap, &dlb) != 3) die("DQ_DIAG_PROBE=HALF:CAP:LB");
++        CssHalf& h = hs[hc == 'Z' ? 1 : 0];
++        h.lb = dlb;
++        HalfStatus st = run_css_half(h, dcap, true, verb, card_mode, pipe_w, INF, INF, true, v);
++        fprintf(stderr, "c DIAGPROBE %c cap %llu -> %s\n", hc, dcap, st == HALF_FOUND ? "FOUND" : st == HALF_NONE ? "NONE" : "OTHER");
++        fflush(stderr);
++        pipe_write_result(pipe_w, -1, false);
++        return -1;
++    }
+     bool seeded = false;   /* GH-144: U holds a verified -ub-pre word (never without -ub-pre) */
+     if (g_ub_pre >= 0) {
+         const Matrix* Ss[2] = { &Hx, &Hz };   /* same-type stabilizers: X half Hx, Z half Hz */
+diff --git a/src/solver/Solver.cc b/src/solver/Solver.cc
+index 54446a84..d12b4586 100644
+--- a/src/solver/Solver.cc
++++ b/src/solver/Solver.cc
+@@ -1,3 +1,6 @@
++#ifdef OVDIAG_TIME
++#include <x86intrin.h>
++#endif
+ /***************************************************************************************[Solver.cc]
+  MiniSat -- Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+  Copyright (c) 2007-2010, Niklas Sorensson
+@@ -456,7 +459,7 @@ bool Solver::removed(CRef cr) {
+ }
+ 
+ void Solver::simplereduceClause(CRef cr, int pathC) {
+-  if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
++  dgRedCalls++; if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
+   nbFlyReduced++;
+   Clause& c=ca[cr];
+   assert(value(c[0]) == l_True);
+@@ -1582,7 +1585,7 @@ Lit Solver::pickBranchLit()
+ }
+ 
+ void Solver::reduceClause(CRef cr, int pathC) {
+-  if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
++  dgRedCalls++; if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
+   nbFlyReduced++;
+   Clause& c=ca[cr];
+   assert(value(c[0]) == l_True);
+@@ -1694,12 +1697,12 @@ void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel, int& ou
+       //     printf("c bin bin...\n");
+     }
+     else {
+-      updateClauseUse(confl);
++      updateClauseUse(confl); const bool dgNB0 = (dgVariant & 4) && ovIsClause(confl);
+       Clause& c = ca[confl];
+       for(int i= 0; i<c.size(); i++)
+ 	if (level(var(c[i])) > 0) {
+ 	  Var v=var(c[i]);
+-	  if (VSIDS){
++	  if (dgNB0) {} else if (VSIDS){
+ 	    varBumpActivity(v, .5);
+ 	    add_tmp.push(c[i]);
+ 	  }else
+@@ -1721,6 +1724,7 @@ void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel, int& ou
+ 	assert(confl != CRef_Undef); // (otherwise should be UIP)
+       else
+ 	break;
++      if ((dgVariant & 8) && !ovRows.empty()) { dgAnaRes++; if (confl != CRef_Bin && ovIsClause(confl)) dgAnaOv++; } const bool dgNB = (dgVariant & 4) && confl != CRef_Bin && ovIsClause(confl);
+       Clause& c = ca[confl];
+         // For binary clauses, we don't rearrange literals in propagate(), so check and make sure the first is an implied lit.
+       if (c.size() == 2 && value(c[0]) == l_False){
+@@ -1739,7 +1743,7 @@ void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel, int& ou
+ 	    nbSeen++;
+ 	  else /*if (!redundantLit(q))*/ {
+ 	    nbNotSeen++;
+-	    if (VSIDS){
++	    if (dgNB) {} else if (VSIDS){
+ 	      varBumpActivity(v, .5);
+ 	      add_tmp.push(q);
+ 	    }else
+@@ -1758,6 +1762,7 @@ void Solver::analyze(CRef confl, vec<Lit>& out_learnt, int& out_btlevel, int& ou
+ 	reduceClause(confl, pathC); //printf("a\n");
+     }
+     out_learnt[0] = ~p;
++    dgLearntLits += out_learnt.size();
+     
+     simplifyConflictClause(out_learnt, out_btlevel, out_lbd);
+     
+@@ -2067,8 +2072,14 @@ CRef Solver::propagate()
+ NextClause:;
+         }
+         ws.shrink(i - j);
+-        if (!ovRows.empty() && confl == CRef_Undef) {   // GH-148 native overlap rows (inactive when empty)
++        if (!ovRows.empty() && confl == CRef_Undef && !(dgVariant & 2)) {   // GH-148 native overlap rows (inactive when empty)
++#ifdef OVDIAG_TIME
++            uint64_t t0 = __rdtsc();
++#endif
+             CRef oc = ovPropagate(p, false);
++#ifdef OVDIAG_TIME
++            dgTicksM += __rdtsc() - t0;
++#endif
+             if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
+         }
+ 	// if (confl == CRef_Undef)
+@@ -2372,7 +2383,7 @@ void Solver::analyzeSoftConflict(vec<Lit>& out_learnt, int& out_btlevel, int& ou
+ 	//     c.setUsed(1);
+ 	//   }
+         // }
+- 	int nbSeen=0, nbNotSeen = 0;
++ 	int nbSeen=0, nbNotSeen = 0; const bool dgNB = (dgVariant & 4) && confl != CRef_Bin && ovIsClause(confl);
+ 	int resolventSize=pathC + out_learnt.size() - 1;
+ 	for (int j = 1; j < c.size(); j++){
+ 	  Lit q = c[j]; Var v = var(q);
+@@ -2382,7 +2393,7 @@ void Solver::analyzeSoftConflict(vec<Lit>& out_learnt, int& out_btlevel, int& ou
+ 	    else {
+ 	  // if (level(v) > 0 && !seen[v] && !redundantLit(q)) {
+ 	        nbNotSeen++;
+-		if (VSIDS){
++		if (dgNB) {} else if (VSIDS){
+ 		  varBumpActivity(v, .5);
+ 		  add_tmp.push(q);
+ 		}else
+@@ -4053,8 +4064,14 @@ CRef Solver::propagateForLK() {
+     NextClause:;
+     }
+     ws.shrink(i - j);
+-    if (!ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef) {   // GH-148 (inactive when empty)
++    if (!ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef && !(dgVariant & 1)) {   // GH-148 (inactive when empty)
++#ifdef OVDIAG_TIME
++      uint64_t t0 = __rdtsc();
++#endif
+       CRef oc = ovPropagate(p, true);
++#ifdef OVDIAG_TIME
++      dgTicksL += __rdtsc() - t0;
++#endif
+       if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
+       else if (falseVar != var_Undef) qhead = trail.size();
+     }
+@@ -7424,6 +7441,8 @@ CRef Solver::ovPropagate(Lit p, bool lk)
+     const Var v = var(p);
+     if ((size_t)v >= ovColRows.size()) return CRef_Undef;
+     const std::vector<int>& rs = ovColRows[(size_t)v];
++    if (lk) dgCallsL++; else dgCallsM++;
++    dgRows += rs.size();
+     for (size_t a = 0; a < rs.size(); a++) {
+         const int r = rs[a];
+         const std::vector<int>& row = ovRows[(size_t)r];
+@@ -7438,15 +7457,15 @@ CRef Solver::ovPropagate(Lit p, bool lk)
+             uint32_t m = 0; int c = 1;
+             for (size_t t = 0; t < row.size(); t++) if (row[t] == v) m |= 1u << t;
+             for (size_t t = 0; t < row.size() && c <= lim; t++) if (((tmask & ~m) >> t) & 1) { m |= 1u << t; c++; }
+-            ovConfls++;
++            ovConfls++; if (lk) dgConflL++;
+             return ovClause(r, m, -1);
+         }
+         if (cnt == lim && umask) {
+             for (size_t t = 0; t < row.size(); t++) {
+                 if (!((umask >> t) & 1) || value(row[t]) != l_Undef) continue;
+                 CRef cr = ovClause(r, tmask | (1u << t), (int)t);
+-                ovProps++;
+-                if (lk) { if (!uncheckedEnqueueForLK(~mkLit(row[t]), cr)) { falseVar = row[t]; return CRef_Undef; } }
++                ovProps++; if (lk) dgPropsL++;
++                if (lk) { if (!uncheckedEnqueueForLK(~mkLit(row[t]), cr)) { dgFalseL++; falseVar = row[t]; return CRef_Undef; } }
+                 else uncheckedEnqueue(~mkLit(row[t]), cr);
+             }
+         }
+diff --git a/src/solver/Solver.h b/src/solver/Solver.h
+index d6a3e7e8..76c8e79e 100644
+--- a/src/solver/Solver.h
++++ b/src/solver/Solver.h
+@@ -600,6 +600,8 @@ public:
+     std::vector<std::pair<uint64_t, CRef> > ovCacheList;   // (key, cref) for relocation
+     std::vector<int>  ovCacheIdx;                        // open addressing table into ovCacheList (-1 empty)
+     uint64_t ovProps = 0, ovConfls = 0;
++    uint64_t dgCallsM = 0, dgCallsL = 0, dgRows = 0, dgPropsL = 0, dgConflL = 0, dgFalseL = 0, dgTicksM = 0, dgTicksL = 0, dgAnaOv = 0, dgAnaRes = 0, dgLearntLits = 0;
++    int dgVariant = 0; uint64_t dgRedCalls = 0;   // DIAG: bit0 skip ov in LK, bit1 skip ov in main propagate
+     std::unordered_set<uint32_t> ovCrefs;               // the cached crefs: on-the-fly clause reduction skips them
+     bool     ovIsClause(CRef cr) const { return !ovRows.empty() && ovCrefs.count((uint32_t)cr) > 0; }
+     void     setOverlapRows(const std::vector<std::vector<int> >& rows, const std::vector<int>& lims, int nQubits);

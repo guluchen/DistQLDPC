@@ -405,8 +405,8 @@ runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -stab-overlap-enc=bin $
 if grep -q "^c OVERLAP" <<<"$err"; then echo "FAIL (no c OVERLAP line with clause encodings)" >&2; fails=$((fails + 1)); fi
 accept 2 "" -engine=auto -stab-overlap=on $L $D1                                                        # auto -> maxsat: applies
 accept 2 "selected cc .*ignoring -stab-overlap=on" -engine=auto -stab-overlap=on $L $C
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense: on more than 11 Tanner 4-cycles, pilot not needed); |g| -> rows: 6:45 (<= 3); binomial rows 45, counter rows 0; per probe 675 clauses, 0 aux vars$" -v -stab-overlap=on -stab-overlap-enc=clauses $L BB_90_8_10
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense: on more than 11 Tanner 4-cycles, pilot not needed); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap=on $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense (more than 11 Tanner 4-cycles)); |g| -> rows: 6:45 (<= 3); binomial rows 45, counter rows 0; per probe 675 clauses, 0 aux vars$" -v -stab-overlap=on -stab-overlap-enc=clauses $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense (more than 11 Tanner 4-cycles)); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap=on $L BB_90_8_10
 vgrep 10 "^c stab-overlap X: 45 of 45 rows used .* binomial rows 45, counter rows 0" -v -stab-overlap=auto -stab-overlap-enc=bin $L BB_90_8_10
 vgrep 10 "^c stab-overlap Z: 45 of 45 rows used .* binomial rows 0, counter rows 45; per probe 1440 clauses, 675 aux vars$" -v -stab-overlap=on -stab-overlap-enc=seq $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v -stab-overlap=auto $L BB_90_8_10
@@ -415,7 +415,7 @@ vgrep 10 "^c stab-overlap X cap 4: 45 of 45 rows active (ratio 0.00)$" -v -stab-
 runs=$((runs + 1)); run -v -stab-overlap=off $L BB_90_8_10
 if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (-stab-overlap=off must not print stab-overlap lines)" >&2; fails=$((fails + 1)); fi
 # default (auto since the PI's adoption decision): the same lines as -stab-overlap=auto
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense: on more than 11 Tanner 4-cycles, pilot not needed); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v $L BB_90_8_10
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense (more than 11 Tanner 4-cycles)); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 8: 45 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
 vgrep 10 "^c stab-overlap X cap 4: 0 of 45 rows active (ratio 2.00)$" -v $L BB_90_8_10
 runs=$((runs + 1)); run -frontier-stats $L BB_90_8_10
@@ -423,8 +423,8 @@ if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP X cap 8: rows 45 props [0-9]* confli
 runs=$((runs + 1)); run -v -joint $L $M
 if grep -q "stab-overlap" <<<"$out$err"; then echo "FAIL (default auto is silently off with -joint: no stab-overlap lines expected)" >&2; fails=$((fails + 1)); fi
 
-# 7g. GH-218 dense rows and the per-half pilot: -stab-overlap-c4=N|off (default 11), -stab-overlap-pilot=N (default 3),
-#     -stab-overlap-pilot-cap=P (default 12); -stab-overlap-c4=off = GH-148's search
+# 7g. GH-218 dense rows and the per-half pilot: -stab-overlap-c4=N|off (default 11), -stab-overlap-pilot=N (default 0 =
+#     drop the dense rows at the first probe with cap >= P' + 4), -stab-overlap-pilot-cap=P (default 12); -stab-overlap-c4=off = GH-148's search
 for f in -stab-overlap-c4= -stab-overlap-c4=x -stab-overlap-c4=-1 -stab-overlap-c4=1.5 -stab-overlap-c4=OFF -stab-overlap-c4=2000000; do
     reject "invalid -stab-overlap-c4" $f $L $M
 done
@@ -442,20 +442,22 @@ accept 8 "" -stab-overlap=on -stab-overlap-c4=1000 -card-mto $L TN_72_8_8
 accept 8 "" -stab-overlap=on -stab-overlap-pilot=1 -stab-overlap-pilot-cap=1 $L TN_72_8_8
 accept 10 "" -stab-overlap=on -stab-overlap-c4=off -stab-overlap-enc=seq $L BB_90_8_10
 vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 6:45 (<= 3); native propagator rows 45 (no clauses)$" -v -stab-overlap-c4=off $L BB_90_8_10
-vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense: on more than 0 Tanner 4-cycles, pilot not needed); |g|" -v -stab-overlap-c4=0 $L BB_90_8_10
-vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 dense: on more than 11 Tanner 4-cycles, pilot at cap max(P, lb, activation) before the first probe with cap >= that + 4); |g| -> rows: 9:36 (<= 4)" -v $L TN_72_8_8
-vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 dense: on more than 11 Tanner 4-cycles, pilot off: dropped from that probe on); |g|" -v -stab-overlap-pilot=0 $L TN_72_8_8
+vgrep 10 "^c stab-overlap X: 45 of 45 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 0 dense (more than 0 Tanner 4-cycles)); |g|" -v -stab-overlap-c4=0 $L BB_90_8_10
+vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 dense (more than 11 Tanner 4-cycles): dropped from the first probe with cap >= P' + 4, P' = max(12, lb, activation)); |g| -> rows: 9:36 (<= 4)" -v $L TN_72_8_8
+vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates; 36 dense (more than 11 Tanner 4-cycles): pilot (3 seeds) at cap P' = max(12, lb, activation) before the first probe with cap >= P' + 4); |g|" -v -stab-overlap-pilot=3 $L TN_72_8_8
 vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0; 0 duplicates); |g| -> rows: 9:36 (<= 4)" -v -stab-overlap-c4=off $L TN_72_8_8
 # TN_72_8_8 (d = 8, ub-pre off: caps 1, 2, 4, 8): P >= 10 (weight-9 rows active from cap 10): no pilot, dense rows used
 runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -ub-pre=off $L TN_72_8_8
 if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP" <<<"$err" || grep -q "OVERLAP-PILOT" <<<"$err"; then echo "FAIL (TN_72_8_8 -stab-overlap=on: dense rows used, no pilot expected)" >&2; fails=$((fails + 1)); fi
 # TN_108_2_12 with -ub-pre=off: caps 1, 2, 4, 8, 16; at cap 16 lb = 9, pilot cap 1 -> P = max(1, 9, 10) = 10, 16 >= 14:
 # one pilot per half (3 seeds)
-runs=$((runs + 1)); run -frontier-stats -ub-pre=off -stab-overlap-pilot-cap=1 -cpu-lim=60 TN_108_2_12
+runs=$((runs + 1)); run -frontier-stats -ub-pre=off -stab-overlap-pilot=3 -stab-overlap-pilot-cap=1 -cpu-lim=60 TN_108_2_12
 if ! grep -Eq "^c OVERLAP-PILOT X cap 10: dense_rows 54 seed 0 [0-9]+/[0-9]+, seed 1 [0-9]+/[0-9]+, seed 2 [0-9]+/[0-9]+ median [0-9.]+ -> (kept|dropped)$" <<<"$err"; then
     echo "FAIL (TN_108_2_12 -ub-pre=off: c OVERLAP-PILOT X line expected): $(grep PILOT <<<"$err")" >&2; fails=$((fails + 1)); fi
-runs=$((runs + 1)); run -frontier-stats -ub-pre=off -stab-overlap-pilot=0 -cpu-lim=5 TN_108_2_12
-if grep -q "OVERLAP-PILOT" <<<"$err"; then echo "FAIL (-stab-overlap-pilot=0: no pilot line expected)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -frontier-stats -ub-pre=off -cpu-lim=20 TN_108_2_12   # default: no pilot, dense rows dropped at cap 16
+if grep -q "OVERLAP-PILOT" <<<"$err" || ! grep -q "^c OVERLAP-DROP X cap 16: dense_rows 54$" <<<"$err"; then echo "FAIL (default -stab-overlap-pilot=0: c OVERLAP-DROP X cap 16 expected, no pilot)" >&2; fails=$((fails + 1)); fi
+runs=$((runs + 1)); run -frontier-stats -cpu-lim=20 TN_108_2_12   # with -ub-pre (U0 = 12): caps <= 11, dense rows never dropped
+if grep -q "OVERLAP-DROP\|OVERLAP-PILOT" <<<"$err"; then echo "FAIL (TN_108_2_12 default: caps stay below 16, no drop/pilot line expected)" >&2; fails=$((fails + 1)); fi
 
 # 8. a CC trap withdraws the bounds already sent (test mutant 2 with the GH-124 rule set traps on LP_136_32_4 after
 #    emitting d_lb lines; with the GH-133 rules the same mutant answers wrongly instead, which this check does not need)

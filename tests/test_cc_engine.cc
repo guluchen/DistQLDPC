@@ -1294,12 +1294,12 @@ int main(int argc, char** argv) {
                         fprintf(stderr, "CC_FAIL GH-218 partG (c) forced dense %s half %d cap %d: %d vs %d\n", st, half, cap, (int)s1, (int)s0);
                     }
                 }
-                g_stab_overlap_pilot_cap = 1;
+                g_stab_overlap_pilot_cap = 1; g_stab_overlap_pilot = 3;
                 int dec[2];
                 for (int rep2 = 0; rep2 < 2; rep2++) { h.ovl_dense_mode = -1; ovl_pilot(h, 0, 0); dec[rep2] = h.ovl_dense_mode; pilot_runs++; }
                 if (dec[0] != dec[1] || dec[0] < 0) { pilot_bad++; fails++; fprintf(stderr, "CC_FAIL GH-218 partG (c) pilot %s half %d: %d / %d\n", st, half, dec[0], dec[1]); }
                 pilot_kept += dec[0] == 1;
-                g_stab_overlap_pilot_cap = 12;
+                g_stab_overlap_pilot_cap = 12; g_stab_overlap_pilot = 0;
             }
         }
         g_stab_overlap_c4 = saved_c4; g_stab_overlap_mutant = saved_mut;

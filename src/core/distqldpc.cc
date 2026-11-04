@@ -934,25 +934,25 @@ static int g_stab_overlap_enc = 3;       /* -stab-overlap-enc=native|bin|seq|cla
 static int g_stab_overlap_mutant = 0;    /* test only (no flag): 1 = limit floor(|g|/2) - 1 (cuts minimum logicals);
                                             2 = the half's parity rows (Hpar) used as g without the GF(2) check */
 static const double STAB_OVL_BIN_MAX = 126.0;   /* auto: binomial up to |g| = 9 (C(9,5) = 126), counter above */
-/* GH-218: per-half pilot for the rows on many Tanner 4-cycles. A verified row g is "dense" if it lies on more than
- * g_stab_overlap_c4 Tanner-graph 4-cycles of the same-type stabilizer matrix, c4(g) = sum over the other distinct rows g'
- * of C(|g & g'|, 2) (the 4-cycles through g's check node). Sparse rows are always used (as in GH-148). The dense rows of a
- * half are used as in GH-148 until the half's first probe with cap >= P + 4, P = max(pilot cap, the half's lb, the cap
- * from which the -stab-overlap ratio activates every dense row: 10 for weight 9 under auto); before
- * that probe a pilot decides, once per half, whether they stay: the probe "weight <= P?" (first solution stops it) is
- * run with and without the dense rows for g_stab_overlap_pilot solver seeds (the run's seed + 0, 1, ...); the dense rows
- * stay iff the median of conflicts(with) / conflicts(without) is <= 1. The decision depends only on conflict counts, so it
- * is deterministic for a given seed. Every subset of the verified rows is sound (each row alone keeps every minimum-weight
- * element of F), so neither the classification nor the pilot changes a probe answer; the pilot probes only decide, their
- * answers are not used. Measured in GH-218: BB / LP / GB rows have c4 <= 4 (never dense; no pilot, GH-148's search);
- * every weight-9 TN row has c4 >= 12; on them the rows' effect is systematic per code and half (TN_216 Z half 1.03-1.54x
- * the conflicts on 10 seed/mode pairs, the GH-148 regression; TN_180 X half 0.48-0.66x on 3 seeds) and the cap-12 pilot
- * ratios point the same way (TN_216 Z 0.91-1.19, median 1.06; X 0.83-1.01; TN_180 X 0.89-0.97). -1 = no classification
- * (every verified row in every probe: GH-148's search, byte for byte). */
+/* GH-218: dense overlap rows. A verified row g is "dense" if it lies on more than g_stab_overlap_c4 Tanner-graph 4-cycles
+ * of the same-type stabilizer matrix, c4(g) = sum over the other distinct rows g' of C(|g & g'|, 2) (the 4-cycles through
+ * g's check node). Sparse rows are always used (as in GH-148). The dense rows of a half are used as in GH-148 until the
+ * half's first probe with cap >= P' + 4, P' = max(pilot cap, the half's lb, the cap from which the -stab-overlap ratio
+ * activates every dense row: 10 for weight 9 under auto); from that probe on they are dropped (default), or, with
+ * -stab-overlap-pilot=N > 0 (opt-in), a pilot decides once per half: the probe "weight <= P'?" (first solution stops it)
+ * is run with and without the dense rows for N solver seeds (the run's seed + 0, 1, ...) and the dense rows stay iff the
+ * median of conflicts(with) / conflicts(without) is <= 1 (deterministic for a given seed). Every subset of the verified
+ * rows is sound (each row alone keeps every minimum-weight element of F), so neither rule changes a probe answer; pilot
+ * probes only decide. Measured in GH-218: BB / LP / GB rows have c4 <= 4 (never dense: GH-148's search); every weight-9 TN
+ * row has c4 >= 12. On them the rows' effect at caps 16-17 is systematic per code and half (TN_216 Z half 1.03-1.54x the
+ * conflicts on all 10 seed/mode pairs, the GH-148 regression; TN_180 X half 0.48-0.66x on 3 seeds), while at caps 10-12
+ * it is near neutral and does not predict it (TN_216 Z at cap 12 over 10 seeds: median 0.97 / 0.92), so the default
+ * drops them and the pilot stays opt-in. Below cap 16 (all TN codes of tiers 1-4) the search is GH-148's. -1 = no
+ * classification (every verified row in every probe: GH-148's search, byte for byte). */
 static const int STAB_OVL_C4_DEFAULT = 11;
 static int g_stab_overlap_c4 = STAB_OVL_C4_DEFAULT;   /* -stab-overlap-c4=N|off (default 11) */
-static int g_stab_overlap_pilot = 3;                  /* -stab-overlap-pilot=N seed pairs (default 3; 0 = dense rows off
-                                                         from that probe on, without a pilot) */
+static int g_stab_overlap_pilot = 0;                  /* -stab-overlap-pilot=N seed pairs (default 0 = the dense rows are
+                                                         dropped from that probe on, without a pilot; N > 0 opt-in) */
 static uint64_t g_stab_overlap_pilot_cap = 12;        /* -stab-overlap-pilot-cap=P (default 12); the pilot asks
                                                          "weight <= max(P, lb)?" */
 static uint64_t g_stab_overlap_pilot_margin = 4;      /* pilot before the first probe with cap >= pilot cap + margin
@@ -1364,7 +1364,13 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     if (!pilot_probe && h.ovl_dense_mode < 0 && !h.ovl_dense.empty() &&
         cap >= ovl_pilot_cap(h) + g_stab_overlap_pilot_margin) {
         if (g_stab_overlap_pilot > 0) ovl_pilot(h, verb, card_mode);
-        else h.ovl_dense_mode = 0;
+        else {
+            h.ovl_dense_mode = 0;
+            size_t nd = 0;
+            for (size_t r = 0; r < h.ovl_dense.size(); r++) nd += h.ovl_dense[r] ? 1 : 0;
+            if (verb > 0) { printf("c stab-overlap %s: %zu dense rows dropped from cap %llu on\n", h.tag, nd, (unsigned long long)cap); fflush(stdout); }
+            if (g_frontier_stats) { fprintf(stderr, "c OVERLAP-DROP %s cap %llu: dense_rows %zu\n", h.tag, (unsigned long long)cap, nd); fflush(stderr); }
+        }
     }
     const bool use_dense = pilot_probe ? dense_force == 1 : h.ovl_dense_mode != 0;
     SimpSolver S;
@@ -1817,8 +1823,17 @@ static int min_distance_css_interleaved(
             printf("c stab-overlap %s: %d of %d rows used (%d rejected: H g != 0 or G g != 0; %d duplicates", hs[k].tag, oi.kept,
                    oi.candidates, oi.rejected, oi.duplicates);
             if (g_stab_overlap_c4 >= 0)   /* GH-218 */
-                printf("; %d dense: on more than %d Tanner 4-cycles, pilot %s", oi.c4_gated, g_stab_overlap_c4,
-                       oi.c4_gated == 0 ? "not needed" : g_stab_overlap_pilot > 0 ? "at cap max(P, lb, activation) before the first probe with cap >= that + 4" : "off: dropped from that probe on");
+            {
+                if (oi.c4_gated == 0) printf("; 0 dense (more than %d Tanner 4-cycles)", g_stab_overlap_c4);
+                else if (g_stab_overlap_pilot > 0)
+                    printf("; %d dense (more than %d Tanner 4-cycles): pilot (%d seeds) at cap P' = max(%llu, lb, activation) before "
+                           "the first probe with cap >= P' + %llu", oi.c4_gated, g_stab_overlap_c4, g_stab_overlap_pilot,
+                           (unsigned long long)g_stab_overlap_pilot_cap, (unsigned long long)g_stab_overlap_pilot_margin);
+                else
+                    printf("; %d dense (more than %d Tanner 4-cycles): dropped from the first probe with cap >= P' + %llu, "
+                           "P' = max(%llu, lb, activation)", oi.c4_gated, g_stab_overlap_c4, (unsigned long long)g_stab_overlap_pilot_margin,
+                           (unsigned long long)g_stab_overlap_pilot_cap);
+            }
             printf("); |g| -> rows:");
             for (std::map<int, int>::const_iterator it = oi.weights.begin(); it != oi.weights.end(); ++it)
                 printf(" %d:%d (<= %d)", it->first, it->second, ovl_limit(it->first));
@@ -2923,10 +2938,10 @@ int main(int argc, char** argv) {
             printf("            H g = 0, G g = 0; a minimum-weight logical always satisfies it, else x + g is lighter); on: every\n");
             printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
             printf("            -stab-overlap-c4=N|off (GH-218, default 11): rows g on more than N Tanner 4-cycles of the stabilizer\n");
-            printf("            matrix (sum over the other rows g' of C(|g & g'|, 2)) are dense; before a half's first probe with cap >= P + 4\n");
-            printf("            a pilot runs \"weight <= max(P, lb, row activation cap)?\" with and without its dense rows for -stab-overlap-pilot=N seeds (default 3;\n");
-            printf("            0 = drop them without a pilot) and keeps them iff the median conflict ratio is <= 1\n");
-            printf("            (-stab-overlap-pilot-cap=P, default 12); off = every verified row in every probe (GH-148's search)\n");
+            printf("            matrix (sum over the other rows g' of C(|g & g'|, 2)) are dense; from a half's first probe with cap >= P' + 4,\n");
+            printf("            P' = max(P, lb, row activation cap), they are dropped (default), or with -stab-overlap-pilot=N > 0 (opt-in)\n");
+            printf("            a pilot runs \"weight <= P'?\" with and without them for N seeds and keeps them iff the median conflict\n");
+            printf("            ratio is <= 1 (-stab-overlap-pilot-cap=P, default 12); off = every verified row in every probe (GH-148)\n");
             printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");
             printf("            clauses up to |g| = 9, sequential counter above; bin / seq: one of them for every row)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
