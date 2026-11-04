@@ -7,7 +7,7 @@ Binary: frozen/server-main-02879a93/distqldpc (`binary.sha256`). Tables built fr
 |---|---|
 | `inputs.json` | the 100 inputs of the panel: 51 tiered codes, the 24 library codes (generator stems `*_unknown`) and the 25 codes of pending data PRs #210-#214 (measured for their reviews only, not added here), with sha256 of every matrix file and the claim used for consistency checks |
 | `server_panel_results.jsonl` | one record per run of runner/server_retier_20261104.py (1173 runs): command, core, wall/user time, max RSS, answer, timestamped lb/ub events |
-| `server_extra_results.jsonl` | runner/server_retier_extra_20261104.py: COLOR_331 no-card seeds 3-4 and the 6 h relabeled (`-seed=1`) CC reproduction runs |
+| `server_extra_results.jsonl` | runner/server_retier_extra_20261104.py: COLOR_331 no-card seeds 3-4 and the relabeled (`-seed=1`) CC reproduction attempts (stopped after 5910 s, see ../../SERVER.md notes) |
 | `drift_c914ef5_results.jsonl`, `drift_02879a93_results.jsonl` | same-day drift check (previous baseline binary c914ef5 and 02879a93 on 5 codes x 2 modes x seeds 0-2) |
 | `witness_check.jsonl` | runner/retier_verify_witnesses.py over every CC `-v` log: every printed word and every bundled basis row checked from scratch in GF(2) |
 | `witnesses_lightest.txt` | the lightest verified word per code (stem as run; the placed stems are in ../../SERVER.md, placement table) |
