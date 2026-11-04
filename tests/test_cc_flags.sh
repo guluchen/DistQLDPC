@@ -449,8 +449,9 @@ vgrep 8 "^c stab-overlap X: 36 of 36 rows used (0 rejected: H g != 0 or G g != 0
 # TN_72_8_8 (d = 8, ub-pre off: caps 1, 2, 4, 8): pilot cap 1 -> P = max(1, lb) = 5 at cap 8 < 9: no pilot, dense rows used
 runs=$((runs + 1)); run -frontier-stats -stab-overlap=on -ub-pre=off $L TN_72_8_8
 if [[ $rc -ne 0 ]] || ! grep -q "^c OVERLAP" <<<"$err" || grep -q "OVERLAP-PILOT" <<<"$err"; then echo "FAIL (TN_72_8_8 -stab-overlap=on: dense rows used, no pilot expected)" >&2; fails=$((fails + 1)); fi
-# TN_108_2_12 with -ub-pre=off: caps 1, 2, 4, 8, 16; at cap 16 lb = 9, P = 9, 16 >= 13: one pilot per half (3 seeds)
-runs=$((runs + 1)); run -frontier-stats -ub-pre=off -cpu-lim=15 TN_108_2_12
+# TN_108_2_12 with -ub-pre=off: caps 1, 2, 4, 8, 16; at cap 16 lb = 9, pilot cap 1 -> P = max(1, 9) = 9, 16 >= 13:
+# one pilot per half (3 seeds)
+runs=$((runs + 1)); run -frontier-stats -ub-pre=off -stab-overlap-pilot-cap=1 -cpu-lim=15 TN_108_2_12
 if ! grep -Eq "^c OVERLAP-PILOT X cap 9: dense_rows 54 seed 0 [0-9]+/[0-9]+, seed 1 [0-9]+/[0-9]+, seed 2 [0-9]+/[0-9]+ median [0-9.]+ -> (kept|dropped)$" <<<"$err"; then
     echo "FAIL (TN_108_2_12 -ub-pre=off: c OVERLAP-PILOT X line expected): $(grep PILOT <<<"$err")" >&2; fails=$((fails + 1)); fi
 runs=$((runs + 1)); run -frontier-stats -ub-pre=off -stab-overlap-pilot=0 -cpu-lim=5 TN_108_2_12
