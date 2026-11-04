@@ -1,0 +1,12 @@
+timeout-maxsat               old  rc=1 wall=3.031  c d_ub: 15|c d_lb: 2|c d_lb: 3|c d_lb: 5|c d_lb: 5|c d_ub: 15|c status: TIMEOUT (child killed after -cpu-lim)|c d  : UNKNOWN|s UNKNOWN|
+timeout-maxsat               new  rc=1 wall=3.025  c d_ub: 15|c d_lb: 2|c d_lb: 3|c d_lb: 5|c d_lb: 5|c d_ub: 15|c status: TIMEOUT (child killed after -cpu-lim)|c d  : UNKNOWN|s UNKNOWN|
+timeout-cc                   old  rc=1 wall=3.031  c d_ub: 52|c d_lb: 2|c d_ub: 40|c d_lb: 4|c d_lb: 6|c d_lb: 8|c d_lb: 10|c d_lb: 12|c d_lb: 14|c d_lb: 16|c d_lb: 18|c d_lb: 20|c d_lb: 20|c d_ub: 40|c status: TIMEOUT (child killed after -cpu-lim)|c d  : UNKNOWN|s UNKNOWN|
+timeout-cc                   new  rc=1 wall=3.031  c d_ub: 52|c d_lb: 2|c d_ub: 40|c d_lb: 4|c d_lb: 6|c d_lb: 8|c d_lb: 10|c d_lb: 12|c d_lb: 14|c d_lb: 16|c d_lb: 18|c d_lb: 20|c d_lb: 20|c d_ub: 40|c status: TIMEOUT (child killed after -cpu-lim)|c d  : UNKNOWN|s UNKNOWN|
+memcap-200M                  old  rc=1 wall=2.913  c d_lb: -|c d_ub: -|c status: UNKNOWN|c d  : UNKNOWN|s UNKNOWN|
+memcap-200M                  new  rc=1 wall=3.060  c d_lb: -|c d_ub: -|c status: UNKNOWN|c d  : UNKNOWN|s UNKNOWN|
+memcap-60M-cc                old  rc=1 wall=1.383  c d_ub: 50|c d_lb: 2|c d_lb: 2|c d_ub: 50|c status: UNKNOWN|c d  : UNKNOWN|s UNKNOWN|
+memcap-60M-cc                new  rc=1 wall=1.281  c d_ub: 50|c d_lb: 2|c d_lb: 2|c d_ub: 50|c status: UNKNOWN|c d  : UNKNOWN|s UNKNOWN|
+child-sigkill                old  rc=1 after-kill=0.008  c status: UNKNOWN|s UNKNOWN|
+child-sigkill                new  rc=1 after-kill=0.006  c status: UNKNOWN|s UNKNOWN|
+child-stop-cont              old  rc=0 wall=7.373  o 10|
+child-stop-cont              new  rc=0 wall=7.220  o 10|

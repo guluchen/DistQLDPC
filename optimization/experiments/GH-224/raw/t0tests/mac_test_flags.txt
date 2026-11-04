@@ -1,0 +1,5 @@
+bash tests/test_cc_flags.sh ./bin/distqldpc
+test_cc_flags: 566 checks, 0 failed
+CC_FLAG_TESTS PASS
+make test-cc-flags CXX="c++ -Wno-reserved-user-defined-literal"  5.28s user 1.91s system 85% cpu 8.385 total
+rc=0
