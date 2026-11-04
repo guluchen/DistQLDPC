@@ -4053,7 +4053,7 @@ CRef Solver::propagateForLK() {
     NextClause:;
     }
     ws.shrink(i - j);
-    if (!ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef && ovWatched(p)) {   // GH-148 (inactive when empty)
+    if (!ovRows.empty() && confl == CRef_Undef && falseVar == var_Undef && ovWatchedLK(p)) {   // GH-148 (inactive when empty)
       CRef oc = ovPropagate(p, true);
       if (oc != CRef_Undef) { confl = oc; qhead = trail.size(); }
       else if (falseVar != var_Undef) qhead = trail.size();
@@ -7368,19 +7368,26 @@ Lit Solver::pickFrontierLit()
 }
 
 // ---- DistQLDPC GH-148: native stabilizer-overlap rows (see Solver.h) ----
-void Solver::setOverlapRows(const std::vector<std::vector<int> >& rows, const std::vector<int>& lims, int nQubits)
+void Solver::setOverlapRows(const std::vector<std::vector<int> >& rows, const std::vector<int>& lims, int nQubits,
+                            const std::vector<char>* noLK)
 {
-    ovRows.clear(); ovLim.clear(); ovCacheList.clear(); ovCrefs.clear();
+    ovRows.clear(); ovLim.clear(); ovCacheList.clear(); ovCrefs.clear(); ovNoLK.clear();
     ovColRows.assign((size_t)nQubits, std::vector<int>());
     for (size_t r = 0; r < rows.size(); r++) {
         if (rows[r].empty() || rows[r].size() > 32 || lims[r] >= (int)rows[r].size()) continue;
         const int id = (int)ovRows.size();
         ovRows.push_back(rows[r]);
         ovLim.push_back(lims[r] < 0 ? 0 : lims[r]);
+        if (noLK) ovNoLK.push_back(r < noLK->size() && (*noLK)[r] ? 1 : 0);
         for (size_t t = 0; t < rows[r].size(); t++) ovColRows[(size_t)rows[r][t]].push_back(id);
     }
     ovHas.assign((size_t)nQubits, 0);   // GH-218: qubits on at least one row (call-site filter)
-    for (int q = 0; q < nQubits; q++) ovHas[(size_t)q] = !ovColRows[(size_t)q].empty();
+    ovHasLK.assign((size_t)nQubits, 0);   // GH-218: qubits on at least one row propagated in the lookahead
+    for (int q = 0; q < nQubits; q++) {
+        ovHas[(size_t)q] = !ovColRows[(size_t)q].empty();
+        for (size_t a = 0; a < ovColRows[(size_t)q].size(); a++)
+            if (ovNoLK.empty() || !ovNoLK[(size_t)ovColRows[(size_t)q][a]]) { ovHasLK[(size_t)q] = 1; break; }
+    }
     ovCacheIdx.assign(1024, -1);
 }
 
@@ -7428,6 +7435,7 @@ CRef Solver::ovPropagate(Lit p, bool lk)
     const std::vector<int>& rs = ovColRows[(size_t)v];
     for (size_t a = 0; a < rs.size(); a++) {
         const int r = rs[a];
+        if (lk && !ovNoLK.empty() && ovNoLK[(size_t)r]) continue;   // GH-218: row kept out of the lookahead
         const std::vector<int>& row = ovRows[(size_t)r];
         const int lim = ovLim[(size_t)r];
         uint32_t tmask = 0, umask = 0; int cnt = 0;

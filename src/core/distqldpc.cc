@@ -953,6 +953,9 @@ static const int STAB_OVL_C4_DEFAULT = 11;
 static int g_stab_overlap_c4 = STAB_OVL_C4_DEFAULT;   /* -stab-overlap-c4=N|off (default 11) */
 static int g_stab_overlap_pilot = 0;                  /* -stab-overlap-pilot=N seed pairs (default 0 = the dense rows are
                                                          dropped from that probe on, without a pilot; N > 0 opt-in) */
+static int g_stab_overlap_dense = 0;                  /* -stab-overlap-dense=drop|nolk (default drop): what happens to
+                                                         the dense rows at that probe without a pilot: dropped, or kept in
+                                                         propagate() but out of the lookahead (propagateForLK) */
 static uint64_t g_stab_overlap_pilot_cap = 12;        /* -stab-overlap-pilot-cap=P (default 12); the pilot asks
                                                          "weight <= max(P, lb)?" */
 static uint64_t g_stab_overlap_pilot_margin = 4;      /* pilot before the first probe with cap >= pilot cap + margin
@@ -1365,11 +1368,16 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
         cap >= ovl_pilot_cap(h) + g_stab_overlap_pilot_margin) {
         if (g_stab_overlap_pilot > 0) ovl_pilot(h, verb, card_mode);
         else {
-            h.ovl_dense_mode = 0;
+            h.ovl_dense_mode = g_stab_overlap_dense == 1 ? 2 : 0;
             size_t nd = 0;
             for (size_t r = 0; r < h.ovl_dense.size(); r++) nd += h.ovl_dense[r] ? 1 : 0;
-            if (verb > 0) { printf("c stab-overlap %s: %zu dense rows dropped from cap %llu on\n", h.tag, nd, (unsigned long long)cap); fflush(stdout); }
-            if (g_frontier_stats) { fprintf(stderr, "c OVERLAP-DROP %s cap %llu: dense_rows %zu\n", h.tag, (unsigned long long)cap, nd); fflush(stderr); }
+            const char* what = h.ovl_dense_mode == 2 ? "kept out of the lookahead" : "dropped";
+            if (verb > 0) { printf("c stab-overlap %s: %zu dense rows %s from cap %llu on\n", h.tag, nd, what, (unsigned long long)cap); fflush(stdout); }
+            if (g_frontier_stats) {
+                fprintf(stderr, "c OVERLAP-%s %s cap %llu: dense_rows %zu\n", h.ovl_dense_mode == 2 ? "NOLK" : "DROP", h.tag,
+                        (unsigned long long)cap, nd);
+                fflush(stderr);
+            }
         }
     }
     const bool use_dense = pilot_probe ? dense_force == 1 : h.ovl_dense_mode != 0;
@@ -1378,11 +1386,14 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     std::vector<Var> aux;
     int n = 0;
     OvlRows ovl_active;   /* GH-148: rows active in this probe (any subset of the verified rows is sound) */
+    std::vector<char> ovl_nolk;   /* GH-218: per active row, 1 = not propagated in the lookahead */
     if (!h.ovl.empty()) {
         for (size_t r = 0; r < h.ovl.size(); r++)
             if ((g_stab_overlap_ratio <= 0.0 || (double)cap >= g_stab_overlap_ratio * (double)(h.ovl[r].size() / 2 + 1)) &&
-                (use_dense || h.ovl_dense.empty() || !h.ovl_dense[r]))   /* GH-218: dense rows only while kept/undecided */
+                (use_dense || h.ovl_dense.empty() || !h.ovl_dense[r])) {   /* GH-218: dense rows only while kept/undecided */
                 ovl_active.push_back(h.ovl[r]);
+                ovl_nolk.push_back(!pilot_probe && h.ovl_dense_mode == 2 && !h.ovl_dense.empty() && h.ovl_dense[r] ? 1 : 0);
+            }
         if (verb > 0) {
             printf("c stab-overlap %s cap %llu: %zu of %zu rows active (ratio %.2f)\n", h.tag, (unsigned long long)cap,
                    ovl_active.size(), h.ovl.size(), g_stab_overlap_ratio);
@@ -1395,7 +1406,9 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     if (ovl_native) {   /* GH-148: the same rows as a native propagator (no clauses) */
         std::vector<int> lims;
         for (size_t r = 0; r < ovl_active.size(); r++) lims.push_back(ovl_limit((int)ovl_active[r].size()));
-        S.setOverlapRows(ovl_active, lims, n);
+        bool any_nolk = false;
+        for (size_t r = 0; r < ovl_nolk.size(); r++) any_nolk = any_nolk || ovl_nolk[r];
+        S.setOverlapRows(ovl_active, lims, n, any_nolk ? &ovl_nolk : NULL);   /* GH-218: NULL = every row in the lookahead */
     }
     S.setBoundsPipe(pipe_w);
     S.initUB = cap >= (uint64_t)INT32_MAX ? INT32_MAX : cap;
@@ -1830,9 +1843,10 @@ static int min_distance_css_interleaved(
                            "the first probe with cap >= P' + %llu", oi.c4_gated, g_stab_overlap_c4, g_stab_overlap_pilot,
                            (unsigned long long)g_stab_overlap_pilot_cap, (unsigned long long)g_stab_overlap_pilot_margin);
                 else
-                    printf("; %d dense (more than %d Tanner 4-cycles): dropped from the first probe with cap >= P' + %llu, "
-                           "P' = max(%llu, lb, activation)", oi.c4_gated, g_stab_overlap_c4, (unsigned long long)g_stab_overlap_pilot_margin,
-                           (unsigned long long)g_stab_overlap_pilot_cap);
+                    printf("; %d dense (more than %d Tanner 4-cycles): %s from the first probe with cap >= P' + %llu, "
+                           "P' = max(%llu, lb, activation)", oi.c4_gated, g_stab_overlap_c4,
+                           g_stab_overlap_dense == 1 ? "kept out of the lookahead" : "dropped",
+                           (unsigned long long)g_stab_overlap_pilot_margin, (unsigned long long)g_stab_overlap_pilot_cap);
             }
             printf("); |g| -> rows:");
             for (std::map<int, int>::const_iterator it = oi.weights.begin(); it != oi.weights.end(); ++it)
@@ -2647,6 +2661,9 @@ int main(int argc, char** argv) {
             else if (*v && end && !*end && k >= 0 && k <= 1000000) g_stab_overlap_c4 = (int)k;
             else die("invalid -stab-overlap-c4 (N = 0..1000000 | off)");
         }
+        else if (!strcmp(argv[i], "-stab-overlap-dense=drop")) g_stab_overlap_dense = 0;   /* GH-218 */
+        else if (!strcmp(argv[i], "-stab-overlap-dense=nolk")) g_stab_overlap_dense = 1;
+        else if (!strncmp(argv[i], "-stab-overlap-dense", 19)) die("invalid -stab-overlap-dense (drop | nolk)");
         else if (!strncmp(argv[i], "-stab-overlap-pilot-cap=", 24)) {   /* GH-218 */
             char* end = NULL;
             long k = strtol(argv[i] + 24, &end, 10);
@@ -2941,7 +2958,9 @@ int main(int argc, char** argv) {
             printf("            matrix (sum over the other rows g' of C(|g & g'|, 2)) are dense; from a half's first probe with cap >= P' + 4,\n");
             printf("            P' = max(P, lb, row activation cap), they are dropped (default), or with -stab-overlap-pilot=N > 0 (opt-in)\n");
             printf("            a pilot runs \"weight <= P'?\" with and without them for N seeds and keeps them iff the median conflict\n");
-            printf("            ratio is <= 1 (-stab-overlap-pilot-cap=P, default 12); off = every verified row in every probe (GH-148)\n");
+            printf("            ratio is <= 1 (-stab-overlap-pilot-cap=P, default 12); off = every verified row in every probe (GH-148);\n");
+            printf("            -stab-overlap-dense=drop|nolk (default drop): without a pilot the dense rows are dropped there, or kept\n");
+            printf("            in the search's propagation but out of the lookahead (nolk)\n");
             printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");
             printf("            clauses up to |g| = 9, sequential counter above; bin / seq: one of them for every row)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
