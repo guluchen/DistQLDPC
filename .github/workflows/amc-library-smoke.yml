@@ -1,0 +1,82 @@
+name: Collapsed AMC source-estimate library smoke
+
+on:
+  push:
+    branches: [codex/collapsed-amc-library]
+    paths:
+      - '.github/workflows/amc-library-smoke.yml'
+      - 'scripts/codegen/amc*'
+      - 'scripts/codegen/validate_amc.py'
+      - 'scripts/codegen/audit_amc_smoke.py'
+      - 'scripts/codegen/verify_css_witness.py'
+      - 'scripts/codegen/smoke_untiered.py'
+      - 'scripts/codegen/validate_css.py'
+      - 'tests/test_codegen_amc.py'
+      - 'data/matrices/untiered/AMC_*.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build unchanged solver
+        run: make --jobs=2 bin/distqldpc
+      - name: Full independent source blocks and logicals, tiny units and inventory
+        run: |
+          python3 tests/test_codegen_amc.py
+          python3 tests/test_codegen_twisted_torus.py
+          python3 tests/test_codegen_color666.py
+          python3 tests/test_codegen_hgp.py
+          python3 tests/test_codegen_cycle.py
+          python3 scripts/codegen/validate_amc.py --out /tmp/amc-construction.json
+          cmp optimization/experiments/GH-199/raw/construction.json /tmp/amc-construction.json
+          python3 scripts/codegen/validate_css.py --output /tmp/css-validation.json
+          cmp data/matrices/untiered/validation.json /tmp/css-validation.json
+      - name: Reproduce all twenty matrices
+        run: |
+          python3 scripts/codegen/amc.py --all --out /tmp/amc-rebuilt
+          python3 - <<'PY'
+          from pathlib import Path
+          files=list(Path('/tmp/amc-rebuilt').glob('*.txt'))
+          assert len(files)==20
+          for p in files: assert p.read_bytes()==(Path('data/matrices/untiered')/p.name).read_bytes(),p
+          print('PASS all twenty matrices byte-identical')
+          PY
+      - name: Five default serial bounded MaxSAT checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family AMC --verbose --out /tmp/amc-maxsat
+      - name: Five independent serial bounded CC checks
+        run: python3 scripts/codegen/smoke_untiered.py --ci --family AMC --verbose --engine cc --out /tmp/amc-cc
+      - name: Actual words, source estimates and independent-engine audit
+        run: |
+          python3 scripts/codegen/audit_amc_smoke.py --maxsat /tmp/amc-maxsat --cc /tmp/amc-cc --construction /tmp/amc-construction.json --out /tmp/amc-audit.json
+          python3 - <<'PY'
+          from pathlib import Path
+          print('GH199_AUDIT_JSON='+Path('/tmp/amc-audit.json').read_text().replace('\n',''))
+          PY
+      - name: Retain all evidence even on failure
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          result={}
+          for label in ['amc-maxsat','amc-cc']:
+              result[label]={p.name:p.read_text() for p in Path('/tmp',label).glob('*') if p.is_file()}
+          print('GH199_EVIDENCE_JSON='+json.dumps(result,separators=(',',':')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gh199-amc-smoke
+          path: |
+            /tmp/amc-maxsat/
+            /tmp/amc-cc/
+            /tmp/amc-construction.json
+            /tmp/amc-audit.json
+          if-no-files-found: warn
+          retention-days: 14
+
