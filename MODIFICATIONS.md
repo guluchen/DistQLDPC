@@ -18,7 +18,7 @@ New code, not derived from MaxCDCL.
 | Area | Description |
 |------|-------------|
 | QLDPC encoding | MaxSAT formulation for stabilizer distance (Hx/Hz/Gx/Gz matrices) |
-| Fork + pipe | Child runs solver; parent enforces wall-clock timeout (`-cpu-lim`) via `SIGKILL` |
+| Fork + pipe | Child runs solver; parent enforces wall-clock timeout (`-cpu-lim`) via `SIGKILL`; the parent waits in `poll()` on the pipe and a SIGCHLD self-pipe, so it sees the child's exit at once (GH-224; was 10 ms `usleep` polling) |
 | Bounds sync | Parent reads `TRY` / `LB` / `UB` / `RESULT` lines from pipe |
 | Progress output | Default mode prints `c trying d:`, `c d_lb:`, `c d_ub:`, `c d:`, `o` |
 | Quiet / debug | Default `verb=0`; child stdout to `/dev/null`; `-v` / `-debug` for solver log |
