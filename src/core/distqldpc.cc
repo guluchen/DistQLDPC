@@ -42,6 +42,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
+#include <poll.h>   /* GH-224 */
 
 #include "utils/System.h"
 #include "SimpSolver.h"
@@ -2200,17 +2201,18 @@ static void apply_pipe_line(BoundsBook& b, const char* line, ProgressState* prog
     }
 }
 
-static void drain_bounds_pipe(int pipe_r, BoundsBook& b, std::string& carry, ProgressState* prog) {
+/* Returns true once the pipe has reached end of file (every write end closed). */
+static bool drain_bounds_pipe(int pipe_r, BoundsBook& b, std::string& carry, ProgressState* prog) {
     char chunk[512];
     for (;;) {
         ssize_t n = read(pipe_r, chunk, sizeof(chunk));
         if (n < 0) {
             if (errno == EINTR)
                 continue;
-            break;
+            return false;
         }
         if (n == 0)
-            break;
+            return true;
         carry.append(chunk, chunk + n);
         size_t pos;
         while ((pos = carry.find('\n')) != std::string::npos) {
@@ -2219,6 +2221,31 @@ static void drain_bounds_pipe(int pipe_r, BoundsBook& b, std::string& carry, Pro
             apply_pipe_line(b, line.c_str(), prog);
         }
     }
+}
+
+/* GH-224: SIGCHLD self-pipe. While the parent waits for the solver child, SIGCHLD writes one byte here so that
+ * the parent's poll() returns as soon as the child exits (the old loop slept 10 ms per check, which quantized the
+ * wall time of fast runs into 10 ms buckets). */
+static volatile int g_sigchld_wake_w = -1;
+
+static void sigchld_wake(int) {
+    int saved = errno;
+    int fd = g_sigchld_wake_w;
+    if (fd >= 0) {
+        char c = 0;
+        ssize_t r = write(fd, &c, 1);   /* non-blocking; a full pipe already guarantees a wake-up */
+        (void)r;
+    }
+    errno = saved;
+}
+
+static void set_nonblock_cloexec(int fd) {
+    int fl = fcntl(fd, F_GETFL, 0);
+    if (fl >= 0)
+        fcntl(fd, F_SETFL, fl | O_NONBLOCK);
+    int fdfl = fcntl(fd, F_GETFD, 0);
+    if (fdfl >= 0)
+        fcntl(fd, F_SETFD, fdfl | FD_CLOEXEC);
 }
 
 static double wall_seconds() {
@@ -2293,8 +2320,34 @@ static int solve_in_child_fork(
     timed_out = false;
     double deadline = (cpu_lim != INT32_MAX) ? wall_seconds() + (double)cpu_lim : -1.0;
 
+    /* GH-224: wait in poll() on the bounds pipe and on a SIGCHLD self-pipe instead of usleep(10000). The handler is
+     * installed only in the parent and after fork(), so the solver child is unaffected; a child that exits before
+     * the handler is in place is caught by the waitpid(WNOHANG) that precedes every poll(). The poll timeout is the
+     * remaining -cpu-lim time, capped at 100 ms as a safety net (1 ms if the self-pipe cannot be created). */
+    int wake[2] = {-1, -1};
+    struct sigaction sa_old;
+    bool have_wake = (pipe(wake) == 0);
+    if (have_wake) {
+        set_nonblock_cloexec(wake[0]);
+        set_nonblock_cloexec(wake[1]);
+        g_sigchld_wake_w = wake[1];
+        struct sigaction sa;
+        memset(&sa, 0, sizeof(sa));
+        sa.sa_handler = sigchld_wake;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+        if (sigaction(SIGCHLD, &sa, &sa_old) != 0) {
+            g_sigchld_wake_w = -1;
+            close(wake[0]);
+            close(wake[1]);
+            have_wake = false;
+        }
+    }
+    bool pipe_eof = false;
+
     for (;;) {
-        drain_bounds_pipe(pipefd[0], book, carry, &prog);
+        if (!pipe_eof)
+            pipe_eof = drain_bounds_pipe(pipefd[0], book, carry, &prog);
 
         int status = 0;
         pid_t w = waitpid(pid, &status, WNOHANG);
@@ -2316,9 +2369,41 @@ static int solve_in_child_fork(
                 apply_pipe_line(book, carry.c_str(), &prog);
             break;
         }
-        usleep(10000);
+
+        int timeout_ms = have_wake ? 100 : 1;
+        if (deadline >= 0.0) {
+            double left_ms = (deadline - wall_seconds()) * 1000.0;
+            if (left_ms + 1.0 < (double)timeout_ms)
+                timeout_ms = left_ms > 0.0 ? (int)left_ms + 1 : 0;
+        }
+        struct pollfd pfd[2];
+        int nfd = 0;
+        if (!pipe_eof) {
+            pfd[nfd].fd = pipefd[0];
+            pfd[nfd].events = POLLIN;
+            pfd[nfd].revents = 0;
+            nfd++;
+        }
+        if (have_wake) {
+            pfd[nfd].fd = wake[0];
+            pfd[nfd].events = POLLIN;
+            pfd[nfd].revents = 0;
+            nfd++;
+        }
+        (void)poll(pfd, (nfds_t)nfd, timeout_ms);   /* EINTR (SIGCHLD) is fine: the loop re-checks everything */
+        if (have_wake) {
+            char sink[64];
+            while (read(wake[0], sink, sizeof(sink)) > 0) {
+            }
+        }
     }
 
+    if (have_wake) {
+        sigaction(SIGCHLD, &sa_old, NULL);
+        g_sigchld_wake_w = -1;
+        close(wake[0]);
+        close(wake[1]);
+    }
     close(pipefd[0]);
     out = book;
     return out.distance;
