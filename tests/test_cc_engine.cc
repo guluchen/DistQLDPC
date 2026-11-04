@@ -64,7 +64,9 @@
 //   symmetry) with orbits from the Tanner generators under the GF(2) checks, all 128 rule subsets x seeds 0..2 vs brute force;
 //   Part H = driver with -cc-aut=on on relabeled hypergraph products (hidden transpose XZ duality) and relabeled random codes;
 //   mutants 13 (candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and 14 (swap map / identity used as dual map
-//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT [NR [NX]]]]]]].
+//   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT [NR [NX [NU]]]]]]]].
+// GH-195 (rule erasure): Part U (half level, below; own RNG stream, the shared stream is saved and restored), and erasure
+//   driver configurations in Parts B and H.
 // GH-162 (rule tiebreak): Part T (half level, below), and tiebreak driver configurations in Parts B and H.
 // GH-183 (-cc-roworder=bfs, -cc-tbbase=asc): Part R (half level, below): every subset of {excl, pack, orbf, mrv, parity, leaf}
 //   x {no overlap, overlap, overlap+tiebreak} with the reversed-BFS row order, x seeds 0..3, plus the ascending tiebreak base
@@ -197,12 +199,14 @@ static distcc::Rules rules_of(int mask) {
     r.overlap = mask & 64; r.charge = mask & 128;   // GH-157
     r.tiebreak = mask & 256;   // GH-162 (Part T and the tiebreak driver configurations; the older parts use masks < 128)
     r.sparse = mask & 512; r.sparseov = mask & 1024; r.xorunit = mask & 2048; r.sparsemrv = mask & 4096;   // GH-181 (RM_SP.. below)
+    r.erasure = mask & 8192;   // GH-195 (Part U and the erasure driver configurations)
     return r;
 }
 static const int RM_CHG = 128;   // GH-157
 static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule set from GH-157 to GH-217 (excl,pack,orbf,parity,leaf,overlap,charge)
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 256;   // RM_TB: GH-162
 static const int RM_SP = 512, RM_SPOV = 1024, RM_XU = 2048, RM_SPMRV = 4096;   // GH-181 sparse, sparseov, xorunit, sparsemrv
+static const int RM_ER = 8192;   // GH-195 erasure
 static const char* rules_name(int mask) {
     static char buf[128];
     distcc::Rules r = rules_of(mask);
@@ -263,6 +267,39 @@ static bool ladder_x(const std::vector<Mask>& H, const std::vector<Mask>& G, con
             acc->nodes += res.nodes; acc->spack += res.spack; acc->sprune += res.sprune; acc->snocand += res.snocand;
             acc->ovtightx += res.ovtightx; acc->xuforbid += res.xuforbid; acc->xuforced += res.xuforced; acc->xudead += res.xudead;
         }
+        const bool expect_found = (w == dh);
+        if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
+        if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
+            snprintf(buf, sizeof(buf), "w=%d got %s expected %s (d_h=%d)", w, res.verdict == distcc::LEVEL_FOUND ? "FOUND" : "EMPTY",
+                     expect_found ? "FOUND" : "EMPTY", dh);
+            why = buf; return false;
+        }
+        if (res.verdict == distcc::LEVEL_FOUND) {
+            Mask v = 0;
+            for (int q : res.witness) v |= 1u << q;
+            if (popc(v) != w || (int)res.witness.size() != w || !in_kernel(H, v) || !detected(G, v)) {
+                snprintf(buf, sizeof(buf), "w=%d invalid witness", w); why = buf; return false;
+            }
+        }
+    }
+    return true;
+}
+
+// GH-195 Part U: ladder_ok with the erasure test hooks (sizegate: also 2|S| + 2 <= w; verify: phi H_R = 0, F H_R = G_R
+// checked on every region column; both start the tests at the first level) and the counters summed into *acc
+static bool ladder_er(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
+                      const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, bool sizegate, bool verify,
+                      distcc::LevelResult* acc, std::string& why, int roworder = distcc::ROWORDER_INDEX) {
+    distcc::Rules r = rules_of(rmask);
+    const distcc::SparseRows Kr = to_rows(K, n);
+    distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr, roworder);
+    hs.set_erasure_test(sizegate, verify);
+    const int top = dh < 0 ? n : dh;
+    char buf[160];
+    for (int w = 1; w <= top; w++) {
+        distcc::LevelResult res = hs.run_level(w);
+        acc->ercalls += res.ercalls; acc->erprune += res.erprune; acc->ergiveup += res.ergiveup; acc->spack += res.spack;
+        acc->xuforbid += res.xuforbid;
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
         if ((res.verdict == distcc::LEVEL_FOUND) != expect_found) {
@@ -542,7 +579,7 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[22] = {0}, mut_runs[22] = {0};
+    long mut_bad[27] = {0}, mut_runs[27] = {0};
     long au_runs = 0, au_bad = 0;   // GH-206 auto-probe driver runs
     long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
@@ -748,6 +785,10 @@ int main(int argc, char** argv) {
             {"gh181-default-sparse", RM_DEF | RM_SP | RM_SPOV | RM_SPMRV, true, false, 0, true},   // merge: new default rules + the GH-181 candidate tokens
             {"gh181-default-tiebreak-sparse-xu", RM_DEF | RM_TB | RM_SP | RM_SPOV | RM_SPMRV | RM_XU, false, false, 1, true},
             {"gh181-tb-mrv-bfs-sparse", RM_ALL | RM_CHG | RM_TB | RM_SP | RM_SPOV | RM_SPMRV, true, false, 2, true, 0, 0, 1, false},
+            {"erasure", RM_DEF | RM_ER, true, false, 0, true}, {"erasure-tiebreak", RM_DEF | RM_TB | RM_ER, true, false, 0, true},   // GH-195
+            {"erasure-tiebreak-mrv-bfs-dual-off-seed1", RM_ALL | RM_CHG | RM_TB | RM_ER, false, true, 1, true, 0, 0, 1, false},
+            {"erasure-index-seed2", 1 | 2 | RM_ER, false, false, 2, false}, {"erasure-defstart-seed3", RM_DEF | RM_ER, true, false, 3, true},
+            {"erasure-gh181", RM_DEF | RM_TB | RM_SP | RM_SPOV | RM_XU | RM_ER, true, false, 0, true},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
@@ -756,6 +797,7 @@ int main(int argc, char** argv) {
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed;
             if (c.lbminr) { o.lb_minr = c.lbminr; o.lb_gap = c.lbgap; }   // GH-157
             o.roworder = c.ro; o.tb_asc = c.asc;   // GH-183
+            if (c.rmask & RM_ER) o.rules.erasure_start = c.seed == 3 ? 16384 : 0;   // GH-195: tests from the first level (seed 3: default)
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
             if (r.d == -1) b_traps++;
@@ -1409,6 +1451,8 @@ int main(int argc, char** argv) {
             {"aut-tiebreak-excl-orbf-overlap", 1 | 4 | 64 | RM_TB, false, false, 2, true, 0},
             {"aut-tiebreak-mrv-bfs", RM_ALL | RM_CHG | RM_TB, true, false, 0, true, 0, 1, false}, {"aut-tiebreak-mrv-bfs-asc-seed1-dual-off", RM_ALL | RM_TB, false, false, 1, true, 0, 1, true},   // GH-183
             {"aut-auto-switch", RM_DEF | RM_TB, true, false, 0, true, 0, 2, false}, {"aut-auto-time-seed1-dual-off", RM_NEW | RM_TB, false, false, 1, true, 0, 3, false},   // GH-206 (ro 2: auto, forced switch; 3: auto, by time)
+            {"aut-erasure-tiebreak", RM_DEF | RM_TB | RM_ER, true, false, 0, true, 0, 0, false}, {"aut-erasure-seed1-dual-off", RM_DEF | RM_ER, false, false, 1, true, 0, 0, false},   // GH-195
+            {"aut-erasure-tiebreak-auto-switch", RM_DEF | RM_TB | RM_ER, true, false, 0, true, 0, 2, false}, {"aut-erasure-auto-time-seed2", RM_DEF | RM_TB | RM_ER, false, false, 2, true, 0, 3, false},
             {"mutant13", RM_NEW, false, false, 0, true, 13}, {"mutant13-orbf", 1 | 4, false, false, 0, true, 13},
             {"mutant14", RM_NEW, true, false, 0, true, 14},
         };
@@ -1419,6 +1463,7 @@ int main(int argc, char** argv) {
             o.rules = rules_of(c.rmask);
             o.dual = c.dual; o.ub_basis = c.ubb; o.seed = c.seed; o.mutant = c.mutant;
             o.roworder = c.ro; o.tb_asc = c.asc;   // GH-183
+            if (c.rmask & RM_ER) o.rules.erasure_start = 0;   // GH-195: tests from the first level
             if (c.ro >= 2) { o.roworder = distcc::ROWORDER_AUTO; o.probe_sec = 0.0; o.probe_growth = 1.0; o.probe_force = c.ro == 2 ? 1 : 0; o.ub_poll_mask = 0; }   // GH-206
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             const bool ok = run_ok(r, d);
@@ -1768,6 +1813,145 @@ int main(int argc, char** argv) {
         if (xm_bad[0] == 0 || xm_bad[1] == 0 || xm_bad[2] == 0) { fprintf(stderr, "CC_FAIL GH-181 mutant expectations not met\n"); fails++; }
         if (x_sprune == 0 || x_forbid == 0 || x_forced == 0 || x_ovtx == 0) { fprintf(stderr, "CC_FAIL GH-181 rules never acted\n"); fails++; }
     }
+    // ---------------- GH-195 Part U: erasure bound at half level ----------------
+    // Own RNG stream (the shared stream is saved and restored, so the instance streams of the other parts are unchanged).
+    // Random halves: planted shift / relabeled planted shift with -cc-aut orbits / none, n = 6..18, denser H so that the
+    // packing is often nearly tight; every third TN-like (heavily overlapping row pairs, so that GH-181 sparse rows exist);
+    // every fourth all-odd; K = a basis of ker [H; G], its elements of weight <= 6, its even elements of weight <= 8, or
+    // random sums. Ladders 1..d_h vs brute force (every witness checked in GF(2)) for the 128 subsets of {excl, orbf, mrv,
+    // parity, leaf, overlap, tiebreak} with pack+erasure (charge on half of them, the bfs row order on a quarter) x seeds
+    // 0..2 x gate {production (+ phi/F verification), size gate 2|S| + 2 <= w}; on 16 of the subsets also with GH-181
+    // sparse+xorunit, sparseov+sparsemrv and all four (seeds 0..1). Mutants 25 (bound weakened by one) and 26 (fixed support
+    // ignored) run on 16 subsets x seeds 0..1 and must give wrong ladders on some instance.
+    {
+        const int NU = argc > 8 ? atoi(argv[8]) : 300;
+        long u_inst = 0, u_orb = 0, u_runs = 0, u_bad = 0, u_fire = 0, u_fire_sg = 0, u_sp_runs = 0, u_sp_fire = 0;
+        distcc::LevelResult uacc, uacc_sg;
+        const unsigned long long rng_saved = rng_state;   // GH-195: Part U must not shift the shared stream
+        rng_state = 0x9e3779b97f4a7c15ULL ^ 195;
+        for (int inst = 0; inst < NU; inst++) {
+            const int n = 6 + (int)rnd(13);
+            const int kind = inst % 3;   // 0 planted shift, 1 relabeled planted shift (-cc-aut), 2 none
+            const bool tnlike = inst % 3 == 2 || inst % 5 == 1;
+            std::vector<std::vector<int> > gens;
+            if (kind != 2) {
+                std::vector<int> divs;
+                for (int L = 2; L <= n; L++) if (n % L == 0) divs.push_back(L);
+                const int L = divs[rnd((unsigned)divs.size())];
+                gens.push_back(rnd(2) ? stridedshift(n, L) : blockshift(n, L));
+            }
+            std::vector<Mask> h0, g0;
+            const int nh = 1 + (int)rnd((unsigned)(n / 2 + 4)), ng = 1 + (int)rnd(3);
+            for (int k = 0; k < nh; k++) {
+                Mask h = rand_vec(n, tnlike ? 4 : 2, tnlike ? 7 : 4 + (int)rnd(3));
+                h0.push_back(h);
+                if (tnlike && rnd(2)) {
+                    Mask t = h;
+                    for (int f = 0, F = 1 + (int)rnd(3); f < F; f++) t ^= 1u << rnd(n);
+                    if (t && t != h) h0.push_back(t);
+                }
+            }
+            for (int k = 0; k < ng; k++) g0.push_back(rand_vec(n, 1, n));
+            std::vector<Mask> H = closure(h0, gens, 64), G = closure(g0, gens, 32);
+            if (G.empty()) G.push_back(1u << rnd(n));
+            if (inst % 4 == 0) make_columns_odd(H, n);
+            if (kind == 1) {
+                std::vector<int> rho(n);
+                for (int i = 0; i < n; i++) rho[i] = i;
+                for (int i = n - 1; i > 0; i--) std::swap(rho[i], rho[rnd((unsigned)(i + 1))]);
+                for (Mask& v : H) v = perm_apply(rho, v);
+                for (Mask& v : G) v = perm_apply(rho, v);
+            }
+            const int dh = half_opt(H, G, n);
+            std::vector<Mask> kerHG, basis, K;
+            {
+                Span sp;
+                for (Mask v = 1; v < (1u << n); v++) {
+                    if (!in_kernel(H, v) || detected(G, v)) continue;
+                    kerHG.push_back(v);
+                    if (sp.add(v)) basis.push_back(v);
+                }
+            }
+            const int kk = (inst / 3) % 4;
+            if (kk == 0) K = basis;
+            else if (kk == 1) { for (Mask v : kerHG) if (popc(v) <= 6 && K.size() < 60) K.push_back(v); }
+            else if (kk == 2) { for (Mask v : kerHG) if (popc(v) <= 8 && !odd(v) && K.size() < 80) K.push_back(v); }
+            else if (!basis.empty())
+                for (int t = 0, T = 1 + (int)rnd(8); t < T; t++) {
+                    Mask v = 0;
+                    for (Mask b : basis) if (rnd(2)) v ^= b;
+                    if (v) K.push_back(v);
+                }
+            std::vector<int> orb;
+            if (kind == 0) orb = orbits_of(H, G, n);
+            else if (kind == 1) {
+                const distcc::SparseRows Hr = to_rows(H, n), Gr = to_rows(G, n);
+                const std::vector<const distcc::SparseRows*> cls = {&Hr, &Gr};
+                const distcc::AutResult ar = distcc::find_row_automorphisms(n, cls, false);
+                const HalfSymInfo ext = find_half_symmetry(to_matrix(H, n), to_matrix(G, n), &ar.gens);
+                if ((int)ext.reps.size() < n) orb = ext.orbit_of;
+            }
+            u_inst++; if (!orb.empty()) u_orb++;
+            if (getenv("CC_TEST_PROGRESS")) fprintf(stderr, "partU inst %d n %d kind %d d_h %d |H| %zu |K| %zu orbits %d\n", inst, n, kind, dh, H.size(), K.size(), (int)!orb.empty());
+            uint64_t fire = 0, fire_sg = 0;
+            for (int sub = 0; sub < 128; sub++) {
+                // bits of sub: excl, orbf, mrv, parity, leaf, overlap, tiebreak -> masks 1, 4, 8, 16, 32, 64, RM_TB
+                const int base = (sub & 1) | (((sub >> 1) & 31) << 2) | ((sub & 64) ? RM_TB : 0) | 2 | RM_ER;
+                for (uint64_t seed = 0; seed < 3; seed++)
+                    for (int prod = 0; prod < 2; prod++) {   // prod = 1: production gate (+ verify); 0: size gate
+                        const int rm = base | (((sub + (int)seed) & 1) ? RM_CHG : 0);
+                        const int ro = (sub + (int)seed + prod) % 4 == 3 ? distcc::ROWORDER_BFS : distcc::ROWORDER_INDEX;
+                        std::string why;
+                        distcc::LevelResult acc;
+                        u_runs++;
+                        if (!ladder_er(H, G, K, n, dh, orb, rm, seed, 0, !prod, prod, &acc, why, ro)) {
+                            u_bad++; fails++;
+                            if (u_bad <= 10) fprintf(stderr, "CC_FAIL GH-195 partU inst=%d n=%d kind=%d rules=%s seed=%llu prod=%d ro=%d: %s\n", inst, n,
+                                                     kind, rules_name(rm), (unsigned long long)seed, prod, ro, why.c_str());
+                        }
+                        distcc::LevelResult& a = prod ? uacc : uacc_sg;
+                        a.ercalls += acc.ercalls; a.erprune += acc.erprune; a.ergiveup += acc.ergiveup;
+                        (prod ? fire : fire_sg) += acc.erprune;
+                    }
+                if (sub % 8 == 0) {
+                    static const int combos[3] = {RM_SP | RM_XU, RM_SPOV | RM_SPMRV, RM_SP | RM_SPOV | RM_XU | RM_SPMRV};
+                    for (int ci = 0; ci < 3; ci++)
+                        for (uint64_t seed = 0; seed < 2; seed++) {
+                            const int rm = base | combos[ci] | ((ci + (int)seed) & 1 ? RM_CHG : 0);
+                            std::string why;
+                            distcc::LevelResult acc;
+                            u_runs++; u_sp_runs++;
+                            if (!ladder_er(H, G, K, n, dh, orb, rm, seed, 0, false, true, &acc, why)) {
+                                u_bad++; fails++;
+                                if (u_bad <= 10) fprintf(stderr, "CC_FAIL GH-195 partU (gh181) inst=%d n=%d rules=%s seed=%llu: %s\n", inst, n,
+                                                         rules_name(rm), (unsigned long long)seed, why.c_str());
+                            }
+                            if (acc.spack > 0 && acc.erprune > 0) u_sp_fire++;
+                        }
+                    for (int mt = 25; mt <= 26; mt++)   // mutants, production gate
+                        for (uint64_t seed = 0; seed < 2; seed++) {
+                            std::string why;
+                            distcc::LevelResult acc;
+                            mut_runs[mt]++;
+                            if (!ladder_er(H, G, K, n, dh, orb, base, seed, mt, false, false, &acc, why)) mut_bad[mt]++;
+                        }
+                }
+            }
+            if (fire) u_fire++;
+            if (fire_sg) u_fire_sg++;
+        }
+        rng_state = rng_saved;
+        printf("GH-195 partU: %ld half instances (%ld with orbits), %ld ladder runs (128 rule subsets with pack,erasure x 3 seeds x 2 gates, "
+               "charge and bfs mixed in; %ld with GH-181 tokens, %ld of them pruned by erasure with redundant rows packed), %ld bad; "
+               "erasure tests %llu, prunes %llu, give-ups %llu with the production gate (%ld instances pruned); tests %llu, prunes %llu with the size gate (%ld instances)\n",
+               u_inst, u_orb, u_runs, u_sp_runs, u_sp_fire, u_bad, (unsigned long long)uacc.ercalls, (unsigned long long)uacc.erprune,
+               (unsigned long long)uacc.ergiveup, u_fire, (unsigned long long)uacc_sg.ercalls, (unsigned long long)uacc_sg.erprune, u_fire_sg);
+        printf("mutant 25 (erasure bound weakened by one: extra - 1 outside qubits): %ld/%ld half ladders wrong\n", mut_bad[25], mut_runs[25]);
+        printf("mutant 26 (erasure with the fixed support S ignored): %ld/%ld half ladders wrong\n", mut_bad[26], mut_runs[26]);
+        if (NU > 0 && (u_fire == 0 || u_fire_sg == 0 || u_sp_fire == 0)) { fprintf(stderr, "CC_FAIL GH-195 partU: the erasure rule never prunes\n"); fails++; }
+        if (NU > 0 && (mut_bad[25] == 0 || mut_bad[26] == 0)) { fprintf(stderr, "CC_FAIL GH-195 mutant expectations not met\n"); fails++; }
+    }
+
     // ---------------- Part C: mutants ----------------
     printf("GH-206 auto probe (Part B): %ld driver runs (forced switch / stay / by time, finder on and off, tbbase asc), %ld bad\n", au_runs, au_bad);
     printf("mutant 21 (auto probe of level w + 1, an aborted probe taken as refuted): %ld/%ld driver runs wrong or stopped\n", mut_bad[21], mut_runs[21]);

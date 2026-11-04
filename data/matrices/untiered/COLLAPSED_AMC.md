@@ -1,5 +1,9 @@
 # Cyclic collapsed 4D AMC inputs (GH-199)
 
+> **Placed 2026-11-04.** These matrices now live in `data/matrices/tier0` … `tier5` under the stems of the
+> [placement table](README.md#placement-2026-11-04); the `_unknown` names below are the generator stems kept
+> for provenance (mapped in `MANIFEST.csv`).
+
 One source exact108k6d9 control and four source random-distance estimates:
 216k6~12,330k6~14,438k6~17,522k6~20. Full parameters are fixed in
 scripts/codegen/amc_cases.json and issue199 before generation. These are

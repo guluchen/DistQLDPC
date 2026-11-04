@@ -102,7 +102,7 @@ class TwistedTests(unittest.TestCase):
         jobs=json.loads(subprocess.check_output(argv,cwd=ROOT,text=True))
         self.assertEqual(len(jobs),6)
         self.assertEqual({a[-1].split('/')[-1] for a in jobs},
-                         {f'BB_{c["n"]}_{c["k"]}_unknown' for c in gen.CASES})
+                         {css.locate(css.UNTIERED,f'BB_{c["n"]}_{c["k"]}_unknown').name for c in gen.CASES})
         bad=subprocess.run(argv+['--stems','COLOR_7_1_unknown'],cwd=ROOT,capture_output=True)
         self.assertNotEqual(bad.returncode,0)
 

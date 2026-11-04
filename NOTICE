@@ -139,6 +139,18 @@ Modified files (partial list): Solver.h, Solver.cc
   implemented from scratch; no third-party code was copied
   (MODIFICATIONS.md, GH-181).
 
+  The CC rule "erasure" (GH-195, -cc-rules=...,erasure, opt-in) cuts a
+  node when no logical extends it inside the free candidates of the
+  packed odd rows plus at most two further qubits. The erasure bound
+  idea (the packing-charged region and its elimination with a random
+  linear fingerprint) is from Qubitserf (https://github.com/Quantinuum/
+  Qubitserf, commit 04b9349, Copyright (c) 2026 Serban Cercelescu and
+  the qubitserf contributors, MIT License). It was re-derived from the
+  mathematics and implemented from scratch; no Qubitserf code was
+  copied. The soundness argument for DistQLDPC's search state
+  (forbidden sets, orbit seeds, overlap, tiebreak) and the cost gate
+  are DistQLDPC's (MODIFICATIONS.md, GH-195).
+
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and
 substantial portions, per the MIT license.
@@ -242,10 +254,11 @@ When you receive DistQLDPC as a whole (source or binary):
 For questions about upstream MaxCDCL, contact the original authors
 (see src/solver/ file headers).
 
-7. Repetition-product hypergraph-product matrices (GH-153, untiered)
------------------------------------------------------------------
+7. Repetition-product hypergraph-product matrices (GH-153; tiered 2026-11-04)
+---------------------------------------------------------------------------
 
-Location: data/matrices/untiered/HGP_*; generator scripts/codegen/hgp_repetition.py.
+Location: data/matrices/tier0 .. tier5 since 2026-11-04 (placement table and provenance in
+data/matrices/untiered/README.md); generator scripts/codegen/hgp_repetition.py.
 Original clean-room implementation and generated matrices, GPL-3.0-or-later.
 No third-party code, matrix files, or paper text were copied.
 
@@ -256,13 +269,13 @@ IEEE Transactions on Information Theory (2014), DOI 10.1109/TIT.2013.2292061.
 The repetition-code specializations have claimed parameters
 [[13,1,3]], [[41,1,5]], [[113,1,8]], [[265,1,12]], [[481,1,16]], [[1105,1,24]].
 These are mathematical ground-truth claims, not DistQLDPC solver results.
-All stems remain _unknown pending PI naming/tier approval. Short smoke runs
-are recorded in GH-153: four exact reproductions, one bounded timeout, and
-one default timeout without bounds (supplemental -ub-pre=1 gives 9..26).
+Placed and renamed 2026-11-04 (PI plan; distances found by DistQLDPC main 02879a93 with
+GF(2)-verified witnesses, all equal to the claims): HGP_13_1_3 (tier0), HGP_41_1_5 (tier0), HGP_113_1_8 (tier0), HGP_265_1_12 (tier1), HGP_481_1_16 (tier3), HGP_1105_1_24 (tier5).
+The earlier 60 s smoke runs remain recorded in GH-153.
 See data/matrices/untiered/MANIFEST.csv and README.md for full provenance.
 
-8. Nonzero-rate cycle-factor HGP matrices (GH-154, untiered)
-----------------------------------------------------------
+8. Nonzero-rate cycle-factor HGP matrices (GH-154; tiered 2026-11-04)
+--------------------------------------------------------------------
 
 Original clean-room generator scripts/codegen/hgp_cycle.py and generated
 HGP_{45,106,306,610,1261,2866}_* matrices, GPL-3.0-or-later. No graph data,
@@ -272,6 +285,7 @@ Graph mathematics is credited to the standard complete graph, Petersen,
 Fano-plane/Heawood, Desargues double and GQ(2,2)/Tutte-Coxeter constructions;
 Andries E. Brouwer's graph descriptions at https://aeb.win.tue.nl/graphs/
 provide construction provenance. See data/matrices/untiered/CYCLE_HGP.md.
+Placed and renamed 2026-11-04: HGP_45_9_3 (tier0), HGP_106_16_4 (tier0), HGP_306_36_5 (tier0), HGP_610_64_6 (tier1), HGP_1261_121_6 (tier3), HGP_2866_256_8 (tier3).
 Claimed distances are derived from the theorem and independently checked
 classical girths; solver observations are recorded separately in the manifest.
 scripts/compute_logicals.py gains an original opt-in bitset backend; its
@@ -311,6 +325,15 @@ Renamed 2026-10-23 (PI decision; same matrices, lower bounds unchanged): upper b
 nontrivial logical operators found by DistQLDPC's GH-146 finder and independently verified
 (optimization/experiments/GH-146/witnesses/): BB_1080_4_30to48 (was BB_1080_4_ge30), BB_756_16_30to34 (was BB_756_16_ge30), BB_864_4_30to40 (was BB_864_4_ge30), TN_288_2_9to24 (was TN_288_2_ge9), TN_324_4_9to25 (was TN_324_4_ge9), TN_360_4_17to24 (was TN_360_4_ge17), TN_396_4_17to26 (was TN_396_4_ge17), TN_432_8_9to29 (was TN_432_8_ge9), TN_468_4_17to29 (was TN_468_4_ge17), TN_496_2_17to30 (was TN_496_2_ge17), TN_504_2_17to34 (was TN_504_2_ge17), TN_540_4_9to34 (was TN_540_4_ge9), TN_576_2_9to37 (was TN_576_2_ge9), TN_612_2_17to40 (was TN_612_2_ge17), TN_648_10_9to32 (was TN_648_10_9to52), TN_648_14_9to28 (was TN_648_14_ge9), TN_684_2_9to29 (was TN_684_2_ge9).
 
+Independent validation credit (GH-150): PolyLabs Research reported a separate,
+clean-room check-driven cluster-search implementation confirming the earlier
+30 <= d <= 34 bounds for BB_756_16 and d = 24 for BB_360_12, with independently
+GF(2)-checked witnesses. This checks the implementations within the same method
+family, not an independent method; it does not validate the later BB_756_16
+lower bound of 32. Credit and BB_756_16 per-pass records:
+https://github.com/guluchen/DistQLDPC/issues/150#issuecomment-6631689406
+Original validation report: https://github.com/guluchen/DistQLDPC/issues/150
+
 Renamed 2026-10-29 (PI decision; same matrices, upper bounds unchanged): lower bounds raised by
 DistQLDPC's optional CC engine with -cc-aut=on (GH-152, issue #152: Tanner-graph automorphism
 candidates, GF(2)-verified before use), reproduced with a different search order (mrv) on the same
@@ -330,8 +353,8 @@ TN_396_4_23to26 (was TN_396_4_17to26), TN_504_2_24to34 (was TN_504_2_17to34), TN
 GH-183]; BB_756_16_32to34 (was BB_756_16_30to34), BB_864_4_32to40 (was BB_864_4_30to40) [GH-183];
 TN_496_2_27to30 (was TN_496_2_23to30) [GH-181].
 
-9. Triangular 6.6.6 color-code matrices (GH-156, untiered)
---------------------------------------------------------
+9. Triangular 6.6.6 color-code matrices (GH-156; tiered 2026-11-04)
+------------------------------------------------------------------
 
 Original clean-room generator scripts/codegen/color666.py and generated
 COLOR_{7,19,127,331,1027,2791}_1_unknown_* matrices, GPL-3.0-or-later.
@@ -344,9 +367,10 @@ color code by matching on a Mobius strip", arXiv:2108.11395v3, Sec. II,
 Fig. 1, Eqs. (1)-(2). Claimed distances use the published family formula;
 DistQLDPC smoke observations are recorded separately. See
 data/matrices/untiered/COLOR666.md and optimization/experiments/GH-156/.
+Placed and renamed 2026-11-04: COLOR_7_1_3 (tier0), COLOR_19_1_5 (tier0), COLOR_127_1_13 (tier1), COLOR_331_1_21 (tier5), COLOR_1027_1_28to37 (tier5), COLOR_2791_1_26to61 (tier5).
 
-10. Twisted-torus generalized toric / BB matrices (GH-159, untiered)
-----------------------------------------------------------------
+10. Twisted-torus generalized toric / BB matrices (GH-159; tiered 2026-11-04)
+--------------------------------------------------------------------------
 
 Original generator scripts/codegen/twisted_torus.py, independent congruence
 validator and generated BB_{30,120,186,248,294,340}_*_unknown_* matrices,
@@ -357,6 +381,7 @@ arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
 Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
 DistQLDPC observations are recorded separately in the manifest. No external
 distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+Placed and renamed 2026-11-04: BB_30_4_6 (tier0), BB_120_8_12 (tier0), BB_186_10_14 (tier1), BB_248_10_18 (tier2), BB_294_10_20 (tier3), BB_340_16_18 (tier2).
 
 GH-199 cyclic collapsed four-dimensional AMC inputs (original reconstruction):
 Hsiang-Ku Lin, Pak Kau Lim, Alexey A. Kovalev and Leonid P. Pryadko,
@@ -369,3 +394,4 @@ in original GPL-3.0-or-later generators and generated matrices; no author
 source code, matrix file, paper text or image is redistributed. The four
 TableVI distance values retain their randomized-estimate status. No external
 distance solver was used for verification.
+Placed and renamed 2026-11-04 (PI): AMC_108_6_9 (tier0), AMC_216_6_12 (tier0), AMC_330_6_14 (tier0), AMC_438_6_17 (tier1), AMC_522_6_20 (tier2).

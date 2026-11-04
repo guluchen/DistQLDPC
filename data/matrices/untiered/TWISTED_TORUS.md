@@ -1,5 +1,9 @@
 # Generalized toric / BB codes on twisted tori
 
+> **Placed 2026-11-04.** These matrices now live in `data/matrices/tier0` … `tier5` under the stems of the
+> [placement table](README.md#placement-2026-11-04); the `_unknown` names below are the generator stems kept
+> for provenance (mapped in `MANIFEST.csv`).
+
 Issue: [GH-159](https://github.com/guluchen/DistQLDPC/issues/159).
 These are a BB subclass, using the existing `BB` prefix. This batch adds
 different quotient lattices and polynomial checks; it is not presented as a
