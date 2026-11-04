@@ -19,6 +19,9 @@ import platform
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from validate_css import locate  # noqa: E402  (placed library codes live in data/matrices/tierN)
+UNTIERED = ROOT/'data/matrices/untiered'
 
 
 def sha(path):
@@ -88,7 +91,7 @@ def main():
             cmd.append('-ub-pre=off')
         if args.verbose:
             cmd.append('-v')
-        cmd.append(f'data/matrices/untiered/{row["stem"]}')
+        cmd.append(str(locate(UNTIERED, row['stem']).relative_to(ROOT)))
         jobs.append((row,cmd))
     if args.dry_run:
         print(json.dumps([cmd for _,cmd in jobs],indent=2))
@@ -119,7 +122,7 @@ def main():
     records = []
     for row,cmd in jobs:
         stem = row['stem']
-        identity = {kind:sha(ROOT/f'data/matrices/untiered/{stem}_{kind}.txt')
+        identity = {kind:sha(Path(f'{locate(UNTIERED, stem)}_{kind}.txt'))
                     for kind in ('Hx','Hz','Gx','Gz')}
         meta = {'cmd':cmd,'binary_sha256':sha(args.bin),'input_sha256':identity,
                 'source_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()}

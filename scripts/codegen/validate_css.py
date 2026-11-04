@@ -57,8 +57,46 @@ def dot(a, b):
     return bin(a & b).count('1') % 2
 
 
+UNTIERED = Path(__file__).resolve().parents[2]/'data/matrices/untiered'
+
+
+def placements(manifest=None):
+    """Generated stem -> bundled prefix data/matrices/tierN/<stem> for library codes that were
+    moved out of untiered/ (MANIFEST.csv columns placed_tier, placed_stem; PI 2026-11-04)."""
+    out = {}
+    for row in csv.DictReader(Path(manifest or UNTIERED/'MANIFEST.csv').open()):
+        if row.get('placed_tier'):
+            out[row['stem']] = UNTIERED.parent/row['placed_tier']/row['placed_stem']
+    return out
+
+
+def locate(directory, stem):
+    """Prefix of a generated stem: directory/<stem> if its files are there, else its tier placement."""
+    if (Path(directory)/f'{stem}_Hx.txt').exists():
+        return Path(directory)/stem
+    placed = placements().get(stem)
+    if placed is None or not Path(f'{placed}_Hx.txt').exists():
+        raise FileNotFoundError(f'{stem}: not in {directory} and no tier placement')
+    return placed
+
+
+def same_as_bundled(path):
+    """True if a regenerated file <stem>_<kind>.txt equals its bundled copy byte for byte; for a
+    placed code the bundled Gx/Gz header names the placed stem instead of the generated one."""
+    path = Path(path)
+    stem, kind = path.name[:-7], path.name[-6:-4]
+    target = Path(f'{locate(UNTIERED, stem)}_{kind}.txt')
+    bundled = target.read_bytes()
+    placed = target.name[:-7]
+    if placed != stem:
+        head, sep, rest = bundled.partition(b'\n')
+        bundled = head.replace(f'{placed}_'.encode(), f'{stem}_'.encode()) + sep + rest
+    return path.read_bytes() == bundled
+
+
 def read_code(directory, stem):
-    matrices = [load(directory/f'{stem}_{kind}.txt') for kind in ('Hx','Hz','Gx','Gz')]
+    prefix = locate(directory, stem)
+    matrices = [load(Path(f'{prefix}_{kind}.txt')) for kind in ('Hx','Hz','Gx','Gz')]
     if len({n for n, _ in matrices}) != 1:
         raise ValueError(f'{stem}: column mismatch')
     return matrices[0][0], [rows for _, rows in matrices]
@@ -115,7 +153,9 @@ def main():
     args = ap.parse_args()
     manifest = list(csv.DictReader((args.dir/'MANIFEST.csv').open()))
     stems = [row['stem'] for row in manifest]
-    actual = {p.name[:-7] for p in args.dir.glob('*_Hx.txt')}
+    placed = placements(args.dir/'MANIFEST.csv')
+    actual = {p.name[:-7] for p in args.dir.glob('*_Hx.txt')} | {
+        s for s, p in placed.items() if Path(f'{p}_Hx.txt').exists()}
     if len(stems) != len(set(stems)) or set(stems) != actual:
         raise ValueError('manifest/code inventory mismatch')
     entries = sorted(args.root.glob('tier[0-5]/*_Hx.txt')) + sorted(args.root.glob('untiered/*_Hx.txt'))
@@ -128,12 +168,15 @@ def main():
             raise ValueError(f'{stem}: manifest dimensions disagree')
         if stem.split('_')[:3] != [row['family'],row['n'],row['k']]:
             raise ValueError(f'{stem}: stem dimensions disagree')
-        compared, matches = duplicates(n, result['k'], *matrices[:2], entries, args.dir/f'{stem}_Hx.txt')
+        prefix = locate(args.dir, stem)
+        compared, matches = duplicates(n, result['k'], *matrices[:2], entries, Path(f'{prefix}_Hx.txt'))
         if matches:
             raise ValueError(f'{stem}: duplicate row spaces: {matches}')
+        if stem in placed:
+            result.update(placed=str(Path('data/matrices')/placed[stem].relative_to(UNTIERED.parent)))
         result.update(stem=stem, same_n_k_compared=compared, duplicates=matches,
                       column_permutation_equivalence='not tested; no same-(n,k) peers' if not compared else 'not tested; manual review required',
-                      sha256={kind: hashlib.sha256((args.dir/f'{stem}_{kind}.txt').read_bytes()).hexdigest()
+                      sha256={kind: hashlib.sha256(Path(f'{prefix}_{kind}.txt').read_bytes()).hexdigest()
                               for kind in ('Hx','Hz','Gx','Gz')})
         results.append(result)
     report = {'codes_checked': len(results), 'inventory_codes': len(entries), 'results': results}
