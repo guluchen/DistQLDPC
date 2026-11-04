@@ -222,6 +222,8 @@ bool parse_rules(const char* s, Rules& out) {
     Rules r;
     r.excl = r.pack = r.orbf = r.mrv = r.parity = r.leaf = r.overlap = r.charge = r.tiebreak = false;
     r.sparse = r.sparseov = r.sparsemrv = r.xorunit = false;
+    r.erasure = false;
+    r.erasure_start = out.erasure_start;   /* GH-195: set by its own flag, kept across -cc-rules */
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -241,6 +243,7 @@ bool parse_rules(const char* s, Rules& out) {
         else if (tok == "sparseov") r.sparseov = true; /* GH-181 */
         else if (tok == "sparsemrv") r.sparsemrv = true; /* GH-181 (with mrv: mrv already branches everywhere) */
         else if (tok == "xorunit") r.xorunit = true;   /* GH-181 */
+        else if (tok == "erasure") r.erasure = true;   /* GH-195 */
         else if (tok == "none") { /* nothing */ }
         else return false;
         pos = e + 1;
@@ -264,6 +267,7 @@ std::string rules_string(const Rules& r) {
     if (r.xorunit) s += ",xorunit";
     if (r.mrv) s += ",mrv";
     if (r.charge) s += ",charge";
+    if (r.erasure) s += ",erasure";   /* GH-195 */
     return s.empty() ? std::string("none") : s.substr(1);
 }
 
@@ -437,6 +441,13 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             if (opt.rules.xorunit)
                 printf("c cc: %s half xorunit: on (%s)%s\n", hs[k].tag, opt.rules.sparse ? "rows of H and the redundant rows" : "rows of H",
                        opt.mutant == 23 ? " [TEST MUTANT 23: even unit rows branched on]" : "");
+            if (opt.rules.erasure)   /* GH-195 (no line without the token: byte identity) */
+                printf("c cc: %s half erasure: %s%s%s\n", hs[k].tag,
+                       !S.erasure_active() ? "idle (needs pack)" : ("on (extra <= 2, region <= 128, from the level after one with >= " +
+                                                     std::to_string((unsigned long long)opt.rules.erasure_start) + " nodes)").c_str(),
+                       S.erasure_active() ? (S.erasure_pair_table() ? ", pair table (lazy)" : ", pairs by scan") : "",
+                       opt.mutant == 25 ? " [TEST MUTANT 25: bound weakened by one]" :
+                       opt.mutant == 26 ? " [TEST MUTANT 26: fixed support ignored]" : "");
         }
     }
     /* GH-133 parity: level 1 of a qualifying half is empty (every element has even weight) */
@@ -682,6 +693,9 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        h.tag, w, (unsigned long long)r.spack, (unsigned long long)r.sprune, (unsigned long long)r.snocand,
                        (unsigned long long)r.ovtightx, (unsigned long long)r.xuforbid, (unsigned long long)r.xuforced,
                        (unsigned long long)r.xudead);
+            if (opt.rules.erasure)   /* GH-195 (no line without the token) */
+                printf("c cc-stats: %s level %d erasure calls %llu prune %llu giveup %llu\n", h.tag, w,
+                       (unsigned long long)r.ercalls, (unsigned long long)r.erprune, (unsigned long long)r.ergiveup);
             if (!r.by_budget.empty()) {   /* nodes by remaining budget w - |S|, budget 0 (full clusters) first */
                 printf("c cc-stats: %s level %d nodes-by-budget", h.tag, w);
                 for (size_t b = 0; b < r.by_budget.size(); b++) printf(" %llu", (unsigned long long)r.by_budget[b]);
@@ -731,6 +745,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 const double p0 = now_seconds();
                 probe_deadline = p0 + cap;
                 if (probe_deadline <= 0) probe_deadline = 1e-9;
+                if (h.search->erasure_live()) h.alt->erasure_go_live();   /* GH-195: probe with the same erasure state */
                 LevelResult pr = pw <= n ? h.alt->run_level(pw) : LevelResult();
                 probe_deadline = 0;
                 const double pdt = now_seconds() - p0;
