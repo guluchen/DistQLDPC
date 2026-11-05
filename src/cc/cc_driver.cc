@@ -69,6 +69,12 @@ private:
     std::vector<int> piv_;
 };
 
+std::string fmt_g(double v) {   /* GH-227: %g for report lines */
+    char b[32];
+    snprintf(b, sizeof(b), "%g", v);
+    return b;
+}
+
 double now_seconds() {
     return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
@@ -224,6 +230,9 @@ bool parse_rules(const char* s, Rules& out) {
     r.sparse = r.sparseov = r.sparsemrv = r.xorunit = false;
     r.erasure = false;
     r.erasure_start = out.erasure_start;   /* GH-195: set by its own flag, kept across -cc-rules */
+    r.erasure_gate = out.erasure_gate;     /* GH-227: likewise */
+    r.erasure_sample = out.erasure_sample;
+    r.erasure_margin = out.erasure_margin;
     std::string all(s ? s : "");
     size_t pos = 0;
     while (pos <= all.size()) {
@@ -444,10 +453,16 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             if (opt.rules.erasure)   /* GH-195 (no line without the token: byte identity) */
                 printf("c cc: %s half erasure: %s%s%s\n", hs[k].tag,
                        !S.erasure_active() ? "idle (needs pack)" : ("on (extra <= 2, region <= 128, from the level after one with >= " +
-                                                     std::to_string((unsigned long long)opt.rules.erasure_start) + " nodes)").c_str(),
+                                                     std::to_string((unsigned long long)opt.rules.erasure_start) + " nodes" +
+                                                     (opt.rules.erasure_gate == ERASURE_GATE_COST ?
+                                                      std::string("; cost gate per (budget, extra) class, 1 in ") +
+                                                      std::to_string((unsigned long long)opt.rules.erasure_sample) + " sampled, margin " +
+                                                      fmt_g(opt.rules.erasure_margin) : std::string("; no gate")) + ")").c_str(),
                        S.erasure_active() ? (S.erasure_pair_table() ? ", pair table (lazy)" : ", pairs by scan") : "",
                        opt.mutant == 25 ? " [TEST MUTANT 25: bound weakened by one]" :
-                       opt.mutant == 26 ? " [TEST MUTANT 26: fixed support ignored]" : "");
+                       opt.mutant == 26 ? " [TEST MUTANT 26: fixed support ignored]" :
+                       opt.mutant == 27 ? " [TEST MUTANT 27: gate prunes a sample the test does not exclude]" :
+                       opt.mutant == 28 ? " [TEST MUTANT 28: gate prunes off-class nodes untested]" : "");
         }
     }
     /* GH-133 parity: level 1 of a qualifying half is empty (every element has even weight) */
@@ -695,8 +710,18 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                        (unsigned long long)r.ovtightx, (unsigned long long)r.xuforbid, (unsigned long long)r.xuforced,
                        (unsigned long long)r.xudead);
             if (opt.rules.erasure)   /* GH-195 (no line without the token) */
+            {
                 printf("c cc-stats: %s level %d erasure calls %llu prune %llu giveup %llu\n", h.tag, w,
                        (unsigned long long)r.ercalls, (unsigned long long)r.erprune, (unsigned long long)r.ergiveup);
+                if (opt.rules.erasure_gate == ERASURE_GATE_COST) {   /* GH-227 */
+                    printf("c cc-stats: %s level %d erasure gate samples %llu skipped %llu\n", h.tag, w,
+                           (unsigned long long)r.ersample, (unsigned long long)r.erskip);
+                    for (size_t i = 0; i + 7 <= r.erclass.size(); i += 7)
+                        printf("c cc-stats: %s level %d erasure class r %d x %d %s samples %.1f (level %d) test %.3fus saved %.3fus\n", h.tag, w,
+                               (int)r.erclass[i], (int)r.erclass[i + 1], r.erclass[i + 2] > 0 ? "on" : "off", r.erclass[i + 3],
+                               (int)r.erclass[i + 6], r.erclass[i + 4], r.erclass[i + 5]);
+                }
+            }
             if (!r.by_budget.empty()) {   /* nodes by remaining budget w - |S|, budget 0 (full clusters) first */
                 printf("c cc-stats: %s level %d nodes-by-budget", h.tag, w);
                 for (size_t b = 0; b < r.by_budget.size(); b++) printf(" %llu", (unsigned long long)r.by_budget[b]);

@@ -139,7 +139,7 @@ Modified files (partial list): Solver.h, Solver.cc
   implemented from scratch; no third-party code was copied
   (MODIFICATIONS.md, GH-181).
 
-  The CC rule "erasure" (GH-195, -cc-rules=...,erasure, opt-in) cuts a
+  The CC rule "erasure" (GH-195; a default CC rule since GH-227) cuts a
   node when no logical extends it inside the free candidates of the
   packed odd rows plus at most two further qubits. The erasure bound
   idea (the packing-charged region and its elimination with a random
@@ -148,8 +148,10 @@ Modified files (partial list): Solver.h, Solver.cc
   the qubitserf contributors, MIT License). It was re-derived from the
   mathematics and implemented from scratch; no Qubitserf code was
   copied. The soundness argument for DistQLDPC's search state
-  (forbidden sets, orbit seeds, overlap, tiebreak) and the cost gate
-  are DistQLDPC's (MODIFICATIONS.md, GH-195).
+  (forbidden sets, orbit seeds, overlap, tiebreak), the start-level
+  gate and the GH-227 timed-sample cost gate (which decides per class
+  of nodes whether the test runs) are DistQLDPC's (MODIFICATIONS.md,
+  GH-195, GH-227).
 
 The original MaxCDCL engine remains under MIT. All upstream copyright
 and permission notices in src/solver/ must be preserved in copies and

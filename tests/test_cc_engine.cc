@@ -66,7 +66,9 @@
 //   mutants 13 (candidates and the cyclic shift i -> i+1 mod n kept without the GF(2) checks) and 14 (swap map / identity used as dual map
 //   without the check) must fail. Usage: test_cc_engine [NA [NB [NG [NH [NT [NR [NX [NU]]]]]]]].
 // GH-195 (rule erasure): Part U (half level, below; own RNG stream, the shared stream is saved and restored), and erasure
-//   driver configurations in Parts B and H.
+//   driver configurations in Parts B and H. GH-227 (erasure cost gate, -cc-erasure-gate=cost, default): the older parts run
+//   the ungated rule (RM_ER without RM_EG); Part U adds gated ladders with sample periods 1 / 2 / 4 / 32 and margins forcing
+//   classes on or off, and mutants 27 / 28; Part B adds gated driver configurations; the default-option runs use the gate.
 // GH-162 (rule tiebreak): Part T (half level, below), and tiebreak driver configurations in Parts B and H.
 // GH-183 (-cc-roworder=bfs, -cc-tbbase=asc): Part R (half level, below): every subset of {excl, pack, orbf, mrv, parity, leaf}
 //   x {no overlap, overlap, overlap+tiebreak} with the reversed-BFS row order, x seeds 0..3, plus the ascending tiebreak base
@@ -200,6 +202,7 @@ static distcc::Rules rules_of(int mask) {
     r.tiebreak = mask & 256;   // GH-162 (Part T and the tiebreak driver configurations; the older parts use masks < 128)
     r.sparse = mask & 512; r.sparseov = mask & 1024; r.xorunit = mask & 2048; r.sparsemrv = mask & 4096;   // GH-181 (RM_SP.. below)
     r.erasure = mask & 8192;   // GH-195 (Part U and the erasure driver configurations)
+    r.erasure_gate = (mask & 16384) ? distcc::ERASURE_GATE_COST : distcc::ERASURE_GATE_NONE;   // GH-227: RM_EG = the cost gate (default)
     return r;
 }
 static const int RM_CHG = 128;   // GH-157
@@ -207,6 +210,7 @@ static const int RM_DEF = 7 | 16 | 32 | 64 | 128;   // GH-157: the default rule 
 static const int RM_OLD = 7, RM_133 = 7 | 16 | 32, RM_NEW = 7 | 16 | 32 | 64, RM_ALL = 127, RM_NSUB = 128, RM_TB = 256;   // RM_TB: GH-162
 static const int RM_SP = 512, RM_SPOV = 1024, RM_XU = 2048, RM_SPMRV = 4096;   // GH-181 sparse, sparseov, xorunit, sparsemrv
 static const int RM_ER = 8192;   // GH-195 erasure
+static const int RM_EG = 16384;  // GH-227 erasure cost gate (without it the older parts keep the ungated GH-195 rule)
 static const char* rules_name(int mask) {
     static char buf[128];
     distcc::Rules r = rules_of(mask);
@@ -289,8 +293,10 @@ static bool ladder_x(const std::vector<Mask>& H, const std::vector<Mask>& G, con
 // checked on every region column; both start the tests at the first level) and the counters summed into *acc
 static bool ladder_er(const std::vector<Mask>& H, const std::vector<Mask>& G, const std::vector<Mask>& K, int n, int dh,
                       const std::vector<int>& orb, int rmask, uint64_t seed, int mutant, bool sizegate, bool verify,
-                      distcc::LevelResult* acc, std::string& why, int roworder = distcc::ROWORDER_INDEX) {
+                      distcc::LevelResult* acc, std::string& why, int roworder = distcc::ROWORDER_INDEX,
+                      uint32_t sample = 32, double margin = 0) {
     distcc::Rules r = rules_of(rmask);
+    r.erasure_sample = sample; r.erasure_margin = margin;   // GH-227 (act only with RM_EG)
     const distcc::SparseRows Kr = to_rows(K, n);
     distcc::HalfSearch hs(to_rows(H, n), to_rows(G, n), orb, r, seed, mutant, &Kr, roworder);
     hs.set_erasure_test(sizegate, verify);
@@ -299,6 +305,7 @@ static bool ladder_er(const std::vector<Mask>& H, const std::vector<Mask>& G, co
     for (int w = 1; w <= top; w++) {
         distcc::LevelResult res = hs.run_level(w);
         acc->ercalls += res.ercalls; acc->erprune += res.erprune; acc->ergiveup += res.ergiveup; acc->spack += res.spack;
+        acc->ersample += res.ersample; acc->erskip += res.erskip;   // GH-227
         acc->xuforbid += res.xuforbid;
         const bool expect_found = (w == dh);
         if (res.verdict == distcc::LEVEL_INCONSISTENT) { snprintf(buf, sizeof(buf), "w=%d INCONSISTENT", w); why = buf; return false; }
@@ -502,15 +509,16 @@ int main(int argc, char** argv) {
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
     int fails = 0;
 
-    // ---------------- GH-217: the CC defaults (no random numbers drawn) ----------------
-    // Default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv and -cc-roworder=auto; every
-    // driver configuration below that keeps DriverOptions' rules / roworder (sequential schedule, mutant 4, Parts E/F finder
-    // runs) therefore exercises the new default against enumeration.
+    // ---------------- GH-217 / GH-227: the CC defaults (no random numbers drawn) ----------------
+    // Default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure (GH-227 added erasure,
+    // start 16384, cost gate with sample period 128 and margin 0) and -cc-roworder=auto; every driver configuration below that keeps DriverOptions' rules / roworder
+    // (sequential schedule, mutant 4, Parts E/F finder runs) therefore exercises the new default against enumeration.
     {
         const distcc::DriverOptions o;
-        const std::string want = "excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge";
+        const std::string want = "excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge,erasure";
         if (distcc::rules_string(o.rules) != want || distcc::rules_string(distcc::Rules()) != want || o.roworder != distcc::ROWORDER_AUTO ||
-            o.tb_asc || o.rules.mrv || o.rules.xorunit) {
+            o.tb_asc || o.rules.mrv || o.rules.xorunit || !o.rules.erasure || o.rules.erasure_start != 16384 ||
+            o.rules.erasure_gate != distcc::ERASURE_GATE_COST || o.rules.erasure_sample != 128 || o.rules.erasure_margin != 0) {
             fails++;
             fprintf(stderr, "CC_FAIL GH-217 defaults: rules %s, roworder %d, tbbase %s\n", distcc::rules_string(o.rules).c_str(), o.roworder,
                     o.tb_asc ? "asc" : "desc");
@@ -520,6 +528,13 @@ int main(int argc, char** argv) {
             distcc::rules_string(old) != "excl,pack,orbf,parity,leaf,overlap,charge") {
             fails++;
             fprintf(stderr, "CC_FAIL GH-217 pre-flip rule list does not parse to the old default\n");
+        }
+        distcc::Rules a17;   // GH-227: the GH-217 default list (no erasure token) parses to erasure off, start and gate kept
+        a17.erasure_sample = 8; a17.erasure_gate = distcc::ERASURE_GATE_NONE;
+        if (!distcc::parse_rules("excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv", a17) || a17.erasure ||
+            a17.erasure_start != 16384 || a17.erasure_sample != 8 || a17.erasure_gate != distcc::ERASURE_GATE_NONE || distcc::rules_string(a17) != "excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge") {
+            fails++;
+            fprintf(stderr, "CC_FAIL GH-227 GH-217 rule list does not parse to the GH-217 default (erasure off)\n");
         }
     }
 
@@ -579,7 +594,7 @@ int main(int argc, char** argv) {
 
     // ---------------- Part A: half level ----------------
     long a_inst = 0, a_orb = 0, a_none = 0, a_odd = 0, a_runs = 0, a_bad = 0;
-    long mut_bad[27] = {0}, mut_runs[27] = {0};
+    long mut_bad[29] = {0}, mut_runs[29] = {0};
     long au_runs = 0, au_bad = 0;   // GH-206 auto-probe driver runs
     long a_kbasis = 0, a_klow = 0, a_krand = 0, a_ktight = 0;
     for (int inst = 0; inst < NA; inst++) {
@@ -789,6 +804,10 @@ int main(int argc, char** argv) {
             {"erasure-tiebreak-mrv-bfs-dual-off-seed1", RM_ALL | RM_CHG | RM_TB | RM_ER, false, true, 1, true, 0, 0, 1, false},
             {"erasure-index-seed2", 1 | 2 | RM_ER, false, false, 2, false}, {"erasure-defstart-seed3", RM_DEF | RM_ER, true, false, 3, true},
             {"erasure-gh181", RM_DEF | RM_TB | RM_SP | RM_SPOV | RM_XU | RM_ER, true, false, 0, true},
+            {"erasure-gate", RM_DEF | RM_TB | RM_SP | RM_SPOV | RM_SPMRV | RM_ER | RM_EG, true, false, 0, true},   // GH-227 (the candidate default rules)
+            {"erasure-gate-mrv-bfs-dual-off-seed1", RM_ALL | RM_CHG | RM_TB | RM_ER | RM_EG, false, true, 1, true, 0, 0, 1, false},
+            {"erasure-gate-index-seed2", 1 | 2 | RM_ER | RM_EG, false, false, 2, false},
+            {"erasure-gate-defstart-seed3", RM_DEF | RM_TB | RM_SP | RM_SPOV | RM_SPMRV | RM_ER | RM_EG, true, false, 3, true},
         };
         for (const Cfg& c : cfgs) {
             distcc::DriverOptions o;
@@ -798,6 +817,11 @@ int main(int argc, char** argv) {
             if (c.lbminr) { o.lb_minr = c.lbminr; o.lb_gap = c.lbgap; }   // GH-157
             o.roworder = c.ro; o.tb_asc = c.asc;   // GH-183
             if (c.rmask & RM_ER) o.rules.erasure_start = c.seed == 3 ? 16384 : 0;   // GH-195: tests from the first level (seed 3: default)
+            if (c.rmask & RM_EG) {   // GH-227: sample periods 1 / 2 (margin -1) / 4 (margin 1e9) / default by seed
+                static const uint32_t ks[4] = {1, 2, 4, 32};
+                static const double ms[4] = {0, -1, 1e9, 0};
+                o.rules.erasure_sample = ks[c.seed & 3]; o.rules.erasure_margin = ms[c.seed & 3];
+            }
             RunOut r = run_driver(mHx, mHz, mGx, mGz, o, c.symbreak, true);
             b_runs++;
             if (r.d == -1) b_traps++;
@@ -1825,8 +1849,8 @@ int main(int argc, char** argv) {
     // ignored) run on 16 subsets x seeds 0..1 and must give wrong ladders on some instance.
     {
         const int NU = argc > 8 ? atoi(argv[8]) : 300;
-        long u_inst = 0, u_orb = 0, u_runs = 0, u_bad = 0, u_fire = 0, u_fire_sg = 0, u_sp_runs = 0, u_sp_fire = 0;
-        distcc::LevelResult uacc, uacc_sg;
+        long u_inst = 0, u_orb = 0, u_runs = 0, u_bad = 0, u_fire = 0, u_fire_sg = 0, u_sp_runs = 0, u_sp_fire = 0, ug_runs = 0;
+        distcc::LevelResult uacc, uacc_sg, ug_acc;   // ug_acc: GH-227 gate runs
         const unsigned long long rng_saved = rng_state;   // GH-195: Part U must not shift the shared stream
         rng_state = 0x9e3779b97f4a7c15ULL ^ 195;
         for (int inst = 0; inst < NU; inst++) {
@@ -1935,6 +1959,35 @@ int main(int argc, char** argv) {
                             mut_runs[mt]++;
                             if (!ladder_er(H, G, K, n, dh, orb, base, seed, mt, false, false, &acc, why)) mut_bad[mt]++;
                         }
+                    // GH-227 gate mutants: 27 (a sample the test does not exclude is pruned; every eligible node a sample),
+                    // 28 (an off-class node pruned untested; classes off after their first sample)
+                    for (uint64_t seed = 0; seed < 2; seed++) {
+                        std::string why;
+                        distcc::LevelResult acc;
+                        mut_runs[27]++;
+                        if (!ladder_er(H, G, K, n, dh, orb, base | RM_EG, seed, 27, false, false, &acc, why, distcc::ROWORDER_INDEX, 1, 0)) mut_bad[27]++;
+                        mut_runs[28]++;
+                        if (!ladder_er(H, G, K, n, dh, orb, base | RM_EG, seed, 28, false, false, &acc, why, distcc::ROWORDER_INDEX, 2, 1e9)) mut_bad[28]++;
+                    }
+                }
+                if (sub % 2 == 0) {   // GH-227 cost gate: sample periods 1 (every eligible node a sample, nothing pruned), 2 (classes on
+                    // whenever a sampled prune saved any time: margin -1), 4 (classes off after a sample: margin 1e9) and 32 (production)
+                    struct GV { uint32_t k; double m; };
+                    static const GV gv[4] = {{1, 0}, {2, -1}, {4, 1e9}, {32, 0}};
+                    for (int gi = 0; gi < 4; gi++)
+                        for (uint64_t seed = 0; seed < 2; seed++) {
+                            const int rm = base | RM_EG | (((sub / 2 + gi + (int)seed) & 1) ? RM_CHG : 0);
+                            const int ro = (sub / 2 + gi + (int)seed) % 4 == 3 ? distcc::ROWORDER_BFS : distcc::ROWORDER_INDEX;
+                            std::string why;
+                            distcc::LevelResult acc;
+                            u_runs++; ug_runs++;
+                            if (!ladder_er(H, G, K, n, dh, orb, rm, seed, 0, false, true, &acc, why, ro, gv[gi].k, gv[gi].m)) {
+                                u_bad++; fails++;
+                                if (u_bad <= 10) fprintf(stderr, "CC_FAIL GH-227 partU (gate) inst=%d n=%d rules=%s seed=%llu k=%u m=%g: %s\n", inst, n,
+                                                         rules_name(rm), (unsigned long long)seed, gv[gi].k, gv[gi].m, why.c_str());
+                            }
+                            ug_acc.ercalls += acc.ercalls; ug_acc.erprune += acc.erprune; ug_acc.ersample += acc.ersample; ug_acc.erskip += acc.erskip;
+                        }
                 }
             }
             if (fire) u_fire++;
@@ -1948,6 +2001,17 @@ int main(int argc, char** argv) {
                (unsigned long long)uacc.ergiveup, u_fire, (unsigned long long)uacc_sg.ercalls, (unsigned long long)uacc_sg.erprune, u_fire_sg);
         printf("mutant 25 (erasure bound weakened by one: extra - 1 outside qubits): %ld/%ld half ladders wrong\n", mut_bad[25], mut_runs[25]);
         printf("mutant 26 (erasure with the fixed support S ignored): %ld/%ld half ladders wrong\n", mut_bad[26], mut_runs[26]);
+        printf("GH-227 partU gate: %ld ladder runs (64 rule subsets x sample period / margin {1/0, 2/-1, 4/1e9, 32/0} x 2 seeds, charge and bfs mixed in): "
+               "tests %llu, prunes %llu, samples %llu, skipped %llu\n", ug_runs, (unsigned long long)ug_acc.ercalls, (unsigned long long)ug_acc.erprune,
+               (unsigned long long)ug_acc.ersample, (unsigned long long)ug_acc.erskip);
+        printf("mutant 27 (gate prunes a sample the test does not exclude): %ld/%ld half ladders wrong\n", mut_bad[27], mut_runs[27]);
+        printf("mutant 28 (gate prunes off-class nodes without the test): %ld/%ld half ladders wrong\n", mut_bad[28], mut_runs[28]);
+        if (NU > 0 && (ug_acc.erprune == 0 || ug_acc.ersample == 0 || ug_acc.erskip == 0)) {
+            fprintf(stderr, "CC_FAIL GH-227 partU: a gate path never runs (prunes %llu, samples %llu, skips %llu)\n", (unsigned long long)ug_acc.erprune,
+                    (unsigned long long)ug_acc.ersample, (unsigned long long)ug_acc.erskip);
+            fails++;
+        }
+        if (NU > 0 && (mut_bad[27] == 0 || mut_bad[28] == 0)) { fprintf(stderr, "CC_FAIL GH-227 mutant expectations not met\n"); fails++; }
         if (NU > 0 && (u_fire == 0 || u_fire_sg == 0 || u_sp_fire == 0)) { fprintf(stderr, "CC_FAIL GH-195 partU: the erasure rule never prunes\n"); fails++; }
         if (NU > 0 && (mut_bad[25] == 0 || mut_bad[26] == 0)) { fprintf(stderr, "CC_FAIL GH-195 mutant expectations not met\n"); fails++; }
     }

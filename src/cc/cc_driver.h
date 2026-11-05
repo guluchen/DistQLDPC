@@ -56,8 +56,9 @@ struct DriverInput {
 };
 
 struct DriverOptions {
-    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv since
-                                GH-217; excl,pack,orbf,parity,leaf,overlap,charge from GH-157 to GH-217) */
+    Rules rules;             /* -cc-rules (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure
+                                since GH-227; the same without erasure from GH-217 to GH-227; excl,pack,orbf,parity,leaf,overlap,charge
+                                from GH-157 to GH-217) */
     int lb_minr;             /* GH-157 -cc-lb-minr=K: charge evaluated at remaining budget >= K (default 3) */
     int lb_gap;              /* GH-157 -cc-lb-gap=G: ... and only where remaining budget - packing <= G (default 0) */
     bool lb_raise;           /* GH-157 -cc-lb-raise=on|off: charge raise step (default on) */

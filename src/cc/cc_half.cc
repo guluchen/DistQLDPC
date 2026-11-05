@@ -11,11 +11,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <chrono>
 #include <iterator>
 
 namespace distcc {
 
 namespace {
+
+/* GH-227 erasure gate: monotonic clock in seconds (only sampled tests read it) */
+inline double er_clock() {
+    return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
+}
 
 uint64_t splitmix64(uint64_t& s) {
     uint64_t z = (s += 0x9e3779b97f4a7c15ULL);
@@ -169,7 +175,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
       ovr_(false), nk_(0), kminw_(0), kmaxw_(0), kzero_(0), ktie_(0), tb_(false), ovtight_(0), ovforbid_(0),
       lbminr_(3), lbgap_(0), lbauto_(40), lbautomin_(100000), lbany_(false), lbraise_(true),
       mx_(0), mxw_(0), ux_(0), ncls_(1), xminw_(0), xmaxw_(0), nk0_(0), nkx_(0), kxminw_(0), kxmaxw_(0), xu_(false), ovtightx_(0),
-      er_(false), er_sizegate_(false), er_verify_(false), er_live_(false), np_(0), estamp_(0), pmask_(0), epscan_(0), w_(0), nodd_(0),
+      er_(false), er_sizegate_(false), er_verify_(false), er_live_(false), er_thr_(false), er_kmask_(0), er_kmask8_(0), np_(0), estamp_(0), pmask_(0), epscan_(0), w_(0), nodd_(0),
       synkey_(0), stamp_(0), res_(NULL), incons_(false), poll_fn_(NULL), poll_ctx_(NULL), poll_mask_(0x3FFF), abort_(false), ext_(false)
 {
     if (n_ <= 0) fatal("half without qubits");
@@ -537,6 +543,21 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         eaff_.assign((size_t)n_ + 1, 0);
         eah_.assign((size_t)n_ + 1, 0);
         eal_.assign(((size_t)n_ + 1) * kw_, 0);
+        /* GH-227 cost gate: every class starts on (the GH-195 behaviour until its samples say otherwise) */
+        er_thr_ = rules_.erasure_gate == ERASURE_GATE_COST;
+        if (er_thr_) {
+            uint32_t k = rules_.erasure_sample;
+            if (k == 0 || (k & (k - 1))) fatal("erasure gate: sample period must be a power of 2");
+            er_kmask_ = k - 1;
+            er_kmask8_ = (k <= (1u << 28) ? 8 * k : k) - 1;
+            const size_t nc = 3 * (size_t)(ER_RMAX + 1);
+            er_cnt_.assign(nc, 0);
+            er_lvl_.assign(nc, 0);
+            er_on_.assign(nc, 1);
+            er_tt_.assign(nc, 0);
+            er_st_.assign(nc, 0);
+            er_ns_.assign(nc, 0);
+        }
     }}
 
 /* erasure (GH-195): the table of all qubit pairs keyed by the XOR of their column keys (n <= 2048: at most ~2.1M pairs). It
@@ -1305,14 +1326,43 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
     if (lbon && (!pack || w_ - size - p <= lbgap_) && lb_prune(size)) return false;
     /* erasure (GH-195): at most `extra` qubits of a kept target lie outside the packed rows' candidates (mutant 25: one
      * fewer is assumed); gate (cost only): extra <= 2 (test hook: also 2|S| + 2 <= w) */
+    /* GH-227 cost gate (-cc-erasure-gate=cost): per class (remaining budget, extra), every erasure_sample-th eligible node is a
+     * sample (test timed, never pruned, subtree searched and timed); the other eligible nodes are tested only while the class
+     * is on. Skipping a test or a prune is always sound; the test itself is unchanged. */
+    int erc = -1;          /* class of a sampled node whose test would prune (its subtree is timed below) */
+    double ert0 = 0, ertt = 0;
     if (er_live_ && pack) {
         const int extra = (w_ - size) - p - (mutant_ == 25 ? 1 : 0);
         if (extra >= 0 && extra <= 2 && (!er_sizegate_ || 2 * size + 2 <= w_)) {
-            ++res_->ercalls;
-            np_ = p;
-            if (erasure_excludes(extra, st)) {
-                ++res_->erprune;
-                return false;
+            bool smp = false;
+            int c = -1;
+            if (er_thr_) {
+                const int rr = w_ - size;
+                c = 3 * (rr < ER_RMAX ? rr : ER_RMAX) + extra;
+                /* period K while the class is on, 8 K while it is off (an off sample costs a test that is not otherwise run) */
+                smp = (er_cnt_[(size_t)c]++ & (er_on_[(size_t)c] ? er_kmask_ : er_kmask8_)) == 0;
+            }
+            if (!er_thr_ || smp || er_on_[(size_t)c]) {
+                ++res_->ercalls;
+                np_ = p;
+                if (smp) {
+                    ++res_->ersample;
+                    ert0 = er_clock();
+                    const bool ex = erasure_excludes(extra, st);
+                    const double t1 = er_clock();
+                    ertt = t1 - ert0;
+                    if (ex) { erc = c; ert0 = t1; }
+                    else {
+                        er_sample_done(c, ertt, false, 0);
+                        if (mutant_ == 27) return false;   /* mutant 27: a sample the test does not exclude is pruned */
+                    }
+                } else if (erasure_excludes(extra, st)) {
+                    ++res_->erprune;
+                    return false;
+                }
+            } else {
+                ++res_->erskip;
+                if (mutant_ == 28) return false;   /* mutant 28: a node of an off class is pruned without the test */
             }
         }
     }
@@ -1371,7 +1421,36 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
     }
     if (mutant_ != 1)   /* restore the forbidden set (mutant 1 leaves it) */
         for (int i = 0; i < excluded; i++) blk_down<E>(cb[i]);
+    if (erc >= 0) er_sample_done(erc, ertt, true, er_clock() - ert0);   /* GH-227: the time this prune would have saved */
     return hit;
+}
+
+/* GH-227 cost gate: record one sample of class c and re-decide the class (on iff saved > (1 + margin) x test time) */
+void HalfSearch::er_sample_done(int c, double test_s, bool pruned, double sub_s) {
+    const size_t i = (size_t)c;
+    er_tt_[i] += test_s;
+    if (pruned) er_st_[i] += sub_s;
+    er_ns_[i] += 1;
+    er_lvl_[i]++;
+    er_on_[i] = er_st_[i] > (1 + rules_.erasure_margin) * er_tt_[i];
+}
+
+/* GH-227: -cc-stats snapshot of the classes, then the sums are halved (recent levels weigh more) */
+void HalfSearch::er_level_end(LevelResult& r) {
+    for (size_t i = 0; i < er_on_.size(); i++) {
+        if (er_ns_[i] <= 0) continue;
+        r.erclass.push_back((double)(i / 3));
+        r.erclass.push_back((double)(i % 3));
+        r.erclass.push_back(er_on_[i] ? 1.0 : 0.0);
+        r.erclass.push_back(er_ns_[i]);
+        r.erclass.push_back(1e6 * er_tt_[i] / er_ns_[i]);
+        r.erclass.push_back(1e6 * er_st_[i] / er_ns_[i]);
+        r.erclass.push_back((double)er_lvl_[i]);
+        er_tt_[i] *= 0.5;
+        er_st_[i] *= 0.5;
+        er_ns_[i] *= 0.5;
+        er_lvl_[i] = 0;
+    }
 }
 
 LevelResult HalfSearch::run_level(int w) {
@@ -1464,6 +1543,7 @@ LevelResult HalfSearch::run_level(int w) {
     r.ovtightx = ovtightx_;
     res_ = NULL;
     lb_auto_update(r);
+    if (er_thr_ && er_live_) er_level_end(r);   /* GH-227 */
     if (er_ && !er_live_ && r.nodes >= rules_.erasure_start) er_live_ = true;   /* GH-195: from the next level on */
     return r;
 }
