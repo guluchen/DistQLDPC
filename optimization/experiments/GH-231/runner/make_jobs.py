@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+"""GH-231 job files (MaxSAT engine; run from a worktree root on yfclab2). Arms:
+  M   = frozen main (its defaults) = the baseline of this round;
+  O   = the GH-231 candidate binary with its defaults (-native-lb off: must behave as main);
+  C   = candidate, -native-lb=charge;            CP = candidate, -native-lb=charge -native-lb-prop;
+  P   = candidate, -native-lb=pack;              PP = candidate, -native-lb=pack -native-lb-prop;
+  CPg = candidate, -native-lb=charge -native-lb-prop -native-lb-gap=-1.
+Every run is -MODE (-no-card | -card-mto) -seed=S.
+  panel OUT M_BIN C_BIN ARMS SEEDS MODES LIMIT STEM...: seeds 0..SEEDS-1, the arms of each (code, mode, seed) adjacent.
+  tier5 OUT M_BIN C_BIN ARMS MODES LIMIT STEM...: default seed (-seed=0).
+"""
+import glob, json, os, sys
+kind, out, MBIN, CBIN = sys.argv[1:5]
+ARMS = {'M': (None, []), 'O': ('C', []), 'C': ('C', ['-native-lb=charge']), 'CP': ('C', ['-native-lb=charge', '-native-lb-prop']),
+        'P': ('C', ['-native-lb=pack']), 'PP': ('C', ['-native-lb=pack', '-native-lb-prop']),
+        'CPg': ('C', ['-native-lb=charge', '-native-lb-prop', '-native-lb-gap=-1'])}
+
+
+def arm(name):
+    b, extra = ARMS[name]
+    return (MBIN if b is None else CBIN), list(extra)
+
+
+def code_of(stem):
+    f = glob.glob(f'data/matrices/*/{stem}_Hx.txt')
+    assert len(f) == 1, (stem, f)
+    return f[0][:-7], os.path.basename(os.path.dirname(f[0]))
+
+
+jobs = []
+if kind == 'panel':
+    arms, seeds, modes, limit = sys.argv[5].split(','), int(sys.argv[6]), sys.argv[7].split(','), int(sys.argv[8])
+    for stem in sys.argv[9:]:
+        code, tier = code_of(stem)
+        for mode in modes:
+            for seed in range(seeds):
+                for a in arms:
+                    b, extra = arm(a)
+                    jobs.append(dict(id=f'mx.{stem}.{mode}.{a}.s{seed}', bin=b, args=[f'-{mode}', f'-seed={seed}'] + extra,
+                                     code=code, stem=stem, tier=tier, arm=a, seed=seed, mode=mode, limit=limit))
+elif kind == 'tier5':
+    arms, modes, limit = sys.argv[5].split(','), sys.argv[6].split(','), int(sys.argv[7])
+    for stem in sys.argv[8:]:
+        code, tier = code_of(stem)
+        for mode in modes:
+            for a in arms:
+                b, extra = arm(a)
+                jobs.append(dict(id=f't5.{stem}.{mode}.{a}', bin=b, args=[f'-{mode}'] + extra, code=code, stem=stem, tier=tier,
+                                 arm=a, seed=0, mode=mode, limit=limit))
+with open(out, 'w') as fh:
+    for j in jobs: fh.write(json.dumps(j) + '\n')
+print(len(jobs), 'jobs ->', out)
