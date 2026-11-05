@@ -1454,7 +1454,7 @@ int main(int argc, char** argv) {
                "propagations %llu, row-state mismatches %llu\n", n_runs, b_inst, n_bad, n_surf, n_surf_bad, n_tot[0], n_tot[1], n_tot[2], n_tot[3],
                n_tot[4], n_tot[5], n_tot[6], n_tot[7]);
         static const char* mname[7] = {"", "pack without disjointness", "no false literal in the explanation", "charge inflated by 1/D",
-                                       "conflict one below the cap", "propagation onto the rows used", "redundant rows lose a qubit (-native-lb-sparse)"};
+                                       "conflict one below the cap", "propagation onto the rows used", "redundant rows lose a qubit (-native-lb-sparse=on)"};
         bool mok = false;
         for (int m = 1; m <= 6; m++) {
             printf("partN mutant %d (%s): %ld runs, audit caught a bad explanation in %ld (%llu of %llu clauses bad), %ld failed, %ld with a wrong RESULT d OPTIMAL\n",
@@ -2322,7 +2322,7 @@ int main(int argc, char** argv) {
                "%llu explanation clauses audited, %llu bad; checks %llu, pack conflicts %llu, charge conflicts %llu, dead rows %llu, propagations %llu, "
                "row-state mismatches %llu\n", na_halves, na_bad, na_tot[0], na_tot[1], na_tot[2], na_tot[3], na_tot[4], na_tot[5], na_tot[6], na_tot[7]);
         static const char* mname[7] = {"", "pack without disjointness", "no false literal in the explanation", "charge inflated by 1/D",
-                                       "conflict one below the cap", "propagation onto the rows used", "redundant rows lose a qubit (-native-lb-sparse)"};
+                                       "conflict one below the cap", "propagation onto the rows used", "redundant rows lose a qubit (-native-lb-sparse=on)"};
         bool mok = true;
         for (int mm = 1; mm <= 6; mm++) {
             printf("partN (a) mutant %d (%s): %ld halves, audit caught a bad explanation on %ld (%llu of %llu clauses bad), wrong probe answers on %ld\n",

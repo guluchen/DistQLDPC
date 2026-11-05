@@ -7720,7 +7720,8 @@ CRef Solver::pcCheck()
     }
     // pack: greedy disjoint selection
     pcSel.clear();
-    std::vector<int> order; order.reserve((size_t)k);
+    std::vector<int>& order = pcOrder;
+    order.clear();
     const uint64_t st = ++pcStamp;
     for (int b = 0; b < nb; b++) {
         for (int r = pcBucketHead[b]; r >= 0; r = pcBucketNext[r]) {

@@ -633,7 +633,7 @@ public:
     uint64_t pcTheta() const { return UB + solutionCost + fixedCostBySearch + derivedCost + relaxedCost; }
     void     pcCollect(const std::vector<int>& rowsUsed, const std::vector<int64_t>& yUsed, int64_t L, int bound, uint64_t theta, vec<Lit>& lits);
     CRef     pcFinishClause(vec<Lit>& lits, uint64_t thetaAudit);
-    // -native-lb-prop: at slack 0 (|S| + bound = cap - 1) every unassigned qubit on none of the rows used is set false
+    // -native-lb-prop=on: at slack 0 (|S| + bound = cap - 1) every unassigned qubit on none of the rows used is set false
     // (one more true qubit outside them leaves the bound unchanged); reason = the clause above for cap - 1 plus ~x_j.
     // The reasons are unwatched, in no clause list, never reduced on the fly, freed once their variable is unassigned.
     bool     pcProp = false;
@@ -655,7 +655,7 @@ public:
     std::vector<int64_t> pcLoad, pcY;
     std::vector<int32_t> pcCnt;
     std::vector<uint32_t> pcRs, pcRq;
-    std::vector<int>  pcBucketHead, pcBucketNext, pcSel;
+    std::vector<int>  pcBucketHead, pcBucketNext, pcSel, pcOrder;
     int64_t  pcLcm[33];
     CRef     pcConfl = CRef_Undef;    // the clause returned by pcCheck() (freed after analysis)
     uint64_t pcChecks = 0, pcPackConfls = 0, pcChgEvals = 0, pcChgConfls = 0, pcDeadConfls = 0, pcBacktracks = 0,

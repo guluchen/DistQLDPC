@@ -1159,10 +1159,11 @@ static bool g_frontier_stats = false, g_frontier_check = false;
  * rows are passed per probe as for -frontier. A conflict is raised when the true qubits plus the bound reach the probe's
  * cap; the clause is implied by H x = 0 and the cap alone (no minimality argument), so probe answers are unchanged.
  * -native-lb-gap=G (default 0; -1 = always) and -native-lb-minr=M (default 1) gate the charge evaluation as GH-157's
- * -cc-lb-gap / -cc-lb-minr; -native-lb-prop adds the slack-0 propagation; -native-lb-sparse adds GH-181's redundant rows;
+ * -cc-lb-gap / -cc-lb-minr; -native-lb-prop=on adds the slack-0 propagation; -native-lb-sparse=on adds GH-181's redundant rows;
  * -native-lb-stats prints per-probe counters to stderr; -native-lb-check re-verifies the incremental row state at every
  * check (debug). Soundness: MODIFICATIONS.md (GH-231). */
 static int g_native_lb = 0;            /* 0 off, 1 pack, 2 pack + charge */
+static bool g_native_lb_given = false;   /* -native-lb=... given explicitly */
 static int g_native_lb_gap = 0, g_native_lb_minr = 1;
 static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false, g_native_lb_sparse = false;
 static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant 1..5; 6 = each redundant row loses its last qubit */
@@ -1170,7 +1171,7 @@ static void (*g_native_lb_audit)(void*, const vec<Lit>&, uint64_t) = NULL;   /* 
 struct NativeLbTotals { unsigned long long checks, pack, charge, dead, props, state_fails; };
 static NativeLbTotals g_native_lb_tot = {0, 0, 0, 0, 0, 0};   /* summed over probes (tests, stats) */
 
-/* GH-231 rows of the bound: the parity rows of the half (qubit vars 0..n-1), plus with -native-lb-sparse the redundant
+/* GH-231 rows of the bound: the parity rows of the half (qubit vars 0..n-1), plus with -native-lb-sparse=on the redundant
  * sparse rows of GH-181 (distinct pair sums r = h1 + h2 with 0 < |r| <= max(|h1|, |h2|), not equal to a row of H; at most
  * 4 m, lightest first, ties by the sorted support). Every r is a sum of rows of H, so r.x = 0 for every x in ker H: the
  * bound and its explanations only use that. */
@@ -1318,7 +1319,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     S.stopAtFirstSolution = first_only;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
-    if (g_native_lb) {   /* GH-231: the half's parity rows over qubit vars 0..n-1 (and the redundant rows with -native-lb-sparse) */
+    if (g_native_lb) {   /* GH-231: the half's parity rows over qubit vars 0..n-1 (and the redundant rows with -native-lb-sparse=on) */
         if (!h.nlb_built) { h.nlb_rows = native_lb_rows(*h.H, g_native_lb_sparse); h.nlb_built = true; }
         S.setPackRows(h.nlb_rows, n, g_native_lb);
         S.pcGap = g_native_lb_gap; S.pcMinr = g_native_lb_minr; S.pcCheckState = g_native_lb_check; S.pcProp = g_native_lb_prop;
@@ -2649,12 +2650,13 @@ int main(int argc, char** argv) {
             die("invalid -stab-overlap-enc (native | clauses | bin | seq)");
         else if (!strncmp(argv[i], "-stab-overlap", 13))
             die("invalid -stab-overlap (on | auto | off)");
-        else if (!strcmp(argv[i], "-native-lb=off"))   /* GH-231 */
-            g_native_lb = 0;
-        else if (!strcmp(argv[i], "-native-lb=pack"))
-            g_native_lb = 1;
-        else if (!strcmp(argv[i], "-native-lb=charge"))
-            g_native_lb = 2;
+        else if (!strcmp(argv[i], "-native-lb=off")) {   /* GH-231 */
+            g_native_lb = 0; g_native_lb_given = true;
+        } else if (!strcmp(argv[i], "-native-lb=pack")) {
+            g_native_lb = 1; g_native_lb_given = true;
+        } else if (!strcmp(argv[i], "-native-lb=charge")) {
+            g_native_lb = 2; g_native_lb_given = true;
+        }
         else if (!strncmp(argv[i], "-native-lb-gap=", 15)) {
             char* end = NULL; long v = strtol(argv[i] + 15, &end, 10);
             if (!*(argv[i] + 15) || *end || v < -1 || v > 1000000) die("invalid -native-lb-gap (-1..1000000)");
@@ -2669,12 +2671,16 @@ int main(int argc, char** argv) {
             g_native_lb_stats = true;
         else if (!strcmp(argv[i], "-native-lb-check"))
             g_native_lb_check = true;
-        else if (!strcmp(argv[i], "-native-lb-prop"))
+        else if (!strcmp(argv[i], "-native-lb-prop=on"))
             g_native_lb_prop = true;
-        else if (!strcmp(argv[i], "-native-lb-sparse"))
+        else if (!strcmp(argv[i], "-native-lb-prop=off"))
+            g_native_lb_prop = false;
+        else if (!strcmp(argv[i], "-native-lb-sparse=on"))
             g_native_lb_sparse = true;
+        else if (!strcmp(argv[i], "-native-lb-sparse=off"))
+            g_native_lb_sparse = false;
         else if (!strncmp(argv[i], "-native-lb", 10))
-            die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-prop, -native-lb-sparse, -native-lb-stats, -native-lb-check)");
+            die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-prop=on|off, -native-lb-sparse=on|off, -native-lb-stats, -native-lb-check)");
         else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */
             g_ub_pre = -1.0; g_ub_pre_given = true;
         } else if (!strcmp(argv[i], "-ub-pre=on")) {
@@ -2975,8 +2981,9 @@ int main(int argc, char** argv) {
             printf("            bounds as a check inside MaxCDCL: disjoint odd parity rows (pack) and the scaled hitting-set dual\n");
             printf("            (charge, implies pack) bound the qubits any completion still needs; true qubits + bound >= cap\n");
             printf("            gives a conflict clause implied by H x = 0 and the cap; -native-lb-gap=G (default 0, -1 always),\n");
-            printf("            -native-lb-minr=M (default 1) gate the charge; -native-lb-prop: at slack 0 set the qubits outside\n");
-            printf("            the rows used to 0; -native-lb-sparse: add GH-181's redundant pair-sum rows; -native-lb-stats,\n");
+            printf("            -native-lb-minr=M (default 1) gate the charge; -native-lb-prop=on|off (default off): at slack 0 set\n");
+            printf("            the qubits outside the rows used to 0; -native-lb-sparse=on|off (default off): add GH-181's\n");
+            printf("            redundant pair-sum rows; -native-lb-stats,\n");
             printf("            -native-lb-check (debug)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
@@ -3016,8 +3023,10 @@ int main(int argc, char** argv) {
             if (g_stab_overlap_given) msg = "-stab-overlap=on: needs the split MaxSAT path (not -joint or -roundingsat)";
             else g_stab_overlap = false;   /* default auto: silently off on paths it does not apply to */
         }
-        if (msg.empty() && g_native_lb && (g_css_joint || backend == SOLVER_ROUNDINGSAT))   /* GH-231 */
-            msg = "-native-lb: needs the split MaxSAT path (not -joint or -roundingsat)";
+        if (msg.empty() && g_native_lb && (g_css_joint || backend == SOLVER_ROUNDINGSAT)) {   /* GH-231 */
+            if (g_native_lb_given) msg = "-native-lb: needs the split MaxSAT path (not -joint or -roundingsat)";
+            else g_native_lb = 0;   /* a default-on bound would be silently off on paths it does not apply to */
+        }
         if (msg.empty() && !g_native_lb) {   /* GH-231: the tuning flags need the bound */
             for (int i = 1; i < argc; i++)
                 if (!strncmp(argv[i], "-native-lb-", 11)) { msg = std::string(argv[i]) + ": needs -native-lb=pack or -native-lb=charge"; break; }
