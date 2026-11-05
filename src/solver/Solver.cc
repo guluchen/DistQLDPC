@@ -101,6 +101,7 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 
 
 #include <math.h>
+#include <algorithm>   // DistQLDPC GH-231 (std::stable_sort)
 #include <signal.h>
 
 #include "mtl/Sort.h"
