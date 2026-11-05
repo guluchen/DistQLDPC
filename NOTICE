@@ -361,6 +361,17 @@ engine in the GH-217 Tier 5 runs (#217, PR #220): main 02879a93's CC default and
 (same engine, not an independent second method): TN_468_4_23to29 (was TN_468_4_17to29), TN_612_2_24to40
 (was TN_612_2_17to40), TN_648_14_21to28 (was TN_648_14_9to28), TN_684_2_22to29 (was TN_684_2_9to29).
 
+Renamed 2026-11-06 (same matrices, upper bounds unchanged): lower bounds raised by DistQLDPC's optional CC
+engine, mostly with the erasure rule (GH-195 #195 / PR #219; opt-in when the bounds were found, in the CC
+default with a cost gate since GH-227 / PR #228), first seen in single 6 h runs of GH-225 (#225) and GH-227
+(#227), and each reached by at least two runs whose search trees differ (relabelled qubits and rows with
+-seed=1 / -seed=2, a different row order with -cc-roworder=bfs, or a different binary and rule set; 12 h
+runs on main 1239e9a2's binary; records in optimization/experiments/GH-225/lb-repro/). This is the same
+engine, not an independent second method: TN_324_4_23to25 (was TN_324_4_22to25), TN_496_2_28to30 (was
+TN_496_2_27to30), TN_540_4_24to34 (was TN_540_4_23to34), TN_648_14_22to28 (was TN_648_14_21to28),
+TN_684_2_24to29 (was TN_684_2_22to29); COLOR_1027_1_31to37 (was COLOR_1027_1_28to37) and
+COLOR_2791_1_28to61 (was COLOR_2791_1_26to61), section 9.
+
 9. Triangular 6.6.6 color-code matrices (GH-156; tiered 2026-11-04)
 ------------------------------------------------------------------
 
@@ -376,6 +387,9 @@ Fig. 1, Eqs. (1)-(2). Claimed distances use the published family formula;
 DistQLDPC smoke observations are recorded separately. See
 data/matrices/untiered/COLOR666.md and optimization/experiments/GH-156/.
 Placed and renamed 2026-11-04: COLOR_7_1_3 (tier0), COLOR_19_1_5 (tier0), COLOR_127_1_13 (tier1), COLOR_331_1_21 (tier5), COLOR_1027_1_28to37 (tier5), COLOR_2791_1_26to61 (tier5).
+Renamed 2026-11-06 (same matrices, upper bounds unchanged; CC lower bounds reproduced by runs with different
+search trees, same engine, see section 5): COLOR_1027_1_31to37 (was COLOR_1027_1_28to37), COLOR_2791_1_28to61
+(was COLOR_2791_1_26to61).
 
 10. Twisted-torus generalized toric / BB matrices (GH-159; tiered 2026-11-04)
 --------------------------------------------------------------------------
