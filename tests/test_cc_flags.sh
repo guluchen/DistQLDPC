@@ -253,9 +253,12 @@ vgrep 2 "^c cc: rules .*dual on (verified map in use)" -v -engine=cc $L $D1
 vgrep 2 "^c cc: rules .*dual on (no verified map: both halves)" -v -engine=cc -dualmode=off $L $D1
 vgrep 2 "^c cc: rules .*dual off" -v -engine=cc -cc-dual=off $L $D1
 # 7b. GH-133: default rule set, parity decision per half, level skip, odd-cap skip on the MaxSAT path
-#     (GH-217: default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv; OLD = the default before)
+#     (GH-217: default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv; OLD = the default before;
+#      GH-227 added erasure to the default; A17 = the GH-217 default)
 OLD="-cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-roworder=index"
-vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge, " -v -engine=cc $L $C
+A17="-cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv"
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge,erasure, " -v -engine=cc $L $C
+vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge, " -v -engine=cc $A17 $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,charge, " -v -engine=cc $OLD $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf,overlap, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap $L $C
 vgrep 2 "^c cc: rules excl,pack,orbf,parity,leaf, " -v -engine=cc -cc-rules=excl,pack,orbf,parity,leaf $L $C
@@ -439,7 +442,7 @@ fi
 
 # 7g. GH-162 tiebreak (opt-in -cc-rules token; needs overlap): values, -v lines, mutants 17/18 accepted, no line without it
 reject "need -engine=cc or -engine=auto" -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
-for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=27; do
+for f in -cc-rules=Tiebreak -cc-rules=tiebreak, -cc-rules=tie -cc-mutant=16 -cc-mutant=29; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-rules=excl,pack,orbf,parity,leaf,overlap,tiebreak $L $M
@@ -462,7 +465,7 @@ fi
 # 7h. GH-183 -cc-roworder=index|bfs and -cc-tbbase=desc|asc: values, -v lines, mutants 19/20 accepted, no line with the defaults
 reject "need -engine=cc or -engine=auto" -cc-roworder=bfs $L $M
 reject "need -engine=cc or -engine=auto" -cc-tbbase=asc $L $M
-for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=27; do
+for f in -cc-roworder -cc-roworder= -cc-roworder=BFS -cc-roworder=dfs -cc-tbbase -cc-tbbase=up -cc-tbbase=ASC -cc-mutant=29; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-roworder=bfs $L $M
@@ -494,7 +497,7 @@ reject "need -engine=cc or -engine=auto" -cc-roworder=auto $L $M
 reject "need -engine=cc or -engine=auto" -cc-probe=2 $L $M
 reject "need -engine=cc or -engine=auto" -cc-probe-growth=10 $L $M
 for f in -cc-roworder=Auto -cc-probe -cc-probe= -cc-probe=-1 -cc-probe=x -cc-probe=1s -cc-probe=SWITCH -cc-probe-growth= \
-         -cc-probe-growth=0.5 -cc-probe-growth=-2 -cc-probe-growth=x -cc-mutant=27; do
+         -cc-probe-growth=0.5 -cc-probe-growth=-2 -cc-probe-growth=x -cc-mutant=29; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 NB="-ub-basis=off -ub-search=off"   # no upper bound before the hit, so a probe is not skipped for lb >= U
@@ -526,7 +529,7 @@ fi
 #     merge with GH-162/183/206), no line without them
 G=excl,pack,orbf,parity,leaf,overlap
 reject "need -engine=cc or -engine=auto" -cc-rules=$G,sparse $L $M
-for f in -cc-rules=Sparse -cc-rules=sparse, -cc-rules=sparseOV -cc-rules=xor -cc-rules=sparse-mrv -cc-mutant=16 -cc-mutant=27; do
+for f in -cc-rules=Sparse -cc-rules=sparse, -cc-rules=sparseOV -cc-rules=xor -cc-rules=sparse-mrv -cc-mutant=16 -cc-mutant=29; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-rules=$G,sparse $L $M
@@ -560,12 +563,12 @@ if [[ $rc -ne 0 ]] || grep -q "sparse\|xorunit\|gh181" <<<"$out"; then
     echo "FAIL (GH-181: a sparse/xorunit line without the tokens): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
-# 7k. GH-195 erasure (opt-in -cc-rules token; needs pack): values, -cc-erasure-start, -v and -cc-stats lines, mutants 25/26
-#     accepted (27 rejected), no erasure line without the token
+# 7k. GH-195 erasure (-cc-rules token, default since GH-227; needs pack): values, -cc-erasure-start, -v and -cc-stats lines,
+#     mutants 25/26 accepted (29 rejected; 27/28 are GH-227 gate mutants, 7n), no erasure line without the token
 D7=excl,pack,orbf,parity,leaf,overlap,charge
 reject "need -engine=cc or -engine=auto" -cc-rules=$D7,erasure $L $M
 reject "need -engine=cc or -engine=auto" -cc-erasure-start=0 $L $M
-for f in -cc-rules=Erasure -cc-rules=erasure, -cc-rules=eras -cc-mutant=27 -cc-erasure-start=-1 -cc-erasure-start=x -cc-erasure-start=; do
+for f in -cc-rules=Erasure -cc-rules=erasure, -cc-rules=eras -cc-mutant=29 -cc-erasure-start=-1 -cc-erasure-start=x -cc-erasure-start=; do
     reject "invalid\|unknown" -engine=cc "$f" $L $C
 done
 accept 3 "" -engine=cc -cc-rules=$D7,erasure $L $M
@@ -573,8 +576,8 @@ accept 3 "" -engine=cc -cc-rules=$D7,tiebreak,erasure -cc-roworder=auto -cc-seed
 accept 3 "" -engine=cc -cc-rules=pack,erasure,mrv -cc-aut=off -no-symbreak -cc-erasure-start=0 $L $M
 accept 3 "" -engine=cc -cc-rules=$D7,tiebreak,sparse,sparseov,xorunit,erasure -cc-erasure-start=0 $L $M
 vgrep 3 "^c cc: rules excl,pack,orbf,parity,leaf,overlap,tiebreak,charge,erasure, " -v -engine=cc -cc-rules=$D7,tiebreak,erasure $L $M
-vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 16384 nodes), pair table (lazy)$" -v -engine=cc -cc-rules=$D7,erasure $L $M
-vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 7 nodes)" -v -engine=cc -cc-erasure-start=7 -cc-rules=$D7,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 16384 nodes; cost gate per (budget, extra) class, 1 in 128 sampled, margin 0), pair table (lazy)$" -v -engine=cc -cc-rules=$D7,erasure $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 7 nodes; cost gate" -v -engine=cc -cc-erasure-start=7 -cc-rules=$D7,erasure $L $M
 vgrep 3 "^c cc: X half erasure: idle (needs pack)$" -v -engine=cc -cc-rules=excl,orbf,erasure $L $M
 vgrep 3 "^c cc-stats: X level [0-9]* erasure calls [0-9]* prune [0-9]* giveup [0-9]*$" -cc-stats -engine=cc -cc-erasure-start=0 -cc-rules=$D7,erasure $L $M
 vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 25: bound weakened by one\]" -v -engine=cc -cc-rules=$D7,erasure -cc-mutant=25 $L $M
@@ -590,12 +593,58 @@ vgrep 3 "^c cc: X half tiebreak: on$" -v -engine=cc $L $M
 vgrep 3 "^c cc: X half sparse: [1-9][0-9]* redundant rows" -v -engine=cc $L $M
 vgrep 3 "^c cc: X half row order: auto (A = index order, rules without mrv, from level 1; B = reversed BFS, rules with mrv, [0-9]* rows; probe at the first refuted level taking >= 0.1s (one probe))$" \
     -v -engine=cc $L $M
-vgrep 3 "^c solver: CC connected-cluster level search .*rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge," -v -engine=cc $L $M
+vgrep 3 "^c solver: CC connected-cluster level search .*rules excl,pack,orbf,parity,leaf,overlap,tiebreak,sparse,sparseov,sparsemrv,charge,erasure," -v -engine=cc $L $M
 accept 3 "" -engine=cc $OLD $L $M
 accept 2 "" -engine=cc $OLD $L $C
 runs=$((runs + 1)); run -v -cc-stats -engine=cc $OLD $L $M
-if [[ $rc -ne 0 ]] || grep -q "tiebreak\|sparse\|row order\|probe" <<<"$out"; then
-    echo "FAIL (GH-217: a tiebreak/sparse/row-order/probe line with the pre-GH-217 default flags): rc=$rc" >&2; fails=$((fails + 1))
+if [[ $rc -ne 0 ]] || grep -q "tiebreak\|sparse\|row order\|probe\|erasure" <<<"$out"; then
+    echo "FAIL (GH-217: a tiebreak/sparse/row-order/probe/erasure line with the pre-GH-217 default flags): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
+# 7m. GH-227 default flip: erasure is a default rule (start 16384); -cc-erasure-start applies to the default rules; the
+#     GH-217 default list (A17) answers and prints no erasure line
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 16384 nodes; cost gate per (budget, extra) class, 1 in 128 sampled, margin 0), pair table (lazy)$" -v -engine=cc $L $M
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 7 nodes; cost gate" -v -engine=cc -cc-erasure-start=7 $L $M
+vgrep 3 "^c cc-stats: X level [0-9]* erasure calls [0-9]* prune [0-9]* giveup [0-9]*$" -cc-stats -engine=cc -cc-erasure-start=0 $L $M
+vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 25: bound weakened by one\]" -v -engine=cc -cc-mutant=25 $L $M
+accept 3 "" -engine=cc -cc-erasure-start=0 $L $M
+accept 2 "" -engine=cc -cc-erasure-start=0 $L $C
+accept 3 "" -engine=cc $A17 $L $M
+accept 2 "" -engine=cc $A17 $L $C
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $A17 $L $M
+if [[ $rc -ne 0 ]] || grep -q "erasure" <<<"$out" || ! grep -q "tiebreak" <<<"$out"; then
+    echo "FAIL (GH-227: an erasure line (or no tiebreak line) with the GH-217 default rules): rc=$rc" >&2; fails=$((fails + 1))
+fi
+
+# 7n. GH-227 erasure cost gate: values, -v line (cost / none), -cc-stats gate and class lines, mutants 27/28 accepted and
+#     reported, the gate settings act on the default rules, no gate line without erasure
+reject "need -engine=cc or -engine=auto" -cc-erasure-gate=none $L $M
+reject "need -engine=cc or -engine=auto" -cc-erasure-sample=64 $L $M
+reject "need -engine=cc or -engine=auto" -cc-erasure-margin=0.5 $L $M
+for f in -cc-erasure-gate -cc-erasure-gate= -cc-erasure-gate=Cost -cc-erasure-gate=off -cc-erasure-sample=0 -cc-erasure-sample=3 \
+         -cc-erasure-sample=x -cc-erasure-sample= -cc-erasure-sample=2147483648 -cc-erasure-margin= -cc-erasure-margin=-2 -cc-erasure-margin=x; do
+    reject "invalid\|unknown" -engine=cc "$f" $L $C
+done
+accept 3 "" -engine=cc -cc-erasure-gate=none $L $M
+accept 3 "" -engine=cc -cc-erasure-gate=cost -cc-erasure-start=0 -cc-erasure-sample=1 $L $M
+accept 3 "" -engine=cc -cc-erasure-start=0 -cc-erasure-sample=2 -cc-erasure-margin=-1 -cc-seed=3 $L $M
+accept 3 "" -engine=cc -cc-erasure-start=0 -cc-erasure-sample=4 -cc-erasure-margin=1e9 -cc-roworder=bfs $L $M
+accept 2 "" -engine=cc -cc-erasure-start=0 -cc-erasure-sample=1 $L $C
+vgrep 3 "^c cc: X half erasure: on (extra <= 2, region <= 128, from the level after one with >= 16384 nodes; no gate), pair table (lazy)$" \
+    -v -engine=cc -cc-erasure-gate=none $L $M
+vgrep 3 "^c cc: X half erasure: on (.*; cost gate per (budget, extra) class, 1 in 8 sampled, margin 0.25)" -v -engine=cc -cc-erasure-sample=8 -cc-erasure-margin=0.25 $L $M
+vgrep 3 "^c cc-stats: X level [0-9]* erasure gate samples [0-9]* skipped [0-9]*$" -cc-stats -engine=cc -cc-erasure-start=0 $L $M
+vgrep 5 "^c cc-stats: X level [0-9]* erasure class r [0-9]* x [012] o[nf]* samples [0-9.]* (level [0-9]*) test [0-9.]*us saved [0-9.]*us$" \
+    -cc-stats -engine=cc -cc-erasure-start=0 -cc-erasure-sample=1 $L COLOR_19_1_5
+vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 27: gate prunes a sample the test does not exclude\]" -v -engine=cc -cc-mutant=27 $L $M
+vgrep 3 "^c cc: X half erasure: on .*\[TEST MUTANT 28: gate prunes off-class nodes untested\]" -v -engine=cc -cc-mutant=28 $L $M
+runs=$((runs + 1)); run -v -cc-stats -engine=cc -cc-erasure-gate=none -cc-erasure-start=0 $L $M
+if [[ $rc -ne 0 ]] || grep -q "erasure gate\|erasure class" <<<"$out"; then
+    echo "FAIL (GH-227: a gate line with -cc-erasure-gate=none): rc=$rc" >&2; fails=$((fails + 1))
+fi
+runs=$((runs + 1)); run -v -cc-stats -engine=cc $A17 -cc-erasure-sample=8 $L $M
+if [[ $rc -ne 0 ]] || grep -q "erasure" <<<"$out"; then
+    echo "FAIL (GH-227: an erasure line without the erasure token): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
 echo "test_cc_flags: $runs checks, $fails failed"

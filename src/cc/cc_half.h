@@ -190,6 +190,19 @@
  *         level of the half with >= erasure_start nodes (default 16384; -cc-erasure-start). Test mutants: 25 the bound
  *         weakened by one (extra - 1 outside qubits enumerated), 26 the fixed support S ignored. Full proof:
  *         MODIFICATIONS.md (GH-195).
+ *         Cost gate (GH-227, -cc-erasure-gate=cost, default; none = every eligible node tested as in GH-195). The eligible
+ *         nodes (extra <= 2, past the start level) are split into classes c = (remaining budget w - |S| capped at 63,
+ *         extra). Every K-th eligible node of a class (K = erasure_sample, default 128, while the class is on; 8 K while
+ *         it is off) is a sample: its test is timed and its result is NOT applied; if the test would prune, the node's
+ *         subtree is searched as usual and timed (the time the prune would have saved, with the descendants under the
+ *         current decisions). Every other eligible node is tested, and cut on a positive test, only while its class is on.
+ *         A class is on iff its sampled saved time exceeds (1 + erasure_margin) x its sampled test time (decayed sums,
+ *         halved at each level end; every class starts on). The gate only decides whether a test runs and whether its
+ *         result is applied: skipping a test or a prune is always sound, the bound itself is unchanged, and a sample
+ *         searches a subtree the rule would have cut (no kept target there; any hit is a genuine element, checked).
+ *         The decisions use wall-clock timings (like the GH-206 auto probe), so node counts can vary between runs;
+ *         verdicts cannot. Test mutants: 27 a sample whose test does not exclude is cut, 28 a node of an off class is
+ *         cut without the test.
  */
 #ifndef DISTQLDPC_CC_HALF_H
 #define DISTQLDPC_CC_HALF_H
@@ -206,18 +219,27 @@ struct SparseRows {
     SparseRows() : cols(0) {}
 };
 
+/* GH-227 erasure gate (cost only; see the erasure paragraph above) */
+enum ErasureGate { ERASURE_GATE_NONE = 0, ERASURE_GATE_COST = 1 };
+
 struct Rules {
     bool excl, pack, orbf, mrv, parity, leaf, overlap;
     bool charge;     /* GH-157 node lower bound, default on (PI, 2026-10-29) */
     bool tiebreak;   /* GH-162 (acts only with overlap); default on since GH-217 */
     bool sparse, sparseov, sparsemrv, xorunit;   /* GH-181; sparse, sparseov, sparsemrv default on since GH-217, xorunit off */
-    bool erasure;    /* GH-195 (default off; acts only with pack) */
+    bool erasure;    /* GH-195 (acts only with pack); default on since GH-227 (with the cost gate) */
     uint64_t erasure_start;   /* GH-195: erasure tests start at the level after the first level of this half with at least
                                * this many nodes (0: from the first level; -cc-erasure-start) */
-    /* Default = the CC default rule set (GH-217): excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv.
-     * -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge (with -cc-roworder=index) = the CC default before GH-217. */
+    int erasure_gate;         /* GH-227 -cc-erasure-gate=cost|none (default cost): cost-aware throttle of the erasure tests per
+                               * (remaining budget, extra) class, or every eligible node tested (GH-195) */
+    uint32_t erasure_sample;  /* GH-227: every erasure_sample-th eligible node of a class is a sample (power of 2; default 128) */
+    double erasure_margin;    /* GH-227: a class is on iff its sampled saved time > (1 + margin) x its sampled test time (default 0) */
+    /* Default = the CC default rule set (GH-227): excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure
+     * with the cost gate. -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv = the GH-217 default
+     * (before GH-227); -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge (with -cc-roworder=index) = the CC default before GH-217. */
     Rules() : excl(true), pack(true), orbf(true), mrv(false), parity(true), leaf(true), overlap(true), charge(true), tiebreak(true),
-              sparse(true), sparseov(true), sparsemrv(true), xorunit(false), erasure(false), erasure_start(16384) {}
+              sparse(true), sparseov(true), sparsemrv(true), xorunit(false), erasure(true), erasure_start(16384),
+              erasure_gate(ERASURE_GATE_COST), erasure_sample(128), erasure_margin(0) {}
 };
 
 /* GH-183 internal row order (-cc-roworder): input order, or the seed-anchored reversed BFS (see the header comment).
@@ -276,6 +298,10 @@ struct LevelResult {
     uint64_t xudead;           /* xorunit: odd row without free qubit after propagation */
     uint64_t ercalls, erprune; /* erasure (GH-195): tests run; nodes pruned */
     uint64_t ergiveup;         /* erasure: tests abandoned because ker H_R holds a detected vector */
+    uint64_t ersample;         /* GH-227 gate: sampled tests (never prune; the subtree is searched and timed) */
+    uint64_t erskip;           /* GH-227 gate: eligible nodes not tested (class off, not a sample) */
+    std::vector<double> erclass;   /* GH-227 -cc-stats: per class with samples so far, 7 values: r, extra, on, samples
+                                    * (decayed), mean test us, mean saved us per test, samples in this level */
     bool skipped;              /* parity: odd level, EMPTY without a search */
     std::vector<uint64_t> by_budget;   /* nodes by remaining budget w - |S| (index 0..w; diagnostic, -cc-stats) */
     std::vector<int> witness;  /* FOUND / INCONSISTENT: support in ORIGINAL qubit labels, ascending */
@@ -283,7 +309,7 @@ struct LevelResult {
                     leaf1(0), leaf2(0), ovtight(0), ovforbid(0),
                     lbeval(0), chgprune(0), lbdead(0), lbswitchoff(false),
                     spack(0), sprune(0), snocand(0), ovtightx(0), xuforbid(0), xuforced(0), xudead(0),
-                    ercalls(0), erprune(0), ergiveup(0), skipped(false) {}
+                    ercalls(0), erprune(0), ergiveup(0), ersample(0), erskip(0), skipped(false) {}
 };
 
 /* Test-only mutants (-cc-mutant=K), each able to change an answer: 1 sibling-exclusion forbidden set not
@@ -440,6 +466,16 @@ private:
     std::vector<uint32_t> xtrail_;
     /* erasure (GH-195): scratch for one test (see erasure_test) */
     bool er_, er_sizegate_, er_verify_, er_live_;   /* er_live_: tests running (erasure_start reached) */
+    /* GH-227 cost gate: per class c = 3 min(r, ER_RMAX) + extra (r = remaining budget): eligible-node counter, decision,
+     * decayed sums of sampled test time and of the subtree time behind sampled tests that would prune (seconds), samples */
+    static const int ER_RMAX = 63;
+    bool er_thr_;
+    uint32_t er_kmask_, er_kmask8_;   /* sample period - 1 while a class is on / off */
+    std::vector<uint32_t> er_cnt_, er_lvl_;
+    std::vector<uint8_t> er_on_;
+    std::vector<double> er_tt_, er_st_, er_ns_;
+    void er_sample_done(int c, double test_s, bool pruned, double sub_s);
+    void er_level_end(LevelResult& r);
     std::vector<uint32_t> prow_;            /* packed rows of the current scan (unified index: >= ux_ is a redundant row) */
     int np_;
     std::vector<uint32_t> ereg_;            /* region qubits */

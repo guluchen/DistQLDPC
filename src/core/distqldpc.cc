@@ -2701,9 +2701,24 @@ int main(int argc, char** argv) {
             unsigned long long v = 0;
             if (!cc_parse_uint(argv[i] + 18, &v)) die("invalid -cc-erasure-start (non-negative integer)");
             g_cc_opt.rules.erasure_start = (uint64_t)v;
+        } else if (!strcmp(argv[i], "-cc-erasure-gate=cost"))   /* GH-227 */
+            g_cc_opt.rules.erasure_gate = distcc::ERASURE_GATE_COST;
+        else if (!strcmp(argv[i], "-cc-erasure-gate=none"))
+            g_cc_opt.rules.erasure_gate = distcc::ERASURE_GATE_NONE;
+        else if (!strncmp(argv[i], "-cc-erasure-gate", 16))
+            die("invalid -cc-erasure-gate (cost | none)");
+        else if (!strncmp(argv[i], "-cc-erasure-sample=", 19)) {   /* GH-227 */
+            unsigned long long v = 0;
+            if (!cc_parse_uint(argv[i] + 19, &v) || v == 0 || v > (1ULL << 30) || (v & (v - 1))) die("invalid -cc-erasure-sample (a power of 2, 1..2^30)");
+            g_cc_opt.rules.erasure_sample = (uint32_t)v;
+        } else if (!strncmp(argv[i], "-cc-erasure-margin=", 19)) {   /* GH-227 */
+            char* end = NULL;
+            const double v = strtod(argv[i] + 19, &end);
+            if (!argv[i][19] || !end || *end || !(v >= -1) || v > 1e9) die("invalid -cc-erasure-margin (a number >= -1)");
+            g_cc_opt.rules.erasure_margin = v;
         } else if (!strncmp(argv[i], "-cc-mutant=", 11)) {
             unsigned long long v = 0;
-            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 15 && (v < 17 || v > 26))) die("invalid -cc-mutant (0..15, 17..26; test only)");
+            if (!cc_parse_uint(argv[i] + 11, &v) || (v > 15 && (v < 17 || v > 28))) die("invalid -cc-mutant (0..15, 17..28; test only)");
             g_cc_opt.mutant = (int)v;
         } else if (!strcmp(argv[i], "-cc-roworder=index"))   /* GH-183 */
             g_cc_opt.roworder = distcc::ROWORDER_INDEX;
@@ -2772,7 +2787,8 @@ int main(int argc, char** argv) {
             printf("            cc = exact connected-cluster level search per CSS half (src/cc); auto = cc unless a\n");
             printf("            half's parity matrix is dense (a row weight > 32, or mean row weight > n/4 with n >= 64)\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge[,tiebreak][,sparse,sparseov,sparsemrv,xorunit][,mrv][,erasure]\n");
-            printf("            (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv since GH-217;\n");
+            printf("            (default excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure since GH-227;\n");
+            printf("            the same without erasure = the CC default from GH-217 to GH-227;\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap,charge -cc-roworder=index = the CC default before GH-217;\n");
             printf("            -cc-rules=excl,pack,orbf,parity,leaf,overlap = the CC search before GH-157;\n");
             printf("            'none' = plain CC; parity = skip odd levels when every column weight of the half is odd;\n");
@@ -2790,9 +2806,13 @@ int main(int argc, char** argv) {
             printf("            (with mrv it adds nothing: mrv branches that way on every half);\n");
             printf("            sparseov = sparse pair sums of the stabilizer rows as extra overlap rows; xorunit = an even row with\n");
             printf("            one free qubit forbids it, an odd row with one free qubit is branched on first;\n");
-            printf("            erasure (GH-195, opt-in) = with pack, when at most 2 added qubits are not charged to a packed row,\n");
+            printf("            erasure (GH-195, default since GH-227) = with pack, when at most 2 added qubits are not charged to a packed row,\n");
             printf("            a node is cut if no logical extends it inside the packed rows' candidates plus <= 2 more qubits;\n");
-            printf("            the tests start at the level after the first one with >= N nodes, -cc-erasure-start=N, default 16384)\n");
+            printf("            the tests start at the level after the first one with >= N nodes, -cc-erasure-start=N, default 16384;\n");
+            printf("            -cc-erasure-gate=cost (GH-227, default) tests a (remaining budget, extra) class only while its timed\n");
+            printf("            samples (every K-th eligible node, -cc-erasure-sample=K, default 128; 8 K while off) show the prunes\n");
+            printf("            saving more search time than (1 + M) x the tests cost (-cc-erasure-margin=M, default 0); none = test\n");
+            printf("            every eligible node (GH-195))\n");
             printf("            -cc-roworder=index|bfs|auto (GH-183; default auto since GH-217, index before): internal row order = packing scan order and mrv\n");
             printf("            tie-break; bfs = reversed BFS over the Tanner graph from the rows of the first seed (a row relabeling);\n");
             printf("            auto (GH-206) = per half, index order without mrv first; a refuted level taking >= S s (-cc-probe=S,\n");

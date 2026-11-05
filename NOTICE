@@ -139,7 +139,7 @@ Modified files (partial list): Solver.h, Solver.cc
   implemented from scratch; no third-party code was copied
   (MODIFICATIONS.md, GH-181).
 
-  The CC rule "erasure" (GH-195, -cc-rules=...,erasure, opt-in) cuts a
+  The CC rule "erasure" (GH-195; a default CC rule since GH-227) cuts a
   node when no logical extends it inside the free candidates of the
   packed odd rows plus at most two further qubits. The erasure bound
   idea (the packing-charged region and its elimination with a random
