@@ -36,6 +36,7 @@
 #include <memory>
 #include <map>   /* GH-148 */
 #include <set>   /* GH-148 */
+#include <iterator>   /* GH-231 */
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <fcntl.h>
@@ -1162,10 +1163,44 @@ static bool g_frontier_stats = false, g_frontier_check = false;
  * incremental row state at every check (debug). */
 static int g_native_lb = 0;            /* 0 off, 1 pack, 2 pack + charge */
 static int g_native_lb_gap = 0, g_native_lb_minr = 1;
-static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false;
+static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false, g_native_lb_sparse = false;
 static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant */
 static void (*g_native_lb_audit)(void*, const vec<Lit>&, uint64_t) = NULL;   /* test only: explanation audit hook */
-static void* g_native_lb_audit_ctx = NULL;
+struct NativeLbTotals { unsigned long long checks, pack, charge, dead, props, state_fails; };
+static NativeLbTotals g_native_lb_tot = {0, 0, 0, 0, 0, 0};   /* summed over probes (tests, stats) */
+
+/* GH-231 rows of the bound: the parity rows of the half (qubit vars 0..n-1), plus with -native-lb-sparse the redundant
+ * sparse rows of GH-181 (distinct pair sums r = h1 + h2 with 0 < |r| <= max(|h1|, |h2|), not equal to a row of H; at most
+ * 4 m, lightest first, ties by the sorted support). Every r is a sum of rows of H, so r.x = 0 for every x in ker H: the
+ * bound and its explanations only use that. */
+static std::vector<std::vector<int> > native_lb_rows(const Matrix& H, bool sparse) {
+    std::vector<std::vector<int> > rows;
+    const int n = H.cols;
+    for (int r = 0; r < H.rows; r++) {
+        std::vector<int> row;
+        for (int i = 0; i < n; i++) if (getm(H, r, i)) row.push_back(i);
+        rows.push_back(row);
+    }
+    if (!sparse) return rows;
+    std::set<std::vector<int> > have(rows.begin(), rows.end());
+    std::vector<std::vector<int> > col((size_t)n);
+    for (size_t r = 0; r < rows.size(); r++) for (int q : rows[r]) col[(size_t)q].push_back((int)r);
+    std::set<std::pair<size_t, std::vector<int> > > cand;
+    for (size_t a = 0; a < rows.size(); a++) {
+        std::set<int> nb;
+        for (int q : rows[a]) for (int b : col[(size_t)q]) if ((size_t)b > a) nb.insert(b);
+        for (int b : nb) {
+            std::vector<int> x;
+            std::set_symmetric_difference(rows[a].begin(), rows[a].end(), rows[(size_t)b].begin(), rows[(size_t)b].end(), std::back_inserter(x));
+            if (x.empty() || x.size() > std::max(rows[a].size(), rows[(size_t)b].size()) || have.count(x)) continue;
+            cand.insert(std::make_pair(x.size(), x));
+        }
+    }
+    size_t lim = 4 * rows.size();
+    for (std::set<std::pair<size_t, std::vector<int> > >::const_iterator it = cand.begin(); it != cand.end() && lim > 0; ++it, --lim)
+        rows.push_back(it->second);
+    return rows;
+}
 
 /* GH-130 -frontier=auto (g_frontier_mode 4): per CSS half, frontier branching (mode on) iff the half's
  * parity matrix has fewer than FRONTIER_AUTO_C4 Tanner-graph 4-cycles per (nonzero) row, decided once
@@ -1241,6 +1276,8 @@ struct CssHalf {
     bool par;             /* GH-133: -oddcap-skip in force (all column weights of H odd): odd caps skipped */
     bool pre;             /* GH-144: ub is a verified -ub-pre finder word (not a solver solution); false without -ub-pre */
     OvlRows ovl;          /* GH-148: verified stabilizer rows for -stab-overlap (empty: no constraint, main's instance) */
+    std::vector<std::vector<int> > nlb_rows;   /* GH-231: rows of -native-lb (built at the first probe) */
+    bool nlb_built;
 };
 
 /* One oracle call on a half. cap: only solutions of weight <= cap are sought (strict).
@@ -1278,16 +1315,11 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     S.stopAtFirstSolution = first_only;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
-    if (g_native_lb) {   /* GH-231: the half's parity rows over qubit vars 0..n-1 */
-        std::vector<std::vector<int> > rows;
-        for (int r = 0; r < h.H->rows; r++) {
-            std::vector<int> row;
-            for (int i = 0; i < n; i++) if (getm(*h.H, r, i)) row.push_back(i);
-            rows.push_back(row);
-        }
-        S.setPackRows(rows, n, g_native_lb);
+    if (g_native_lb) {   /* GH-231: the half's parity rows over qubit vars 0..n-1 (and the redundant rows with -native-lb-sparse) */
+        if (!h.nlb_built) { h.nlb_rows = native_lb_rows(*h.H, g_native_lb_sparse); h.nlb_built = true; }
+        S.setPackRows(h.nlb_rows, n, g_native_lb);
         S.pcGap = g_native_lb_gap; S.pcMinr = g_native_lb_minr; S.pcCheckState = g_native_lb_check; S.pcProp = g_native_lb_prop;
-        S.pcMutant = g_native_lb_mutant; S.pcAudit = g_native_lb_audit; S.pcAuditCtx = g_native_lb_audit_ctx;
+        S.pcMutant = g_native_lb_mutant; S.pcAudit = g_native_lb_audit; S.pcAuditCtx = (void*)h.H;
     }
     if (h.frontier) {   /* GH-129: the half's parity rows over qubit vars 0..n-1 */
         std::vector<std::vector<int> > rows;
@@ -1313,6 +1345,10 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
             fprintf(stderr, "c OVERLAP %s cap %llu: rows %zu props %llu conflicts %llu cached_clauses %zu\n", h.tag, (unsigned long long)cap,
                     ovl_active.size(), (unsigned long long)S.ovProps, (unsigned long long)S.ovConfls, S.ovCacheList.size());
         fflush(stderr);
+    }
+    if (g_native_lb) {   /* GH-231 totals */
+        g_native_lb_tot.checks += S.pcChecks; g_native_lb_tot.pack += S.pcPackConfls; g_native_lb_tot.charge += S.pcChgConfls;
+        g_native_lb_tot.dead += S.pcDeadConfls; g_native_lb_tot.props += S.pcProps; g_native_lb_tot.state_fails += S.pcStateFails;
     }
     if (g_native_lb && (g_native_lb_stats || g_native_lb_check)) {   /* GH-231 */
         fprintf(stderr, "c NATIVE-LB %s cap %llu %s: conflicts %llu checks %llu pack %llu charge_evals %llu charge %llu dead %llu "
@@ -2632,6 +2668,8 @@ int main(int argc, char** argv) {
             g_native_lb_check = true;
         else if (!strcmp(argv[i], "-native-lb-prop"))
             g_native_lb_prop = true;
+        else if (!strcmp(argv[i], "-native-lb-sparse"))
+            g_native_lb_sparse = true;
         else if (!strncmp(argv[i], "-native-lb", 10))
             die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-stats, -native-lb-check)");
         else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */

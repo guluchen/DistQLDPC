@@ -7613,7 +7613,7 @@ void Solver::pcCollect(const std::vector<int>& rowsUsed, const std::vector<int64
             const int q = row[t];
             const lbool v = value(q);
             if (v == l_Undef) continue;
-            if (pcMark[q] != st) { pcMark[q] = st; pcLoad[q] = 0; if (v == l_True && pcMutant != 5) { lits.push(~mkLit(q)); nT++; } }
+            if (pcMark[q] != st) { pcMark[q] = st; pcLoad[q] = 0; if (v == l_True) { lits.push(~mkLit(q)); nT++; } }
             if (v == l_False) pcLoad[q] += yUsed[a];
         }
     }
@@ -7631,7 +7631,7 @@ void Solver::pcCollect(const std::vector<int>& rowsUsed, const std::vector<int64
         const Lit p = pcApplied[a];
         if (sign(p)) continue;
         const int q = var(p);
-        if (pcMutant != 5 && pcMark[q] == st) continue;   // mutant 5: the rows' true qubits were not taken above
+        if (pcMark[q] == st) continue;
         pcMark[q] = st;
         lits.push(~p); nT++;
     }
@@ -7669,7 +7669,7 @@ bool Solver::pcPropagate(const std::vector<int>& rowsUsed, const std::vector<int
     vec<Lit> base;
     pcCollect(rowsUsed, yUsed, L, bound, theta - 1, base);
     const uint64_t st = ++pcStamp;
-    for (size_t a = 0; a < rowsUsed.size(); a++) {
+    for (size_t a = 0; a < rowsUsed.size() && pcMutant != 5; a++) {   // mutant 5: the rows used are not excluded
         const std::vector<int>& row = pcRows[(size_t)rowsUsed[a]];
         for (size_t t = 0; t < row.size(); t++) if (value(row[t]) == l_Undef) pcMark[row[t]] = st;
     }
@@ -7703,7 +7703,7 @@ CRef Solver::pcCheck()
         vec<Lit> lits;
         for (size_t t = 0; t < row.size(); t++) lits.push(value(row[t]) == l_True ? ~mkLit(row[t]) : mkLit(row[t]));
         pcDeadConfls++;
-        return pcFinishClause(lits, 0);   // theta 0: implied by H x = 0 alone
+        return pcFinishClause(lits, UINT64_MAX);   // implied by H x = 0 alone (no completion at all)
     }
     const uint64_t theta = pcMutant == 4 && thetaTrue > 0 ? thetaTrue - 1 : thetaTrue;
     if ((uint64_t)pcTrue >= theta) return CRef_Undef;   // the solver's own cost conflict

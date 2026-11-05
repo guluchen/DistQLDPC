@@ -647,6 +647,46 @@ if [[ $rc -ne 0 ]] || grep -q "erasure" <<<"$out"; then
     echo "FAIL (GH-227: an erasure line without the erasure token): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
+# 7o. GH-231 -native-lb (split MaxSAT path): values, conflicts, output; default off = main's search (identical -v output)
+for f in -native-lb -native-lb= -native-lb=on -native-lb=PACK -native-lbX "-native-lb=charge -native-lb-gap=x" "-native-lb=charge -native-lb-gap=-2" \
+         "-native-lb=charge -native-lb-gap=" "-native-lb=charge -native-lb-minr=0" "-native-lb=charge -native-lb-minr=x" "-native-lb=pack -native-lb-bogus"; do
+    reject "invalid" $f $L $M
+done
+reject "needs -native-lb=pack or -native-lb=charge" -native-lb-prop $L $M
+reject "needs -native-lb=pack or -native-lb=charge" -native-lb-gap=1 -card-mto $L $M
+reject "needs -native-lb=pack or -native-lb=charge" -native-lb=charge -native-lb=off -native-lb-stats $L $M   # last wins
+reject "no effect with -engine=cc" -engine=cc -native-lb=charge $L $C
+reject "no effect with -engine=cc" -engine=cc -native-lb=off $L $C
+reject "needs the split MaxSAT path" -native-lb=pack -joint $L $M
+reject "needs the split MaxSAT path" -joint -native-lb=charge -card-mto $L $M
+reject "needs the split MaxSAT path" -native-lb=charge -roundingsat=/nonexistent $L $M
+accept 3 "" -native-lb=off -joint $L $M
+accept 3 "" -native-lb=pack $L $M
+accept 3 "" -native-lb=charge -native-lb-prop -card-mto -seed=3 $L $M
+accept 2 "" -native-lb=charge -native-lb-prop -native-lb-gap=-1 -oddcap-skip=off -no-symbreak -dualmode=off $L $C
+accept 10 "" -native-lb=charge -native-lb-prop -native-lb-check $L BB_90_8_10
+accept 10 "" -native-lb=pack -native-lb-prop -stab-overlap=off -ub-pre=off $L BB_90_8_10
+accept 8 "" -native-lb=charge -native-lb-gap=-1 -native-lb-minr=2 -card-mto $L TN_72_8_8
+accept 8 "" -native-lb=charge -native-lb-prop -native-lb-gap=3 -native-lb-check -seed=2 $L TN_72_8_8
+accept 2 "" -engine=auto -native-lb=charge $L $D1                                                        # auto -> maxsat: applies
+accept 2 "selected cc .*ignoring -native-lb=charge" -engine=auto -native-lb=charge $L $C
+runs=$((runs + 1)); run -native-lb=charge -native-lb-prop -native-lb-stats $L TN_72_8_8
+if [[ $rc -ne 0 ]] || ! grep -Eq "^c NATIVE-LB [XZ] cap [0-9]+ (feasibility|optimize): conflicts [0-9]+ checks [0-9]+ pack [1-9][0-9]* charge_evals [0-9]+ charge [0-9]+ dead [0-9]+ backtracks [0-9]+ mean_clause [0-9.]+ state_fails 0 props [1-9][0-9]* prop_rounds [0-9]+$" <<<"$err"; then
+    echo "FAIL (GH-231: c NATIVE-LB line with pack conflicts and propagations expected)" >&2; fails=$((fails + 1))
+fi
+runs=$((runs + 1)); run -native-lb=charge -native-lb-check $L TN_72_8_8
+if [[ $rc -ne 0 ]] || ! grep -q "^c NATIVE-LB" <<<"$err" || grep -q "state_fails [1-9]" <<<"$err"; then
+    echo "FAIL (GH-231: -native-lb-check prints counters with no row-state mismatch)" >&2; fails=$((fails + 1))
+fi
+runs=$((runs + 1)); run -native-lb=charge $L TN_72_8_8
+if [[ $rc -ne 0 ]] || grep -q "NATIVE-LB" <<<"$err$out"; then echo "FAIL (GH-231: no c NATIVE-LB line without -native-lb-stats)" >&2; fails=$((fails + 1)); fi
+for code in BB_90_8_10 TN_72_8_8 $C; do   # default = -native-lb=off: the same -v output
+    runs=$((runs + 1))
+    run -v $L $code; out0="$out"
+    run -v -native-lb=off $L $code
+    if [[ $rc -ne 0 || "$out" != "$out0" ]]; then echo "FAIL (GH-231: -native-lb=off -v output differs from the default on $code)" >&2; fails=$((fails + 1)); fi
+done
+
 echo "test_cc_flags: $runs checks, $fails failed"
 [[ $fails -eq 0 ]] && echo "CC_FLAG_TESTS PASS" || echo "CC_FLAG_TESTS FAIL"
 exit $((fails > 0))

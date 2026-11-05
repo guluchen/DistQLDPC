@@ -620,7 +620,7 @@ public:
     int      pcGap = 0;               // charge only when (need - 1) - pack <= pcGap (< 0: always)
     int      pcMinr = 1;              // charge only when need - 1 >= pcMinr
     int      pcMutant = 0;            // test only: 1 pack without disjointness, 2 no false literal in the explanation,
-                                      // 3 charge inflated by 1/D, 4 conflict one below the cap, 5 rows' true qubits omitted
+                                      // 3 charge inflated by 1/D, 4 conflict one below the cap, 5 propagation onto the rows used
     bool     pcCheckState = false;    // debug: recompute the row state from scratch at every check
     void   (*pcAudit)(void* ctx, const vec<Lit>& clause, uint64_t theta) = nullptr;   // test hook: every explanation
     void*    pcAuditCtx = nullptr;

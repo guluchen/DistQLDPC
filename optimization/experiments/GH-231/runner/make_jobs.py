@@ -4,7 +4,8 @@
   O   = the GH-231 candidate binary with its defaults (-native-lb off: must behave as main);
   C   = candidate, -native-lb=charge;            CP = candidate, -native-lb=charge -native-lb-prop;
   P   = candidate, -native-lb=pack;              PP = candidate, -native-lb=pack -native-lb-prop;
-  CPg = candidate, -native-lb=charge -native-lb-prop -native-lb-gap=-1.
+  CPg = candidate, -native-lb=charge -native-lb-prop -native-lb-gap=-1;
+  CPS / PPS / CS = CP / PP / C with -native-lb-sparse (GH-181's redundant pair-sum rows added to the bound's rows).
 Every run is -MODE (-no-card | -card-mto) -seed=S.
   panel OUT M_BIN C_BIN ARMS SEEDS MODES LIMIT STEM...: seeds 0..SEEDS-1, the arms of each (code, mode, seed) adjacent.
   tier5 OUT M_BIN C_BIN ARMS MODES LIMIT STEM...: default seed (-seed=0).
@@ -13,7 +14,10 @@ import glob, json, os, sys
 kind, out, MBIN, CBIN = sys.argv[1:5]
 ARMS = {'M': (None, []), 'O': ('C', []), 'C': ('C', ['-native-lb=charge']), 'CP': ('C', ['-native-lb=charge', '-native-lb-prop']),
         'P': ('C', ['-native-lb=pack']), 'PP': ('C', ['-native-lb=pack', '-native-lb-prop']),
-        'CPg': ('C', ['-native-lb=charge', '-native-lb-prop', '-native-lb-gap=-1'])}
+        'CPg': ('C', ['-native-lb=charge', '-native-lb-prop', '-native-lb-gap=-1']),
+        'CPS': ('C', ['-native-lb=charge', '-native-lb-prop', '-native-lb-sparse']),
+        'PPS': ('C', ['-native-lb=pack', '-native-lb-prop', '-native-lb-sparse']),
+        'CS': ('C', ['-native-lb=charge', '-native-lb-sparse'])}
 
 
 def arm(name):
