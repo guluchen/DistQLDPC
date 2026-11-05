@@ -457,6 +457,7 @@ bool Solver::removed(CRef cr) {
 
 void Solver::simplereduceClause(CRef cr, int pathC) {
   if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
+  if (pcIsReason(cr)) return;   // GH-231: native-lb reasons are unwatched: never reduced
   nbFlyReduced++;
   Clause& c=ca[cr];
   assert(value(c[0]) == l_True);
@@ -1501,6 +1502,7 @@ bool Solver::satisfied(const Clause& c) const {
 void Solver::cancelUntil(int level) {
     if (decisionLevel() > level){
         if (frontierMode && trail_lim[level] < frSynced) frSynced = trail_lim[level];   // GH-129
+        if (pcMode && trail_lim[level] < pcSynced) pcSynced = trail_lim[level];   // GH-231
         for (int c = trail.size()-1; c >= trail_lim[level]; c--){
             Var      x  = var(trail[c]);
             
@@ -1583,6 +1585,7 @@ Lit Solver::pickBranchLit()
 
 void Solver::reduceClause(CRef cr, int pathC) {
   if (ovIsClause(cr)) return;   // GH-148: cached overlap reasons are shared and unwatched: never reduced
+  if (pcIsReason(cr)) return;   // GH-231: native-lb reasons are unwatched: never reduced
   nbFlyReduced++;
   Clause& c=ca[cr];
   assert(value(c[0]) == l_True);
@@ -3655,6 +3658,15 @@ lbool Solver::search(int& nof_conflicts)
     
     for (;;){
         CRef confl = lPropagate();
+        // GH-231 native pack/charge bound (pcMode 0: main's loop); may backtrack to the clause's highest level
+        if (pcMode && confl == CRef_Undef && !softConflictFlag && qhead == trail.size()) {
+            confl = pcCheck();
+            while (confl == CRef_Undef && qhead < trail.size()) {   // -native-lb-prop enqueued literals
+                confl = lPropagate();
+                if (confl != CRef_Undef || softConflictFlag) break;
+                confl = pcCheck();
+            }
+        }
         
         if (confl != CRef_Undef || softConflictFlag || !lookahead()){
 
@@ -3672,7 +3684,10 @@ lbool Solver::search(int& nof_conflicts)
             // if (conflicts == 100000 && learnts_core.size() < 100) {
 	    //   core_lbd_cut = 6; tier2_lbd_cut = 8;
 	    // }
-            if (decisionLevel() == 0) return l_False;
+            if (decisionLevel() == 0) {
+                if (pcConfl != CRef_Undef) { ca.free(pcConfl); pcConfl = CRef_Undef; }   // GH-231
+                return l_False;
+            }
             
             learnt_clause.clear();
 
@@ -3691,6 +3706,7 @@ lbool Solver::search(int& nof_conflicts)
 	    }
 	    else
 	      analyze(confl, learnt_clause, backtrack_level, lbd);
+            if (pcConfl != CRef_Undef) { ca.free(pcConfl); pcConfl = CRef_Undef; }   // GH-231: transient conflict clause
             cancelUntil(backtrack_level);
 	    if (backtrack_level == 0 && learnt_clause.size()==0) return l_False;
             
@@ -5164,6 +5180,7 @@ void Solver::removeLearntClauses() {
 
 void Solver::cancelUntilBeginning(int begnning) {
   if (frontierMode && begnning < frSynced) frSynced = begnning;   // GH-129
+  if (pcMode && begnning < pcSynced) pcSynced = begnning;   // GH-231
   for (int c = trail.size()-1; c >= begnning; c--){
     Var      x  = var(trail[c]);
     if (!VSIDS){
@@ -7128,6 +7145,13 @@ void Solver::relocAll(ClauseAllocator& to)
                 ca.reloc(ws_bin[j].cref, to);
         }
     
+    // GH-231: native-lb reasons still in use (assigned variable, still its reason); the others are dropped (not copied)
+    if (!pcReasons.empty()) {
+        size_t j = 0;
+        for (size_t i = 0; i < pcReasons.size(); i++)
+            if (value(pcReasons[i].first) != l_Undef && reason(pcReasons[i].first) == pcReasons[i].second) pcReasons[j++] = pcReasons[i];
+        pcReasons.resize(j);
+    }
     // All reasons:
     //
     for (int i = 0; i < trail.size(); i++){
@@ -7135,6 +7159,13 @@ void Solver::relocAll(ClauseAllocator& to)
         
         if (reason(v) != CRef_Undef && (ca[reason(v)].reloced() || locked(ca[reason(v)])))
             ca.reloc(vardata[v].reason, to);
+    }
+    if (!pcReasons.empty() || !pcReasonSet.empty()) {   // GH-231: the relocated reasons
+        pcReasonSet.clear();
+        for (size_t i = 0; i < pcReasons.size(); i++) {
+            pcReasons[i].second = reason(pcReasons[i].first);
+            pcReasonSet.insert((uint32_t)pcReasons[i].second);
+        }
     }
     
     // GH-148: cached overlap reason clauses
@@ -7452,4 +7483,344 @@ CRef Solver::ovPropagate(Lit p, bool lk)
         }
     }
     return CRef_Undef;
+}
+
+//=================================================================================================
+// DistQLDPC GH-231: native pack/charge lower bound (see Solver.h). The CC engine's node bounds (GH-124 pack, GH-157
+// charge; Banfi, Ferrari, Favano, Tarable, Barletta, arXiv:2610.28008; Okada-Kasai, cpm-ldpc-distance) re-derived for a
+// partial assignment of the MaxSAT half instance. Row state (per row: unassigned count, parity of the true qubits; lists
+// of odd rows (parity 1, an unassigned qubit) and dead rows (parity 1, none)) is kept incrementally exactly as GH-129's
+// frontier state: pcApplied lists the qubit literals reflected in it with their trail positions; cancelUntil() and
+// cancelUntilBeginning() lower pcSynced; pcSync() undoes the entries at or above pcSynced and applies the trail from there.
+
+void Solver::setPackRows(const std::vector<std::vector<int> >& rows, int nQubits, int mode)
+{
+    pcMode = mode;
+    pcN = nQubits;
+    pcRows.clear();
+    for (size_t r = 0; r < rows.size(); r++)
+        if (!rows[r].empty()) pcRows.push_back(rows[r]);
+    pcColRows.assign((size_t)pcN, std::vector<int>());
+    size_t maxlen = 0;
+    for (size_t r = 0; r < pcRows.size(); r++) {
+        if (pcRows[r].size() > maxlen) maxlen = pcRows[r].size();
+        for (size_t t = 0; t < pcRows[r].size(); t++) pcColRows[(size_t)pcRows[r][t]].push_back((int)r);
+    }
+    const size_t m = pcRows.size();
+    pcUnass.assign(m, 0);
+    for (size_t r = 0; r < m; r++) pcUnass[r] = (int)pcRows[r].size();
+    pcPar.assign(m, 0);
+    pcOddPos.assign(m, -1); pcDeadPos.assign(m, -1);
+    pcOdd.clear(); pcDead.clear(); pcApplied.clear(); pcAppliedPos.clear();
+    pcSynced = 0; pcTrue = 0;
+    pcMark.assign((size_t)pcN, 0); pcStamp = 0;
+    pcLoad.assign((size_t)pcN, 0); pcCnt.assign((size_t)pcN, 0);
+    pcY.assign(m + 1, 0);
+    pcRs.assign(m + 1, 0);
+    size_t nnz = 0;
+    for (size_t r = 0; r < m; r++) nnz += pcRows[r].size();
+    pcRq.assign(nnz + 1, 0);
+    pcBucketHead.assign(maxlen + 2, -1); pcBucketNext.assign(m, -1);
+    pcSel.clear();
+    pcLcm[0] = 1;
+    for (int d = 1; d <= 32; d++) {
+        int64_t a = pcLcm[d - 1], b = d;
+        while (b) { const int64_t t = a % b; a = b; b = t; }
+        pcLcm[d] = pcLcm[d - 1] / a * d;   // lcm(1..32) < 2^48
+    }
+}
+
+void Solver::pcSetRowState(int r)
+{
+    const bool odd = pcPar[r] && pcUnass[r] > 0, dead = pcPar[r] && pcUnass[r] == 0;
+    if (odd) { if (pcOddPos[r] < 0) { pcOddPos[r] = (int)pcOdd.size(); pcOdd.push_back(r); } }
+    else if (pcOddPos[r] >= 0) {
+        const int pos = pcOddPos[r], last = pcOdd.back();
+        pcOdd[pos] = last; pcOddPos[last] = pos; pcOdd.pop_back(); pcOddPos[r] = -1;
+    }
+    if (dead) { if (pcDeadPos[r] < 0) { pcDeadPos[r] = (int)pcDead.size(); pcDead.push_back(r); } }
+    else if (pcDeadPos[r] >= 0) {
+        const int pos = pcDeadPos[r], last = pcDead.back();
+        pcDead[pos] = last; pcDeadPos[last] = pos; pcDead.pop_back(); pcDeadPos[r] = -1;
+    }
+}
+
+void Solver::pcApply(Lit p, int sgn)
+{
+    const bool t = !sign(p);
+    if (t) pcTrue += sgn;
+    const std::vector<int>& rs = pcColRows[(size_t)var(p)];
+    for (size_t k = 0; k < rs.size(); k++) {
+        const int r = rs[k];
+        pcUnass[r] -= sgn;
+        if (t) pcPar[r] ^= 1;
+        pcSetRowState(r);
+    }
+}
+
+void Solver::pcSync()
+{
+    const int lo = pcSynced < trail.size() ? pcSynced : trail.size();
+    while (!pcAppliedPos.empty() && pcAppliedPos.back() >= lo) {
+        pcApply(pcApplied.back(), -1);
+        pcApplied.pop_back(); pcAppliedPos.pop_back();
+    }
+    for (int i = lo; i < trail.size(); i++) {
+        const Lit p = trail[i];
+        if (var(p) < pcN) { pcApply(p, +1); pcApplied.push_back(p); pcAppliedPos.push_back(i); }
+    }
+    pcSynced = trail.size();
+}
+
+// Debug (-native-lb-check): compare the incremental state with a recomputation; on a mismatch count it and rebuild.
+void Solver::pcVerifyState()
+{
+    bool bad = false;
+    for (size_t a = 0; a < pcApplied.size() && !bad; a++) {
+        const int pos = pcAppliedPos[a];
+        if (pos >= trail.size() || trail[pos] != pcApplied[a]) bad = true;
+    }
+    int tr = 0;
+    for (int q = 0; q < pcN; q++) if (value(q) == l_True) tr++;
+    if (tr != pcTrue) bad = true;
+    for (size_t r = 0; r < pcRows.size() && !bad; r++) {
+        int un = 0, par = 0;
+        for (size_t t = 0; t < pcRows[r].size(); t++) {
+            const lbool v = value(pcRows[r][t]);
+            if (v == l_Undef) un++; else if (v == l_True) par ^= 1;
+        }
+        const bool odd = par && un > 0, dead = par && un == 0;
+        if (un != pcUnass[r] || par != pcPar[r] || odd != (pcOddPos[r] >= 0) || dead != (pcDeadPos[r] >= 0)) bad = true;
+    }
+    if (!bad) return;
+    pcStateFails++;
+    std::vector<std::vector<int> > rows = pcRows;
+    setPackRows(rows, pcN, pcMode);
+    pcSync();
+}
+
+/* The conflict clause for "every completion has weight >= theta": rows rowsUsed (odd, scaled dual values yUsed, unit L,
+ * sum of yUsed > (bound - 1) L) give bound more qubits outside the true set T. */
+void Solver::pcCollect(const std::vector<int>& rowsUsed, const std::vector<int64_t>& yUsed, int64_t L, int bound, uint64_t theta, vec<Lit>& lits)
+{
+    lits.clear();
+    const uint64_t st = ++pcStamp;
+    int nT = 0;
+    for (size_t a = 0; a < rowsUsed.size(); a++) {   // true qubits of the rows (parity), loads of the false qubits
+        const std::vector<int>& row = pcRows[(size_t)rowsUsed[a]];
+        for (size_t t = 0; t < row.size(); t++) {
+            const int q = row[t];
+            const lbool v = value(q);
+            if (v == l_Undef) continue;
+            if (pcMark[q] != st) { pcMark[q] = st; pcLoad[q] = 0; if (v == l_True && pcMutant != 5) { lits.push(~mkLit(q)); nT++; } }
+            if (v == l_False) pcLoad[q] += yUsed[a];
+        }
+    }
+    if (pcMutant != 2)
+        for (size_t a = 0; a < rowsUsed.size(); a++) {   // a false qubit stays in the clause iff freeing it breaks feasibility
+            const std::vector<int>& row = pcRows[(size_t)rowsUsed[a]];
+            for (size_t t = 0; t < row.size(); t++) {
+                const int q = row[t];
+                if (value(q) != l_False || pcLoad[q] <= L) continue;
+                lits.push(mkLit(q)); pcLoad[q] = -1;   // -1: already in the clause
+            }
+        }
+    const int64_t wantT = (int64_t)theta - (int64_t)bound;
+    for (size_t a = 0; a < pcApplied.size() && nT < wantT; a++) {   // further true qubits, trail order (lowest levels first)
+        const Lit p = pcApplied[a];
+        if (sign(p)) continue;
+        const int q = var(p);
+        if (pcMutant != 5 && pcMark[q] == st) continue;   // mutant 5: the rows' true qubits were not taken above
+        pcMark[q] = st;
+        lits.push(~p); nT++;
+    }
+}
+
+/* Backtrack to the clause's highest level if no literal is at the current one, audit, allocate (transient). */
+CRef Solver::pcFinishClause(vec<Lit>& lits, uint64_t thetaAudit)
+{
+    int maxLev = 0;
+    for (int i = 0; i < lits.size(); i++) if (level(var(lits[i])) > maxLev) maxLev = level(var(lits[i]));
+    if (maxLev < decisionLevel()) { cancelUntil(maxLev); pcBacktracks++; }
+    if (pcAudit) pcAudit(pcAuditCtx, lits, thetaAudit);
+    pcClauseLits += (uint64_t)lits.size();
+    const CRef cr = ca.alloc(lits, false);
+    pcConfl = cr;
+    return cr;
+}
+
+void Solver::pcSweepReasons()
+{
+    size_t j = 0;
+    for (size_t i = 0; i < pcReasons.size(); i++) {
+        const Var v = pcReasons[i].first;
+        if (value(v) != l_Undef && reason(v) == pcReasons[i].second) pcReasons[j++] = pcReasons[i];
+        else { pcReasonSet.erase((uint32_t)pcReasons[i].second); ca.free(pcReasons[i].second); }
+    }
+    pcReasons.resize(j);
+}
+
+/* Slack 0: |S| + bound = theta - 1 for the rows used. A further true qubit j on none of them keeps every row used odd with
+ * the same free set, so |x| >= |S| + 1 + bound = theta: x_j = 0 with reason (~x_j | clause for theta - 1). */
+bool Solver::pcPropagate(const std::vector<int>& rowsUsed, const std::vector<int64_t>& yUsed, int64_t L, int bound, uint64_t theta,
+                         uint64_t thetaAudit, uint64_t)
+{
+    vec<Lit> base;
+    pcCollect(rowsUsed, yUsed, L, bound, theta - 1, base);
+    const uint64_t st = ++pcStamp;
+    for (size_t a = 0; a < rowsUsed.size(); a++) {
+        const std::vector<int>& row = pcRows[(size_t)rowsUsed[a]];
+        for (size_t t = 0; t < row.size(); t++) if (value(row[t]) == l_Undef) pcMark[row[t]] = st;
+    }
+    bool any = false;
+    vec<Lit> lits;
+    for (int j = 0; j < pcN; j++) {
+        if (value(j) != l_Undef || pcMark[j] == st || !decision[j]) continue;
+        lits.clear();
+        lits.push(~mkLit(j));
+        for (int i = 0; i < base.size(); i++) lits.push(base[i]);
+        if (pcAudit) pcAudit(pcAuditCtx, lits, thetaAudit);
+        const CRef cr = ca.alloc(lits, false);
+        pcReasons.push_back(std::make_pair((Var)j, cr));
+        pcReasonSet.insert((uint32_t)cr);
+        uncheckedEnqueue(~mkLit(j), cr);
+        pcProps++; any = true;
+    }
+    if (any) pcPropRounds++;
+    return any;
+}
+
+CRef Solver::pcCheck()
+{
+    pcSync();
+    if (pcCheckState) pcVerifyState();
+    if (!pcReasons.empty()) pcSweepReasons();
+    pcChecks++;
+    const uint64_t thetaTrue = pcTheta();
+    if (!pcDead.empty()) {   // an odd row without a free qubit (H x = 0 violated by the assignment itself)
+        const std::vector<int>& row = pcRows[(size_t)pcDead[0]];
+        vec<Lit> lits;
+        for (size_t t = 0; t < row.size(); t++) lits.push(value(row[t]) == l_True ? ~mkLit(row[t]) : mkLit(row[t]));
+        pcDeadConfls++;
+        return pcFinishClause(lits, 0);   // theta 0: implied by H x = 0 alone
+    }
+    const uint64_t theta = pcMutant == 4 && thetaTrue > 0 ? thetaTrue - 1 : thetaTrue;
+    if ((uint64_t)pcTrue >= theta) return CRef_Undef;   // the solver's own cost conflict
+    const uint64_t needU = theta - (uint64_t)pcTrue;
+    const int k = (int)pcOdd.size();
+    if ((uint64_t)k < needU) return CRef_Undef;          // every bound here is <= the number of odd rows
+    const int need = (int)needU;
+    // bucket the odd rows by their number of free qubits (fewest first; within a bucket the list order)
+    const int nb = (int)pcBucketHead.size();
+    for (int i = k - 1; i >= 0; i--) {
+        const int r = pcOdd[(size_t)i];
+        const int b = pcUnass[r] < nb ? pcUnass[r] : nb - 1;
+        pcBucketNext[r] = pcBucketHead[b]; pcBucketHead[b] = r;
+    }
+    // pack: greedy disjoint selection
+    pcSel.clear();
+    std::vector<int> order; order.reserve((size_t)k);
+    const uint64_t st = ++pcStamp;
+    for (int b = 0; b < nb; b++) {
+        for (int r = pcBucketHead[b]; r >= 0; r = pcBucketNext[r]) {
+            order.push_back(r);
+            const std::vector<int>& row = pcRows[(size_t)r];
+            bool free = true;
+            if (pcMutant != 1)
+                for (size_t t = 0; t < row.size() && free; t++) if (value(row[t]) == l_Undef && pcMark[row[t]] == st) free = false;
+            if (!free) continue;
+            for (size_t t = 0; t < row.size(); t++) if (value(row[t]) == l_Undef) pcMark[row[t]] = st;
+            pcSel.push_back(r);
+        }
+        pcBucketHead[b] = -1;
+    }
+    const int p = (int)pcSel.size();
+    if (p >= need) {
+        pcPackConfls++;
+        std::vector<int> used(pcSel.begin(), pcSel.begin() + need);
+        std::vector<int64_t> y((size_t)need, 1);
+        vec<Lit> lits;
+        pcCollect(used, y, 1, need, theta, lits);
+        return pcFinishClause(lits, thetaTrue);
+    }
+    if (pcMode < 2 || need - 1 < pcMinr || (pcGap >= 0 && (need - 1) - p > pcGap) || k >= (1 << 15)) {
+        if (pcProp && p > 0 && p == need - 1) {   // slack 0 with the packing
+            std::vector<int64_t> y((size_t)p, 1);
+            pcPropagate(pcSel, y, 1, p, theta, thetaTrue, 0);
+        }
+        return CRef_Undef;
+    }
+    // charge (GH-157's raised local-degree charge) over the odd rows' free sets, in the scan order above
+    pcChgEvals++;
+    const uint64_t st2 = ++pcStamp;
+    int D = 0;
+    uint32_t nq = 0;
+    pcRs[0] = 0;
+    for (int i = 0; i < k; i++) {
+        const std::vector<int>& row = pcRows[(size_t)order[(size_t)i]];
+        for (size_t t = 0; t < row.size(); t++) {
+            const int q = row[t];
+            if (value(q) != l_Undef) continue;
+            pcRq[nq++] = (uint32_t)q;
+            if (pcMark[q] != st2) { pcMark[q] = st2; pcCnt[q] = 0; pcLoad[q] = 0; }
+            if (++pcCnt[q] > D) D = pcCnt[q];
+        }
+        pcRs[(size_t)i + 1] = nq;
+    }
+    if (D > 32) return CRef_Undef;
+    const int64_t L = pcLcm[D];
+    const int64_t R = (int64_t)(need - 1) * L;
+    int64_t Y = 0;
+    for (int i = 0; i < k; i++) {
+        int dm = 0;
+        for (uint32_t t = pcRs[i]; t < pcRs[i + 1]; t++) if (pcCnt[pcRq[t]] > dm) dm = pcCnt[pcRq[t]];
+        int64_t yi = L / dm;
+        if (pcMutant == 3) yi += L / D;
+        pcY[(size_t)i] = yi; Y += yi;
+    }
+    if (Y <= R) {
+        for (int i = 0; i < k; i++)
+            for (uint32_t t = pcRs[i]; t < pcRs[i + 1]; t++) pcLoad[pcRq[t]] += pcY[(size_t)i];
+        for (int i = 0; i < k && Y <= R; i++) {   // raise: y_u += min residual capacity of its free qubits
+            int64_t s = L;
+            for (uint32_t t = pcRs[i]; t < pcRs[i + 1]; t++) { const int64_t res = L - pcLoad[pcRq[t]]; if (res < s) s = res; }
+            if (s <= 0) continue;
+            pcY[(size_t)i] += s; Y += s;
+            for (uint32_t t = pcRs[i]; t < pcRs[i + 1]; t++) pcLoad[pcRq[t]] += s;
+        }
+    }
+    if (Y <= R) {
+        if (!pcProp) return CRef_Undef;
+        if (p > 0 && p == need - 1) {   // slack 0: the packing (rows of the scan above)
+            std::vector<int64_t> y((size_t)p, 1);
+            pcPropagate(pcSel, y, 1, p, theta, thetaTrue, 0);
+        } else if (need >= 2 && Y > (int64_t)(need - 2) * L) {   // slack 0: the charge, fewest rows by decreasing y
+            std::vector<int> idx((size_t)k);
+            for (int i = 0; i < k; i++) idx[(size_t)i] = i;
+            std::stable_sort(idx.begin(), idx.end(), [&](int a, int b) { return pcY[(size_t)a] > pcY[(size_t)b]; });
+            std::vector<int> used; std::vector<int64_t> y;
+            int64_t Ys = 0;
+            const int64_t R2 = (int64_t)(need - 2) * L;
+            for (size_t a = 0; a < idx.size() && Ys <= R2; a++) {
+                if (pcY[(size_t)idx[a]] <= 0) break;
+                used.push_back(order[(size_t)idx[a]]); y.push_back(pcY[(size_t)idx[a]]); Ys += pcY[(size_t)idx[a]];
+            }
+            pcPropagate(used, y, L, need - 1, theta, thetaTrue, 0);
+        }
+        return CRef_Undef;
+    }
+    pcChgConfls++;
+    // rows by decreasing y until the sum exceeds (need - 1) L (any subset of a feasible dual is feasible)
+    std::vector<int> idx((size_t)k);
+    for (int i = 0; i < k; i++) idx[(size_t)i] = i;
+    std::stable_sort(idx.begin(), idx.end(), [&](int a, int b) { return pcY[(size_t)a] > pcY[(size_t)b]; });
+    std::vector<int> used; std::vector<int64_t> y;
+    int64_t Ys = 0;
+    for (size_t a = 0; a < idx.size() && Ys <= R; a++) {
+        if (pcY[(size_t)idx[a]] <= 0) break;
+        used.push_back(order[(size_t)idx[a]]); y.push_back(pcY[(size_t)idx[a]]); Ys += pcY[(size_t)idx[a]];
+    }
+    vec<Lit> lits;
+    pcCollect(used, y, L, need, theta, lits);
+    return pcFinishClause(lits, thetaTrue);
 }

@@ -1153,6 +1153,20 @@ enum HalfStatus { HALF_FOUND, HALF_NONE, HALF_OPT, HALF_UNKNOWN, HALF_INFEASIBLE
 static int g_frontier_mode = 4;   /* GH-130: auto is the default (PI 2026-10-18); -frontier=off restores main's pre-GH-130 search */
 static bool g_frontier_stats = false, g_frontier_check = false;
 
+/* GH-231 -native-lb=off|pack|charge (split MaxSAT path; default off = main's search): the CC node lower bounds (GH-124 pack,
+ * GH-157 charge) as a native bound check inside MaxCDCL (Solver::setPackRows / pcCheck, see Solver.h). The half's parity
+ * rows are passed per probe as for -frontier. A conflict is raised when the true qubits plus the bound reach the probe's
+ * cap; the clause is implied by H x = 0 and the cap alone (no minimality argument), so probe answers are unchanged.
+ * -native-lb-gap=G (default 0; -1 = always) and -native-lb-minr=M (default 1) gate the charge evaluation as GH-157's
+ * -cc-lb-gap / -cc-lb-minr; -native-lb-stats prints per-probe counters to stderr; -native-lb-check re-verifies the
+ * incremental row state at every check (debug). */
+static int g_native_lb = 0;            /* 0 off, 1 pack, 2 pack + charge */
+static int g_native_lb_gap = 0, g_native_lb_minr = 1;
+static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false;
+static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant */
+static void (*g_native_lb_audit)(void*, const vec<Lit>&, uint64_t) = NULL;   /* test only: explanation audit hook */
+static void* g_native_lb_audit_ctx = NULL;
+
 /* GH-130 -frontier=auto (g_frontier_mode 4): per CSS half, frontier branching (mode on) iff the half's
  * parity matrix has fewer than FRONTIER_AUTO_C4 Tanner-graph 4-cycles per (nonzero) row, decided once
  * from the matrix before any search. A 4-cycle is a pair of rows sharing a pair of qubits; the count is
@@ -1264,6 +1278,17 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     S.stopAtFirstSolution = first_only;
     S.startAtCap = true;   /* first test is the cap itself: probes test only "weight <= cap"; optimisation finds, then descends */
     S.boundsLbCap = lb_cap; S.boundsUbCap = ub_cap; S.boundsHideLB = hide_lb;
+    if (g_native_lb) {   /* GH-231: the half's parity rows over qubit vars 0..n-1 */
+        std::vector<std::vector<int> > rows;
+        for (int r = 0; r < h.H->rows; r++) {
+            std::vector<int> row;
+            for (int i = 0; i < n; i++) if (getm(*h.H, r, i)) row.push_back(i);
+            rows.push_back(row);
+        }
+        S.setPackRows(rows, n, g_native_lb);
+        S.pcGap = g_native_lb_gap; S.pcMinr = g_native_lb_minr; S.pcCheckState = g_native_lb_check; S.pcProp = g_native_lb_prop;
+        S.pcMutant = g_native_lb_mutant; S.pcAudit = g_native_lb_audit; S.pcAuditCtx = g_native_lb_audit_ctx;
+    }
     if (h.frontier) {   /* GH-129: the half's parity rows over qubit vars 0..n-1 */
         std::vector<std::vector<int> > rows;
         for (int r = 0; r < h.H->rows; r++) {
@@ -1287,6 +1312,16 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
         if (ovl_native)   /* GH-148: appended only with the native propagator (main's line format otherwise) */
             fprintf(stderr, "c OVERLAP %s cap %llu: rows %zu props %llu conflicts %llu cached_clauses %zu\n", h.tag, (unsigned long long)cap,
                     ovl_active.size(), (unsigned long long)S.ovProps, (unsigned long long)S.ovConfls, S.ovCacheList.size());
+        fflush(stderr);
+    }
+    if (g_native_lb && (g_native_lb_stats || g_native_lb_check)) {   /* GH-231 */
+        fprintf(stderr, "c NATIVE-LB %s cap %llu %s: conflicts %llu checks %llu pack %llu charge_evals %llu charge %llu dead %llu "
+                "backtracks %llu mean_clause %.1f state_fails %llu props %llu prop_rounds %llu\n", h.tag, (unsigned long long)cap, first_only ? "feasibility" : "optimize",
+                (unsigned long long)S.conflicts, (unsigned long long)S.pcChecks, (unsigned long long)S.pcPackConfls,
+                (unsigned long long)S.pcChgEvals, (unsigned long long)S.pcChgConfls, (unsigned long long)S.pcDeadConfls,
+                (unsigned long long)S.pcBacktracks,
+                (S.pcPackConfls + S.pcChgConfls + S.pcDeadConfls) ? (double)S.pcClauseLits / (double)(S.pcPackConfls + S.pcChgConfls + S.pcDeadConfls) : 0.0,
+                (unsigned long long)S.pcStateFails, (unsigned long long)S.pcProps, (unsigned long long)S.pcPropRounds);
         fflush(stderr);
     }
     h.probes++; h.conflicts += S.conflicts;   /* GH-107 work counters (fresh solver per probe) */
@@ -2040,7 +2075,8 @@ static int engine_flag_family(const char* a)
     if (!strcmp(a, "-no-card") || !strcmp(a, "-card-sinz") || !strcmp(a, "-card-mto") || !strcmp(a, "-card-both") ||
         !strcmp(a, "-card-both-force") || !strcmp(a, "-dualshare-stats") || !strncmp(a, "-oddcap-skip=", 13) ||
         !strncmp(a, "-ub-pre", 7) ||   /* GH-144: -ub-pre=, -ub-pre-hits=, -ub-pre-plateau= */
-        !strncmp(a, "-stab-overlap", 13))   /* GH-148: -stab-overlap=, -stab-overlap-enc= */
+        !strncmp(a, "-stab-overlap", 13) ||   /* GH-148: -stab-overlap=, -stab-overlap-enc= */
+        !strncmp(a, "-native-lb", 10))        /* GH-231: -native-lb=, -native-lb-gap=, ... */
         return ENGFLAG_MAXSAT_TUNE;
     if (!strncmp(a, "-cc-", 4) || !strcmp(a, "-ub-basis") || !strncmp(a, "-ub-basis=", 10) || !strncmp(a, "-ub-search", 10))
         return ENGFLAG_CC;
@@ -2574,6 +2610,30 @@ int main(int argc, char** argv) {
             die("invalid -stab-overlap-enc (native | clauses | bin | seq)");
         else if (!strncmp(argv[i], "-stab-overlap", 13))
             die("invalid -stab-overlap (on | auto | off)");
+        else if (!strcmp(argv[i], "-native-lb=off"))   /* GH-231 */
+            g_native_lb = 0;
+        else if (!strcmp(argv[i], "-native-lb=pack"))
+            g_native_lb = 1;
+        else if (!strcmp(argv[i], "-native-lb=charge"))
+            g_native_lb = 2;
+        else if (!strncmp(argv[i], "-native-lb-gap=", 15)) {
+            char* end = NULL; long v = strtol(argv[i] + 15, &end, 10);
+            if (!*(argv[i] + 15) || *end || v < -1 || v > 1000000) die("invalid -native-lb-gap (-1..1000000)");
+            g_native_lb_gap = (int)v;
+        }
+        else if (!strncmp(argv[i], "-native-lb-minr=", 16)) {
+            char* end = NULL; long v = strtol(argv[i] + 16, &end, 10);
+            if (!*(argv[i] + 16) || *end || v < 1 || v > 1000000) die("invalid -native-lb-minr (1..1000000)");
+            g_native_lb_minr = (int)v;
+        }
+        else if (!strcmp(argv[i], "-native-lb-stats"))
+            g_native_lb_stats = true;
+        else if (!strcmp(argv[i], "-native-lb-check"))
+            g_native_lb_check = true;
+        else if (!strcmp(argv[i], "-native-lb-prop"))
+            g_native_lb_prop = true;
+        else if (!strncmp(argv[i], "-native-lb", 10))
+            die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-stats, -native-lb-check)");
         else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */
             g_ub_pre = -1.0; g_ub_pre_given = true;
         } else if (!strcmp(argv[i], "-ub-pre=on")) {
@@ -2870,6 +2930,11 @@ int main(int argc, char** argv) {
             printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
             printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");
             printf("            clauses up to |g| = 9, sequential counter above; bin / seq: one of them for every row)\n");
+            printf("  Native lower bound (split MaxSAT path only, GH-231): -native-lb=off|pack|charge (default off): the CC node\n");
+            printf("            bounds as a check inside MaxCDCL: disjoint odd parity rows (pack) and the scaled hitting-set dual\n");
+            printf("            (charge, implies pack) bound the qubits any completion still needs; true qubits + bound >= cap\n");
+            printf("            gives a conflict clause implied by H x = 0 and the cap; -native-lb-gap=G (default 0, -1 always),\n");
+            printf("            -native-lb-minr=M (default 1) gate the charge; -native-lb-stats, -native-lb-check (debug)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");
@@ -2907,6 +2972,12 @@ int main(int argc, char** argv) {
         if (msg.empty() && g_stab_overlap && (g_css_joint || backend == SOLVER_ROUNDINGSAT)) {   /* GH-148 */
             if (g_stab_overlap_given) msg = "-stab-overlap=on: needs the split MaxSAT path (not -joint or -roundingsat)";
             else g_stab_overlap = false;   /* default auto: silently off on paths it does not apply to */
+        }
+        if (msg.empty() && g_native_lb && (g_css_joint || backend == SOLVER_ROUNDINGSAT))   /* GH-231 */
+            msg = "-native-lb: needs the split MaxSAT path (not -joint or -roundingsat)";
+        if (msg.empty() && !g_native_lb) {   /* GH-231: the tuning flags need the bound */
+            for (int i = 1; i < argc; i++)
+                if (!strncmp(argv[i], "-native-lb-", 11)) { msg = std::string(argv[i]) + ": needs -native-lb=pack or -native-lb=charge"; break; }
         }
         if (msg.empty() && !g_stab_overlap) {   /* GH-148: the tuning flags need the constraints */
             for (int i = 1; i < argc; i++)

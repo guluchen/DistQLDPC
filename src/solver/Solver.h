@@ -605,6 +605,61 @@ public:
     void     setOverlapRows(const std::vector<std::vector<int> >& rows, const std::vector<int>& lims, int nQubits);
     CRef     ovClause(int r, uint32_t mask, int impliedPos);
     CRef     ovPropagate(Lit p, bool lk);
+    // DistQLDPC GH-231 (-native-lb=pack|charge): the CC engine's node lower bounds as a native bound check. Rows are the
+    // half's parity rows over qubit vars 0..pcN-1. With S = true qubits, F = false qubits, A = unassigned qubits, a row u
+    // is odd when |S & u| is odd; every completion x with H x = 0, S in x, x & F = {} meets A & u for every odd row u.
+    // pack: disjoint odd rows (greedy, fewest free qubits first) give |x| >= |S| + p. charge: a scaled feasible dual y of
+    // the hitting-set LP over the odd rows' free sets (local-degree charge, raised; GH-157) gives |x| >= |S| + ceil(sum y).
+    // At each propagation fixpoint of search() (before lookahead), when |S| + bound >= pcTheta() (= UB plus the solver's
+    // cost offset: every solution the solver accepts has weight < pcTheta()), a conflict clause is built: the negation of
+    // the true qubits of the rows used plus enough further true qubits (trail order) to reach the count, and of the false
+    // qubits of the rows used whose omission would break disjointness / dual feasibility. It is implied by H x = 0 and the
+    // cap. If no literal of the clause is at the current level the solver first backtracks to the clause's highest level.
+    // pcMode 0 (default) = main's solver, untouched.
+    int      pcMode = 0;              // 0 off, 1 pack, 2 pack + charge
+    int      pcGap = 0;               // charge only when (need - 1) - pack <= pcGap (< 0: always)
+    int      pcMinr = 1;              // charge only when need - 1 >= pcMinr
+    int      pcMutant = 0;            // test only: 1 pack without disjointness, 2 no false literal in the explanation,
+                                      // 3 charge inflated by 1/D, 4 conflict one below the cap, 5 rows' true qubits omitted
+    bool     pcCheckState = false;    // debug: recompute the row state from scratch at every check
+    void   (*pcAudit)(void* ctx, const vec<Lit>& clause, uint64_t theta) = nullptr;   // test hook: every explanation
+    void*    pcAuditCtx = nullptr;
+    void     setPackRows(const std::vector<std::vector<int> >& rows, int nQubits, int mode);
+    CRef     pcCheck();
+    void     pcSync();
+    void     pcApply(Lit p, int sgn);
+    void     pcSetRowState(int r);
+    void     pcVerifyState();
+    uint64_t pcTheta() const { return UB + solutionCost + fixedCostBySearch + derivedCost + relaxedCost; }
+    void     pcCollect(const std::vector<int>& rowsUsed, const std::vector<int64_t>& yUsed, int64_t L, int bound, uint64_t theta, vec<Lit>& lits);
+    CRef     pcFinishClause(vec<Lit>& lits, uint64_t thetaAudit);
+    // -native-lb-prop: at slack 0 (|S| + bound = cap - 1) every unassigned qubit on none of the rows used is set false
+    // (one more true qubit outside them leaves the bound unchanged); reason = the clause above for cap - 1 plus ~x_j.
+    // The reasons are unwatched, in no clause list, never reduced on the fly, freed once their variable is unassigned.
+    bool     pcProp = false;
+    std::vector<std::pair<Var, CRef> > pcReasons;
+    std::unordered_set<uint32_t> pcReasonSet;
+    bool     pcIsReason(CRef cr) const { return !pcReasons.empty() && pcReasonSet.count((uint32_t)cr) > 0; }
+    void     pcSweepReasons();
+    bool     pcPropagate(const std::vector<int>& rowsUsed, const std::vector<int64_t>& yUsed, int64_t L, int bound, uint64_t theta,
+                         uint64_t thetaAudit, uint64_t stamp);
+    uint64_t pcProps = 0, pcPropRounds = 0;
+    int      pcN = 0, pcSynced = 0, pcTrue = 0;
+    std::vector<std::vector<int> > pcRows, pcColRows;
+    std::vector<int>  pcUnass, pcOdd, pcOddPos, pcDead, pcDeadPos;
+    std::vector<char> pcPar;
+    std::vector<Lit>  pcApplied;
+    std::vector<int>  pcAppliedPos;
+    std::vector<uint64_t> pcMark;     // stamps (packing, row dedupe)
+    uint64_t pcStamp = 0;
+    std::vector<int64_t> pcLoad, pcY;
+    std::vector<int32_t> pcCnt;
+    std::vector<uint32_t> pcRs, pcRq;
+    std::vector<int>  pcBucketHead, pcBucketNext, pcSel;
+    int64_t  pcLcm[33];
+    CRef     pcConfl = CRef_Undef;    // the clause returned by pcCheck() (freed after analysis)
+    uint64_t pcChecks = 0, pcPackConfls = 0, pcChgEvals = 0, pcChgConfls = 0, pcDeadConfls = 0, pcBacktracks = 0,
+             pcClauseLits = 0, pcStateFails = 0;
     // Former function-local statics, now per instance (identical for single-instance runs).
     uint64_t srch_prevUB = 0, card_prevUB = 0, lk_prevUB = 0;
     int      lk_thres = 2, lk_prevConflicts = 0, lk_maxSuccLB = 0, lk_nbSample = 0, lk_myLH = 0, lk_mySucc = 0;
