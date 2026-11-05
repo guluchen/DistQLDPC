@@ -34,6 +34,7 @@ New code, not derived from MaxCDCL.
 | Stern / Dumer collision mode of the shared finder (GH-146; `-ub-isd=off\|stern\|dumer[:P,L,W,B,R]`, default stern since 2026-10-23, PI; `-ub-isd=off` = previous finder, GH-140) | Applies to the CC `-ub-search` finder and to the MaxSAT `-ub-pre` pre-pass (both use `UbFinder`). Per round: W Canteaut-Chabaud pivot swaps on the stored systematic columns (or a fresh elimination), a random split of the information set into two halves and a random window of L reduced rows; all subsets of size <= P of each half (`dumer`: the window pivot columns are elements too), bucketed by the window part of their column sum; every colliding pair with different detector parities is weighed, kept words go through the unchanged detector check, stabilizer local improvement and the driver's / pre-pass's independent verification. Single systematic words are also tried every round. Defaults from S0: P 2, L automatic (about log2 of the list size), W 32, B 1 round per iteration. `-ub-isd=off` = the GH-140 enumeration byte for byte (identical to GH-144's 6d2b7a1 on tier0+1). Soundness below (GH-146). See `optimization/experiments/GH-146/`. |
 | Tanner-graph automorphism candidates for the CC engine (GH-152; `-cc-aut=on\|off`, default on since 2026-10-28, PI decision; `-cc-aut=off` = previous CC search; experimental) | CC wrapper `min_distance_css_cc` only. With `-cc-aut=on`, `distcc::find_row_automorphisms` (`src/cc/cc_aut.{h,cc}`) proposes colour-preserving automorphisms of the Tanner graph (qubits, Hx rows, Hz rows) and one map exchanging the Hx and Hz rows. The generators are tried as extra candidates in `find_half_symmetry` after the GH-75 family, under the same two GF(2) checks (new optional arguments, default = old behaviour). The swap map is offered to `verify_dual_perm` (new, the `find_dual_maps` check for one map) only when `find_dual_maps` finds no map. `-v` prints `c cc aut:` lines. With `-cc-aut=off` no line of any log changes (identity verified on tier0+1, both engines); since the default flip (2026-10-28) the default MaxSAT path is still byte-identical, and the default CC path equals `-cc-aut=on`. Test mutants 13/14 (candidates or the swap map used without the GF(2) check). The MaxSAT path is unchanged. Soundness below (GH-152). See `optimization/experiments/GH-152/`. |
 | Stabilizer-overlap dominance constraints in the MaxSAT split (GH-148; `-stab-overlap=off\|on\|auto`, default auto since the PI's adoption decision; `-stab-overlap=off` = previous search; silently off with -joint/-roundingsat unless given explicitly) | Split MaxSAT path only (an explicit `-stab-overlap=on\|auto` is refused with -joint/-roundingsat/-engine=cc). For every CSS half, the rows g of the same-type stabilizer matrix (X half: Hx; Z half: Hz) that pass a GF(2) check Hpar g = 0 and Glog g = 0 on the input matrices (duplicates removed) give the constraint "at most floor(\|g\|/2) of the qubits of g are 1" in each probe: by default (`-stab-overlap-enc=native`) as a native propagator inside MaxCDCL (`Solver::setOverlapRows`, set by `run_css_half` after `build_css_half`; see the `Solver.h` / `Solver.cc` section), or as clauses (`add_overlap_constraints` at the end of `build_css_half`): `clauses` = binomial clauses for \|g\| <= 9 and Sinz's sequential counter above, `bin` / `seq` = one of them for every row. `on`: every verified row in every probe; `auto`: row g only in probes of cap c >= 2 (floor(\|g\|/2) + 1) (`-stab-overlap-ratio=X` sets the factor). With `-stab-overlap=off` the instance and the `-v` log are those of the search before the adoption byte for byte (main e52d15b; identity verified on tier0+1 x 2 modes). Soundness below (GH-148). See `optimization/experiments/GH-148/`. |
+| Native pack/charge lower bound in the MaxSAT split (GH-231; `-native-lb=off\|pack\|charge`, default off; experimental) | Split MaxSAT path only (refused with -joint/-roundingsat/-engine=cc). `run_css_half` passes the half's parity rows (and with `-native-lb-sparse` GH-181's redundant pair-sum rows, `native_lb_rows`) to `Solver::setPackRows`; MaxCDCL then checks the CC engine's node lower bounds (GH-124 `pack`, GH-157 `charge`) at every propagation fixpoint of its search and raises a conflict when the true qubits plus the bound reach the probe's cap. `-native-lb-prop` also sets to 0, at slack 0, every unassigned qubit outside the rows used. `-native-lb-gap=G` / `-native-lb-minr=M` gate the charge as `-cc-lb-gap` / `-cc-lb-minr`; `-native-lb-stats` / `-native-lb-check` print per-probe counters (the latter also re-verifies the incremental row state). With `-native-lb=off` (default) no row is passed and the search and `-v` output are main's byte for byte. Soundness below (GH-231). See `optimization/experiments/GH-231/`. |
 | CC engine switch (GH-124 S0, experimental) | `-engine=maxsat` (default) leaves the search above unchanged (byte-identical `-v` logs); `-engine=cc` runs the connected-cluster level search of `src/cc/` on the same CSS split through the same pipe protocol and output; `-engine=auto` is a structural selector (not the default): CC unless a half's parity matrix has a row of weight > 32 or, for n >= 64, a mean row weight > n/4 (pre-S1 rule; every bundled code goes to CC). `-seed=N` (timing seeds): N > 0 sets `random_seed` of every MaxCDCL solver on the MaxSAT path from the application layer (the engine source is unchanged; N = 0 or no flag keeps main's search byte for byte) and equals `-cc-seed=N` with the CC engine. A CC no-answer stop sends `RESULT -1 TRAP` on the pipe, and the parent withdraws the bounds it had received (MaxSAT never sends it). `find_dual_maps` additionally keeps the verified qubit maps (its report output is unchanged). Flags: `-seed`, `-cc-rules`, `-cc-dual`, `-ub-basis`, `-ub-search` and `-cc-ub-*` (GH-140), `-cc-seed`, `-cc-trace`, `-cc-stats`, `-cc-mutant` and `-cc-schedule` (tests only). Conflicting combinations are rejected (exit 1): CC flags without `-engine=cc\|auto`; `-joint`, `-roundingsat`, the dumps and `-native-parity-opb` with `-engine=cc\|auto`; the cardinality flags and `-dualshare-stats` with `-engine=cc` (`-engine=auto` warns about the flags its choice ignores). See `optimization/experiments/GH-124/`. |
 
 ### `src/cc/` (GH-124, experimental; new code, not derived from MaxCDCL or any third-party code)
@@ -673,6 +674,58 @@ d = 3..5: RESULT = enumeration, every UB >= d, LBs monotone <= d; test mutants (
 and 2 (the half's parity rows used as g without the GF(2) check) must give wrong answers. `make test-cc-flags`:
 values, conflicts, `-v` lines, no output with the flag off. *Evidence.* `optimization/experiments/GH-148/REPORT.md`.
 
+GH-231 (`-native-lb=off|pack|charge`, split MaxSAT path, `src/core/distqldpc.cc` and `src/solver/Solver.{h,cc}`; default
+off). *What it adds.* A bound check inside MaxCDCL's search. *Setting.* A probe of a half solves F_h = {x : H x = 0, G x != 0}
+with weight objective |x| (one soft literal ~x_i per qubit) under the cap c: the solver accepts only solutions with
+cost < UB in its internal units, which is |x| < theta with theta = UB + solutionCost + fixedCostBySearch + derivedCost +
+relaxedCost (`Solver::pcTheta`; the offsets are the costs MaxCDCL has already taken out of the search units, and its cost
+of a full assignment never undercounts |x|). *Bound.* Under a partial assignment let S be the true qubit variables, Z the
+false ones and A the unassigned ones; a row u (of H, or a sum of rows of H with `-native-lb-sparse`) is odd if |S & u| is
+odd. Every completion x (x contains S, avoids Z) with H x = 0 has u.x = 0, so x meets A & u in an odd number >= 1 of
+qubits for every odd u. (i) pack: odd rows u_1..u_p whose free sets A & u_i are pairwise disjoint (greedy, fewest free
+qubits first) give |x| >= |S| + p. (ii) charge (GH-157): for y >= 0 on the odd rows U with sum_{u in U, j in u} y_u <= 1
+for every j in A (here the raised local-degree charge in exact scaled integers, as `lb_charge`), weak LP duality for the
+hitting set of {A & u} gives |x| >= |S| + ceil(sum y). Neither bound uses minimality, the detector rows G, or any
+other constraint of the probe (orbit clauses, overlap rows): it holds for every completion of every probe. *Conflict.*
+When |S| + bound >= theta, the clause C = OR_{j in T} ~x_j OR OR_{k in Z'} x_k is returned as a conflict, where R are the
+rows used (the first `need` = theta - |S| packed rows, or the charge rows by decreasing y until the scaled sum exceeds
+(need - 1) L), T contains every true qubit of the rows of R plus further true qubits in trail order up to theta - bound
+(in practice all of S), and Z' contains the false qubits k of the rows of R whose load sum_{u in R, k in u} y_u exceeds 1
+(in pack: k on two rows used). *Why C is implied by H x = 0 and the cap.* Take any x with H x = 0 that falsifies C:
+x contains T and avoids Z'. For u in R, every qubit of u outside T and Z' is in W_u = (A & u) plus the omitted false qubits
+of u; all true qubits of u are in T, so |T & u| is odd and x meets W_u. The y restricted to R stays dual feasible on the
+union of the W_u (a dropped false qubit has load <= 1, the unassigned ones had load <= 1 over all odd rows), the W_u avoid
+T, hence |x| >= |T| + ceil(sum_R y) >= theta: no solution the solver could accept falsifies C. A row of the bound that
+is odd with no free qubit gives the clause over its own literals (implied by u.x = 0 alone). *Propagation*
+(`-native-lb-prop`). If |S| + bound = theta - 1 for rows R (pack: all p packed rows; charge: rows by decreasing y until
+the scaled sum exceeds (need - 2) L), then for an unassigned qubit j on no row of R the clause C_j = ~x_j OR C(theta - 1)
+is implied in the same way: x_j = 1 adds j to T, every row of R keeps its parity and its free set (j is not on it), so
+|x| >= |T| + 1 + bound = theta; x_j = 0 is enqueued with reason C_j. *Search integration.* The check runs in `search()`
+after `lPropagate()` returns without conflict at a fixpoint, before MaxCDCL's lookahead; propagated literals are
+propagated again before the next check. If no literal of C is at the current decision level, the solver first backtracks
+to the highest level of C (conflict analysis needs a literal of the current level); a conflict at level 0 ends the
+search for this UB exactly as MaxCDCL's own cost conflicts do. C depends on the cap only through theta: MaxCDCL's UB only
+decreases inside a run except after an UB failure, when every learnt clause (core, tier 2, local) is removed and the trail
+is reset to the start of the search (`removeLearntClauses`, `cancelUntilBeginning`), exactly as for its own learnt
+clauses from cost conflicts; a decrease of UB or a move of level-0 cost into the offsets keeps C valid (theta does not
+increase). Conflict clauses are transient (freed after analysis); propagation reasons are unwatched, in no clause list,
+skipped by on-the-fly clause reduction and freed once their variable is unassigned. The lookahead, `simplePropagate()`
+and the other propagation routines do not call the check: they only propagate less. *Tests.* `make test-cc` Part N:
+(a) half-level probes (`run_css_half`, caps 1..d_h + 2, feasibility and optimisation) on random halves with n = 14..28,
+six configurations (pack; charge; charge + prop with gap unlimited and 0; pack + prop; charge + prop + sparse), against
+the brute-force minimum weight of F_h: every probe answer exact, and every explanation clause and propagation reason
+audited against ker H by enumeration (every x in ker H falsifying it weighs >= theta), and the incremental row state
+re-verified at every check; (b) the MaxSAT split driver on the Part B codes and the rotated surface codes d = 3..5 in nine
+configurations (with -card-mto, -ub-pre, -dualmode off/skip, -no-symbreak, -oddcap-skip off, -stab-overlap off): RESULT =
+enumeration, every explanation audited. Test mutants (no flag) 1 (pack without disjointness), 2 (no false literal in
+the explanation), 3 (charge inflated by 1/D), 4 (conflict one below the cap), 5 (propagation onto the rows used), 6
+(redundant rows lose a qubit) must each produce an explanation the audit rejects and a wrong probe answer. `make
+test-cc-flags` 7o: values, conflicts, the `c NATIVE-LB` line, `-v` output with `-native-lb=off` equal to the default.
+*Credit.* The bounds are GH-124's packing and GH-157's charge (Banfi, Ferrari, Favano, Tarable, Barletta,
+arXiv:2610.28008; Okada-Kasai, cpm-ldpc-distance) and GH-181's redundant rows (idea of Qubitserf 04b9349's
+augment_sparse_checks, S. Cercelescu, MIT, and Puchert-Tillmann arXiv:2004.03387); the propagator, its explanations and
+the search integration are new code. *Evidence.* `optimization/experiments/GH-231/`.
+
 Fix round 1 (S0a): the S0 spec's literal mutants 3 ("orbit seeds without forbidding earlier orbits") and 4 ("stop
 rule without checking the other half's lower bound") are equivalent mutants as built: the first only drops a
 restriction, so every level verdict stays exact; the second skips a check that the lockstep pick order (lowest
@@ -762,6 +815,23 @@ not a change to MaxSAT costs or quantum-code distance semantics. See
   found by the solver satisfies all hard clauses of the half instance, so its weight is a valid upper bound
   even if it were to violate an overlap row (the rows are dominance constraints, see GH-148 above)
 - Counters `ovProps`, `ovConfls` (printed by `-frontier-stats` as a `c OVERLAP` line)
+
+#### Native pack/charge lower bound (GH-231, experimental; inactive unless rows are set)
+
+- `setPackRows(rows, nQubits, mode)`: parity rows over qubit variables, mode 1 pack / 2 pack + charge; called by
+  `run_css_half` only with `-native-lb=pack|charge`; with `pcMode` 0 every new branch below is skipped, so the solver
+  behaves as before byte for byte
+- Row state (unassigned count, parity of the true qubits, lists of odd and dead rows, number of true qubits) kept
+  incrementally from the trail (`pcSync`, as GH-129's frontier state; `cancelUntil()` / `cancelUntilBeginning()` lower
+  `pcSynced`); `pcVerifyState` recomputes it (debug)
+- `pcCheck()`: called in `search()` after `lPropagate()` at a fixpoint without conflict, before `lookahead()`; returns a
+  transient conflict clause (`pcCollect` / `pcFinishClause`; freed after `analyze()`), backtracking first to the clause's
+  highest level when it has no literal at the current one; with `pcProp`, enqueues x_j = 0 at slack 0 with reasons
+  allocated by `pcPropagate` (kept in `pcReasons`, freed by `pcSweepReasons` once unused, relocated in `relocAll`,
+  skipped by `reduceClause()` / `simplereduceClause()` via `pcIsReason`)
+- `pcTheta()`: the cap in objective units (UB plus the cost offsets of the search)
+- Test hooks: `pcMutant` (1..5), `pcAudit` (called with every explanation clause and theta); counters printed by
+  `-native-lb-stats` as a `c NATIVE-LB` line
 
 ---
 

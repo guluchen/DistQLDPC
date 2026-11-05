@@ -1159,12 +1159,13 @@ static bool g_frontier_stats = false, g_frontier_check = false;
  * rows are passed per probe as for -frontier. A conflict is raised when the true qubits plus the bound reach the probe's
  * cap; the clause is implied by H x = 0 and the cap alone (no minimality argument), so probe answers are unchanged.
  * -native-lb-gap=G (default 0; -1 = always) and -native-lb-minr=M (default 1) gate the charge evaluation as GH-157's
- * -cc-lb-gap / -cc-lb-minr; -native-lb-stats prints per-probe counters to stderr; -native-lb-check re-verifies the
- * incremental row state at every check (debug). */
+ * -cc-lb-gap / -cc-lb-minr; -native-lb-prop adds the slack-0 propagation; -native-lb-sparse adds GH-181's redundant rows;
+ * -native-lb-stats prints per-probe counters to stderr; -native-lb-check re-verifies the incremental row state at every
+ * check (debug). Soundness: MODIFICATIONS.md (GH-231). */
 static int g_native_lb = 0;            /* 0 off, 1 pack, 2 pack + charge */
 static int g_native_lb_gap = 0, g_native_lb_minr = 1;
 static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false, g_native_lb_sparse = false;
-static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant */
+static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant 1..5; 6 = each redundant row loses its last qubit */
 static void (*g_native_lb_audit)(void*, const vec<Lit>&, uint64_t) = NULL;   /* test only: explanation audit hook */
 struct NativeLbTotals { unsigned long long checks, pack, charge, dead, props, state_fails; };
 static NativeLbTotals g_native_lb_tot = {0, 0, 0, 0, 0, 0};   /* summed over probes (tests, stats) */
@@ -1197,8 +1198,10 @@ static std::vector<std::vector<int> > native_lb_rows(const Matrix& H, bool spars
         }
     }
     size_t lim = 4 * rows.size();
-    for (std::set<std::pair<size_t, std::vector<int> > >::const_iterator it = cand.begin(); it != cand.end() && lim > 0; ++it, --lim)
+    for (std::set<std::pair<size_t, std::vector<int> > >::const_iterator it = cand.begin(); it != cand.end() && lim > 0; ++it, --lim) {
         rows.push_back(it->second);
+        if (g_native_lb_mutant == 6 && rows.back().size() > 1) rows.back().pop_back();   /* test mutant 6: not a sum of rows of H */
+    }
     return rows;
 }
 
@@ -2671,7 +2674,7 @@ int main(int argc, char** argv) {
         else if (!strcmp(argv[i], "-native-lb-sparse"))
             g_native_lb_sparse = true;
         else if (!strncmp(argv[i], "-native-lb", 10))
-            die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-stats, -native-lb-check)");
+            die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-prop, -native-lb-sparse, -native-lb-stats, -native-lb-check)");
         else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */
             g_ub_pre = -1.0; g_ub_pre_given = true;
         } else if (!strcmp(argv[i], "-ub-pre=on")) {
@@ -2972,7 +2975,9 @@ int main(int argc, char** argv) {
             printf("            bounds as a check inside MaxCDCL: disjoint odd parity rows (pack) and the scaled hitting-set dual\n");
             printf("            (charge, implies pack) bound the qubits any completion still needs; true qubits + bound >= cap\n");
             printf("            gives a conflict clause implied by H x = 0 and the cap; -native-lb-gap=G (default 0, -1 always),\n");
-            printf("            -native-lb-minr=M (default 1) gate the charge; -native-lb-stats, -native-lb-check (debug)\n");
+            printf("            -native-lb-minr=M (default 1) gate the charge; -native-lb-prop: at slack 0 set the qubits outside\n");
+            printf("            the rows used to 0; -native-lb-sparse: add GH-181's redundant pair-sum rows; -native-lb-stats,\n");
+            printf("            -native-lb-check (debug)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
             printf("  Solver runs in forked child; bounds sync via pipe; hard kill on timeout.\n");

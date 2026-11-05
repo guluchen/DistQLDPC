@@ -366,7 +366,7 @@ static RunOut run_driver(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
 struct PreCfg { const char* name; double pre; uint64_t iters; bool oddcap; uint64_t seed; int dualmode; bool symbreak; int card; int mutant;
                 int ovl; int ovl_enc; int ovl_mutant; double ovl_ratio;   /* GH-148 (0 = -stab-overlap off) */
                 int isd = 0; int isd_p = 2;   // GH-146: collision mode of the pre-pass finder
-                int nlb = 0; bool nlb_prop = false; int nlb_gap = 0; int nlb_minr = 1; int nlb_mutant = 0; bool nlb_check = false; };   // GH-231
+                int nlb = 0; bool nlb_prop = false; int nlb_gap = 0; int nlb_minr = 1; int nlb_mutant = 0; bool nlb_check = false; bool nlb_sparse = false; };   // GH-231
 
 // GH-231: explanation audit (in the forked child). ctx = the probe's parity matrix H (n <= 31). Every x in ker H that
 // falsifies every literal of the clause (x_v = 1 for a literal ~x_v, x_v = 0 for a literal x_v) must weigh >= theta
@@ -433,7 +433,7 @@ static RunOut run_maxsat(const Matrix& Hx, const Matrix& Hz, const Matrix& Gx, c
             g_ub_isd.isd = pc->isd; g_ub_isd.isd_p = pc->isd_p;   // GH-146 (child process only)
             g_stab_overlap = pc->ovl != 0; g_stab_overlap_enc = pc->ovl_enc; g_stab_overlap_mutant = pc->ovl_mutant; g_stab_overlap_ratio = pc->ovl_ratio;   // GH-148
             g_native_lb = pc->nlb; g_native_lb_prop = pc->nlb_prop; g_native_lb_gap = pc->nlb_gap; g_native_lb_minr = pc->nlb_minr;   // GH-231
-            g_native_lb_mutant = pc->nlb_mutant; g_native_lb_check = pc->nlb_check; if (pc->nlb) g_native_lb_audit = nlb_audit;
+            g_native_lb_mutant = pc->nlb_mutant; g_native_lb_check = pc->nlb_check; g_native_lb_sparse = pc->nlb_sparse; if (pc->nlb) g_native_lb_audit = nlb_audit;
             (void)min_distance_css_interleaved(Hx, Hz, Gx, Gz, 0, fd[1], pc->card, pc->symbreak, pc->dualmode, false);
             if (pc->nlb) {
                 char nb[256];
@@ -579,7 +579,7 @@ static bool nlb_half_probes(const std::vector<Mask>& H, const std::vector<Mask>&
         if (devnull >= 0 && !getenv("CC_TEST_VERBOSE")) { dup2(devnull, 1); dup2(devnull, 2); }
         alarm(120);
         g_native_lb = c.nlb; g_native_lb_prop = c.nlb_prop; g_native_lb_gap = c.nlb_gap; g_native_lb_minr = c.nlb_minr;
-        g_native_lb_mutant = c.nlb_mutant; g_native_lb_check = c.nlb_check; g_native_lb_audit = c.nlb ? nlb_audit : NULL;
+        g_native_lb_mutant = c.nlb_mutant; g_native_lb_check = c.nlb_check; g_native_lb_sparse = c.nlb_sparse; g_native_lb_audit = c.nlb ? nlb_audit : NULL;
         g_seed = c.seed;
         Matrix mH = to_matrix(H, n), mG = to_matrix(G, n);
         std::string out;
@@ -636,8 +636,12 @@ static std::vector<PreCfg> nlb_cfgs() {
     v.push_back(nlb_cfg("nlb-charge-prop-pre1s-seed3", 2, true, 0, 1, 0, false, 0, 3, DUALMODE_SHARE, true, true, 1.0, 0, 1));
     v.push_back(nlb_cfg("nlb-charge-prop-dualoff-nosym-oddoff-noovl", 2, true, -1, 1, 0, true, 0, 2, DUALMODE_OFF, false, false, -1.0, 0, 0));
     v.push_back(nlb_cfg("nlb-charge-prop-skip-iter1-mto-minr2", 2, true, 1, 2, 0, true, 3, 4, DUALMODE_SKIP, true, true, 1.0, 1, 1));
-    for (int m = 1; m <= 5; m++)
+    v.push_back(nlb_cfg("nlb-charge-prop-sparse", 2, true, 0, 1, 0, true, 0, 5, DUALMODE_SHARE, true, true, -1.0, 0, 1)); v.back().nlb_sparse = true;
+    v.push_back(nlb_cfg("nlb-pack-prop-sparse-always-mto", 1, true, -1, 1, 0, true, 3, 6, DUALMODE_OFF, true, true, 1.0, 1, 1)); v.back().nlb_sparse = true;
+    for (int m = 1; m <= 6; m++) {
         v.push_back(nlb_cfg("nlb-mutant", 2, true, -1, 1, m, false, 0, (uint64_t)m, DUALMODE_SHARE, true, true, -1.0, 0, 0));
+        if (m == 6) v.back().nlb_sparse = true;
+    }
     return v;
 }
 
@@ -842,8 +846,8 @@ int main(int argc, char** argv) {
     long f_runs = 0, f_bad = 0, f_above = 0, f_exact = 0, f_m1_runs = 0, f_m1_bad = 0, f_m2_runs = 0, f_m2_wrong = 0;
     long g_runs = 0, g_bad = 0, g_codes_removing = 0, g_m_runs[3] = {0, 0, 0}, g_m_wrong[3] = {0, 0, 0}, g_m_failed[3] = {0, 0, 0}, g_m_wrong_nat[3] = {0, 0, 0};
     // GH-231 Part N: -native-lb (canonical runs, mutants 1..5), per-run NLB counters summed
-    long n_runs = 0, n_bad = 0, n_mruns[6] = {0}, n_mwrong[6] = {0}, n_mfailed[6] = {0}, n_mcaught[6] = {0}, n_surf = 0, n_surf_bad = 0;
-    unsigned long long n_tot[8] = {0}, n_mtot[6][8] = {{0}};
+    long n_runs = 0, n_bad = 0, n_mruns[7] = {0}, n_mwrong[7] = {0}, n_mfailed[7] = {0}, n_mcaught[7] = {0}, n_surf = 0, n_surf_bad = 0;
+    unsigned long long n_tot[8] = {0}, n_mtot[7][8] = {{0}};
     long e_halves = 0, e_bad = 0, e_reach = 0, e_nondet = 0, e_mut11_unit = 0, e_runs = 0, e_dbad = 0, e_aborted = 0, e_mut12_wrong = 0, e_mut_halves = 0;
     // GH-146 collision mode
     static const struct ICfg { const char* name; int isd, p, l, walk, batch, refresh; } icfgs[] = {
@@ -1449,10 +1453,10 @@ int main(int argc, char** argv) {
                "%llu explanation clauses audited, %llu bad; checks %llu, pack conflicts %llu, charge conflicts %llu, dead rows %llu, "
                "propagations %llu, row-state mismatches %llu\n", n_runs, b_inst, n_bad, n_surf, n_surf_bad, n_tot[0], n_tot[1], n_tot[2], n_tot[3],
                n_tot[4], n_tot[5], n_tot[6], n_tot[7]);
-        static const char* mname[6] = {"", "pack without disjointness", "no false literal in the explanation", "charge inflated by 1/D",
-                                       "conflict one below the cap", "propagation onto the rows used"};
+        static const char* mname[7] = {"", "pack without disjointness", "no false literal in the explanation", "charge inflated by 1/D",
+                                       "conflict one below the cap", "propagation onto the rows used", "redundant rows lose a qubit (-native-lb-sparse)"};
         bool mok = false;
-        for (int m = 1; m <= 5; m++) {
+        for (int m = 1; m <= 6; m++) {
             printf("partN mutant %d (%s): %ld runs, audit caught a bad explanation in %ld (%llu of %llu clauses bad), %ld failed, %ld with a wrong RESULT d OPTIMAL\n",
                    m, mname[m], n_mruns[m], n_mcaught[m], n_mtot[m][1], n_mtot[m][0], n_mfailed[m], n_mwrong[m]);
             if (n_mcaught[m]) mok = true;   // the per-mutant expectations are in Part N (a); here at least one mutant must be caught
@@ -2238,15 +2242,17 @@ int main(int argc, char** argv) {
         const int NN = argc > 9 ? atoi(argv[9]) : 300;
         const unsigned long long rng_saved_n = rng_state;
         rng_state = 0x9e3779b97f4a7c15ULL;
-        long na_halves = 0, na_probes = 0, na_bad = 0, na_mprobes[6] = {0}, na_mwrong[6] = {0}, na_mcaught[6] = {0};
-        unsigned long long na_tot[8] = {0}, na_mtot[6][8] = {{0}};
-        static const PreCfg ncan[] = {
-            nlb_cfg("pack", 1, false, 0, 1, 0, true, 0, 0, DUALMODE_SHARE, true, true, -1.0, 0, 0),
-            nlb_cfg("charge-always", 2, false, -1, 1, 0, true, 3, 1, DUALMODE_SHARE, true, true, -1.0, 0, 0),
-            nlb_cfg("charge-prop-always", 2, true, -1, 1, 0, true, 0, 2, DUALMODE_SHARE, true, true, -1.0, 0, 0),
-            nlb_cfg("charge-prop-gap0", 2, true, 0, 1, 0, true, 3, 3, DUALMODE_SHARE, true, true, -1.0, 0, 0),
-            nlb_cfg("pack-prop", 1, true, 0, 1, 0, true, 0, 4, DUALMODE_SHARE, true, true, -1.0, 0, 0),
-        };
+        long na_halves = 0, na_probes = 0, na_bad = 0, na_mprobes[7] = {0}, na_mwrong[7] = {0}, na_mcaught[7] = {0};
+        unsigned long long na_tot[8] = {0}, na_mtot[7][8] = {{0}};
+        std::vector<PreCfg> ncan;
+        ncan.push_back(nlb_cfg("pack", 1, false, 0, 1, 0, true, 0, 0, DUALMODE_SHARE, true, true, -1.0, 0, 0));
+        ncan.push_back(nlb_cfg("charge-always", 2, false, -1, 1, 0, true, 3, 1, DUALMODE_SHARE, true, true, -1.0, 0, 0));
+        ncan.push_back(nlb_cfg("charge-prop-always", 2, true, -1, 1, 0, true, 0, 2, DUALMODE_SHARE, true, true, -1.0, 0, 0));
+        ncan.push_back(nlb_cfg("charge-prop-gap0", 2, true, 0, 1, 0, true, 3, 3, DUALMODE_SHARE, true, true, -1.0, 0, 0));
+        ncan.push_back(nlb_cfg("pack-prop", 1, true, 0, 1, 0, true, 0, 4, DUALMODE_SHARE, true, true, -1.0, 0, 0));
+        ncan.push_back(nlb_cfg("charge-prop-sparse", 2, true, -1, 1, 0, true, 0, 5, DUALMODE_SHARE, true, true, -1.0, 0, 0));
+        ncan.back().nlb_sparse = true;
+        const int NC = (int)ncan.size();
         for (int inst = 0; inst < NN; inst++) {
             const int n = 14 + (int)rnd(15);   // 14..28 qubits
             const int m = n / 2 + (int)rnd((unsigned)(n / 4 + 1));
@@ -2278,10 +2284,11 @@ int main(int argc, char** argv) {
             if (dh > n) continue;   // no element of F
             na_halves++;
             const int maxcap = std::min(n, dh + 2);
-            for (int ci = 0; ci < 5 + 5; ci++) {
-                const bool mut = ci >= 5;
-                PreCfg c = mut ? nlb_cfg("mutant", 2, true, -1, 1, ci - 4, false, (inst & 1) ? 3 : 0, (uint64_t)inst, DUALMODE_SHARE, true, true, -1.0, 0, 0)
-                               : ncan[ci];
+            for (int ci = 0; ci < NC + 6; ci++) {
+                const bool mut = ci >= NC;
+                PreCfg c = mut ? nlb_cfg("mutant", 2, true, -1, 1, ci - NC + 1, false, (inst & 1) ? 3 : 0, (uint64_t)inst, DUALMODE_SHARE, true, true, -1.0, 0, 0)
+                               : ncan[(size_t)ci];
+                if (mut && ci - NC + 1 == 6) c.nlb_sparse = true;
                 std::vector<int> st; std::vector<long long> val; unsigned long long nl[8];
                 const bool okrun = nlb_half_probes(H, G, n, maxcap, c, (inst % 3 == 0) ? 1 : 0, st, val, nl);
                 bool wrong = !okrun;
@@ -2295,7 +2302,7 @@ int main(int argc, char** argv) {
                     }
                 }
                 if (mut) {
-                    const int mm = ci - 4;
+                    const int mm = ci - NC + 1;
                     na_mprobes[mm]++;
                     for (int k = 0; k < 8; k++) na_mtot[mm][k] += nl[k];
                     if (nl[1]) na_mcaught[mm]++;
@@ -2311,13 +2318,13 @@ int main(int argc, char** argv) {
             }
         }
         rng_state = rng_saved_n;
-        printf("partN (a) (GH-231 half-level probes, caps 1..d_h + 2, feasibility + optimisation): %ld halves x 5 configurations, %ld bad; "
+        printf("partN (a) (GH-231 half-level probes, caps 1..d_h + 2, feasibility + optimisation): %ld halves x 6 configurations, %ld bad; "
                "%llu explanation clauses audited, %llu bad; checks %llu, pack conflicts %llu, charge conflicts %llu, dead rows %llu, propagations %llu, "
                "row-state mismatches %llu\n", na_halves, na_bad, na_tot[0], na_tot[1], na_tot[2], na_tot[3], na_tot[4], na_tot[5], na_tot[6], na_tot[7]);
-        static const char* mname[6] = {"", "pack without disjointness", "no false literal in the explanation", "charge inflated by 1/D",
-                                       "conflict one below the cap", "propagation onto the rows used"};
+        static const char* mname[7] = {"", "pack without disjointness", "no false literal in the explanation", "charge inflated by 1/D",
+                                       "conflict one below the cap", "propagation onto the rows used", "redundant rows lose a qubit (-native-lb-sparse)"};
         bool mok = true;
-        for (int mm = 1; mm <= 5; mm++) {
+        for (int mm = 1; mm <= 6; mm++) {
             printf("partN (a) mutant %d (%s): %ld halves, audit caught a bad explanation on %ld (%llu of %llu clauses bad), wrong probe answers on %ld\n",
                    mm, mname[mm], na_mprobes[mm], na_mcaught[mm], na_mtot[mm][1], na_mtot[mm][0], na_mwrong[mm]);
             if (na_mcaught[mm] == 0 || na_mwrong[mm] == 0) mok = false;   // every mutant: a bad explanation found by the audit and a wrong answer

@@ -9,6 +9,8 @@
 Every run is -MODE (-no-card | -card-mto) -seed=S.
   panel OUT M_BIN C_BIN ARMS SEEDS MODES LIMIT STEM...: seeds 0..SEEDS-1, the arms of each (code, mode, seed) adjacent.
   tier5 OUT M_BIN C_BIN ARMS MODES LIMIT STEM...: default seed (-seed=0).
+  answers OUT M_BIN C_BIN STEM...: Tier 0 answer checks of the candidate with -native-lb in both modes (tier0/1: ten variants,
+       tier2/3: four), limit 2400 s; the runner checks every answer and bound against the stem.
 """
 import glob, json, os, sys
 kind, out, MBIN, CBIN = sys.argv[1:5]
@@ -51,6 +53,20 @@ elif kind == 'tier5':
                 b, extra = arm(a)
                 jobs.append(dict(id=f't5.{stem}.{mode}.{a}', bin=b, args=[f'-{mode}'] + extra, code=code, stem=stem, tier=tier,
                                  arm=a, seed=0, mode=mode, limit=limit))
+elif kind == 'answers':
+    NL = ['-native-lb=charge', '-native-lb-prop']
+    V_ALL = [('CP', NL), ('CPS-seed1', NL + ['-native-lb-sparse', '-seed=1']), ('CP-nosym-dualoff-seed2', NL + ['-no-symbreak', '-dualmode=off', '-seed=2']),
+             ('PP-nopre-noovl-seed3', ['-native-lb=pack', '-native-lb-prop', '-ub-pre=off', '-stab-overlap=off', '-seed=3']),
+             ('C-seed4', ['-native-lb=charge', '-seed=4']), ('CPg-oddoff', NL + ['-native-lb-gap=-1', '-oddcap-skip=off']),
+             ('CP-dualskip-minr3', NL + ['-dualmode=skip', '-native-lb-minr=3']), ('P-frontier-off', ['-native-lb=pack', '-frontier=off']),
+             ('CPS-ovlon-seed5', NL + ['-native-lb-sparse', '-stab-overlap=on', '-seed=5']), ('CP-isdoff-check', NL + ['-ub-isd=off', '-native-lb-check'])]
+    for stem in sys.argv[5:]:
+        code, tier = code_of(stem)
+        vs = V_ALL if tier in ('tier0', 'tier1') else V_ALL[:4]
+        for mode in ('no-card', 'card-mto'):
+            for name, extra in vs:
+                jobs.append(dict(id=f'ans.{stem}.{mode}.{name}', bin=CBIN, args=[f'-{mode}'] + extra, code=code, stem=stem, tier=tier,
+                                 arm=name, seed=0, mode=mode, limit=2400))
 with open(out, 'w') as fh:
     for j in jobs: fh.write(json.dumps(j) + '\n')
 print(len(jobs), 'jobs ->', out)
