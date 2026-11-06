@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """GH-231 job files (MaxSAT engine; run from a worktree root on yfclab2). Arms:
   M   = frozen main (its defaults) = the baseline of this round;
-  O   = the GH-231 candidate binary with its defaults (-native-lb off: must behave as main);
+  O   = the GH-231 candidate binary with its defaults (before the flip -native-lb off; after it charge + prop (max 128) + sparse);
+  Ooff = the candidate with -native-lb=off (must behave as main);
   C   = candidate, -native-lb=charge;            CP = candidate, -native-lb=charge -native-lb-prop=on;
   P   = candidate, -native-lb=pack;              PP = candidate, -native-lb=pack -native-lb-prop=on;
   CPg = candidate, -native-lb=charge -native-lb-prop=on -native-lb-gap=-1;
@@ -16,7 +17,7 @@ Every run is -MODE (-no-card | -card-mto) -seed=S.
 """
 import glob, json, os, sys
 kind, out, MBIN, CBIN = sys.argv[1:5]
-ARMS = {'M': (None, []), 'O': ('C', []), 'C': ('C', ['-native-lb=charge']), 'CP': ('C', ['-native-lb=charge', '-native-lb-prop=on']),
+ARMS = {'M': (None, []), 'O': ('C', []), 'Ooff': ('C', ['-native-lb=off']), 'C': ('C', ['-native-lb=charge']), 'CP': ('C', ['-native-lb=charge', '-native-lb-prop=on']),
         'P': ('C', ['-native-lb=pack']), 'PP': ('C', ['-native-lb=pack', '-native-lb-prop=on']),
         'CPg': ('C', ['-native-lb=charge', '-native-lb-prop=on', '-native-lb-gap=-1']),
         'CPS': ('C', ['-native-lb=charge', '-native-lb-prop=on', '-native-lb-sparse=on']),

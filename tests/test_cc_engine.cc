@@ -100,6 +100,12 @@
 //   60 % after any level; seed 2: no raise): the ladder must match enumeration; mutant 15 (charge inflated by 1/D) must
 //   give wrong half-level verdicts. The search hands a copy of the odd rows' candidate sets to the lb_charge tested in
 //   (a). (c) Part B driver configurations with charge (minr 1 and 3, gap 0 / 1 / unlimited, with and without pack).
+// Part N (GH-231, -native-lb on the MaxSAT path): (a) half-level probes (run_css_half, caps 1..d_h + 2, feasibility and
+//   optimisation) on random halves with n = 14..28 in six configurations vs brute force, every explanation clause and
+//   propagation reason audited against ker H by enumeration (nlb_audit), the incremental row state re-verified; (b) the
+//   MaxSAT split driver on the Part B codes and the rotated surface codes d = 3..5 in nine configurations, every explanation
+//   audited. Mutants (test-only g_native_lb_mutant) 1..6 must each give a rejected explanation and a wrong answer in (a).
+//   Since the default flip, Part D (production defaults) also runs the default bound (charge, prop, prop-max 128, sparse).
 #define main distqldpc_main_unused
 #include "../src/core/distqldpc.cc"
 #undef main
@@ -1448,6 +1454,8 @@ int main(int argc, char** argv) {
                g_m_failed[2], g_m_runs[2], g_m_wrong[2], g_surf_mwrong[2]);
         if (g_codes_removing == 0 || g_m_wrong[1] == 0 || g_m_wrong[2] == 0 || g_m_wrong_nat[1] == 0) { fprintf(stderr, "CC_FAIL GH-148 mutant/coverage expectations not met\n"); fails++; }
     }
+    if (g_native_lb != 2 || !g_native_lb_prop || g_native_lb_prop_max != 128 || !g_native_lb_sparse || g_native_lb_gap != 0 || g_native_lb_minr != 1 ||
+        g_native_lb_after) { fprintf(stderr, "CC_FAIL GH-231 defaults (charge, prop on, prop-max 128, sparse on, gap 0, minr 1, before)\n"); fails++; }   // parent: untouched globals
     {   // GH-231 Part N summary
         printf("partN (GH-231 -native-lb, MaxSAT split driver): %ld runs on %ld codes, %ld bad; surface codes d = 3..5: %ld runs, %ld bad; "
                "%llu explanation clauses audited, %llu bad; checks %llu, pack conflicts %llu, charge conflicts %llu, dead rows %llu, "

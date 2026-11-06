@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """GH-231 identity check (from GH-227's ident.py, MaxSAT configurations only): frozen main (BASE) vs the GH-231 candidate
-(CAND), -v logs on tier0+tier1, {-no-card, -card-mto} x {default, -ub-pre=off} with the same flags for both, and the same
-four with -native-lb=off given explicitly to CAND (the default). Expected: IDENTICAL (main's default -ub-pre=on alternates
+(CAND), -v logs on tier0+tier1, {-no-card, -card-mto} x {default, -ub-pre=off}, CAND with -native-lb=off (before the default
+flip also without it: the "maxsat" / "maxsat-nopre" configurations; after the flip those differ by design). Expected: IDENTICAL (main's default -ub-pre=on alternates
 its halves by finder TIME, so a -v log can differ between two runs of the same binary; such a difference is attributed to
 timing only if BASE-vs-BASE differs too or the first differing line is an ub-pre progress line). Time fields masked;
 stdout+stderr compared line by line. Every process pinned and capped (taskset -c CORE prlimit --as=4294967296).

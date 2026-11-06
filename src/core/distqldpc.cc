@@ -1154,7 +1154,9 @@ enum HalfStatus { HALF_FOUND, HALF_NONE, HALF_OPT, HALF_UNKNOWN, HALF_INFEASIBLE
 static int g_frontier_mode = 4;   /* GH-130: auto is the default (PI 2026-10-18); -frontier=off restores main's pre-GH-130 search */
 static bool g_frontier_stats = false, g_frontier_check = false;
 
-/* GH-231 -native-lb=off|pack|charge (split MaxSAT path; default off = main's search): the CC node lower bounds (GH-124 pack,
+/* GH-231 -native-lb=off|pack|charge (split MaxSAT path; default charge with -native-lb-prop=on -native-lb-prop-max=128
+ * -native-lb-sparse=on; -native-lb=off = the search before GH-231 byte for byte; silently off with -joint / -roundingsat
+ * unless given explicitly): the CC node lower bounds (GH-124 pack,
  * GH-157 charge) as a native bound check inside MaxCDCL (Solver::setPackRows / pcCheck, see Solver.h). The half's parity
  * rows are passed per probe as for -frontier. A conflict is raised when the true qubits plus the bound reach the probe's
  * cap; the clause is implied by H x = 0 and the cap alone (no minimality argument), so probe answers are unchanged.
@@ -1162,12 +1164,12 @@ static bool g_frontier_stats = false, g_frontier_check = false;
  * -cc-lb-gap / -cc-lb-minr; -native-lb-prop=on adds the slack-0 propagation; -native-lb-sparse=on adds GH-181's redundant rows;
  * -native-lb-stats prints per-probe counters to stderr; -native-lb-check re-verifies the incremental row state at every
  * check (debug). Soundness: MODIFICATIONS.md (GH-231). */
-static int g_native_lb = 0;            /* 0 off, 1 pack, 2 pack + charge */
+static int g_native_lb = 2;            /* 0 off, 1 pack, 2 pack + charge (default since GH-231's adoption; -native-lb=off = main before it) */
 static bool g_native_lb_given = false;   /* -native-lb=... given explicitly */
 static int g_native_lb_gap = 0, g_native_lb_minr = 1;
 static bool g_native_lb_after = false;
-static int g_native_lb_prop_max = -1;   /* -native-lb-prop-max=N (-1 = no limit) */   /* -native-lb-order=before|after (default before: the check runs before MaxCDCL's lookahead) */
-static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false, g_native_lb_sparse = false;
+static int g_native_lb_prop_max = 128;   /* -native-lb-prop-max=N (-1 = no limit; default 128) */   /* -native-lb-order=before|after (default before: the check runs before MaxCDCL's lookahead) */
+static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = true, g_native_lb_sparse = true;   /* GH-231 defaults: prop on, sparse on */
 static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant 1..5; 6 = each redundant row loses its last qubit */
 static void (*g_native_lb_audit)(void*, const vec<Lit>&, uint64_t) = NULL;   /* test only: explanation audit hook */
 struct NativeLbTotals { unsigned long long checks, pack, charge, dead, props, state_fails; };
@@ -2988,13 +2990,15 @@ int main(int argc, char** argv) {
             printf("            row in every probe; auto: row g only in probes with cap >= 2 (floor(|g|/2) + 1) (-stab-overlap-ratio=X);\n");
             printf("            -stab-overlap-enc=native|clauses|bin|seq (default native: a propagator inside MaxCDCL; clauses: binomial\n");
             printf("            clauses up to |g| = 9, sequential counter above; bin / seq: one of them for every row)\n");
-            printf("  Native lower bound (split MaxSAT path only, GH-231): -native-lb=off|pack|charge (default off): the CC node\n");
+            printf("  Native lower bound (split MaxSAT path only, GH-231): -native-lb=off|pack|charge (default charge; off restores\n");
+            printf("            the previous search): the CC node\n");
             printf("            bounds as a check inside MaxCDCL: disjoint odd parity rows (pack) and the scaled hitting-set dual\n");
             printf("            (charge, implies pack) bound the qubits any completion still needs; true qubits + bound >= cap\n");
             printf("            gives a conflict clause implied by H x = 0 and the cap; -native-lb-gap=G (default 0, -1 always),\n");
-            printf("            -native-lb-minr=M (default 1) gate the charge; -native-lb-prop=on|off (default off): at slack 0 set\n");
-            printf("            the qubits outside the rows used to 0; -native-lb-sparse=on|off (default off): add GH-181's\n");
-            printf("            redundant pair-sum rows; -native-lb-stats,\n");
+            printf("            -native-lb-minr=M (default 1) gate the charge; -native-lb-prop=on|off (default on): at slack 0 set\n");
+            printf("            the qubits outside the rows used to 0, unless more than -native-lb-prop-max=N (default 128; -1 no\n");
+            printf("            limit); -native-lb-sparse=on|off (default on): add GH-181's redundant pair-sum rows;\n");
+            printf("            -native-lb-order=before|after (default before MaxCDCL's lookahead); -native-lb-stats,\n");
             printf("            -native-lb-check (debug)\n");
             printf("  Output (default): live c trying d / c d_lb / c d_ub, then c d / o d\n");
             printf("  -v / -debug: solver search log and matrix paths\n");
