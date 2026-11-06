@@ -372,6 +372,15 @@ TN_496_2_27to30), TN_540_4_24to34 (was TN_540_4_23to34), TN_648_14_22to28 (was T
 TN_684_2_24to29 (was TN_684_2_22to29); COLOR_1027_1_31to37 (was COLOR_1027_1_28to37) and
 COLOR_2791_1_28to61 (was COLOR_2791_1_26to61), section 9.
 
+Renamed 2026-11-07 (same matrices, upper bounds unchanged): lower bounds raised by DistQLDPC's optional CC
+engine in 12 h follow-up runs (GH-225 follow-up, records in optimization/experiments/GH-225/lb-push/), each
+reached by at least two runs whose search trees differ: main 755e0c21's CC default (gated erasure) and main
+1239e9a2's CC default plus ungated erasure (and, for some codes, without erasure), or a different row order.
+This is the same engine, not an independent second method: TN_288_2_23to24 (was TN_288_2_22to24),
+TN_432_8_24to29 (was TN_432_8_23to29), TN_468_4_24to29 (was TN_468_4_23to29), TN_576_2_25to37 (was
+TN_576_2_24to37), TN_612_2_25to40 (was TN_612_2_24to40); COLOR_1027_1_32to37 (was COLOR_1027_1_31to37) and
+COLOR_2791_1_29to61 (was COLOR_2791_1_28to61), section 9.
+
 9. Triangular 6.6.6 color-code matrices (GH-156; tiered 2026-11-04)
 ------------------------------------------------------------------
 
@@ -390,6 +399,8 @@ Placed and renamed 2026-11-04: COLOR_7_1_3 (tier0), COLOR_19_1_5 (tier0), COLOR_
 Renamed 2026-11-06 (same matrices, upper bounds unchanged; CC lower bounds reproduced by runs with different
 search trees, same engine, see section 5): COLOR_1027_1_31to37 (was COLOR_1027_1_28to37), COLOR_2791_1_28to61
 (was COLOR_2791_1_26to61).
+Renamed 2026-11-07 (same matrices, upper bounds unchanged; see section 5): COLOR_1027_1_32to37 (was
+COLOR_1027_1_31to37), COLOR_2791_1_29to61 (was COLOR_2791_1_28to61).
 
 10. Twisted-torus generalized toric / BB matrices (GH-159; tiered 2026-11-04)
 --------------------------------------------------------------------------
