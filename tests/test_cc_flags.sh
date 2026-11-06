@@ -647,17 +647,19 @@ if [[ $rc -ne 0 ]] || grep -q "erasure" <<<"$out"; then
     echo "FAIL (GH-227: an erasure line without the erasure token): rc=$rc" >&2; fails=$((fails + 1))
 fi
 
-# 7o. GH-231 -native-lb (split MaxSAT path): values, conflicts, output; default charge + prop (max 128) + sparse, off = the previous search
+# 7o. GH-231 -native-lb (split MaxSAT path): values, conflicts, output; default off = main's search (identical -v output);
+#     -native-lb=charge alone = charge + prop (max 128) + sparse
 for f in -native-lb -native-lb= -native-lb=on -native-lb=PACK -native-lbX "-native-lb=charge -native-lb-gap=x" "-native-lb=charge -native-lb-gap=-2" \
          "-native-lb=charge -native-lb-gap=" "-native-lb=charge -native-lb-minr=0" "-native-lb=charge -native-lb-minr=x" "-native-lb=pack -native-lb-bogus" \
          "-native-lb=charge -native-lb-prop" "-native-lb=charge -native-lb-prop=yes" "-native-lb=charge -native-lb-sparse" "-native-lb=pack -native-lb-sparse=" "-native-lb=charge -native-lb-order=x" \
          "-native-lb=charge -native-lb-prop-max=x" "-native-lb=charge -native-lb-prop-max=-2"; do
     reject "invalid" $f $L $M
 done
-reject "needs -native-lb=pack or -native-lb=charge" -native-lb=off -native-lb-prop=on $L $M
-accept 3 "" -native-lb-prop=off -native-lb-sparse=off $L $M   # tunes the default bound
-reject "needs -native-lb=pack or -native-lb=charge" -native-lb-gap=1 -card-mto -native-lb=off $L $M
-accept 3 "" -joint -card-mto $L $M   # default bound silently off with -joint
+reject "needs -native-lb=pack or -native-lb=charge" -native-lb-prop=on $L $M
+reject "needs -native-lb=pack or -native-lb=charge" -native-lb=off -native-lb-prop=off $L $M
+accept 3 "" -native-lb=charge -native-lb-prop=off -native-lb-sparse=off $L $M
+reject "needs -native-lb=pack or -native-lb=charge" -native-lb-gap=1 -card-mto $L $M
+accept 3 "" -joint -card-mto $L $M
 reject "needs -native-lb=pack or -native-lb=charge" -native-lb=charge -native-lb=off -native-lb-stats $L $M   # last wins
 reject "no effect with -engine=cc" -engine=cc -native-lb=charge $L $C
 reject "no effect with -engine=cc" -engine=cc -native-lb=off $L $C
@@ -686,11 +688,15 @@ if [[ $rc -ne 0 ]] || ! grep -q "^c NATIVE-LB" <<<"$err" || grep -q "state_fails
 fi
 runs=$((runs + 1)); run -native-lb=charge $L TN_72_8_8
 if [[ $rc -ne 0 ]] || grep -q "NATIVE-LB" <<<"$err$out"; then echo "FAIL (GH-231: no c NATIVE-LB line without -native-lb-stats)" >&2; fails=$((fails + 1)); fi
-for code in BB_90_8_10 TN_72_8_8 $C; do   # default = -native-lb=charge -native-lb-prop=on -native-lb-prop-max=128 -native-lb-sparse=on: the same -v output
+for code in BB_90_8_10 TN_72_8_8 $C; do   # default = -native-lb=off: the same -v output; -native-lb=charge = its tuned defaults
     runs=$((runs + 1))
     run -v $L $code; out0="$out"
+    run -v -native-lb=off $L $code
+    if [[ $rc -ne 0 || "$out" != "$out0" ]]; then echo "FAIL (GH-231: -native-lb=off -v output differs from the default on $code)" >&2; fails=$((fails + 1)); fi
+    runs=$((runs + 1))
+    run -v -native-lb=charge $L $code; out0="$out"
     run -v -native-lb=charge -native-lb-prop=on -native-lb-prop-max=128 -native-lb-sparse=on -native-lb-gap=0 -native-lb-minr=1 -native-lb-order=before $L $code
-    if [[ $rc -ne 0 || "$out" != "$out0" ]]; then echo "FAIL (GH-231: the explicit default flags give a different -v output on $code)" >&2; fails=$((fails + 1)); fi
+    if [[ $rc -ne 0 || "$out" != "$out0" ]]; then echo "FAIL (GH-231: -native-lb=charge and its explicit defaults differ on $code)" >&2; fails=$((fails + 1)); fi
 done
 
 echo "test_cc_flags: $runs checks, $fails failed"
