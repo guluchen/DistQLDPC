@@ -6,7 +6,8 @@
   P   = candidate, -native-lb=pack;              PP = candidate, -native-lb=pack -native-lb-prop=on;
   CPg = candidate, -native-lb=charge -native-lb-prop=on -native-lb-gap=-1;
   CPS / PPS / CS = CP / PP / C with -native-lb-sparse=on (GH-181's redundant pair-sum rows added to the bound's rows);
-  CPSa / CSa = CPS / CS with -native-lb-order=after (the check only where MaxCDCL's lookahead found no conflict).
+  CPSa / CSa = CPS / CS with -native-lb-order=after (the check only where MaxCDCL's lookahead found no conflict);
+  CPS64 / CPS128 = CPS with -native-lb-prop-max=64 / 128 (propagation rounds forcing more qubits are skipped).
 Every run is -MODE (-no-card | -card-mto) -seed=S.
   panel OUT M_BIN C_BIN ARMS SEEDS MODES LIMIT STEM...: seeds 0..SEEDS-1, the arms of each (code, mode, seed) adjacent.
   tier5 OUT M_BIN C_BIN ARMS MODES LIMIT STEM...: default seed (-seed=0).
@@ -22,7 +23,9 @@ ARMS = {'M': (None, []), 'O': ('C', []), 'C': ('C', ['-native-lb=charge']), 'CP'
         'PPS': ('C', ['-native-lb=pack', '-native-lb-prop=on', '-native-lb-sparse=on']),
         'CS': ('C', ['-native-lb=charge', '-native-lb-sparse=on']),
         'CPSa': ('C', ['-native-lb=charge', '-native-lb-prop=on', '-native-lb-sparse=on', '-native-lb-order=after']),
-        'CSa': ('C', ['-native-lb=charge', '-native-lb-sparse=on', '-native-lb-order=after'])}
+        'CSa': ('C', ['-native-lb=charge', '-native-lb-sparse=on', '-native-lb-order=after']),
+        'CPS64': ('C', ['-native-lb=charge', '-native-lb-prop=on', '-native-lb-sparse=on', '-native-lb-prop-max=64']),
+        'CPS128': ('C', ['-native-lb=charge', '-native-lb-prop=on', '-native-lb-sparse=on', '-native-lb-prop-max=128'])}
 
 
 def arm(name):

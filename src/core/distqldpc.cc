@@ -1165,7 +1165,8 @@ static bool g_frontier_stats = false, g_frontier_check = false;
 static int g_native_lb = 0;            /* 0 off, 1 pack, 2 pack + charge */
 static bool g_native_lb_given = false;   /* -native-lb=... given explicitly */
 static int g_native_lb_gap = 0, g_native_lb_minr = 1;
-static bool g_native_lb_after = false;   /* -native-lb-order=before|after (default before: the check runs before MaxCDCL's lookahead) */
+static bool g_native_lb_after = false;
+static int g_native_lb_prop_max = -1;   /* -native-lb-prop-max=N (-1 = no limit) */   /* -native-lb-order=before|after (default before: the check runs before MaxCDCL's lookahead) */
 static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false, g_native_lb_sparse = false;
 static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant 1..5; 6 = each redundant row loses its last qubit */
 static void (*g_native_lb_audit)(void*, const vec<Lit>&, uint64_t) = NULL;   /* test only: explanation audit hook */
@@ -1323,7 +1324,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     if (g_native_lb) {   /* GH-231: the half's parity rows over qubit vars 0..n-1 (and the redundant rows with -native-lb-sparse=on) */
         if (!h.nlb_built) { h.nlb_rows = native_lb_rows(*h.H, g_native_lb_sparse); h.nlb_built = true; }
         S.setPackRows(h.nlb_rows, n, g_native_lb);
-        S.pcGap = g_native_lb_gap; S.pcMinr = g_native_lb_minr; S.pcCheckState = g_native_lb_check; S.pcProp = g_native_lb_prop; S.pcAfter = g_native_lb_after;
+        S.pcGap = g_native_lb_gap; S.pcMinr = g_native_lb_minr; S.pcCheckState = g_native_lb_check; S.pcProp = g_native_lb_prop; S.pcAfter = g_native_lb_after; S.pcPropMax = g_native_lb_prop_max;
         S.pcMutant = g_native_lb_mutant; S.pcAudit = g_native_lb_audit; S.pcAuditCtx = (void*)h.H;
     }
     if (h.frontier) {   /* GH-129: the half's parity rows over qubit vars 0..n-1 */
@@ -1357,12 +1358,12 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     }
     if (g_native_lb && (g_native_lb_stats || g_native_lb_check)) {   /* GH-231 */
         fprintf(stderr, "c NATIVE-LB %s cap %llu %s: conflicts %llu checks %llu pack %llu charge_evals %llu charge %llu dead %llu "
-                "backtracks %llu mean_clause %.1f state_fails %llu props %llu prop_rounds %llu\n", h.tag, (unsigned long long)cap, first_only ? "feasibility" : "optimize",
+                "backtracks %llu mean_clause %.1f state_fails %llu props %llu prop_rounds %llu prop_skips %llu\n", h.tag, (unsigned long long)cap, first_only ? "feasibility" : "optimize",
                 (unsigned long long)S.conflicts, (unsigned long long)S.pcChecks, (unsigned long long)S.pcPackConfls,
                 (unsigned long long)S.pcChgEvals, (unsigned long long)S.pcChgConfls, (unsigned long long)S.pcDeadConfls,
                 (unsigned long long)S.pcBacktracks,
                 (S.pcPackConfls + S.pcChgConfls + S.pcDeadConfls) ? (double)S.pcClauseLits / (double)(S.pcPackConfls + S.pcChgConfls + S.pcDeadConfls) : 0.0,
-                (unsigned long long)S.pcStateFails, (unsigned long long)S.pcProps, (unsigned long long)S.pcPropRounds);
+                (unsigned long long)S.pcStateFails, (unsigned long long)S.pcProps, (unsigned long long)S.pcPropRounds, (unsigned long long)S.pcPropSkips);
         fflush(stderr);
     }
     h.probes++; h.conflicts += S.conflicts;   /* GH-107 work counters (fresh solver per probe) */
@@ -2676,6 +2677,11 @@ int main(int argc, char** argv) {
             g_native_lb_prop = true;
         else if (!strcmp(argv[i], "-native-lb-prop=off"))
             g_native_lb_prop = false;
+        else if (!strncmp(argv[i], "-native-lb-prop-max=", 20)) {
+            char* end = NULL; long v = strtol(argv[i] + 20, &end, 10);
+            if (!*(argv[i] + 20) || *end || v < -1 || v > 100000000) die("invalid -native-lb-prop-max (-1..100000000)");
+            g_native_lb_prop_max = (int)v;
+        }
         else if (!strcmp(argv[i], "-native-lb-order=before"))
             g_native_lb_after = false;
         else if (!strcmp(argv[i], "-native-lb-order=after"))

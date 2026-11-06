@@ -644,7 +644,8 @@ public:
     void     pcSweepReasons();
     bool     pcPropagate(const std::vector<int>& rowsUsed, const std::vector<int64_t>& yUsed, int64_t L, int bound, uint64_t theta,
                          uint64_t thetaAudit, uint64_t stamp);
-    uint64_t pcProps = 0, pcPropRounds = 0;
+    int      pcPropMax = -1;           // -native-lb-prop-max=N: a round forcing more than N qubits is skipped (-1: no limit)
+    uint64_t pcProps = 0, pcPropRounds = 0, pcPropSkips = 0;
     int      pcN = 0, pcSynced = 0, pcTrue = 0;
     std::vector<std::vector<int> > pcRows, pcColRows;
     std::vector<int>  pcUnass, pcOdd, pcOddPos, pcDead, pcDeadPos;

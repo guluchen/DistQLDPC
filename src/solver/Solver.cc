@@ -7684,6 +7684,11 @@ bool Solver::pcPropagate(const std::vector<int>& rowsUsed, const std::vector<int
         const std::vector<int>& row = pcRows[(size_t)rowsUsed[a]];
         for (size_t t = 0; t < row.size(); t++) if (value(row[t]) == l_Undef) pcMark[row[t]] = st;
     }
+    if (pcPropMax >= 0) {   // -native-lb-prop-max: skip rounds that would force more qubits (the check finds the conflict later)
+        int cnt = 0;
+        for (int j = 0; j < pcN && cnt <= pcPropMax; j++) if (value(j) == l_Undef && pcMark[j] != st && decision[j]) cnt++;
+        if (cnt > pcPropMax) { pcPropSkips++; return false; }
+    }
     bool any = false;
     vec<Lit> lits;
     for (int j = 0; j < pcN; j++) {

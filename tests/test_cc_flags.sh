@@ -650,7 +650,8 @@ fi
 # 7o. GH-231 -native-lb (split MaxSAT path): values, conflicts, output; default off = main's search (identical -v output)
 for f in -native-lb -native-lb= -native-lb=on -native-lb=PACK -native-lbX "-native-lb=charge -native-lb-gap=x" "-native-lb=charge -native-lb-gap=-2" \
          "-native-lb=charge -native-lb-gap=" "-native-lb=charge -native-lb-minr=0" "-native-lb=charge -native-lb-minr=x" "-native-lb=pack -native-lb-bogus" \
-         "-native-lb=charge -native-lb-prop" "-native-lb=charge -native-lb-prop=yes" "-native-lb=charge -native-lb-sparse" "-native-lb=pack -native-lb-sparse="; do
+         "-native-lb=charge -native-lb-prop" "-native-lb=charge -native-lb-prop=yes" "-native-lb=charge -native-lb-sparse" "-native-lb=pack -native-lb-sparse=" "-native-lb=charge -native-lb-order=x" \
+         "-native-lb=charge -native-lb-prop-max=x" "-native-lb=charge -native-lb-prop-max=-2"; do
     reject "invalid" $f $L $M
 done
 reject "needs -native-lb=pack or -native-lb=charge" -native-lb-prop=on $L $M
@@ -669,11 +670,12 @@ accept 2 "" -native-lb=charge -native-lb-prop=on -native-lb-gap=-1 -oddcap-skip=
 accept 10 "" -native-lb=charge -native-lb-prop=on -native-lb-check $L BB_90_8_10
 accept 10 "" -native-lb=pack -native-lb-prop=on -stab-overlap=off -ub-pre=off $L BB_90_8_10
 accept 8 "" -native-lb=charge -native-lb-gap=-1 -native-lb-minr=2 -card-mto $L TN_72_8_8
+accept 8 "" -native-lb=charge -native-lb-prop=on -native-lb-prop-max=4 -native-lb-order=after -native-lb-sparse=on $L TN_72_8_8
 accept 8 "" -native-lb=charge -native-lb-prop=on -native-lb-gap=3 -native-lb-check -seed=2 $L TN_72_8_8
 accept 2 "" -engine=auto -native-lb=charge $L $D1                                                        # auto -> maxsat: applies
 accept 2 "selected cc .*ignoring -native-lb=charge" -engine=auto -native-lb=charge $L $C
 runs=$((runs + 1)); run -native-lb=charge -native-lb-prop=on -native-lb-stats $L TN_72_8_8
-if [[ $rc -ne 0 ]] || ! grep -Eq "^c NATIVE-LB [XZ] cap [0-9]+ (feasibility|optimize): conflicts [0-9]+ checks [0-9]+ pack [1-9][0-9]* charge_evals [0-9]+ charge [0-9]+ dead [0-9]+ backtracks [0-9]+ mean_clause [0-9.]+ state_fails 0 props [1-9][0-9]* prop_rounds [0-9]+$" <<<"$err"; then
+if [[ $rc -ne 0 ]] || ! grep -Eq "^c NATIVE-LB [XZ] cap [0-9]+ (feasibility|optimize): conflicts [0-9]+ checks [0-9]+ pack [1-9][0-9]* charge_evals [0-9]+ charge [0-9]+ dead [0-9]+ backtracks [0-9]+ mean_clause [0-9.]+ state_fails 0 props [1-9][0-9]* prop_rounds [0-9]+ prop_skips 0$" <<<"$err"; then
     echo "FAIL (GH-231: c NATIVE-LB line with pack conflicts and propagations expected)" >&2; fails=$((fails + 1))
 fi
 runs=$((runs + 1)); run -native-lb=charge -native-lb-check $L TN_72_8_8
