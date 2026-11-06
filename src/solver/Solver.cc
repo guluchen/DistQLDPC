@@ -3659,8 +3659,9 @@ lbool Solver::search(int& nof_conflicts)
     
     for (;;){
         CRef confl = lPropagate();
-        // GH-231 native pack/charge bound (pcMode 0: main's loop); may backtrack to the clause's highest level
-        if (pcMode && confl == CRef_Undef && !softConflictFlag && qhead == trail.size()) {
+        // GH-231 native pack/charge bound (pcMode 0: main's loop); may backtrack to the clause's highest level.
+        // pcAfter: only where MaxCDCL's lookahead found no conflict (it then runs on the same state as before).
+        if (pcMode && !pcAfter && confl == CRef_Undef && !softConflictFlag && qhead == trail.size()) {
             confl = pcCheck();
             while (confl == CRef_Undef && qhead < trail.size()) {   // -native-lb-prop enqueued literals
                 confl = lPropagate();
@@ -3668,8 +3669,18 @@ lbool Solver::search(int& nof_conflicts)
                 confl = pcCheck();
             }
         }
+        bool lhOk = true;
+        if (confl == CRef_Undef && !softConflictFlag) lhOk = lookahead();
+        if (pcMode && pcAfter && lhOk && confl == CRef_Undef && !softConflictFlag && qhead == trail.size()) {
+            confl = pcCheck();
+            while (confl == CRef_Undef && qhead < trail.size()) {
+                confl = lPropagate();
+                if (confl != CRef_Undef || softConflictFlag) break;
+                confl = pcCheck();
+            }
+        }
         
-        if (confl != CRef_Undef || softConflictFlag || !lookahead()){
+        if (confl != CRef_Undef || softConflictFlag || !lhOk){
 
 	  if (confl == CRef_Undef && !softConflictFlag) {
 	    assert(LHconfl != CRef_Undef);

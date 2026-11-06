@@ -1165,6 +1165,7 @@ static bool g_frontier_stats = false, g_frontier_check = false;
 static int g_native_lb = 0;            /* 0 off, 1 pack, 2 pack + charge */
 static bool g_native_lb_given = false;   /* -native-lb=... given explicitly */
 static int g_native_lb_gap = 0, g_native_lb_minr = 1;
+static bool g_native_lb_after = false;   /* -native-lb-order=before|after (default before: the check runs before MaxCDCL's lookahead) */
 static bool g_native_lb_stats = false, g_native_lb_check = false, g_native_lb_prop = false, g_native_lb_sparse = false;
 static int g_native_lb_mutant = 0;     /* test only (no flag): Solver::pcMutant 1..5; 6 = each redundant row loses its last qubit */
 static void (*g_native_lb_audit)(void*, const vec<Lit>&, uint64_t) = NULL;   /* test only: explanation audit hook */
@@ -1322,7 +1323,7 @@ static HalfStatus run_css_half(CssHalf& h, uint64_t cap, bool first_only, int ve
     if (g_native_lb) {   /* GH-231: the half's parity rows over qubit vars 0..n-1 (and the redundant rows with -native-lb-sparse=on) */
         if (!h.nlb_built) { h.nlb_rows = native_lb_rows(*h.H, g_native_lb_sparse); h.nlb_built = true; }
         S.setPackRows(h.nlb_rows, n, g_native_lb);
-        S.pcGap = g_native_lb_gap; S.pcMinr = g_native_lb_minr; S.pcCheckState = g_native_lb_check; S.pcProp = g_native_lb_prop;
+        S.pcGap = g_native_lb_gap; S.pcMinr = g_native_lb_minr; S.pcCheckState = g_native_lb_check; S.pcProp = g_native_lb_prop; S.pcAfter = g_native_lb_after;
         S.pcMutant = g_native_lb_mutant; S.pcAudit = g_native_lb_audit; S.pcAuditCtx = (void*)h.H;
     }
     if (h.frontier) {   /* GH-129: the half's parity rows over qubit vars 0..n-1 */
@@ -2675,12 +2676,16 @@ int main(int argc, char** argv) {
             g_native_lb_prop = true;
         else if (!strcmp(argv[i], "-native-lb-prop=off"))
             g_native_lb_prop = false;
+        else if (!strcmp(argv[i], "-native-lb-order=before"))
+            g_native_lb_after = false;
+        else if (!strcmp(argv[i], "-native-lb-order=after"))
+            g_native_lb_after = true;
         else if (!strcmp(argv[i], "-native-lb-sparse=on"))
             g_native_lb_sparse = true;
         else if (!strcmp(argv[i], "-native-lb-sparse=off"))
             g_native_lb_sparse = false;
         else if (!strncmp(argv[i], "-native-lb", 10))
-            die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-prop=on|off, -native-lb-sparse=on|off, -native-lb-stats, -native-lb-check)");
+            die("invalid -native-lb (off | pack | charge; -native-lb-gap=G, -native-lb-minr=M, -native-lb-prop=on|off, -native-lb-sparse=on|off, -native-lb-order=before|after, -native-lb-stats, -native-lb-check)");
         else if (!strcmp(argv[i], "-ub-pre=off")) {   /* GH-144 */
             g_ub_pre = -1.0; g_ub_pre_given = true;
         } else if (!strcmp(argv[i], "-ub-pre=on")) {

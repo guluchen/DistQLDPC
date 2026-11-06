@@ -637,6 +637,7 @@ public:
     // (one more true qubit outside them leaves the bound unchanged); reason = the clause above for cap - 1 plus ~x_j.
     // The reasons are unwatched, in no clause list, never reduced on the fly, freed once their variable is unassigned.
     bool     pcProp = false;
+    bool     pcAfter = false;          // -native-lb-order=after: check only where the lookahead found no conflict
     std::vector<std::pair<Var, CRef> > pcReasons;
     std::unordered_set<uint32_t> pcReasonSet;
     bool     pcIsReason(CRef cr) const { return !pcReasons.empty() && pcReasonSet.count((uint32_t)cr) > 0; }
