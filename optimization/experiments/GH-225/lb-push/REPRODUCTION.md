@@ -28,7 +28,7 @@ both halves (X half only for the color codes, Hx = Hz). This is the same engine,
 | BB_1080_4 | 34 | 755e0c21 s0 40 586; 1239e9a2 E (24 h run) 44 390 |
 | COLOR_2791_1 | 29 | 755e0c21 default (GH-227 C, 6 h) 20 721, and with `-cc-roworder=index` 20 425; 755e0c21 `-cc-roworder=bfs` 37 963 |
 
-**BB_1080 lb 34 (added 2026-11-07, `push3-bb1080/`).**
+**BB_1080 lb 34 (added 2026-11-07, `push3/`).**
 - 755e0c21 s0 (push1) reached it at 40 586 s.
 - A 24 h run of 1239e9a2 E reached it at 44 390 s. This is a different tree: level 32 has 36.4G vs 7.1G nodes.
 - Both have level 32 EMPTY (X half under the verified dual map; odd levels skipped by parity).
@@ -39,3 +39,26 @@ both halves (X half only for the color codes, Hx = Hz). This is the same engine,
 - TN_684 lb 25: about 3x the 39 000 s that lb 24 took, so far beyond 12 h. No run was started for it.
 
 `summary.md` (from `runner/summ_push.py`) lists every run with its time to each lb and the node counts of its last level. `logs.tgz` holds the full solver output.
+
+## push3: 24-36 h runs (started 2026-11-07)
+
+`push3/` holds two arms per code, each a different tree:
+- C = main 755e0c21's default;
+- E = main 1239e9a2 plus ungated erasure.
+
+There are three exceptions:
+- TN_684: E with `-seed=1` and `-seed=2`;
+- COLOR_2791: C and C `-cc-roworder=bfs`;
+- COLOR_1027: C and E `-cc-roworder=index`.
+
+Limits: 36 h, except BB_1080 at 24 h. The logs in `push3/logs/` are an interim copy and are refreshed when the runs end.
+
+Lower bounds reproduced so far (both arms, time to lb in s):
+
+| Code | New stem | C | E |
+|---|---|---:|---:|
+| TN_360_4 | TN_360_4_24 (solved, d = 24; both runs print `o 24`) | 47 415 | 48 186 |
+| TN_396_4 | TN_396_4_24to26 | 47 489 | 47 923 |
+| TN_496_2 | TN_496_2_29to30 | 46 997 | 47 826 |
+| TN_504_2 | TN_504_2_25to34 | 54 147 | 56 955 |
+| TN_648_10 | TN_648_10_23to32 | 53 620 | 58 436 |

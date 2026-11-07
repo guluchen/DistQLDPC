@@ -33,7 +33,7 @@ certified).
 | tier2 | medium filter; main 10–100 s on yfclab2 | TN_108_2_12 [[108,2,12]], BB_144_14_14 [[144,14,14]], TN_144_2_13 [[144,2,13]], TN_200_10_10 [[200,10,10]], BB_248_10_18 [[248,10,18]], BB_340_16_18 [[340,16,18]], AMC_522_6_20 [[522,6,20]], LP_544_80_12 [[544,80,12]] |
 | tier3 | decisive set; main 100–2000 s on yfclab2 | TN_250_10_15 [[250,10,15]], BB_294_10_20 [[294,10,20]], HGP_481_1_16 [[481,1,16]], LP_714_100_16 [[714,100,16]], LP_1020_136_16 [[1020,136,16]], HGP_1261_121_6 [[1261,121,6]], HGP_2866_256_8 [[2866,256,8]] |
 | tier4 | hard; main 2000–5000 s on yfclab2; timeout 2000 s Mac / 5000 s yfclab2 | (none) |
-| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_23to24 [[288,2,23–24]], TN_324_4_23to25 [[324,4,23–25]], COLOR_331_1_21 [[331,1,21]], BB_360_12_24 [[360,12,24]], TN_360_4_23to24 [[360,4,23–24]], TN_396_4_23to26 [[396,4,23–26]], TN_432_8_24to29 [[432,8,24–29]], TN_468_4_24to29 [[468,4,24–29]], TN_496_2_28to30 [[496,2,28–30]], TN_504_2_24to34 [[504,2,24–34]], TN_540_4_24to34 [[540,4,24–34]], TN_576_2_25to37 [[576,2,25–37]], TN_612_2_25to40 [[612,2,25–40]], TN_648_10_22to32 [[648,10,22–32]], TN_648_14_22to28 [[648,14,22–28]], TN_684_2_24to29 [[684,2,24–29]], BB_756_16_32to34 [[756,16,32–34]], BB_864_4_32to40 [[864,4,32–40]], COLOR_1027_1_32to37 [[1027,1,32–37]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_34to48 [[1080,4,34–48]], HGP_1105_1_24 [[1105,1,24]], LP_1122_148_20 [[1122,148,20]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_2610_744_16 [[2610,744,16]], COLOR_2791_1_29to61 [[2791,1,29–61]] |
+| tier5 | open set; main > 5000 s or unsolved on yfclab2; timeout 21600 s (6 h) | TN_180_2_17 [[180,2,17]], TN_216_4_18 [[216,4,18]], TN_252_2_21 [[252,2,21]], TN_288_2_23to24 [[288,2,23–24]], TN_324_4_23to25 [[324,4,23–25]], COLOR_331_1_21 [[331,1,21]], BB_360_12_24 [[360,12,24]], TN_360_4_24 [[360,4,24]], TN_396_4_24to26 [[396,4,24–26]], TN_432_8_24to29 [[432,8,24–29]], TN_468_4_24to29 [[468,4,24–29]], TN_496_2_29to30 [[496,2,29–30]], TN_504_2_25to34 [[504,2,25–34]], TN_540_4_24to34 [[540,4,24–34]], TN_576_2_25to37 [[576,2,25–37]], TN_612_2_25to40 [[612,2,25–40]], TN_648_10_23to32 [[648,10,23–32]], TN_648_14_22to28 [[648,14,22–28]], TN_684_2_24to29 [[684,2,24–29]], BB_756_16_32to34 [[756,16,32–34]], BB_864_4_32to40 [[864,4,32–40]], COLOR_1027_1_32to37 [[1027,1,32–37]], LP_1054_140_20 [[1054,140,20]], BB_1080_4_34to48 [[1080,4,34–48]], HGP_1105_1_24 [[1105,1,24]], LP_1122_148_20 [[1122,148,20]], LP_1428_184_24 [[1428,184,24]], LP_1768_224_22 [[1768,224,22]], LP_2610_744_16 [[2610,744,16]], COLOR_2791_1_29to61 [[2791,1,29–61]] |
 
 Counts: tier0 26, tier1 9, tier2 8, tier3 7, tier4 0, tier5 30 (total 80).
 
@@ -66,6 +66,11 @@ and [credit request and per-pass records](https://github.com/guluchen/DistQLDPC/
 
 | Date | Old | New | Note |
 |------|-----|-----|------|
+| 2026-11-07 | TN_360_4_23to24 | TN_360_4_24 | d = 24 (solved): lb 24 reached by main 755e0c21's CC default (gated erasure) at 47 415 s and by main 1239e9a2's CC default plus ungated `erasure` at 48 186 s (36 h runs, yfclab2; level 23 EMPTY on both halves in both, 5.3G / 6.2G vs 2.4G / 2.6G nodes, different trees); both runs then report `o 24`, matching the GH-146 weight-24 witness (copy in `optimization/experiments/GH-146/witnesses/renamed-2026-11-07/`). Same engine, not an independent second method; records `optimization/experiments/GH-225/lb-push/` |
+| 2026-11-07 | TN_396_4_23to26 | TN_396_4_24to26 | lb 24 (36 h runs as above): 755e0c21 47 489 s; 1239e9a2 plus erasure 47 923 s; both halves EMPTY, different trees; ub unchanged |
+| 2026-11-07 | TN_496_2_28to30 | TN_496_2_29to30 | lb 29 (as above): 755e0c21 46 997 s; 1239e9a2 plus erasure 47 826 s; X half under the verified XZ-dual map; ub unchanged |
+| 2026-11-07 | TN_504_2_24to34 | TN_504_2_25to34 | lb 25 (as above): 755e0c21 54 147 s; 1239e9a2 plus erasure 56 955 s; ub unchanged |
+| 2026-11-07 | TN_648_10_22to32 | TN_648_10_23to32 | lb 23 (as above): 755e0c21 53 620 s; 1239e9a2 plus erasure 58 436 s; ub unchanged |
 | 2026-11-07 | BB_1080_4_32to48 | BB_1080_4_34to48 | lb 34: main 755e0c21's CC default (gated erasure), 12 h: lb 34 at 40 586 s; main 1239e9a2's CC default plus ungated `erasure`, 24 h: lb 34 at 44 390 s; level 32 EMPTY in both (X half under the verified dual map; odd levels skipped by the parity rule), 36.4G vs 7.1G nodes at level 32 (different trees); same engine, not an independent second method; records `optimization/experiments/GH-225/lb-push/`. ub unchanged (GH-146 witness; copy in `optimization/experiments/GH-146/witnesses/renamed-2026-11-07/`) |
 | 2026-11-07 | TN_288_2_22to24 | TN_288_2_23to24 | lb 23: CC lower bound from the GH-225 follow-up (12 h, yfclab2, seed 0; records `optimization/experiments/GH-225/lb-push/`): main 755e0c21's CC default (gated erasure) lb 23 at 30 093 s, and main 1239e9a2's CC default plus ungated `erasure` lb 23 at 30 030 s; level 22 EMPTY on both halves in both runs, with different node counts (different trees); same engine, not an independent second method. ub unchanged (GH-146 witness; copy under the new stem in `optimization/experiments/GH-146/witnesses/renamed-2026-11-07/`) |
 | 2026-11-07 | TN_432_8_23to29 | TN_432_8_24to29 | lb 24 (as above): 755e0c21 default 29 251 s; 1239e9a2 plus erasure 29 784 s; 1239e9a2 default without erasure 38 938 s; ub unchanged |
@@ -232,8 +237,9 @@ and [credit request and per-pass records](https://github.com/guluchen/DistQLDPC/
 ## Open items
 
 - **Former numeric tier5 names** (BB_756_16_34, BB_864_4_40, BB_1080_4_54, TN_180_2_17 ... TN_684_2_29): the old third field may be a literature value or an upstream index; it is kept in the rename history but not in the stem until DistQLDPC confirms the distance.
-- **TN_648_10_22to32:** d <= 32 (GH-146 verified witness; the bundled bases contain weight-52
-  nontrivial logicals); lb 22 from GH-157 (2026-10-31); the exact distance is unknown.
+- **TN_648_10_23to32:** d <= 32 (GH-146 verified witness; the bundled bases contain weight-52
+  nontrivial logicals); lb 22 from GH-157 (2026-10-31), lb 23 from the GH-225 follow-up (2026-11-07); the exact
+  distance is unknown.
 - **Upper-bound witnesses (`{lb}to{ub}` stems):** the upper bounds of the tier5 `{lb}to{ub}` stems renamed on
   2026-10-23 come from the GH-146 finder; one nontrivial logical per stem is stored as
   `optimization/experiments/GH-146/witnesses/renamed/<stem>.<X|Z>.w<ub>.txt` (0-based qubit indices) and can be
@@ -252,9 +258,10 @@ and [credit request and per-pass records](https://github.com/guluchen/DistQLDPC/
   Five TN stems were renamed on 2026-11-06 (TN_324_4_23to25, TN_496_2_28to30, TN_540_4_24to34, TN_648_14_22to28,
   TN_684_2_24to29); copies of their witnesses under the current stems are in
   `optimization/experiments/GH-146/witnesses/renamed-2026-11-06/` (same supports, `VERIFY.txt`: 5/5 VALID).
-  Six more stems were renamed on 2026-11-07 (TN_288_2_23to24, TN_432_8_24to29, TN_468_4_24to29, TN_576_2_25to37,
-  TN_612_2_25to40, BB_1080_4_34to48); copies under the current stems are in
-  `optimization/experiments/GH-146/witnesses/renamed-2026-11-07/` (same supports, `VERIFY.txt`: 6/6 VALID).
+  Eleven more stems were renamed on 2026-11-07 (TN_288_2_23to24, TN_432_8_24to29, TN_468_4_24to29, TN_576_2_25to37,
+  TN_612_2_25to40, BB_1080_4_34to48, TN_360_4_24, TN_396_4_24to26, TN_496_2_29to30, TN_504_2_25to34,
+  TN_648_10_23to32); copies under the current stems are in `optimization/experiments/GH-146/witnesses/renamed-2026-11-07/`
+  (same supports, `VERIFY.txt`: 11/11 VALID).
 - **GH-152 lower bounds (2026-10-29):** the lower bounds of the six stems above come from the optional CC engine with
   `-cc-aut=on` (6 h, yfclab2) and were reproduced with a different search order (`mrv`, 12 h) on the same labels;
   this is the same algorithm, not an independent method. Record: issue #152 and
