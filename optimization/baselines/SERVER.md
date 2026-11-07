@@ -159,8 +159,8 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | COLOR_1027_1_32to37 | no-card | 21600 | TIMEOUT | 17 | 37 | 2@46, 3@46, 5@46, 9@51, 17@1758, 17@21600 | - |
 | LP_1054_140_20 | card-mto | 21600 | TIMEOUT | 18 | 20 | 2@1, 4@2, 6@3, 10@11, 18@5978, 18@21600 | 21600, 18, 32 |
 | LP_1054_140_20 | no-card | 21600 | TIMEOUT | 18 | 20 | 2@1, 4@2, 6@3, 10@15, 18@6760, 18@21600 | 21600, 18, 32 |
-| BB_1080_4_32to48 | card-mto | 21600 | TIMEOUT | 18 | 60 | 2@29, 4@29, 6@29, 10@29, 18@40, 18@21600 | 21600, 18, - |
-| BB_1080_4_32to48 | no-card | 21600 | TIMEOUT | 18 | 60 | 2@29, 4@29, 6@29, 10@29, 18@39, 18@21600 | 21600, 18, - |
+| BB_1080_4_34to48 | card-mto | 21600 | TIMEOUT | 18 | 60 | 2@29, 4@29, 6@29, 10@29, 18@40, 18@21600 | 21600, 18, - |
+| BB_1080_4_34to48 | no-card | 21600 | TIMEOUT | 18 | 60 | 2@29, 4@29, 6@29, 10@29, 18@39, 18@21600 | 21600, 18, - |
 | HGP_1105_1_24 | card-mto | 21600 | TIMEOUT | 17 | 24 | 2@61, 3@61, 5@61, 9@64, 17@2097, 17@21600 | - |
 | HGP_1105_1_24 | no-card | 21600 | TIMEOUT | 17 | 24 | 2@61, 3@61, 5@61, 9@63, 17@2099, 17@21600 | - |
 | LP_1122_148_20 | card-mto | 19865 | solved | 20 | 20 | 2@1, 4@2, 6@4, 10@9, 18@6701, 19@19865, 20@19865 | 21600, 18, 32 |
@@ -251,7 +251,7 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | 5 | BB_864_4_32to40 | - | - | TIMEOUT lb 30 ub 42 | - | 42 |
 | 5 | COLOR_1027_1_32to37 | T / T / T | 5000 | TIMEOUT lb 29 ub 37 | 5000 | 37 |
 | 5 | LP_1054_140_20 | - | - | solved 20 in 2.00 s | - | 20 |
-| 5 | BB_1080_4_32to48 | - | - | TIMEOUT lb 30 ub 66 | - | 66 |
+| 5 | BB_1080_4_34to48 | - | - | TIMEOUT lb 30 ub 66 | - | 66 |
 | 5 | HGP_1105_1_24 | 71.64 / 181 / 189 | 181 | - | 3.86 | 24 |
 | 5 | LP_1122_148_20 | - | - | solved 20 in 5.30 s | - | 20 |
 | 5 | LP_1428_184_24 | - | - | solved 24 in 147 s | - | 24 |
@@ -336,7 +336,7 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | BB_864_4_32to40 | tier5 | - | unsolved / > 5000 | 5 | no |
 | COLOR_1027_1_32to37 | untiered/COLOR_1027_1_unknown | no-card | 5000 | 5 | untiered -> tier5 |
 | LP_1054_140_20 | tier5 | - | unsolved / > 5000 | 5 | no |
-| BB_1080_4_32to48 | tier5 | - | unsolved / > 5000 | 5 | no |
+| BB_1080_4_34to48 | tier5 | - | unsolved / > 5000 | 5 | no |
 | HGP_1105_1_24 | untiered/HGP_1105_1_unknown | no-card | 5000 | 5 | untiered -> tier5 |
 | LP_1122_148_20 | tier5 | - | unsolved / > 5000 | 5 | no |
 | LP_1428_184_24 | tier5 | - | unsolved / > 5000 | 5 | no |

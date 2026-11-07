@@ -25,12 +25,14 @@ both halves (X half only for the color codes, Hx = Hz). This is the same engine,
 | TN_576_2 | 25 | 755e0c21 s0 28 223; 1239e9a2 E 30 871; 1239e9a2 A 34 316 |
 | TN_612_2 | 25 | 755e0c21 s0 35 008; 1239e9a2 E 37 476; 1239e9a2 A 42 105 |
 | COLOR_1027_1 | 32 | 755e0c21 s0 38 288; 1239e9a2 E `-cc-roworder=index` 37 190 (`../lb-repro/repro2/`, the GH-225 erasure tree) |
+| BB_1080_4 | 34 | 755e0c21 s0 40 586; 1239e9a2 E (24 h run) 44 390 |
 | COLOR_2791_1 | 29 | 755e0c21 default (GH-227 C, 6 h) 20 721, and with `-cc-roworder=index` 20 425; 755e0c21 `-cc-roworder=bfs` 37 963 |
 
-**Still PLAUSIBLE (one tree): BB_1080 lb 34.**
-- 755e0c21 s0 reached it at 40 586 s, with levels up to 32 EMPTY (X half under the verified dual map; odd levels skipped by parity).
-- The 1239e9a2 E run reached only lb 32 in 12 h.
-- Reproducing it needs a run longer than 12 h, or a faster different order.
+**BB_1080 lb 34 (added 2026-11-07, `push3-bb1080/`).**
+- 755e0c21 s0 (push1) reached it at 40 586 s.
+- A 24 h run of 1239e9a2 E reached it at 44 390 s. This is a different tree: level 32 has 36.4G vs 7.1G nodes.
+- Both have level 32 EMPTY (X half under the verified dual map; odd levels skipped by parity).
+- After lb 34 was reproduced, I stopped the E run and the companion 755e0c21 `-cc-roworder=index` run (rc -15, 47 015 s); lb 36 is far out of reach.
 
 **Not reached in 12 h:**
 - TN_324 lb 24 (two levels away);
