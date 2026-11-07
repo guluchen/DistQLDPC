@@ -55,8 +55,8 @@ which names the parity file, differs). Every solved distance has a GF(2)-verifie
 | COLOR_19_1_unknown | COLOR_19_1_5 | 0 | 5 | 0.06 | 0.09 | 0.09 | d = 5 | yes |
 | COLOR_127_1_unknown | COLOR_127_1_13 | 1 | 13 | 1.60 | 0.08 | 0.07 | d = 13 | yes |
 | COLOR_331_1_unknown | COLOR_331_1_21 | 5 | 21 | > 5000 | 122 | 13.65 | d = 21 | yes |
-| COLOR_1027_1_unknown | COLOR_1027_1_32to37 | 5 | 37 | > 5000 | > 5000 | > 5000 | bounds 28–37 | consistent (open) |
-| COLOR_2791_1_unknown | COLOR_2791_1_29to61 | 5 | 61 | > 5000 | > 5000 | > 5000 | bounds 26–61 | consistent (open) |
+| COLOR_1027_1_unknown | COLOR_1027_1_33to37 | 5 | 37 | > 5000 | > 5000 | > 5000 | bounds 28–37 | consistent (open) |
+| COLOR_2791_1_unknown | COLOR_2791_1_30to61 | 5 | 61 | > 5000 | > 5000 | > 5000 | bounds 26–61 | consistent (open) |
 | HGP_13_1_unknown | HGP_13_1_3 | 0 | 3 | 0.05 | 0.08 | 0.08 | d = 3 | yes |
 | HGP_41_1_unknown | HGP_41_1_5 | 0 | 5 | 0.08 | 0.09 | 0.08 | d = 5 | yes |
 | HGP_45_9_unknown | HGP_45_9_3 | 0 | 3 | 0.06 | 0.08 | 0.09 | d = 3 | yes |

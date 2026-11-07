@@ -121,8 +121,8 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | TN_252_2_21 | no-card | 21600 | TIMEOUT | 17 | 21 | 2@1, 3@1, 5@1, 9@6, 17@8965, 17@21600 | 21600, 17, 28 |
 | TN_288_2_23to24 | card-mto | 21600 | TIMEOUT | 9 | 24 | 2@1, 3@1, 5@1, 9@13, 9@21600 | 21600, 9, - |
 | TN_288_2_23to24 | no-card | 21600 | TIMEOUT | 9 | 24 | 2@1, 3@1, 5@2, 9@15, 9@21600 | 21600, 9, - |
-| TN_324_4_23to25 | card-mto | 21600 | TIMEOUT | 9 | 25 | 2@1, 3@1, 5@2, 9@16, 9@21600 | 21600, 9, - |
-| TN_324_4_23to25 | no-card | 21600 | TIMEOUT | 9 | 25 | 2@1, 3@1, 5@2, 9@16, 9@21600 | 21600, 9, - |
+| TN_324_4_24to25 | card-mto | 21600 | TIMEOUT | 9 | 25 | 2@1, 3@1, 5@2, 9@16, 9@21600 | 21600, 9, - |
+| TN_324_4_24to25 | no-card | 21600 | TIMEOUT | 9 | 25 | 2@1, 3@1, 5@2, 9@16, 9@21600 | 21600, 9, - |
 | COLOR_331_1_21 | card-mto | 7914 | solved | 21 | 21 | 2@0, 3@0, 5@0, 9@1, 17@119, 21@7914 | - |
 | COLOR_331_1_21 | no-card | 6472 | solved | 21 | 21 | 2@0, 3@0, 5@0, 9@1, 17@120, 21@6472 | - |
 | BB_360_12_24 | card-mto | 12723 | solved | 24 | 24 | 2@0, 4@0, 6@0, 10@0, 18@11, 23@12723, 24@12723 | 21600, 18, 24 |
@@ -139,24 +139,24 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | TN_496_2_29to30 | no-card | 21600 | TIMEOUT | 17 | 32 | 2@3, 3@3, 5@3, 9@9, 17@11666, 17@21600 | 21600, 17, - |
 | TN_504_2_25to34 | card-mto | 21600 | TIMEOUT | 17 | 47 | 2@2, 3@2, 5@2, 9@12, 17@5427, 17@21600 | 21600, 17, - |
 | TN_504_2_25to34 | no-card | 21600 | TIMEOUT | 17 | 47 | 2@2, 3@2, 5@3, 9@10, 17@6126, 17@21600 | 21600, 17, - |
-| TN_540_4_24to34 | card-mto | 21600 | TIMEOUT | 9 | 40 | 2@5, 3@5, 5@8, 9@35, 9@21600 | 21600, 9, - |
-| TN_540_4_24to34 | no-card | 21600 | TIMEOUT | 9 | 40 | 2@5, 3@5, 5@8, 9@38, 9@21600 | 21600, 9, - |
+| TN_540_4_25to34 | card-mto | 21600 | TIMEOUT | 9 | 40 | 2@5, 3@5, 5@8, 9@35, 9@21600 | 21600, 9, - |
+| TN_540_4_25to34 | no-card | 21600 | TIMEOUT | 9 | 40 | 2@5, 3@5, 5@8, 9@38, 9@21600 | 21600, 9, - |
 | TN_576_2_25to37 | card-mto | 21600 | TIMEOUT | 9 | 43 | 2@3, 3@3, 5@8, 9@36, 9@21600 | 21600, 9, - |
 | TN_576_2_25to37 | no-card | 21600 | TIMEOUT | 9 | 43 | 2@3, 3@3, 5@8, 9@40, 9@21600 | 21600, 9, - |
 | TN_612_2_25to40 | card-mto | 21600 | TIMEOUT | 17 | 41 | 2@6, 3@6, 5@6, 9@14, 17@7362, 17@21600 | 21600, 17, - |
 | TN_612_2_25to40 | no-card | 21600 | TIMEOUT | 17 | 41 | 2@6, 3@6, 5@6, 9@15, 17@6932, 17@21600 | 21600, 17, - |
 | TN_648_10_23to32 | card-mto | 21600 | TIMEOUT | 9 | 47 | 2@5, 3@5, 5@10, 9@65, 9@21600 | 21600, 9, - |
 | TN_648_10_23to32 | no-card | 21600 | TIMEOUT | 9 | 47 | 2@5, 3@5, 5@10, 9@57, 9@21600 | 21600, 9, - |
-| TN_648_14_22to28 | card-mto | 21600 | TIMEOUT | 9 | 31 | 2@6, 3@6, 5@13, 9@64, 9@21600 | 21600, 9, - |
-| TN_648_14_22to28 | no-card | 21600 | TIMEOUT | 9 | 31 | 2@6, 3@6, 5@12, 9@76, 9@21600 | 21600, 9, - |
+| TN_648_14_23to28 | card-mto | 21600 | TIMEOUT | 9 | 31 | 2@6, 3@6, 5@13, 9@64, 9@21600 | 21600, 9, - |
+| TN_648_14_23to28 | no-card | 21600 | TIMEOUT | 9 | 31 | 2@6, 3@6, 5@12, 9@76, 9@21600 | 21600, 9, - |
 | TN_684_2_24to29 | card-mto | 21600 | TIMEOUT | 17 | 31 | 2@5, 3@5, 5@5, 9@19, 17@18931, 17@21600 | 21600, 9, - |
 | TN_684_2_24to29 | no-card | 21600 | TIMEOUT | 17 | 31 | 2@5, 3@5, 5@5, 9@20, 17@18881, 17@21600 | 21600, 9, - |
-| BB_756_16_32to34 | card-mto | 21600 | TIMEOUT | 18 | 34 | 2@10, 4@10, 6@10, 10@10, 18@18, 18@21600 | 21600, 18, - |
-| BB_756_16_32to34 | no-card | 21600 | TIMEOUT | 18 | 34 | 2@10, 4@10, 6@10, 10@11, 18@18, 18@21600 | 21600, 18, - |
-| BB_864_4_32to40 | card-mto | 21600 | TIMEOUT | 18 | 50 | 2@12, 4@12, 6@12, 10@12, 18@20, 18@21600 | 21600, 18, - |
-| BB_864_4_32to40 | no-card | 21600 | TIMEOUT | 18 | 50 | 2@12, 4@12, 6@12, 10@12, 18@20, 18@21600 | 21600, 18, - |
-| COLOR_1027_1_32to37 | card-mto | 21600 | TIMEOUT | 17 | 37 | 2@46, 3@46, 5@46, 9@51, 17@1729, 17@21600 | - |
-| COLOR_1027_1_32to37 | no-card | 21600 | TIMEOUT | 17 | 37 | 2@46, 3@46, 5@46, 9@51, 17@1758, 17@21600 | - |
+| BB_756_16_34 | card-mto | 21600 | TIMEOUT | 18 | 34 | 2@10, 4@10, 6@10, 10@10, 18@18, 18@21600 | 21600, 18, - |
+| BB_756_16_34 | no-card | 21600 | TIMEOUT | 18 | 34 | 2@10, 4@10, 6@10, 10@11, 18@18, 18@21600 | 21600, 18, - |
+| BB_864_4_34to40 | card-mto | 21600 | TIMEOUT | 18 | 50 | 2@12, 4@12, 6@12, 10@12, 18@20, 18@21600 | 21600, 18, - |
+| BB_864_4_34to40 | no-card | 21600 | TIMEOUT | 18 | 50 | 2@12, 4@12, 6@12, 10@12, 18@20, 18@21600 | 21600, 18, - |
+| COLOR_1027_1_33to37 | card-mto | 21600 | TIMEOUT | 17 | 37 | 2@46, 3@46, 5@46, 9@51, 17@1729, 17@21600 | - |
+| COLOR_1027_1_33to37 | no-card | 21600 | TIMEOUT | 17 | 37 | 2@46, 3@46, 5@46, 9@51, 17@1758, 17@21600 | - |
 | LP_1054_140_20 | card-mto | 21600 | TIMEOUT | 18 | 20 | 2@1, 4@2, 6@3, 10@11, 18@5978, 18@21600 | 21600, 18, 32 |
 | LP_1054_140_20 | no-card | 21600 | TIMEOUT | 18 | 20 | 2@1, 4@2, 6@3, 10@15, 18@6760, 18@21600 | 21600, 18, 32 |
 | BB_1080_4_34to48 | card-mto | 21600 | TIMEOUT | 18 | 60 | 2@29, 4@29, 6@29, 10@29, 18@40, 18@21600 | 21600, 18, - |
@@ -171,8 +171,8 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | LP_1768_224_22 | no-card | 21600 | TIMEOUT | 18 | 22 | 2@53, 4@57, 6@62, 10@89, 18@4533, 18@21600 | 21600, 18, - |
 | LP_2610_744_16 | card-mto | 21600 | TIMEOUT | 10 | 16 | 2@8, 4@26, 6@69, 10@397, 10@21600 | 21600, 10, 16 |
 | LP_2610_744_16 | no-card | 21600 | TIMEOUT | 10 | 16 | 2@8, 4@25, 6@69, 10@398, 10@21600 | 21600, 10, 16 |
-| COLOR_2791_1_29to61 | card-mto | 21600 | TIMEOUT | 17 | 63 | 2@70, 3@71, 5@72, 9@103, 17@18089, 17@21600 | - |
-| COLOR_2791_1_29to61 | no-card | 21600 | TIMEOUT | 17 | 63 | 2@70, 3@70, 5@71, 9@102, 17@17980, 17@21600 | - |
+| COLOR_2791_1_30to61 | card-mto | 21600 | TIMEOUT | 17 | 63 | 2@70, 3@71, 5@72, 9@103, 17@18089, 17@21600 | - |
+| COLOR_2791_1_30to61 | no-card | 21600 | TIMEOUT | 17 | 63 | 2@70, 3@70, 5@71, 9@102, 17@17980, 17@21600 | - |
 
 ## CC engine (information only; not used for tier placement)
 
@@ -232,7 +232,7 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | 5 | TN_216_4_18 | - | - | solved 18 in 508 s | - | 18 |
 | 5 | TN_252_2_21 | - | - | solved 21 in 8714 s | - | 21 |
 | 5 | TN_288_2_23to24 | - | - | TIMEOUT lb 22 ub 24 | - | 24 |
-| 5 | TN_324_4_23to25 | - | - | TIMEOUT lb 22 ub 25 | - | 25 |
+| 5 | TN_324_4_24to25 | - | - | TIMEOUT lb 22 ub 25 | - | 25 |
 | 5 | COLOR_331_1_21 | 21.25 / 122 / 148 | 122 | - | 13.65 | 21 |
 | 5 | BB_360_12_24 | - | - | solved 24 in 202 s | - | 24 |
 | 5 | TN_360_4_24 | - | - | TIMEOUT lb 22 ub 24 | - | 24 |
@@ -241,15 +241,15 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | 5 | TN_468_4_24to29 | - | - | TIMEOUT lb 23 ub 29 | - | 29 |
 | 5 | TN_496_2_29to30 | - | - | TIMEOUT lb 23 ub 30 | - | 30 |
 | 5 | TN_504_2_25to34 | - | - | TIMEOUT lb 23 ub 34 | - | 34 |
-| 5 | TN_540_4_24to34 | - | - | TIMEOUT lb 23 ub 34 | - | 34 |
+| 5 | TN_540_4_25to34 | - | - | TIMEOUT lb 23 ub 34 | - | 34 |
 | 5 | TN_576_2_25to37 | - | - | TIMEOUT lb 24 ub 38 | - | 38 |
 | 5 | TN_612_2_25to40 | - | - | TIMEOUT lb 24 ub 41 | - | 41 |
 | 5 | TN_648_10_23to32 | - | - | TIMEOUT lb 21 ub 33 | - | 33 |
-| 5 | TN_648_14_22to28 | - | - | TIMEOUT lb 21 ub 31 | - | 31 |
+| 5 | TN_648_14_23to28 | - | - | TIMEOUT lb 21 ub 31 | - | 31 |
 | 5 | TN_684_2_24to29 | - | - | TIMEOUT lb 22 ub 29 | - | 29 |
-| 5 | BB_756_16_32to34 | - | - | TIMEOUT lb 28 ub 34 | - | 34 |
-| 5 | BB_864_4_32to40 | - | - | TIMEOUT lb 30 ub 42 | - | 42 |
-| 5 | COLOR_1027_1_32to37 | T / T / T | 5000 | TIMEOUT lb 29 ub 37 | 5000 | 37 |
+| 5 | BB_756_16_34 | - | - | TIMEOUT lb 28 ub 34 | - | 34 |
+| 5 | BB_864_4_34to40 | - | - | TIMEOUT lb 30 ub 42 | - | 42 |
+| 5 | COLOR_1027_1_33to37 | T / T / T | 5000 | TIMEOUT lb 29 ub 37 | 5000 | 37 |
 | 5 | LP_1054_140_20 | - | - | solved 20 in 2.00 s | - | 20 |
 | 5 | BB_1080_4_34to48 | - | - | TIMEOUT lb 30 ub 66 | - | 66 |
 | 5 | HGP_1105_1_24 | 71.64 / 181 / 189 | 181 | - | 3.86 | 24 |
@@ -257,7 +257,7 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | 5 | LP_1428_184_24 | - | - | solved 24 in 147 s | - | 24 |
 | 5 | LP_1768_224_22 | - | - | solved 22 in 17.70 s | - | 22 |
 | 5 | LP_2610_744_16 | - | - | solved 16 in 2.70 s | - | 16 |
-| 5 | COLOR_2791_1_29to61 | T / T / T | 5000 | TIMEOUT lb 28 ub 61 | 5000 | 61 |
+| 5 | COLOR_2791_1_30to61 | T / T / T | 5000 | TIMEOUT lb 28 ub 61 | 5000 | 61 |
 
 ## Tier placement (rule PI 2026-10-12: slower-mode MaxSAT median on this server; <1 s t0, 1-10 t1, 10-100 t2, 100-2000 t3, 2000-5000 t4, else t5)
 
@@ -317,7 +317,7 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | TN_216_4_18 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_252_2_21 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_288_2_23to24 | tier5 | - | unsolved / > 5000 | 5 | no |
-| TN_324_4_23to25 | tier5 | - | unsolved / > 5000 | 5 | no |
+| TN_324_4_24to25 | tier5 | - | unsolved / > 5000 | 5 | no |
 | COLOR_331_1_21 | untiered/COLOR_331_1_unknown | no-card | unsolved / > 5000 | 5 | untiered -> tier5 |
 | BB_360_12_24 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_360_4_24 | tier5 | - | unsolved / > 5000 | 5 | no |
@@ -326,15 +326,15 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | TN_468_4_24to29 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_496_2_29to30 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_504_2_25to34 | tier5 | - | unsolved / > 5000 | 5 | no |
-| TN_540_4_24to34 | tier5 | - | unsolved / > 5000 | 5 | no |
+| TN_540_4_25to34 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_576_2_25to37 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_612_2_25to40 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_648_10_23to32 | tier5 | - | unsolved / > 5000 | 5 | no |
-| TN_648_14_22to28 | tier5 | - | unsolved / > 5000 | 5 | no |
+| TN_648_14_23to28 | tier5 | - | unsolved / > 5000 | 5 | no |
 | TN_684_2_24to29 | tier5 | - | unsolved / > 5000 | 5 | no |
-| BB_756_16_32to34 | tier5 | - | unsolved / > 5000 | 5 | no |
-| BB_864_4_32to40 | tier5 | - | unsolved / > 5000 | 5 | no |
-| COLOR_1027_1_32to37 | untiered/COLOR_1027_1_unknown | no-card | 5000 | 5 | untiered -> tier5 |
+| BB_756_16_34 | tier5 | - | unsolved / > 5000 | 5 | no |
+| BB_864_4_34to40 | tier5 | - | unsolved / > 5000 | 5 | no |
+| COLOR_1027_1_33to37 | untiered/COLOR_1027_1_unknown | no-card | 5000 | 5 | untiered -> tier5 |
 | LP_1054_140_20 | tier5 | - | unsolved / > 5000 | 5 | no |
 | BB_1080_4_34to48 | tier5 | - | unsolved / > 5000 | 5 | no |
 | HGP_1105_1_24 | untiered/HGP_1105_1_unknown | no-card | 5000 | 5 | untiered -> tier5 |
@@ -342,7 +342,7 @@ Binary: main 02879a93 (PR #203 merge) built on yfclab2 (frozen/server-main-02879
 | LP_1428_184_24 | tier5 | - | unsolved / > 5000 | 5 | no |
 | LP_1768_224_22 | tier5 | - | unsolved / > 5000 | 5 | no |
 | LP_2610_744_16 | tier5 | - | unsolved / > 5000 | 5 | no |
-| COLOR_2791_1_29to61 | untiered/COLOR_2791_1_unknown | no-card | 5000 | 5 | untiered -> tier5 |
+| COLOR_2791_1_30to61 | untiered/COLOR_2791_1_unknown | no-card | 5000 | 5 | untiered -> tier5 |
 
 Notes:
 - Replaces the main c914ef5 table (2026-10-21; git history). The Mac table (README.md, main_mac_reference.json) was not re-recorded: the Mac is reserved for timing work of other rounds.
