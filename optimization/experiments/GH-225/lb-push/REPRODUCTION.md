@@ -1,6 +1,6 @@
 # GH-225 follow-up: pushing open Tier 5 lower bounds (2026-11-06/07)
 
-12 h runs on yfclab2, logical CPUs 64-95. Each run had one pinned core and a 4 GB cap. Before each launch the runner
+12 h runs on a dedicated server. Each run had one pinned core and a 4 GB cap. Before each launch the runner
 checked that the core and its SMT sibling were idle (runner: `../lb-repro/runner/gh225lb_queue.py`).
 Data: main a79d7c89 (the stems after #230).
 
