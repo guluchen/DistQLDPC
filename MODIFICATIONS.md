@@ -724,7 +724,10 @@ test-cc-flags` 7o: values, conflicts, the `c NATIVE-LB` line, `-v` output with `
 *Credit.* The bounds are GH-124's packing and GH-157's charge (Banfi, Ferrari, Favano, Tarable, Barletta,
 arXiv:2610.28008; Okada-Kasai, cpm-ldpc-distance) and GH-181's redundant rows (idea of Qubitserf 04b9349's
 augment_sparse_checks, S. Cercelescu, MIT, and Puchert-Tillmann arXiv:2004.03387); the propagator, its explanations and
-the search integration are new code. *Evidence.* `optimization/experiments/GH-231/`.
+the search integration are new code. *Why it is not the default.* A candidate with `-native-lb=charge` as the default failed
+the adoption gates on yfclab2 (5-seed medians vs main, Tier 5 single 6 h runs): Tier 3 HGP_2866_256_8 -card-mto 1.279 (rule: no
+cell above 1.25), Tier 5 COLOR_331_1_21 -no-card 1.514 and LP_1122_148_20 1.291 / 1.262 (rule: no solved code above 1.2x); the
+tier geomeans were 0.748 / 0.682 / 0.806 and the other Tier 5 solved cells 0.63 to 0.95. *Evidence.* `optimization/experiments/GH-231/`.
 
 Fix round 1 (S0a): the S0 spec's literal mutants 3 ("orbit seeds without forbidding earlier orbits") and 4 ("stop
 rule without checking the other half's lower bound") are equivalent mutants as built: the first only drops a

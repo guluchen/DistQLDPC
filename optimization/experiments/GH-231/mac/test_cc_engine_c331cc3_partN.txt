@@ -1,0 +1,16 @@
+partN (GH-231 -native-lb, MaxSAT split driver): 1800 runs on 200 codes, 0 bad; surface codes d = 3..5: 27 runs, 0 bad; 1647 explanation clauses audited, 0 bad; checks 18256, pack conflicts 173, charge conflicts 43, dead rows 0, propagations 1431, row-state mismatches 0
+partN mutant 1 (pack without disjointness): 203 runs, audit caught a bad explanation in 17 (27 of 75 clauses bad), 12 failed, 4 with a wrong RESULT d OPTIMAL
+partN mutant 2 (no false literal in the explanation): 203 runs, audit caught a bad explanation in 1 (2 of 155 clauses bad), 0 failed, 0 with a wrong RESULT d OPTIMAL
+partN mutant 3 (charge inflated by 1/D): 203 runs, audit caught a bad explanation in 16 (19 of 50 clauses bad), 10 failed, 2 with a wrong RESULT d OPTIMAL
+partN mutant 4 (conflict one below the cap): 203 runs, audit caught a bad explanation in 23 (60 of 151 clauses bad), 9 failed, 3 with a wrong RESULT d OPTIMAL
+partN mutant 5 (propagation onto the rows used): 203 runs, audit caught a bad explanation in 12 (26 of 223 clauses bad), 7 failed, 3 with a wrong RESULT d OPTIMAL
+partN mutant 6 (redundant rows lose a qubit (-native-lb-sparse=on)): 203 runs, audit caught a bad explanation in 17 (48 of 464 clauses bad), 0 failed, 0 with a wrong RESULT d OPTIMAL
+partD (MaxSAT split, -oddcap-skip off/on): 400 runs on 200 codes (56 with an all-odd half), 0 bad
+partN (a) (GH-231 half-level probes, caps 1..d_h + 2, feasibility + optimisation): 297 halves x 6 configurations, 0 bad; 583631 explanation clauses audited, 0 bad; checks 978234, pack conflicts 111031, charge conflicts 15072, dead rows 1706, propagations 455822, row-state mismatches 0
+partN (a) mutant 1 (pack without disjointness): 297 halves, audit caught a bad explanation on 147 (2352 of 21976 clauses bad), wrong probe answers on 99
+partN (a) mutant 2 (no false literal in the explanation): 297 halves, audit caught a bad explanation on 52 (216 of 116590 clauses bad), wrong probe answers on 5
+partN (a) mutant 3 (charge inflated by 1/D): 297 halves, audit caught a bad explanation on 141 (1731 of 41906 clauses bad), wrong probe answers on 88
+partN (a) mutant 4 (conflict one below the cap): 297 halves, audit caught a bad explanation on 181 (2142 of 87301 clauses bad), wrong probe answers on 124
+partN (a) mutant 5 (propagation onto the rows used): 297 halves, audit caught a bad explanation on 117 (1950 of 234844 clauses bad), wrong probe answers on 66
+partN (a) mutant 6 (redundant rows lose a qubit (-native-lb-sparse=on)): 297 halves, audit caught a bad explanation on 172 (8881 of 106020 clauses bad), wrong probe answers on 94
+CC_ENGINE_TESTS PASS
