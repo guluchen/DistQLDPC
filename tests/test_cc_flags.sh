@@ -688,14 +688,15 @@ if [[ $rc -ne 0 ]] || ! grep -q "^c NATIVE-LB" <<<"$err" || grep -q "state_fails
 fi
 runs=$((runs + 1)); run -native-lb=charge $L TN_72_8_8
 if [[ $rc -ne 0 ]] || grep -q "NATIVE-LB" <<<"$err$out"; then echo "FAIL (GH-231: no c NATIVE-LB line without -native-lb-stats)" >&2; fails=$((fails + 1)); fi
+# -ub-pre=off: the pre-pass prints wall times and alternates its halves by time, so two runs of one command can differ
 for code in BB_90_8_10 TN_72_8_8 $C; do   # default = -native-lb=off: the same -v output; -native-lb=charge = its tuned defaults
     runs=$((runs + 1))
-    run -v $L $code; out0="$out"
-    run -v -native-lb=off $L $code
+    run -v -ub-pre=off $L $code; out0="$out"
+    run -v -ub-pre=off -native-lb=off $L $code
     if [[ $rc -ne 0 || "$out" != "$out0" ]]; then echo "FAIL (GH-231: -native-lb=off -v output differs from the default on $code)" >&2; fails=$((fails + 1)); fi
     runs=$((runs + 1))
-    run -v -native-lb=charge $L $code; out0="$out"
-    run -v -native-lb=charge -native-lb-prop=on -native-lb-prop-max=128 -native-lb-sparse=on -native-lb-gap=0 -native-lb-minr=1 -native-lb-order=before $L $code
+    run -v -ub-pre=off -native-lb=charge $L $code; out0="$out"
+    run -v -ub-pre=off -native-lb=charge -native-lb-prop=on -native-lb-prop-max=128 -native-lb-sparse=on -native-lb-gap=0 -native-lb-minr=1 -native-lb-order=before $L $code
     if [[ $rc -ne 0 || "$out" != "$out0" ]]; then echo "FAIL (GH-231: -native-lb=charge and its explicit defaults differ on $code)" >&2; fails=$((fails + 1)); fi
 done
 
