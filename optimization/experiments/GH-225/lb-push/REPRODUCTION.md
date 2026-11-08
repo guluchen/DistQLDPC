@@ -34,38 +34,54 @@ both halves (X half only for the color codes, Hx = Hz). This is the same engine,
 - Both have level 32 EMPTY (X half under the verified dual map; odd levels skipped by parity).
 - After lb 34 was reproduced, I stopped the E run and the companion 755e0c21 `-cc-roworder=index` run (rc -15, 47 015 s); lb 36 is far out of reach.
 
-**Not reached in 12 h:**
-- TN_324 lb 24 (two levels away);
-- TN_684 lb 25: about 3x the 39 000 s that lb 24 took, so far beyond 12 h. No run was started for it.
+**Not reached in 12 h:** TN_324 lb 24 and TN_684 lb 25. Both were reached in the 36 h runs below.
 
 `summary.md` (from `runner/summ_push.py`) lists every run with its time to each lb and the node counts of its last level. `logs.tgz` holds the full solver output.
 
-## push3: 24-36 h runs (started 2026-11-07)
+## push3, push4, push5: 24-36 h runs (2026-11-07 to 2026-11-09)
 
-`push3/` holds two arms per code, each a different tree:
-- C = main 755e0c21's default;
-- E = main 1239e9a2 plus ungated erasure.
+Two arms per code, each a different tree. C = main 755e0c21's CC default (gated erasure), frozen as
+`frozen/server-gh225lb-main-755e0c2`. E = main 1239e9a2's CC default plus ungated `erasure`, frozen as
+`frozen/server-gh225lb-main-1239e9a`. Exceptions: TN_684 uses E with `-seed=1` and `-seed=2`; COLOR_2791 uses C and C with
+`-cc-roworder=bfs`; COLOR_1027 uses C and E with `-cc-roworder=index`. Limit 36 h (BB_1080 24 h, stopped by hand at
+47 015 s once lb 34 was reproduced). Data: stems of main a79d7c89, so the run ids carry the older stem names.
 
-There are three exceptions:
-- TN_684: E with `-seed=1` and `-seed=2`;
-- COLOR_2791: C and C `-cc-roworder=bfs`;
-- COLOR_1027: C and E `-cc-roworder=index`.
+Final state of the stems renamed on 2026-11-07. Times are s to the new lb (or to the solved value).
 
-Limits: 36 h, except BB_1080 at 24 h. The logs in `push3/logs/` are an interim copy and are refreshed when the runs end.
+| Stem on this branch | Was (main) | Arm 1 | Arm 2 | Runs |
+|---|---|---:|---:|---|
+| BB_1080_4_34to48 | BB_1080_4_32to48 | C 40 586 (push1) | E 44 390 | push1 / push3 |
+| BB_756_16_34 (d = 34) | BB_756_16_32to34 | C 59 834 | E 65 917 | push3 |
+| BB_864_4_34to40 | BB_864_4_32to40 | C 58 134 | E 64 158 | push3 |
+| COLOR_1027_1_33to37 | COLOR_1027_1_31to37 | C 78 893 | E index 77 146 | push3 |
+| COLOR_2791_1_30to61 | COLOR_2791_1_28to61 | C 42 701 | C bfs 79 340 | push3 |
+| TN_288_2_24 (d = 24) | TN_288_2_22to24 | C 98 733 | E 100 460 | push3 |
+| TN_324_4_24to25 | TN_324_4_23to25 | C 72 074 | E 72 807 | push3 |
+| TN_360_4_24 (d = 24) | TN_360_4_23to24 | C 47 415 | E 48 186 | push3 |
+| TN_396_4_24to26 | TN_396_4_23to26 | C 47 489 | E 47 923 | push3 |
+| TN_432_8_25to29 | TN_432_8_23to29 | C 87 063 | E 89 519 | push4 |
+| TN_468_4_25to29 | TN_468_4_23to29 | C 107 865 | E 110 270 | push5 |
+| TN_496_2_30 (d = 30) | TN_496_2_28to30 | C 117 232 | E 119 072 | push3 |
+| TN_504_2_25to34 | TN_504_2_24to34 | C 54 147 | E 56 955 | push3 |
+| TN_540_4_25to34 | TN_540_4_24to34 | C 57 564 | E 63 505 | push3 |
+| TN_576_2_26to37 | TN_576_2_24to37 | C 79 691 | E 88 962 | push4 |
+| TN_612_2_26to40 | TN_612_2_24to40 | C 97 484 | E 107 037 | push5 |
+| TN_648_10_23to32 | TN_648_10_22to32 | C 53 620 | E 58 436 | push3 |
+| TN_648_14_23to28 | TN_648_14_22to28 | C 70 302 | E 63 576 | push3 |
+| TN_684_2_25to29 | TN_684_2_24to29 | E s1 106 893 | E s2 105 414 | push3 |
 
-Lower bounds reproduced so far (both arms, time to lb in s):
+Not renamed (one tree, PLAUSIBLE): COLOR_2791 lb 31 (C only, 88 551 s).
 
-| Code | New stem | C | E |
-|---|---|---:|---:|
-| TN_360_4 | TN_360_4_24 (solved, d = 24; both runs print `o 24`) | 47 415 | 48 186 |
-| TN_396_4 | TN_396_4_24to26 | 47 489 | 47 923 |
-| TN_496_2 | TN_496_2_29to30 | 46 997 | 47 826 |
-| TN_504_2 | TN_504_2_25to34 | 54 147 | 56 955 |
-| TN_648_10 | TN_648_10_23to32 | 53 620 | 58 436 |
-| BB_756_16 | BB_756_16_34 (solved, d = 34; both runs print `o 34`) | 59 834 | 65 917 |
-| BB_864_4 | BB_864_4_34to40 | 58 134 | 64 158 |
-| TN_324_4 | TN_324_4_24to25 | 72 074 | 72 807 |
-| TN_540_4 | TN_540_4_25to34 | 57 564 | 63 505 |
-| TN_648_14 | TN_648_14_23to28 | 70 302 | 63 576 |
-| COLOR_1027_1 | COLOR_1027_1_33to37 | 78 893 | E index 77 146 |
-| COLOR_2791_1 | COLOR_2791_1_30to61 | 42 701 | C bfs 79 340 |
+Checks:
+- `verify_levels.txt` (from `runner/verify_lb.py`): in all 71 runs of push1-5 and repro3 every recorded level is EMPTY. The levels missing below the final lb are the odd levels of the BB codes (parity rule).
+- `verify_parity.txt` (from `runner/parity_check.py`, pure Python): every column of Hx and Hz has odd weight on BB_756, BB_864 and BB_1080, so all kernel vectors have even weight.
+- XZ-dual maps, for the codes searched on the X half only:
+  - BB_756, BB_864, BB_1080 (`halfswap-inverse Z_l x Z_m`) and COLOR_1027, COLOR_2791 (identity, Hx = Hz) are re-checked in pure Python in `verify_dual.txt` (`runner/dual_check.py`);
+  - TN_496 uses a Tanner-graph map (`tanner-swap`). The map was dumped from a scratch one-line patch of 755e0c21 (not part of any commit) to `dual/TN_496_dual_perm.txt` and re-checked in pure Python in `verify_dual.txt` (`runner/dual_check_perm.py`).
+  - Result for all six: the map is a permutation, ranks of Hx and Hz are equal, and pi(rows of Hz) lies in rs Hx and pi(rows of Hx) in rs Hz, so dX = dZ. TN_684 and the other TN codes searched both halves.
+- The upper bounds of all renamed TN and BB stems are the GH-146 witnesses, re-verified in pure Python under the new stems: `optimization/experiments/GH-146/witnesses/renamed-2026-11-07/VERIFY.txt`, 17/17 VALID. That covers the four solved stems.
+
+Caveats:
+- All of this is the same CC engine family, not an independent second method.
+- C and E both use the erasure rule (GH-195; gated on C, ungated on E). They differ in binary and gating and search different trees, but a soundness bug in code they share would affect both. Non-erasure (A) runs reached only the lower values noted in the rename history (TN_432 24, TN_576 25, TN_612 25).
+- On COLOR_1027 the two arms have the same row order and differ only in gating and binary (level 32: 38.0G vs 36.3G nodes), so that pair is the weakest of the set.
