@@ -1,13 +1,15 @@
-DistQLDPC fault-distance web release 2026-11-12
+DistQLDPC implicit circuit-distance web release 2026-11-12
 Copyright (C) 2026 Yu-Fang Chen. GPL-3.0-or-later.
 Embedded MaxCDCL: MIT; see the root project license and notices.
 
-The circuit detector/logical formulation follows M. A. Webster et al.,
-Distance-Finding Algorithms for Quantum Codes and Circuits, arXiv:2603.22532.
-The XOR-closed location-support observation and benchmark design acknowledge
-Bin Cheng, Naixu Guo and Feng Pan, tropidist, arXiv:2611.08247 (review b03ec2d).
-The guarded reduction and connected-cluster backend are our own implementation;
-no tropidist source was copied or linked. No external solver was run.
-Stim-text interoperability and compound Clifford expansions follow
-quantumlib/Stim's documented format and gate definitions; no simulator code
-was copied or linked. No Stim or DEM runtime is required.
+Original local error-frame MaxSAT encoding, adjoint ideal-output sweep, and
+bounded demand-driven connected-cluster responses. Production circuit paths
+do not enumerate the complete detector-error matrix. No external solver is
+linked or used by this web application.
+
+Detector/logical distance formulation: M. A. Webster et al., Distance-Finding
+Algorithms for Quantum Codes and Circuits, arXiv:2603.22532.
+Circuit-distance and benchmark reference: Bin Cheng, Naixu Guo and Feng Pan,
+tropidist, arXiv:2611.08247 (source review b03ec2d). No tropidist code copied.
+Stim format/gate interoperability follows quantumlib/Stim documentation;
+no simulator implementation was copied or linked.
