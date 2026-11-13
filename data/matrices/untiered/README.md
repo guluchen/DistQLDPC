@@ -1,5 +1,9 @@
 # Untiered matrix library
 
+New fixture: [rotated toric [[10,2,3]]](ROTATED_TORIC.md), with exhaustive
+distance regression tests. This standalone fixture is not part of the historical
+29-code MANIFEST.csv or validation.json batches below.
+
 The library contains [repetition-factor HGP codes](#construction-and-distance-provenance) (GH-153),
 [nonzero-rate cycle-factor HGP codes](CYCLE_HGP.md) (GH-154),
 [triangular 6.6.6 color codes](COLOR666.md) (GH-156), and

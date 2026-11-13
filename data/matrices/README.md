@@ -6,7 +6,7 @@ which lived in [untiered/](untiered/README.md), were measured with main 02879a93
 bundled code and placed into the tiers on 2026-11-04 (PI plan of 2026-11-04; placement table in
 [untiered/README.md](untiered/README.md#placement-2026-11-04)). Their generators, MANIFEST.csv (now with
 `placed_tier` / `placed_stem` columns), validation evidence and provenance documents stay in untiered/, which
-holds no matrices any more. New, unmeasured codes are added there first and stay out of the tier sets and the
+holds the new rotated-toric fixture described below. New, unmeasured codes are added there first and stay out of the tier sets and the
 QDistSAT mirror until a PI-approved tier assignment; use their full path when invoking DistQLDPC.
 
 Each code `<stem>` is four text files `<stem>_Hx.txt`, `<stem>_Hz.txt`, `<stem>_Gx.txt`,
@@ -20,6 +20,12 @@ is used as given (`./bin/distqldpc data/matrices/tier1/BB_144_12_12`).
 `scripts/benchmark_matrices.py` searches the same way (`--matrices-dir data/matrices/tierN`
 restricts it to one tier). `scripts/compute_logicals.py --dir` and
 `scripts/preprocess_matrices.py --src` take one flat directory, e.g. `data/matrices/tier0`.
+
+## New untiered correctness fixture
+
+[Rotated toric [[10,2,3]]](untiered/ROTATED_TORIC.md) is available as
+`data/matrices/untiered/TORIC_10_2_3`. It is not included in the tier counts
+or performance panels pending dedicated-server measurement and tier approval.
 
 ## Tiers
 
@@ -48,7 +54,7 @@ pre-registered plan and kept identical for baseline and candidate.
 
 ## Naming rule
 
-`{family}_{n}_{k}_{d}` with family in `AMC`, `BB`, `COLOR`, `GB`, `HGP`, `LP`, `TN` (`HGP` = hypergraph product, `COLOR` = 6.6.6 color code, `AMC` = abelian multi-cycle, all 2026-11-04; the twisted-torus codes keep `BB`); n = columns of Hx, k = rows
+`{family}_{n}_{k}_{d}` with family in `TORIC` (rotated toric), `AMC`, `BB`, `COLOR`, `GB`, `HGP`, `LP`, `TN` (`HGP` = hypergraph product, `COLOR` = 6.6.6 color code, `AMC` = abelian multi-cycle, all 2026-11-04; the twisted-torus codes keep `BB`); n = columns of Hx, k = rows
 of Gx, d = minimum distance once our tool has found it (PI 2026-10-11), otherwise the current proven bounds: `{lb}to{ub}` when an upper bound (a logical operator of that weight) is known, `ge{lb}` when only a lower bound is known (PI 2026-10-11: "Unknown可以改成目前上下界"); names are updated when bounds improve; codes with equal n and k are first checked for being the same code (duplicates are removed); genuinely different codes would get a suffix `_a`, `_b`. `GB` keeps its own
 prefix (not merged into `BB`). Former `PK_*` / `xu_*` codes are `LP_*`; former `QT_*`
 codes are `TN_*`. Upstream ids and attribution are recorded in [NOTICE](../../NOTICE),

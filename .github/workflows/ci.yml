@@ -23,6 +23,9 @@ jobs:
       - name: Build DistQLDPC
         run: make --jobs="$(nproc)"
 
+      - name: Validate rotated-toric exact distance and both engines
+        run: python3 tests/test_rotated_toric.py
+
       - name: Run smoke validation
         run: bash scripts/smoke_test.sh
 
