@@ -1,15 +1,503 @@
-DistQLDPC implicit circuit-distance web release 2026-11-12
-Copyright (C) 2026 Yu-Fang Chen. GPL-3.0-or-later.
-Embedded MaxCDCL: MIT; see the root project license and notices.
+DistQLDPC — Third-Party and Modification Notices
+================================================
 
-Original local error-frame MaxSAT encoding, adjoint ideal-output sweep, and
-bounded demand-driven connected-cluster responses. Production circuit paths
-do not enumerate the complete detector-error matrix. No external solver is
-linked or used by this web application.
+This file supplements the root LICENSE (GPL-3.0-or-later). It documents
+third-party components bundled in this repository and modifications made
+to upstream code.
 
-Detector/logical distance formulation: M. A. Webster et al., Distance-Finding
-Algorithms for Quantum Codes and Circuits, arXiv:2603.22532.
-Circuit-distance and benchmark reference: Bin Cheng, Naixu Guo and Feng Pan,
-tropidist, arXiv:2611.08247 (source review b03ec2d). No tropidist code copied.
-Stim format/gate interoperability follows quantumlib/Stim documentation;
-no simulator implementation was copied or linked.
+
+1. DistQLDPC application (GPL)
+------------------------------
+
+Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
+
+Includes, without limitation:
+
+  src/core/distqldpc.cc
+  src/cc/ (GH-124 CC level-search engine, experimental)
+  scripts/compute_logicals.py
+  scripts/preprocess_matrices.py
+  scripts/benchmark_matrices.py
+  src/fault/fault_main.cc and scripts/fault_distance.py (2026-11-12):
+    original native fault-distance frontends, sharing the embedded MaxCDCL
+    engine without changing it. The detector/logical matrix formulation is
+    credited to the published circuit-distance definition in M. A. Webster
+    et al., "Distance-Finding Algorithms for Quantum Codes and Circuits",
+    arXiv:2603.22532, Section 3.3. Native Stim-text interoperability follows
+    quantumlib/Stim's documented circuit format; no Stim or other third-party
+    simulator code was copied or linked. See docs/FAULT_DISTANCE.md.
+  README.md and project documentation authored for DistQLDPC
+
+2026-11-12: The native fault-distance CC implementation independently adapts
+the project's connected-cluster branching, sibling exclusion and packing to
+detector/logical signatures with physical-location exclusivity. The guarded
+XOR-closed-support reduction and circuit benchmark design acknowledge the
+formulation discussed by Bin Cheng, Naixu Guo and Feng Pan, tropidist,
+arXiv:2611.08247, source review b03ec2d. No tropidist solver code was copied.
+Benchmark preparation reads unchanged public circuits with their original
+MIT or Google/tesseract Apache-2.0 provenance and retains the license files.
+Native Stim compound Clifford expansion follows quantumlib/Stim's documented
+gate definitions; no simulator implementation was copied.
+
+Licensed under GNU General Public License v3.0 or later. See LICENSE.
+
+
+2. MaxCDCL / MaxSAT engine (MIT, with DistQLDPC modifications)
+--------------------------------------------------------------
+
+Location: src/solver/
+
+Upstream: MaxCDCL — a MaxSAT solver combining clause learning and
+branch-and-bound (Chu-Min Li et al., CP 2021).
+
+  Copyright (c) 2021, Chu-Min Li (chu-min.li@u-picardie.fr)
+  Based on Maple_CM / Maple_LCM / MiniSat lineage.
+
+Full MIT license text: src/solver/LICENSE
+Copyright headers in individual source files list earlier authors
+(MiniSat, Maple_CM, etc.).
+
+Reference:
+  Chu-Min Li, Zhenxing Xu, Jordi Coll, Felip Manyà, Djamal Habet, Kun He,
+  Combining Clause Learning and Branch and Bound for MaxSAT, CP 2021.
+
+
+3. Modifications to src/solver/ (DistQLDPC patches)
+-----------------------------------------------------
+
+Copyright (C) 2025-2026 Yu-Fang Chen <yfc@iis.sinica.edu.tw>
+Part of DistQLDPC (GPL-3.0-or-later when distributed as this project).
+
+These changes are documented in detail in MODIFICATIONS.md. Summary:
+
+  - Bounds pipe API (TRY / LB / UB messages for parent-process progress)
+  - Best-solution tracking and printing on timeout / interrupt
+  - Configurable cardinality encoding modes (Sinz / MTO / off)
+  - Retire inactive unit and auxiliary soft literals after preprocessing
+    partition, preserving representative clauses and objective accounting (GH58)
+  - Multi-instance search controls and per-instance heuristic state (interleaved CSS split, experimental)
+  - GH-148 (inactive unless DistQLDPC passes rows; it does by default on the split MaxSAT path): native "at most k of these
+    variables" propagator for stabilizer-overlap rows in propagate() / propagateForLK(), with
+    lazily allocated, cached reason clauses (relocated in relocAll, skipped by on-the-fly reduction)
+
+Modified files (partial list): Solver.h, Solver.cc
+
+  src/core/distqldpc.cc also contains GH-85 per-half symmetry breaking
+  (GH-73 x GH-75 interaction): an original, domain-specific adaptation of
+  static symmetry breaking (Crawford et al., KR 1996; Anders, Brenner, Rattan,
+  "Satsuma", SAT 2024, DOI 10.4230/LIPIcs.SAT.2024.4). No third-party code.
+  src/core/distqldpc.cc also contains GH-87 dual-half elimination (an
+  original use of verified XZ-dual qubit permutations to prove dX = dZ in
+  the GH-73 split; GF(2) checks reused from GH-75). No third-party code.
+  src/core/distqldpc.cc also contains GH-107 dual-map bound sharing (an
+  original use of the verified XZ-dual maps of GH-87 to share proven lower
+  bounds between the two GH-73 split halves; ported from GH-102). No
+  third-party code.
+
+  src/cc/ (GH-124, optional connected-cluster engine, off by default;
+  enable with -engine=cc) implements the connected-cluster distance
+  search of I. Dumer, A. A. Kovalev, L. P. Pryadko, "Distance
+  verification for classical and quantum LDPC codes", IEEE Trans. Inf.
+  Theory 63(7), 4675-4686, 2017. It was written from scratch from the
+  published algorithm and DistQLDPC's own code. The search skeleton
+  (connected clusters grown from a seed, branching on one unsatisfied
+  check, closed-cluster dead ends, interleaved X/Z weight levels) was
+  studied in Quantinuum's Qubitserf (https://github.com/Quantinuum/Qubitserf,
+  Copyright (c) 2026 Serban Cercelescu and the qubitserf contributors,
+  MIT License); no Qubitserf code was copied. DistQLDPC's own additions
+  are the disjoint odd-check packing bound, sibling exclusion, orbit
+  seeds from the GH-85 verified automorphisms, single-half search under
+  the GH-87/GH-107 verified XZ-dual maps, the stop rule, independent
+  witness verification and the verified basis-row upper bound (see
+  README, "Connected-cluster (CC) engine").
+  The CC node lower bound `charge` (GH-157, a default CC rule since the
+  PI's decision of 2026-10-29) was implemented from published mathematics
+  only: the detector-charge bound of F. Banfi, G. Ferrari, A. Favano,
+  A. Tarable, R. Barletta, arXiv:2610.28008 (2026), and the scaled
+  feasible set-cover dual of K. Okada and K. Kasai, cpm-ldpc-distance
+  (https://github.com/kasaikenta/cpm-ldpc-distance). No third-party code
+  was read or copied.
+
+  src/cc/cc_aut.h, src/cc/cc_aut.cc (GH-152, -cc-aut=on, the CC default
+  since 2026-10-28) find candidate automorphisms of the coloured Tanner
+  graph by colour refinement (coarsest equitable partition) and
+  individualisation-refinement with backtracking, in the style of the
+  graph-automorphism tools nauty and Traces (B. D. McKay, "Practical
+  graph isomorphism", Congressus Numerantium 30, 45-87, 1981; B. D.
+  McKay and A. Piperno, "Practical graph isomorphism, II", J. Symbolic
+  Computation 60, 94-112, 2014) and bliss (T. Junttila, P. Kaski,
+  ALENEX 2007). It was implemented from scratch from the published
+  descriptions; no nauty, Traces, bliss or other third-party code was
+  read, copied or linked. Every candidate is accepted only after
+  DistQLDPC's own GF(2) checks (GH-75/GH-85/GH-87).
+
+  The CC rule "tiebreak" (GH-162, -cc-rules=...,overlap,tiebreak,
+  opt-in) cuts the even-weight stabilizer-overlap tie |e & g| = |g|/2
+  unless the first qubit of g lies in e. The first(g) tie-break idea
+  is from Qubitserf (https://github.com/Quantinuum/Qubitserf, commit
+  04b9349, Copyright (c) 2026 Serban Cercelescu and the qubitserf
+  contributors, MIT License). It was re-derived from the mathematics
+  and implemented from scratch; no Qubitserf code was copied. The
+  per-seed qubit orders that make it compatible with DistQLDPC's orbit
+  seeds, and the proof, are DistQLDPC's (MODIFICATIONS.md, GH-162).
+
+  The CC option -cc-roworder=bfs (GH-183) uses the reversed-BFS row ordering idea of Qubitserf 04b9349 (S. Cercelescu, MIT); re-implemented from scratch, no code copied.
+
+  The CC rules "sparse", "sparseov" and "sparsemrv" (GH-181, opt-in)
+  add redundant parity rows (sparse sums of two rows of the half's
+  parity matrix, and of two stabilizer rows for the overlap rule). The
+  idea of redundant pair-XOR checks is from Qubitserf
+  (https://github.com/Quantinuum/Qubitserf, commit 04b9349,
+  augment_sparse_checks, Copyright (c) 2026 Serban Cercelescu and the
+  qubitserf contributors, MIT License); the classical precursor is
+  M. Puchert and A. M. Tillmann, "Exact separation of forbidden-set
+  cuts associated with redundant parity checks of binary linear
+  codes", arXiv:2004.03387. The rule "xorunit" (GH-181, opt-in) is a
+  forced-unit step in the style of K. Okada and K. Kasai's
+  cpm-ldpc-distance. All were re-derived from the mathematics and
+  implemented from scratch; no third-party code was copied
+  (MODIFICATIONS.md, GH-181).
+
+  The CC rule "erasure" (GH-195; a default CC rule since GH-227) cuts a
+  node when no logical extends it inside the free candidates of the
+  packed odd rows plus at most two further qubits. The erasure bound
+  idea (the packing-charged region and its elimination with a random
+  linear fingerprint) is from Qubitserf (https://github.com/Quantinuum/
+  Qubitserf, commit 04b9349, Copyright (c) 2026 Serban Cercelescu and
+  the qubitserf contributors, MIT License). It was re-derived from the
+  mathematics and implemented from scratch; no Qubitserf code was
+  copied. The soundness argument for DistQLDPC's search state
+  (forbidden sets, orbit seeds, overlap, tiebreak), the start-level
+  gate and the GH-227 timed-sample cost gate (which decides per class
+  of nodes whether the test runs) are DistQLDPC's (MODIFICATIONS.md,
+  GH-195, GH-227).
+
+The original MaxCDCL engine remains under MIT. All upstream copyright
+and permission notices in src/solver/ must be preserved in copies and
+substantial portions, per the MIT license.
+
+
+4. MiniSat / Maple_CM / related utilities (MIT)
+-----------------------------------------------
+
+Location: src/solver/mtl/, src/solver/utils/, and headers in src/solver/
+
+  MiniSat — Copyright (c) Niklas Een, Niklas Sorensson
+  Chanseok Oh's MiniSat Patch Series — Copyright (c) Chanseok Oh
+  Maple_LCM / Maple_CM — Copyright (c) Mao Luo, Chu-Min Li, Fan Xiao
+
+See file headers in src/solver/ for exact attribution per file.
+
+
+5. Benchmark matrices from codeDistancePYPI (MIT)
+-------------------------------------------------
+
+Location: data/matrices/ (tier subdirectories tier0 .. tier5; see
+data/matrices/README.md)
+
+Some example parity-check and logical-operator data in this repository
+were derived from the codeDistancePYPI project:
+
+  Repository: https://github.com/m-webster/codeDistancePYPI
+  Source tree: https://github.com/m-webster/codeDistancePYPI/tree/main/examples
+  Upstream license: MIT (Copyright (c) 2026 Mark Alan Webster, Abraham Jacob,
+  Oscar Higgott). Full text:
+  https://github.com/m-webster/codeDistancePYPI/blob/main/LICENSE
+
+DistQLDPC changes applied to upstream data:
+
+  - Converted to text matrices: {code}_Hx.txt, {code}_Hz.txt,
+    {code}_Gx.txt, {code}_Gz.txt (GF(2), space-separated 0/1 rows).
+  - File headers and naming follow the DistQLDPC layout described in
+    README.md.
+  - Stem names use {family}_{n}_{k}_{d} (same convention as QDistSAT).
+    If d is not certified, the stem uses `unknown`. Upstream example IDs
+    are listed below where files were renamed.
+
+Codes in data/matrices/tier*/ derived from codeDistancePYPI examples
+(after format conversion and stem rename):
+
+  LP_* (from upstream AJ_*):
+    LP_34_20_2 (AJ_01), LP_136_32_4 (AJ_04), LP_238_44_6 (AJ_07),
+    LP_340_56_8 (AJ_10), LP_442_68_10 (AJ_13),
+    LP_1768_224_22 (AJ_52; was LP_1768_224_ge17)
+  LP_* (from upstream xu_*):
+    LP_544_80_12 (xu_16), LP_714_100_16 (xu_21; was LP_714_100_unknown),
+    LP_1020_136_16 (was xu_30), LP_1428_184_24 (was xu_42, then LP_1428_184_ge17)
+  LP_* (from upstream PK_*):
+    LP_1054_140_20 (was PK_31, then LP_1054_140_17to32)
+  TN_* — TN_36_8_3 (was QT_36_8_3), TN_36_8_4, TN_54_11_4 (was QT_54_11_4),
+         TN_72_8_8, TN_72_14_4 (was QT_72_14_4), TN_108_2_12, TN_144_2_13,
+         TN_180_2_17 (was TN_180_2_17), TN_200_10_10 (was QT_200_10_10), TN_216_4_18 (was TN_216_4_18),
+         TN_250_10_15 (was QT_250_10_15), TN_252_2_21 (was TN_252_2_21, then TN_252_2_17to28 until d = 21 was confirmed), TN_288_2_ge9 (was TN_288_2_24),
+         TN_324_4_ge9 (was TN_324_4_25), TN_360_4_ge17 (was TN_360_4_24), TN_396_4_ge17 (was TN_396_4_26),
+         TN_432_8_ge9 (was TN_432_8_33), TN_468_4_ge17 (was TN_468_4_31),
+         TN_496_2_ge17 (was TN_496_2_32), TN_504_2_ge17 (was TN_504_2_45), TN_540_4_ge9 (was TN_540_4_40), TN_576_2_ge9 (was TN_576_2_57; TN_576_2_59 was a duplicate of the same code and was removed),
+         TN_612_2_ge17 (was TN_612_2_52), TN_648_10_9to52 (was TN_648_10_71), TN_648_14_ge9 (was TN_648_14_50),
+         TN_684_2_ge9 (was TN_684_2_29)
+
+Other files under data/matrices/ (e.g. BB_*, GB_*) are not listed
+here and are provided under the DistQLDPC repository license unless
+otherwise noted.
+
+Renamed in this repository (same matrices, corrected metadata in filenames),
+aligned with QDistSAT:
+  BB_144_14_14 (was BB_144_14_0), BB_288_12_18 (was BB_288_12_18, then BB_288_12_unknown; d = 18 found by DistQLDPC 2026-10-11),
+  BB_360_12_24 (was BB_360_12_24, then BB_360_12_17to24 until d = 24 was confirmed), GB_144_12_8 (was GB_144_12_24),
+  GB_144_12_12 (was GB_144_12_37).
+Renamed 2026-10-11 (PI decision; same matrices, stem = {family}_{n}_{k}_{d}
+with n = columns of Hx, k = rows of Gx): LP_1054_140_17to32 (was PK_31),
+LP_1020_136_16 (was xu_30), LP_1428_184_ge17 (was xu_42),
+TN_648_10_9to52 (was TN_648_10_71; the bundled logical bases contain
+weight-52 nontrivial logicals, so d <= 52 and 71 was not a valid distance),
+TN_360_4_ge17 (was TN_360_4_24; matrices identical to QDistSAT's
+TN_360_4_ge17, distance not certified here).
+
+Redistribution of the MIT-derived matrix files must retain the upstream
+copyright and permission notice above (or the full MIT license text from
+the codeDistancePYPI repository).
+
+
+6. Combined distribution
+--------------------------
+
+When you receive DistQLDPC as a whole (source or binary):
+
+  - The combined work is licensed under GPL-3.0-or-later (see LICENSE).
+  - Third-party MIT components remain available under their original
+    MIT terms; this NOTICE, src/solver/LICENSE, and section 5 above
+    satisfy the MIT attribution requirement for bundled MIT code and
+    MIT-derived benchmark data.
+  - If you extract src/solver/ alone from upstream MaxCDCL sources
+    (without DistQLDPC patches), those files are governed by MIT as
+    stated in src/solver/LICENSE.
+
+For questions about upstream MaxCDCL, contact the original authors
+(see src/solver/ file headers).
+
+7. Repetition-product hypergraph-product matrices (GH-153; tiered 2026-11-04)
+---------------------------------------------------------------------------
+
+Location: data/matrices/tier0 .. tier5 since 2026-11-04 (placement table and provenance in
+data/matrices/untiered/README.md); generator scripts/codegen/hgp_repetition.py.
+Original clean-room implementation and generated matrices, GPL-3.0-or-later.
+No third-party code, matrix files, or paper text were copied.
+
+Construction credit: Jean-Pierre Tillich and Gilles Zemor, "Quantum LDPC
+Codes With Positive Rate and Minimum Distance Proportional to the Square
+Root of the Blocklength", arXiv:0903.0566v2 (2013), Theorem 1;
+IEEE Transactions on Information Theory (2014), DOI 10.1109/TIT.2013.2292061.
+The repetition-code specializations have claimed parameters
+[[13,1,3]], [[41,1,5]], [[113,1,8]], [[265,1,12]], [[481,1,16]], [[1105,1,24]].
+These are mathematical ground-truth claims, not DistQLDPC solver results.
+Placed and renamed 2026-11-04 (PI plan; distances found by DistQLDPC main 02879a93 with
+GF(2)-verified witnesses, all equal to the claims): HGP_13_1_3 (tier0), HGP_41_1_5 (tier0), HGP_113_1_8 (tier0), HGP_265_1_12 (tier1), HGP_481_1_16 (tier3), HGP_1105_1_24 (tier5).
+The earlier 60 s smoke runs remain recorded in GH-153.
+See data/matrices/untiered/MANIFEST.csv and README.md for full provenance.
+
+8. Nonzero-rate cycle-factor HGP matrices (GH-154; tiered 2026-11-04)
+--------------------------------------------------------------------
+
+Original clean-room generator scripts/codegen/hgp_cycle.py and generated
+HGP_{45,106,306,610,1261,2866}_* matrices, GPL-3.0-or-later. No graph data,
+third-party code or source text copied. Uses the Tillich-Zemor HGP theorem
+cited in section 7, with full-row-rank checks of graph cycle codes.
+Graph mathematics is credited to the standard complete graph, Petersen,
+Fano-plane/Heawood, Desargues double and GQ(2,2)/Tutte-Coxeter constructions;
+Andries E. Brouwer's graph descriptions at https://aeb.win.tue.nl/graphs/
+provide construction provenance. See data/matrices/untiered/CYCLE_HGP.md.
+Placed and renamed 2026-11-04: HGP_45_9_3 (tier0), HGP_106_16_4 (tier0), HGP_306_36_5 (tier0), HGP_610_64_6 (tier1), HGP_1261_121_6 (tier3), HGP_2866_256_8 (tier3).
+Claimed distances are derived from the theorem and independently checked
+classical girths; solver observations are recorded separately in the manifest.
+scripts/compute_logicals.py gains an original opt-in bitset backend; its
+existing dense default and the solver itself are unchanged.
+
+Renamed 2026-10-16 (PI decision; same matrices): distances confirmed by
+DistQLDPC's experimental connected-cluster engine (GH-124, -engine=cc) and by two
+independent clean-room reimplementations plus a from-scratch prototype, all with
+GF(2)-verified witnesses: BB_360_12_24 (was BB_360_12_17to24), TN_252_2_21 (was
+TN_252_2_17to28), LP_1054_140_20 (was LP_1054_140_17to32), LP_1428_184_24 (was
+LP_1428_184_ge17), LP_1768_224_22 (was LP_1768_224_ge17).
+
+Independent results by others: C. Crocker, "Exact minimum distances of five
+lifted-product quantum codes from Cain et al. (2026), Xu et al. (2024) and
+Panteleev-Kalachev", Zenodo, v1.0 14 Oct 2026 (doi:10.5281/zenodo.23379787),
+v1.1 17 Oct 2026 (doi:10.5281/zenodo.23445463), CC BY 4.0. It published
+d = 20 for [[1054,140]] (our LP_1054_140_20) before DistQLDPC did, and
+independently agrees with DistQLDPC's earlier d = 16 for [[714,100]]
+(LP_714_100_16) and [[1020,136]] (LP_1020_136_16).
+
+Added 2026-10-18: LP_1122_148_20 and LP_2610_744_16, the lifted-product codes
+lp20^{3,5} [[1122,148]] and lp16^{3,7} [[2610,744]] of M. Cain et al.,
+arXiv:2603.28627 (2026), Appendix A.1, Eqs. (A3) and (A5). The matrices were
+built by DistQLDPC from the seed matrices as listed in C. Crocker's Zenodo
+record above (data/codes.json, CC BY 4.0), which first established their exact
+distances d = 20 and d = 16; DistQLDPC re-verified both values with its own
+connected-cluster engine and checked Crocker's witnesses with its own GF(2) code.
+
+Renamed 2026-10-21 (PI decision; same matrices): BB_756_16_ge28 (was BB_756_16_ge17),
+BB_864_4_ge28 (was BB_864_4_ge17), BB_1080_4_ge28 (was BB_1080_4_ge17): lower bound 28 from
+DistQLDPC's optional CC engine (GH-133).
+
+Renamed 2026-10-22 (PI decision; same matrices): BB_756_16_ge30, BB_864_4_ge30, BB_1080_4_ge30
+(were ..._ge28): lower bound 30 from DistQLDPC's optional CC engine with the GH-138 overlap rule.
+
+Renamed 2026-10-23 (PI decision; same matrices, lower bounds unchanged): upper bounds added from
+nontrivial logical operators found by DistQLDPC's GH-146 finder and independently verified
+(optimization/experiments/GH-146/witnesses/): BB_1080_4_30to48 (was BB_1080_4_ge30), BB_756_16_30to34 (was BB_756_16_ge30), BB_864_4_30to40 (was BB_864_4_ge30), TN_288_2_9to24 (was TN_288_2_ge9), TN_324_4_9to25 (was TN_324_4_ge9), TN_360_4_17to24 (was TN_360_4_ge17), TN_396_4_17to26 (was TN_396_4_ge17), TN_432_8_9to29 (was TN_432_8_ge9), TN_468_4_17to29 (was TN_468_4_ge17), TN_496_2_17to30 (was TN_496_2_ge17), TN_504_2_17to34 (was TN_504_2_ge17), TN_540_4_9to34 (was TN_540_4_ge9), TN_576_2_9to37 (was TN_576_2_ge9), TN_612_2_17to40 (was TN_612_2_ge17), TN_648_10_9to32 (was TN_648_10_9to52), TN_648_14_9to28 (was TN_648_14_ge9), TN_684_2_9to29 (was TN_684_2_ge9).
+
+Independent validation credit (GH-150): PolyLabs Research reported a separate,
+clean-room check-driven cluster-search implementation confirming the earlier
+30 <= d <= 34 bounds for BB_756_16 and d = 24 for BB_360_12, with independently
+GF(2)-checked witnesses. This checks the implementations within the same method
+family, not an independent method; it does not validate the later BB_756_16
+lower bound of 32. Credit and BB_756_16 per-pass records:
+https://github.com/guluchen/DistQLDPC/issues/150#issuecomment-6631689406
+Original validation report: https://github.com/guluchen/DistQLDPC/issues/150
+
+Renamed 2026-10-29 (PI decision; same matrices, upper bounds unchanged): lower bounds raised by
+DistQLDPC's optional CC engine with -cc-aut=on (GH-152, issue #152: Tanner-graph automorphism
+candidates, GF(2)-verified before use), reproduced with a different search order (mrv) on the same
+labels (optimization/experiments/GH-152/REPRODUCTION.md, branch experiment/gh-152-tanner-aut):
+TN_288_2_22to24 (was TN_288_2_9to24), TN_324_4_22to25 (was TN_324_4_9to25), TN_432_8_23to29 (was
+TN_432_8_9to29), TN_496_2_23to30 (was TN_496_2_17to30), TN_540_4_23to34 (was TN_540_4_9to34),
+TN_576_2_24to37 (was TN_576_2_9to37).
+
+Renamed 2026-10-31 (PI decision; same matrices, upper bounds unchanged): lower bounds raised by
+DistQLDPC's optional CC engine with rules that were opt-in when the bounds were found (charge,
+GH-157 #157, default CC rule on main since PR #161; tiebreak, GH-162 #162 / PR #180, with mrv and
+-cc-roworder=bfs, GH-183 #183 / PR #204; sparse,sparseov,sparsemrv, GH-181 #181 / PR #203; the last
+three are not on main), each reproduced with a different search order or binary of the same engine
+(not an independent second method): TN_360_4_23to24 (was TN_360_4_17to24),
+TN_396_4_23to26 (was TN_396_4_17to26), TN_504_2_24to34 (was TN_504_2_17to34), TN_648_10_22to32
+(was TN_648_10_9to32) [GH-157]; BB_1080_4_32to48 (was BB_1080_4_30to48) [GH-162, reproduced by
+GH-183]; BB_756_16_32to34 (was BB_756_16_30to34), BB_864_4_32to40 (was BB_864_4_30to40) [GH-183];
+TN_496_2_27to30 (was TN_496_2_23to30) [GH-181].
+
+Renamed 2026-11-05 (same matrices, upper bounds unchanged): lower bounds raised by DistQLDPC's optional CC
+engine in the GH-217 Tier 5 runs (#217, PR #220): main 02879a93's CC default and the GH-217 candidate default
+(tiebreak, sparse rows, -cc-roworder=auto) both reached them, and a relabelled run (-seed=1) reproduced each
+(same engine, not an independent second method): TN_468_4_23to29 (was TN_468_4_17to29), TN_612_2_24to40
+(was TN_612_2_17to40), TN_648_14_21to28 (was TN_648_14_9to28), TN_684_2_22to29 (was TN_684_2_9to29).
+
+Renamed 2026-11-06 (same matrices, upper bounds unchanged): lower bounds raised by DistQLDPC's optional CC
+engine, mostly with the erasure rule (GH-195 #195 / PR #219; opt-in when the bounds were found, in the CC
+default with a cost gate since GH-227 / PR #228), first seen in single 6 h runs of GH-225 (#225) and GH-227
+(#227), and each reached by at least two runs whose search trees differ (relabelled qubits and rows with
+-seed=1 / -seed=2, a different row order with -cc-roworder=bfs, or a different binary and rule set; 12 h
+runs on main 1239e9a2's binary; records in optimization/experiments/GH-225/lb-repro/). This is the same
+engine, not an independent second method: TN_324_4_23to25 (was TN_324_4_22to25), TN_496_2_28to30 (was
+TN_496_2_27to30), TN_540_4_24to34 (was TN_540_4_23to34), TN_648_14_22to28 (was TN_648_14_21to28),
+TN_684_2_24to29 (was TN_684_2_22to29); COLOR_1027_1_31to37 (was COLOR_1027_1_28to37) and
+COLOR_2791_1_28to61 (was COLOR_2791_1_26to61), section 9.
+
+Renamed 2026-11-07 (same matrices, upper bounds unchanged): lower bounds raised by DistQLDPC's optional CC engine in
+12-36 h follow-up runs of GH-225 (#225; records in optimization/experiments/GH-225/lb-push/). Each was reached by two runs
+with different search trees: main 755e0c21's CC default (gated erasure) and main 1239e9a2's CC default plus ungated
+erasure, or, for TN_684, relabelled qubits and rows (-seed=1, -seed=2), or, for COLOR_2791, a different row order. This is
+the same engine, not an independent second method. BB_756_16_34, TN_288_2_24, TN_360_4_24 and TN_496_2_30 are now exact:
+the lower bound meets the GH-146 upper-bound witness. Stems: BB_1080_4_34to48 (was BB_1080_4_32to48), BB_756_16_34 (was BB_756_16_32to34), BB_864_4_34to40 (was
+BB_864_4_32to40), COLOR_1027_1_33to37 (was COLOR_1027_1_31to37), COLOR_2791_1_30to61 (was COLOR_2791_1_28to61),
+TN_288_2_24 (was TN_288_2_22to24), TN_324_4_24to25 (was TN_324_4_23to25), TN_360_4_24 (was TN_360_4_23to24),
+TN_396_4_24to26 (was TN_396_4_23to26), TN_432_8_25to29 (was TN_432_8_23to29), TN_468_4_25to29 (was
+TN_468_4_23to29), TN_496_2_30 (was TN_496_2_28to30), TN_504_2_25to34 (was TN_504_2_24to34), TN_540_4_25to34 (was
+TN_540_4_24to34), TN_576_2_26to37 (was TN_576_2_24to37), TN_612_2_26to40 (was TN_612_2_24to40), TN_648_10_23to32
+(was TN_648_10_22to32), TN_648_14_23to28 (was TN_648_14_22to28), TN_684_2_25to29 (was TN_684_2_24to29).
+
+9. Triangular 6.6.6 color-code matrices (GH-156; tiered 2026-11-04)
+------------------------------------------------------------------
+
+Original clean-room generator scripts/codegen/color666.py and generated
+COLOR_{7,19,127,331,1027,2791}_1_unknown_* matrices, GPL-3.0-or-later.
+No third-party implementation, decoder, matrix data or paper text copied.
+Mathematical construction: H. Bombin and M. A. Martin-Delgado,
+"Topological Quantum Distillation", quant-ph/0605138v3,
+DOI:10.1103/PhysRevLett.97.180501. Honeycomb triangular-patch parameters
+and boundary logicals: K. Sahay and B. J. Brown, "A decoder for the triangular
+color code by matching on a Mobius strip", arXiv:2108.11395v3, Sec. II,
+Fig. 1, Eqs. (1)-(2). Claimed distances use the published family formula;
+DistQLDPC smoke observations are recorded separately. See
+data/matrices/untiered/COLOR666.md and optimization/experiments/GH-156/.
+Placed and renamed 2026-11-04: COLOR_7_1_3 (tier0), COLOR_19_1_5 (tier0), COLOR_127_1_13 (tier1), COLOR_331_1_21 (tier5), COLOR_1027_1_28to37 (tier5), COLOR_2791_1_26to61 (tier5).
+Renamed 2026-11-06 (same matrices, upper bounds unchanged; CC lower bounds reproduced by runs with different
+search trees, same engine, see section 5): COLOR_1027_1_31to37 (was COLOR_1027_1_28to37), COLOR_2791_1_28to61
+(was COLOR_2791_1_26to61).
+Renamed 2026-11-07 (same matrices, upper bounds unchanged; see section 5): COLOR_1027_1_33to37 (was
+COLOR_1027_1_31to37), COLOR_2791_1_30to61 (was COLOR_2791_1_28to61).
+
+10. Twisted-torus generalized toric / BB matrices (GH-159; tiered 2026-11-04)
+--------------------------------------------------------------------------
+
+Original generator scripts/codegen/twisted_torus.py, independent congruence
+validator and generated BB_{30,120,186,248,294,340}_*_unknown_* matrices,
+GPL-3.0-or-later. No third-party code, matrices or paper text copied.
+Construction and numerical parameters: Z. Liang, K. Liu, H. Song, Y.-A. Chen,
+"Generalized toric codes on twisted tori for quantum error correction",
+arXiv:2503.03827v3, PRX Quantum 6, 020357 (2025), DOI:10.1103/rmy6-9n89,
+Eqs. (3)-(5), Tables 1-4. Published exact-distance labels are source claims;
+DistQLDPC observations are recorded separately in the manifest. No external
+distance solver is used. See data/matrices/untiered/TWISTED_TORUS.md.
+Placed and renamed 2026-11-04: BB_30_4_6 (tier0), BB_120_8_12 (tier0), BB_186_10_14 (tier1), BB_248_10_18 (tier2), BB_294_10_20 (tier3), BB_340_16_18 (tier2).
+
+GH-199 cyclic collapsed four-dimensional AMC inputs (original reconstruction):
+Hsiang-Ku Lin, Pak Kau Lim, Alexey A. Kovalev and Leonid P. Pryadko,
+"Abelian multi-cycle codes for single-shot error correction", arXiv:2506.16910v3,
+Eqs.27-31 and TableI; Feroz Ahmed Mian, Owen Gwilliam and Stefan Krastanov,
+"Multivariate Multicycle Codes for Complete Single-Shot Decoding",
+arXiv:2601.18879v2, TableVI. Both primary papers use the arXiv perpetual
+nonexclusive distribution license. We reconstruct their published mathematics
+in original GPL-3.0-or-later generators and generated matrices; no author
+source code, matrix file, paper text or image is redistributed. The four
+TableVI distance values retain their randomized-estimate status. No external
+distance solver was used for verification.
+Placed and renamed 2026-11-04 (PI): AMC_108_6_9 (tier0), AMC_216_6_12 (tier0), AMC_330_6_14 (tier0), AMC_438_6_17 (tier1), AMC_522_6_20 (tier2).
+
+2026-11-12: The implicit circuit correction adds our original local Pauli-frame
+MaxSAT encoding, adjoint ideal-output validation, and bounded demand-driven CC
+responses. Complete circuit fault/detector expansion is not used in production.
+The PI-authorized comparator invokes the external MIT-licensed tropidist at
+b03ec2d without copying its solver implementation; its method is credited to
+B. Cheng, N. Guo and F. Pan, arXiv:2611.08247. External physical witnesses are
+also checked using DistQLDPC's own forward frame replay.
+
+2026-11-13: Original opt-in frontier DP for CSS code, phenomenological and
+Clifford circuit distance. Conceptual inspiration: min-plus/trellis dynamic
+programming discussed by B. Cheng, N. Guo and F. Pan in tropidist (reviewed at
+b03ec2d4077f287f89f97b5c2c16ce5ce17c2c58; https://github.com/Fanerst/tropidist,
+arXiv:2611.08247). DistQLDPC's frontier, local circuit-frame transitions, register
+liveness/reuse, dense/sparse tables and witness-trace implementation were written
+independently; no tropidist solver code was copied. This does not implement all
+of tropidist's rank/temporal reductions or imply equivalent performance.
+
+2026-11-13: Direct DP additionally uses an independently written local-coordinate
+dependency graph with checked projection-closed supports. Its exact component
+minimum argument and limits are documented in docs/DP_ENGINE.md; no external
+sector-reduction implementation or detector-error matrix is used.
+
+2026-11-13 — FTEC-derived benchmark sources
+The independently written verified-cat extraction builders use the Shor-style
+fault-tolerant syndrome-extraction primitives described by P. W. Shor,
+"Fault-tolerant quantum computation", quant-ph/9605011v2, and D. Gottesman,
+"Surviving as a Quantum Computer in a Classical World", May 7, 2024,
+sections 12.1.3 and 12.2. The benchmark specifies a fixed accepted branch;
+it is not a full adaptive recovery protocol or a multi-fault-tolerance proof.
+Official Stim generators and tesseract-decoder BB circuit fixtures retain their
+Apache-2.0 attribution and notices in the benchmark source archive. Exact
+revisions, paths, generator arguments, input hashes and local modifications are
+recorded per case; see benchmarks/ftec/README.md and the source registry. Source
+papers are referenced, not redistributed; no external solver code was copied.
+
+2026-11-13: The independently written DP additionally supports exact unit-location
+weight-bounded passes. Weight-bounded sparse DP is a general concept discussed
+by Cheng, Guo and Pan in tropidist (reference above); the direct local-frame
+implementation and its inclusive-cap/physical-exclusivity proof are original
+here. No upstream solver code was copied. Performance is measured separately;
+this is not a claim to implement the full tropidist method.
+
+2026-11-13: Direct circuit DP additionally uses an independently written quotient
+of local wire frames by their linear map to future specified outputs. Generic
+linear state/trellis reduction concepts are credited to Cheng, Guo and Pan
+(reference above); the backwards/forwards wire-map, sparse reset restores and
+physical-prefix implementation here were written without copying external code.
+This does not enumerate a complete per-fault detector-error matrix. See
+optimization/experiments/DP-QUOTIENT-20261113/PROOF.md for scope and proof.
