@@ -1,13 +1,16 @@
 CC ?= cc
 CFLAGS ?= -std=c99 -O2 -Wall -Wextra -Werror -Wconversion -pedantic
 SOURCES := ccv.c ccv_primitives.c
+COQ_OCAML_ROOT ?= $(shell ocamlfind query coq-core)
+PACKED_LIBS = -I "$(COQ_OCAML_ROOT)/kernel" -I "$(COQ_OCAML_ROOT)/vm" -I . -I extract -I "$(COQ_OCAML_ROOT)/clib" "$(COQ_OCAML_ROOT)/clib/clib.cmxa" "$(COQ_OCAML_ROOT)/kernel/kernel.cmxa" -cclib -lcoqrun_stubs
+PACKED_ML = pcm_generated.mli pcm_generated.ml extract/packed_advice.ml
 MODULES := $(sort $(wildcard proof/*.v))
 COQFLAGS := -Q proof CCV
 ifneq ($(VST_ROOT),)
 COQFLAGS += $(foreach pkg,msl sepcomp veric floyd zlist,-Q $(VST_ROOT)/$(pkg) VST.$(pkg)) -R $(VST_ROOT)/compcert compcert
 endif
 
-.PHONY: all test mutants proofs pcm check-ast clean
+.PHONY: all test mutants proofs pcm test-packed check-ast clean
 all: ccv libccv.so
 
 ccv: ccv_cli.c $(SOURCES) ccv.h
@@ -29,14 +32,18 @@ proofs:
 
 pcm: all
 	coq_makefile $(COQFLAGS) $(MODULES) -o Makefile.coq
-	$(MAKE) -j1 -f Makefile.coq proof/CCPCMAnswer.vo proof/CCPCMBitRows.vo
+	$(MAKE) -j1 -f Makefile.coq proof/CCPackedAnswer.vo proof/CCPCMBitRows.vo
 	coqc $(COQFLAGS) extract/PCMExtract.v
-	ocamlopt -ccopt "$(CFLAGS)" -I . -o pcm-prepare pcm_generated.mli pcm_generated.ml extract/pcm_prepare.ml extract/pcm_stubs.c $(SOURCES)
+	ocamlopt -ccopt "$(CFLAGS)" -o pcm-prepare $(PACKED_LIBS) $(PACKED_ML) extract/pcm_prepare.ml extract/packed_hint.c extract/pcm_stubs.c $(SOURCES)
+
+test-packed: pcm
+	ocamlopt -ccopt "$(CFLAGS)" -o packed-oracle $(PACKED_LIBS) $(PACKED_ML) tests/packed_oracle.ml extract/packed_hint.c
+	./packed-oracle
 
 check-ast:
 	sha256sum --check source-ast.sha256
 
 clean:
-	$(RM) ccv libccv.so mutant-*.so mutant-*.log pcm-prepare pcm_stubs.o ccv.o ccv_primitives.o pcm_generated.* extract/*.cm[iox] extract/*.o extract/*.vo* extract/*.glob extract/.*.aux
+	$(RM) ccv libccv.so mutant-*.so mutant-*.log pcm-prepare packed-oracle packed_hint.o tests/packed_oracle.cm[iox] tests/packed_oracle.o pcm_stubs.o ccv.o ccv_primitives.o pcm_generated.* extract/*.cm[iox] extract/*.o extract/*.vo* extract/*.glob extract/.*.aux
 	$(if $(wildcard Makefile.coq),$(MAKE) -f Makefile.coq clean)
 	$(RM) Makefile.coq Makefile.coq.conf .Makefile.coq.d

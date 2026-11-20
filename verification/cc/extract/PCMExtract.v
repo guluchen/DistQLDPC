@@ -1,6 +1,4 @@
-(* Standalone preparation front end. C inputs and outputs use 32-bit
-   extents; the wire adapter requires a 64-bit OCaml runtime. *)
-From Coq Require Import Extraction ExtrOcamlBasic ExtrOcamlNatInt ExtrOcamlZInt.
-Require Import CCV.CCPCMBitRows CCV.CCPCMAnswer.
+From Coq Require Import Extraction ExtrOcamlBasic ExtrOcamlNatInt ExtrOcamlZInt ExtrOCamlInt63.
+Require Import CCV.CCPCMBitRows CCV.CCPCMAnswer CCV.CCPackedAnswer CCV.CCPackedWords CCV.CCPackedHalf.
 Extraction Language OCaml.
-Extraction "pcm_generated.ml" bit_prepare finish_pcm.
+Extraction "pcm_generated.ml" bit_prepare finish_pcm packed_report.

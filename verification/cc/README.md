@@ -47,13 +47,14 @@ make check-ast
 
 ## Compute a full CSS distance from the two PCMs
 
-Build the extracted front end with 64-bit OCaml, then pass the qubit count
+Build the extracted front end with 64-bit OCaml, ocamlfind and the Coq 8.18 native development libraries (on Ubuntu, `libcoq-core-ocaml-dev`). Then pass the qubit count
 and the original X- and Z-check files. Rows can contain contiguous or
 whitespace-separated bits. A line starting with `#` is a comment. Empty
 files represent zero rows of the declared width.
 
 ```sh
 make pcm
+make test-packed
 python3 extract/css_distance.py 7 ../../data/matrices/tier0/COLOR_7_1_3_Hx.txt ../../data/matrices/tier0/COLOR_7_1_3_Hz.txt
 python3 tests/test_pcm.py --matrices ../../data/matrices/tier0
 ```
@@ -75,14 +76,28 @@ certificate. The [preparation proof](proof/CCPCMBitRows.v) establishes
 that the extracted front end returns the same optional model as the reference
 for every raw input, including detector bytes and row order. It computes GF(2) products and sums by traversing stored Boolean rows in column order.
 Successive rows are decoded by a [streaming traversal](proof/CCPCMChunks.v).
-The command reads each file once, calls the verified C kernel twice in the
-64-bit OCaml process and runs the extracted result aggregation. The standalone
-half CLI remains available to check this host adapter.
-The [full-distance theorem](proof/CCPCMAnswer.v) derives the
-minimum over all Pauli operators, including mixed operators, from the two C
-half contracts. The executable extracts preparation and result aggregation
-from these Coq definitions. Text I/O, OCaml extraction/runtime, host allocation
-and the process adapter lie outside the C proof.
+The command reads each file once and prepares both validated half models.
+At the default budget and rule mask it can certify an upper witness from the
+input with the packed search. The implementation tries this for widths 96
+through 189, up to 189 check and detector rows per half, and a proposed weight
+from 7 through 18. It verifies the witness and excludes every smaller logical
+operator in each half. A checked weight-preserving map can transfer the lower
+bound to the opposite half. Every row suggestion, orbit, row index and
+short-syndrome filter must pass its corresponding checks. The two- and
+three-column filters permit collisions, which can only retain search branches.
+The [packed report theorem](proof/CCPackedAnswer.v) proves that every accepted
+answer is a minimum over mixed Pauli operators for the decoded input PCMs.
+
+When the packed route is inapplicable or inconclusive, the command calls the
+VST-verified C kernel on each half and runs the extracted result aggregation.
+The [C-path theorem](proof/CCPCMAnswer.v) establishes the same mixed-distance
+guarantee from the C half contracts. The standalone half CLI supports
+cross-checks. Text I/O, extraction, the 64-bit OCaml runtime, host allocation
+and foreign-function marshalling form the executable trust boundary. The C
+row-choice helper supplies advice to the Coq checker. Its body has no VST
+proof. The membership and index callbacks must return consistent values for
+the duration of a check. Search-order advice has a two-million-call allowance
+per half, after which the standard C search uses its regular iteration budget.
 
 ## Run the half-distance CLI
 

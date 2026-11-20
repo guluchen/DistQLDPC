@@ -90,15 +90,22 @@ let distance () =
   let budget = int_of_string Sys.argv.(5) and rules = int_of_string Sys.argv.(6) in
   if budget < 0 || budget > 4294967295 || rules < 0 || rules > 63 then invalid_arg "invalid search limits";
   let hx = read_matrix Sys.argv.(3) and hz = read_matrix Sys.argv.(4) in
-  let solve h g =
-    let a = prepare_half n h g in
+  let solve a =
     let status, bits = kernel_distance (n,a.model_m,a.model_l,a.model_k)
       (matrix_bytes a.model_h, matrix_bytes a.model_lg, matrix_bytes a.model_g) (budget,rules) in
     status, List.init n (fun i -> Char.code (Bytes.get bits i))
   in
-  let rx, ox = solve hz hx in
-  let rz, oz = solve hx hz in
-  exit (print_report (finish_pcm n rx ox rz oz))
+  let finish_pair (rx,ox) (rz,oz) = exit (print_report (finish_pcm n rx ox rz oz)) in
+  let _,mx,_ = hx and _,mz,_ = hz in
+  if n>=96 && n<=189 && mx<=189 && mz<=189 && budget=100000000 && rules=63 then begin
+    let ax = prepare_half n hz hx and az = prepare_half n hx hz in
+    match Packed_advice.certify n ax az with
+    | Some answer -> exit (print_report answer)
+    | None -> let x = solve ax in finish_pair x (solve az)
+  end else begin
+    let x = solve (prepare_half n hz hx) in
+    finish_pair x (solve (prepare_half n hx hz))
+  end
 
 let () =
   try

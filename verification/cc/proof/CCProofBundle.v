@@ -331,8 +331,21 @@ Require Import CCV.VerifZeroRemaining.
 Require Import CCV.VerifZeroTailClosed.
 Require Import CCV.ccv_core.
 Require Import CCV.ccv_primitives.
+Require Import CCV.CCOrbit.
+Require Import CCV.CCPackedAnswer.
+Require Import CCV.CCPackedBranch.
+Require Import CCV.CCPackedDual.
+Require Import CCV.CCPackedHalf.
+Require Import CCV.CCPackedIndex.
+Require Import CCV.CCPackedLayout.
+Require Import CCV.CCPackedOrbit.
+Require Import CCV.CCPackedRefute.
+Require Import CCV.CCPackedRoots.
+Require Import CCV.CCPackedShort.
+Require Import CCV.CCPackedWords.
 Check CCVerifiedKernel.certified_kernel_contract_and_termination.
 Check CCPCMEntry.linked_pcm_distance.
 Check CCPCMAnswer.exact_report_from_pcm.
 Check CCPCMFast.fast_prepare_pcm_half_correct.
 Check CCPCMBitRows.bit_prepare_correct.
+Check CCPackedAnswer.packed_report_from_pcm.
