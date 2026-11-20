@@ -75,6 +75,10 @@ certificate. The [sparse preparation proof](proof/CCPCMFast.v) establishes
 that the extracted front end returns the same optional model as the reference
 for every raw input, including detector bytes and row order. It slices each
 input row once and computes parity using the nonzero stabilizer columns.
+Successive rows are decoded by a [streaming traversal](proof/CCPCMChunks.v).
+The command reads each file once, calls the verified C kernel twice in the
+64-bit OCaml process and runs the extracted result aggregation. The standalone
+half CLI remains available to check this host adapter.
 The [full-distance theorem](proof/CCPCMAnswer.v) derives the
 minimum over all Pauli operators, including mixed operators, from the two C
 half contracts. The executable extracts preparation and result aggregation

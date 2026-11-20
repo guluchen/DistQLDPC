@@ -31,12 +31,12 @@ pcm: all
 	coq_makefile $(COQFLAGS) $(MODULES) -o Makefile.coq
 	$(MAKE) -j1 -f Makefile.coq proof/CCPCMAnswer.vo proof/CCPCMFast.vo
 	coqc $(COQFLAGS) extract/PCMExtract.v
-	ocamlopt -I . -o pcm-prepare pcm_generated.mli pcm_generated.ml extract/pcm_prepare.ml
+	ocamlopt -ccopt "$(CFLAGS)" -I . -o pcm-prepare pcm_generated.mli pcm_generated.ml extract/pcm_prepare.ml extract/pcm_stubs.c $(SOURCES)
 
 check-ast:
 	sha256sum --check source-ast.sha256
 
 clean:
-	$(RM) ccv libccv.so mutant-*.so mutant-*.log pcm-prepare pcm_generated.* extract/*.cm[iox] extract/*.o extract/*.vo* extract/*.glob extract/.*.aux
+	$(RM) ccv libccv.so mutant-*.so mutant-*.log pcm-prepare pcm_stubs.o ccv.o ccv_primitives.o pcm_generated.* extract/*.cm[iox] extract/*.o extract/*.vo* extract/*.glob extract/.*.aux
 	$(if $(wildcard Makefile.coq),$(MAKE) -f Makefile.coq clean)
 	$(RM) Makefile.coq Makefile.coq.conf .Makefile.coq.d

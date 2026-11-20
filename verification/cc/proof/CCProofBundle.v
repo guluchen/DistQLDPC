@@ -109,6 +109,7 @@ Require Import CCV.CCPCMAnswer.
 Require Import CCV.CCPCMDetectors.
 Require Import CCV.CCPCMEntry.
 Require Import CCV.CCPCMExamples.
+Require Import CCV.CCPCMChunks.
 Require Import CCV.CCPCMFast.
 Require Import CCV.CCPCMInput.
 Require Import CCV.CCPCMLayout.

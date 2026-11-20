@@ -2,18 +2,18 @@
 Require Import VST.floyd.proofauto.
 Require Import CCV.CCModel CCV.CCFunctional CCV.CCCache CCV.CCRows
  CCV.CCValidation CCV.CCMatrixModel CCV.CCSearchSpecs CCV.CCPCMDetectors
- CCV.CCPCMLayout CCV.CCPCMInput.
+ CCV.CCPCMLayout CCV.CCPCMInput CCV.CCPCMChunks.
 Import ListNotations.
 Local Open Scope Z_scope.
 
 (* Keep row slicing outside the returned bit accessor in extracted code. *)
 Definition sliced_vectors n m (flat : list Z) : list vector :=
   map (fun row j => nth j row 0 =? 1)
-      (map (fun i => matrix_row n (Z.of_nat i) flat) (seq 0 (Z.to_nat m))).
+      (row_chunks (Z.to_nat n) (Z.to_nat m) flat).
 
 Lemma sliced_vectors_correct n m flat :
   sliced_vectors n m flat = matrix_vectors n m flat.
-Proof. unfold sliced_vectors, matrix_vectors; rewrite map_map; reflexivity. Qed.
+Proof. unfold sliced_vectors, matrix_vectors; rewrite chunks_matrix_rows, map_map; reflexivity. Qed.
 
 Fixpoint support (n : nat) (g : vector) : list nat :=
   match n with

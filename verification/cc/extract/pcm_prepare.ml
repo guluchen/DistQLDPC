@@ -33,19 +33,23 @@ let print_rows width xs =
         else loop (col + 1) more
   in loop 0 xs
 
-let prepare () =
+let checked_width text =
+  let n = int_of_string text in
+  if n <= 0 || n > 107374182 then invalid_arg "unsupported width";
+  n
 
-    if Array.length Sys.argv <> 4 then invalid_arg "usage: pcm-prepare WIDTH OPPOSITE.txt SAME.txt";
-    let n = int_of_string Sys.argv.(1) in
-    if n <= 0 || n > 107374182 then invalid_arg "unsupported width";
-    let wn, m, h = read_matrix Sys.argv.(2) in
-    let wg, k, g = read_matrix Sys.argv.(3) in
-    if (m <> 0 && wn <> n) || (k <> 0 && wg <> n) then invalid_arg "inconsistent widths";
-    match fast_prepare_pcm_half {width=n;check_count=m;same_count=k;checks=h;same_bytes=g} with
-    | None -> invalid_arg "invalid CSS matrices or C extents"
-    | Some a ->
-        Printf.printf "%d %d %d %d\n" a.model_n a.model_m a.model_l a.model_k;
-        List.iter (print_rows n) [a.model_h;a.model_lg;a.model_g]
+let prepare_half n (wn, m, h) (wg, k, g) =
+  if (m <> 0 && wn <> n) || (k <> 0 && wg <> n) then invalid_arg "inconsistent widths";
+  match fast_prepare_pcm_half {width=n;check_count=m;same_count=k;checks=h;same_bytes=g} with
+  | None -> invalid_arg "invalid CSS matrices or C extents"
+  | Some a -> a
+
+let prepare () =
+  if Array.length Sys.argv <> 4 then invalid_arg "usage: pcm-prepare WIDTH OPPOSITE.txt SAME.txt";
+  let n = checked_width Sys.argv.(1) in
+  let a = prepare_half n (read_matrix Sys.argv.(2)) (read_matrix Sys.argv.(3)) in
+  Printf.printf "%d %d %d %d\n" a.model_n a.model_m a.model_l a.model_k;
+  List.iter (print_rows n) [a.model_h;a.model_lg;a.model_g]
 
 let read_half_result n =
   let status = int_of_string (read_line ()) in
@@ -58,22 +62,49 @@ let read_half_result n =
 let bit_string bs =
   String.of_seq (Seq.map (fun b -> if b then '1' else '0') (List.to_seq bs))
 
-let finish () =
-  let n = int_of_string Sys.argv.(2) in
-  if n <= 0 || n > 107374182 then invalid_arg "unsupported width";
-  let rx, ox = read_half_result n in
-  let rz, oz = read_half_result n in
-  match finish_pcm n rx ox rz oz with
-  | OutOfBudget -> print_endline "{\"status\":\"UNKNOWN\"}"
-  | NoLogical -> print_endline "{\"status\":\"EMPTY\"}"
+let print_report = function
+  | OutOfBudget -> print_endline "{\"status\":\"UNKNOWN\"}"; 3
+  | NoLogical -> print_endline "{\"status\":\"EMPTY\"}"; 0
   | Exact (d,x,z) ->
       Printf.printf "{\"status\":\"FOUND\",\"distance\":%d,\"x\":\"%s\",\"z\":\"%s\"}\n"
-        d (bit_string x) (bit_string z)
+        d (bit_string x) (bit_string z); 0
+
+let finish () =
+  let n = checked_width Sys.argv.(2) in
+  let rx, ox = read_half_result n in
+  let rz, oz = read_half_result n in
+  ignore (print_report (finish_pcm n rx ox rz oz))
+
+external kernel_distance :
+  (int * int * int * int) -> (bytes * bytes * bytes) -> (int * int) -> int * bytes
+  = "caml_ccv_distance"
+
+let matrix_bytes xs =
+  let data = Bytes.create (List.length xs) in
+  List.iteri (fun j b -> Bytes.set data j (Char.chr b)) xs;
+  data
+
+let distance () =
+  if Array.length Sys.argv <> 7 then invalid_arg "usage: pcm-prepare --distance WIDTH HX HZ BUDGET RULES";
+  let n = checked_width Sys.argv.(2) in
+  let budget = int_of_string Sys.argv.(5) and rules = int_of_string Sys.argv.(6) in
+  if budget < 0 || budget > 4294967295 || rules < 0 || rules > 63 then invalid_arg "invalid search limits";
+  let hx = read_matrix Sys.argv.(3) and hz = read_matrix Sys.argv.(4) in
+  let solve h g =
+    let a = prepare_half n h g in
+    let status, bits = kernel_distance (n,a.model_m,a.model_l,a.model_k)
+      (matrix_bytes a.model_h, matrix_bytes a.model_lg, matrix_bytes a.model_g) (budget,rules) in
+    status, List.init n (fun i -> Char.code (Bytes.get bits i))
+  in
+  let rx, ox = solve hz hx in
+  let rz, oz = solve hx hz in
+  exit (print_report (finish_pcm n rx ox rz oz))
 
 let () =
   try
     if Sys.word_size <> 64 then invalid_arg "requires 64-bit OCaml";
     if Array.length Sys.argv = 3 && Sys.argv.(1) = "--finish" then finish ()
+    else if Array.length Sys.argv >= 2 && Sys.argv.(1) = "--distance" then distance ()
     else prepare ()
   with Invalid_argument msg | Failure msg | Sys_error msg ->
     prerr_endline msg; exit 2

@@ -45,6 +45,28 @@ def check_result(report, n, hx, hz, distance):
     assert x not in row_span(hx) or z not in row_span(hz)
 
 
+def compare_native_to_file_driver(n, hx, hz):
+    # The process-based oracle uses the original separately linked C executable.
+    prepared = [subprocess.check_output([ROOT / "pcm-prepare", str(n), a, b])
+                for a, b in [(hz, hx), (hx, hz)]]
+    for rules in range(64):
+        for budget in (0, 31, 4294967295) if rules in (0, 63) else (100000,):
+            replies = []
+            for data in prepared:
+                half = subprocess.run([ROOT / "ccv", str(budget), str(rules)],
+                                      input=data, capture_output=True, timeout=10)
+                assert half.returncode in (0, 3)
+                result = json.loads(half.stdout)
+                replies.extend([str(result["status"]), "".join(map(str, result["witness"]))])
+            raw = subprocess.check_output([ROOT / "pcm-prepare", "--finish", str(n)],
+                                          input="\n".join(replies) + "\n", text=True)
+            expected = json.loads(raw)
+            native = subprocess.run([ROOT / "pcm-prepare", "--distance", str(n), hx, hz,
+                                     str(budget), str(rules)], capture_output=True, timeout=10)
+            assert native.returncode == (3 if expected["status"] == "UNKNOWN" else 0)
+            assert json.loads(native.stdout) == expected, (rules, budget, expected, native.stdout)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--matrices", type=Path, required=True, help="repository tier0 directory")
@@ -100,6 +122,9 @@ def main():
         result = run(n, *files)
         assert result.returncode == 0, result.stderr
         check_result(json.loads(result.stdout), n, *rows, d)
+    compare_native_to_file_driver(30, opts.matrices / "BB_30_4_6_Hx.txt",
+                                  opts.matrices / "BB_30_4_6_Hz.txt")
+    print("PASS native/file-driver agreement on all 64 rule masks and boundary budgets")
     print(f"PASS {len(cases)} exhaustive comparisons, 2 repository PCMs, 1 budget, 3 rejection cases and 2 wide-column cases")
 
 
