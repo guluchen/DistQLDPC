@@ -7,6 +7,7 @@
 | Legal calls terminate in the original two-unit Clight environment | [CCPublicTermination.v](CCPublicTermination.v) |
 | PCM preparation computes detectors whose kernel equals the stabilizer row span | [CCPCMDetectors.v](CCPCMDetectors.v) |
 | Accepted raw inputs satisfy the C data and CSS quotient requirements | [CCPCMInput.v](CCPCMInput.v) |
+| Sparse preparation and reference preparation return identical models or rejections on every raw input | [CCPCMFast.v](CCPCMFast.v) |
 | The linked distance entry implements the prepared-input contract | [CCPCMEntry.v](CCPCMEntry.v) |
 | The reported full distance minimizes weight over mixed Pauli operators | [CCPCMAnswer.v](CCPCMAnswer.v) |
 

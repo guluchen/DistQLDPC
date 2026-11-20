@@ -41,7 +41,7 @@ let prepare () =
     let wn, m, h = read_matrix Sys.argv.(2) in
     let wg, k, g = read_matrix Sys.argv.(3) in
     if (m <> 0 && wn <> n) || (k <> 0 && wg <> n) then invalid_arg "inconsistent widths";
-    match prepare_pcm_half {width=n;check_count=m;same_count=k;checks=h;same_bytes=g} with
+    match fast_prepare_pcm_half {width=n;check_count=m;same_count=k;checks=h;same_bytes=g} with
     | None -> invalid_arg "invalid CSS matrices or C extents"
     | Some a ->
         Printf.printf "%d %d %d %d\n" a.model_n a.model_m a.model_l a.model_k;

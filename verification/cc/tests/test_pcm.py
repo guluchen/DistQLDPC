@@ -69,6 +69,19 @@ def main():
             result = run(n, h, z)
             assert result.returncode == 0, result.stderr
             check_result(json.loads(result.stdout), n, hx, hz, exact)
+        # Exercise sparse products beyond two machine words. One shared high
+        # column anticommutes; sharing both high columns commutes.
+        n_wide = 129
+        pair = (1 << 64) | (1 << 128)
+        wide_x = [0, pair, pair]
+        h.write_text(rows_as_text(wide_x, n_wide))
+        z.write_text(rows_as_text([1 << 128], n_wide))
+        rejected = run(n_wide, h, z)
+        assert rejected.returncode == 2 and not rejected.stdout, rejected
+        z.write_text(rows_as_text([pair], n_wide))
+        accepted = run(n_wide, h, z)
+        assert accepted.returncode == 0, accepted.stderr
+        check_result(json.loads(accepted.stdout), n_wide, wide_x, [pair], 1)
         h.write_text("")
         z.write_text("110\n011\n")
         limited = run(3, h, z, "--budget", "0")
@@ -87,7 +100,7 @@ def main():
         result = run(n, *files)
         assert result.returncode == 0, result.stderr
         check_result(json.loads(result.stdout), n, *rows, d)
-    print(f"PASS {len(cases)} exhaustive comparisons, 2 repository PCMs, 1 budget and 3 rejection cases")
+    print(f"PASS {len(cases)} exhaustive comparisons, 2 repository PCMs, 1 budget, 3 rejection cases and 2 wide-column cases")
 
 
 if __name__ == "__main__":

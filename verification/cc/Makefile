@@ -29,7 +29,7 @@ proofs:
 
 pcm: all
 	coq_makefile $(COQFLAGS) $(MODULES) -o Makefile.coq
-	$(MAKE) -j1 -f Makefile.coq proof/CCPCMAnswer.vo
+	$(MAKE) -j1 -f Makefile.coq proof/CCPCMAnswer.vo proof/CCPCMFast.vo
 	coqc $(COQFLAGS) extract/PCMExtract.v
 	ocamlopt -I . -o pcm-prepare pcm_generated.mli pcm_generated.ml extract/pcm_prepare.ml
 
