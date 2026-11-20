@@ -71,10 +71,9 @@ set can contain opposite checks; it need not be a minimum-size logical basis.
 [PCM preparation](proof/CCPCMInput.v) checks the binary row-major buffers,
 commutation and the C size limits, then supplies all three matrices for the
 [linked C entry](proof/CCPCMEntry.v). The caller supplies no logical-basis
-certificate. The [sparse preparation proof](proof/CCPCMFast.v) establishes
+certificate. The [preparation proof](proof/CCPCMBitRows.v) establishes
 that the extracted front end returns the same optional model as the reference
-for every raw input, including detector bytes and row order. It slices each
-input row once and computes parity using the nonzero stabilizer columns.
+for every raw input, including detector bytes and row order. It computes GF(2) products and sums by traversing stored Boolean rows in column order.
 Successive rows are decoded by a [streaming traversal](proof/CCPCMChunks.v).
 The command reads each file once, calls the verified C kernel twice in the
 64-bit OCaml process and runs the extracted result aggregation. The standalone

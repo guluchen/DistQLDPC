@@ -109,6 +109,7 @@ Require Import CCV.CCPCMAnswer.
 Require Import CCV.CCPCMDetectors.
 Require Import CCV.CCPCMEntry.
 Require Import CCV.CCPCMExamples.
+Require Import CCV.CCPCMBitRows.
 Require Import CCV.CCPCMChunks.
 Require Import CCV.CCPCMFast.
 Require Import CCV.CCPCMInput.
@@ -334,3 +335,4 @@ Check CCVerifiedKernel.certified_kernel_contract_and_termination.
 Check CCPCMEntry.linked_pcm_distance.
 Check CCPCMAnswer.exact_report_from_pcm.
 Check CCPCMFast.fast_prepare_pcm_half_correct.
+Check CCPCMBitRows.bit_prepare_correct.
