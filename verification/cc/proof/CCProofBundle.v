@@ -105,6 +105,13 @@ Require Import CCV.CCOverlapTarget.
 Require Import CCV.CCOwnedCall.
 Require Import CCV.CCOwnedFuelRank.
 Require Import CCV.CCOwnedSolver.
+Require Import CCV.CCPCMAnswer.
+Require Import CCV.CCPCMDetectors.
+Require Import CCV.CCPCMEntry.
+Require Import CCV.CCPCMExamples.
+Require Import CCV.CCPCMInput.
+Require Import CCV.CCPCMLayout.
+Require Import CCV.CCPCMPair.
 Require Import CCV.CCPackedArray.
 Require Import CCV.CCPacking.
 Require Import CCV.CCPhaseZero.
@@ -133,6 +140,7 @@ Require Import CCV.CCPushInvariant.
 Require Import CCV.CCPushMemory.
 Require Import CCV.CCPushScan.
 Require Import CCV.CCQuotientCertificate.
+Require Import CCV.CCRawCSS.
 Require Import CCV.CCRawTopExit.
 Require Import CCV.CCRawTopHeap.
 Require Import CCV.CCReadBorrow.
@@ -321,3 +329,5 @@ Require Import CCV.VerifZeroTailClosed.
 Require Import CCV.ccv_core.
 Require Import CCV.ccv_primitives.
 Check CCVerifiedKernel.certified_kernel_contract_and_termination.
+Check CCPCMEntry.linked_pcm_distance.
+Check CCPCMAnswer.exact_report_from_pcm.

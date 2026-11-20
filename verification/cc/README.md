@@ -45,6 +45,38 @@ clightgen -normalize -canonical-idents -I. -o proof/ccv_core.v ccv.c
 make check-ast
 ```
 
+## Compute a full CSS distance from the two PCMs
+
+Build the extracted front end with 64-bit OCaml, then pass the qubit count
+and the original X- and Z-check files. Rows can contain contiguous or
+whitespace-separated bits. A line starting with `#` is a comment. Empty
+files represent zero rows of the declared width.
+
+```sh
+make pcm
+python3 extract/css_distance.py 7 ../../data/matrices/tier0/COLOR_7_1_3_Hx.txt ../../data/matrices/tier0/COLOR_7_1_3_Hz.txt
+python3 tests/test_pcm.py --matrices ../../data/matrices/tier0
+```
+
+This example returns distance 3. A successful report includes two bit
+strings, `x` and `z`, giving the Pauli witness in input column order. The
+reported distance counts the union of their supports. Each half receives
+its own `--budget`. If either half returns UNKNOWN, the combined report
+returns UNKNOWN (exit 3). EMPTY means neither half has a logical witness.
+
+[Detector construction](proof/CCPCMDetectors.v) performs GF(2) elimination
+on same-type stabilizers. Its detectors vanish exactly on their row span.
+Dependent rows, empty matrices and zero rows are supported. The detector
+set can contain opposite checks; it need not be a minimum-size logical basis.
+[PCM preparation](proof/CCPCMInput.v) checks the binary row-major buffers,
+commutation and the C size limits, then supplies all three matrices for the
+[linked C entry](proof/CCPCMEntry.v). The caller supplies no logical-basis
+certificate. The [full-distance theorem](proof/CCPCMAnswer.v) derives the
+minimum over all Pauli operators, including mixed operators, from the two C
+half contracts. The executable extracts preparation and result aggregation
+from these Coq definitions. Text I/O, OCaml extraction/runtime, host allocation
+and the process adapter lie outside the C proof.
+
 ## Run the half-distance CLI
 
 The first input line is the number of qubits, opposite check rows, logical
