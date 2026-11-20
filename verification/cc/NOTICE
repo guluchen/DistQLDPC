@@ -1,0 +1,35 @@
+DistQLDPC CC plain-C verification fork,2026-11-19
+Copyright (C)2026 Yu-Fang Chen. SPDX-License-Identifier: GPL-3.0-or-later.
+Original C implementation generated with OpenAI Codex assistance, from the
+DistQLDPC CC mathematical contracts and its own GPL source; no Qubitserf source
+copied. Connected-cluster completeness: Dumer,Kovalev,Pryadko,IEEE TIT63(7),2017,
+as credited in DistQLDPC src/cc/cc_half.h. Stabilizer-overlap inequality follows
+the native GH-138/Lee arXiv:2610.06820 source notes; packing/charge follow native
+GH-152/GH-157 with a deliberately simpler uniform integer cover bound here.
+The untouched native repository's NOTICE/MODIFICATIONS remain authoritative for
+its other mechanisms. No implementation of Qubitserf tie-break/BFS/erasure here.
+
+VST: PrincetonUniversity/VST,2.14. Documentation consulted for interfaces/tactics;
+this package's specifications/proofs are newly written. CompCert is a separate
+verification/compiler dependency. Their sources and license terms are not
+relicensed by this fork. See the repository LICENSE for the DistQLDPC components.
+
+2026-11-20: CCLinkedProgram.finish_cenv_build adapts the build-composite
+portion of VST2.14 floyd/forward.v solve_cenvcs_goal (PrincetonUniversity/VST),
+with a qualified Maps.PTree name. This small proof-tactic adaptation is credited
+as reused VST material; the independently written solver is unchanged.
+
+2026-11-20: CCLibraryFunctions.linked_func_cons adapts the internal-function
+branch of VST2.14 floyd/forward.v semax_func_cons, with vm_compute on the
+identifier-membership boolean. Callee, body, lookup and type obligations remain
+checked by the original VST theorems. Nonvacuous externals are not skipped.
+
+2026-11-20: VerifLinkedCertificateAPI.distance_linked_environment follows the
+ground-PTree pattern of VST2.14 floyd/forward.v try_prove_tycontext_subVG,
+instantiated for the private linked-library context. All context/subsumption
+obligations are discharged with the original checked VST rules.
+
+2026-11-20: CCLibraryEntry, CCFramedSafety, CCInternalEvents and
+CCFramedInternal adapt proofs from PrincetonUniversity/VST 2.14
+(veric/semax_prog.v, veric/SequentialClight2.v and veric/Clight_evsem.v).
+The modules retain the VST copyright and BSD two-clause license.
