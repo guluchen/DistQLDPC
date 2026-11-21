@@ -41,3 +41,19 @@ for second in (None, ("X", "1" + "0" * 757)):
         assert full.args == ([ROOT/"pcm-xl", "758", "hx", "hz"], word)
 print("2 adaptive search fallback controls passed")
 print("7 extended-width certificate controls and 1 full CLI witness passed")
+
+with tempfile.TemporaryDirectory() as tmp:
+    hx, hz = (Path(tmp) / side for side in ("hx", "hz"))
+    hx.write_text("# comment\n\n" + "0" * 758 + " # row\n")
+    hz.write_text("")
+    raw = ["758", str(hx), str(hz)]
+    assert certified.multiple_logicals_from_row_count(raw)
+    word = ("X", "1" * 8 + "0" * 750)
+    with patch.object(sys, "argv", ["certified.py", *raw, "--extended-width"]), \
+         patch.object(certified, "upper_proposal", side_effect=[word, None]), \
+         patch.object(certified, "packed_check", return_value=SimpleNamespace(returncode=0, stdout="")) as check:
+        assert certified.main() == 0
+        check.assert_called_once_with([ROOT / "pcm-xl", *raw], word)
+    hz.write_text(("0" * 758 + "\n") * 756)
+    assert not certified.multiple_logicals_from_row_count(raw)
+print("3 structural upper-schedule controls passed")

@@ -36,6 +36,25 @@ def upper_proposal(raw, width, rounds):
     return side, word
 
 
+def multiple_logicals_from_row_count(raw):
+    # k = n - rank(Hx) - rank(Hz). This cheap sufficient condition rules out
+    # the single logical class covered by the disjoint-representative shortcut.
+    # Parsing and all mathematical conclusions belong to the checked kernel.
+    n = int(raw[0])
+    count = 0
+    try:
+        for path in raw[1:]:
+            with open(path, "rb") as stream:
+                for line in stream:
+                    if line.partition(b"#")[0].strip():
+                        count += 1
+                        if count >= n - 1:
+                            return False
+    except OSError:
+        return False
+    return True
+
+
 def packed_check(verifier, proposal):
     side, word = proposal
     payload = side+"\n"+word+"\n"
@@ -107,6 +126,11 @@ def main():
             # Give the first XL proposal a short search, then always let the
             # best available witness use the full kernel after the deeper C pass.
             quick = adaptive_xl and stage == 0
+            if quick and best[1].count("1") > 6 and multiple_logicals_from_row_count(raw):
+                # Each leaf query covers at most three more coordinates. A
+                # heavy first proposal with no line shortcut merits the deeper
+                # upper search before paying for preprocessing a second time.
+                continue
             checked = packed_check([*verifier, "quick-probe"] if quick else verifier, best)
             if checked.returncode == 0:
                 sys.stdout.write(checked.stdout)

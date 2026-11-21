@@ -61,3 +61,8 @@ For the default XL upper-search schedule, the first witness gets a short
 32,768-choice lower search. If inconclusive, C tries 512 information sets and
 the best available witness gets the full search, even if its weight is
 unchanged. An explicit `--upper-rounds` uses a single full lower search.
+When the input has fewer than `n - 1` check rows in total, its CSS quotient
+has dimension at least two. With an initial upper witness heavier than six,
+the XL schedule then goes directly to the deeper upper search. This avoids a
+packed lower search that cannot use the single-class disjoint-representative
+certificate. Every accepted distance receives the same proof checks.
