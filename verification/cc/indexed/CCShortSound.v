@@ -112,3 +112,18 @@ Proof.
   destruct (lt_dec j (length hs)) as [B|B]; [apply K; now apply nth_In|].
   rewrite nth_overflow by lia; apply qcert_zero_dot.
 Qed.
+
+Definition extended_rows (hs:list vector) (pairs:list(nat*nat)) :=
+  hs ++ map (fun ij=>vxor (nth (fst ij) hs zero_vector) (nth (snd ij) hs zero_vector)) pairs.
+
+Lemma kernel_extended_rows n hs pairs e :
+  kernel n hs e -> kernel n (extended_rows hs pairs) e.
+Proof.
+  intros K h H;unfold extended_rows in H;apply in_app_iff in H as [R|R];[now apply K|].
+  apply in_map_iff in R as [[i j] [<- _]]; cbn [fst snd].
+  assert (All:forall k, parity n (nth k hs zero_vector) e=false).
+  { intro k;destruct(lt_dec k (length hs));[apply K;now apply nth_In|].
+    rewrite nth_overflow by lia;apply qcert_zero_dot. }
+  rewrite qcert_parity_comm,parity_xor,! (qcert_parity_comm n e _),!All.
+  reflexivity.
+Qed.

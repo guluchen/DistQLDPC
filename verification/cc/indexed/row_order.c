@@ -52,3 +52,57 @@ CAMLprim value caml_ccv_reverse_bfs(value width, value packed_rows) {
     for (int i = 0; i < tail; ++i) Field(result,i) = Val_int(order[tail - 1 - i]);
     CAMLreturn(result);
 }
+
+/* Only propose original-row pairs. Coq constructs the actual added rows. */
+#include <stdlib.h>
+#include <string.h>
+
+enum { vector_words = (max_dimension+63)/64 };
+typedef struct { uint64_t lane[vector_words]; } check_bits;
+
+CAMLprim value caml_ccv_sparse_pairs(value width, value source, value capacity) {
+    CAMLparam3(width,source,capacity);
+    CAMLlocal1(result);
+    intnat dn=Long_val(width), limit=Long_val(capacity);
+    mlsize_t size=caml_string_length(source);
+    if (dn<1 || dn>max_dimension || limit<1 || limit>max_dimension ||
+        size%(mlsize_t)dn || size/(mlsize_t)dn >= (mlsize_t)limit) CAMLreturn(Atom(0));
+    int n=(int)dn, original=(int)(size/(mlsize_t)dn), lanes=(n+63)/64;
+    if (original<2) CAMLreturn(Atom(0));
+    if (limit>3*original) limit=3*original;
+    check_bits *checks=calloc((size_t)limit,sizeof(*checks));
+    if (!checks) CAMLreturn(Atom(0));
+    unsigned weights[max_dimension]={0};
+    int pairs[2*max_dimension],count=original;
+    const unsigned char *bytes=Bytes_val(source);
+    for (int r=0;r<original;++r) {
+        for (int q=0;q<n;++q) if (bytes[r*n+q]) {
+            checks[r].lane[q/64] |= UINT64_C(1)<<(q%64);
+            ++weights[r];
+        }
+    }
+    for (int a=0;a<original && count<limit;++a) {
+        if (!weights[a] || weights[a]>32) continue;
+        for (int b=0;b<a && count<limit;++b) {
+            if (!weights[b] || weights[b]>32) continue;
+            check_bits sum={{0}};
+            unsigned w=0;
+            for (int k=0;k<lanes;++k) {
+                sum.lane[k]=checks[a].lane[k]^checks[b].lane[k];
+                w+=(unsigned)__builtin_popcountll(sum.lane[k]);
+            }
+            if (!w || (w>weights[a] && w>weights[b])) continue;
+            int i=0;
+            while (i<count && memcmp(checks[i].lane,sum.lane,(size_t)lanes*sizeof(uint64_t))) ++i;
+            if (i<count) continue;
+            pairs[2*(count-original)]=a;
+            pairs[2*(count-original)+1]=b;
+            checks[count++]=sum;
+        }
+    }
+    free(checks);
+    int entries=2*(count-original);
+    result=caml_alloc((mlsize_t)entries,0);
+    for (int i=0;i<entries;++i) Field(result,i)=Val_int(pairs[i]);
+    CAMLreturn(result);
+}

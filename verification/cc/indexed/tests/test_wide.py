@@ -56,6 +56,14 @@ if __name__ == "__main__":
         row="1"*n+"\n"
         query(n,"Z",{0,n-1},row,row,2,binary,"pair-pack","reverse-bfs")
         query(n,"X",{0},row,row,None,binary,"pair-pack")
+    for n,binary in ((192,"pcm-wide"),(382,"pcm-large")):
+        # Pair the coordinates of each of three short checks so that the CSS
+        # commutation condition holds. These rows produce three new pair sums.
+        rows=["".join(bit*2 for bit in row)+"0"*(n-8) for row in ("1101","1110","0110")]
+        rows.append("0"*8+"1"*(n-8))
+        pcm="\n".join(rows)+"\n"
+        query(n,"X",{2,3},pcm,pcm,2,binary,"sparse-checks","reverse-bfs","pair-pack")
+        query(n,"X",{2},pcm,pcm,None,binary,"sparse-checks")
     # Above the small-kernel cutoff, exercise the complete C upper/Coq lower
     # pipeline and independently check its file-level witness.
     with tempfile.TemporaryDirectory() as td:
@@ -77,4 +85,4 @@ if __name__ == "__main__":
                               "--row-order","reverse-bfs","--pair-pack"],capture_output=True,text=True,check=True)
         assert json.loads(found.stdout)["distance"] == 2
     print("4 upper-effort controls passed")
-    print("34 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
+    print("38 certificate boundary controls and 3 end-to-end C upper-witness controls passed")

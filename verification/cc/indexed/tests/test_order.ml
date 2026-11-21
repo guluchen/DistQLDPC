@@ -15,3 +15,14 @@ let () =
   assert (Row_advice.reverse_bfs 3 (Bytes.create 2) = [||]);
   assert (Row_advice.reverse_bfs 1 (Bytes.create 757) = [||]);
   print_endline "7 row-order controls passed"
+
+let () =
+  let flat = [1;1;0;1;1;1;1;0;0;1;1;0] in
+  let order,pairs = Row_advice.plan ~bfs:true ~sparse:true 12 4 (4,3,flat) in
+  assert (pairs=[1,0;2,0;2,1]);
+  assert (List.sort Int.compare order=List.init 6 Fun.id);
+  let _,limited=Row_advice.plan ~bfs:false ~sparse:true 4 4 (4,3,flat) in
+  assert (limited=[1,0]);
+  let o,p = Row_advice.plan ~bfs:false ~sparse:false 12 4 (4,3,flat) in
+  assert (o=[] && p=[]);
+  print_endline "4 redundant-row advice controls passed"
