@@ -28,17 +28,20 @@ def main():
     parser.add_argument("hz")
     parser.add_argument("--budget", type=int, default=100000000, help="iteration budget per half per stage")
     parser.add_argument("--rules", type=int, default=39, help="mask for the verified C bounded query")
+    parser.add_argument("--row-order", choices=("index","reverse-bfs"), default="index",
+                        help="row order for the packed lower-bound searches")
     args = parser.parse_args()
     if not (0 < args.width <= 107374182 and 0 <= args.rules <= 63 and 0 <= args.budget <= 4294967295):
         parser.error("unsupported width, rule mask or budget")
     raw = [str(args.width), args.hx, args.hz]
     budget = str(args.budget)
+    order = [] if args.row_order == "index" else [args.row_order]
     if args.width <= 64:
         os.execv(ROOT/"pcm-proved", ["pcm-proved","--distance",*raw,budget,"63"])
     if args.width <= 756 and args.budget == 100000000:
         upper = subprocess.run([ROOT/"pcm-upper", *raw],capture_output=True,text=True)
         if upper.returncode == 0:
-            verifier = [ROOT/"pcm-large" if args.width > 378 else ROOT/"pcm-wide", *raw]
+            verifier = [ROOT/"pcm-large" if args.width > 378 else ROOT/"pcm-wide", *raw, *order]
             checked = subprocess.run(verifier, input=upper.stdout,capture_output=True,text=True)
             if checked.returncode == 0:
                 sys.stdout.write(checked.stdout)
@@ -56,7 +59,7 @@ def main():
         os.execv(ROOT/"pcm-proved", ["pcm-proved","--distance",*raw,budget,"63"])
     side, word = suggestion
     if 190 <= args.width <= 756 and args.budget == 100000000:
-        wide = subprocess.run([ROOT/"pcm-large" if args.width > 378 else ROOT/"pcm-wide", *raw], input=side+"\n"+word+"\n", capture_output=True,text=True)
+        wide = subprocess.run([ROOT/"pcm-large" if args.width > 378 else ROOT/"pcm-wide", *raw, *order], input=side+"\n"+word+"\n", capture_output=True,text=True)
         if wide.returncode == 0:
             sys.stdout.write(wide.stdout)
             return 0

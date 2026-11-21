@@ -98,3 +98,17 @@ Proof.
   intro Lower; destruct (Nat.eq_dec (weight n e) k) as [Eq|Ne]; [congruence|lia].
 Qed.
 Print Assumptions parity_limit_sound.
+
+(* Any supplied check is either an original row or the zero row. Even
+   incomplete advice consequently preserves every possible original word. *)
+Definition advised_rows (hs:list vector) (order:list nat) :=
+  match order with [] => hs | _ => map (fun i=>nth i hs zero_vector) order end.
+Lemma kernel_advised_rows n hs order e :
+  kernel n hs e -> kernel n (advised_rows hs order) e.
+Proof.
+  intros K; destruct order as [|i tail]; [exact K|].
+  unfold advised_rows; fold (map (fun j=>nth j hs zero_vector) (i::tail)).
+  intros h H; apply in_map_iff in H as [j [<- _]].
+  destruct (lt_dec j (length hs)) as [B|B]; [apply K; now apply nth_In|].
+  rewrite nth_overflow by lia; apply qcert_zero_dot.
+Qed.

@@ -37,8 +37,11 @@ $(NAME)_driver.ml: ../pcm_proved.ml $(NAME)_driver.inc.ml
 dual_advice.ml: ../dual_advice.ml
 	cp $< $@
 
-pcm-$(NAME): $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
-	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(NAME)_generated.mli $(NAME)_generated.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_driver.ml $(NAME)_hint.c ../../extract/pcm_stubs.c ../../ccv.c ../../ccv_primitives.c
+row_advice.ml: ../row_advice.ml
+	cp $< $@
+
+pcm-$(NAME): row_advice.ml ../row_order.c $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
+	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(NAME)_generated.mli $(NAME)_generated.ml dual_advice.ml row_advice.ml $(NAME)_advice.ml $(NAME)_driver.ml $(NAME)_hint.c ../row_order.c ../../extract/pcm_stubs.c ../../ccv.c ../../ccv_primitives.c
 
 clean:
-	$(RM) $(addsuffix .v,$(addprefix $(PREFIX),$(GENERATED_TAGS))) *.vo* *.glob .*.aux *.o *.cm[iox] $(NAME)_generated.ml $(NAME)_generated.mli $(NAME)_driver.ml dual_advice.ml pcm-$(NAME) proof.stamp
+	$(RM) $(addsuffix .v,$(addprefix $(PREFIX),$(GENERATED_TAGS))) *.vo* *.glob .*.aux *.o *.cm[iox] $(NAME)_generated.ml $(NAME)_generated.mli $(NAME)_driver.ml dual_advice.ml row_advice.ml pcm-$(NAME) proof.stamp
