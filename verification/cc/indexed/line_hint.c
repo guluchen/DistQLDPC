@@ -102,3 +102,55 @@ CAMLprim value caml_ccv_disjoint_lines(value width,value distance,value checks,v
     }
     CAMLreturn(result);
 }
+
+/* A raw row list need not be closed under an isometry, even when its span
+   is. Test both spans. The packed dual checker still certifies the chosen
+   permutation against both the checks and the logical detectors. */
+static int maps_to_span(const unsigned char *rows,int m,const basis *target,
+                        const int *perm,int n,int count) {
+    for(int j=0;j<m;++j) {
+        bits image={{0}};
+        for(int i=0;i<n;++i) if(rows[j*n+i]) {
+            int q=perm[i]; image.w[q/64]|=UINT64_C(1)<<(q%64);
+        }
+        reduce(&image,target,n,count);
+        if(nonzero(&image,count)) return 0;
+    }
+    return 1;
+}
+
+CAMLprim value caml_ccv_span_dual(value width,value xs,value zs) {
+    CAMLparam3(width,xs,zs); CAMLlocal1(result);
+    intnat dn=Long_val(width);
+    if(dn<2 || dn>limit) CAMLreturn(Atom(0));
+    int n=(int)dn,count=(n+63)/64,half=n/2;
+    mlsize_t sx=caml_string_length(xs),sz=caml_string_length(zs);
+    if(!sx || !sz || sx%(mlsize_t)n || sz%(mlsize_t)n ||
+       sx/(mlsize_t)n>limit || sz/(mlsize_t)n>limit) CAMLreturn(Atom(0));
+    int mx=(int)(sx/(mlsize_t)n),mz=(int)(sz/(mlsize_t)n);
+    basis *x=calloc(1,sizeof(*x)),*z=calloc(1,sizeof(*z));
+    int perm[limit],matched=0;
+    if(x && z) {
+        const unsigned char *xr=Bytes_val(xs),*zr=Bytes_val(zs);
+        int rx=build(x,xr,mx,n,count),rz=build(z,zr,mz,n,count);
+        if(rx==rz) {
+            for(int b=0;b<=half && !matched;++b) {
+                if(b && (n%2 || half%b)) continue;
+                for(int i=0;i<n;++i) {
+                    if(!b) perm[i]=i;
+                    else {
+                        int a=half/b,first=i%half/b,second=i%b;
+                        perm[i]=(1-i/half)*half+(a-first)%a*b+(b-second)%b;
+                    }
+                }
+                matched=maps_to_span(xr,mx,z,perm,n,count) &&
+                        maps_to_span(zr,mz,x,perm,n,count);
+            }
+        }
+    }
+    free(x);free(z);
+    if(!matched) CAMLreturn(Atom(0));
+    result=caml_alloc((mlsize_t)n,0);
+    for(int i=0;i<n;++i) Field(result,i)=Val_int(perm[i]);
+    CAMLreturn(result);
+}

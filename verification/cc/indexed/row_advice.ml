@@ -65,3 +65,9 @@ let line_groups n d (_,xcount,xf) (_,zcount,zf) =
     List.init d (fun i->data.(2*i),data.(2*i+1)) in
   let a=lines z x and b=lines x z in
   List.sort_uniq Stdlib.compare (List.filter ((<>) []) [a;b])
+
+external span_hint : int -> bytes -> bytes -> int array = "caml_ccv_span_dual"
+
+let span_dual n (_,_,xf) (_,_,zf) =
+  let bytes flat=Bytes.of_seq (Seq.map Char.chr (List.to_seq flat)) in
+  let p=Array.to_list (span_hint n (bytes xf) (bytes zf)) in p,p

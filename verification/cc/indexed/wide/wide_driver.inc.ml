@@ -32,7 +32,8 @@ let () =
       if other.model_m>378 || other.model_l>378 then exit(print_report OutOfBudget);
       let os,ss=Row_advice.plan ~bfs ~sparse 378 n stabs in
       let ax,az,rx,rz,px,pz=if side then a,other,order,os,sums,ss else other,a,os,order,ss,sums in
-      (match packed_report n ax az side w (Wide_advice.make_advice ~logical_lines 40000000 pairs) [] [] rx rz px pz with
+      let p,inv=Row_advice.span_dual n hx hz in
+      (match packed_report n ax az side w (Wide_advice.make_advice ~logical_lines 40000000 pairs) p inv rx rz px pz with
       | Some ans->exit(print_report ans)|None->exit(print_report OutOfBudget))
   with Wide_advice.Exhausted->exit(print_report OutOfBudget)
      | Invalid_argument msg | Sys_error msg | Failure msg ->prerr_endline msg;exit 2

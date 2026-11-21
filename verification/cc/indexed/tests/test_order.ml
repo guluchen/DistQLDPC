@@ -80,3 +80,15 @@ let () =
   assert(Row_advice.line_groups 5 2 (raw []) (raw [])=[]);
   assert(Row_advice.line_hint 5 2 Bytes.empty (Bytes.make 1 '0')=[||]);
   print_endline "4 disjoint logical adviser controls passed"
+
+let () =
+  (* The right basis uses the sum of the two exchanged generators. *)
+  let cells rows=Bytes.of_seq (Seq.map Char.chr (List.to_seq (List.concat rows))) in
+  let x=cells [[1;0;0;0;0;0];[0;0;1;0;0;0]] in
+  let z=cells [[0;0;0;1;0;0];[0;0;0;1;1;0]] in
+  let map=Row_advice.span_hint 6 x z in
+  assert(Array.length map=6 && Array.for_all (fun q->map.(map.(q))=q) (Array.init 6 Fun.id));
+  assert(List.sort Int.compare [map.(0);map.(2)]=[3;4]);
+  assert(Row_advice.span_hint 6 x (cells [[0;0;0;1;1;0]])=[||]);
+  assert(Row_advice.span_hint 6 Bytes.empty z=[||]);
+  print_endline "3 unequal-generator span controls passed"
