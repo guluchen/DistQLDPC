@@ -2,6 +2,7 @@
    every logical word on which that coset is odd. All input advice is checked. *)
 From Coq Require Import Bool List Arith Lia.
 Require Import CCV.CCModel CCV.CCFunctional CCV.CCCSSBridge CCV.CCQuotientCertificate.
+Require Import CCShortSound.
 Require Import PACKWords PACKOrbit PACKRefute.
 Import ListNotations. Local Open Scope nat_scope.
 
@@ -68,3 +69,51 @@ Proof.
  lia.
 Qed.
 Print Assumptions coset_bound_sound.
+
+Definition ones : vector := fun _=>true.
+Definition kernel_even n hs :=
+ is_empty (reduce (row_basis n hs) (packv n ones)).
+Definition logical_odd n hs ls :=
+ let extended:=row_basis n (ones::hs) in
+ forallb (fun l=>is_empty(reduce extended (packv n l))) ls.
+Lemma kernel_even_ok n hs e : n<=WIDTH -> kernel n hs e ->kernel_even n hs=true ->
+ Nat.odd(weight n e)=false.
+Proof.
+ intros N K Passed;unfold kernel_even in Passed.
+ pose proof(reduced_zero _ _ _ _ _ (row_basis_ok n hs N) K Passed) as Z.
+ rewrite packv_parity in Z by exact N;unfold ones in Z;now rewrite ones_parity in Z.
+Qed.
+Lemma logical_odd_ok n hs ls e : n<=WIDTH -> good n hs ls e ->logical_odd n hs ls=true ->
+ Nat.odd(weight n e)=true.
+Proof.
+ intros N [_ [K [l [InL Odd]]]] Checked.
+ destruct(Nat.odd(weight n e))eqn:P;[reflexivity|exfalso].
+ assert(K2:kernel n (ones::hs) e).
+ { intros g [<-|G];[unfold ones;rewrite ones_parity;exact P|apply K;exact G]. }
+ unfold logical_odd in Checked;rewrite forallb_forall in Checked.
+ pose proof(reduced_zero _ _ _ _ _ (row_basis_ok n (ones::hs) N) K2 (Checked l InL)) as Z.
+ rewrite packv_parity in Z by exact N;congruence.
+Qed.
+Definition class_limit allow n hs ls d :=
+ let base:=parity_limit n hs d in
+ if allow && (base=?d) && (n<=?WIDTH) then
+    match d with 0=>0|S k=>
+      if (if Nat.odd k then kernel_even n hs else logical_odd n hs ls) then k else base
+    end
+ else base.
+Lemma class_limit_sound allow n hs ls d e : good n hs ls e ->
+ class_limit allow n hs ls d<=weight n e ->d<=weight n e.
+Proof.
+ intros G;pose proof(proj1(proj2 G)) as K;unfold class_limit.
+ destruct (_ && _ && _)%bool eqn:B;[|now apply parity_limit_sound].
+ apply andb_true_iff in B as [_ B];apply Nat.leb_le in B.
+ destruct d as [|k];[lia|].
+ destruct(Nat.odd k)eqn:P.
+ - destruct(kernel_even n hs)eqn:C;[|now apply parity_limit_sound].
+   pose proof(kernel_even_ok _ _ _ B K C).
+   intro W;destruct(Nat.eq_dec (weight n e) k);[congruence|lia].
+ - destruct(logical_odd n hs ls)eqn:C;[|now apply parity_limit_sound].
+   pose proof(logical_odd_ok _ _ _ _ B G C).
+   intro W;destruct(Nat.eq_dec (weight n e) k);[congruence|lia].
+Qed.
+Print Assumptions class_limit_sound.

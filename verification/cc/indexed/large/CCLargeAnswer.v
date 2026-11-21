@@ -20,13 +20,13 @@ Definition sliced_l a:=cached_vectors (model_n a) (model_l a) (model_lg a).
 Definition ordered_lower n hs ls d adv ids pairs :=
   if existsb (coset_bound n hs ls d) (logical_lines adv d) then true else
   let rows:=advised_rows (extended_rows hs pairs) ids in
-  lower_test n rows ls (parity_limit n hs d) adv.
+  lower_test n rows ls (class_limit (use_class_parity adv) n hs ls d) adv.
 Lemma ordered_lower_sound n hs ls d adv ids pairs e :
   ordered_lower n hs ls d adv ids pairs=true -> good n hs ls e -> d<=weight n e.
 Proof.
   unfold ordered_lower;destruct (existsb _ _) eqn:Line.
   { intros _ G;apply existsb_exists in Line as [g [_ Hit]];eapply coset_bound_sound;eassumption. }
-  intros Checked [Pos [Ker Log]];eapply parity_limit_sound;[exact Ker|].
+  intros Checked G;eapply class_limit_sound;[exact G|]. destruct G as [Pos [Ker Log]].
   eapply lower_test_sound;[exact Checked|]. split;[exact Pos|]. split;[|exact Log].
   apply kernel_advised_rows;apply kernel_extended_rows;exact Ker.
 Qed.

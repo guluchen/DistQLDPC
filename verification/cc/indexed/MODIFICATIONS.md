@@ -15,3 +15,5 @@ Added a C proposal for disjoint representatives of one logical coset and a Coq p
 For different generator lists of the same permuted subspaces, added a C row-space isometry adviser. Its permutation is passed to the existing checked packed isometry test.
 
 Implemented a certificate-producing saturated erasure check in C and proved the arbitrary-row-sum packing rule in Coq. The erasure-region idea follows the GH-195 attribution to Qubitserf 04b9349 by Serban Cercelescu (MIT).
+
+Added checked parity-of-weight tests on the check-row span and the detecting quotient, with positive and negative controls including redundant generators.

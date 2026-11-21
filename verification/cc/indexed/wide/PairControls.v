@@ -53,3 +53,17 @@ Proof. vm_compute;reflexivity. Qed.
 Example two_rows_cannot_close_that_pack :
  linear_cut 5 (active 5) triple_row triple_sy triple_free 2 [3;4] [0;2]=false.
 Proof. vm_compute;reflexivity. Qed.
+
+Definition r12 i:bool:=orb (Nat.eqb i 1) (Nat.eqb i 2).
+Example logicals_of_odd_weight :
+ class_limit true 3 [r01;r12] [Nat.eqb 0] 3=2.
+Proof. vm_compute;reflexivity. Qed.
+Example mixed_parities_kept :
+ class_limit true 2 [] [Nat.eqb 0] 3=3.
+Proof. vm_compute;reflexivity. Qed.
+Example even_kernel_with_redundant_generator :
+ class_limit true 4 [r4;r01] [Nat.eqb 0] 4=3.
+Proof. vm_compute;reflexivity. Qed.
+Example original_parity_without_span_check :
+ class_limit false 4 [r4;r01] [Nat.eqb 0] 4=4.
+Proof. vm_compute;reflexivity. Qed.

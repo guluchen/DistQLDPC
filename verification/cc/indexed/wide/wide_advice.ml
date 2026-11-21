@@ -72,7 +72,7 @@ let membership k cols =
   let immutable=Bytes.unsafe_to_string data in
   fun w -> let i=index (signature w) in Char.code immutable.[i lsr 3] land (1 lsl(i land 7)) <> 0
 
-let make_advice ~erasure ~logical_lines ?(extra_roots=Fun.id) limit pair_pack =
+let make_advice ~use_class_parity ~erasure ~logical_lines ?(extra_roots=Fun.id) limit pair_pack =
   let left=ref limit in
   let make_choice rows =
     let a=Array.of_list(List.map(fun r->words r.support_mask)rows) in
@@ -91,4 +91,4 @@ let make_advice ~erasure ~logical_lines ?(extra_roots=Fun.id) limit pair_pack =
   let prepare_index rows =
     let a=Array.of_list(List.mapi(fun i r->r,singleton0 i)rows) in
     fun i -> if i<0 || i>=Array.length a then bad_row,none0 else a.(i) in
-  {logical_lines;prepare_index;propose=(fun n rows -> extra_roots (propose n rows));make_choice;membership}
+  {use_class_parity;logical_lines;prepare_index;propose=(fun n rows -> extra_roots (propose n rows));make_choice;membership}

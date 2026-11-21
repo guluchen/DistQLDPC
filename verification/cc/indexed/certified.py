@@ -60,6 +60,8 @@ def main():
     parser.add_argument("--sparse-checks", action="store_true", help="add independently checked short pair-XOR rows")
     parser.add_argument("--erasure-pack", action="store_true",
                         help="certify syndrome inconsistency on the occupied packing region")
+    parser.add_argument("--class-parity", action="store_true",
+                        help="check whether the logical quotient forces an odd or even weight")
     args = parser.parse_args()
     if args.upper_rounds is not None and not 1 <= args.upper_rounds <= 4096:
         parser.error("--upper-rounds must be between 1 and 4096")
@@ -70,6 +72,8 @@ def main():
     order = [] if args.row_order == "index" else [args.row_order]
     if args.sparse_checks:
         order.append("sparse-checks")
+    if args.class_parity:
+        order.append("class-parity")
     if args.erasure_pack:
         order.append("erasure-pack")
     if args.pair_pack:
