@@ -28,6 +28,7 @@ $(PREFIX)Raw.v: ../raw_packed.v.in
 proof.stamp: $(PREFIX)Lines.v $(PREFIX)Raw.v ../CCCompactPrepare.vo ../CCRawDual.vo ../wide/instantiate.py $(wildcard ../wide/pack-pair-*.patch) $(HAND_PROOFS) $(PARENT_SRC) $(IMPORTED_STAMP) ../CCShortSound.vo
 	cp ../CCShortSound.vo ../CCRawDual.vo ../CCCompactPrepare.vo .
 	$(if $(IMPORTED_STAMP),cp ../wide/CCWide*.vo .,true)
+	$(if $(filter xl,$(NAME)),cp ../large/CCLarge*.vo .,true)
 	python3 -B ../wide/instantiate.py "$(PARENT)/proof" . $(PREFIX) $(WIDTH)
 	set -e; for module in $(MODULES); do coqc $(COQFLAGS) "$$module.v"; done
 	touch $@
@@ -44,10 +45,11 @@ dual_advice.ml: ../dual_advice.ml
 	cp $< $@
 
 row_advice.ml: ../row_advice.ml
-	cp $< $@
+	sed 's/756/$(ROW_ADVICE_LIMIT)/g' $< > $@
 
-pcm-$(NAME): row_advice.ml ../line_hint.c ../dual_hint.c ../row_order.c ../packed_hint.h $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
-	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(NAME)_generated.mli $(NAME)_generated.ml dual_advice.ml row_advice.ml $(NAME)_advice.ml $(NAME)_driver.ml $(NAME)_hint.c ../row_order.c ../line_hint.c ../dual_hint.c ../../extract/pcm_stubs.c ../../ccv.c ../../ccv_primitives.c
+ROW_ADVICE_LIMIT ?= 756
+pcm-$(NAME): ../advice_width.h row_advice.ml ../line_hint.c ../dual_hint.c ../row_order.c ../packed_hint.h $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
+	ocamlopt -ccopt "$(CFLAGS) $(ADVICE_FLAGS)" -o $@ $(LIBS) $(NAME)_generated.mli $(NAME)_generated.ml dual_advice.ml row_advice.ml $(NAME)_advice.ml $(NAME)_driver.ml $(NAME)_hint.c ../row_order.c ../line_hint.c ../dual_hint.c ../../extract/pcm_stubs.c ../../ccv.c ../../ccv_primitives.c
 
 clean:
 	$(RM) $(PREFIX)Lines.v $(PREFIX)Raw.v

@@ -17,3 +17,6 @@ For different generator lists of the same permuted subspaces, added a C row-spac
 Implemented a certificate-producing saturated erasure check in C and proved the arbitrary-row-sum packing rule in Coq. The erasure-region idea follows the GH-195 attribution to Qubitserf 04b9349 by Serban Cercelescu (MIT).
 
 Added checked parity-of-weight tests on the check-row span and the detecting quotient, with positive and negative controls including redundant generators.
+
+- Extended the checked packed representation to two 756-bit children and
+  specialized the C advisers and witness search for 1,512 coordinates.

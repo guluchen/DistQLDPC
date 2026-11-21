@@ -73,8 +73,8 @@ dual-test: $(ML_INPUTS) test_dual.ml
 rule-probes.so: tests/rule_probes.c $(INDEX) $(HEADERS) ../ccv_primitives.c
 	$(CC) $(CFLAGS) -fPIC -shared $< ccv_sparse.c ccv_flip.c ../ccv_primitives.c -o $@
 
-row-test: dual_advice.ml row_advice.ml row_order.c dual_hint.c line_hint.c tests/test_order.ml
-	ocamlopt -ccopt "$(CFLAGS)" -o $@ $^
+row-test: dual_advice.ml row_advice.ml row_order.c dual_hint.c line_hint.c tests/test_order.ml advice_width.h
+	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(filter-out %.h,$^)
 
 test: all cli dual-test rule-probes.so row-test
 	python3 -B ../tests/test_ccv.py ./libccv-indexed.so
@@ -89,6 +89,8 @@ clean:
 	$(MAKE) -C small clean
 	$(MAKE) -C wide clean
 	$(MAKE) -C large clean
+	$(MAKE) -C xl clean
+	$(RM) pcm-xl pcm-upper-xl
 	$(RM) replay_stubs.c replay_driver.ml pcm-check pcm-small pcm-wide pcm-large pcm-upper *.o *.cm[iox] *.vo* *.glob .*.aux pcm_generated.ml pcm_generated.mli pcm_indexed.ml pcm_proved.ml packed_advice.ml pcm-indexed pcm-proved ccv-indexed libccv-indexed.so dual-test row-test rule-probes.so
 
 replay_stubs.c: replay-stubs.patch $(BASE)/pcm_stubs.c
@@ -101,7 +103,7 @@ replay_driver.ml: pcm_proved.ml replay_driver.inc.ml
 pcm-check: $(ML_INPUTS) replay_driver.ml replay_stubs.c $(C_STUBS) ../ccv.c ../ccv.h
 	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(ML_INPUTS) replay_driver.ml $(C_STUBS) replay_stubs.c ../ccv.c
 
-WIDE_SOURCES := logical_packing.v.in line_hint.c raw_packed.v.in dual_hint.c packed_hint.h  $(wildcard wide/pack-pair-*.patch) row_order.c row_advice.ml certifier.mk $(wildcard wide/*.inc.ml) $(wildcard wide/CCWide*.v) wide/WideExtract.v wide/instantiate.py wide/Makefile wide/wide_hint.c wide/wide_advice.ml $(wildcard ../proof/CCPacked*.v)
+WIDE_SOURCES := advice_width.h logical_packing.v.in line_hint.c raw_packed.v.in dual_hint.c packed_hint.h  $(wildcard wide/pack-pair-*.patch) row_order.c row_advice.ml certifier.mk $(wildcard wide/*.inc.ml) $(wildcard wide/CCWide*.v) wide/WideExtract.v wide/instantiate.py wide/Makefile wide/wide_hint.c wide/wide_advice.ml $(wildcard ../proof/CCPacked*.v)
 pcm-wide: $(WIDE_SOURCES) CCShortSound.vo CCCompactPrepare.vo CCRawDual.vo pcm_proved.ml
 	$(MAKE) -C wide all
 	cp wide/pcm-wide $@
@@ -111,10 +113,24 @@ pcm-small: $(SMALL_SOURCES) CCShortSound.vo CCCompactPrepare.vo CCRawDual.vo pcm
 	$(MAKE) -C small all
 	cp small/pcm-small $@
 
-pcm-upper: upper.c
+pcm-upper: upper.c advice_width.h
 	$(CC) $(CFLAGS) $< -o $@
 
 LARGE_SOURCES := certifier.mk $(wildcard large/*.inc.ml) $(wildcard large/CCLarge*.v) large/LargeExtract.v large/Makefile large/large_hint.c large/large_advice.ml
 pcm-large: $(LARGE_SOURCES) pcm-wide
 	$(MAKE) -C large all
 	cp large/pcm-large $@
+
+.PHONY: extended test-extended
+extended: pcm-xl pcm-upper-xl
+	$(MAKE) -C xl proof
+
+pcm-xl: pcm-large xl/Makefile xl/generate_advice.py xl/xl_hint.c
+	$(MAKE) -C xl all
+	cp xl/pcm-xl $@
+
+pcm-upper-xl: upper.c advice_width.h
+	$(CC) $(CFLAGS) -DCCV_ADVICE_WIDTH=1512 $< -o $@
+
+test-extended: extended
+	python3 -B tests/test_extended.py

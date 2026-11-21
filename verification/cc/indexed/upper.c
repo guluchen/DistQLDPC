@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_N 756
+#include "advice_width.h"
+#define MAX_N CCV_ADVICE_WIDTH
 #define WORDS ((MAX_N+63)/64)
 #define POOL 32
 typedef struct { uint64_t v[WORDS]; } word;

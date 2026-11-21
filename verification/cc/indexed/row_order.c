@@ -5,7 +5,8 @@
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 
-enum { max_dimension = 756 };
+#include "advice_width.h"
+enum { max_dimension = CCV_ADVICE_WIDTH };
 
 CAMLprim value caml_ccv_reverse_bfs(value width, value packed_rows) {
     CAMLparam2(width, packed_rows);

@@ -7,7 +7,8 @@
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 
-enum { limit=756, lanes=(limit+63)/64 };
+#include "advice_width.h"
+enum { limit=CCV_ADVICE_WIDTH, lanes=(limit+63)/64 };
 typedef struct { uint64_t w[lanes]; } bits;
 typedef struct { bits row[limit]; unsigned char pivot[limit]; } basis;
 typedef struct { int start, step; } line;

@@ -8,7 +8,8 @@
 #include <caml/memory.h>
 #include <caml/mlvalues.h>
 
-enum { limit = 756 };
+#include "advice_width.h"
+enum { limit = CCV_ADVICE_WIDTH };
 struct trial {
     int width, rows, seed[limit], seed_length;
     int perm[limit];

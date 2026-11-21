@@ -50,3 +50,14 @@ When no exact permutation of the raw row lists is found, a bounded C test can su
 The optional --erasure-pack uses the check equations restricted to the union of a saturated packing. If elimination over that region finds a contradiction, C returns the original row indices forming the odd equation. The extracted verifier reconstructs that sum and checks its disjointness against the packing. The option includes pair packing. The implementation currently tests saturated packings of two through eight rows and tracks up to 64 independent restricted equations. Declining a test leaves the ordinary CC search available.
 
 With --class-parity the verifier can exclude an entire weight parity from one half. If the all-ones vector reduces to zero in the check row space, kernel words are even. If adjoining that vector makes every logical detector reduce to zero, a logical word must have odd weight. In both cases the skipped weight is justified on the input PCM.
+
+For raw matrices with 757–1512 qubits, build the optional 24-lane kernel with
+`make test-extended` from this directory after the standard build. Pass
+`--extended-width` to `certified.py`. This uses two 756-bit children and
+rechecks the instantiated proof with Coq before the end-to-end tests. The C
+upper-witness generator and row advice use the same width. Under the existing
+budget, a failed packed check can fall back to the general search.
+For the default XL upper-search schedule, the first witness gets a short
+32,768-choice lower search. If inconclusive, C tries 512 information sets and
+the best available witness gets the full search, even if its weight is
+unchanged. An explicit `--upper-rounds` uses a single full lower search.

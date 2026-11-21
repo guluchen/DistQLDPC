@@ -22,7 +22,8 @@ def pure_witness(data, width):
 
 
 def upper_proposal(raw, width, rounds):
-    args = [ROOT/"pcm-upper", *raw]
+    upper = "pcm-upper-xl" if width > 756 else "pcm-upper"
+    args = [ROOT/upper, *raw]
     if rounds is not None:
         args.append(str(rounds))
     result = subprocess.run(args, capture_output=True, text=True)
@@ -62,6 +63,8 @@ def main():
                         help="certify syndrome inconsistency on the occupied packing region")
     parser.add_argument("--class-parity", action="store_true",
                         help="check whether the logical quotient forces an odd or even weight")
+    parser.add_argument("--extended-width", action="store_true",
+                        help="use the optional 1512-bit kernel for widths 757..1512 (make extended)")
     args = parser.parse_args()
     if args.upper_rounds is not None and not 1 <= args.upper_rounds <= 4096:
         parser.error("--upper-rounds must be between 1 and 4096")
@@ -80,24 +83,36 @@ def main():
         order.append("pair-pack")
     if args.width <= 64:
         os.execv(ROOT/"pcm-proved", ["pcm-proved","--distance",*raw,budget,"63"])
-    verifier = [ROOT/("pcm-large" if args.width > 378 else "pcm-wide"), *raw, *order]
+    packed_limit = 1512 if args.extended_width else 756
+    kernel = "pcm-large" if args.width > 378 else "pcm-wide"
+    if args.extended_width and 756 < args.width <= packed_limit:
+        if not all(os.access(ROOT/name, os.X_OK) for name in ("pcm-xl", "pcm-upper-xl")):
+            parser.error("build the optional 1512-bit kernel with make extended")
+        kernel = "pcm-xl"
+    verifier = [ROOT/kernel, *raw, *order]
     tried = set()
-    if args.width <= 756 and args.budget == 100000000:
+    if args.width <= packed_limit and args.budget == 100000000:
         # A failed lower check can also mean that the proposed upper bound is
         # loose. A deeper C pass is worthwhile before launching full C search.
+        adaptive_xl = args.width > 756 and args.upper_rounds is None
         rounds = [args.upper_rounds] if args.upper_rounds is not None else [None, 512]
-        best = args.width + 1
-        for effort in rounds:
+        best = None
+        for stage, effort in enumerate(rounds):
             suggestion = upper_proposal(raw, args.width, effort)
-            if suggestion is None or suggestion[1].count("1") >= best:
+            if suggestion is not None and (best is None or suggestion[1].count("1") < best[1].count("1")):
+                best = suggestion
+            elif not adaptive_xl or best is None:
                 continue
-            best = suggestion[1].count("1")
-            checked = packed_check(verifier, suggestion)
+            # A loose early witness can make a complete refutation expensive.
+            # Give the first XL proposal a short search, then always let the
+            # best available witness use the full kernel after the deeper C pass.
+            quick = adaptive_xl and stage == 0
+            checked = packed_check([*verifier, "quick-probe"] if quick else verifier, best)
             if checked.returncode == 0:
                 sys.stdout.write(checked.stdout)
                 return 0
-            if checked.returncode == 3:
-                tried.add(suggestion)
+            if checked.returncode == 3 and not quick:
+                tried.add(best)
     proposed = subprocess.run([ROOT/"pcm-indexed", "--distance", *raw, budget, "63"],
                               capture_output=True, text=True)
     suggestion = None
@@ -110,7 +125,7 @@ def main():
         # An untrusted EMPTY, UNKNOWN or failed proposal carries no conclusion.
         os.execv(ROOT/"pcm-proved", ["pcm-proved","--distance",*raw,budget,"63"])
     side, word = suggestion
-    if 190 <= args.width <= 756 and args.budget == 100000000 and suggestion not in tried:
+    if 190 <= args.width <= packed_limit and args.budget == 100000000 and suggestion not in tried:
         wide = packed_check(verifier, suggestion)
         if wide.returncode == 0:
             sys.stdout.write(wide.stdout)

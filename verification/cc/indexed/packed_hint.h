@@ -17,6 +17,8 @@ static uint64_t mask_word(value mask,int j) {
     return word(Field(mask,j/3),j%3);
 #elif CCV_LANES == 12
     return word(Field(Field(mask,j/6),(j/3)%2),j%3);
+#elif CCV_LANES == 24
+    return word(Field(Field(Field(mask,j/12),(j/6)%2),(j/3)%2),j%3);
 #else
 #error "Unsupported packed representation"
 #endif
@@ -69,7 +71,7 @@ static int erasure_conflict(value rows, value sy, value incident, const uint64_t
 }
 
 CAMLprim value caml_wide_hash(value mask) {
-    static const unsigned rot[12]={0,7,17,26,37,49,4,11,23,35,45,55};
+    static const unsigned rot[24]={0,7,17,26,37,49,4,11,23,35,45,55,2,13,20,28,39,51,6,15,25,33,47,59};
     uint64_t hash=mask_word(mask,0);
     for (int i=1;i<CCV_LANES;i++) {
         uint64_t x=mask_word(mask,i);
