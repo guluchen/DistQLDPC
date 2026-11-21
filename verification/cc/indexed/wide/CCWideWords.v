@@ -13,6 +13,11 @@ Definition meet := comb CCV.CCPackedWords.meet.
 Definition join := comb CCV.CCPackedWords.join.
 Definition subtract := comb CCV.CCPackedWords.subtract.
 Definition is_empty a := CCV.CCPackedWords.is_empty (first_part a) && CCV.CCPackedWords.is_empty (second_part a).
+Definition disjoint a b := CCV.CCPackedWords.disjoint (first_part a) (first_part b) &&
+  CCV.CCPackedWords.disjoint (second_part a) (second_part b).
+Lemma disjoint_meet a b : disjoint a b=is_empty(meet a b).
+Proof. unfold disjoint,is_empty,meet,comb;cbn [first_part second_part].
+  now rewrite !CCV.CCPackedWords.disjoint_meet. Qed.
 Definition singleton i := if i <? 189 then pair_bits (CCV.CCPackedWords.singleton i) CCV.CCPackedWords.none
                           else pair_bits CCV.CCPackedWords.none (CCV.CCPackedWords.singleton (i-189)).
 Lemma decode_none i : decode none i=false.

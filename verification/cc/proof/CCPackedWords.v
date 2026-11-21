@@ -7,7 +7,25 @@ Local Open Scope nat_scope.
 
 Record bits := lanes { low:int; middle:int; high:int }.
 Definition none := lanes 0%uint63 0%uint63 0%uint63.
-Definition index63 n := Uint63.of_Z (Z.of_nat n).
+(* Bit operations only request positions in a 63-bit lane. Construct small
+   indices with bounded arithmetic, retaining the general conversion outside
+   that range. This avoids a linear nat-to-positive traversal after extraction. *)
+Definition index8 (n:nat) : int :=
+  match n with
+  | 0 => 0%uint63 | 1 => 1%uint63 | 2 => 2%uint63 | 3 => 3%uint63
+  | 4 => 4%uint63 | 5 => 5%uint63 | 6 => 6%uint63 | _ => 7%uint63
+  end.
+Definition index16 n :=
+  if n <? 8 then index8 n else Uint63.add 8%uint63 (index8 (n-8)).
+Definition index32 n :=
+  if n <? 16 then index16 n else Uint63.add 16%uint63 (index16 (n-16)).
+Definition index63 n :=
+  if n <? 32 then index32 n
+  else if n <? 64 then Uint63.add 32%uint63 (index32 (n-32))
+  else Uint63.of_Z (Z.of_nat n).
+
+Lemma index63_correct n : index63 n=Uint63.of_Z (Z.of_nat n).
+Proof. do 64 (destruct n as [|n];[reflexivity|]). reflexivity. Qed.
 Definition decode (a:bits) (i:nat) : bool :=
   if i <? 63 then Uint63.bit (low a) (index63 i)
   else if i <? 126 then Uint63.bit (middle a) (index63 (i-63))
@@ -18,13 +36,22 @@ Definition meet a b := lanes (Uint63.land (low a) (low b))
   (Uint63.land (middle a) (middle b)) (Uint63.land (high a) (high b)).
 Definition join a b := lanes (Uint63.lor (low a) (low b))
   (Uint63.lor (middle a) (middle b)) (Uint63.lor (high a) (high b)).
-Definition subtract a b := add_bits a (meet a b).
+Definition clear_word (x y:int) := Uint63.lxor x (Uint63.land x y).
+Definition subtract a b := lanes (clear_word (low a) (low b))
+  (clear_word (middle a) (middle b)) (clear_word (high a) (high b)).
 Definition is_empty a := (Uint63.eqb (low a) 0%uint63 &&
   Uint63.eqb (middle a) 0%uint63 && Uint63.eqb (high a) 0%uint63)%bool.
 
 Ltac lanes_cases i :=
   unfold decode; destruct (i <? 63), (i <? 126), (i <? 189);
   cbn [add_bits meet join none low middle high].
+(* Test only the native lanes needed to decide the predicate. *)
+Definition disjoint_word (x y:int) := Uint63.eqb (Uint63.land x y) 0%uint63.
+Definition disjoint a b := (disjoint_word (low a) (low b) &&
+  disjoint_word (middle a) (middle b) && disjoint_word (high a) (high b))%bool.
+Lemma disjoint_meet a b : disjoint a b=is_empty(meet a b).
+Proof. reflexivity. Qed.
+
 Lemma decode_none i : decode none i = false.
 Proof. lanes_cases i; solve [apply Uint63.bit_0|reflexivity]. Qed.
 Lemma decode_add a b i : decode (add_bits a b) i=xorb (decode a i) (decode b i).
@@ -34,7 +61,8 @@ Proof. lanes_cases i; solve [apply Uint63.land_spec|reflexivity]. Qed.
 Lemma decode_join a b i : decode (join a b) i=orb (decode a i) (decode b i).
 Proof. lanes_cases i; solve [apply Uint63.lor_spec|reflexivity]. Qed.
 Lemma decode_subtract a b i : decode (subtract a b) i=andb (decode a i) (negb (decode b i)).
-Proof. unfold subtract;rewrite decode_add, decode_meet; destruct (decode a i),(decode b i);reflexivity. Qed.
+Proof. change (decode (add_bits a (meet a b)) i=andb (decode a i) (negb (decode b i))).
+  rewrite decode_add, decode_meet; destruct (decode a i),(decode b i);reflexivity. Qed.
 Lemma empty_none a : is_empty a=true -> a=none.
 Proof.
   destruct a as [x y z]; unfold is_empty; cbn [low middle high].
@@ -49,7 +77,7 @@ Definition singleton i :=
 
 Lemma word_index_small i : i<189 -> Uint63.to_Z (index63 i) = Z.of_nat i.
 Proof.
-  intro B;unfold index63;rewrite Uint63.of_Z_spec, Z.mod_small;[reflexivity|].
+  intro B;rewrite index63_correct, Uint63.of_Z_spec, Z.mod_small;[reflexivity|].
   change (0 <= Z.of_nat i < 9223372036854775808)%Z;lia.
 Qed.
 Lemma one_word_bit i j : i<63 -> j<63 ->
@@ -87,7 +115,7 @@ Proof.
       assert ((Uint63.digits <=? j)%uint63=true) by (apply Uint63.leb_spec;change (63<=Uint63.to_Z j)%Z;lia).
       congruence. }
     set (k:=Z.to_nat (Uint63.to_Z j)).
-    assert (J:index63 k=j) by (unfold k,index63;rewrite Z2Nat.id by lia;apply Uint63.of_to_Z).
+    assert (J:index63 k=j) by (rewrite index63_correct;unfold k;rewrite Z2Nat.id by lia;apply Uint63.of_to_Z).
     rewrite <- J; apply H;unfold k;lia.
 Qed.
 

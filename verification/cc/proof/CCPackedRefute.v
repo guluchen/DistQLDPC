@@ -23,7 +23,7 @@ Fixpoint packing_cut (test:bits->nat->bool) row sy free budget used ids {struct 
   | i::tail=>
       if test sy i then
         let can:=meet free (support_mask (row i)) in
-        if is_empty (meet used can) then
+        if disjoint used can then
           match budget with
           | O=>true
           | S k=>packing_cut test row sy free k (join used can) tail
@@ -63,7 +63,7 @@ Lemma packing_safe n hs ls test row e s sy a used ids rem :
 Proof.
   intros Check L K Sig Fit;revert rem used;induction ids as [|i ids IH];intros rem used B;[reflexivity|].
   cbn [packing_cut];destruct (test sy i) eqn:A;[|reflexivity].
-  set (can:=meet a (support_mask (row i))). destruct (is_empty (meet used can)) eqn:Z;[|reflexivity].
+  set (can:=meet a (support_mask (row i))). rewrite disjoint_meet. destruct (is_empty (meet used can)) eqn:Z;[|reflexivity].
   destruct (active_target n hs ls row e s sy a i L K Sig Fit (Check _ _ A)) as [q [Q [E [S [Hit H]]]]].
   assert (Unused:decode used q=false).
   { apply empty_none in Z;pose proof (f_equal (fun b=>decode b q) Z) as R;

@@ -56,7 +56,7 @@ Proof.
     rewrite Z in E;discriminate.
 Qed.
 Definition indexed_active m (read:nat->entry) sy i :=
-  (i <? m) && negb(is_empty(meet sy (snd(read i)))).
+  (i <? m) && negb(disjoint sy (snd(read i))).
 Lemma compiled_index n hs ls read : n<=189 ->length hs<=189 ->length ls<=189 ->
  index_ok (compiled_rows n hs ls) read=true ->
  active_ok (length hs) (indexed_active (length hs) read) /\
@@ -65,7 +65,7 @@ Proof.
   intros N H L V;pose proof(entry_valid _ _ V) as All.
   assert (Len:length(compiled_rows n hs ls)=length hs) by (unfold compiled_rows;rewrite map_length;reflexivity).
   split.
-  - intros sy i;unfold indexed_active,active;destruct (i <? length hs) eqn:B;[|discriminate].
+  - intros sy i;unfold indexed_active,active;rewrite disjoint_meet;destruct (i <? length hs) eqn:B;[|discriminate].
     apply Nat.ltb_lt in B;rewrite All by lia;cbn [snd];rewrite meet_single_bit by lia;auto.
   - intros i I;rewrite All by lia;apply (compile_layout n hs ls N H L i I).
 Qed.

@@ -13,6 +13,11 @@ Definition meet := comb CCWideWords.meet.
 Definition join := comb CCWideWords.join.
 Definition subtract := comb CCWideWords.subtract.
 Definition is_empty a := CCWideWords.is_empty (left_half a) && CCWideWords.is_empty (right_half a).
+Definition disjoint a b := CCWideWords.disjoint (left_half a) (left_half b) &&
+  CCWideWords.disjoint (right_half a) (right_half b).
+Lemma disjoint_meet a b : disjoint a b=is_empty(meet a b).
+Proof. unfold disjoint,is_empty,meet,comb;cbn [left_half right_half].
+  now rewrite !CCWideWords.disjoint_meet. Qed.
 Definition singleton i := if i <? 378 then pair_bits (CCWideWords.singleton i) CCWideWords.none
                           else pair_bits CCWideWords.none (CCWideWords.singleton (i-378)).
 Lemma decode_none i : decode none i=false.

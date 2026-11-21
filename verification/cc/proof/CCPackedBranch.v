@@ -52,11 +52,11 @@ Proof.
     rewrite (H _ InH) in Odd;discriminate.
 Qed.
 
-Definition available free c := negb (is_empty (meet free (mark c))).
+Definition available free c := negb (disjoint free (mark c)).
 Lemma available_hit n hs ls c e s a : col_ok n hs ls c -> fits n e s a ->
   e (position c)=true -> s (position c)=false -> available a c=true.
 Proof.
-  intros [I [M _]] [_ F] T P. unfold available.
+  intros [I [M _]] [_ F] T P. unfold available;rewrite disjoint_meet.
   destruct (is_empty (meet a (mark c))) eqn:Z;[|reflexivity].
   apply empty_none in Z. pose proof (f_equal (fun b=>decode b (position c)) Z) as K.
   cbn beta in K;rewrite decode_none,decode_meet,M,Nat.eqb_refl,(F _ I T P) in K by exact I.
