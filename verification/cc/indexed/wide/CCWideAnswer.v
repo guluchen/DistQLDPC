@@ -4,7 +4,7 @@ Require Import VST.floyd.proofauto.
 Require Import CCV.CCModel CCV.CCFunctional CCV.CCCSSBridge CCV.CCCSSResultBridge
  CCV.CCRepresentation CCV.CCSearchSpecs CCV.CCPCMInput CCV.CCRawCSS CCV.CCPCMPair
  CCV.CCPCMFast CCV.CCPCMDetectors CCV.CCPCMAnswer CCWideHalf CCWideDual.
-Require Import CCWideCached.
+Require Import CCWideCached CCShortSound.
 Import ListNotations. Local Open Scope nat_scope. Local Open Scope bool_scope.
 
 Definition witness_test n hs ls w :=
@@ -24,7 +24,7 @@ Definition packed_report n ax az (x_side:bool) (ws:list bool) adv (p inv:list na
   let d:=weight n w in
   if (length ws=?n) &&
      (if x_side then witness_test n sx lx w else witness_test n sz lz w) &&
-     lower_test n sx lx d adv && (dual_check n sx lx sz lz p inv || lower_test n sz lz d adv)
+     lower_test n sx lx (parity_limit n sx d) adv && (dual_check n sx lx sz lz p inv || lower_test n sz lz (parity_limit n sz d) adv)
   then Some (serialize_pair n (if x_side then found (w,zero_vector) else found (zero_vector,w)))
   else None.
 
@@ -54,15 +54,20 @@ Proof.
   pose proof(prepared_good (swap_half q) az Z) as GZ.
   fold n in GX;change (forall e,good n (sliced_h az) (sliced_l az) e <->
     css_logical n (same_rows q) (check_rows q) e) in GZ.
+  assert (BoundX:forall e,good n (sliced_h ax) (sliced_l ax) e->weight n w<=weight n e).
+  { intros e E; eapply parity_limit_sound; [exact (proj1 (proj2 E))|].
+    eapply lower_test_sound; [exact LX|exact E]. }
   assert (Min:forall u v,mixed_logical n (same_rows q) (check_rows q) u v ->
                           weight n w<=mixed_weight n u v).
   { intros u v [U [V [A|B]]];destruct(weight_union n u v) as [WU WV].
-    - pose proof(lower_test_sound _ _ _ _ _ LX u (proj2 (GX u) (conj U A)));lia.
+    - pose proof(BoundX u (proj2 (GX u) (conj U A)));lia.
     - pose proof(proj2 (GZ v) (conj V B)) as GoodZ.
       apply orb_true_iff in LZ as [Dual|Direct].
       + destruct(dual_transports _ _ _ _ _ _ _ Dual v GoodZ) as [GoodX Eq].
-        pose proof(lower_test_sound _ _ _ _ _ LX _ GoodX);lia.
-      + pose proof(lower_test_sound _ _ _ _ _ Direct v GoodZ);lia. }
+        pose proof(BoundX _ GoodX);lia.
+      + assert (Zlower:weight n w<=weight n v).
+        { eapply parity_limit_sound; [exact (proj1 (proj2 GoodZ))|].
+          eapply lower_test_sound; [exact Direct|exact GoodZ]. } lia. }
   destruct x_side;intros [= <-];cbn [serialize_pair].
   - apply witness_test_sound in Upper;apply GX in Upper as [K NS].
     exists w,zero_vector;repeat split;try reflexivity;try assumption;try apply zero_kernel;

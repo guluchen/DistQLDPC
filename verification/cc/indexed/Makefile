@@ -95,7 +95,7 @@ pcm-check: $(ML_INPUTS) replay_driver.ml replay_stubs.c $(C_STUBS) ../ccv.c ../c
 	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(ML_INPUTS) replay_driver.ml $(C_STUBS) replay_stubs.c ../ccv.c
 
 WIDE_SOURCES := certifier.mk $(wildcard wide/*.inc.ml) $(wildcard wide/CCWide*.v) wide/WideExtract.v wide/instantiate.py wide/Makefile wide/wide_hint.c wide/wide_advice.ml $(wildcard ../proof/CCPacked*.v)
-pcm-wide: $(WIDE_SOURCES) CCCompactPrepare.vo CCRawDual.vo pcm_proved.ml
+pcm-wide: $(WIDE_SOURCES) CCShortSound.vo CCCompactPrepare.vo CCRawDual.vo pcm_proved.ml
 	$(MAKE) -C wide all
 	cp wide/pcm-wide $@
 

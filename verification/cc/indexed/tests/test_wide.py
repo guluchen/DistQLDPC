@@ -41,6 +41,12 @@ if __name__ == "__main__":
         query(n,"Z",{188,378},all_ones,all_ones,2,"pcm-large")
         query(n,"Z",{378},all_ones,all_ones,None,"pcm-large")
     query(757,"Z",{756},"","",None,"pcm-large")
+    # Both halves have a zero column. A valid weight-two proposal loses to
+    # the singleton on it, even though every other column has odd degree.
+    for n, binary in ((190, "pcm-wide"), (380, "pcm-large")):
+        row = "1"*(n-2)+"00\n"
+        query(n, "X", {0,1}, row, row, None, binary)
+        query(n, "Z", {n-1}, row, row, 1, binary)
     # Above the small-kernel cutoff, exercise the complete C upper/Coq lower
     # pipeline and independently check its file-level witness.
     with tempfile.TemporaryDirectory() as td:
@@ -53,4 +59,4 @@ if __name__ == "__main__":
             assert obj["status"] == "FOUND" and obj["distance"] == 2
             x,z = int(obj["x"][::-1],2),int(obj["z"][::-1],2)
             assert x.bit_count()%2 == z.bit_count()%2 == 0 and (x|z).bit_count() == 2
-    print("22 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
+    print("26 certificate boundary controls and 3 end-to-end C upper-witness controls passed")

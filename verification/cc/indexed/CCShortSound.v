@@ -77,3 +77,24 @@ End Filter.
 Print Assumptions odd_columns_even_weight.
 Print Assumptions three_keeps.
 Print Assumptions four_keeps.
+
+(* When every column has odd check degree, a kernel word has even weight.
+   In that half it suffices to exclude weights strictly below d-1 for even d. *)
+Definition parity_limit n hs d :=
+  match d with
+  | 0 => 0
+  | S k => if Nat.odd k && forallb (add_all hs) (seq 0 n) then k else S k
+  end.
+
+Theorem parity_limit_sound n hs d e :
+  kernel n hs e -> parity_limit n hs d <= weight n e -> d <= weight n e.
+Proof.
+  intros K; destruct d as [|k]; [simpl; lia|].
+  cbn [parity_limit]; destruct (_ && _)%bool eqn:E; [|auto].
+  apply andb_true_iff in E as [Odd All].
+  assert (Even : Nat.odd (weight n e) = false).
+  { eapply odd_columns_even_weight; [|exact K].
+    intros i I. apply forallb_forall with (x:=i) in All; [exact All|apply in_seq;lia]. }
+  intro Lower; destruct (Nat.eq_dec (weight n e) k) as [Eq|Ne]; [congruence|lia].
+Qed.
+Print Assumptions parity_limit_sound.
