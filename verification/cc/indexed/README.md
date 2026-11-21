@@ -66,3 +66,9 @@ has dimension at least two. With an initial upper witness heavier than six,
 the XL schedule then goes directly to the deeper upper search. This avoids a
 packed lower search that cannot use the single-class disjoint-representative
 certificate. Every accepted distance receives the same proof checks.
+
+The XL C witness generator records which 64-bit words of each stabilizer row
+are nonzero. During descent it visits those words when fewer than half are
+occupied and otherwise scans the row consecutively. Both paths count the
+same overlap and use the same strict weight-decrease rule. The standard
+generator uses its original consecutive scan.

@@ -68,15 +68,62 @@ static int logical(word w,const word *basis,unsigned rank,const unsigned *pivot,
     for(unsigned i=0;i<rank;i++) if(bit(&w,pivot[i])) add(&w,basis+i,lanes);
     return wt(&w,lanes)!=0;
 }
-static void descend(word *w,const matrix *g,const unsigned *weights,unsigned *weight) {
+/* On a sparse check, visit only its occupied 64-bit words. Dense checks and
+   small matrices keep the contiguous scan. Both compute the same overlap. */
+#if CCV_ADVICE_WIDTH > 756
+typedef struct {
+    unsigned weight;
+    uint32_t occupied;
+} row_info;
+
+static row_info describe_row(const word *row, unsigned lanes) {
+    row_info info = {wt(row,lanes), 0};
+    if (lanes >= 8 && lanes <= 32) {
+        uint32_t mask = 0;
+        for (unsigned j=0; j<lanes; ++j)
+            if (row->v[j]) mask |= UINT32_C(1) << j;
+        if (2u*(unsigned)__builtin_popcount(mask) < lanes) info.occupied = mask;
+    }
+    return info;
+}
+
+static unsigned overlap_weight(const word *w, const word *row, unsigned lanes, uint32_t occupied) {
+    unsigned total=0;
+    if (occupied) {
+        for (uint32_t scan=occupied; scan; scan &= scan-1u) {
+            unsigned j=(unsigned)__builtin_ctz(scan);
+            total += (unsigned)__builtin_popcountll(w->v[j] & row->v[j]);
+        }
+    } else {
+        for (unsigned j=0; j<lanes; ++j)
+            total += (unsigned)__builtin_popcountll(w->v[j] & row->v[j]);
+    }
+    return total;
+}
+
+#else
+/* A separate executable handles up to 756 qubits. Keep its compact weight
+   array and contiguous inner loop; sparse word indexing is for the XL path. */
+typedef unsigned row_info;
+#define describe_row wt
+#endif
+
+static void descend(word *w,const matrix *g,const row_info *info,unsigned *weight) {
     for(unsigned pass=0;pass<4;pass++) {
         int changed=0;
         for(unsigned r=0;r<g->count;r++) {
-            if(weights[r]>=2u*(*weight))continue;
+#if CCV_ADVICE_WIDTH > 756
+            unsigned weight_r=info[r].weight;
+            if(weight_r>=2u*(*weight))continue;
+            unsigned overlap=overlap_weight(w,g->r+r,g->lanes,info[r].occupied);
+#else
+            unsigned weight_r=info[r];
+            if(weight_r>=2u*(*weight))continue;
             unsigned overlap=0;
             for(unsigned j=0;j<g->lanes;j++)overlap+=(unsigned)__builtin_popcountll(w->v[j]&g->r[r].v[j]);
-            if(2u*overlap>weights[r]) {
-                add(w,g->r+r,g->lanes);*weight-=2u*overlap-weights[r];changed=1;
+#endif
+            if(2u*overlap>weight_r) {
+                add(w,g->r+r,g->lanes);*weight-=2u*overlap-weight_r;changed=1;
             }
         }
         if(!changed)break;
@@ -89,13 +136,13 @@ static void consider(word w,const matrix *g,const word *basis,unsigned rank,cons
 }
 static unsigned propose(const matrix *h,const matrix *g,word *answer,unsigned rounds) {
     word *rows=calloc(h->count+1u,sizeof(word)),*basis=calloc(g->count+1u,sizeof(word));
-    unsigned *weights=calloc(g->count+1u,sizeof(unsigned));
-    if(!rows||!basis||!weights){free(rows);free(basis);free(weights);return h->n+1u;}
+    row_info *info=calloc(g->count+1u,sizeof(*info));
+    if(!rows||!basis||!info){free(rows);free(basis);free(info);return h->n+1u;}
     unsigned order[MAX_N]={0},piv[MAX_N],gp[MAX_N],best=h->n+1u;
     unsigned char used[MAX_N]={0};
     unsigned n=h->n,l=h->lanes;uint32_t state=UINT32_C(462119);
     for(unsigned i=0;i<n;i++)order[i]=i;
-    for(unsigned j=0;j<g->count;j++) weights[j]=wt(g->r+j,l);
+    for(unsigned j=0;j<g->count;j++) info[j]=describe_row(g->r+j,l);
     memcpy(basis,g->r,g->count*sizeof(word));
     unsigned grank=rref(basis,g->count,order,n,l,gp,used);
     for(unsigned rep=0;rep<rounds;rep++) {
@@ -109,7 +156,7 @@ static unsigned propose(const matrix *h,const matrix *g,word *answer,unsigned ro
             word v={{0}};flip(&v,f);
             for(unsigned i=0;i<rank;i++)if(bit(rows+i,f))flip(&v,piv[i]);
             unsigned d=wt(&v,l);
-            descend(&v,g,weights,&d);
+            descend(&v,g,info,&d);
             if(!d)continue;
             consider(v,g,basis,grank,gp,&best,answer);
             for(unsigned i=0;i<kept;i++) {
@@ -125,7 +172,7 @@ static unsigned propose(const matrix *h,const matrix *g,word *answer,unsigned ro
             }
         }
     }
-    free(rows);free(basis);free(weights);return best;
+    free(rows);free(basis);free(info);return best;
 }
 int main(int argc,char **argv) {
     if(argc!=4 && argc!=5)return 2;

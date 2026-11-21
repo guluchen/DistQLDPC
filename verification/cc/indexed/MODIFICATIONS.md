@@ -20,3 +20,6 @@ Added checked parity-of-weight tests on the check-row span and the detecting quo
 
 - Extended the checked packed representation to two 756-bit children and
   specialized the C advisers and witness search for 1,512 coordinates.
+
+- Added sparse 64-bit word scans to the XL C upper-witness descent, with
+  a differential check of overlap counts across all 24 supported word widths.

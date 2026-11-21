@@ -76,7 +76,7 @@ rule-probes.so: tests/rule_probes.c $(INDEX) $(HEADERS) ../ccv_primitives.c
 row-test: dual_advice.ml row_advice.ml row_order.c dual_hint.c line_hint.c tests/test_order.ml advice_width.h
 	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(filter-out %.h,$^)
 
-test: all cli dual-test rule-probes.so row-test
+test: all cli dual-test rule-probes.so row-test test-upper-overlap
 	python3 -B ../tests/test_ccv.py ./libccv-indexed.so
 	./dual-test
 	./row-test
@@ -90,7 +90,7 @@ clean:
 	$(MAKE) -C wide clean
 	$(MAKE) -C large clean
 	$(MAKE) -C xl clean
-	$(RM) pcm-xl pcm-upper-xl
+	$(RM) pcm-xl pcm-upper-xl upper-overlap-test
 	$(RM) replay_stubs.c replay_driver.ml pcm-check pcm-small pcm-wide pcm-large pcm-upper *.o *.cm[iox] *.vo* *.glob .*.aux pcm_generated.ml pcm_generated.mli pcm_indexed.ml pcm_proved.ml packed_advice.ml pcm-indexed pcm-proved ccv-indexed libccv-indexed.so dual-test row-test rule-probes.so
 
 replay_stubs.c: replay-stubs.patch $(BASE)/pcm_stubs.c
@@ -121,7 +121,11 @@ pcm-large: $(LARGE_SOURCES) pcm-wide
 	$(MAKE) -C large all
 	cp large/pcm-large $@
 
-.PHONY: extended test-extended
+.PHONY: extended test-extended test-upper-overlap
+test-upper-overlap: tests/test_upper_overlap.c upper.c advice_width.h
+	$(CC) $(CFLAGS) -DCCV_ADVICE_WIDTH=1512 $< -o upper-overlap-test
+	./upper-overlap-test
+
 extended: pcm-xl pcm-upper-xl
 	$(MAKE) -C xl proof
 
