@@ -4,7 +4,7 @@ Require Import VST.floyd.proofauto.
 Require Import CCV.CCModel CCV.CCFunctional CCV.CCCSSBridge CCV.CCCSSResultBridge
  CCV.CCRepresentation CCV.CCSearchSpecs CCV.CCPCMInput CCV.CCRawCSS CCV.CCPCMPair
  CCV.CCPCMFast CCV.CCPCMDetectors CCV.CCPCMAnswer CCLargeHalf CCLargeDual.
-Require Import CCLargeCached CCShortSound.
+Require Import CCLargeCached CCLargeLines CCShortSound.
 Import ListNotations. Local Open Scope nat_scope. Local Open Scope bool_scope.
 
 Definition witness_test n hs ls w :=
@@ -18,11 +18,14 @@ Qed.
 Definition sliced_h a:=cached_vectors (model_n a) (model_m a) (model_h a).
 Definition sliced_l a:=cached_vectors (model_n a) (model_l a) (model_lg a).
 Definition ordered_lower n hs ls d adv ids pairs :=
+  if existsb (coset_bound n hs ls d) (logical_lines adv d) then true else
   let rows:=advised_rows (extended_rows hs pairs) ids in
   lower_test n rows ls (parity_limit n hs d) adv.
 Lemma ordered_lower_sound n hs ls d adv ids pairs e :
   ordered_lower n hs ls d adv ids pairs=true -> good n hs ls e -> d<=weight n e.
 Proof.
+  unfold ordered_lower;destruct (existsb _ _) eqn:Line.
+  { intros _ G;apply existsb_exists in Line as [g [_ Hit]];eapply coset_bound_sound;eassumption. }
   intros Checked [Pos [Ker Log]];eapply parity_limit_sound;[exact Ker|].
   eapply lower_test_sound;[exact Checked|]. split;[exact Pos|]. split;[|exact Log].
   apply kernel_advised_rows;apply kernel_extended_rows;exact Ker.

@@ -7,6 +7,7 @@ Require Import CCV.CCModel CCV.CCFunctional CCV.CCPCMDetectors CCLargeWords
 Import ListNotations. Local Open Scope nat_scope.
 
 Record advice := suggest {
+  logical_lines : nat -> list (list (nat*nat));
   prepare_index : list packed_row -> nat -> entry;
   propose : nat -> list packed_row -> list nat * list nat;
   make_choice : list packed_row -> bits -> bits -> nat -> hint;

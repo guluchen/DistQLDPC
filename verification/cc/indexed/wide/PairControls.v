@@ -20,3 +20,15 @@ Proof. vm_compute;reflexivity. Qed.
 Example invalid_index_rejected :
   pair_cut 3 (active 3) rows sy avail 1 [2] 0 3=false.
 Proof. vm_compute;reflexivity. Qed.
+
+Require Import CCWideLines.
+Definition r01 i:bool := orb (Nat.eqb i 0) (Nat.eqb i 1).
+Definition r4 i:bool := Nat.ltb i 4.
+Example disjoint_logical_bound : coset_bound 5 [r4] [r01] 2 [(0,1);(2,1)]=true.
+Proof. vm_compute;reflexivity. Qed.
+Example duplicate_logical_support : coset_bound 5 [r4] [r01] 2 [(0,1);(0,1)]=false.
+Proof. vm_compute;reflexivity. Qed.
+Example missing_coset_equality : coset_bound 5 [] [r01] 2 [(0,1);(2,1)]=false.
+Proof. vm_compute;reflexivity. Qed.
+Example uncovered_detector : coset_bound 5 [r4] [r01;Nat.eqb 4] 2 [(0,1);(2,1)]=false.
+Proof. vm_compute;reflexivity. Qed.

@@ -81,6 +81,27 @@ if __name__ == "__main__":
         query(n,"Z",{n//2},xrow,zrow,1,binary)
         query(n,"X",{n//2},xrow,zrow,None,binary)
         query(n,"Z",{0},xrow,zrow,None,binary)
+    # Hypergraph product of two length-seven repetition codes. The seven
+    # disjoint rows (columns) in the 7 x 7 data block certify the two halves.
+    d=7
+    n=d*d+(d-1)*(d-1)
+    hxrows=[]; hzrows=[]
+    def matrix_text(rows):
+        return "".join("".join("1" if i in row else "0" for i in range(n))+"\n" for row in rows)
+    for i in range(d-1):
+        for j in range(d):
+            hx={i*d+j,(i+1)*d+j}
+            hz={j*d+i,j*d+i+1}
+            for k in (j-1,j):
+                if 0<=k<d-1:
+                    hx.add(d*d+i*(d-1)+k)
+                    hz.add(d*d+k*(d-1)+i)
+            hxrows.append(hx);hzrows.append(hz)
+    xmat,zmat=matrix_text(hxrows),matrix_text(hzrows)
+    xword=set(range(d));zword=set(range(0,d*d,d))
+    query(n,"X",xword,xmat,zmat,d,"pcm-small")
+    query(n,"Z",zword,xmat,zmat,d,"pcm-small")
+    query(n,"X",xword ^ hxrows[-1],xmat,zmat,None,"pcm-small")
     # Above the small-kernel cutoff, exercise the complete C upper/Coq lower
     # pipeline and independently check its file-level witness.
     with tempfile.TemporaryDirectory() as td:
@@ -102,4 +123,4 @@ if __name__ == "__main__":
                               "--row-order","reverse-bfs","--pair-pack"],capture_output=True,text=True,check=True)
         assert json.loads(found.stdout)["distance"] == 2
     print("4 upper-effort controls passed")
-    print("59 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
+    print("62 certificate boundary controls and 3 end-to-end C upper-witness controls passed")

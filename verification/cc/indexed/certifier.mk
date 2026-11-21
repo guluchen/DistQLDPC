@@ -9,7 +9,7 @@ COQ_OCAML_ROOT ?= $(shell ocamlfind query coq-core)
 CFLAGS ?= -std=c99 -O3 -Wall -Wextra -Werror -Wconversion -pedantic
 LIBS := -I "$(COQ_OCAML_ROOT)/kernel" -I "$(COQ_OCAML_ROOT)/vm" -I . -I "$(COQ_OCAML_ROOT)/clib" "$(COQ_OCAML_ROOT)/clib/clib.cmxa" "$(COQ_OCAML_ROOT)/kernel/kernel.cmxa" -cclib -lcoqrun_stubs
 GENERATED_TAGS := Branch Refute Roots Layout Index Short Orbit Dual
-TAGS := Words $(GENERATED_TAGS) Half Cached Answer Raw
+TAGS := Words $(GENERATED_TAGS) Half Cached Lines Answer Raw
 MODULES := $(addprefix $(PREFIX),$(TAGS))
 PARENT_SRC := $(foreach t,$(GENERATED_TAGS),$(PARENT)/proof/CCPacked$(t).v)
 HAND_PROOFS := $(addprefix $(PREFIX),Words.v Cached.v Half.v Answer.v)
@@ -19,10 +19,13 @@ all: pcm-$(NAME)
 proof: proof.stamp
 	coqchk $(COQFLAGS) $(foreach module,$(MODULES),-norec $(module))
 
+$(PREFIX)Lines.v: ../logical_packing.v.in
+	sed 's/PACK/$(PREFIX)/g;s/WIDTH/$(WIDTH)/g' $< > $@
+
 $(PREFIX)Raw.v: ../raw_packed.v.in
 	sed 's/PACKED_ANSWER/$(PREFIX)Answer/g' $< > $@
 
-proof.stamp: $(PREFIX)Raw.v ../CCCompactPrepare.vo ../CCRawDual.vo ../wide/instantiate.py $(wildcard ../wide/pack-pair-*.patch) $(HAND_PROOFS) $(PARENT_SRC) $(IMPORTED_STAMP) ../CCShortSound.vo
+proof.stamp: $(PREFIX)Lines.v $(PREFIX)Raw.v ../CCCompactPrepare.vo ../CCRawDual.vo ../wide/instantiate.py $(wildcard ../wide/pack-pair-*.patch) $(HAND_PROOFS) $(PARENT_SRC) $(IMPORTED_STAMP) ../CCShortSound.vo
 	cp ../CCShortSound.vo ../CCRawDual.vo ../CCCompactPrepare.vo .
 	$(if $(IMPORTED_STAMP),cp ../wide/CCWide*.vo .,true)
 	python3 -B ../wide/instantiate.py "$(PARENT)/proof" . $(PREFIX) $(WIDTH)
@@ -43,9 +46,9 @@ dual_advice.ml: ../dual_advice.ml
 row_advice.ml: ../row_advice.ml
 	cp $< $@
 
-pcm-$(NAME): row_advice.ml ../dual_hint.c ../row_order.c ../packed_hint.h $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
-	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(NAME)_generated.mli $(NAME)_generated.ml dual_advice.ml row_advice.ml $(NAME)_advice.ml $(NAME)_driver.ml $(NAME)_hint.c ../row_order.c ../dual_hint.c ../../extract/pcm_stubs.c ../../ccv.c ../../ccv_primitives.c
+pcm-$(NAME): row_advice.ml ../line_hint.c ../dual_hint.c ../row_order.c ../packed_hint.h $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
+	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(NAME)_generated.mli $(NAME)_generated.ml dual_advice.ml row_advice.ml $(NAME)_advice.ml $(NAME)_driver.ml $(NAME)_hint.c ../row_order.c ../line_hint.c ../dual_hint.c ../../extract/pcm_stubs.c ../../ccv.c ../../ccv_primitives.c
 
 clean:
-	$(RM) $(PREFIX)Raw.v
+	$(RM) $(PREFIX)Lines.v $(PREFIX)Raw.v
 	$(RM) $(addsuffix .v,$(addprefix $(PREFIX),$(GENERATED_TAGS))) *.vo* *.glob .*.aux *.o *.cm[iox] $(NAME)_generated.ml $(NAME)_generated.mli $(NAME)_driver.ml dual_advice.ml row_advice.ml pcm-$(NAME) proof.stamp

@@ -50,3 +50,33 @@ let () =
   assert (Row_advice.dual_hint 0 Bytes.empty Bytes.empty=[||]);
   assert (Row_advice.dual_hint 4 (Bytes.make 3 '0') (Bytes.make 3 '0')=[||]);
   print_endline "5 raw symmetry advice controls passed"
+
+let () =
+  let n=12 in
+  let shift q=let x=q mod 6 / 3 and y=q mod 3 in
+    q/6*6+(x+1) mod 2*3+(y+(if x=1 then 1 else 0)) mod 3 in
+  let rec orbit count row=if count=0 then [] else row::orbit (count-1) (List.map shift row) in
+  let rows=orbit 6 [0;2;4;7] in
+  let flat=List.concat_map (fun row->List.init n (fun i->if List.mem i row then 1 else 0)) rows in
+  let raw=n,List.length rows,flat in
+  (match Row_advice.grid_roots n raw [] with
+   | [p,inv]->
+     assert(List.for_all2 (=) (List.map (List.nth inv) p) (List.init n Fun.id));
+     List.iter(fun row->let image=List.sort Int.compare (List.map (List.nth p) row) in
+       assert(List.exists(fun t->List.sort Int.compare t=image)rows)) rows
+   | _->assert false);
+  let bytes=Bytes.of_seq (Seq.map Char.chr (List.to_seq flat)) in
+  assert(Row_advice.grid_shift n bytes (Bytes.make n (Char.chr 1))=[||]);
+  assert(Row_advice.grid_shift n bytes Bytes.empty=[||]);
+  print_endline "3 grid root-translation controls passed"
+
+let () =
+  let raw rows=5,List.length rows,List.concat_map (fun row->
+    List.init 5 (fun i->if List.mem i row then 1 else 0)) rows in
+  let hx=raw [[0;1;4];[2;3;4]] and hz=raw [[0;2;4];[1;3;4]] in
+  let groups=Row_advice.line_groups 5 2 hx hz in
+  assert(List.mem [0,1;2,1] groups && List.mem [0,2;1,2] groups);
+  assert(Row_advice.line_groups 5 3 hx hz=[]);
+  assert(Row_advice.line_groups 5 2 (raw []) (raw [])=[]);
+  assert(Row_advice.line_hint 5 2 Bytes.empty (Bytes.make 1 '0')=[||]);
+  print_endline "4 disjoint logical adviser controls passed"

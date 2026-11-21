@@ -9,3 +9,5 @@ For the packed verifier, sparse row advice follows GH-181. The verifier construc
 The 189-bit specialization uses the existing three-word Coq algebra and shares the checked search templates and C advice with the larger verifiers.
 
 Added an independent C proposer for sheared inversions and reversed cyclic blocks. Raw row images are checked in both directions using the existing raw duality lemma. The packed theorem transports the lower bound to the opposite half and preserves the original Pauli side of the witness.
+
+Added a C proposal for disjoint representatives of one logical coset and a Coq proof that checks disjointness, the coset and completeness of the detector family. Added a checked grid-translation proposal for root coverage. The proposals use the PCM and the weight of the in-process upper witness.

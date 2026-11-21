@@ -16,20 +16,23 @@ let () =
     let a=prepare_half n checks stabs in
     if a.model_m>756 || a.model_l>756 then exit(print_report OutOfBudget);
     let order,sums=Row_advice.plan ~bfs ~sparse 756 n checks in
+    let d=List.fold_left (fun sum bit->if bit then sum+1 else sum) 0 w in
+    let groups=lazy (Row_advice.line_groups n d hx hz) in
+    let logical_lines target=if target=d then Lazy.force groups else [] in
     let facts=Row_advice.raw_dual n hx hz in
     match facts with
     | Some (p,forward,backward)->
       let f,b=if side then forward,backward else backward,forward in
       let _,m,h=checks and _,k,g=stabs in
       let q={width=n;check_count=m;same_count=k;checks=h;same_bytes=g} in
-      (match raw_packed_report q a side w (Large_advice.make_advice 40000000 pairs) order sums p f b with
+      (match raw_packed_report q a side w (Large_advice.make_advice ~logical_lines 40000000 pairs) order sums p f b with
       | Some ans->exit(print_report ans) | None->exit(print_report OutOfBudget))
     | None->
       let other=prepare_half n stabs checks in
       if other.model_m>756 || other.model_l>756 then exit(print_report OutOfBudget);
       let os,ss=Row_advice.plan ~bfs ~sparse 756 n stabs in
       let ax,az,rx,rz,px,pz=if side then a,other,order,os,sums,ss else other,a,os,order,ss,sums in
-      (match packed_report n ax az side w (Large_advice.make_advice 40000000 pairs) [] [] rx rz px pz with
+      (match packed_report n ax az side w (Large_advice.make_advice ~logical_lines 40000000 pairs) [] [] rx rz px pz with
       | Some ans->exit(print_report ans)|None->exit(print_report OutOfBudget))
   with Large_advice.Exhausted->exit(print_report OutOfBudget)
      | Invalid_argument msg | Sys_error msg | Failure msg ->prerr_endline msg;exit 2

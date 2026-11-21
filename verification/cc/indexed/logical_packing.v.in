@@ -1,0 +1,70 @@
+(* Disjoint representatives of a detecting coset give a lower bound for
+   every logical word on which that coset is odd. All input advice is checked. *)
+From Coq Require Import Bool List Arith Lia.
+Require Import CCV.CCModel CCV.CCFunctional CCV.CCCSSBridge CCV.CCQuotientCertificate.
+Require Import PACKWords PACKOrbit PACKRefute.
+Import ListNotations. Local Open Scope nat_scope.
+
+Definition row_basis n hs := build_basis n (map (packv n) hs) [].
+Lemma row_basis_ok n hs : n<=WIDTH ->basis_ok n hs (row_basis n hs).
+Proof.
+ intro N;unfold row_basis;apply build_basis_ok;[|constructor].
+ apply Forall_forall;intros x H;apply in_map_iff in H as [g [<- G]];intros e K.
+ rewrite packv_parity by exact N;apply K;exact G.
+Qed.
+Lemma reduced_zero n hs b a e : basis_ok n hs b ->kernel n hs e ->
+ is_empty(reduce b a)=true ->packed_parity n a e=false.
+Proof.
+ intros B K E;apply empty_none in E.
+ rewrite <-(reduce_parity _ _ _ _ _ B K),E;unfold packed_parity;rewrite qcert_parity_comm.
+ rewrite (parity_ext n e (decode none) zero_vector) by (intros;apply decode_none).
+ rewrite qcert_parity_comm;apply qcert_zero_dot.
+Qed.
+Fixpoint hits b p used gs :=
+ match gs with []=>true |g::rest=>
+ is_empty(meet used g) && is_empty(reduce b (add_bits p g)) && hits b p (join used g) rest end.
+Lemma hits_bound n hs b p e gs used : basis_ok n hs b ->kernel n hs e ->
+ packed_parity n p e=true ->hits b p used gs=true ->
+ length gs<=weight n (unseen e zero_vector used).
+Proof.
+ intros B K Odd;revert used;induction gs as [|g gs IH];intros used Hit;[cbn;lia|].
+ cbn [hits] in Hit;rewrite !andb_true_iff in Hit;destruct Hit as [[Sep Sum] Rest].
+ apply empty_none in Sep. pose proof(reduced_zero n hs b _ e B K Sum) as Z.
+ rewrite add_parity,Odd in Z;destruct(packed_parity n g e) eqn:G;[|discriminate].
+ destruct(odd_parity_has_column n (decode g) e G) as [q [Q [On E]]].
+ assert(U:decode used q=false).
+ { pose proof(f_equal (fun m=>decode m q) Sep) as J;cbn beta in J.
+   rewrite decode_meet,decode_none,On,andb_true_r in J;exact J. }
+ assert(C:vdiff e zero_vector q=true) by (unfold vdiff,zero_vector;now rewrite E).
+ specialize(IH _ Rest);pose proof(unseen_join n e zero_vector used g q Q C U On);cbn [length];lia.
+Qed.
+Definition line_mask d (a:nat*nat) :=
+ fold_right join none (map (fun i=>singleton(fst a+i*snd a)) (seq 0 d)).
+Definition coset_bound n hs ls d lines :=
+ match map (line_mask d) lines with
+ |[]=>false
+ |p::tail=>
+   let extended:=row_basis n (decode p::hs) in
+   (n<=?WIDTH) && (d<=?length (p::tail)) &&
+   forallb (fun l=>is_empty(reduce extended (packv n l))) ls &&
+   hits (row_basis n hs) p none (p::tail)
+ end.
+Lemma coset_bound_sound n hs ls d lines e : coset_bound n hs ls d lines=true ->
+ good n hs ls e ->d<=weight n e.
+Proof.
+ unfold coset_bound;destruct(map (line_mask d) lines) as [|p tail];[discriminate|].
+ rewrite !andb_true_iff,!Nat.leb_le,forallb_forall.
+ intros [[[N Size] All] H] [_ [K [l [InL OddL]]]].
+ assert (Odd:packed_parity n p e=true).
+ { destruct (packed_parity n p e) eqn:P;[reflexivity|exfalso].
+   assert(K2:kernel n (decode p::hs) e).
+   { intros g [<-|G];[exact P|apply K;exact G]. }
+   pose proof(reduced_zero _ _ _ _ _ (row_basis_ok n (decode p::hs) N) K2 (All l InL)) as Z.
+   rewrite packv_parity in Z by exact N;congruence. }
+ pose proof(hits_bound _ _ _ _ _ _ _ (row_basis_ok n hs N) K Odd H) as Bound.
+ assert(Eq:weight n (unseen e zero_vector none)=weight n e).
+ { apply weight_ext;intros i I;unfold unseen,vdiff,zero_vector;rewrite decode_none.
+   destruct(e i);reflexivity. }
+ lia.
+Qed.
+Print Assumptions coset_bound_sound.

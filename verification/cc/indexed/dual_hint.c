@@ -61,6 +61,26 @@ static int candidates(struct trial *t) {
     return 0;
 }
 
+static void index_rows(struct trial *t,const unsigned char *z) {
+    uint64_t salt=UINT64_C(0x243f6a8885a308d3);
+    for (int q=0; q<t->width; ++q) {
+        salt^=salt>>12; salt^=salt<<25; salt^=salt>>27;
+        t->salt[q]=salt*UINT64_C(2685821657736338717);
+    }
+    t->seed_length=0;
+    for (int r=0; r<t->rows; ++r) {
+        uint64_t h=0;
+        int count=0;
+        for (int q=0; q<t->width; ++q) {
+            if (z[r*t->width+q]) h^=t->salt[q];
+            if (!t->seed_length && t->x[r*t->width+q]) t->seed[count++]=q;
+        }
+        if (!t->seed_length) t->seed_length=count;
+        t->target[r]=h;
+    }
+    qsort(t->target,(size_t)t->rows,sizeof(t->target[0]),compare);
+}
+
 CAMLprim value caml_ccv_dual_hint(value width,value xs,value zs) {
     CAMLparam3(width,xs,zs);
     CAMLlocal1(answer);
@@ -73,25 +93,47 @@ CAMLprim value caml_ccv_dual_hint(value width,value xs,value zs) {
     t.width=(int)width_n; t.rows=(int)(size/(mlsize_t)width_n);
     t.x=Bytes_val(xs);
     const unsigned char *z=Bytes_val(zs);
-    uint64_t salt=UINT64_C(0x243f6a8885a308d3);
-    for (int q=0; q<t.width; ++q) {
-        salt^=salt>>12; salt^=salt<<25; salt^=salt>>27;
-        t.salt[q]=salt*UINT64_C(2685821657736338717);
-    }
-    t.seed_length=0;
-    for (int r=0; r<t.rows; ++r) {
-        uint64_t h=0;
-        int count=0;
-        for (int q=0; q<t.width; ++q) {
-            if (z[r*t.width+q]) h^=t.salt[q];
-            if (!t.seed_length && t.x[r*t.width+q]) t.seed[count++]=q;
-        }
-        if (!t.seed_length) t.seed_length=count;
-        t.target[r]=h;
-    }
-    qsort(t.target,(size_t)t.rows,sizeof(t.target[0]),compare);
+    index_rows(&t,z);
     if (!t.seed_length || !candidates(&t)) CAMLreturn(Atom(0));
     answer=caml_alloc((mlsize_t)t.width,0);
     for (int i=0; i<t.width; ++i) Field(answer,i)=Val_int(t.perm[i]);
+    CAMLreturn(answer);
+}
+
+/* Translate the first coordinate of the same two-block grid. At its wrap
+   apply a cyclic shear. Score only roots not already skipped by earlier
+   independently checked maps. */
+CAMLprim value caml_ccv_grid_shift(value width,value matrix,value covered) {
+    CAMLparam3(width,matrix,covered);
+    CAMLlocal1(answer);
+    intnat dn=Long_val(width);
+    mlsize_t size=caml_string_length(matrix);
+    if (dn<4 || dn>limit || dn%2 || caml_string_length(covered)!=(mlsize_t)dn ||
+        !size || size%(mlsize_t)dn || size/(mlsize_t)dn>limit) CAMLreturn(Atom(0));
+    struct trial t;
+    t.width=(int)dn; t.rows=(int)(size/(mlsize_t)dn); t.x=Bytes_val(matrix);
+    index_rows(&t,t.x);
+    if (!t.seed_length) CAMLreturn(Atom(0));
+    int half=t.width/2, best=0, choice[limit];
+    const unsigned char *seen=Bytes_val(covered);
+    for (int b=1; b<half; ++b) if (half%b==0) {
+        int a=half/b;
+        for (int shear=0; shear<b; ++shear) {
+            int gain=0;
+            for (int q=0;q<t.width;++q) {
+                int x=q%half/b, y=q%b;
+                int image=q/half*half+(x+1)%a*b+(y+(x+1==a ? shear : 0))%b;
+                t.perm[q]=image;
+                gain+=image>q && !seen[image];
+            }
+            if (gain>best && matches(&t)) {
+                memcpy(choice,t.perm,(size_t)t.width*sizeof(*choice));
+                best=gain;
+            }
+        }
+    }
+    if (!best) CAMLreturn(Atom(0));
+    answer=caml_alloc((mlsize_t)t.width,0);
+    for (int i=0;i<t.width;++i) Field(answer,i)=Val_int(choice[i]);
     CAMLreturn(answer);
 }
