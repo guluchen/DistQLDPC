@@ -1,0 +1,53 @@
+Require Import VST.floyd.proofauto.
+Require Import CCV.CCOrbit CCV.CCModel CCV.CCFunctional CCV.CCCSSBridge CCV.CCCSSResultBridge
+ CCV.CCPCMInput CCV.CCRawCSS CCV.CCPCMDetectors CCV.CCPCMAnswer CCV.CCSearchSpecs
+ CCV.CCPCMPair CCV.CCPCMFast CCV.CCRepresentation CCRawDual PACKED_ANSWER.
+Local Open Scope nat_scope. Local Open Scope bool_scope.
+
+(* The input is oriented with the proposed side first. A checked raw
+   involution supplies the other half's lower bound without preparing it. *)
+Definition raw_packed_report q ax (as_x:bool) ws adv order pairs p forward backward :=
+  let n:=Z.to_nat (width q) in
+  let w:=fun i=>nth i ws false in let h:=sliced_h ax in let l:=sliced_l ax in
+  if (length ws=?n) && raw_dual_check q p forward backward &&
+      witness_test n h l w && ordered_lower n h l (weight n w) adv order pairs
+  then Some (serialize_pair n (if as_x then found (w,zero_vector) else found (zero_vector,w)))
+  else None.
+
+Theorem raw_packed_report_exact q ax as_x ws adv order pairs p forward backward ans :
+  prepare_pcm_half q=Some ax ->
+  raw_packed_report q ax as_x ws adv order pairs p forward backward=Some ans ->
+  let n:=Z.to_nat(width q) in
+  let hx:=if as_x then same_rows q else check_rows q in
+  let hz:=if as_x then check_rows q else same_rows q in
+  match ans with
+  | Exact d bx bz=>exists x z,bx=tabulate n x /\ bz=tabulate n z /\ mixed_logical n hx hz x z /\
+    d=mixed_weight n x z /\ forall u v,mixed_logical n hx hz u v->d<=mixed_weight n u v
+  | _=>False end.
+Proof.
+  intros Prep;unfold raw_packed_report.
+  set (n:=Z.to_nat(width q));set(w:=fun i=>nth i ws false).
+  destruct (_ && _ && _ && _)%bool eqn:Check;[|discriminate].
+  rewrite !andb_true_iff in Check;destruct Check as [[[_ Dual] Upper] Lower].
+  apply witness_test_sound in Upper.
+  pose proof (prepared_good q ax Prep) as Good;fold n in Good.
+  apply Good in Upper as [K NS].
+  destruct (check_facts _ _ _ _ Dual) as [P [Inv [A B]]];fold n in P,Inv,A,B.
+  assert (First:forall u,css_logical n (check_rows q) (same_rows q) u->weight n w<=weight n u).
+  { intros u H;apply Good in H;eapply ordered_lower_sound;eassumption. }
+  assert (Second:forall v,css_logical n (same_rows q) (check_rows q) v->weight n w<=weight n v).
+  { intros v H;pose proof(raw_transport n p (same_rows q) (check_rows q) v P Inv A B H) as T.
+    specialize(First _ T);rewrite orbit_weight in First by exact P;exact First. }
+  destruct as_x;intros [= <-];cbn [serialize_pair].
+  - exists w,zero_vector;repeat split;try reflexivity;try assumption;try apply zero_kernel;
+      try (left;exact NS);rewrite (proj1(pure_weights n w)).
+    intros u v [U [V [M|M]]];destruct(weight_union n u v)as [HU HV].
+      * specialize(First u (conj U M));lia.
+      * specialize(Second v (conj V M));lia.
+  - exists zero_vector,w;repeat split;try reflexivity;try assumption;try apply zero_kernel;
+      try (right;exact NS);rewrite (proj2(pure_weights n w)).
+    intros u v [U [V [M|M]]];destruct(weight_union n u v)as [HU HV].
+      * specialize(Second u (conj U M));lia.
+      * specialize(First v (conj V M));lia.
+Qed.
+Print Assumptions raw_packed_report_exact.

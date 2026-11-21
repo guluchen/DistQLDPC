@@ -23,3 +23,19 @@ let plan ~bfs ~sparse capacity n ((_,rows,flat) as raw) =
       Bytes.set full ((rows+i)*n+q) (Char.chr (x lxor y))
     done) pairs;
   Array.to_list (reverse_bfs n full),pairs
+
+external dual_hint : int -> bytes -> bytes -> int array = "caml_ccv_dual_hint"
+
+let raw_dual n ((_,xc,xf) as hx) ((_,zc,zf) as hz) =
+  if n<1 || n>756 || xc<>zc || xc<1 || xc>756 ||
+     List.length xf<>xc*n || List.length zf<>zc*n then None else
+  match Dual_advice.propose n hx hz with
+  | Some cert -> Some cert
+  | None ->
+    let bytes flat = Bytes.of_seq (Seq.map Char.chr (List.to_seq flat)) in
+    let perm=dual_hint n (bytes xf) (bytes zf) in
+    if Array.length perm<>n then None else
+    let x,xt=Dual_advice.index_rows n xc xf and z,zt=Dual_advice.index_rows n zc zf in
+    let images rows target=Array.to_list(Array.map (fun row ->
+      Hashtbl.find target (String.init n (fun i->row.[perm.(i)]))) rows) in
+    try Some(Array.to_list perm,images z xt,images x zt) with Not_found->None

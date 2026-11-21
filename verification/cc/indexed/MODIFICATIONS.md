@@ -7,3 +7,5 @@ The optional C traversal for reversed BFS follows GH-183. The Coq lower-bound pr
 For the packed verifier, sparse row advice follows GH-181. The verifier constructs the named sums and proves that they preserve the input kernel. The dynamic pair-packing check separately constructs an odd sum disjoint from a certified packing.
 
 The 189-bit specialization uses the existing three-word Coq algebra and shares the checked search templates and C advice with the larger verifiers.
+
+Added an independent C proposer for sheared inversions and reversed cyclic blocks. Raw row images are checked in both directions using the existing raw duality lemma. The packed theorem transports the lower bound to the opposite half and preserves the original Pauli side of the witness.

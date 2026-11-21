@@ -72,6 +72,15 @@ if __name__ == "__main__":
         pcm="\n".join(rows)+"\n"
         query(n,"X",{2,3},pcm,pcm,2,binary,"sparse-checks","reverse-bfs","pair-pack")
         query(n,"X",{2},pcm,pcm,None,binary,"sparse-checks")
+    # Asymmetric stabilizers exchanged by an involution. Witness sets for
+    # the two orientations differ, so swapping the X/Z result is observable.
+    for n,binary in ((66,"pcm-small"),(190,"pcm-wide"),(380,"pcm-large")):
+        xrow="11"+"0"*(n-2)+"\n"
+        zrow="0"*(n//2)+"11"+"0"*(n-n//2-2)+"\n"
+        query(n,"X",{0},xrow,zrow,1,binary)
+        query(n,"Z",{n//2},xrow,zrow,1,binary)
+        query(n,"X",{n//2},xrow,zrow,None,binary)
+        query(n,"Z",{0},xrow,zrow,None,binary)
     # Above the small-kernel cutoff, exercise the complete C upper/Coq lower
     # pipeline and independently check its file-level witness.
     with tempfile.TemporaryDirectory() as td:
@@ -93,4 +102,4 @@ if __name__ == "__main__":
                               "--row-order","reverse-bfs","--pair-pack"],capture_output=True,text=True,check=True)
         assert json.loads(found.stdout)["distance"] == 2
     print("4 upper-effort controls passed")
-    print("47 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
+    print("59 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
