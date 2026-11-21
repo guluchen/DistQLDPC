@@ -13,3 +13,5 @@ Added an independent C proposer for sheared inversions and reversed cyclic block
 Added a C proposal for disjoint representatives of one logical coset and a Coq proof that checks disjointness, the coset and completeness of the detector family. Added a checked grid-translation proposal for root coverage. The proposals use the PCM and the weight of the in-process upper witness.
 
 For different generator lists of the same permuted subspaces, added a C row-space isometry adviser. Its permutation is passed to the existing checked packed isometry test.
+
+Implemented a certificate-producing saturated erasure check in C and proved the arbitrary-row-sum packing rule in Coq. The erasure-region idea follows the GH-195 attribution to Qubitserf 04b9349 by Serban Cercelescu (MIT).

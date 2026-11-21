@@ -21,6 +21,53 @@ static uint64_t mask_word(value mask,int j) {
 #error "Unsupported packed representation"
 #endif
 }
+/* Solve the syndrome equations on the union of saturated packed supports.
+   If inconsistent, return the original row indices whose XOR witnesses it.
+   The extracted kernel re-derives the odd check and the disjoint packing. */
+static int erasure_conflict(value rows, value sy, value incident, const uint64_t used[CCV_LANES], int proof[65]) {
+    int rank=0;
+    unsigned char touched[CCV_WIDTH]={0}, slot[CCV_WIDTH]={0};
+    uint64_t basis[64][CCV_LANES];
+    unsigned char rhs[64];
+    int origin[64]; uint64_t explanation[64];
+    for(int block=0;block<CCV_LANES;++block) {
+        uint64_t mask=used[block];
+        while(mask) {
+            int q=63*block+__builtin_ctzll(mask);mask&=mask-1;
+            value adj=Field(incident,q);
+            for(mlsize_t k=0;k<Wosize_val(adj);++k) {
+                int i=Int_val(Field(adj,k));if(touched[i])continue;touched[i]=1;
+                value row=Field(rows,i);
+                uint64_t r[CCV_LANES];
+                for(int j=0;j<CCV_LANES;++j)r[j]=word(row,j)&used[j];
+                unsigned char parity=(unsigned char)((mask_word(sy,i/63)>>(i%63))&1u);
+                uint64_t deps=0; int inserted=0;
+                for(int j=0;j<CCV_LANES && !inserted;++j) while(r[j]) {
+                    int col=63*j+__builtin_ctzll(r[j]);
+                    int s=slot[col];
+                    if(!s) {
+                        if(rank>=64)return 0;
+                        for(int h=j;h<CCV_LANES;++h)basis[rank][h]=r[h];
+                        origin[rank]=i; explanation[rank]=deps|(UINT64_C(1)<<rank);
+                        rhs[rank]=parity;slot[col]=(unsigned char)(++rank);inserted=1;break;
+                    }
+                    for(int h=j;h<CCV_LANES;++h)r[h]^=basis[s-1][h];
+                    parity^=rhs[s-1]; deps^=explanation[s-1];
+                }
+                if(!inserted && parity) {
+                    int count=0; proof[count++]=i;
+                    while(deps) {
+                        proof[count++]=origin[__builtin_ctzll(deps)];
+                        deps&=deps-1;
+                    }
+                    return count;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 CAMLprim value caml_wide_hash(value mask) {
     static const unsigned rot[12]={0,7,17,26,37,49,4,11,23,35,45,55};
     uint64_t hash=mask_word(mask,0);
@@ -32,9 +79,10 @@ CAMLprim value caml_wide_hash(value mask) {
 }
 CAMLprim value caml_wide_hint(value data, value syndrome, value free_mask, value remaining) {
     CAMLparam4(data, syndrome, free_mask, remaining);
-    CAMLlocal3(result, list, cell);
+    CAMLlocal4(result, list, cell, combination);
     value rows=Field(data,0), incident=Field(data,1);
     int pair_i=-1,pair_j=-1;
+    int proof[65], proof_length=0;
     uint64_t used[CCV_LANES] = {0}, free_bits[CCV_LANES];
     int packed[CCV_WIDTH], count = 0, shortest = (CCV_WIDTH + 1), choice = 0;
     int head[(CCV_WIDTH + 1)], ids[CCV_WIDTH], next[CCV_WIDTH], entries=0, largest=0;
@@ -106,6 +154,11 @@ CAMLprim value caml_wide_hint(value data, value syndrome, value free_mask, value
             }
         }
     }
+    if (Bool_val(Field(data,2)) && Wosize_val(incident)>0 &&
+        count==Long_val(remaining) && count>=2 && count<=8) {
+        proof_length=erasure_conflict(rows,syndrome,incident,used,proof);
+        if(proof_length) goto pack;
+    }
 split:
     result=caml_alloc_small(1,0); Field(result,0)=Val_int(choice); CAMLreturn(result);
 pack:
@@ -113,6 +166,15 @@ pack:
     while (count) {
         cell=caml_alloc_small(2,0); Field(cell,0)=Val_int(packed[--count]);
         Field(cell,1)=list; list=cell;
+    }
+    if (proof_length) {
+        combination=Val_emptylist;
+        while(proof_length) {
+            cell=caml_alloc_small(2,0); Field(cell,0)=Val_int(proof[--proof_length]);
+            Field(cell,1)=combination; combination=cell;
+        }
+        result=caml_alloc_small(2,3);
+        Field(result,0)=list; Field(result,1)=combination; CAMLreturn(result);
     }
     if (pair_i>=0) {
         result=caml_alloc_small(3,2); Field(result,0)=list;

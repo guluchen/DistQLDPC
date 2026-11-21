@@ -13,11 +13,11 @@
         exists c,In c (neighbors (row i)) /\ position c=q).
  
 -Inductive hint := split_row (i:nat) | pack_rows (ids:list nat).
-+Inductive hint := split_row (i:nat) | pack_rows (ids:list nat) | packed_pair (ids:list nat) (i j:nat).
++Inductive hint := split_row (i:nat) | pack_rows (ids:list nat) | packed_pair (ids:list nat) (i j:nat) | packed_sum (ids combo:list nat).
  Definition active m sy i := (i <? m) && decode sy i.
  
  Definition active_ok m (test:bits->nat->bool) := forall sy i,test sy i=true ->active m sy i=true.
-@@ -74,17 +75,68 @@
+@@ -74,17 +75,129 @@
    destruct rem; [lia|]. apply IH;lia.
  Qed.
  
@@ -72,11 +72,72 @@
 +  eapply (packing_safe n hs ls test row e s sy a reserved ids k);try assumption;lia.
 +Qed.
 +
++Fixpoint sum_support (row:nat->packed_row) ids :=
++ match ids with []=>none |i::t=>add_bits (support_mask(row i)) (sum_support row t) end.
++Fixpoint sum_row (hs:list vector) ids :=
++ match ids with []=>zero_vector |i::t=>vxor (nth i hs zero_vector) (sum_row hs t) end.
++Fixpoint sum_syndrome sy ids :=
++ match ids with []=>false |i::t=>xorb (decode sy i) (sum_syndrome sy t) end.
++Lemma support_sum_agrees n hs ls row ids :
++ layout n hs ls row -> Forall (fun i=>i<length hs) ids ->
++ forall q,q<n->decode(sum_support row ids)q=sum_row hs ids q.
++Proof.
++ intros L F;induction F as [|i ids I T IH];intros q Q;cbn.
++ - apply decode_none.
++ - unfold vxor;rewrite decode_add,(proj1(L i I) q Q),IH by exact Q;reflexivity.
++Qed.
++Lemma sum_on_prefix n hs s sy ids : signature n hs s sy ->
++ Forall (fun i=>i<length hs) ids -> parity n (sum_row hs ids) s=sum_syndrome sy ids.
++Proof.
++ intros S F;induction F as [|i ids I T IH];cbn.
++ - apply qcert_zero_dot.
++ - rewrite pair_dot,IH,<- (S i);reflexivity.
++Qed.
++Lemma sum_on_kernel n hs e ids : kernel n hs e ->
++ Forall (fun i=>i<length hs) ids -> parity n (sum_row hs ids) e=false.
++Proof.
++ intros K F;induction F as [|i ids I T IH];cbn.
++ - apply qcert_zero_dot.
++ - rewrite pair_dot,(K _ (nth_In _ _ I)),IH;reflexivity.
++Qed.
++Definition linear_cut m test row sy free rem packed ids :=
++ if forallb (fun i=>i<?m) ids && sum_syndrome sy ids then
++   match rem with 0=>true |S k=>
++    packing_cut test row sy free k (meet free (sum_support row ids)) packed end
++ else false.
++Lemma linear_cut_safe n hs ls test row e s sy free packed ids rem :
++ active_ok (length hs) test -> layout n hs ls row -> kernel n hs e ->
++ signature n hs s sy -> fits n e s free -> weight n (vdiff e s)<=rem ->
++ linear_cut (length hs) test row sy free rem packed ids=false.
++Proof.
++ intros Act L K Sig Fit Bound;unfold linear_cut.
++ destruct (_ && _)%bool eqn:C;[|reflexivity].
++ apply andb_true_iff in C as [C Odd].
++ assert (Indices:Forall (fun i=>i<length hs) ids).
++ { apply Forall_forall;rewrite forallb_forall in C;intros i I;apply Nat.ltb_lt;auto. }
++ rewrite <-(sum_on_prefix _ _ _ _ _ Sig Indices) in Odd.
++ destruct(odd_row_has_target_extension n _ s e (proj1 Fit) Odd (sum_on_kernel _ _ _ _ K Indices))
++   as [q [Q [On [E S0]]]].
++ set(region:=meet free (sum_support row ids)).
++ assert(Hit:decode region q=true).
++ { unfold region;rewrite decode_meet,(proj2 Fit q Q E S0);cbn.
++   rewrite (support_sum_agrees _ _ _ _ _ L Indices q Q);exact On. }
++ assert(Drop:weight n (unseen e s region)<weight n (vdiff e s)).
++ { eapply (weight_strict_extra n _ _ q).
++   - intros j J V;apply andb_true_iff in V as [V _];exact V.
++   - exact Q.
++   - unfold unseen;rewrite Hit,andb_false_r;reflexivity.
++   - unfold vdiff;rewrite E,S0;reflexivity. }
++ destruct rem as [|k];[lia|].
++ eapply (packing_safe n hs ls test row e s sy free region packed k);try assumption;lia.
++Qed.
++
 +Fixpoint refute (m:nat) (test:bits->nat->bool) (row:nat->packed_row) (choose:bits->bits->nat->hint)
                  (short:nat->bits->bool) (rem:nat) (sy ly a:bits) : bool :=
    if is_empty sy then is_empty ly else
    if short rem sy then true else
    match choose sy a rem with
++  | packed_sum ids combo => linear_cut m test row sy a rem ids combo
 +  | packed_pair ids i j => pair_cut m test row sy a rem ids i j
    | pack_rows ids => packing_cut test row sy a rem none ids
    | split_row i =>
@@ -88,7 +149,7 @@
          end
        else false
    end.
-@@ -97,14 +149,15 @@
+@@ -97,14 +210,17 @@
    active_ok (length hs) test -> layout n hs ls row -> short_correct n hs short -> minimum n hs ls e ->
    fits n e s a -> 0<weight n s -> weight n e<=weight n s+rem ->
    signature n hs s sy -> signature n ls s ly ->
@@ -101,7 +162,9 @@
    all: try solve [destruct (is_empty ly) eqn:Z; [exfalso;eapply closed_refutes;eauto|reflexivity]].
    all: rewrite (Short _ e s sy (proj1 (proj2 (proj1 Min))) (proj1 Fit) HS B).
 -  all: destruct (choose sy a _) as [i|ids].
-+  all: destruct (choose sy a _) as [i|ids|ids ri rj].
++  all: destruct (choose sy a _) as [i|ids|ids ri rj|ids combo].
++  all: try solve [eapply (linear_cut_safe n hs ls test row e s sy a ids combo); try assumption;
++    [exact (proj1 (proj2 (proj1 Min)))|pose proof (subset_split n s e (proj1 Fit));lia]].
 +  all: try solve [eapply (pair_cut_safe n hs ls test row e s sy a ids ri rj); try assumption; [exact (proj1 (proj2 (proj1 Min)))|pose proof (subset_split n s e (proj1 Fit));lia]].
    all: try solve [apply (packing_safe n hs ls test row e s sy a none ids);try assumption;
      [exact (proj1 (proj2 (proj1 Min)))|];
