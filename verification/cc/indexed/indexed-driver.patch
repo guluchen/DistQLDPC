@@ -1,0 +1,38 @@
+--- pcm_prepare.ml
++++ pcm_indexed.ml
+@@ -40,7 +40,7 @@
+ 
+ let prepare_half n (wn, m, h) (wg, k, g) =
+   if (m <> 0 && wn <> n) || (k <> 0 && wg <> n) then invalid_arg "inconsistent widths";
+-  match bit_prepare {width=n;check_count=m;same_count=k;checks=h;same_bytes=g} with
++  match compact_prepare {width=n;check_count=m;same_count=k;checks=h;same_bytes=g} with
+   | None -> invalid_arg "invalid CSS matrices or C extents"
+   | Some a -> a
+ 
+@@ -96,16 +96,16 @@
+     status, List.init n (fun i -> Char.code (Bytes.get bits i))
+   in
+   let finish_pair (rx,ox) (rz,oz) = exit (print_report (finish_pcm n rx ox rz oz)) in
+-  let _,mx,_ = hx and _,mz,_ = hz in
+-  if n>=96 && n<=189 && mx<=189 && mz<=189 && budget=100000000 && rules=63 then begin
+-    let ax = prepare_half n hz hx and az = prepare_half n hx hz in
+-    match Packed_advice.certify n ax az with
+-    | Some answer -> exit (print_report answer)
+-    | None -> let x = solve ax in finish_pair x (solve az)
+-  end else begin
+-    let x = solve (prepare_half n hz hx) in
+-    finish_pair x (solve (prepare_half n hx hz))
+-  end
++  let _,mx,xx=hx and _,mz,zz=hz in
++  let raw={width=n;check_count=mz;same_count=mx;checks=zz;same_bytes=xx} in
++  (* Validate shape/commutation via prepare_half before accepting a half result. *)
++  (match Dual_advice.propose n hx hz with
++   | Some (p,a,b) when raw_dual_check raw p a b ->
++       let ret,out=solve (prepare_half n hz hx) in exit (print_report (finish_dual n ret out))
++   | _ -> ());
++  let x = solve (prepare_half n hz hx) in
++  finish_pair x (solve (prepare_half n hx hz))
++
+ 
+ let () =
+   try

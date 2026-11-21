@@ -23,6 +23,8 @@ The x86-64 Clight proofs cover the two C translation units in the linked
 library. The host CLI, its parser and allocator, and the production C++ solver
 have separate verification boundaries.
 
+The [indexed and certified drivers](indexed/README.md) add sparse C search, input-checked X/Z symmetry, and certification of an externally proposed witness with verified bounded queries.
+
 ## Build and check
 
 Use Linux, Coq 8.18.0 and VST 2.14 built for 64-bit CompCert semantics.

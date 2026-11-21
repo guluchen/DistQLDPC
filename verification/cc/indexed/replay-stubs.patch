@@ -1,0 +1,36 @@
+--- pcm_stubs.c
++++ replay_stubs.c
+@@ -10,13 +10,13 @@
+ 
+ /* The runtime may move OCaml objects during allocation. Allocate the output
+    before borrowing any byte pointers. The kernel never calls the runtime. */
+-CAMLprim value caml_ccv_distance(value dims, value matrices, value limits) {
++CAMLprim value caml_ccv_decide(value dims, value matrices, value limits) {
+     CAMLparam3(dims, matrices, limits);
+     CAMLlocal2(bits, result);
+     struct ccv_problem p;
+     struct ccv_workspace w;
+     struct ccv_stats stats;
+-    unsigned int distance, budget, rules;
++    unsigned int budget, rules;
+     int ret;
+     intnat n = Long_val(Field(dims, 0));
+     intnat m = Long_val(Field(dims, 1));
+@@ -24,6 +24,8 @@
+     intnat k = Long_val(Field(dims, 3));
+     intnat b = Long_val(Field(limits, 0));
+     intnat mask = Long_val(Field(limits, 1));
++    intnat cap = Long_val(Field(limits, 2));
++    if (cap < 0 || cap > n) caml_invalid_argument("invalid bounded query");
+     if (n <= 0 || n > (intnat)(INT_MAX / sizeof(struct ccv_frame)) ||
+         m < 0 || l <= 0 || k < 0 || m > INT_MAX / n || l > INT_MAX / n ||
+         k > INT_MAX / n || b < 0 || (uintnat)b > UINT_MAX || mask < 0 || mask > CCV_ALL)
+@@ -58,7 +60,7 @@
+     w.selected = scratch; w.forbidden = scratch + ns; w.packed = scratch + 2u * ns;
+     w.syndrome = scratch + 3u * ns; w.logical_value = w.syndrome + ms;
+     w.undo = undo; w.frames = frames;
+-    ret = ccv_distance(&p, budget, rules, &w, (unsigned char *)Bytes_val(bits), &distance, &stats);
++    ret = ccv_decide(&p, (unsigned int)cap, budget, rules, &w, (unsigned char *)Bytes_val(bits), &stats);
+     free(frames); free(undo); free(scratch);
+     if (ret != CCV_FOUND && ret != CCV_EMPTY && ret != CCV_UNKNOWN)
+         caml_invalid_argument("kernel rejected prepared PCM");
