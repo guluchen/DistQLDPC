@@ -67,3 +67,25 @@ Proof. vm_compute;reflexivity. Qed.
 Example original_parity_without_span_check :
  class_limit false 4 [r4;r01] [Nat.eqb 0] 4=4.
 Proof. vm_compute;reflexivity. Qed.
+
+(* Two virtual rows and a physical row require three distinct future flips. *)
+Definition separate_rows i:=prow (singleton i) [].
+Definition three_bits:=join (union_bits 0 1) (singleton 2).
+Example double_disjoint_with_pack :
+ double_cut 3 (active 3) separate_rows three_bits three_bits 2 [2] [0] [1]=true.
+Proof. vm_compute;reflexivity. Qed.
+Example double_repeated_region :
+ double_cut 3 (active 3) separate_rows three_bits three_bits 2 [2] [0] [0]=false.
+Proof. vm_compute;reflexivity. Qed.
+Example double_overlap_with_pack :
+ double_cut 3 (active 3) separate_rows three_bits three_bits 2 [0] [0] [1]=false.
+Proof. vm_compute;reflexivity. Qed.
+Example double_sufficient_budget :
+ double_cut 3 (active 3) separate_rows three_bits three_bits 3 [2] [0] [1]=false.
+Proof. vm_compute;reflexivity. Qed.
+Example double_cancelled_sum :
+ double_cut 3 (active 3) separate_rows three_bits three_bits 2 [2] [0] [1;1]=false.
+Proof. vm_compute;reflexivity. Qed.
+Example double_unknown_row :
+ double_cut 3 (active 3) separate_rows three_bits three_bits 2 [2] [0] [1;3]=false.
+Proof. vm_compute;reflexivity. Qed.

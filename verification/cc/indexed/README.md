@@ -72,3 +72,5 @@ are nonzero. During descent it visits those words when fewer than half are
 occupied and otherwise scans the row consecutively. Both paths count the
 same overlap and use the same strict weight-decrease rule. The standard
 generator uses its original consecutive scan.
+
+The optional `--double-erasure` also tests packings of two to seven rows that leave one flip unaccounted for. C first searches for an odd row sum outside the packing. It then includes the available support of that sum in the restricted region and searches for a second odd sum. The extracted checker recomputes both syndromes, the two available supports, and disjointness between all charged supports. The option includes `--erasure-pack`.

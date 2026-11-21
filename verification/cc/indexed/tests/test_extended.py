@@ -14,6 +14,8 @@ for n in (758, 1512):
     query(n, "X", {755, n - 1}, row, row, 2, "pcm-xl", "pair-pack")
     query(n, "Z", {0, 756}, row, row, 2, "pcm-xl", "reverse-bfs", "class-parity")
     query(n, "Z", {n - 1}, row, row, None, "pcm-xl", "erasure-pack")
+    query(n, "X", {0, n-1}, row, row, 2, "pcm-xl", "double-erasure")
+    query(n, "Z", {0}, row, row, None, "pcm-xl", "double-erasure")
 query(1513, "X", {1512}, "", "", None, "pcm-xl")
 with tempfile.TemporaryDirectory() as tmp:
     pcm = Path(tmp) / "h"
@@ -40,7 +42,7 @@ for second in (None, ("X", "1" + "0" * 757)):
         assert first.args == ([ROOT/"pcm-xl", "758", "hx", "hz", "quick-probe"], word)
         assert full.args == ([ROOT/"pcm-xl", "758", "hx", "hz"], word)
 print("2 adaptive search fallback controls passed")
-print("7 extended-width certificate controls and 1 full CLI witness passed")
+print("11 extended-width certificate controls and 1 full CLI witness passed")
 
 with tempfile.TemporaryDirectory() as tmp:
     hx, hz = (Path(tmp) / side for side in ("hx", "hz"))

@@ -23,3 +23,5 @@ Added checked parity-of-weight tests on the check-row span and the detecting quo
 
 - Added sparse 64-bit word scans to the XL C upper-witness descent, with
   a differential check of overlap counts across all 24 supported word widths.
+
+Extended the saturated erasure certificate to two sequential restricted eliminations, with a Coq proof that both virtual rows and the physical packing require distinct correcting coordinates.

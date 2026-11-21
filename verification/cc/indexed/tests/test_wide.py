@@ -106,6 +106,10 @@ if __name__ == "__main__":
     query(n,"Z",{0},xmat,zmat,None,"pcm-small","erasure-pack")
     query(n,"Z",zword,xmat,zmat,d,"pcm-small","class-parity","erasure-pack")
     query(n,"X",xword ^ hxrows[-1],xmat,zmat,None,"pcm-small","class-parity")
+    for width, kernel in ((68,"pcm-small"),(192,"pcm-wide"),(380,"pcm-large")):
+        row="1"*width+"\n"
+        query(width,"X",{0,width-1},row,row,2,kernel,"double-erasure")
+        query(width,"Z",{0},row,row,None,kernel,"double-erasure")
     # Above the small-kernel cutoff, exercise the complete C upper/Coq lower
     # pipeline and independently check its file-level witness.
     with tempfile.TemporaryDirectory() as td:
@@ -127,4 +131,4 @@ if __name__ == "__main__":
                               "--row-order","reverse-bfs","--pair-pack"],capture_output=True,text=True,check=True)
         assert json.loads(found.stdout)["distance"] == 2
     print("4 upper-effort controls passed")
-    print("66 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
+    print("72 certificate boundary controls and 3 end-to-end C upper-witness controls passed")

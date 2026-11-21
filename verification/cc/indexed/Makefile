@@ -80,7 +80,7 @@ test: all cli dual-test rule-probes.so row-test test-upper-overlap
 	python3 -B ../tests/test_ccv.py ./libccv-indexed.so
 	./dual-test
 	./row-test
-	$(MAKE) -C wide pair-controls
+	$(MAKE) -C wide pair-controls double-controls
 	python3 -B tests/test_rules.py ./rule-probes.so
 	python3 -B tests/test_replay.py
 	python3 -B tests/test_wide.py

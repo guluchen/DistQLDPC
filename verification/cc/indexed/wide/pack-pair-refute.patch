@@ -8,16 +8,17 @@
  Import ListNotations. Local Open Scope nat_scope.
  
  Record packed_row := prow { support_mask:bits; neighbors:list column }.
-@@ -12,7 +13,7 @@
+@@ -12,7 +13,8 @@
      (forall q,q<n -> nth i hs zero_vector q=true ->
         exists c,In c (neighbors (row i)) /\ position c=q).
  
 -Inductive hint := split_row (i:nat) | pack_rows (ids:list nat).
-+Inductive hint := split_row (i:nat) | pack_rows (ids:list nat) | packed_pair (ids:list nat) (i j:nat) | packed_sum (ids combo:list nat).
++Inductive hint := split_row (i:nat) | pack_rows (ids:list nat) | packed_pair (ids:list nat) (i j:nat) | packed_sum (ids combo:list nat)
++  | packed_double (ids first second:list nat).
  Definition active m sy i := (i <? m) && decode sy i.
  
  Definition active_ok m (test:bits->nat->bool) := forall sy i,test sy i=true ->active m sy i=true.
-@@ -74,17 +75,129 @@
+@@ -74,17 +76,189 @@
    destruct rem; [lia|]. apply IH;lia.
  Qed.
  
@@ -132,11 +133,71 @@
 + eapply (packing_safe n hs ls test row e s sy free region packed k);try assumption;lia.
 +Qed.
 +
++Definition valid_odd_sum m sy ids :=
++  forallb (fun i=>i<?m) ids && sum_syndrome sy ids.
++Definition double_cut m test row sy free rem packed first second :=
++  if valid_odd_sum m sy first && valid_odd_sum m sy second then
++    let a:=meet free (sum_support row first) in
++    let b:=meet free (sum_support row second) in
++    if disjoint a b then
++      match rem with
++      | S (S k)=>packing_cut test row sy free k (join a b) packed
++      | _=>true end
++    else false
++  else false.
++
++Lemma odd_sum_hit n hs ls row e s sy free ids :
++  layout n hs ls row -> kernel n hs e -> signature n hs s sy -> fits n e s free ->
++  valid_odd_sum (length hs) sy ids=true ->
++  exists q,q<n /\ vdiff e s q=true /\ decode (meet free (sum_support row ids)) q=true.
++Proof.
++  intros L K Sig Fit Valid;apply andb_true_iff in Valid as [Valid Odd].
++  assert (Indices:Forall (fun i=>i<length hs) ids).
++  { apply Forall_forall;rewrite forallb_forall in Valid;intros i I;apply Nat.ltb_lt;auto. }
++  rewrite <-(sum_on_prefix _ _ _ _ _ Sig Indices) in Odd.
++  destruct (odd_row_has_target_extension n _ s e (proj1 Fit) Odd
++    (sum_on_kernel _ _ _ _ K Indices)) as [q [Q [On [E S0]]]].
++  exists q;split;[exact Q|]. split.
++  - unfold vdiff;rewrite E,S0;reflexivity.
++  - rewrite decode_meet,(proj2 Fit q Q E S0).
++    now rewrite (support_sum_agrees _ _ _ _ _ L Indices q Q).
++Qed.
++
++Lemma double_cut_safe n hs ls test row e s sy free packed first second rem :
++  active_ok (length hs) test -> layout n hs ls row -> kernel n hs e ->
++  signature n hs s sy -> fits n e s free -> weight n (vdiff e s)<=rem ->
++  double_cut (length hs) test row sy free rem packed first second=false.
++Proof.
++  intros Act L K Sig Fit Bound;unfold double_cut.
++  destruct (_ && _)%bool eqn:Valid;[|reflexivity].
++  apply andb_true_iff in Valid as [First Second].
++  set (a:=meet free (sum_support row first)).
++  set (b:=meet free (sum_support row second)).
++  destruct (disjoint a b) eqn:D;[|reflexivity].
++  destruct (odd_sum_hit _ _ _ _ _ _ _ _ _ L K Sig Fit First) as [p [P [DeltaP HitP]]].
++  destruct (odd_sum_hit _ _ _ _ _ _ _ _ _ L K Sig Fit Second) as [q [Q [DeltaQ HitQ]]].
++  fold a in HitP;fold b in HitQ.
++  assert (Outside:decode a q=false).
++  { rewrite disjoint_meet in D;apply empty_none in D.
++    pose proof (f_equal (fun bits=>decode bits q) D) as H;cbn beta in H.
++    rewrite decode_meet,decode_none,HitQ,andb_true_r in H;exact H. }
++  assert (Drop:weight n (unseen e s a)<weight n (vdiff e s)).
++  { eapply (weight_strict_extra n _ _ p).
++    - intros j J V;apply andb_true_iff in V as [V _];exact V.
++    - exact P.
++    - unfold unseen;rewrite HitP,andb_false_r;reflexivity.
++    - exact DeltaP. }
++  pose proof (unseen_join n e s a b q Q DeltaQ Outside HitQ).
++  destruct rem as [|[|k]];try lia.
++  apply (packing_safe n hs ls test row e s sy free (join a b) packed k);try assumption;lia.
++Qed.
++
 +Fixpoint refute (m:nat) (test:bits->nat->bool) (row:nat->packed_row) (choose:bits->bits->nat->hint)
                  (short:nat->bits->bool) (rem:nat) (sy ly a:bits) : bool :=
    if is_empty sy then is_empty ly else
    if short rem sy then true else
    match choose sy a rem with
++  | packed_double ids first second => double_cut m test row sy a rem ids first second
 +  | packed_sum ids combo => linear_cut m test row sy a rem ids combo
 +  | packed_pair ids i j => pair_cut m test row sy a rem ids i j
    | pack_rows ids => packing_cut test row sy a rem none ids
@@ -149,7 +210,7 @@
          end
        else false
    end.
-@@ -97,14 +210,17 @@
+@@ -97,14 +271,19 @@
    active_ok (length hs) test -> layout n hs ls row -> short_correct n hs short -> minimum n hs ls e ->
    fits n e s a -> 0<weight n s -> weight n e<=weight n s+rem ->
    signature n hs s sy -> signature n ls s ly ->
@@ -162,7 +223,9 @@
    all: try solve [destruct (is_empty ly) eqn:Z; [exfalso;eapply closed_refutes;eauto|reflexivity]].
    all: rewrite (Short _ e s sy (proj1 (proj2 (proj1 Min))) (proj1 Fit) HS B).
 -  all: destruct (choose sy a _) as [i|ids].
-+  all: destruct (choose sy a _) as [i|ids|ids ri rj|ids combo].
++  all: destruct (choose sy a _) as [i|ids|ids ri rj|ids combo|ids first second].
++  all: try solve [eapply (double_cut_safe n hs ls test row e s sy a ids first second); try assumption;
++    [exact (proj1 (proj2 (proj1 Min)))|pose proof (subset_split n s e (proj1 Fit));lia]].
 +  all: try solve [eapply (linear_cut_safe n hs ls test row e s sy a ids combo); try assumption;
 +    [exact (proj1 (proj2 (proj1 Min)))|pose proof (subset_split n s e (proj1 Fit));lia]].
 +  all: try solve [eapply (pair_cut_safe n hs ls test row e s sy a ids ri rj); try assumption; [exact (proj1 (proj2 (proj1 Min)))|pose proof (subset_split n s e (proj1 Fit));lia]].

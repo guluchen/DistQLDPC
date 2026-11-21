@@ -84,6 +84,8 @@ def main():
                         help="check whether the logical quotient forces an odd or even weight")
     parser.add_argument("--extended-width", action="store_true",
                         help="use the optional 1512-bit kernel for widths 757..1512 (make extended)")
+    parser.add_argument("--double-erasure", action="store_true",
+                        help="certify two disjoint odd row sums when a packing is one row short")
     args = parser.parse_args()
     if args.upper_rounds is not None and not 1 <= args.upper_rounds <= 4096:
         parser.error("--upper-rounds must be between 1 and 4096")
@@ -96,7 +98,9 @@ def main():
         order.append("sparse-checks")
     if args.class_parity:
         order.append("class-parity")
-    if args.erasure_pack:
+    if args.double_erasure:
+        order.append("double-erasure")
+    elif args.erasure_pack:
         order.append("erasure-pack")
     if args.pair_pack:
         order.append("pair-pack")

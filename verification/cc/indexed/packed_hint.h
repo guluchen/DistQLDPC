@@ -81,10 +81,10 @@ CAMLprim value caml_wide_hash(value mask) {
 }
 CAMLprim value caml_wide_hint(value data, value syndrome, value free_mask, value remaining) {
     CAMLparam4(data, syndrome, free_mask, remaining);
-    CAMLlocal4(result, list, cell, combination);
+    CAMLlocal5(result, list, cell, combination, other_combination);
     value rows=Field(data,0), incident=Field(data,1);
     int pair_i=-1,pair_j=-1;
-    int proof[65], proof_length=0;
+    int proof[65], proof_length=0, other[65], other_length=0;
     uint64_t used[CCV_LANES] = {0}, free_bits[CCV_LANES];
     int packed[CCV_WIDTH], count = 0, shortest = (CCV_WIDTH + 1), choice = 0;
     int head[(CCV_WIDTH + 1)], ids[CCV_WIDTH], next[CCV_WIDTH], entries=0, largest=0;
@@ -161,6 +161,23 @@ CAMLprim value caml_wide_hint(value data, value syndrome, value free_mask, value
         proof_length=erasure_conflict(rows,syndrome,incident,used,proof);
         if(proof_length) goto pack;
     }
+    /* A packing one row short needs two more disjoint odd checks.
+       Restrict the second elimination to a region that also covers the
+       first virtual check's available support. */
+    if (Bool_val(Field(data,3)) && Wosize_val(incident)>0 &&
+        count+1==Long_val(remaining) && count>=2 && count<=7) {
+        proof_length=erasure_conflict(rows,syndrome,incident,used,proof);
+        if (proof_length) {
+            for (int k=0;k<CCV_LANES;k++) {
+                uint64_t support=0;
+                for (int j=0;j<proof_length;j++)
+                    support^=word(Field(rows,proof[j]),k);
+                used[k]|=free_bits[k]&support;
+            }
+            other_length=erasure_conflict(rows,syndrome,incident,used,other);
+            if (other_length) goto pack;
+        }
+    }
 split:
     result=caml_alloc_small(1,0); Field(result,0)=Val_int(choice); CAMLreturn(result);
 pack:
@@ -174,6 +191,16 @@ pack:
         while(proof_length) {
             cell=caml_alloc_small(2,0); Field(cell,0)=Val_int(proof[--proof_length]);
             Field(cell,1)=combination; combination=cell;
+        }
+        if (other_length) {
+            other_combination=Val_emptylist;
+            while(other_length) {
+                cell=caml_alloc_small(2,0); Field(cell,0)=Val_int(other[--other_length]);
+                Field(cell,1)=other_combination; other_combination=cell;
+            }
+            result=caml_alloc_small(3,4); Field(result,0)=list;
+            Field(result,1)=combination; Field(result,2)=other_combination;
+            CAMLreturn(result);
         }
         result=caml_alloc_small(2,3);
         Field(result,0)=list; Field(result,1)=combination; CAMLreturn(result);
