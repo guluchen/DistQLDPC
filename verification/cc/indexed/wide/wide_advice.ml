@@ -52,7 +52,7 @@ let propose n rows =
   in pick 3 shifts
 
 exception Exhausted
-external row_hint : int array array -> bits0 -> bits0 -> int -> hint = "caml_wide_hint"
+external row_hint : (int array array * int array array) -> bits0 -> bits0 -> int -> hint = "caml_wide_hint"
 
 (* A linear signature commutes with every column XOR. The extracted checker
    also verifies every required entry in the immutable filter. *)
@@ -72,13 +72,22 @@ let membership k cols =
   let immutable=Bytes.unsafe_to_string data in
   fun w -> let i=index (signature w) in Char.code immutable.[i lsr 3] land (1 lsl(i land 7)) <> 0
 
-let make_advice limit =
+let make_advice limit pair_pack =
   let left=ref limit in
   let make_choice rows =
     let a=Array.of_list(List.map(fun r->words r.support_mask)rows) in
+    let incident =
+      if not pair_pack then [||] else
+      let by_qubit = Array.make 378 [] in
+      Array.iteri (fun i mask ->
+        for q=0 to Array.length by_qubit-1 do
+          if bit mask q then by_qubit.(q)<-i::by_qubit.(q)
+        done) a;
+      Array.map Array.of_list by_qubit in
+    let data = a,incident in
     fun sy free rem ->
       if !left=0 then raise Exhausted;
-      decr left; row_hint a sy free rem in
+      decr left; row_hint data sy free rem in
   let prepare_index rows =
     let a=Array.of_list(List.mapi(fun i r->r,singleton0 i)rows) in
     fun i -> if i<0 || i>=Array.length a then bad_row,none0 else a.(i) in

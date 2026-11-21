@@ -45,7 +45,7 @@ Definition lower_test n hs ls d adv :=
         let tables := skip_tables n hs ls (propose adv n rows) in
         let p2 := membership adv 2 cs in
         index_ok rows read && verify_sums p2 cs 2 none &&
-        all_roots (refute (indexed_active (length hs) read) (fun i=>fst(read i))
+        all_roots (refute (length hs) (indexed_active (length hs) read) (fun i=>fst(read i))
           (make_choice adv rows) (short_table 2 p2) k) (covered tables)
           (encode (repeat true n)) cs
       else false

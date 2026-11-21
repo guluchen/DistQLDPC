@@ -79,6 +79,7 @@ test: all cli dual-test rule-probes.so row-test
 	python3 -B ../tests/test_ccv.py ./libccv-indexed.so
 	./dual-test
 	./row-test
+	$(MAKE) -C wide pair-controls
 	python3 -B tests/test_rules.py ./rule-probes.so
 	python3 -B tests/test_replay.py
 	python3 -B tests/test_wide.py
@@ -98,7 +99,7 @@ replay_driver.ml: pcm_proved.ml replay_driver.inc.ml
 pcm-check: $(ML_INPUTS) replay_driver.ml replay_stubs.c $(C_STUBS) ../ccv.c ../ccv.h
 	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(ML_INPUTS) replay_driver.ml $(C_STUBS) replay_stubs.c ../ccv.c
 
-WIDE_SOURCES := row_order.c row_advice.ml certifier.mk $(wildcard wide/*.inc.ml) $(wildcard wide/CCWide*.v) wide/WideExtract.v wide/instantiate.py wide/Makefile wide/wide_hint.c wide/wide_advice.ml $(wildcard ../proof/CCPacked*.v)
+WIDE_SOURCES := $(wildcard wide/pack-pair-*.patch) row_order.c row_advice.ml certifier.mk $(wildcard wide/*.inc.ml) $(wildcard wide/CCWide*.v) wide/WideExtract.v wide/instantiate.py wide/Makefile wide/wide_hint.c wide/wide_advice.ml $(wildcard ../proof/CCPacked*.v)
 pcm-wide: $(WIDE_SOURCES) CCShortSound.vo CCCompactPrepare.vo CCRawDual.vo pcm_proved.ml
 	$(MAKE) -C wide all
 	cp wide/pcm-wide $@

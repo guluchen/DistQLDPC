@@ -1,0 +1,108 @@
+--- CCPackedRefute.v
++++ CCPackedRefute.v
+@@ -2,6 +2,7 @@
+    every successful cut is checked against the current syndrome and geometry. *)
+ From Coq Require Import List Bool Arith Lia.
+ Require Import CCV.CCModel CCV.CCFunctional CCV.CCPackedWords CCV.CCPackedBranch.
++Require Import CCV.CCQuotientCertificate CCV.CCCSSBridge.
+ Import ListNotations. Local Open Scope nat_scope.
+ 
+ Record packed_row := prow { support_mask:bits; neighbors:list column }.
+@@ -12,7 +13,7 @@
+     (forall q,q<n -> nth i hs zero_vector q=true ->
+        exists c,In c (neighbors (row i)) /\ position c=q).
+ 
+-Inductive hint := split_row (i:nat) | pack_rows (ids:list nat).
++Inductive hint := split_row (i:nat) | pack_rows (ids:list nat) | packed_pair (ids:list nat) (i j:nat).
+ Definition active m sy i := (i <? m) && decode sy i.
+ 
+ Definition active_ok m (test:bits->nat->bool) := forall sy i,test sy i=true ->active m sy i=true.
+@@ -74,17 +75,68 @@
+   destruct rem; [lia|]. apply IH;lia.
+ Qed.
+ 
+-Fixpoint refute (test:bits->nat->bool) (row:nat->packed_row) (choose:bits->bits->nat->hint)
++(* A sum of two check rows is another check row. If it is odd on the prefix,
++   it needs a free correcting qubit just like a physical row. Its support
++   can therefore be reserved before testing the other disjoint odd rows. *)
++Definition pair_cut m test row sy free rem ids i j :=
++  if (i <? m) && (j <? m) && xorb (decode sy i) (decode sy j) then
++    let reserved:=meet free (add_bits (support_mask (row i)) (support_mask (row j))) in
++    match rem with
++    | 0 => true
++    | S k => packing_cut test row sy free k reserved ids
++    end
++  else false.
++
++Lemma pair_dot n h g x :
++  parity n (vxor h g) x=xorb (parity n h x) (parity n g x).
++Proof.
++  rewrite qcert_parity_comm,parity_xor,(qcert_parity_comm n x h),(qcert_parity_comm n x g).
++  reflexivity.
++Qed.
++
++Lemma pair_cut_safe n hs ls test row e s sy a ids i j rem :
++  active_ok (length hs) test -> layout n hs ls row -> kernel n hs e ->
++  signature n hs s sy -> fits n e s a -> weight n (vdiff e s)<=rem ->
++  pair_cut (length hs) test row sy a rem ids i j=false.
++Proof.
++  intros Act L K Sig Fit B; unfold pair_cut.
++  destruct (_ && _ && _)%bool eqn:C; [|reflexivity].
++  repeat rewrite andb_true_iff in C; destruct C as [[I J] Odd].
++  apply Nat.ltb_lt in I,J.
++  set (h:=nth i hs zero_vector);set (g:=nth j hs zero_vector).
++  assert (Neutral:parity n (vxor h g) e=false).
++  { rewrite pair_dot; unfold h,g; rewrite !K by (apply nth_In;assumption);reflexivity. }
++  assert (Bad:parity n (vxor h g) s=true).
++  { rewrite pair_dot; unfold h,g; now rewrite <- (Sig i), <- (Sig j). }
++  destruct(odd_row_has_target_extension n (vxor h g) s e (proj1 Fit) Bad Neutral)
++    as [q [Q [HQ [E S0]]]].
++  set (reserved:=meet a (add_bits (support_mask (row i)) (support_mask (row j)))).
++  assert (Hit:decode reserved q=true).
++  { unfold reserved;rewrite decode_meet,decode_add,(proj2 Fit q Q E S0).
++    destruct (L i I) as [A _],(L j J) as [G _].
++    rewrite (A q Q),(G q Q); exact HQ. }
++  assert (Drop:weight n (unseen e s reserved)<weight n (vdiff e s)).
++  { eapply (weight_strict_extra n _ _ q).
++    - intros u U V; apply andb_true_iff in V as [D _]; exact D.
++    - exact Q.
++    - unfold unseen; rewrite Hit,andb_false_r;reflexivity.
++    - unfold vdiff; rewrite E,S0;reflexivity. }
++  destruct rem as [|k];[lia|].
++  eapply (packing_safe n hs ls test row e s sy a reserved ids k);try assumption;lia.
++Qed.
++
++Fixpoint refute (m:nat) (test:bits->nat->bool) (row:nat->packed_row) (choose:bits->bits->nat->hint)
+                 (short:nat->bits->bool) (rem:nat) (sy ly a:bits) : bool :=
+   if is_empty sy then is_empty ly else
+   if short rem sy then true else
+   match choose sy a rem with
++  | packed_pair ids i j => pair_cut m test row sy a rem ids i j
+   | pack_rows ids => packing_cut test row sy a rem none ids
+   | split_row i =>
+       if test sy i then
+         match rem with
+         | O=>true
+-        | S k=>all_branches (refute test row choose short k) sy ly a (neighbors (row i))
++        | S k=>all_branches (refute m test row choose short k) sy ly a (neighbors (row i))
+         end
+       else false
+   end.
+@@ -97,14 +149,15 @@
+   active_ok (length hs) test -> layout n hs ls row -> short_correct n hs short -> minimum n hs ls e ->
+   fits n e s a -> 0<weight n s -> weight n e<=weight n s+rem ->
+   signature n hs s sy -> signature n ls s ly ->
+-  refute test row choose short rem sy ly a=false.
++  refute (length hs) test row choose short rem sy ly a=false.
+ Proof.
+   intros Check L Short Min;revert s sy ly a;induction rem as [|rem IH];
+     intros s sy ly a Fit Pos B HS LS; cbn [refute];
+     destruct (is_empty sy) eqn:Zero.
+   all: try solve [destruct (is_empty ly) eqn:Z; [exfalso;eapply closed_refutes;eauto|reflexivity]].
+   all: rewrite (Short _ e s sy (proj1 (proj2 (proj1 Min))) (proj1 Fit) HS B).
+-  all: destruct (choose sy a _) as [i|ids].
++  all: destruct (choose sy a _) as [i|ids|ids ri rj].
++  all: try solve [eapply (pair_cut_safe n hs ls test row e s sy a ids ri rj); try assumption; [exact (proj1 (proj2 (proj1 Min)))|pose proof (subset_split n s e (proj1 Fit));lia]].
+   all: try solve [apply (packing_safe n hs ls test row e s sy a none ids);try assumption;
+     [exact (proj1 (proj2 (proj1 Min)))|];
+     assert (weight n (unseen e s none)=weight n (vdiff e s)) by

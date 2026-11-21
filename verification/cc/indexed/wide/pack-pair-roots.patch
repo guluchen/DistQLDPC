@@ -1,0 +1,20 @@
+--- CCPackedRoots.v
++++ CCPackedRoots.v
+@@ -28,7 +28,7 @@
+   Forall (col_ok n hs ls) cs -> map position cs=seq seed (length cs) ->
+   (forall j,seed<=j<n ->decode free j=true) ->
+   seeds_before_clear n hs ls (S rest) seed ->
+-  all_roots (refute test row choose short rest) skip free cs=true ->
++  all_roots (refute (length hs) test row choose short rest) skip free cs=true ->
+   seeds_before_clear n hs ls (S rest) (seed+length cs).
+ Proof.
+   intros Check Layout Short Skip Col;revert seed free;induction Col as [|c tail C CT IH];
+@@ -61,7 +61,7 @@
+   active_ok (length hs) test -> layout n hs ls row ->short_correct n hs short ->root_skip_ok n hs ls (S cap) skip ->
+   Forall (col_ok n hs ls) cs -> map position cs=seq 0 n ->
+   (forall j,j<n->decode free j=true) ->
+-  all_roots (refute test row choose short cap) skip free cs=true ->
++  all_roots (refute (length hs) test row choose short cap) skip free cs=true ->
+   forall e, good n hs ls e -> S cap<weight n e.
+ Proof.
+   intros Check L T Sk Col Seq F OK. assert (Len:length cs=n).

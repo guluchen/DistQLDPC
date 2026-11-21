@@ -34,7 +34,7 @@ Definition lower_test n hs ls d adv :=
         let sk := flags n hs ls p inv in
         let p2 := membership adv 2 cs in
         index_ok rows read && verify_sums p2 cs 2 none &&
-        all_roots (refute (indexed_active (length hs) read) (fun i=>fst(read i))
+        all_roots (refute (length hs) (indexed_active (length hs) read) (fun i=>fst(read i))
           (make_choice adv rows) (short_table 2 p2) k) (fun i=>nth i sk false)
           (encode (repeat true n)) cs
       else false

@@ -52,6 +52,10 @@ if __name__ == "__main__":
         query(n,"X",{0,n-1},even,even,2,binary,"reverse-bfs")
         missing = "1"*(n-2)+"00\n"
         query(n,"Z",{0,1},missing,missing,None,binary,"reverse-bfs")
+    for n,binary in ((190,"pcm-wide"),(380,"pcm-large")):
+        row="1"*n+"\n"
+        query(n,"Z",{0,n-1},row,row,2,binary,"pair-pack","reverse-bfs")
+        query(n,"X",{0},row,row,None,binary,"pair-pack")
     # Above the small-kernel cutoff, exercise the complete C upper/Coq lower
     # pipeline and independently check its file-level witness.
     with tempfile.TemporaryDirectory() as td:
@@ -64,4 +68,13 @@ if __name__ == "__main__":
             assert obj["status"] == "FOUND" and obj["distance"] == 2
             x,z = int(obj["x"][::-1],2),int(obj["z"][::-1],2)
             assert x.bit_count()%2 == z.bit_count()%2 == 0 and (x|z).bit_count() == 2
-    print("30 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
+    with tempfile.TemporaryDirectory() as td:
+        h=Path(td)/"pcm"; h.write_text("1"*66+"\n")
+        for count in ("0","4097","bad"):
+            cp=subprocess.run([ROOT/"pcm-upper","66",h,h,count],capture_output=True)
+            assert cp.returncode == 2
+        found=subprocess.run([sys.executable,ROOT/"certified.py","66",h,h,"--upper-rounds","128",
+                              "--row-order","reverse-bfs","--pair-pack"],capture_output=True,text=True,check=True)
+        assert json.loads(found.stdout)["distance"] == 2
+    print("4 upper-effort controls passed")
+    print("34 certificate boundary controls and 3 end-to-end C upper-witness controls passed")

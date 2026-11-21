@@ -21,9 +21,11 @@ CAMLprim value caml_wide_hash(value mask) {
     }
     return Val_long((intnat)(hash&UINT64_C(0x7fffffffffffffff)));
 }
-CAMLprim value caml_wide_hint(value rows, value syndrome, value free_mask, value remaining) {
-    CAMLparam4(rows, syndrome, free_mask, remaining);
+CAMLprim value caml_wide_hint(value data, value syndrome, value free_mask, value remaining) {
+    CAMLparam4(data, syndrome, free_mask, remaining);
     CAMLlocal3(result, list, cell);
+    value rows=Field(data,0), incident=Field(data,1);
+    int pair_i=-1,pair_j=-1;
     uint64_t used[12] = {0}, free_bits[12];
     int packed[756], count = 0, shortest = 757, choice = 0;
     int head[757], ids[756], next[756], entries=0, largest=0;
@@ -73,6 +75,28 @@ CAMLprim value caml_wide_hint(value rows, value syndrome, value free_mask, value
             }
         }
     }
+    /* When every remaining flip is charged to a packed row, an odd
+       redundant check disjoint from the entire packing disproves completion.
+       The Coq checker re-derives the sum and tests the whole certificate. */
+    if (Wosize_val(incident) > 0 && count == Long_val(remaining) && count >= 2 && count <= 8) {
+        for (int at=0; at<entries; ++at) {
+            int i=ids[at], pivot=-1;
+            value ri=Field(rows,i);
+            for (int k=0; k<12; ++k) {
+                uint64_t inter=word(ri,k)&used[k];
+                if (inter) {pivot=k*63+__builtin_ctzll(inter);break;}
+            }
+            if (pivot<0) continue;
+            value candidates=Field(incident,pivot);
+            for (mlsize_t u=0;u<Wosize_val(candidates);++u) {
+                int j=Int_val(Field(candidates,u));
+                if ((mask_word(syndrome,j/63)>>(j%63))&1u) continue;
+                value rj=Field(rows,j); int k=0;
+                while(k<12 && !((word(ri,k)^word(rj,k))&used[k])) ++k;
+                if(k==12) { pair_i=i; pair_j=j; goto pack; }
+            }
+        }
+    }
 split:
     result=caml_alloc_small(1,0); Field(result,0)=Val_int(choice); CAMLreturn(result);
 pack:
@@ -80,6 +104,11 @@ pack:
     while (count) {
         cell=caml_alloc_small(2,0); Field(cell,0)=Val_int(packed[--count]);
         Field(cell,1)=list; list=cell;
+    }
+    if (pair_i>=0) {
+        result=caml_alloc_small(3,2); Field(result,0)=list;
+        Field(result,1)=Val_int(pair_i); Field(result,2)=Val_int(pair_j);
+        CAMLreturn(result);
     }
     result=caml_alloc_small(1,1); Field(result,0)=list; CAMLreturn(result);
 }

@@ -86,7 +86,7 @@ static void consider(word w,const matrix *g,const word *basis,unsigned rank,cons
     unsigned d=wt(&w,g->lanes);
     if(d && d<*best && logical(w,basis,rank,gp,g->lanes)) {*best=d;*answer=w;}
 }
-static unsigned propose(const matrix *h,const matrix *g,word *answer) {
+static unsigned propose(const matrix *h,const matrix *g,word *answer,unsigned rounds) {
     word *rows=calloc(h->count+1u,sizeof(word)),*basis=calloc(g->count+1u,sizeof(word));
     unsigned *weights=calloc(g->count+1u,sizeof(unsigned));
     if(!rows||!basis||!weights){free(rows);free(basis);free(weights);return h->n+1u;}
@@ -97,8 +97,6 @@ static unsigned propose(const matrix *h,const matrix *g,word *answer) {
     for(unsigned j=0;j<g->count;j++) weights[j]=wt(g->r+j,l);
     memcpy(basis,g->r,g->count*sizeof(word));
     unsigned grank=rref(basis,g->count,order,n,l,gp,used);
-    /* Small matrices admit more shuffled information sets at low cost. */
-    unsigned rounds=n<=189u ? 64u : 8u;
     for(unsigned rep=0;rep<rounds;rep++) {
         if(rep)for(unsigned j=n-1;j>0;j--){
             unsigned k=random_u32(&state)%(j+1u),v=order[j];order[j]=order[k];order[k]=v;
@@ -129,15 +127,22 @@ static unsigned propose(const matrix *h,const matrix *g,word *answer) {
     free(rows);free(basis);free(weights);return best;
 }
 int main(int argc,char **argv) {
-    if(argc!=4)return 2;
+    if(argc!=4 && argc!=5)return 2;
     char *end;long width=strtol(argv[1],&end,10);
     if(*end || width<1 || width>MAX_N)return 3;
     unsigned n=(unsigned)width;
+    /* Small matrices admit more shuffled information sets at low cost. */
+    unsigned rounds=n<=189u ? 64u : 8u;
+    if(argc==5) {
+        long requested=strtol(argv[4],&end,10);
+        if(*end || requested<1 || requested>4096) return 2;
+        rounds=(unsigned)requested;
+    }
     matrix x={calloc(2u*n,sizeof(word)),0,n,(n+63u)/64u};
     matrix z={calloc(2u*n,sizeof(word)),0,n,(n+63u)/64u};
     if(!x.r || !z.r || !read_pcm(&x,argv[2]) || !read_pcm(&z,argv[3])){free(x.r);free(z.r);return 3;}
     word wx={{0}},wz={{0}};
-    unsigned dx=propose(&z,&x,&wx),dz=propose(&x,&z,&wz);
+    unsigned dx=propose(&z,&x,&wx,rounds),dz=propose(&x,&z,&wz,rounds);
     free(x.r);free(z.r);if(dx>n && dz>n)return 3;
     const word *w=dx<=dz?&wx:&wz;puts(dx<=dz?"X":"Z");
     for(unsigned i=0;i<n;i++)putchar(bit(w,i)?'1':'0');

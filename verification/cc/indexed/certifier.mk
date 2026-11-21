@@ -19,7 +19,7 @@ all: pcm-$(NAME)
 proof: proof.stamp
 	coqchk $(COQFLAGS) $(foreach module,$(MODULES),-norec $(module))
 
-proof.stamp: ../wide/instantiate.py $(HAND_PROOFS) $(PARENT_SRC) $(IMPORTED_STAMP) ../CCShortSound.vo
+proof.stamp: ../wide/instantiate.py $(wildcard ../wide/pack-pair-*.patch) $(HAND_PROOFS) $(PARENT_SRC) $(IMPORTED_STAMP) ../CCShortSound.vo
 	cp ../CCShortSound.vo .
 	$(if $(IMPORTED_STAMP),cp ../wide/CCWide*.vo .,true)
 	python3 -B ../wide/instantiate.py "$(PARENT)/proof" . $(PREFIX) $(WIDTH)
