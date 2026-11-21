@@ -5,3 +5,5 @@ The packed certificate code instantiates the parent bounded-search proofs at 378
 The optional C traversal for reversed BFS follows GH-183. The Coq lower-bound proof admits arbitrary advice indices and selects rows from the original check list.
 
 For the packed verifier, sparse row advice follows GH-181. The verifier constructs the named sums and proves that they preserve the input kernel. The dynamic pair-packing check separately constructs an odd sum disjoint from a certified packing.
+
+The 189-bit specialization uses the existing three-word Coq algebra and shares the checked search templates and C advice with the larger verifiers.

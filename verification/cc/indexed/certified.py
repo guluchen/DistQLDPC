@@ -37,7 +37,13 @@ def upper_proposal(raw, width, rounds):
 
 def packed_check(verifier, proposal):
     side, word = proposal
-    return subprocess.run(verifier, input=side+"\n"+word+"\n", capture_output=True, text=True)
+    payload = side+"\n"+word+"\n"
+    if int(verifier[1]) <= 189:
+        small = subprocess.run([ROOT/"pcm-small", *verifier[1:]], input=payload,
+                               capture_output=True, text=True)
+        if small.returncode != 3:
+            return small
+    return subprocess.run(verifier, input=payload, capture_output=True, text=True)
 
 
 def main():

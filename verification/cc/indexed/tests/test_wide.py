@@ -25,6 +25,14 @@ def query(n, side, ones, hx_data, hz_data, expected, binary="pcm-wide", *options
 
 
 if __name__ == "__main__":
+    # Exercise the three Uint63 lanes, including their end coordinates.
+    for n in (66, 126, 188, 189):
+        active = n - n % 2
+        row = "1"*active+"0"*(n-active)+"\n"
+        weights = {0, active-1} if n == active else {n-1}
+        query(n, "X", weights, row, row, len(weights), "pcm-small", "reverse-bfs", "pair-pack")
+        query(n, "X", {0}, row, row, None, "pcm-small", "sparse-checks")
+    query(190, "X", {189}, "", "", None, "pcm-small")
     # Any two bits form a minimum logical for this single even stabilizer.
     for n in (190, 252, 378):
         all_ones = "1"*n+"\n"
@@ -85,4 +93,4 @@ if __name__ == "__main__":
                               "--row-order","reverse-bfs","--pair-pack"],capture_output=True,text=True,check=True)
         assert json.loads(found.stdout)["distance"] == 2
     print("4 upper-effort controls passed")
-    print("38 certificate boundary controls and 3 end-to-end C upper-witness controls passed")
+    print("47 certificate boundary controls and 3 end-to-end C upper-witness controls passed")

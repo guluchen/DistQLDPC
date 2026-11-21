@@ -40,7 +40,7 @@ dual_advice.ml: ../dual_advice.ml
 row_advice.ml: ../row_advice.ml
 	cp $< $@
 
-pcm-$(NAME): row_advice.ml ../row_order.c $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
+pcm-$(NAME): row_advice.ml ../row_order.c ../packed_hint.h $(NAME)_generated.ml $(NAME)_driver.ml dual_advice.ml $(NAME)_advice.ml $(NAME)_hint.c ../../ccv.c ../../ccv_primitives.c ../../extract/pcm_stubs.c
 	ocamlopt -ccopt "$(CFLAGS)" -o $@ $(LIBS) $(NAME)_generated.mli $(NAME)_generated.ml dual_advice.ml row_advice.ml $(NAME)_advice.ml $(NAME)_driver.ml $(NAME)_hint.c ../row_order.c ../../extract/pcm_stubs.c ../../ccv.c ../../ccv_primitives.c
 
 clean:
