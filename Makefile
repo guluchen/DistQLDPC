@@ -9,9 +9,10 @@ BIN     = bin/distqldpc
 MAXCDCL = bin/maxcdcl
 
 CXX     ?= g++
-CFLAGS  ?= -O3 -g
-CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O3 -g \
-           -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG
+OPTFLAGS ?= -O3 -g -DNDEBUG
+CFLAGS  ?= $(OPTFLAGS)
+CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses $(OPTFLAGS) \
+           -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS
 LDFLAGS  = -lz
 
 ENGINE_OBJS = \

@@ -10,7 +10,7 @@ ifneq ($(VST_ROOT),)
 COQFLAGS += $(foreach pkg,msl sepcomp veric floyd zlist,-Q $(VST_ROOT)/$(pkg) VST.$(pkg)) -R $(VST_ROOT)/compcert compcert
 endif
 
-.PHONY: all test mutants proofs pcm test-packed check-ast clean
+.PHONY: all test mutants proofs pcm test-packed check-ast check-shared-level clean
 all: ccv libccv.so
 
 ccv: ccv_cli.c $(SOURCES) ccv.h
@@ -39,6 +39,9 @@ pcm: all
 test-packed: pcm
 	ocamlopt -ccopt "$(CFLAGS)" -o packed-oracle $(PACKED_LIBS) $(PACKED_ML) tests/packed_oracle.ml extract/packed_hint.c
 	./packed-oracle
+
+check-shared-level:
+	python3 -B shared/check.py
 
 check-ast:
 	sha256sum --check source-ast.sha256

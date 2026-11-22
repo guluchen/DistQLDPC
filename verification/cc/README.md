@@ -25,6 +25,25 @@ have separate verification boundaries.
 
 The [indexed and certified drivers](indexed/README.md) add sparse C search, input-checked X/Z symmetry, and certification of an externally proposed witness with verified bounded queries.
 
+## Shared C kernel used by the native CLI
+
+On this experimental branch the native CLI calls `src/cc/cc_level.c` for the
+index-seeded `excl,pack,leaf` search. Use `OPTFLAGS` in the root Makefile to
+set optimization and architecture options for both C and C++.
+
+Run `make -C verification/cc check-shared-level` from the repository root with
+64-bit CompCert 3.13.1 `clightgen`, Coq 8.18.0 and VST 2.14. Set `CLIGHTGEN`
+to the generator executable and `VST_ROOT` to the built VST tree when they
+are outside the standard paths. The target generates Clight directly from the
+native source in a fresh temporary directory, compiles the proof, runs
+`coqchk` on the two project modules, and prints the input and AST digests.
+
+The [detector theorem](shared/VerifDetected.v) covers the actual C function
+that scans the logical parity words. It returns one exactly when some word
+is nonzero and preserves the caller’s memory. This includes an empty array
+with a null data pointer. The recursive search, its pruning rules, and the
+C++ caller still need their own contracts and proofs for this kernel.
+
 ## Build and check
 
 Use Linux, Coq 8.18.0 and VST 2.14 built for 64-bit CompCert semantics.
