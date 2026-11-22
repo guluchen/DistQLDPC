@@ -7,6 +7,7 @@
  * See cc_half.h for the definitions, the exactness argument and the rules. Clean-room code.
  */
 #include "cc_half.h"
+#include "cc_level.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1498,6 +1499,29 @@ LevelResult HalfSearch::run_level(int w) {
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
     r.by_budget.assign((size_t)w + 1, 0);
     if (rules_.charge) r.lbprune_by_budget.assign((size_t)w + 1, 0);
+    if (mutant_ == 0 && rules_.excl && rules_.pack && rules_.leaf && !rules_.mrv &&
+        !rules_.sparse && !rules_.charge && !rules_.erasure && !ext_ && !ovr_ && !tb_ &&
+        !orbit_mode_ && !par_) {
+        cc_level s{};
+        s.n = n_; s.w = w; s.mw = mw_; s.kw = kw_; s.maxrow = maxrow_;
+        s.rstart = rstart_.data(); s.rq = rq_.data(); s.cstart = cstart_.data(); s.cr = cr_.data();
+        s.gmask = gmask_.data(); s.colkey = colkey_.data(); s.htab = htab_.data();
+        s.hnext = hnext_.data(); s.hmask = hmask_; s.syn = syn_.data(); s.gpar = gpar_.data();
+        s.mark = mark_.data(); s.blk = blk_.data(); s.cur = cur_.data(); s.cand = cand_.data();
+        s.by_budget = r.by_budget.data(); s.poll = poll_fn_; s.poll_ctx = poll_ctx_;
+        s.poll_mask = poll_mask_; s.stamp = stamp_;
+        const cc_level_outcome outcome = cc_run_level(&s);
+        stamp_ = s.stamp;
+        r.nodes = s.nodes; r.seeds = s.seeds; r.closed = s.closed; r.nocand = s.nocand;
+        r.packprune = s.packprune; r.leaf1 = s.leaf1; r.leaf2 = s.leaf2;
+        abort_ = outcome == CC_LEVEL_ABORTED;
+        incons_ = outcome == CC_LEVEL_INCONSISTENT;
+        if (s.witness_size) record_witness(s.witness_size);
+        r.verdict = abort_ ? LEVEL_ABORTED : incons_ ? LEVEL_INCONSISTENT :
+                    outcome == CC_LEVEL_FOUND ? LEVEL_FOUND : LEVEL_EMPTY;
+        res_ = NULL;
+        return r;
+    }
     for (size_t i = 0; i < seed_.size(); i++) {
         const int s = seed_[i];
         /* mutant 3 (orbit seed rule off by one): the seed rule's forbidding of O_i is applied BEFORE the

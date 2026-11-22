@@ -9,6 +9,7 @@ BIN     = bin/distqldpc
 MAXCDCL = bin/maxcdcl
 
 CXX     ?= g++
+CFLAGS  ?= -O3 -g
 CXXFLAGS = -I$(SOLVER) -Wall -Wno-parentheses -O3 -g \
            -D __STDC_LIMIT_MACROS -D __STDC_FORMAT_MACROS -DNDEBUG
 LDFLAGS  = -lz
@@ -21,11 +22,11 @@ ENGINE_OBJS = \
 
 # GH-124 (experimental): connected-cluster level-search engine (C++17), linked into bin/distqldpc
 CC_OBJS = \
-	$(BUILD)/cc_half.o \
+	$(BUILD)/cc_half.o $(BUILD)/cc_level.o \
 	$(BUILD)/cc_driver.o \
 	$(BUILD)/cc_ubsearch.o \
 	$(BUILD)/cc_aut.o
-CC_HDRS = $(CCDIR)/cc_half.h $(CCDIR)/cc_driver.h $(CCDIR)/cc_ubsearch.h $(CCDIR)/cc_aut.h
+CC_HDRS = $(CCDIR)/cc_level.h $(CCDIR)/cc_half.h $(CCDIR)/cc_driver.h $(CCDIR)/cc_ubsearch.h $(CCDIR)/cc_aut.h
 TEST_CC = $(BUILD)/test_cc_engine
 
 .PHONY: all clean test-cc test-cc-flags
@@ -52,6 +53,9 @@ $(BUILD)/Options.o: $(SOLVER)/utils/Options.cc | dirs
 
 $(BUILD)/System.o: $(SOLVER)/utils/System.cc | dirs
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(BUILD)/cc_level.o: $(CCDIR)/cc_level.c $(CCDIR)/cc_level.h | dirs
+	$(CC) $(CPPFLAGS) $(CFLAGS) -std=c99 -Wall -c -o $@ $<
 
 $(BUILD)/cc_half.o: $(CCDIR)/cc_half.cc $(CC_HDRS) | dirs
 	$(CXX) $(CXXFLAGS) -std=c++17 -c -o $@ $<
