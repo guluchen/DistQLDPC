@@ -504,10 +504,39 @@ static bool ovl_removes(const std::vector<Mask>& H, const std::vector<Mask>& G, 
     return false;
 }
 
+// A length-eight repetition chain has one detectable support. The last two
+// coordinates form a separate, trivial stabilizer, exercising tight overlap.
+static bool default_level_resumes_after_abort() {
+    std::vector<Mask> rows;
+    for (int i = 0; i < 7; ++i) rows.push_back(3u << i);
+    rows.push_back(3u << 8);
+    const distcc::SparseRows H = to_rows(rows, 10), G = to_rows({1u}, 10);
+    const distcc::SparseRows K = to_rows({3u << 8}, 10);
+    distcc::Rules rules;
+    rules.erasure_start = 0;
+    rules.erasure_gate = distcc::ERASURE_GATE_NONE;
+    distcc::HalfSearch reused(H, G, {}, rules, 3, 0, &K, distcc::ROWORDER_BFS);
+    distcc::HalfSearch fresh(H, G, {}, rules, 3, 0, &K, distcc::ROWORDER_BFS);
+    int visits = 0;
+    reused.set_poll([](void* p) { return ++*static_cast<int*>(p) == 4; }, &visits, 0);
+    const auto interrupted = reused.run_level(8);
+    if (interrupted.verdict != distcc::LEVEL_ABORTED || !interrupted.witness.empty() || visits != 4) return false;
+    reused.set_poll(nullptr, nullptr);
+    const auto actual = reused.run_level(8), expected = fresh.run_level(8);
+    const std::vector<int> support = {0,1,2,3,4,5,6,7};
+    return actual.verdict == distcc::LEVEL_FOUND && expected.verdict == actual.verdict &&
+           actual.witness == support && actual.witness == expected.witness &&
+           actual.by_budget == expected.by_budget && actual.seeds == expected.seeds;
+}
+
 int main(int argc, char** argv) {
     const int NA = argc > 1 ? atoi(argv[1]) : 300;   // part A instances
     const int NB = argc > 2 ? atoi(argv[2]) : 200;   // part B instances
     int fails = 0;
+    if (!default_level_resumes_after_abort()) {
+        fprintf(stderr, "CC_FAIL default level rollback after interrupted C traversal\n");
+        ++fails;
+    }
 
     // ---------------- GH-217 / GH-227: the CC defaults (no random numbers drawn) ----------------
     // Default rules excl,pack,orbf,parity,leaf,overlap,charge,tiebreak,sparse,sparseov,sparsemrv,erasure (GH-227 added erasure,

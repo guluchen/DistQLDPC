@@ -1243,17 +1243,14 @@ bool HalfSearch::xu_propagate(int size, int& forced) {
     return true;
 }
 
-/* the node's bound scan and branching (forced >= 0: branch on that row, GH-181 xorunit) */
-template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(int size, int forced) {
-    const bool leaf = rules_.leaf;
-    const bool meet = leaf && size == w_ - (mutant_ == 6 ? 3 : 2);   /* budget 2: lookup instead of recursion */
-
+/* Fill the level's borrowed candidate slice after the native bound checks. */
+template <bool E> inline int HalfSearch::choose_children(int size, int forced, int odd_count, cc_erasure_sample& sample) {
     /* scan the odd rows in index order: packing bound, no-candidate dead end, branching row */
     const bool pack = rules_.pack, mrv = rules_.mrv || (E && rules_.sparsemrv && mx_ > 0);   /* GH-181 sparsemrv */
     const uint64_t st = ++stamp_;
     int p = 0, brow = -1;
     /* GH-157: charge only where a hitting-set bound can exceed the remaining budget (tau <= |U| = nodd_) */
-    const bool lbon = lbany_ && w_ - size >= lbminr_ && nodd_ > w_ - size;
+    const bool lbon = lbany_ && w_ - size >= lbminr_ && odd_count > w_ - size;
 
     uint32_t bcnt = UINT32_MAX;
     /* GH-181 sparse (pack or mrv): the odd rows of H and R are scanned by weight class, lightest first (within a class
@@ -1283,7 +1280,7 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
                 if (cnt == 0) {
                     ++res_->nocand;
                     if (red) ++res_->snocand;
-                    return false;
+                    return 0;
                 }
                 if (disjoint) {
                     ++p;
@@ -1291,7 +1288,7 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
                     if (mutant_ == 2 ? size + p >= w_ : size + p > w_) {
                         ++res_->packprune;
                         if (pr > 0) ++res_->sprune;
-                        return false;
+                        return 0;
                     }
                     if (er_live_) prow_[p - 1] = (uint32_t)r;   /* erasure (GH-195): packed rows */
                     /* marking forbidden qubits too is harmless: only free qubits can clash */
@@ -1321,17 +1318,18 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
         brow = forced;
         ++res_->xuforced;
     }
-    if (brow < 0) return false;   /* unreachable: nodd_ > 0 */
+    if (brow < 0) return 0;   /* unreachable: nodd_ > 0 */
     /* gap gate: evaluated only when the packing is within lb-gap of pruning (r - p <= gap; prunes concentrate at
      * r = p); without pack always. Skipping an evaluation only skips a sound prune. */
-    if (lbon && (!pack || w_ - size - p <= lbgap_) && lb_prune(size)) return false;
+    if (lbon && (!pack || w_ - size - p <= lbgap_) && lb_prune(size)) return 0;
     /* erasure (GH-195): at most `extra` qubits of a kept target lie outside the packed rows' candidates (mutant 25: one
      * fewer is assumed); gate (cost only): extra <= 2 (test hook: also 2|S| + 2 <= w) */
     /* GH-227 cost gate (-cc-erasure-gate=cost): per class (remaining budget, extra), every erasure_sample-th eligible node is a
      * sample (test timed, never pruned, subtree searched and timed); the other eligible nodes are tested only while the class
      * is on. Skipping a test or a prune is always sound; the test itself is unchanged. */
-    int erc = -1;          /* class of a sampled node whose test would prune (its subtree is timed below) */
-    double ert0 = 0, ertt = 0;
+    int& erc = sample.class_id;          /* class of a sampled node whose test would prune (its subtree is timed below) */
+    double& ert0 = sample.started;
+    double& ertt = sample.test_seconds;
     if (er_live_ && pack) {
         const int extra = (w_ - size) - p - (mutant_ == 25 ? 1 : 0);
         if (extra >= 0 && extra <= 2 && (!er_sizegate_ || 2 * size + 2 <= w_)) {
@@ -1355,15 +1353,15 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
                     if (ex) { erc = c; ert0 = t1; }
                     else {
                         er_sample_done(c, ertt, false, 0);
-                        if (mutant_ == 27) return false;   /* mutant 27: a sample the test does not exclude is pruned */
+                        if (mutant_ == 27) return 0;   /* mutant 27: a sample the test does not exclude is pruned */
                     }
                 } else if (erasure_excludes(extra, st)) {
                     ++res_->erprune;
-                    return false;
+                    return 0;
                 }
             } else {
                 ++res_->erskip;
-                if (mutant_ == 28) return false;   /* mutant 28: a node of an off class is pruned without the test */
+                if (mutant_ == 28) return 0;   /* mutant 28: a node of an off class is pruned without the test */
             }
         }
     }
@@ -1377,6 +1375,17 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
         for (const uint32_t* t = a; t < e; ++t)
             if (!blk_[*t]) cb[nc++] = *t;
     }
+    return nc;
+}
+
+/* the node's bound scan and branching (forced >= 0: branch on that row, GH-181 xorunit) */
+template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(int size, int forced) {
+    const bool leaf = rules_.leaf;
+    const bool meet = leaf && size == w_ - (mutant_ == 6 ? 3 : 2);   /* budget 2: lookup instead of recursion */
+
+    cc_erasure_sample sample{-1, 0, 0};
+    const int nc = choose_children<E>(size, forced, nodd_, sample);
+    uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
     int excluded = 0;
     bool hit = false;
     /* overlap: the counters are updated only for children of remaining budget >= 3. A child of budget 1 (completed
@@ -1422,7 +1431,7 @@ template <bool E> __attribute__((always_inline)) inline bool HalfSearch::expand(
     }
     if (mutant_ != 1)   /* restore the forbidden set (mutant 1 leaves it) */
         for (int i = 0; i < excluded; i++) blk_down<E>(cb[i]);
-    if (erc >= 0) er_sample_done(erc, ertt, true, er_clock() - ert0);   /* GH-227: the time this prune would have saved */
+    if (sample.class_id >= 0) er_sample_done(sample.class_id, sample.test_seconds, true, er_clock() - sample.started);   /* GH-227: the time this prune would have saved */
     return hit;
 }
 
@@ -1499,9 +1508,38 @@ LevelResult HalfSearch::run_level(int w) {
     cand_.assign((size_t)w * (size_t)maxrow_ + 1, 0);
     r.by_budget.assign((size_t)w + 1, 0);
     if (rules_.charge) r.lbprune_by_budget.assign((size_t)w + 1, 0);
-    if (mutant_ == 0 && rules_.excl && rules_.pack && rules_.leaf && !rules_.mrv &&
-        !rules_.sparse && !rules_.charge && !rules_.erasure && !ext_ && !ovr_ && !tb_ &&
-        !orbit_mode_ && !par_) {
+    if (mutant_ == 0 && rules_.excl && rules_.pack && rules_.leaf && !xu_) {
+        const bool simple = !rules_.mrv && !rules_.sparse && !rules_.charge && !rules_.erasure &&
+                            !ext_ && !ovr_ && !tb_ && !orbit_mode_ && !par_;
+        cc_level_policy policy{};
+        if (!simple) {
+            policy.owner = this;
+            policy.seed_count = (int)seed_.size();
+            policy.seed = seed_.data();
+            policy.block_start = bstart_.data();
+            policy.block = block_.data();
+            if (mx_ > 0) {
+                policy.redundant_start = xcstart_.data();
+                policy.redundant_rows = xcr_.data();
+            }
+            policy.parity = par_;
+            policy.choose_children = [](void* ctx, int size, int odd, cc_erasure_sample* sample) {
+                HalfSearch& h = *static_cast<HalfSearch*>(ctx);
+                return h.ext_ ? h.choose_children<true>(size, -1, odd, *sample) :
+                                h.choose_children<false>(size, -1, odd, *sample);
+            };
+            if (ovr_) policy.overlap = [](void* ctx, int q, bool add) {
+                HalfSearch& h = *static_cast<HalfSearch*>(ctx);
+                if (add) h.ov_add<true>(q); else h.ov_del<true>(q);
+            };
+            if (tb_) {
+                policy.seed_exemption = [](void* ctx, int q, bool on) { static_cast<HalfSearch*>(ctx)->tb_seed(q, on); };
+                policy.block_done = [](void* ctx, int i) { static_cast<HalfSearch*>(ctx)->tb_block_done(i); };
+            }
+            policy.sample_done = [](void* ctx, const cc_erasure_sample* x) {
+                static_cast<HalfSearch*>(ctx)->er_sample_done(x->class_id, x->test_seconds, true, er_clock() - x->started);
+            };
+        }
         cc_level s{};
         s.n = n_; s.w = w; s.mw = mw_; s.kw = kw_; s.maxrow = maxrow_;
         s.rstart = rstart_.data(); s.rq = rq_.data(); s.cstart = cstart_.data(); s.cr = cr_.data();
@@ -1510,16 +1548,23 @@ LevelResult HalfSearch::run_level(int w) {
         s.mark = mark_.data(); s.blk = blk_.data(); s.cur = cur_.data(); s.cand = cand_.data();
         s.by_budget = r.by_budget.data(); s.poll = poll_fn_; s.poll_ctx = poll_ctx_;
         s.poll_mask = poll_mask_; s.stamp = stamp_;
-        const cc_level_outcome outcome = cc_run_level(&s);
-        stamp_ = s.stamp;
-        r.nodes = s.nodes; r.seeds = s.seeds; r.closed = s.closed; r.nocand = s.nocand;
-        r.packprune = s.packprune; r.leaf1 = s.leaf1; r.leaf2 = s.leaf2;
+        const cc_level_outcome outcome = cc_run_level(&s, simple ? nullptr : &policy);
+        if (simple) stamp_ = s.stamp;
+        r.nodes = s.nodes; r.seeds = s.seeds; r.closed = s.closed; r.nocand += s.nocand;
+        r.parprune = s.parprune;
+        r.ovtight = ovtight_; r.ovforbid = ovforbid_; r.ovtightx = ovtightx_;
+        r.packprune += s.packprune; r.leaf1 = s.leaf1; r.leaf2 = s.leaf2;
         abort_ = outcome == CC_LEVEL_ABORTED;
         incons_ = outcome == CC_LEVEL_INCONSISTENT;
         if (s.witness_size) record_witness(s.witness_size);
         r.verdict = abort_ ? LEVEL_ABORTED : incons_ ? LEVEL_INCONSISTENT :
                     outcome == CC_LEVEL_FOUND ? LEVEL_FOUND : LEVEL_EMPTY;
         res_ = NULL;
+        if (outcome == CC_LEVEL_EMPTY) {
+            lb_auto_update(r);
+            if (er_thr_ && er_live_) er_level_end(r);
+            if (er_ && !er_live_ && r.nodes >= rules_.erasure_start) er_live_ = true;
+        }
         return r;
     }
     for (size_t i = 0; i < seed_.size(); i++) {

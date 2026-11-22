@@ -28,7 +28,12 @@ The [indexed and certified drivers](indexed/README.md) add sparse C search, inpu
 ## Shared C kernel used by the native CLI
 
 On this experimental branch the native CLI calls `src/cc/cc_level.c` for the
-index-seeded `excl,pack,leaf` search. Use `OPTFLAGS` in the root Makefile to
+default CC traversal. C owns the seed and sibling loops, recursive search,
+syndrome and parity updates, leaf checks and rollback. It borrows the C++
+driver’s row selection, pruning and orbit/overlap bookkeeping through callbacks.
+The index-seeded `excl,pack,leaf` specialization keeps its C packing scan.
+Test mutants, xorunit, and rule sets lacking excl, pack or leaf use the
+original C++ traversal. Use `OPTFLAGS` in the root Makefile to
 set optimization and architecture options for both C and C++.
 
 Run `make -C verification/cc check-shared-level` from the repository root with

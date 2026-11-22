@@ -210,6 +210,8 @@
 #include <stdint.h>
 #include <vector>
 
+struct cc_erasure_sample;
+
 namespace distcc {
 
 /* 0/1 matrix as row supports (column indices); cols = number of qubits. */
@@ -531,6 +533,7 @@ private:
     template <bool E> void blk_down(uint32_t q);
     void xu_count(uint32_t q, int d);
     bool xu_propagate(int size, int& forced); /* false: dead end; forced: unified index of an odd unit row or -1 */
+    template <bool E> int choose_children(int size, int forced, int odd_count, cc_erasure_sample& sample);
     template <bool E> bool expand(int size, int forced);
     template <bool E> void ov_add(int q);
     template <bool E> void ov_del(int q);
