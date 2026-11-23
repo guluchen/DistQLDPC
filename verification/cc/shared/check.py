@@ -8,6 +8,14 @@ import subprocess
 from tempfile import TemporaryDirectory
 
 
+# Dependency order. Each project module is an explicit coqchk target.
+MODULES = (
+    "VerifDetected", "PackedDetector", "VerifPackedDetector",
+    "LeafClosure", "LeafMatrix", "DetectorMatrix", "SiblingExclusion",
+    "VerifClosesCount", "VerifDfsLeaf",
+)
+
+
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -26,16 +34,21 @@ def main():
     with TemporaryDirectory(prefix="distqldpc-level-") as temp:
         build = Path(temp)
         ast = build / "level_ast.v"
-        proof = build / "VerifDetected.v"
-        shutil.copyfile(proof_dir / proof.name, proof)
+        proofs = [build / (name + ".v") for name in MODULES]
+        for proof in proofs:
+            shutil.copyfile(proof_dir / proof.name, proof)
         subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
                         str(ast), "cc_level.c"], cwd=source_dir, check=True)
-        for module in (ast, proof):
+        for module in [ast, *proofs]:
             subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
-        subprocess.run(["coqchk", "-silent", *flags, "-norec", "level_ast",
-                        "-norec", proof.stem], cwd=build, check=True)
-        inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", ast, proof]
-        print(json.dumps({"checked_body": "detected", "sha256": {
+        check_targets = [arg for name in ("level_ast", *MODULES)
+                         for arg in ("-norec", name)]
+        subprocess.run(["coqchk", "-silent", *flags, *check_targets],
+                       cwd=build, check=True)
+        inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", ast, *proofs]
+        print(json.dumps({"checked_body": "detected",
+                          "checked_paths": ["closes count mismatch", "dfs terminal depth without polling"],
+                          "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 
 
