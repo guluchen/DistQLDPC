@@ -17,6 +17,7 @@ checked baseline is the C traversal in the C++/C candidate at commit
 | The result of that C contract is exactly the matrix test after one qubit flip. | `ClosureMatrix.closes_value_pcm` | CSR incidence contains each physical row of the column once. Packed words contain the current syndrome, logical response and logical column, with zero padding. The stored odd count represents the physical syndrome. |
 | The C function `toggle` flips each incident syndrome bit, adjusts the odd count, XORs the column key, and updates every packed logical parity word. | `VerifToggleBody.body_toggle` | The contract requires valid CSR and packed storage, representable intermediate counts, and sufficient space for the addressed logical column. |
 | XORing the packed response with a represented column implements addition of that column over GF(2). Repeating the update restores the words. | `ToggleModel.packed_flip`, `packed_rollback` | The two packed word lists have equal length and use the same bit order. |
+| The postcondition of C `toggle` represents the syndrome, its cardinality, the logical response and the syndrome hash of the updated qubit support. | `SparseSyndrome.toggle_pcm` | The CSR slice is the ordered encoding of the distinct incident physical rows. The original counts, packed words and keys represent the input matrices. |
 | Equal physical syndromes have equal signatures; a complete bucket and the physical leaf test find every eligible leaf even when distinct columns collide. | `SyndromeHash.signature_toggle`, `bucket_complete` | The bucket contains every key match. Concrete table construction and probe termination require separate proofs. |
 | Sibling exclusion partitions every target that meets the child list. | `SiblingExclusion.dfs_siblings_partition` | The selected child is present and earlier children are absent. The unique index is the first hit in the actual child order. |
 | A terminal C DFS call returns FOUND exactly for zero odd-check count and a lit detector bit, updates the two counters and records the witness size on success. | `VerifDfsLeaf.body_dfs_terminal` | The depth equals the target weight and the poll pointer is null. `DetectorMatrix.terminal_bits_correct` interprets the decision for a represented PCM and detector matrix. |
@@ -38,6 +39,11 @@ and completeness proofs cover every seed and every smaller weight.
 from the input row spaces with MathComp, combines the half distances and
 proves minimality for mixed Pauli weight (the union of the X and Z supports).
 `css_distance_empty` covers an empty logical set.
+
+`DetectorRank.validated_detector` connects a supplied detector matrix to
+the same row-space test. It uses the orthogonality and rank conditions
+checked by the production driver. For any vector with zero check syndrome,
+all its input detectors vanish exactly when it is in the stabilizer row space.
 
 `MinimumOverlap.minimum_overlap` proves that a minimum representative
 occupies at most half of a stabilizer's support. `ChargeBound.charge_bound`
