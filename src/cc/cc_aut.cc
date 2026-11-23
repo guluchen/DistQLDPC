@@ -18,6 +18,7 @@
  * after an explicit check that it maps every row support onto the support of its image row.
  */
 #include "cc_aut.h"
+#include "cc_epoch.h"
 
 #include <algorithm>
 #include <set>
@@ -276,7 +277,7 @@ public:
             const uint32_t a = g_.start[(size_t)r], ae = g_.start[(size_t)r + 1];
             const uint32_t b = g_.start[(size_t)rr], be = g_.start[(size_t)rr + 1];
             if (ae - a != be - b) return false;
-            ++stamp_;
+            stamp_ = cc_next_tag(stamp_, mark_.data(), mark_.size());
             for (uint32_t t = b; t < be; t++) mark_[g_.adj[t]] = stamp_;
             for (uint32_t t = a; t < ae; t++) if (mark_[(size_t)vmap[g_.adj[t]]] != stamp_) return false;
         }

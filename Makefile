@@ -27,7 +27,7 @@ CC_OBJS = \
 	$(BUILD)/cc_driver.o \
 	$(BUILD)/cc_ubsearch.o \
 	$(BUILD)/cc_aut.o
-CC_HDRS = $(CCDIR)/cc_level.h $(CCDIR)/cc_half.h $(CCDIR)/cc_driver.h $(CCDIR)/cc_ubsearch.h $(CCDIR)/cc_aut.h
+CC_HDRS = $(CCDIR)/cc_epoch.h $(CCDIR)/cc_level.h $(CCDIR)/cc_half.h $(CCDIR)/cc_driver.h $(CCDIR)/cc_ubsearch.h $(CCDIR)/cc_aut.h
 TEST_CC = $(BUILD)/test_cc_engine
 
 .PHONY: all clean test-cc test-cc-flags
@@ -55,7 +55,7 @@ $(BUILD)/Options.o: $(SOLVER)/utils/Options.cc | dirs
 $(BUILD)/System.o: $(SOLVER)/utils/System.cc | dirs
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(BUILD)/cc_level.o: $(CCDIR)/cc_level.c $(CCDIR)/cc_level.h | dirs
+$(BUILD)/cc_level.o: $(CCDIR)/cc_level.c $(CCDIR)/cc_level.h $(CCDIR)/cc_epoch.h | dirs
 	$(CC) $(CPPFLAGS) $(CFLAGS) -std=c99 -Wall -c -o $@ $<
 
 $(BUILD)/cc_half.o: $(CCDIR)/cc_half.cc $(CC_HDRS) | dirs

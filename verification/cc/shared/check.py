@@ -59,7 +59,7 @@ def main():
                          for arg in ("-norec", name)]
         subprocess.run(["coqchk", "-silent", *flags, *check_targets],
                        cwd=build, check=True)
-        inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", ast, *proofs]
+        inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", source_dir / "cc_epoch.h", ast, *proofs]
         print(json.dumps({"checked_body": "detected",
                           "checked_paths": ["closes count mismatch", "closes full body",
                                             "dfs terminal depth without polling",

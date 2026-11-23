@@ -8,6 +8,7 @@
  */
 #include "cc_half.h"
 #include "cc_level.h"
+#include "cc_epoch.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -599,7 +600,7 @@ void LbWork::reset(int nq, int maxrows) {
  * Pass 2: y_u = L / max_{j in u} c_j (scaled by L = lcm(1..D)); loads. Pass 3: raise. Exact integer arithmetic:
  * Y <= k L <= k 2^48, no overflow for k < 2^15 (k is at most the number of rows of H; checked). */
 int lb_charge(const uint32_t* rs, const uint32_t* rq, int k, int r, LbWork& w, int mutant, bool raise) {
-    const uint64_t st = ++w.st;
+    const uint64_t st = w.st = cc_next_tag(w.st, w.mk.data(), w.mk.size());
     int D = 0;
     for (int i = 0; i < k; i++) {
         if (rs[i] == rs[i + 1]) return LB_DEAD;
@@ -651,7 +652,7 @@ bool HalfSearch::lb_prune(int size) {
     ++res_->lbeval;
     int k = 0, D = 0;
     uint32_t nq = 0;
-    const uint64_t st = ++lbw_.st;   /* counting stamp (the copy pass also counts c_j, as lb_charge's first pass) */
+    const uint64_t st = lbw_.st = cc_next_tag(lbw_.st, lbw_.mk.data(), lbw_.mk.size());   /* counting stamp (the copy pass also counts c_j, as lb_charge's first pass) */
     lbrs_[0] = 0;
     for (int wi = 0; wi < mw_; wi++) {
         uint64_t x = syn_[wi];
@@ -872,7 +873,8 @@ bool HalfSearch::erasure_excludes(int extra, uint64_t st) {
 template <int KW>
 bool HalfSearch::erasure_test(int extra, uint64_t st) {
     const int kw = KW ? KW : kw_;
-    estamp_ += 2;
+    estamp_ = cc_next_tag_pair(estamp_, eqs_.data(), eqs_.size(),
+                               erows_.data(), erows_.size(), etabst_.data(), etabst_.size());
     const uint64_t peeled = estamp_, affected = estamp_ + 1;
     /* region (declined above 128 qubits) */
     uint32_t* const reg = ereg_.data();
@@ -1239,7 +1241,7 @@ bool HalfSearch::xu_propagate(int size, int& forced) {
 template <bool E> inline int HalfSearch::choose_children(int size, int forced, int odd_count, cc_erasure_sample& sample) {
     /* scan the odd rows in index order: packing bound, no-candidate dead end, branching row */
     const bool pack = rules_.pack, mrv = rules_.mrv || (E && rules_.sparsemrv && mx_ > 0);   /* GH-181 sparsemrv */
-    const uint64_t st = ++stamp_;
+    const uint64_t st = stamp_ = cc_next_tag(stamp_, mark_.data(), mark_.size());
     int p = 0, brow = -1;
     /* GH-157: charge only where a hitting-set bound can exceed the remaining budget (tau <= |U| = nodd_) */
     const bool lbon = lbany_ && w_ - size >= lbminr_ && odd_count > w_ - size;

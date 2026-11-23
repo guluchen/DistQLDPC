@@ -514,7 +514,7 @@ private:
     uint64_t synkey_;                       /* Zobrist key of syn_ (leaf) */
     std::vector<uint64_t> gpar_;            /* detector parities of S */
     std::vector<uint32_t> blk_;             /* > 0: in S or forbidden */
-    std::vector<uint64_t> mark_;            /* packing stamp (64-bit, never wraps) */
+    std::vector<uint64_t> mark_;            /* packing tags cleared when the counter is recycled */
     uint64_t stamp_;
     std::vector<int> cur_;                  /* S as a stack */
     std::vector<uint32_t> cand_;            /* per-depth candidate buffers */

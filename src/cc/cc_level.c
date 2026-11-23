@@ -2,6 +2,7 @@
  * DistQLDPC's connected-cluster weight-level traversal.
  * All column keys are filters: closure always compares physical syndromes. */
 #include "cc_level.h"
+#include "cc_epoch.h"
 #include <stddef.h>
 
 /* Leiserson, Prokop and Randall, "Using de Bruijn Sequences to Index a 1
@@ -67,7 +68,8 @@ static inline int closing_qubit(const struct cc_level *s) {
 }
 
 static inline int index_children(struct cc_level *s, int size, uint32_t *children) {
-    uint64_t stamp = ++s->stamp;
+    uint64_t stamp = cc_next_tag(s->stamp, s->mark, (size_t)s->n);
+    s->stamp = stamp;
     int packed = 0, branch = -1;
     for (int wi = 0; wi < s->mw; ++wi) {
         uint64_t odd = s->syn[wi];
@@ -228,4 +230,15 @@ void cc_build_leaf_index(int n, uint64_t mask, const uint64_t *keys,
             i = (i + 1) & mask;
         }
     }
+}
+
+uint64_t cc_next_tag_pair(uint64_t last, uint64_t *qubits, size_t nq,
+                          uint64_t *rows, size_t nr, uint64_t *slots, size_t ns) {
+    if (last >= UINT64_MAX - 2) {
+        cc_clear_tags(qubits, nq);
+        cc_clear_tags(rows, nr);
+        cc_clear_tags(slots, ns);
+        return 2;
+    }
+    return last + 2;
 }

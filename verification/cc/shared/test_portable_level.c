@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 #include "cc_level.h"
+#include "cc_epoch.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -36,7 +37,7 @@ static void repetition(int rotation) {
             .rstart=rstart, .rq=rq, .cstart=cstart, .cr=cr, .gmask=logical,
             .colkey=keys, .htab=table, .hnext=next, .hmask=7, .syn=syn,
             .gpar=par, .mark=mark, .by_budget=budget, .blk=blocked,
-            .cand=candidates, .cur=path};
+            .cand=candidates, .cur=path, .stamp=(rotation & 1) ? UINT64_MAX : 0};
         enum cc_level_outcome status = cc_run_level(&s, NULL);
         assert(syn[0] == 0 && syn[1] == 0 && par[0] == 0 && s.nodd == 0);
         if (w < 4) { assert(status == CC_LEVEL_EMPTY); continue; }
@@ -95,7 +96,35 @@ static unsigned table_cases(void) {
     return count;
 }
 
+static void epoch_boundaries(void) {
+    const uint64_t prior[] = {0, 2, UINT64_MAX - 4, UINT64_MAX - 3,
+                              UINT64_MAX - 2, UINT64_MAX - 1, UINT64_MAX};
+    for (size_t j = 0; j < sizeof(prior) / sizeof(prior[0]); ++j) {
+        uint64_t current = prior[j];
+        uint64_t qubits[] = {11, 37, 38, 39, 12}, rows[] = {13, 40, 14},
+                 slots[] = {15, 41, 42, 16};
+        uint64_t single = cc_next_tag(current, qubits + 1, 3);
+        assert(single == (current == UINT64_MAX ? 1 : current + 1));
+        for (unsigned t = 0; t < 3; ++t) {
+            assert(qubits[t + 1] == (current == UINT64_MAX ? 0 : 37u + t));
+            qubits[t + 1] = 37u + t;
+        }
+        uint64_t pair = cc_next_tag_pair(current, qubits + 1, 3, rows + 1, 1, slots + 1, 2);
+        int restart = current >= UINT64_MAX - 2;
+        assert(pair == (restart ? 2 : current + 2) && pair && pair + 1);
+        for (unsigned t = 0; t < 3; ++t) assert(qubits[t + 1] == (restart ? 0 : 37u + t));
+        assert(rows[1] == (restart ? 0 : 40));
+        for (unsigned t = 0; t < 2; ++t) assert(slots[t + 1] == (restart ? 0 : 41u + t));
+        assert(qubits[0] == 11 && qubits[4] == 12 && rows[0] == 13 && rows[2] == 14 &&
+               slots[0] == 15 && slots[3] == 16);
+    }
+    assert(cc_next_tag(UINT64_MAX, NULL, 0) == 1);
+    assert(cc_next_tag_pair(UINT64_MAX - 1, NULL, 0, NULL, 0, NULL, 0) == 2);
+}
+
 int main(void) {
+    epoch_boundaries();
+    puts("PASS single and paired epoch boundaries");
     const unsigned tables = table_cases();
     assert(tables == 3906);
     printf("PASS %u physical leaf tables, six membership queries per table\n", tables);
