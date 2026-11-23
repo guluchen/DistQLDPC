@@ -208,3 +208,24 @@ enum cc_level_outcome cc_run_level(struct cc_level *s, const struct cc_level_pol
     }
     return CC_LEVEL_EMPTY;
 }
+
+/* Descending insertion leaves each same-key chain in ascending qubit order. */
+void cc_build_leaf_index(int n, uint64_t mask, const uint64_t *keys,
+                         int32_t *slots, int32_t *next) {
+    for (int q = n - 1; q >= 0; --q) {
+        uint64_t i = keys[q] & mask;
+        for (;;) {
+            const int32_t h = slots[i];
+            if (h < 0) {
+                slots[i] = q;
+                break;
+            }
+            if (keys[h] == keys[q]) {
+                next[q] = h;
+                slots[i] = q;
+                break;
+            }
+            i = (i + 1) & mask;
+        }
+    }
+}

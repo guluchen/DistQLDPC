@@ -23,6 +23,10 @@ MODULES = (
     "RedundantState", "OrbitLevel", "VerifOneLeft", "VerifSeedIndex",
     "LowestWord", "WordScan", "VerifLowestBit",
     "LeafShortcut", "RowTally", "NativeLeafChoice",
+    "PrunedLevel", "PhysicalPrunes", "LocalCharge", "TiebreakTarget",
+    "SiblingCounters", "LeafAPI", "PCMLeafAPI", "VerifPolicyParity",
+    "TableFlow", "TableCoverage", "TableMembers", "BuiltLookup",
+    "BucketPipeline", "VerifTableBuild", "BuiltPCM",
 )
 
 
@@ -64,7 +68,11 @@ def main():
                                             "dfs closed interior prefix without polling",
                                             "nonzero-word lowest-bit full body",
                                             "dfs one free move with physical lookup",
-                                            "full index-order seed loop under callee contracts"],
+                                            "full index-order seed loop under callee contracts",
+                                            "non-null policy parity return without polling",
+                                            "physical leaf lookup without a supplied outcome",
+                                            "leaf index construction from empty arrays",
+                                            "leaf lookup for a physically constructed PCM table"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 

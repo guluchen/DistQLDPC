@@ -316,15 +316,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         hmask_ = (uint64_t)sz - 1;
         htab_.assign(sz, -1);
         hnext_.assign((size_t)n_, -1);
-        for (int q = n_ - 1; q >= 0; q--) {   /* descending insertion: chains ascend (branch order) */
-            uint64_t i = colkey_[q] & hmask_;
-            for (;;) {
-                const int32_t h = htab_[i];
-                if (h < 0) { htab_[i] = q; break; }
-                if (colkey_[h] == colkey_[q]) { hnext_[q] = h; htab_[i] = q; break; }
-                i = (i + 1) & hmask_;
-            }
-        }
+        cc_build_leaf_index(n_, hmask_, colkey_.data(), htab_.data(), hnext_.data());
     }
 
     /* detector masks */

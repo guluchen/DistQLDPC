@@ -54,6 +54,12 @@ struct cc_level_policy {
 };
 
 enum cc_level_outcome { CC_LEVEL_EMPTY, CC_LEVEL_FOUND, CC_LEVEL_ABORTED, CC_LEVEL_INCONSISTENT };
+/* Populate the leaf lookup table. The caller supplies a power-of-two
+   table of at least max(4, 2*n) slots with mask equal to its size minus
+   one, plus n next links. All slots and links initially contain -1. */
+void cc_build_leaf_index(int n, uint64_t mask, const uint64_t *keys,
+                         int32_t *slots, int32_t *next);
+
 enum cc_level_outcome cc_run_level(struct cc_level *s, const struct cc_level_policy *policy);
 
 #ifdef __cplusplus

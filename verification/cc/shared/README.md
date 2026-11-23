@@ -1,7 +1,7 @@
 # Proofs for the production CC level traversal
 
 These modules use the Clight translation of `src/cc/cc_level.c`. The
-checked baseline is the C traversal in the C++/C candidate at commit
+C traversal descends from the C++/C performance candidate at commit
 `ca80fd7`. Proofs were developed on x86-64 Linux with Coq
 8.18.0, CompCert 3.13.1, VST 2.14 and MathComp 2.1.0 (SSReflect and Algebra).
 
@@ -104,15 +104,47 @@ nonzero detection. `RowTally.row_tally` computes the exact machine count
 and clash bits for a CSR row. `no_candidate_exact` checks the zero-count
 branch, including the maximum representable 32-bit row length.
 
-The executable MathComp model and the Clight body contracts have separate
-verification boundaries. The native CLI theorem still requires concrete
-hash-table construction, correct packing and block and overlap counters across
-recursion and rollback, seed enumeration, the policy callbacks and the
-driver. The C++ table constructor must establish the preconditions of
-`finite_lookup` and bucket coverage. The timed source has
-C++ callbacks that form a past-the-end CSR
-pointer with a vector subscript. Private correction `9fa8df2` uses pointer
-addition for those ranges.
+`PhysicalPrunes.physical_distance` connects a search with combined pruning
+to the minimum-distance index even when no logical operator exists. The
+MathComp search applies greedy packing, a feasible integer charge bound
+and stabilizer overlap to an ordered list of candidates. The hypotheses
+state which rows are odd, that the qubit order covers the coordinates,
+and that each stabilizer preserves syndrome and detector values.
+`LocalCharge.scaled_bound` proves the local-degree charges and all
+residual-capacity raises stay feasible using integer division.
+`TiebreakTarget.even_tie_contains_first` separately justifies the
+exemption for a canonical minimum at an equal-weight stabilizer tie.
+The default orbit schedule and its C++ exemption updates still need to
+select and maintain that canonical target.
+
+`VerifPolicyParity.body_policy_parity` covers the actual C return when
+a non-null policy enables the parity cut. It checks the machine low bit,
+signed subtraction bounds and the three counters touched by this path.
+`SiblingCounters.rollback_siblings` proves that undoing prior exclusions
+in forward order restores arbitrary inherited machine counts.
+`LeafAPI.body_leaf_api` checks the actual C lookup under a contract whose
+caller supplies a table image. The C function chooses its own outcome.
+`PCMLeafAPI.physical_leaf_image` constructs this contract from physical
+matrix layouts, the XOR keys and coverage of the matching-key bucket.
+The returned qubit therefore has the PCM completion property and a miss
+excludes every free one-move completion.
+
+The C++ constructor allocates two arrays initialized to −1 and calls
+the C function `cc_build_leaf_index`. Its VST contract records every
+descending insertion, including linear probing across collisions and wrap.
+`BuiltLookup.insertion_finishes` shows a free slot is reachable under
+the capacity and mask conditions. `BucketPipeline.exact_bucket` identifies
+the chain members exactly by column key, including when many columns have
+the same key. `BuiltPCM.body_leaf_for_built_pcm` applies these results to
+the C leaf lookup. Given the builder postcondition and physical PCM layout,
+a hit is an eligible completion and a miss excludes every free completion.
+
+The native CLI theorem still requires the concrete recursive child traversal
+and rollback, child selection, orbit and policy callbacks, and the driver
+that constructs the physical arrays and detector basis. Private correction
+`9fa8df2` also replaces out-of-range vector subscripts in C++ CSR pointer
+construction with pointer addition. Timing results refer to the frozen
+candidate identified separately in the benchmark records.
 
 In this private derivative, the C odd-row loop calls `cc_lowest_bit`
 on each nonzero word. `LowestWord.lowest_bit_correct` identifies the
