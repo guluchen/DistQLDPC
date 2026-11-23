@@ -12,7 +12,9 @@ from tempfile import TemporaryDirectory
 MODULES = (
     "VerifDetected", "PackedDetector", "VerifPackedDetector",
     "LeafClosure", "LeafMatrix", "DetectorMatrix", "SiblingExclusion",
-    "VerifClosesCount", "VerifDfsLeaf",
+    "VerifClosesCount", "VerifDfsLeaf", "VerifClosesBody",
+    "MinimumPrefix", "LevelSearch", "CSSLevelDistance",
+    "ClosureEncoding", "ClosureWord", "ClosureMatrix", "MinimumOverlap", "ChargeBound",
 )
 
 
@@ -47,7 +49,8 @@ def main():
                        cwd=build, check=True)
         inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", ast, *proofs]
         print(json.dumps({"checked_body": "detected",
-                          "checked_paths": ["closes count mismatch", "dfs terminal depth without polling"],
+                          "checked_paths": ["closes count mismatch", "closes full body",
+                                            "dfs terminal depth without polling"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 

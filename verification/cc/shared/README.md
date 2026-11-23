@@ -13,16 +13,41 @@ checked baseline is the C traversal in the C++/C candidate at commit
 | Stored words detect a nonzero logical response over GF(2). | `DetectorMatrix.packed_matrix_nonzero` | The bit order matches the detector rows and all padding bits are zero. |
 | The one-qubit leaf test accepts exactly when toggling physical qubit q gives a zero check syndrome and a nonzero detector response. | `LeafMatrix.leaf_matrix_exact` | The sparse column lists the physical rows of q without duplicates. Matrices, dimensions, support and q are arbitrary. |
 | The first C rejection in `closes` returns zero and preserves caller storage. | `VerifClosesCount.body_closes_count` | Valid offset bounds and a column degree unequal to the stored odd-row count. `LeafMatrix.count_mismatch_nonzero` explains why this cannot discard a completion when those counts represent the matrix state. |
+| The full C function `closes` scans the addressed CSR column and packed syndrome. It accepts when the degree matches the odd count, every listed bit is set, and at least one logical parity word differs from the candidate column. | `VerifClosesBody.body_closes` | The contract specifies readable storage, valid array bounds and a positive logical word count. All paths preserve the caller's storage. |
+| The result of that C contract is exactly the matrix test after one qubit flip. | `ClosureMatrix.closes_value_pcm` | CSR incidence contains each physical row of the column once. Packed words contain the current syndrome, logical response and logical column, with zero padding. The stored odd count represents the physical syndrome. |
 | Sibling exclusion partitions every target that meets the child list. | `SiblingExclusion.dfs_siblings_partition` | The selected child is present and earlier children are absent. The unique index is the first hit in the actual child order. |
 | A terminal C DFS call returns FOUND exactly for zero odd-check count and a lit detector bit, updates the two counters and records the witness size on success. | `VerifDfsLeaf.body_dfs_terminal` | The depth equals the target weight and the poll pointer is null. `DetectorMatrix.terminal_bits_correct` interprets the decision for a represented PCM and detector matrix. |
 
-Overall minimum-distance correctness for this production traversal still
-requires the array-state invariants across flips, hash lookup, row selection
-and pruning callbacks, recursive descent and seed enumeration. The positive
-path through the packed C function `closes` also needs a body proof. The
-matrix theorem describes the intended leaf criterion in both directions.
-Applying the logical detector test to CSS minimum distance requires the
-caller's logical detector basis to span the appropriate quotient.
+## Search and distance over arbitrary matrices
+
+`MinimumPrefix.minimum_prefix_odd` proves that every nonempty proper subset
+of a minimum logical support has an odd check. If such a subset were closed,
+the subset or its complement in the target would be a lighter logical
+operator. `odd_row_hits_residual` shows that every odd check touches a qubit
+that still has to be added.
+
+`LevelSearch.descend` branches on an odd check, removes each explored
+sibling from future branches and stops at closed prefixes. The soundness
+and completeness proofs cover every seed and every smaller weight.
+`distance_index_spec` returns the minimum when a logical operator exists.
+`distance_index_empty` establishes the exhaustion sentinel otherwise.
+`CSSLevelDistance.css_distance_exact` derives the two detector matrices
+from the input row spaces with MathComp, combines the half distances and
+proves minimality for mixed Pauli weight (the union of the X and Z supports).
+`css_distance_empty` covers an empty logical set.
+
+`MinimumOverlap.minimum_overlap` proves that a minimum representative
+occupies at most half of a stabilizer's support. `ChargeBound.charge_bound`
+proves the capacity inequality for charges on the odd rows. Its disjoint
+unit-charge specialization `packing_bound` gives the packing rule.
+
+The executable MathComp model and the Clight body contracts have separate
+verification boundaries. An end-to-end theorem for the native CLI still
+requires the array-state invariants across flips, lookup and rollback,
+the recursive traversal and seed enumeration, and the concrete C++ policies
+and driver. The timed source has C++ callbacks that form a past-the-end CSR
+pointer with a vector subscript. Private correction `9fa8df2` uses pointer
+addition for those ranges.
 
 ## Recheck
 
