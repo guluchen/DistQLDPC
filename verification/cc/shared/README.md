@@ -49,10 +49,25 @@ the same row-space test. It uses the orthogonality and rank conditions
 checked by the production driver. For any vector with zero check syndrome,
 all its input detectors vanish exactly when it is in the stabilizer row space.
 
+The native early return for a closed prefix at any interior depth is
+covered by `VerifClosedPrefix.body_dfs_closed` when polling is disabled.
+It returns EMPTY for a trivial prefix and INCONSISTENT for an early
+logical witness, records its depth, and increments the correct budget
+and node counters. This distinction matters when testing a lower bound.
+
 `MinimumOverlap.minimum_overlap` proves that a minimum representative
 occupies at most half of a stabilizer's support. `ChargeBound.charge_bound`
 proves the capacity inequality for charges on the odd rows. Its disjoint
 unit-charge specialization `packing_bound` gives the packing rule.
+
+`IndexPacking.scan_keeps_target` follows the greedy first-odd-row scan.
+It proves the guard keeps every fitting completion even if a wrapped
+stamp leaves extra marks. `ParityPrune.parity_prune` proves that if all
+physical columns have odd weight, then a completion needs the prescribed
+parity of remaining moves. `OrbitSeed.representative_covers` proves that
+a valid support has an image of equal weight containing the earliest
+orbit's representative and avoiding all earlier orbits, assuming the
+input orbits are certified by coordinate automorphisms.
 
 The executable MathComp model and the Clight body contracts have separate
 verification boundaries. The native CLI theorem still requires concrete

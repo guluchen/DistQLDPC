@@ -19,6 +19,7 @@ MODULES = (
     "DetectorRank", "SparseFlipBits", "SparseSyndrome", "SparseRollback",
     "VerifFlipBody",
     "HashLookup", "HashProbe", "VerifLookup",
+    "IndexPacking", "OrbitSeed", "ParityPrune", "VerifClosedPrefix",
 )
 
 
@@ -56,7 +57,8 @@ def main():
                           "checked_paths": ["closes count mismatch", "closes full body",
                                             "dfs terminal depth without polling",
                                             "toggle full body", "flip full body",
-                                            "closing_qubit full body"],
+                                            "closing_qubit full body",
+                                            "dfs closed interior prefix without polling"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 
