@@ -15,6 +15,7 @@ MODULES = (
     "VerifClosesCount", "VerifDfsLeaf", "VerifClosesBody",
     "MinimumPrefix", "LevelSearch", "CSSLevelDistance",
     "ClosureEncoding", "ClosureWord", "ClosureMatrix", "MinimumOverlap", "ChargeBound",
+    "ToggleModel", "SyndromeHash", "VerifToggleBody",
 )
 
 
@@ -50,7 +51,8 @@ def main():
         inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", ast, *proofs]
         print(json.dumps({"checked_body": "detected",
                           "checked_paths": ["closes count mismatch", "closes full body",
-                                            "dfs terminal depth without polling"],
+                                            "dfs terminal depth without polling",
+                                            "toggle full body"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 
