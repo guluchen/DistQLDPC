@@ -69,6 +69,41 @@ a valid support has an image of equal weight containing the earliest
 orbit's representative and avoiding all earlier orbits, assuming the
 input orbits are certified by coordinate automorphisms.
 
+`OrbitLevel.orbit_minimum_level` lifts this argument to executable
+weight levels. It runs the search from a representative with every
+earlier orbit excluded. Every minimum weight is reachable and all
+smaller levels are empty under the stated automorphism and scheduling
+conditions. `RedundantState.extra_preserves_physical` relates the
+redundant-row byte writes of `flip` to the physical syndrome and count.
+Its rollback theorem covers repeated indices in the extra CSR slice.
+
+For positive odd count at depth one short of the target, the actual DFS
+calls the verified leaf lookup. `VerifOneLeft.body_dfs_one_left`
+proves both outcomes for a null policy and poll. It returns EMPTY on
+exhaustion or writes the selected qubit to the last path position and
+records the full witness size. The proof derives the returned index
+range from the table representation and scan trace.
+
+`VerifSeedIndex.body_index_seeds` follows the full `cc_run_level` body
+for the no-policy entry with initially clear block counts. It visits
+seeds in index order and returns the first nonempty child outcome, or
+EMPTY when every seed is exhausted. Each exit records which previous
+seeds are blocked, the seed counter, and the head of a successful path.
+The argument is modular. The concrete flip and recursive DFS must
+satisfy the selected-state, rollback, and result contracts of
+`seed_flip` and `seed_dfs` before this theorem can be used for the CLI.
+The orbit-policy seed callbacks have an additional concrete interface.
+
+The one-move shortcut now connects the physical return value to the
+abstract recursive search. `LeafShortcut.unrolled_equals_search` covers
+every depth and row ordering used by the model. With certified bucket
+coverage and physical CSR/detector layouts, `NativeLeafChoice.native_leaf_misses`
+identifies exhaustion of all free qubits and `native_leaf_found` ties
+the actual returned index to membership, cardinality, zero syndrome and
+nonzero detection. `RowTally.row_tally` computes the exact machine count
+and clash bits for a CSR row. `no_candidate_exact` checks the zero-count
+branch, including the maximum representable 32-bit row length.
+
 The executable MathComp model and the Clight body contracts have separate
 verification boundaries. The native CLI theorem still requires concrete
 hash-table construction, correct packing and block and overlap counters across

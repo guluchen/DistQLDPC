@@ -20,7 +20,9 @@ MODULES = (
     "VerifFlipBody",
     "HashLookup", "HashProbe", "VerifLookup",
     "IndexPacking", "OrbitSeed", "ParityPrune", "VerifClosedPrefix",
+    "RedundantState", "OrbitLevel", "VerifOneLeft", "VerifSeedIndex",
     "LowestWord", "WordScan", "VerifLowestBit",
+    "LeafShortcut", "RowTally", "NativeLeafChoice",
 )
 
 
@@ -60,7 +62,9 @@ def main():
                                             "toggle full body", "flip full body",
                                             "closing_qubit full body",
                                             "dfs closed interior prefix without polling",
-                                            "nonzero-word lowest-bit full body"],
+                                            "nonzero-word lowest-bit full body",
+                                            "dfs one free move with physical lookup",
+                                            "full index-order seed loop under callee contracts"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 
