@@ -17,6 +17,7 @@ MODULES = (
     "ClosureEncoding", "ClosureWord", "ClosureMatrix", "MinimumOverlap", "ChargeBound",
     "ToggleModel", "SyndromeHash", "VerifToggleBody",
     "DetectorRank", "SparseFlipBits", "SparseSyndrome", "SparseRollback",
+    "VerifFlipBody",
 )
 
 
@@ -53,7 +54,7 @@ def main():
         print(json.dumps({"checked_body": "detected",
                           "checked_paths": ["closes count mismatch", "closes full body",
                                             "dfs terminal depth without polling",
-                                            "toggle full body"],
+                                            "toggle full body", "flip full body"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 
