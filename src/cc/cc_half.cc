@@ -734,7 +734,7 @@ template <bool E> inline void HalfSearch::ov_add(int q) {
             ++ovtight_;
             if (E && (int)g >= nk0_) ++ovtightx_;   /* GH-181 sparseov row */
             uint64_t nf = 0;
-            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t) { nf += blk_[*t] == 0; blk_up<E>(*t); }
+            for (const uint32_t *t = kq_.data() + kstart_[g], *te = kq_.data() + kstart_[g + 1]; t < te; ++t) { nf += blk_[*t] == 0; blk_up<E>(*t); }
             ovforbid_ += nf;
         }
     }
@@ -746,7 +746,7 @@ template <bool E> inline void HalfSearch::ov_del(int q) {
     for (uint32_t i = kcstart_[q], e = kcstart_[q + 1]; i < e; i++) {
         const uint32_t g = kcr_[i];
         if (slack_[g]++ == 0)
-            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t) blk_down<E>(*t);
+            for (const uint32_t *t = kq_.data() + kstart_[g], *te = kq_.data() + kstart_[g + 1]; t < te; ++t) blk_down<E>(*t);
     }
 }
 
@@ -761,7 +761,7 @@ template <bool E> inline void HalfSearch::ov_add_tb(int q) {
             ++ovtight_;
             if (E && (int)g >= nk0_) ++ovtightx_;   /* GH-181 sparseov row */
             uint64_t nf = 0;
-            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t)
+            for (const uint32_t *t = kq_.data() + kstart_[g], *te = kq_.data() + kstart_[g + 1]; t < te; ++t)
                 if ((int32_t)*t != x) { nf += blk_[*t] == 0; blk_up<E>(*t); }   /* blk_up: GH-181 xorunit counters */
             ovforbid_ += nf;
         }
@@ -774,7 +774,7 @@ template <bool E> inline void HalfSearch::ov_del_tb(int q) {
         const int32_t x = kex_[g];
         if (x == q) continue;
         if (slack_[g]++ == 0)
-            for (const uint32_t *t = &kq_[kstart_[g]], *te = &kq_[kstart_[g + 1]]; t < te; ++t)
+            for (const uint32_t *t = kq_.data() + kstart_[g], *te = kq_.data() + kstart_[g + 1]; t < te; ++t)
                 if ((int32_t)*t != x) blk_down<E>(*t);
     }
 }
@@ -888,8 +888,8 @@ bool HalfSearch::erasure_test(int extra, uint64_t st) {
     for (int i = 0; i < np_; i++) {
         const uint32_t r = prow_[i];
         const bool red = (int)r >= ux_ && mx_ > 0;   /* GH-181 redundant row (a sum of rows of H) */
-        const uint32_t* t = red ? &xq_[xstart_[r - ux_]] : &rq_[rstart_[r]];
-        const uint32_t* e = red ? &xq_[xstart_[r - ux_ + 1]] : &rq_[rstart_[r + 1]];
+        const uint32_t* t = red ? xq_.data() + xstart_[r - ux_] : rq_.data() + rstart_[r];
+        const uint32_t* e = red ? xq_.data() + xstart_[r - ux_ + 1] : rq_.data() + rstart_[r + 1];
         for (; t < e; ++t)
             if (blk_[*t] == 0) {
                 if (nreg == 128) return false;
@@ -1220,8 +1220,8 @@ bool HalfSearch::xu_propagate(int size, int& forced) {
                 x &= x - 1;
                 if (freecnt_[u] != 1) continue;   /* changed by a forbid earlier in this pass */
                 const uint32_t *a, *e;
-                if ((int)u < ux_) { a = &rq_[rstart_[u]]; e = &rq_[rstart_[u + 1]]; }
-                else { a = &xq_[xstart_[u - ux_]]; e = &xq_[xstart_[u - ux_ + 1]]; }
+                if ((int)u < ux_) { a = rq_.data() + rstart_[u]; e = rq_.data() + rstart_[u + 1]; }
+                else { a = xq_.data() + xstart_[u - ux_]; e = xq_.data() + xstart_[u - ux_ + 1]; }
                 const uint32_t* t = a;
                 while (t < e && blk_[*t]) ++t;
                 if (t == e) fatal("xorunit: free count out of sync");
@@ -1267,8 +1267,8 @@ template <bool E> inline int HalfSearch::choose_children(int size, int forced, i
         while (x) {
             const int r = wi * 64 + __builtin_ctzll(x);
             x &= x - 1;
-            const uint32_t* a = red ? &xq_[xstart_[r - ux_]] : &rq_[rstart_[r]];
-            const uint32_t* e = red ? &xq_[xstart_[r - ux_ + 1]] : &rq_[rstart_[r + 1]];
+            const uint32_t* a = red ? xq_.data() + xstart_[r - ux_] : rq_.data() + rstart_[r];
+            const uint32_t* e = red ? xq_.data() + xstart_[r - ux_ + 1] : rq_.data() + rstart_[r + 1];
             if (pack) {
                 uint32_t cnt = 0, clash = 0;
                 for (const uint32_t* t = a; t < e; ++t) {
@@ -1370,8 +1370,8 @@ template <bool E> inline int HalfSearch::choose_children(int size, int forced, i
     int nc = 0;
     {
         const bool red = E && brow >= ux_;
-        const uint32_t* a = red ? &xq_[xstart_[brow - ux_]] : &rq_[rstart_[brow]];
-        const uint32_t* e = red ? &xq_[xstart_[brow - ux_ + 1]] : &rq_[rstart_[brow + 1]];
+        const uint32_t* a = red ? xq_.data() + xstart_[brow - ux_] : rq_.data() + rstart_[brow];
+        const uint32_t* e = red ? xq_.data() + xstart_[brow - ux_ + 1] : rq_.data() + rstart_[brow + 1];
         for (const uint32_t* t = a; t < e; ++t)
             if (!blk_[*t]) cb[nc++] = *t;
     }
