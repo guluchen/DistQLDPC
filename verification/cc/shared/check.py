@@ -16,7 +16,7 @@ MODULES = (
     "MinimumPrefix", "LevelSearch", "CSSLevelDistance",
     "ClosureEncoding", "ClosureWord", "ClosureMatrix", "MinimumOverlap", "ChargeBound",
     "ToggleModel", "SyndromeHash", "VerifToggleBody",
-    "DetectorRank", "SparseFlipBits", "SparseSyndrome",
+    "DetectorRank", "SparseFlipBits", "SparseSyndrome", "SparseRollback",
 )
 
 
