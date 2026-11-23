@@ -79,6 +79,15 @@ C++ callbacks that form a past-the-end CSR
 pointer with a vector subscript. Private correction `9fa8df2` uses pointer
 addition for those ranges.
 
+In this private derivative, the C odd-row loop calls `cc_lowest_bit`
+on each nonzero word. `LowestWord.lowest_bit_correct` identifies the
+least set position for every such 64-bit word. `WordScan.scan_exact`
+proves that clearing it on each iteration enumerates exactly the set
+positions without repetition, and `scan_finite` establishes termination.
+`VerifLowestBit` checks the global table initializer and the helper body
+in the level traversal's own Clight translation. The original timed C
+uses the compiler builtin and remains separately identified by its hash.
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run

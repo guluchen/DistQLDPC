@@ -20,6 +20,7 @@ MODULES = (
     "VerifFlipBody",
     "HashLookup", "HashProbe", "VerifLookup",
     "IndexPacking", "OrbitSeed", "ParityPrune", "VerifClosedPrefix",
+    "LowestWord", "WordScan", "VerifLowestBit",
 )
 
 
@@ -58,7 +59,8 @@ def main():
                                             "dfs terminal depth without polling",
                                             "toggle full body", "flip full body",
                                             "closing_qubit full body",
-                                            "dfs closed interior prefix without polling"],
+                                            "dfs closed interior prefix without polling",
+                                            "nonzero-word lowest-bit full body"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 

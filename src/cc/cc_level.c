@@ -4,6 +4,22 @@
 #include "cc_level.h"
 #include <stddef.h>
 
+/* Leiserson, Prokop and Randall, "Using de Bruijn Sequences to Index a 1
+ * in a Computer Word" (1998). The table is the inverse of the six high
+ * bits of (2^position * multiplier) modulo 2^64. */
+static const uint8_t bit_position[64] = {
+     0,  1, 48,  2, 57, 49, 28,  3, 61, 58, 50, 42, 38, 29, 17,  4,
+    62, 55, 59, 36, 53, 51, 43, 22, 45, 39, 33, 30, 24, 18, 12,  5,
+    63, 47, 56, 27, 60, 41, 37, 16, 54, 35, 52, 21, 44, 32, 23, 11,
+    46, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19,  9, 13,  8,  7,  6,
+};
+
+static inline int cc_lowest_bit(uint64_t word) {
+    uint64_t isolated = word & (UINT64_C(0) - word);
+    uint64_t index = (isolated * UINT64_C(0x03f79d71b4cb0a89)) >> 58;
+    return bit_position[index];
+}
+
 static inline void toggle(struct cc_level *s, int q) {
     for (uint32_t i = s->cstart[q]; i < s->cstart[q + 1]; ++i) {
         uint32_t r = s->cr[i];
@@ -56,7 +72,7 @@ static inline int index_children(struct cc_level *s, int size, uint32_t *childre
     for (int wi = 0; wi < s->mw; ++wi) {
         uint64_t odd = s->syn[wi];
         while (odd) {
-            int r = 64 * wi + __builtin_ctzll(odd);
+            int r = 64 * wi + cc_lowest_bit(odd);
             odd &= odd - 1;
             uint32_t count = 0, clash = 0;
             uint32_t begin = s->rstart[r], end = s->rstart[r + 1];

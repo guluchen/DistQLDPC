@@ -808,3 +808,10 @@ verified. Coordinate translation and pair-complement/group inversion are
 actual checked rowspace maps, not assumed distance proofs. No geometric,
 single-shot, decoder, threshold or gate property is imported. Generation
 and algebraic checks are not a logical-distance search.
+
+2026-11-24. The private C level traversal replaces the compiler-specific
+count-trailing-zeros call with an unsigned 64-bit multiply and table lookup.
+The caller supplies a nonzero word. The table and its initializer are
+checked at all 64 bit positions. The search keeps its original row order.
+Algorithm credit: Leiserson, Prokop and Randall (1998), as listed in NOTICE.
+The authors list the manuscript on [Keith Randall's MIT page](https://people.csail.mit.edu/randall/).
