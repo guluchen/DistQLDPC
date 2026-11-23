@@ -20,7 +20,9 @@ checked baseline is the C traversal in the C++/C candidate at commit
 | The postcondition of C `toggle` represents the syndrome, its cardinality, the logical response and the syndrome hash of the updated qubit support. | `SparseSyndrome.toggle_pcm` | The CSR slice is the ordered encoding of the distinct incident physical rows. The original counts, packed words and keys represent the input matrices. |
 | Applying the physical sparse column twice restores every bit in the original syndrome buffer, including unused bits in its last word. | `SparseRollback.sparse_words_restore` | All row addresses are within the packed buffer. The scans use the same order and may include repeated entries. |
 | The C function `flip` calls `toggle` and applies any extra row XORs in the supplied CSR slice, preserving the physical odd-row count and logical response from `toggle`. | `VerifFlipBody.body_flip` | Covers a null policy, a policy without extra rows, and a valid redundant-row CSR table. The contract describes the exact word writes. Correct construction of the redundant columns belongs to the caller. |
-| Equal physical syndromes have equal signatures. A complete bucket and the physical leaf test find every eligible leaf even when distinct columns collide. | `SyndromeHash.signature_toggle`, `bucket_complete` | The bucket contains every key match. Concrete table construction and probe termination require separate proofs. |
+| Equal physical syndromes have equal signatures. A complete bucket and the physical leaf test find every eligible leaf even when distinct columns collide. | `SyndromeHash.signature_toggle`, `bucket_complete` | The bucket contains every key match. |
+| The C function `closing_qubit` returns the first free candidate in the matching chain that passes the physical leaf test, or returns −1 on exhaustion. | `VerifLookup.body_closing_qubit`, `HashProbe.physical_lookup` | The arrays satisfy the C bounds. The mathematical absence result additionally requires the bucket to contain every eligible candidate. |
+| Probing a power-of-two table visits every possible slot within one circuit of the table. A sentinel and increasing links give a finite search with a unique result. | `HashProbe.visit_slot`, `finite_lookup`, `unique_lookup` | The word mask represents table size minus one, there is an empty slot, and every nonterminal link goes to a larger in-range qubit. |
 | Sibling exclusion partitions every target that meets the child list. | `SiblingExclusion.dfs_siblings_partition` | The selected child is present and earlier children are absent. The unique index is the first hit in the actual child order. |
 | A terminal C DFS call returns FOUND exactly for zero odd-check count and a lit detector bit, updates the two counters and records the witness size on success. | `VerifDfsLeaf.body_dfs_terminal` | The depth equals the target weight and the poll pointer is null. `DetectorMatrix.terminal_bits_correct` interprets the decision for a represented PCM and detector matrix. |
 
@@ -54,10 +56,10 @@ unit-charge specialization `packing_bound` gives the packing rule.
 
 The executable MathComp model and the Clight body contracts have separate
 verification boundaries. The native CLI theorem still requires concrete
-hash-table construction and lookup, block and overlap counters across
+hash-table construction, correct packing and block and overlap counters across
 recursion and rollback, seed enumeration, the policy callbacks and the
-driver. Native termination also requires that hash probes encounter a match
-or an empty slot and that each collision chain ends. The timed source has
+driver. The C++ table constructor must establish the preconditions of
+`finite_lookup` and bucket coverage. The timed source has
 C++ callbacks that form a past-the-end CSR
 pointer with a vector subscript. Private correction `9fa8df2` uses pointer
 addition for those ranges.
