@@ -507,3 +507,12 @@ packing or charge evidence for these physical counters.
 node. The chooser borrows the shared owner field once. Its returned
 count and candidate pointer reach the following subtree at exactly
 the depth and weight stored in the C structures.
+
+`PreparedInteriorGuards.enter_interior_on_live_flags` follows the C
+function from entry to candidate initialization when there are at least
+two moves left and a positive odd-check count. The poll flag may be
+set if the incremented 64-bit node counter is between deadline checks.
+The parity flag may be set if the remaining budget and the odd count
+agree in parity. The two counters have the values written by C upon
+entry to candidate selection. The proof also checks that appending
+the remaining search to this prefix gives the full DFS body.

@@ -127,6 +127,7 @@ MODULES = (
     "PreparedInitializeScan", "PreparedSelectedReturn", "PreparedChooseReturn",
     "PreparedInteriorEntry", "PreparedEmptyLoops", "PreparedDFSRejected",
     "PreparedPrunedPCM",
+    "PreparedInteriorGuards",
 )
 
 
