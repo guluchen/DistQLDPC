@@ -27,6 +27,11 @@ MODULES = (
     "SiblingCounters", "LeafAPI", "PCMLeafAPI", "VerifPolicyParity",
     "TableFlow", "TableCoverage", "TableMembers", "BuiltLookup",
     "BucketPipeline", "VerifTableBuild", "BuiltPCM",
+    "ClightSelect", "TableTotal", "ErasureProjection", "RowGather",
+    "VerifPhysicalStep", "VerifPolicyStep", "PCMSearchStep",
+    "VerifSiblingRollback", "VerifLastPair", "VerifLastPairClosed",
+    "ClightNested", "OrbitPreferred",
+    "ActiveChildren", "VerifGather", "EpochFreshness", "VerifEpoch",
 )
 
 
@@ -72,7 +77,10 @@ def main():
                                             "non-null policy parity return without polling",
                                             "physical leaf lookup without a supplied outcome",
                                             "leaf index construction from empty arrays",
-                                            "leaf lookup for a physically constructed PCM table"],
+                                            "leaf lookup for a physically constructed PCM table",
+                                            "one-left DFS with the PCM table and a non-null policy",
+                                            "two-move dispatch with open or closed first child",
+                                            "restoration of excluded siblings in the native DFS"],
                           "modules": list(MODULES), "sha256": {
             path.name: digest(path) for path in inputs}}, indent=2))
 

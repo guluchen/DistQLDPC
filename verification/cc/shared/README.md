@@ -155,6 +155,29 @@ positions without repetition, and `scan_finite` establishes termination.
 in the level traversal's own Clight translation. The original timed C
 uses the compiler builtin and remains separately identified by its hash.
 
+The one-move theorem in `PCMSearchStep` connects the positive-syndrome
+DFS body to a physically populated PCM table and the parity-prune contract.
+`VerifLastPair` and `VerifLastPairClosed` check the dispatch after adding
+the first of two moves. A shorter logical prefix sets INCONSISTENT.
+`VerifSiblingRollback` checks the actual native restoration loop for
+arbitrary inherited counters, including repeated qubit labels.
+`TableTotal` supplies existence of a construction history. The finite-set
+theorem in `ErasureProjection` proves a necessary test for completions
+when the projection kills the chosen region; the construction of that
+projection by the production callback is a separate obligation.
+
+The epoch routines are the C definitions reached by both native row packing
+and the policy scratch arrays. `VerifEpoch` verifies ordinary allocation of
+one or two fresh tags and the exact array writes at unsigned rollover.
+`EpochFreshness` shows that no slot bearing a previous tag can be mistaken
+for a fresh slot given the recorded tag-range invariant.
+
+`OrbitPreferred` takes the earliest orbit over all minimum logical
+supports. It proves that a minimum support preferred under that seed's own
+order contains its representative and avoids every exhausted orbit. The C
+row-gather proof preserves the order of the free qubits in a CSR row and
+preserves the unused suffix of the destination buffer.
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run
