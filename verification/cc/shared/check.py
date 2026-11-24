@@ -105,6 +105,15 @@ MODULES = (
     "PreparedPlainCoverage", "PreparedRowCoverage", "PreparedResidualIndex", "PreparedScanFromPCM",
     "PreparedBudgetArena", "PreparedTerminalTrace", "PreparedNativeCallees", "PreparedPairStorage",
     "PreparedAnswerFrame", "PreparedOpenPair", "PreparedPrefixKernel", "PreparedBudgetDriver",
+    "PreparedCallerLocals", "PreparedClosedPairMemory", "PreparedClosedPair",
+    "PreparedLookupMatrix", "PreparedPairBracket", "PreparedClosedBracket",
+    "PreparedWitnessRegister", "PreparedPairTrace", "PreparedPairCSS",
+    "PreparedPhysicalPair", "PreparedShortCSS", "PreparedPairLedger",
+    "PreparedPairEvent", "PreparedLeafWorkspace", "PreparedBothLeaves",
+    "PreparedLeafVisit", "PreparedInstalledScan", "PreparedInstalledUndo",
+    "PreparedLeafLoopBridge", "PreparedPCMLeafVisit", "PreparedLeafMinimum",
+    "PreparedLeafAtPath", "PreparedReusableBook", "PreparedInitialLookup",
+    "PreparedSelectedBlocks", "PreparedChildPrefix",
 )
 
 

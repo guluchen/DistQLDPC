@@ -403,12 +403,26 @@ and any enabled overlap updates to preserve the other target qubits.
 `PreparedTerminalTrace` binds a terminal FOUND to the active prefix of
 the actual C trace buffer. `PreparedOpenPair` verifies the two-move
 lookup dispatch with the same block, syndrome and key arrays used by
-the parent. The compiled sibling loop for exactly two remaining moves,
-the producer of the chosen rows, and the initialization of these shared
-representations still need integration.
+the parent.
 
 The installed seed loop and its DFS callee share the weight stored in the C
 level. `PreparedBudgetDriver.one_weight_through_recursive_driver` specializes
 the search report at that weight on every eligible seed, including when the
 same witness buffer is reused for successive levels. It assumes the seed
 tables, callback admission condition and recursive DFS contract.
+
+At two remaining moves, `PreparedPCMLeafVisit.actual_fast_sibling_loop`
+verifies the compiled sibling and undo loops on the shared flip heap and
+candidate arena. If the first flip closes the syndrome, the early
+return saves the shorter witness length. Otherwise the hash-table lookup
+checks the remaining qubit. The individual branch theorems in
+`PreparedShortCSS` and `PreparedPhysicalPair` relate the stored trace
+and length to a CSS logical witness.
+
+`PreparedInitialLookup` derives the live lookup preconditions from a
+valid initial PCM representation and a protected prefix.
+`PreparedChildPrefix` proves that the filtered row extends that prefix
+with a fresh qubit and keeps the selected qubits blocked. The loop
+theorem takes the reachable-state representation and the interpretation
+of the returned trace as premises. The C++ host initialization, row
+producer and general recursive DFS body still require integration.
