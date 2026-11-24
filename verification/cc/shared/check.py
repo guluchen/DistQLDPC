@@ -49,6 +49,10 @@ MODULES = (
     "FlipRoundtrip",
     "VerifOrbitBlock",
     "VerifChildVisit",
+    "SiblingSearchCoverage",
+    "VerifVisitRestoration",
+    "NativePackingScan",
+    "OverlapRowState",
 )
 
 

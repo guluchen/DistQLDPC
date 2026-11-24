@@ -26,6 +26,8 @@ Definition child_array children xs :=
  data_at Tsh (tarray tuint (Zlength xs)) (map (fun q=>Vint (Int.repr q)) xs) children.
 
 Record nested_calls := {
+  nested_policy : val;
+  nested_policy_valid : is_pointer_or_null nested_policy;
   active_support : val -> option Z -> mpred;
   child_outcome : list int -> Z -> Z;
   returned_trace : list int -> Z -> list int -> Prop
@@ -34,7 +36,7 @@ Definition enter_child (c:nested_calls) : ident*funspec :=
  DECLARE _flip
  WITH s:val, q:Z, enter:bool
  PRE [tptr level_type,tptr (Tstruct _cc_level_policy noattr),tint]
-   PROP(0<=q<=Int.max_signed) PARAMS(s;nullval;Vint (Int.repr q))
+   PROP(0<=q<=Int.max_signed) PARAMS(s;nested_policy c;Vint (Int.repr q))
    SEP(active_support c s (if enter then None else Some q))
  POST [tvoid] PROP() RETURN() SEP(active_support c s (if enter then Some q else None)).
 Definition recursive_child (c:nested_calls) : ident*funspec :=
@@ -43,7 +45,7 @@ Definition recursive_child (c:nested_calls) : ident*funspec :=
  PRE [tptr level_type,tptr (Tstruct _cc_level_policy noattr),tint]
    PROP(1<=depth<w-2; w<=Int.max_signed; w<=Zlength path;
      0<=q<Zlength blocks; Znth depth path=Int.repr q)
-   PARAMS(s;nullval;Vint (Int.repr (depth+1)))
+   PARAMS(s;nested_policy c;Vint (Int.repr (depth+1)))
    SEP(child_fields s cp bp w blocks path;active_support c s (Some q))
  POST [tint] EX next:list int, PROP(0<=child_outcome c blocks q<=3;Zlength next=Zlength path;
      sublist 0 (depth+1) next=sublist 0 (depth+1) path;
@@ -61,8 +63,8 @@ Definition visit_finished c xs base i r :=
  (0<=i<Zlength xs /\ r=outcome_at c xs base i /\ r<>0)).
 Definition visit_trace c xs base i r tail :=
   r<>0 -> returned_trace c (added xs base (i+1)) (Znth i xs) tail.
-Definition visit_loc s children depth n i r :=
- [temp _s s;temp _children children;temp _policy nullval;temp _update_overlap (Vint Int.zero);
+Definition visit_loc c s children depth n i r :=
+ [temp _s s;temp _children children;temp _policy (nested_policy c);temp _update_overlap (Vint Int.zero);
   temp _size (Vint (Int.repr depth));temp _count (Vint (Int.repr n));
   temp _excluded (Vint (Int.repr i));temp _result (Vint (Int.repr r))].
 
@@ -70,26 +72,26 @@ Theorem semax_recursive_siblings {Espec:OracleKind} c s children cp bp xs base p
   1<=depth<w-2 -> w<=Int.max_signed -> Zlength xs<=Int.max_signed ->
   Zlength base<=Int.max_signed -> w<=Zlength path -> in_array (Zlength base) xs ->
   semax (func_tycontext f_dfs Vprog (NestedGprog c) [])
-   (PROPx nil (LOCALx (visit_loc s children depth (Zlength xs) 0 0)
+   (PROPx nil (LOCALx (visit_loc c s children depth (Zlength xs) 0 0)
      (SEPx [child_fields s cp bp w base path;child_array children xs;active_support c s None])))
    native_visit
    (normal_ret_assert (EX i:Z, EX r:Z, EX tail:list int,
      PROPx [visit_finished c xs base i r; visit_trace c xs base i r tail; Zlength tail=Zlength path; sublist 0 depth tail=sublist 0 depth path]
-     (LOCALx (visit_loc s children depth (Zlength xs) i r)
+     (LOCALx (visit_loc c s children depth (Zlength xs) i r)
        (SEPx [child_fields s cp bp w (added xs base i) tail;child_array children xs;active_support c s None])))).
 Proof.
-  intros deep weight count limit pathlen range. unfold native_visit,visit_loc. abbreviate_semax.
+  intros deep weight count limit pathlen range. pose proof (nested_policy_valid c) as policy_ok. unfold native_visit,visit_loc. abbreviate_semax.
   forward.
   forward_loop
     (EX i:Z, EX cur:list int,
      PROP(0<=i<=Zlength xs;clear_prefix c xs base i;Zlength cur=Zlength path;sublist 0 depth cur=sublist 0 depth path)
      LOCAL(temp _i (Vint (Int.repr i));temp _excluded (Vint (Int.repr i));temp _result (Vint Int.zero);
-       temp _s s;temp _children children;temp _policy nullval;temp _update_overlap (Vint Int.zero);
+       temp _s s;temp _children children;temp _policy (nested_policy c);temp _update_overlap (Vint Int.zero);
        temp _size (Vint (Int.repr depth));temp _count (Vint (Int.repr (Zlength xs))))
      SEP(child_fields s cp bp w (added xs base i) cur;child_array children xs;active_support c s None))%assert
     break: (EX i:Z, EX r:Z, EX cur:list int,
       PROPx [visit_finished c xs base i r;visit_trace c xs base i r cur;Zlength cur=Zlength path;sublist 0 depth cur=sublist 0 depth path]
-       (LOCALx (visit_loc s children depth (Zlength xs) i r)
+       (LOCALx (visit_loc c s children depth (Zlength xs) i r)
         (SEPx [child_fields s cp bp w (added xs base i) cur;child_array children xs;active_support c s None])))%assert.
   - Exists 0 path;unfold added;rewrite sublist_nil by lia;entailer!.
     + unfold clear_prefix;intros;lia.
