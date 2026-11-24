@@ -32,6 +32,8 @@ MODULES = (
     "VerifSiblingRollback", "VerifLastPair", "VerifLastPairClosed",
     "ClightNested", "OrbitPreferred",
     "ActiveChildren", "VerifGather", "EpochFreshness", "VerifEpoch",
+    "PreferredTraversal", "VerifRowTally", "VerifMarkRow", "RowMarkSemantics",
+    "VerifPackCallback",
 )
 
 
@@ -58,13 +60,17 @@ def main():
             shutil.copyfile(proof_dir / proof.name, proof)
         subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
                         str(ast), "cc_level.c"], cwd=source_dir, check=True)
-        for module in [ast, *proofs]:
+        pack_ast = build / "pack_ast.v"
+        subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
+                        str(pack_ast), "pack_row_ast.c"], cwd=proof_dir, check=True)
+        for module in [ast, pack_ast, *proofs]:
             subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
-        check_targets = [arg for name in ("level_ast", *MODULES)
+        check_targets = [arg for name in ("level_ast", "pack_ast", *MODULES)
                          for arg in ("-norec", name)]
         subprocess.run(["coqchk", "-silent", *flags, *check_targets],
                        cwd=build, check=True)
-        inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", source_dir / "cc_epoch.h", ast, *proofs]
+        inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", source_dir / "cc_epoch.h",
+                  source_dir / "cc_pack_row.h", proof_dir / "pack_row_ast.c", ast, pack_ast, *proofs]
         print(json.dumps({"checked_body": "detected",
                           "checked_paths": ["closes count mismatch", "closes full body",
                                             "dfs terminal depth without polling",

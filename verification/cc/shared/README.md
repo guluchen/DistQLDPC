@@ -178,6 +178,22 @@ order contains its representative and avoids every exhausted orbit. The C
 row-gather proof preserves the order of the free qubits in a CSR row and
 preserves the unused suffix of the destination buffer.
 
+The production C++ policy calls the C functions in `src/cc/cc_pack_row.h`.
+The checker translates those same definitions through `pack_row_ast.c`.
+`VerifPackCallback.callback_tally_body` proves the free count and stamp clash
+for the entire declared row. `callback_mark_body` proves exactly which
+array updates the second function performs. Both contracts allow a null
+row pointer when the row has zero length.
+
+The differential fixture `test_pack_integration.cpp` drives the production
+`HalfSearch` entry point on connected repetition-code graphs, with two seeds
+and three policy configurations. To check one built tree from its root, run
+
+```sh
+c++ -O2 -std=c++17 -Isrc/cc verification/cc/shared/test_pack_integration.cpp build/cc_half.o build/cc_level.o -lz -o /tmp/cc-pack-integration
+/tmp/cc-pack-integration
+```
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run
