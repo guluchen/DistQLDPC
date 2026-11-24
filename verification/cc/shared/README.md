@@ -436,3 +436,27 @@ selected odd row covers a compatible minimum at this weight. It applies
 to the compiled search and undo loops with two moves remaining. The
 C++ host initialization, row producer and complete DFS body still
 require integration.
+
+`PreparedCSSRootPost.installed_root_proves_css_post` verifies the public
+C seed loop against a CSS distance contract. An EMPTY result excludes
+the current half distance when the orbit representatives cover a
+preferred minimum and the recursive calls satisfy their contract.
+A full-weight hit leaves a checked CSS witness in the trace. A shorter
+hit retains a valid prefix at its own weight. Given the host's detector
+rank checks and a certified incoming lower bound, `PreparedCertifiedBounds`
+also relates the returned status to the canonical half distance. An
+interrupted search supplies no tighter bound.
+
+`PreparedPCMInterior` checks the recursive sibling and undo statements
+under the same contract and machine weight as the caller. It requires
+a covering odd row and the survival of the preferred target. The
+overlap proofs derive this survival from the effective stabilizer rows,
+their slack and the chosen representative's rank order. Separate
+proofs cover the parity cut, early closure, last-qubit lookup and full
+weight. `PreparedReadWitness` checks the signed length written by the
+two-move leaf against the corresponding prefix of the C array.
+
+The whole optimized command still requires a proof of the general DFS
+function body, initialization and the policy that supplies the rows and
+callbacks. These local and conditional guarantees apply to the C
+traversal used by the optimized binary.

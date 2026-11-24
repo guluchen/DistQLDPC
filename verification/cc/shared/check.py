@@ -115,6 +115,10 @@ MODULES = (
     "PreparedLeafAtPath", "PreparedReusableBook", "PreparedInitialLookup",
     "PreparedSelectedBlocks", "PreparedChildPrefix",
     "PreparedFastCoverage", "PreparedObservedWitness", "PreparedLeafReport", "PreparedPCMFastSearch",
+    "PreparedInteriorReport", "PreparedPCMInterior", "PreparedPreferredOverlap", "PreparedPreferredSeed",
+    "PreparedRootWitness", "PreparedWeightCases", "PreparedCutReports", "PreparedFinalLookup",
+    "PreparedZeroPCM", "PreparedReadWitness", "PreparedProtectedCounts", "PreparedSeedSlack",
+    "PreparedCertifiedBounds", "PreparedCSSRootPost",
 )
 
 
