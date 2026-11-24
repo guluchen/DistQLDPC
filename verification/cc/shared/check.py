@@ -119,6 +119,9 @@ MODULES = (
     "PreparedRootWitness", "PreparedWeightCases", "PreparedCutReports", "PreparedFinalLookup",
     "PreparedZeroPCM", "PreparedReadWitness", "PreparedProtectedCounts", "PreparedSeedSlack",
     "PreparedCertifiedBounds", "PreparedCSSRootPost",
+    "PreparedPackingVerdict", "PreparedOrbitCredit", "PreparedReachedOrbit",
+    "PreparedZeroLimitRows", "PreparedSeedAdmission", "PreparedVerifiedSeedRoot",
+    "PreparedReturnTrace",
 )
 
 

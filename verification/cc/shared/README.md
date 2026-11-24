@@ -460,3 +460,20 @@ The whole optimized command still requires a proof of the general DFS
 function body, initialization and the policy that supplies the rows and
 callbacks. These local and conditional guarantees apply to the C
 traversal used by the optimized binary.
+
+`PreparedVerifiedSeedRoot.prepared_root_from_seed_tables` derives seed
+admission from the contents of the orbit, block and overlap tables. The
+proof counts earlier orbit visits and tracks the exemption on each
+zero-limit row as the seed changes. It shows that a preferred minimum
+survives through its earliest representative. The initial counts,
+effective stabilizer rows, orbit ordering and CSR table representation
+are obligations of the caller. The result uses the recursive DFS
+contract at the actual weight.
+
+`PreparedPackingVerdict` establishes that a failed packing scan or an
+over-budget feasible charge excludes compatible minima. The rows may
+include redundant checks when their kernel contains the input kernel.
+`PreparedReturnTrace` checks the final sampling branch and the return
+instruction of DFS. Both paths return the result stored in the C local
+and preserve the trace. The optional callback must return its borrowed
+sample storage.
