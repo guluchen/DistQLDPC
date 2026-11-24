@@ -34,6 +34,17 @@ MODULES = (
     "ActiveChildren", "VerifGather", "EpochFreshness", "VerifEpoch",
     "PreferredTraversal", "VerifRowTally", "VerifMarkRow", "RowMarkSemantics",
     "VerifPackCallback",
+    "ErasureBacksub",
+    "ErasureElimination",
+    "CSRWordTraversal",
+    "ColumnParityPCM",
+    "CertifiedSchedule",
+    "DualDistance",
+    "IndexRowBridge",
+    "EvenOverlapLimit",
+    "CSSSearchSchedule",
+    "ErasureBasisMap",
+    "VerifPollAbort",
 )
 
 
