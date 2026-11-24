@@ -516,3 +516,12 @@ The parity flag may be set if the remaining budget and the odd count
 agree in parity. The two counters have the values written by C upon
 entry to candidate selection. The proof also checks that appending
 the remaining search to this prefix gives the full DFS body.
+
+`PreparedChosenPhysicalRow.visit_chosen_physical_row` connects the actual
+chooser call to the recursive sibling loop, rollback and return. Its
+contract requires the chooser to write the available qubits of a
+selected odd PCM row into the current depth's buffer and return the
+matching count. The proof lends the chooser pointer and the current odd
+count from the same heap used by the recursive search. It applies with
+at least three moves left, a disabled erasure sample and the recursive
+callee and overlap contracts.

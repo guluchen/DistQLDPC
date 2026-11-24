@@ -128,6 +128,7 @@ MODULES = (
     "PreparedInteriorEntry", "PreparedEmptyLoops", "PreparedDFSRejected",
     "PreparedPrunedPCM",
     "PreparedInteriorGuards",
+    "PreparedChosenPhysicalRow",
 )
 
 
