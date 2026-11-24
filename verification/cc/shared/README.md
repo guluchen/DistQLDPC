@@ -364,3 +364,28 @@ slice, including redundant rows. The prepared DFS proofs cover polling,
 terminal depth, an early closed prefix, the parity cut and the one-move
 lookup. A complete recursive DFS refinement, the C++ policy producer
 and whole-program termination are still open.
+
+`PreparedPCMDepth.body_flip_from_one_pcm` proves the production `flip` body
+for every legal prefix of an encoded PCM. The assumptions describe the
+initial physical rows, CSR bounds, and detector storage. `PhysicalPrefixInvariant`
+uses MathComp finite sets to propagate those properties through the path.
+
+`PreparedSiblingRestore.complete_recursive_sibling_scan` covers the child
+loop with overlap enabled and more than three qubits left to choose. It
+uses the same DFS contract at every depth. On every exit it restores the
+shared block counters, slack and incoming path prefix. EMPTY records every
+visited child as empty. An interrupted call records only the preceding
+empty siblings. `PreparedTargetCoverage` connects those records to the
+first child that retains a target. Its hypothesis about that child's
+recursive report remains a proof obligation for the full DFS body.
+
+The compiled terminal DFS branch now has a CSS-level postcondition in
+`PreparedCSSTerminal`. For an encoded state, distinct trace entries and
+a valid detector basis, a noninterrupted call at the weight limit returns
+FOUND exactly when the trace is a nontrivial logical operator. Its Hamming
+weight is the number of selected qubits. A due poll may return ABORT and
+preserves the previous witness size. `PreparedMatrixPath` transports the
+required matrix products across any legal sequence of flips.
+`PreparedArenaScan` keeps the current candidate row in the parent and
+lends the array suffix to deeper calls. The recursive callee and the
+C++ candidate producer still have separate refinement obligations.

@@ -29,35 +29,36 @@ Proof.
  intros slot len save;rewrite <-stored_prefix in save by assumption.
  unfold active_prefix in *;apply (proj1 (@chosen_trace depth before q after slot len save)).
 Qed.
-Theorem recursive_siblings_overlap_enabled {Espec:OracleKind} c heap report bits s cp children xs root path w depth :
+Theorem recursive_siblings_using_loan {Espec:OracleKind} c heap (dfs_heap:node_storage) (loan:mpred) report bits s cp children xs root path w depth :
  1<=depth<w-3 -> w<=Int.max_signed -> w<=Zlength path ->
  Zlength xs<=Int.max_signed -> 0<Zlength (blocked root)<=Int.max_signed ->
  in_array (Zlength (blocked root)) xs -> is_pointer_or_null (callback_owner c) ->
  (forall i,0<=i<Zlength xs ->
    check_child (geometry c) (Znth i xs) (sibling_state root xs (i+1))) ->
- semax (func_tycontext f_dfs prepared_vars (depth_context c heap report bits) [])
+ (forall node,Zlength node=depth+1 -> dfs_heap s node=(heap s node * loan)%logic) ->
+ semax (func_tycontext f_dfs prepared_vars (prepared_calls (snd (depth_flip c heap bits)) (snd (depth_dfs c dfs_heap report bits))) [])
    (PROPx nil (LOCALx (scan_loc c s children depth (Zlength xs) 0 0 bits)
-     (SEPx [enabled_memory c s cp w path root;heap s (active_prefix depth path);child_array children xs])))
+     (SEPx [enabled_memory c s cp w path root;heap s (active_prefix depth path);loan;child_array children xs])))
    search_children
    (normal_ret_assert (EX i:Z,EX r:Z,EX st:snapshot,EX tail:list int,
     PROPx [scan_outcome report (geometry c) root xs (active_prefix depth path) i r tail;keeps_witness c root xs i r tail;0<=r<=3;
      same_search st (sibling_state root xs i);Zlength tail=Zlength path;active_prefix depth tail=active_prefix depth path]
     (LOCALx (scan_loc c s children depth (Zlength xs) i r bits)
-      (SEPx [enabled_memory c s cp w tail st;heap s (active_prefix depth path);child_array children xs])))).
+      (SEPx [enabled_memory c s cp w tail st;heap s (active_prefix depth path);loan;child_array children xs])))).
 Proof.
- intros deep cap plen count total range owner safe.
+ intros deep cap plen count total range owner safe join.
  pose proof (nested_policy_valid (nested c)) as validp.
  unfold scan_loc,search_children;abbreviate_semax;forward.
  forward_loop (EX i:Z,EX st:snapshot,EX cur:list int,
    PROPx [0<=i<=Zlength xs;prior_empty report (geometry c) root xs (active_prefix depth path) i;same_search st (sibling_state root xs i);
           Zlength cur=Zlength path;active_prefix depth cur=active_prefix depth path]
    (LOCALx (temp _i (Vint (Int.repr i))::scan_loc c s children depth (Zlength xs) i 0 bits)
-    (SEPx [enabled_memory c s cp w cur st;heap s (active_prefix depth path);child_array children xs])))%assert
+    (SEPx [enabled_memory c s cp w cur st;heap s (active_prefix depth path);loan;child_array children xs])))%assert
  break: (EX i:Z,EX r:Z,EX st:snapshot,EX tail:list int,
     PROPx [scan_outcome report (geometry c) root xs (active_prefix depth path) i r tail;keeps_witness c root xs i r tail;0<=r<=3;
      same_search st (sibling_state root xs i);Zlength tail=Zlength path;active_prefix depth tail=active_prefix depth path]
     (LOCALx (scan_loc c s children depth (Zlength xs) i r bits)
-      (SEPx [enabled_memory c s cp w tail st;heap s (active_prefix depth path);child_array children xs])))%assert.
+      (SEPx [enabled_memory c s cp w tail st;heap s (active_prefix depth path);loan;child_array children xs])))%assert.
  - Exists 0 root path;unfold scan_loc;entailer!;try apply derives_refl.
    split;[unfold prior_empty;intros;lia|apply initial_siblings].
  - Intros i st cur;unfold scan_loc;forward_if.
@@ -82,16 +83,18 @@ Proof.
          Ssequence _ (Ssequence _ (Ssequence _ (Ssequence _ (Ssequence _ (Ssequence _ ?rest))))) => rest
        end in
      apply (semax_unfold_seq (Ssequence child_bracket suffix) body eq_refl) end.
+   assert (node_len:Zlength (append_qubit cur depth q)=depth+1).
+   { unfold append_qubit,active_prefix;rewrite Zlength_app,Zlength_sublist by lia;cbn;lia. }
    eapply semax_seq'.
    { assert (sel_len: Zlength (blocked (selected st q))=Zlength (blocked st)) by
        (unfold selected,counters;cbn [blocked];unfold adjust;rewrite upd_Znth_Zlength by lia;reflexivity).
-     eapply semax_pre;[|apply (@visit_with_active_column Espec c heap report bits s cp w depth q (selected st q) cur children (Zlength xs) i (child_array children xs))];
+     eapply semax_pre;[|apply (@visit_with_declared_flip Espec (snd (depth_flip c heap bits)) c dfs_heap report bits s cp w depth q (selected st q) cur children (Zlength xs) i (child_array children xs))];
        try eassumption;try lia.
-     unfold descent_loc,append_qubit;rewrite child_owner_view by lia;unfold child_fields,child_array.
+     rewrite (join _ node_len);unfold descent_loc,append_qubit;rewrite child_owner_view by lia;unfold child_fields,child_array.
      rewrite sel_len;unfold selected,counters,view_without_blocks;cbn [slack blocked tight tight_extra forbidden].
      match goal with K:active_prefix depth cur=active_prefix depth path |- _=>rewrite K end.
      unfold adjust,q;entailer!;try apply derives_refl. }
-   Intros final tail r;unfold descent_loc.
+   Intros final tail r;unfold descent_loc;rewrite (join _ node_len);Intros.
    set (entry:=after_column (geometry c) q true (selected st q)) in *.
    assert (agree:same_search entry (child_entry (geometry c) root xs i)).
    { apply physical_child_congruence;apply selected_sibling;assumption. }
@@ -140,4 +143,27 @@ Proof.
      unfold adjust;rewrite upd_Znth_map;entailer!;try apply derives_refl.
 
  - Intros i r st tail;Exists i r st tail;unfold scan_loc;entailer!;try apply derives_refl.
+Qed.
+
+Theorem recursive_siblings_overlap_enabled {Espec:OracleKind} c heap report bits s cp children xs root path w depth :
+ 1<=depth<w-3 -> w<=Int.max_signed -> w<=Zlength path ->
+ Zlength xs<=Int.max_signed -> 0<Zlength (blocked root)<=Int.max_signed ->
+ in_array (Zlength (blocked root)) xs -> is_pointer_or_null (callback_owner c) ->
+ (forall i,0<=i<Zlength xs ->
+   check_child (geometry c) (Znth i xs) (sibling_state root xs (i+1))) ->
+ semax (func_tycontext f_dfs prepared_vars (depth_context c heap report bits) [])
+   (PROPx nil (LOCALx (scan_loc c s children depth (Zlength xs) 0 0 bits)
+     (SEPx [enabled_memory c s cp w path root;heap s (active_prefix depth path);child_array children xs])))
+   search_children
+   (normal_ret_assert (EX i:Z,EX r:Z,EX st:snapshot,EX tail:list int,
+    PROPx [scan_outcome report (geometry c) root xs (active_prefix depth path) i r tail;keeps_witness c root xs i r tail;0<=r<=3;
+     same_search st (sibling_state root xs i);Zlength tail=Zlength path;active_prefix depth tail=active_prefix depth path]
+    (LOCALx (scan_loc c s children depth (Zlength xs) i r bits)
+      (SEPx [enabled_memory c s cp w tail st;heap s (active_prefix depth path);child_array children xs])))).
+Proof.
+ intros deep cap plen count total range owner safe;eapply semax_post'.
+ 2:{ eapply semax_pre;[|apply (@recursive_siblings_using_loan Espec c heap heap emp report bits s cp children xs root path w depth)];
+      try eassumption;try solve [intros;rewrite sepcon_emp;reflexivity].
+     unfold scan_loc;entailer!;cancel. }
+ Intros i r st tail;Exists i r st tail;unfold scan_loc;entailer!;cancel.
 Qed.

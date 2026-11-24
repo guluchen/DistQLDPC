@@ -9,11 +9,11 @@ Local Open Scope Z_scope.
 
 (* An installed overlap callback stays in the level state even where the
    cached update flag is false, in particular at w - depth = 3. *)
-Theorem recursive_child_without_update {Espec:OracleKind} c heap report bits s cp w depth q parent path children count index frame:
+Theorem plain_with_declared_flip {Espec:OracleKind} (flip:funspec) c heap report bits s cp w depth q parent path children count index frame:
  1<=depth<w-2 -> w<=Int.max_signed -> w<=Zlength path -> 0<=q<Zlength (blocked parent) ->
  let g:=geometry c in let prefix:=append_qubit path depth q in
  let locs:=descent_loc c s depth q children count index bits false in
- semax (func_tycontext f_dfs prepared_vars (depth_context c heap report bits) [])
+ semax (func_tycontext f_dfs prepared_vars (prepared_calls flip (snd (depth_dfs c heap report bits))) [])
  (PROPx [] (LOCALx locs (SEPx [enabled_memory c s cp w path parent;heap s prefix;frame])))
  child_bracket (normal_ret_assert (EX final:snapshot,EX tail:list int,EX r:Z,
  PROPx [same_search final parent;0<=r<=3;Zlength tail=Zlength path;active_prefix (depth+1) tail=prefix;
@@ -40,3 +40,6 @@ Proof.
  forward_if;try solve [contradiction|congruence|discriminate];forward.
  Exists child tail r;rewrite save in *;unfold enabled_memory,with_rows,g;cbn [nested geometry callback_owner callback_addr conn];entailer!;try apply derives_refl.
 Qed.
+
+Definition recursive_child_without_update {Espec:OracleKind} (c:policy_state) (heap:node_storage) (report:node_report) (bits:int):=
+ @plain_with_declared_flip Espec (snd (depth_flip c heap bits)) c heap report bits.

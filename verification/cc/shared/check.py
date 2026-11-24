@@ -99,6 +99,9 @@ MODULES = (
     "PreparedSiblingRestore", "PreparedDriverDepth", "PreparedPairDispatch",
     "PreparedOverlapDepth", "PreparedVisitAccounting", "PreparedSampling",
     "PreparedCandidateSlice", "PreparedTargetCoverage", "PreparedChoiceCall",
+    "PreparedCandidateArena", "PreparedArenaContext", "PreparedArenaRoot", "PreparedArenaScan",
+    "PreparedOwnerFields", "PreparedTerminalPoll", "PreparedMatrixResponse", "PreparedMatrixPath",
+    "PreparedWitnessWeight", "PreparedBudgetContract", "PreparedCSSTerminal",
 )
 
 

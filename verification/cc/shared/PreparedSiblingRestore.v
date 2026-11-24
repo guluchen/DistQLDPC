@@ -10,11 +10,11 @@ Local Open Scope Z_scope.
 #[local] Existing Instance VerifDetected.CompSpecs.
 
 Definition undo_children:statement:=ltac:(native_fragment (counts_on _i__1) f_dfs).
-Theorem enabled_undo {Espec:OracleKind} c heap report bits s cp children xs root st path w depth stop result (prefix:list int) :
+Theorem undo_in_declared_context {Espec:OracleKind} (flip dfs:funspec) c (heap:node_storage) bits s cp children xs root st path w depth stop result (prefix:list int) :
  Zlength xs<=Int.max_signed -> 0<Zlength (blocked root)<=Int.max_signed ->
  in_array (Zlength (blocked root)) xs -> 0<=stop<=Zlength xs ->
  same_search st (sibling_state root xs stop) ->
- semax (func_tycontext f_dfs prepared_vars (depth_context c heap report bits) [])
+ semax (func_tycontext f_dfs prepared_vars (prepared_calls flip dfs) [])
   (PROPx nil (LOCALx (scan_loc c s children depth (Zlength xs) stop result bits)
     (SEPx [enabled_memory c s cp w path st;heap s prefix;child_array children xs])))
   undo_children
@@ -43,6 +43,10 @@ Proof.
  - rewrite replay_stop by exact range;unfold scan_loc;entailer!.
 Qed.
 
+
+Definition enabled_undo {Espec:OracleKind} (c:policy_state) (heap:node_storage) (report:node_report) (bits:int):=
+ @undo_in_declared_context Espec (snd (depth_flip c heap bits)) (snd (depth_dfs c heap report bits)) c heap bits.
+
 (* The loop returns the prefix index for all return codes. The undo phase
    consumes exactly that index, even when the last child timed out. *)
 Theorem complete_recursive_sibling_scan {Espec:OracleKind} c heap report bits s cp children xs root path w depth:
@@ -68,6 +72,37 @@ Proof.
   destruct H as [_ [[e _]|[p _]]];pose proof (Zlength_nonneg xs);lia end).
  eapply semax_post'.
  2:{ apply (@enabled_undo Espec c heap report bits s cp children xs root st tail w depth i r (active_prefix depth path));assumption. }
+ assert (restored:same_search (restore_fields st (blocked root)) root).
+ { split;[match goal with H:same_search st _ |- _=>exact (proj1 H) end|reflexivity]. }
+ Exists i r (restore_fields st (blocked root)) tail;unfold scan_loc;entailer!;apply derives_refl.
+Qed.
+
+Theorem restore_siblings_with_loan {Espec:OracleKind} c heap (dfs_heap:node_storage) (loan:mpred) report bits s cp children xs root path w depth:
+ 1<=depth<w-3 -> w<=Int.max_signed -> w<=Zlength path -> Zlength xs<=Int.max_signed ->
+ 0<Zlength (blocked root)<=Int.max_signed -> in_array (Zlength (blocked root)) xs ->
+ is_pointer_or_null (callback_owner c) ->
+ (forall i,0<=i<Zlength xs -> check_child (geometry c) (Znth i xs) (sibling_state root xs (i+1))) ->
+ (forall node,Zlength node=depth+1 -> dfs_heap s node=(heap s node * loan)%logic) ->
+ semax (func_tycontext f_dfs prepared_vars (prepared_calls (snd (depth_flip c heap bits)) (snd (depth_dfs c dfs_heap report bits))) [])
+ (PROPx [] (LOCALx (scan_loc c s children depth (Zlength xs) 0 0 bits)
+ (SEPx [enabled_memory c s cp w path root;heap s (active_prefix depth path);loan;child_array children xs])))
+ (Ssequence PreparedChildCall.search_children undo_children)
+ (normal_ret_assert (EX i:Z,EX r:Z,EX st:snapshot,EX tail:list int,
+  PROPx [scan_outcome report (geometry c) root xs (active_prefix depth path) i r tail;
+   keeps_witness c root xs i r tail;0<=r<=3;same_search st root;Zlength tail=Zlength path;
+   active_prefix depth tail=active_prefix depth path]
+  (LOCALx (scan_loc c s children depth (Zlength xs) i r bits)
+    (SEPx [enabled_memory c s cp w tail st;heap s (active_prefix depth path);loan;child_array children xs])))).
+Proof.
+ intros deep cap room bound total keys own safe join;eapply semax_seq'.
+ { apply recursive_siblings_using_loan;assumption. }
+ Intros i r st tail.
+ assert (seen:0<=i<=Zlength xs) by (match goal with H:scan_outcome _ _ _ _ _ i r tail |- _=>
+  destruct H as [_ [[e _]|[p _]]];pose proof (Zlength_nonneg xs);lia end).
+ eapply semax_post'.
+ 2:{ eapply semax_pre;[|apply (@undo_in_declared_context Espec (snd (depth_flip c heap bits)) (snd (depth_dfs c dfs_heap report bits)) c
+       (fun s prefix=>(heap s prefix * loan)%logic) bits s cp children xs root st tail w depth i r (active_prefix depth path))];
+       try eassumption;unfold scan_loc;entailer!;cancel. }
  assert (restored:same_search (restore_fields st (blocked root)) root).
  { split;[match goal with H:same_search st _ |- _=>exact (proj1 H) end|reflexivity]. }
  Exists i r (restore_fields st (blocked root)) tail;unfold scan_loc;entailer!;apply derives_refl.
