@@ -79,6 +79,12 @@ MODULES = (
     "EmptySeedColumns", "EmptyOrbitBlocks", "VerifSeedBranch", "VerifRootCall",
     "VerifRootAdmission", "DynamicOverlapCallback", "SeedCallFrame", "RootOwnerMemory",
     "SeedFramedCallback",
+    "ActualOrbitCommit", "RootSearchPhases", "StableSeedPreference", "UniversalRootSearch",
+    "UniformSeedControl", "LiveRootPolicy", "OrbitHeapLoan", "PCMSeedSafety",
+    "SeedTableSafety", "BlockTableSafety", "RootTableInvariant", "SeedExecution",
+    "PreparedSeed", "RootDriver", "ConcreteSeedSafety", "FunctionPointerGuard",
+    "PreparedPolicyOptions", "PreparedSeedDispatch", "PreparedPrimitives", "PreparedRootStages",
+    "PreparedRootLoop", "PreparedOverlapCalls", "PreparedRootOrbit",
 )
 
 
@@ -100,7 +106,8 @@ def main():
     with TemporaryDirectory(prefix="distqldpc-level-") as temp:
         build = Path(temp)
         translations = [
-            ("level_ast", source_dir / "cc_level.c"),
+            ("level_ast", proof_dir / "reference" / "cc_level.c"),
+            ("flag_level_ast", source_dir / "cc_level.c"),
             ("pack_ast", proof_dir / "pack_row_ast.c"),
             ("overlap_ast", proof_dir / "overlap_ast.c"),
             ("driver_ast", proof_dir / "driver_bounds_ast.c"),
@@ -125,6 +132,7 @@ def main():
         inputs = [source_dir / name for name in ("cc_level.h", "cc_epoch.h", "cc_pack_row.h",
                   "cc_overlap.h", "cc_overlap_policy.h", "cc_seed_policy.h", "cc_distance_bounds.h")]
         inputs.extend(source for _, source in translations)
+        inputs.extend(proof_dir / "reference" / n for n in ("cc_level.h", "cc_epoch.h"))
         inputs.extend([*generated, *proofs])
         print(json.dumps({"checked_body": "detected",
                           "checked_paths": ["closes count mismatch", "closes full body",
@@ -142,8 +150,11 @@ def main():
                                             "one-left DFS with the PCM table and a non-null policy",
                                             "two-move dispatch with open or closed first child",
                                             "restoration of excluded siblings in the native DFS"],
+                          "reference_c_commit": "b558c89eb4cf482da029e2076daa44ddb06e17c4",
+                          "production_ast": "flag_level_ast",
                           "modules": list(MODULES), "sha256": {
-            path.name: digest(path) for path in inputs}}, indent=2))
+            ("reference/" + path.name if path.parent == proof_dir / "reference" else path.name):
+            digest(path) for path in inputs}}, indent=2))
 
 
 if __name__ == "__main__":

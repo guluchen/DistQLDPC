@@ -313,3 +313,36 @@ CompCert installation. The checker generates a fresh Clight AST, compiles
 the modules in order and passes every project module to the Coq kernel
 checker. MathComp provides finite sets, cardinality, ordinal indices, the
 first-match sequence lemmas, finite fields and matrix operations.
+
+The non-null tie-break/overlap seed loop is covered by
+`ConcreteSeedSafety.native_root_driver_from_tables`. The theorem threads the
+same physical reference-count array from seed entry through DFS return,
+exemption restoration and the exhausted-orbit update. Its entry conditions
+specify the CSR sizes, index ranges and stable exemptions. Its callee contracts
+still govern DFS and flip, and the old pointer tests require separate
+weak-pointer assertions. `FunctionPointerGuard.function_guard_at_entry`
+checks why a pure VST function resource at offset zero with no permission at
+offset minus one cannot supply that weak-pointer assertion. This conditional
+loop theorem alone does not certify a normally initialized native executable.
+
+### Prepared production entry
+
+The production half search takes its callback options from the configuration
+once per level and passes them to `cc_run_prepared_level`. The public C
+wrapper `cc_run_level` also accepts callers using nullable fields. For this
+version `check.py` regenerates `flag_level_ast.v` from the production file.
+The three C files in `reference/` reproduce the earlier translation
+`level_ast.v` at commit b558c89. They serve the earlier contracts and the
+cross-version function-body check. Compiling the C++ half search uses only
+the production source.
+
+`PreparedPolicyOptions.prepared_source_has_numeric_guards` checks the
+actual prepared traversal, DFS and flip ASTs. The seed, overlap, and
+block-completion dispatch proofs cover enabled and disabled calls with
+no separate pointer-validity resource for the callback. On EMPTY,
+`PreparedRootOrbit.prepared_complete_orbit` verifies incrementing the
+shared counts and calling the exhausted-block handler on those arrays.
+`PreparedRootLoop.body_prepared_root_control` covers the whole policy
+seed loop under its two substatement contracts. The DFS callee, caller
+representation and total termination still require integration before the
+optimized executable can be claimed correct for every input PCM.
