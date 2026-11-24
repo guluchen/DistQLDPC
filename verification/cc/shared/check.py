@@ -93,15 +93,18 @@ MODULES = (
     "PreparedMinimumExclusion", "PreparedSeedResult", "PreparedSourceDriver",
     "PreparedTablesDriver", "OverlapTableAdmission", "PreparedDeadline",
     "NativeFlipPayload", "NativeRootFlip", "PreparedPhysicalPCM",
-    "FramedRootFlip", "PreparedDepthSpec", "PreparedChildCall",
+    "FramedRootFlip", "PreparedDepthSpec", "PreparedBudgetContract", "PreparedChildCall",
     "NativeDepthFlip", "PhysicalColumnBounds", "PhysicalPrefixInvariant",
-    "PreparedPCMDepth", "PreparedChildPlain", "PreparedSiblingScan",
+    "PreparedPCMDepth", "PreparedChildPlain", "PreparedChildMode", "PreparedSiblingScan",
     "PreparedSiblingRestore", "PreparedDriverDepth", "PreparedPairDispatch",
     "PreparedOverlapDepth", "PreparedVisitAccounting", "PreparedSampling",
     "PreparedCandidateSlice", "PreparedTargetCoverage", "PreparedChoiceCall",
     "PreparedCandidateArena", "PreparedArenaContext", "PreparedArenaRoot", "PreparedArenaScan",
     "PreparedOwnerFields", "PreparedTerminalPoll", "PreparedMatrixResponse", "PreparedMatrixPath",
-    "PreparedWitnessWeight", "PreparedBudgetContract", "PreparedCSSTerminal",
+    "PreparedWitnessWeight", "PreparedCSSTerminal",
+    "PreparedPlainCoverage", "PreparedRowCoverage", "PreparedResidualIndex", "PreparedScanFromPCM",
+    "PreparedBudgetArena", "PreparedTerminalTrace", "PreparedNativeCallees", "PreparedPairStorage",
+    "PreparedAnswerFrame", "PreparedOpenPair", "PreparedPrefixKernel",
 )
 
 

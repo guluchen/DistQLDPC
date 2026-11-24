@@ -3,6 +3,7 @@ Require Import VST.floyd.proofauto VST.floyd.reassoc_seq VST.zlist.list_solver.
 Require Import VerifDetected VerifChildVisit ClightSelect EnabledCall VerifEnabledVisit VerifOverlapDispatch
  OverlapColumnState OverlapView OverlapChildState OverlapSharedBlocks ChildColumn UniversalRootSearch
  PreparedSeedDispatch PreparedRootStages PreparedRecursiveCall PreparedDepthSpec.
+Require Import PreparedBudgetContract.
 Require flag_level_ast.
 Import flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
@@ -31,18 +32,18 @@ Proof.
  rewrite upd_Znth_same,sublist_upd_Znth_l by lia;reflexivity.
 Qed.
 
-Theorem visit_with_declared_flip {Espec:OracleKind} (flip:funspec) c heap report bits s cp w depth q parent path children count index frame:
+Theorem visit_with_actual_weight {Espec:OracleKind} (flip:funspec) c (heap:budget_heap) (report:budget_report) bits s cp w depth q parent path children count index frame:
  1<=depth<w-2 -> w<=Int.max_signed -> w<=Zlength path -> 0<=q<Zlength (blocked parent) ->
  is_pointer_or_null (callback_owner c) ->
  let g:=geometry c in let entered:=after_column g q true parent in
  column_bounds g q parent -> admissible g q true parent -> admissible g q false entered ->
  let prefix:=append_qubit path depth q in let locs:=descent_loc c s depth q children count index bits true in
- semax (func_tycontext f_dfs prepared_vars (prepared_calls flip (snd (depth_dfs c heap report bits))) [])
- (PROPx [] (LOCALx locs (SEPx [enabled_memory c s cp w path parent;heap s prefix;frame])))
+ semax (func_tycontext f_dfs prepared_vars (prepared_calls flip (snd (budget_dfs c heap report bits))) [])
+ (PROPx [] (LOCALx locs (SEPx [enabled_memory c s cp w path parent;heap w s prefix;frame])))
  child_bracket (normal_ret_assert (EX final:snapshot,EX tail:list int,EX r:Z,
   PROPx [same_search final parent;0<=r<=3;Zlength tail=Zlength path;active_prefix (depth+1) tail=prefix;
-   report g entered prefix r tail;witness_status r->returned_trace (nested c) (blocked entered) q tail]
-  (LOCALx (temp _result (Vint (Int.repr r))::locs) (SEPx [enabled_memory c s cp w tail final;heap s prefix;frame])))).
+   report w g entered prefix r tail;witness_status r->returned_trace (nested c) (blocked entered) q tail]
+  (LOCALx (temp _result (Vint (Int.repr r))::locs) (SEPx [enabled_memory c s cp w tail final;heap w s prefix;frame])))).
 Proof.
  intros deep cap room key owner g entered legal add_ok remove_ok prefix locs.
  pose proof (entered_block_count g q parent legal) as width;fold entered in width.
@@ -75,6 +76,9 @@ Proof.
  Exists (after_column g q false child) tail r;unfold enabled_memory,pointers,callback_fields;rewrite save in *.
  entailer!;try cancel;unfold cols,g;cbn [geometry callback_owner conn];apply derives_refl.
 Qed.
+
+Definition visit_with_declared_flip {Espec:OracleKind} (flip:funspec) (c:policy_state) (heap:node_storage) (report:node_report) (bits:int):=
+ @visit_with_actual_weight Espec flip c (fun _=>heap) (fun _=>report) bits.
 
 Definition visit_with_active_column {Espec:OracleKind} (c:policy_state) (heap:node_storage) (report:node_report) (bits:int):=
  @visit_with_declared_flip Espec (snd (depth_flip c heap bits)) c heap report bits.

@@ -389,3 +389,20 @@ required matrix products across any legal sequence of flips.
 `PreparedArenaScan` keeps the current candidate row in the parent and
 lends the array suffix to deeper calls. The recursive callee and the
 C++ candidate producer still have separate refinement obligations.
+
+At an interior node with at least three moves left,
+`PreparedBudgetArena.scan_native_candidate_arena` covers the compiled
+child loop and exclusion rollback for either value of the cached overlap
+flag. It carries the level's actual weight into the recursive callee.
+`PreparedScanFromPCM` shows that filtering the chosen odd PCM row
+retains a qubit of every compatible target and connects it to the
+sibling scan's EMPTY condition. The row order can be arbitrary.
+The result requires the physical block counts to match availability
+and any enabled overlap updates to preserve the other target qubits.
+
+`PreparedTerminalTrace` binds a terminal FOUND to the active prefix of
+the actual C trace buffer. `PreparedOpenPair` verifies the two-move
+lookup dispatch with the same block, syndrome and key arrays used by
+the parent. The compiled sibling loop for exactly two remaining moves,
+the producer of the chosen rows, and the initialization of these shared
+representations still need integration.
