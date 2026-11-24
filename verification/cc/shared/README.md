@@ -283,6 +283,27 @@ in the same iteration order restores every qubit count, including repeated
 indices. `PCMOverlapHits` connects the overlap hit list with the finite-set
 stabilizer bound under its explicit incidence and slack hypotheses.
 
+For each physical qubit, `SeedTransferTrace` proves that its block count
+plus the number of zero-limit rows exempting it stays constant when a
+seed is changed. `SeedColumnRestore` uses this invariant on the actual CSR
+visit in both directions. Once recursive search gives back the same search
+arrays, the exit restores both the exemptions and all qubit counts, even if
+the event counter changed. `EmptySeedColumns` and `EmptyOrbitBlocks` cover
+empty columns with no allocated row storage. `SeedSharedView` and
+`RootOwnerMemory` identify the actual shared buffers and policy owner field
+used by both callbacks.
+
+`VerifRootAdmission` checks the full blocked-or-free seed branch of the
+production C loop with overlap enabled. The blocked branch leaves the
+witness buffer untouched. The free branch counts the seed, enters and
+undoes its column and support, and preserves the returned trace. The
+recursive DFS has a contract at depth one. `VerifPolicySeeds` checks
+the full non-null-policy seed loop under two statement contracts. Only
+EMPTY permits permanent orbit exclusion and advancing to the next seed.
+The two contracts describe visiting one seed and committing its exhausted
+orbit. Their integration with the mutable owner, the recursive DFS contract
+and the constructor are further proof obligations.
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run

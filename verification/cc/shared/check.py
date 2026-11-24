@@ -74,6 +74,11 @@ MODULES = (
     "PCMOverlapHits", "SeedExemptionState", "SeedColumnModel", "VerifSeedMove",
     "VerifSeedOwner", "SeedPolicyView", "VerifSeedVisit", "SeedBlockModel",
     "SeedBlockView", "VerifRememberColumn", "VerifRememberBlock", "ExemptionRollback",
+    "SeedTransferTrace", "SeedColumnRestore", "SeedResume", "SeedSharedView",
+    "SeedStorageTransition", "SeedOrbitStorage", "SeedLoopModel", "VerifPolicySeeds",
+    "EmptySeedColumns", "EmptyOrbitBlocks", "VerifSeedBranch", "VerifRootCall",
+    "VerifRootAdmission", "DynamicOverlapCallback", "SeedCallFrame", "RootOwnerMemory",
+    "SeedFramedCallback",
 )
 
 
