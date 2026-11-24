@@ -424,5 +424,15 @@ valid initial PCM representation and a protected prefix.
 `PreparedChildPrefix` proves that the filtered row extends that prefix
 with a fresh qubit and keeps the selected qubits blocked. The loop
 theorem takes the reachable-state representation and the interpretation
-of the returned trace as premises. The C++ host initialization, row
-producer and general recursive DFS body still require integration.
+of the returned trace as premises.
+
+`PreparedPCMFastSearch.physical_two_move_search` discharges these
+mathematical obligations for a filtered physical PCM row, starting with
+the initial encoded matrices, table construction and protected parent
+prefix. A caller can observe a valid CSS witness through its trace
+predicate. FOUND uses the full length, while early closure uses the
+shorter length. The theorem also excludes an EMPTY result when the
+selected odd row covers a compatible minimum at this weight. It applies
+to the compiled search and undo loops with two moves remaining. The
+C++ host initialization, row producer and complete DFS body still
+require integration.

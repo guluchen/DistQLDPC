@@ -114,6 +114,7 @@ MODULES = (
     "PreparedLeafLoopBridge", "PreparedPCMLeafVisit", "PreparedLeafMinimum",
     "PreparedLeafAtPath", "PreparedReusableBook", "PreparedInitialLookup",
     "PreparedSelectedBlocks", "PreparedChildPrefix",
+    "PreparedFastCoverage", "PreparedObservedWitness", "PreparedLeafReport", "PreparedPCMFastSearch",
 )
 
 
