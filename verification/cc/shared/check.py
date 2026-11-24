@@ -104,7 +104,7 @@ MODULES = (
     "PreparedWitnessWeight", "PreparedCSSTerminal",
     "PreparedPlainCoverage", "PreparedRowCoverage", "PreparedResidualIndex", "PreparedScanFromPCM",
     "PreparedBudgetArena", "PreparedTerminalTrace", "PreparedNativeCallees", "PreparedPairStorage",
-    "PreparedAnswerFrame", "PreparedOpenPair", "PreparedPrefixKernel",
+    "PreparedAnswerFrame", "PreparedOpenPair", "PreparedPrefixKernel", "PreparedBudgetDriver",
 )
 
 

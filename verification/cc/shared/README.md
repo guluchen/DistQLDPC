@@ -406,3 +406,9 @@ lookup dispatch with the same block, syndrome and key arrays used by
 the parent. The compiled sibling loop for exactly two remaining moves,
 the producer of the chosen rows, and the initialization of these shared
 representations still need integration.
+
+The installed seed loop and its DFS callee share the weight stored in the C
+level. `PreparedBudgetDriver.one_weight_through_recursive_driver` specializes
+the search report at that weight on every eligible seed, including when the
+same witness buffer is reused for successive levels. It assumes the seed
+tables, callback admission condition and recursive DFS contract.

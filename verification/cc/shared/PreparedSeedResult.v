@@ -47,14 +47,14 @@ Definition visit_safe e x q:=
  (available (active_at e x q) q=true -> seed_checked (root_at e x q) (active_at e x q) q).
 
 Definition root_loc e q i bits:=visit_loc (policy e) (state_address e) q i (Zlength (order e)) bits.
-Theorem physical_root_returns {Espec:OracleKind} e report x q i bits frame :
+Theorem root_returns_at_weight {Espec:OracleKind} e report x q i bits frame :
  Int.and bits (Int.repr 32)<>Int.zero -> Int.and bits (Int.repr 16)<>Int.zero ->
  visit_safe e x q ->
- semax (func_tycontext f_cc_run_prepared_level prepared_vars (RecG (policy e) report bits) [])
+ semax (func_tycontext f_cc_run_prepared_level prepared_vars (root_calls_at_weight (policy e) report bits) [])
  (PROPx [] (LOCALx (root_loc e q i bits) (SEPx [(seed_memory e x * frame)%logic])))
  run_root
  (normal_ret_assert (EX final:snapshot,EX tail:list int,EX left:moving_state,EX r:Z,
-   PROPx [0<=r<=3;observed_return e report x q final tail left r]
+   PROPx [0<=r<=3;observed_return e (report (weight e)) x q final tail left r]
     (LOCALx (temp _result (Vint (Int.repr r))::root_loc e q i bits)
      (SEPx [(seed_memory e (returned_state e x q final tail left) * frame)%logic])))).
 Proof.
@@ -62,7 +62,7 @@ Proof.
    [extent [n [entry [exit [rest choose]]]]]]]]]]]]].
  eapply semax_post'.
  2:{ rewrite (seed_visit_storage e x (exempts (entered_at e x q)) frame).
-     apply (@PreparedPhysicalVisit.physical_seed_visit Espec (root_at e x q) report (state_address e) (path_address e) (weight e)
+     apply (@PreparedPhysicalVisit.seed_visit_at_weight Espec (root_at e x q) report (state_address e) (path_address e) (weight e)
        (witness_path x) (visit_address e) (source_at e x) (live_rows (remaining_rows x)) (running x)
        q i (Zlength (order e)) (seed_calls x) bits (root_frame e frame));try assumption;try reflexivity. }
  Intros final tail left r;Exists final tail left r.
@@ -72,3 +72,6 @@ Proof.
  - apply prop_right;exact (conj H0 (conj (conj H (conj H1 (conj H2 (conj H3 H4)))) I)).
  - apply andp_left2;apply derives_refl.
 Qed.
+
+Definition physical_root_returns {Espec:OracleKind} e (report:root_report):=
+ @root_returns_at_weight Espec e (fun _=>report).

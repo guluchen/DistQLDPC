@@ -27,16 +27,7 @@ Lemma weight_independent_dfs c heap obs bits:
  budget_dfs c (fun _=>heap) (fun _=>obs) bits=depth_dfs c heap obs bits.
 Proof. reflexivity. Qed.
 
-Definition budget_root c (obs:Z->root_report) (bits:int):ident*funspec:=
- DECLARE _dfs WITH geom:layout,s:val,cp:val,w:Z,q:Z,st:snapshot,path:list int
- PRE [tptr level_type,tptr (Tstruct _cc_level_policy noattr),tint,tuint]
- PROP(1<=w<=Int.max_signed;w<=Zlength path;0<=q<Zlength (blocked st);Znth 0 path=Int.repr q)
- PARAMS(s;nested_policy (nested c);Vint Int.one;Vint bits)
- SEP(enabled_memory (with_rows c geom) s cp w path st;active_support (nested c) s (Some q))
- POST [tint] EX final:snapshot,EX tail:list int,EX r:Z,
- PROP(same_search final st;0<=r<=3;Zlength tail=Zlength path;Znth 0 tail=Int.repr q;
-  obs w geom st q r tail;witness_status r -> returned_trace (nested c) (blocked st) q tail)
- RETURN(Vint (Int.repr r)) SEP(enabled_memory (with_rows c geom) s cp w tail final;active_support (nested c) s (Some q)).
+Definition budget_root:=root_dfs_at_weight.
 
 Lemma same_root_for_constant_report c obs bits:
  budget_root c (fun _=>obs) bits=root_dfs_spec c obs bits.

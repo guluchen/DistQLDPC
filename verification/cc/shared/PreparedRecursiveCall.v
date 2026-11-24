@@ -23,7 +23,7 @@ Definition root_flip c (mask:int):ident*funspec:=
  POST [tvoid] PROP() RETURN() SEP(active_support (nested c) s (if enter then Some q else None)).
 (* A real deadline may expire at any visit, including after a sibling was
    exhausted. Only FOUND and INCONSISTENT require a completed witness trace. *)
-Definition root_dfs_spec c (report:root_report) (mask:int):ident*funspec:=
+Definition root_dfs_at_weight c (report:Z->root_report) (mask:int):ident*funspec:=
  DECLARE _dfs WITH geom:layout,s:val,cp:val,w:Z,q:Z,st:snapshot,path:list int
  PRE [tptr level_type,tptr (Tstruct _cc_level_policy noattr),tint,tuint]
  PROP(1<=w<=Int.max_signed;w<=Zlength path;0<=q<Zlength (blocked st);Znth 0 path=Int.repr q)
@@ -31,25 +31,27 @@ Definition root_dfs_spec c (report:root_report) (mask:int):ident*funspec:=
  SEP(enabled_memory (with_rows c geom) s cp w path st;active_support (nested c) s (Some q))
  POST [tint] EX final:snapshot,EX tail:list int,EX r:Z,
  PROP(same_search final st;0<=r<=3;Zlength tail=Zlength path;Znth 0 tail=Int.repr q;
-   report geom st q r tail;witness_status r -> returned_trace (nested c) (blocked st) q tail)
+   report w geom st q r tail;witness_status r -> returned_trace (nested c) (blocked st) q tail)
  RETURN(Vint (Int.repr r)) SEP(enabled_memory (with_rows c geom) s cp w tail final;active_support (nested c) s (Some q)).
+Definition root_dfs_spec c (report:root_report):=root_dfs_at_weight c (fun _=>report).
+Definition root_calls_at_weight c report bits:=prepared_calls (snd (root_flip c bits)) (snd (root_dfs_at_weight c report bits)).
 Definition RecG c report bits:=prepared_calls (snd (root_flip c bits)) (snd (root_dfs_spec c report bits)).
 Definition visit_loc c s q i count bits:=
  [temp _s s;temp _q (Vint (Int.repr q));temp _policy (nested_policy (nested c));temp _i (Vint (Int.repr i));
   temp _count (Vint (Int.repr count));temp _options (Vint bits)].
 
-Theorem recursive_root_with_overlap {Espec:OracleKind} c report s cp w q st path i count bits (frame:mpred):
+Theorem recursive_root_at_weight {Espec:OracleKind} c report s cp w q st path i count bits (frame:mpred):
  1<=w<=Int.max_signed -> w<=Zlength path -> 0<=q<Zlength (blocked st) -> q<=Int.max_signed ->
  Int.and bits (Int.repr 16)<>Int.zero -> is_pointer_or_null (callback_owner c) ->
  let g:=geometry c in let entered:=after_column g q true st in
  column_bounds g q st -> admissible g q true st -> admissible g q false entered ->
- semax (func_tycontext f_cc_run_prepared_level prepared_vars (RecG c report bits) [])
+ semax (func_tycontext f_cc_run_prepared_level prepared_vars (root_calls_at_weight c report bits) [])
  (PROPx [] (LOCALx (visit_loc c s q i count bits)
   (SEPx [enabled_memory c s cp w path st;active_support (nested c) s (Some q);frame])))
  root_bracket
  (normal_ret_assert (EX final:snapshot,EX tail:list int,EX r:Z,
   PROPx [same_search final st;0<=r<=3;Zlength tail=Zlength path;Znth 0 tail=Int.repr q;
-    report g entered q r tail;witness_status r -> returned_trace (nested c) (blocked entered) q tail]
+    report w g entered q r tail;witness_status r -> returned_trace (nested c) (blocked entered) q tail]
   (LOCALx (temp _result (Vint (Int.repr r))::visit_loc c s q i count bits)
    (SEPx [enabled_memory c s cp w tail final;active_support (nested c) s (Some q);frame])))).
 Proof.
@@ -75,3 +77,6 @@ Proof.
  Exists (after_column g q false child) tail r;unfold visit_loc,enabled_memory,pointers,callback_fields.
  entailer!;try cancel;unfold cols,g;cbn [geometry callback_owner conn];apply derives_refl.
 Qed.
+
+Definition recursive_root_with_overlap {Espec:OracleKind} (c:policy_state) (report:root_report):=
+ @recursive_root_at_weight Espec c (fun _=>report).

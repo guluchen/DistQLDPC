@@ -30,18 +30,18 @@ Definition admission_contract e report initial:=
  forall i x,0<=i<Zlength (order e) -> reached e report initial i x ->
   let q:=root_number e i in available (active_at e x q) q=true -> seed_checked (root_at e x q) (active_at e x q) q.
 
-Theorem native_root_driver_from_tables e report n initial array bits:
+Theorem table_driver_at_weight e report n initial array bits:
  Int.and bits Int.one<>Int.zero -> Int.and bits (Int.repr 16)<>Int.zero ->
  Int.and bits (Int.repr 32)<>Int.zero -> Int.and bits (Int.repr 64)<>Int.zero ->
  checked_tables e n -> tables_at_rest n (database e) (remaining_rows initial) ->
- admission_contract e report initial -> 0<Zlength (block_members (orbits e)) ->
- semax_body prepared_vars (RecG (policy e) report bits) f_cc_run_prepared_level
-   (prepared_spec (schedule e report initial) (state_address e) (p_address e) array bits).
+ admission_contract e (report (weight e)) initial -> 0<Zlength (block_members (orbits e)) ->
+ semax_body prepared_vars (root_calls_at_weight (policy e) report bits) f_cc_run_prepared_level
+   (prepared_spec (schedule e (report (weight e)) initial) (state_address e) (p_address e) array bits).
 Proof.
  intros preset overlap seed notify cfg start [size [room [own [owner_layout [columns [rows allowed]]]]]] members.
  assert (owner_pointer:is_pointer_or_null (callback_owner (policy e))) by (destruct (callback_owner (policy e));try contradiction;constructor).
- apply verified_prepared_driver;try assumption.
- - intros i x pos route;pose proof (reached_root_invariant e report n initial i x cfg start route) as [stable len].
+ apply prepared_driver_at_weight;try assumption.
+ - intros i x pos route;pose proof (reached_root_invariant e (report (weight e)) n initial i x cfg start route) as [stable len].
    pose proof stable as [[defaults choices] between];destruct choices as [shape [qubits admissible]].
    destruct cfg as [cap len_limit many incidence seeds total blocks offsets];pose proof (seeds i pos) as key.
    destruct (incidence _ key) as [rs [idx [available_rows valid_indices]]].
@@ -61,9 +61,12 @@ Proof.
    + apply stable_exemption_on_return;assumption.
    + apply allowed;assumption.
  - intros i y pos [x [run [tail [left [route [summary ->]]]]]].
-   destruct (reached_root_invariant e report n initial i x cfg start route) as [old _].
+   destruct (reached_root_invariant e (report (weight e)) n initial i x cfg start route) as [old _].
    set (y:=returned_state e x (root_number e i) run tail left).
    assert (rest:tables_at_rest n (database e) (remaining_rows y)) by
       (apply restored_tables_at_rest;[exact old|exact (proj1 (proj2 (proj2 summary)))]).
    exact (proj1 (safe_orbit_at e n i y cfg pos rest)).
 Qed.
+
+Definition native_root_driver_from_tables e (report:root_report):=
+ @table_driver_at_weight e (fun _=>report).

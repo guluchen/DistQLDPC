@@ -6,11 +6,11 @@ Require flag_level_ast.
 Import flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
 Local Open Scope Z_scope.
-Theorem prepared_root_admission {Espec:OracleKind} c report s cp w q st path i count calls bits (frame:mpred):
+Theorem root_admission_at_weight {Espec:OracleKind} c report s cp w q st path i count calls bits (frame:mpred):
  1<=w<=Int.max_signed -> w<=Zlength path -> 0<=q<Zlength (blocked st) -> q<=Int.max_signed ->
  Int.and bits (Int.repr 16)<>Int.zero -> is_pointer_or_null (callback_owner c) ->
  (available st q=true -> seed_checked c st q) ->
- semax (func_tycontext f_cc_run_prepared_level prepared_vars (RecG c report bits) [])
+ semax (func_tycontext f_cc_run_prepared_level prepared_vars (root_calls_at_weight c report bits) [])
  (PROPx [] (LOCALx (temp _result (Vint Int.zero)::visit_loc c s q i count bits)
    (SEPx [enabled_memory c s cp w path st;active_support (nested c) s None;seed_counter s calls;frame])))
  visit_root
@@ -18,7 +18,7 @@ Theorem prepared_root_admission {Espec:OracleKind} c report s cp w q st path i c
   PROPx [same_search final st;0<=r<=3;Zlength tail=Zlength path;
    available st q=false -> r=0 /\ tail=path;
    available st q=true -> let entered:=after_column (geometry c) q true (selected st q) in
-     report (geometry c) entered q r tail /\ Znth 0 tail=Int.repr q /\
+     report w (geometry c) entered q r tail /\ Znth 0 tail=Int.repr q /\
       (witness_status r -> returned_trace (nested c) (blocked entered) q tail)]
   (LOCALx (temp _result (Vint (Int.repr r))::visit_loc c s q i count bits)
    (SEPx [enabled_memory c s cp w tail final;active_support (nested c) s None;
@@ -43,7 +43,7 @@ Proof.
  eapply semax_seq'.
  { assert (marker: Zlength (blocked (selected st q))=Zlength (blocked st)) by
    (unfold selected,counters;cbn [blocked];unfold adjust;rewrite upd_Znth_Zlength by lia;reflexivity).
-   eapply semax_pre;[|apply (@recursive_root_with_overlap Espec c report s cp w q (selected st q) path i count bits
+   eapply semax_pre;[|apply (@recursive_root_at_weight Espec c report s cp w q (selected st q) path i count bits
       (seed_counter s (Int64.add calls Int64.one) * frame)%logic)];try eassumption;try lia.
    unfold visit_loc,seed_counter;rewrite child_owner_view by lia;unfold child_fields;rewrite marker.
    unfold selected,counters,view_without_blocks;cbn [blocked slack tight tight_extra forbidden].
@@ -61,3 +61,6 @@ Proof.
  unfold adjust in *;rewrite ?upd_Znth_Zlength by lia;entailer!;try cancel.
  all:first [solve [unfold same_search in *;cbn [slack blocked selected counters] in *;intuition congruence]|apply derives_refl].
 Qed.
+
+Definition prepared_root_admission {Espec:OracleKind} (c:policy_state) (report:root_report):=
+ @root_admission_at_weight Espec c (fun _=>report).
