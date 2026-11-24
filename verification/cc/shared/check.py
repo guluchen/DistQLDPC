@@ -93,6 +93,12 @@ MODULES = (
     "PreparedMinimumExclusion", "PreparedSeedResult", "PreparedSourceDriver",
     "PreparedTablesDriver", "OverlapTableAdmission", "PreparedDeadline",
     "NativeFlipPayload", "NativeRootFlip", "PreparedPhysicalPCM",
+    "FramedRootFlip", "PreparedDepthSpec", "PreparedChildCall",
+    "NativeDepthFlip", "PhysicalColumnBounds", "PhysicalPrefixInvariant",
+    "PreparedPCMDepth", "PreparedChildPlain", "PreparedSiblingScan",
+    "PreparedSiblingRestore", "PreparedDriverDepth", "PreparedPairDispatch",
+    "PreparedOverlapDepth", "PreparedVisitAccounting", "PreparedSampling",
+    "PreparedCandidateSlice", "PreparedTargetCoverage", "PreparedChoiceCall",
 )
 
 
