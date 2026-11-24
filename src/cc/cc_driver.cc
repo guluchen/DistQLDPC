@@ -7,6 +7,7 @@
  * See cc_driver.h for the bound algebra, the verification and the traps. Clean-room code.
  */
 #include "cc_driver.h"
+#include "cc_distance_bounds.h"
 
 #include <limits.h>
 #include <stdio.h>
@@ -640,9 +641,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
 
     int lastLB = 1, lastTry = 0, d = -1;   /* the trivial bound 1 is not emitted */
     {   /* parity: the certified bound 2 of a qualifying half is emitted before the first level */
-        int glb0 = INF;
-        for (int k = 0; k < 2; k++)
-            if (hs[k].exists && hs[k].lb < glb0) glb0 = hs[k].lb;
+        int glb0 = cc_global_lower(hs[0].exists, hs[0].lb, hs[1].exists, hs[1].lb);
         if (glb0 > lastLB && glb0 < U) {
             sink.bound(sink.ctx, "LB", (uint64_t)glb0);
             lastLB = glb0;
@@ -654,9 +653,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             ub_poll();
             if (!ub_trap.empty()) return fail(ub_trap);
         }
-        int glb = INF;
-        for (int k = 0; k < 2; k++)
-            if (hs[k].exists && hs[k].lb < glb) glb = hs[k].lb;
+        int glb = cc_global_lower(hs[0].exists, hs[0].lb, hs[1].exists, hs[1].lb);
         if (glb > U) return fail("global lower bound exceeds the verified upper bound");
         if (glb >= U) { d = U; break; }
         /* next level: lockstep (lowest lb; tie: half that was cheaper at its previous level, then X),
@@ -751,9 +748,8 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
         }
         bool stop = false;
         if (r.verdict == LEVEL_EMPTY) {
-            h.lb = w + 1;
-            if (h.par && (h.lb & 1)) {   /* GH-133 parity: an EMPTY even level 2t certifies 2t+2 */
-                h.lb++;
+            h.lb = cc_next_after_empty(w, h.par);
+            if (h.lb > w + 1) {   /* GH-133: parity certified the additional skipped level */
                 if (trace) { fprintf(trace, "%s %d SKIPPED 0 0.000000\n", h.tag, w + 1); fflush(trace); }
                 if (verb > 0) printf("c cc: %s half level %d skipped (parity: every logical has even weight)\n", h.tag, w + 1);
             }
@@ -833,8 +829,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
              * at a hit (the picked half has the lowest lb; a mirrored dual half has lb = w); under the
              * sequential schedule it is load-bearing. Mutant 4 (which forces sequential) skips the check. */
             const Half& o = hs[1 - pick];
-            const int olb = o.exists ? o.lb : INF;
-            if (opt.mutant == 4 || olb >= w) {
+            if (opt.mutant == 4 || cc_hit_closes(w, o.exists, o.lb)) {
                 stop = true;
                 d = w;
             }
@@ -847,9 +842,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
                 return fail(buf);
             }
         if (stop) break;
-        glb = INF;
-        for (int k = 0; k < 2; k++)
-            if (hs[k].exists && hs[k].lb < glb) glb = hs[k].lb;
+        glb = cc_global_lower(hs[0].exists, hs[0].lb, hs[1].exists, hs[1].lb);
         if (glb > U) return fail("global lower bound exceeds the verified upper bound");
         if (glb > lastLB && glb < U) {
             sink.bound(sink.ctx, "LB", (uint64_t)glb);

@@ -61,7 +61,7 @@ $(BUILD)/cc_level.o: $(CCDIR)/cc_level.c $(CCDIR)/cc_level.h $(CCDIR)/cc_epoch.h
 $(BUILD)/cc_half.o: $(CCDIR)/cc_half.cc $(CCDIR)/cc_pack_row.h $(CCDIR)/cc_overlap.h $(CC_HDRS) | dirs
 	$(CXX) $(CXXFLAGS) -std=c++17 -c -o $@ $<
 
-$(BUILD)/cc_driver.o: $(CCDIR)/cc_driver.cc $(CC_HDRS) | dirs
+$(BUILD)/cc_driver.o: $(CCDIR)/cc_driver.cc $(CCDIR)/cc_distance_bounds.h $(CC_HDRS) | dirs
 	$(CXX) $(CXXFLAGS) -std=c++17 -c -o $@ $<
 
 $(BUILD)/cc_ubsearch.o: $(CCDIR)/cc_ubsearch.cc $(CC_HDRS) | dirs
