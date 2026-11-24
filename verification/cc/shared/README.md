@@ -525,3 +525,11 @@ matching count. The proof lends the chooser pointer and the current odd
 count from the same heap used by the recursive search. It applies with
 at least three moves left, a disabled erasure sample and the recursive
 callee and overlap contracts.
+
+`reachable_recursive_entry` starts at the first instruction of the
+same compiled DFS body. It accounts for the incremented visit counters,
+checks the polling mask and passing parity condition, initializes the
+local sample and candidate pointer, then applies the chosen-row theorem.
+Its postcondition identifies the restored parent state and the stored
+CSS witness when the search returns a hit. The input row, lookup and
+overlap data, chooser and recursive callee must satisfy their contracts.
