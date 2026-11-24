@@ -10,7 +10,7 @@ ifneq ($(VST_ROOT),)
 COQFLAGS += $(foreach pkg,msl sepcomp veric floyd zlist,-Q $(VST_ROOT)/$(pkg) VST.$(pkg)) -R $(VST_ROOT)/compcert compcert
 endif
 
-.PHONY: all test mutants proofs pcm test-packed test-portable-level check-ast check-shared-level test-charge-epoch clean
+.PHONY: all test mutants proofs pcm test-packed test-portable-level check-ast check-shared-level test-charge-epoch test-pack-row clean
 all: ccv libccv.so
 
 ccv: ccv_cli.c $(SOURCES) ccv.h
@@ -53,14 +53,20 @@ check-ast:
 	sha256sum --check source-ast.sha256
 
 clean:
-	$(RM) portable-level-test charge-epoch-test charge-epoch-level.o
+	$(RM) portable-level-test charge-epoch-test charge-epoch-level.o pack-row-test
 	$(RM) ccv libccv.so mutant-*.so mutant-*.log pcm-prepare packed-oracle packed_hint.o tests/packed_oracle.cm[iox] tests/packed_oracle.o pcm_stubs.o ccv.o ccv_primitives.o pcm_generated.* extract/*.cm[iox] extract/*.o extract/*.vo* extract/*.glob extract/.*.aux
 	$(if $(wildcard Makefile.coq),$(MAKE) -f Makefile.coq clean)
 	$(RM) Makefile.coq Makefile.coq.conf .Makefile.coq.d
 
-charge-epoch-test: shared/test_charge_epoch.cc ../../src/cc/cc_half.cc ../../src/cc/cc_half.h ../../src/cc/cc_level.c ../../src/cc/cc_level.h ../../src/cc/cc_epoch.h
+charge-epoch-test: ../../src/cc/cc_pack_row.h shared/test_charge_epoch.cc ../../src/cc/cc_half.cc ../../src/cc/cc_half.h ../../src/cc/cc_level.c ../../src/cc/cc_level.h ../../src/cc/cc_epoch.h
 	$(CC) $(CPPFLAGS) -std=c99 -O2 -Wall -Wextra -Werror -I../../src/cc -c ../../src/cc/cc_level.c -o charge-epoch-level.o
 	$(CXX) $(CPPFLAGS) -std=c++17 -O2 -I../../src/cc shared/test_charge_epoch.cc ../../src/cc/cc_half.cc charge-epoch-level.o $(LDFLAGS) -o $@
 
 test-charge-epoch: charge-epoch-test
 	./charge-epoch-test
+
+pack-row-test: shared/test_pack_row.c ../../src/cc/cc_pack_row.h
+	$(CC) $(CPPFLAGS) -std=c11 -O2 -Wall -Wextra -Werror $< $(LDFLAGS) -o $@
+
+test-pack-row: pack-row-test
+	./pack-row-test

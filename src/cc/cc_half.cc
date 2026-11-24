@@ -9,6 +9,7 @@
 #include "cc_half.h"
 #include "cc_level.h"
 #include "cc_epoch.h"
+#include "cc_pack_row.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1264,12 +1265,9 @@ template <bool E> inline int HalfSearch::choose_children(int size, int forced, i
             const uint32_t* a = red ? xq_.data() + xstart_[r - ux_] : rq_.data() + rstart_[r];
             const uint32_t* e = red ? xq_.data() + xstart_[r - ux_ + 1] : rq_.data() + rstart_[r + 1];
             if (pack) {
-                uint32_t cnt = 0, clash = 0;
-                for (const uint32_t* t = a; t < e; ++t) {
-                    const uint32_t free_q = blk_[*t] == 0;
-                    cnt += free_q;
-                    clash |= free_q & (uint32_t)(mark_[*t] == st);
-                }
+                const uint32_t length = static_cast<uint32_t>(e - a);
+                uint32_t cnt, clash;
+                cc_tally_pack_row(a, length, blk_.data(), mark_.data(), st, &cnt, &clash);
                 const bool disjoint = !clash;
                 if (cnt == 0) {
                     ++res_->nocand;
@@ -1286,7 +1284,7 @@ template <bool E> inline int HalfSearch::choose_children(int size, int forced, i
                     }
                     if (er_live_) prow_[p - 1] = (uint32_t)r;   /* erasure (GH-195): packed rows */
                     /* marking forbidden qubits too is harmless: only free qubits can clash */
-                    for (const uint32_t* t = a; t < e; ++t) mark_[*t] = st;
+                    cc_mark_pack_row(a, length, mark_.data(), st);
                 }
                 if (mrv) {
                     if (cnt < bcnt) { bcnt = cnt; brow = r; }
