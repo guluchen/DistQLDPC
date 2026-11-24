@@ -194,6 +194,28 @@ c++ -O2 -std=c++17 -Isrc/cc verification/cc/shared/test_pack_integration.cpp bui
 /tmp/cc-pack-integration
 ```
 
+### From a checked weight level to a CSS distance
+
+For arbitrary binary PCMs, `CSSSearchSchedule.finish_from_pcm` starts the
+two lower bounds at 1 and the upper bound at the sentinel n+1. It proves
+that closing these bounds gives exactly the CSS distance in the mathematical
+model. Its event premises distinguish exhausted levels, verified physical
+witnesses and interrupted searches. A permutation certified to transport
+logical supports in both directions preserves the distance, including the
+no-logical case (`DualDistance.equal_half_distance`). Uniformly odd PCM
+columns justify skipping odd weights. The separate Clight proof
+`VerifPollAbort.body_dfs_abort` shows a scheduled, true-returning native
+poll yields ABORTED after updating the counters.
+
+`EvenOverlapLimit.exempt_overlap_limit` derives the tighter limit for a
+stabilizer after removing its preferred qubit. `IndexRowBridge` relates
+machine free-count and stamp tests to sets of physical qubits, and
+`CSRWordTraversal` covers all words in the syndrome. For erasure pruning,
+`ErasureBasisMap.original_column` lifts the solved triangular equations
+back through the recorded XOR reductions to an original physical column.
+A producer still has to establish that its pivot sequence and reductions
+actually describe the input.
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run
