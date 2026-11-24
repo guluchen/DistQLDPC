@@ -241,6 +241,36 @@ weight and the optional parity skip preserve a finite half's lower bound.
 and proves the two-half stopping inequality with an absent half represented
 by the largest signed integer. `VerifDriverBounds` proves the complete C bodies for all three operations.
 
+For a recursive node with more than three picks remaining and the overlap
+callback enabled, `VerifEnabledVisit` checks the C statements that select
+a child, invoke DFS and undo the overlap update. `VerifEnabledSiblings`
+checks the entire sibling loop. `VerifEnabledUndo` composes that loop with
+its following rollback loop. A child may update event counters. Every
+normal or early exit restores the parent's slack and block arrays and
+preserves the parent prefix of the trace. The recursive call and the
+support toggle have contracts. Connecting all recursive entry paths and
+establishing the callback preconditions from the constructor data are
+still obligations for a proof of the optimized executable.
+
+`OverlapTargetProgress` tracks the first child belonging to a target
+through sibling exclusions and the actual list of newly blocked qubits.
+If no remaining target qubit belongs to that list, each stays selectable
+in the child, even when several stabilizer rows tighten at once. It also
+proves that the loop reports EMPTY exactly when every child returns EMPTY.
+`EffectiveRowTarget` proves the corresponding finite-set saturation
+property for an ordinary stabilizer and for the effective row with its
+tie-breaking qubit removed. `VerifOverlapGuard` checks the actual short
+circuit tests and the signed remaining-weight comparison that selects
+the enabled loop.
+
+`NativeHalfExists` proves that stacking the detector rows underneath the
+checks raises the rank exactly when the half admits a detected logical
+operator. `ValidatedHalfStart` proves that the supplied detector and the
+row-space definition have equal distance under the driver's mathematical
+orthogonality and rank checks. The finite distance lies between one and
+the number of columns. An empty half takes the mathematical sentinel
+`n+1`.
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run

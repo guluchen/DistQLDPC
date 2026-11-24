@@ -67,6 +67,10 @@ MODULES = (
     "VerifOverlapUpdate",
     "VerifDriverBounds",
     "OverlapSharedBlocks",
+    "ChildColumn", "EnabledCall", "EnabledLoopFacts", "VerifEnabledVisit",
+    "VerifEnabledSiblings", "VerifEnabledUndo", "NativeHalfExists",
+    "ValidatedHalfStart", "OverlapTargetProgress", "EffectiveRowTarget",
+    "VerifOverlapGuard",
 )
 
 
