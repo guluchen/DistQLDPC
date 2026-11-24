@@ -53,6 +53,10 @@ MODULES = (
     "VerifVisitRestoration",
     "NativePackingScan",
     "OverlapRowState",
+    "OverlapRowSpecs",
+    "OverlapColumnState",
+    "VerifOverlapRows",
+    "VerifOverlapDispatch",
 )
 
 
@@ -82,14 +86,18 @@ def main():
         pack_ast = build / "pack_ast.v"
         subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
                         str(pack_ast), "pack_row_ast.c"], cwd=proof_dir, check=True)
-        for module in [ast, pack_ast, *proofs]:
+        overlap_ast = build / "overlap_ast.v"
+        subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
+                        str(overlap_ast), "overlap_ast.c"], cwd=proof_dir, check=True)
+        for module in [ast, pack_ast, overlap_ast, *proofs]:
             subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
-        check_targets = [arg for name in ("level_ast", "pack_ast", *MODULES)
+        check_targets = [arg for name in ("level_ast", "pack_ast", "overlap_ast", *MODULES)
                          for arg in ("-norec", name)]
         subprocess.run(["coqchk", "-silent", *flags, *check_targets],
                        cwd=build, check=True)
         inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", source_dir / "cc_epoch.h",
-                  source_dir / "cc_pack_row.h", proof_dir / "pack_row_ast.c", ast, pack_ast, *proofs]
+                  source_dir / "cc_pack_row.h", source_dir / "cc_overlap.h",
+                  proof_dir / "pack_row_ast.c", proof_dir / "overlap_ast.c", ast, pack_ast, overlap_ast, *proofs]
         print(json.dumps({"checked_body": "detected",
                           "checked_paths": ["closes count mismatch", "closes full body",
                                             "dfs terminal depth without polling",

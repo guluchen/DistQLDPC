@@ -216,6 +216,17 @@ back through the recorded XOR reductions to an original physical column.
 A producer still has to establish that its pivot sequence and reductions
 actually describe the input.
 
+The C++ production policy also calls the header in `src/cc/cc_overlap.h`.
+The Clight generated from `overlap_ast.c` contains those actual C functions.
+`VerifOverlapRows` covers each complete inner row function, including
+exempt qubits, inherited block counts and empty slices. `OverlapColumnState`
+models the slack counters and the statistics separately and proves
+that one matched row update restores the search arrays. The two
+`VerifOverlapDispatch` statements pass the actual owner, qubit and
+direction through the policy pointer under its stated contract.
+The full column loop and the recursive path with overlap enabled
+remain additional proof obligations.
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run
