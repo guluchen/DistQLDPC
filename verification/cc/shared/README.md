@@ -346,3 +346,21 @@ shared counts and calling the exhausted-block handler on those arrays.
 seed loop under its two substatement contracts. The DFS callee, caller
 representation and total termination still require integration before the
 optimized executable can be claimed correct for every input PCM.
+
+`PreparedTablesDriver.native_root_driver_from_tables` now composes both
+substatements for an installed overlap and seed tie-break policy. It uses
+validated CSR tables, the entered and restored exemption, and the actual
+orbit scan. `PreparedDeadline` checks the callback mask and both possible
+callback answers. `PreparedRecursiveCall` permits a fresh interruption
+at each visit. The root propagates that outcome without excluding its
+remaining orbit. `PreparedMinimumExclusion` connects all completed
+root positions to the MathComp minimum-distance theorem, given the
+per-root search refinement.
+
+`NativeRootFlip.body_flip_for_prepared_root` discharges the root's flip
+call on physical packed arrays. `PreparedPhysicalPCM` proves restoration
+of the syndrome, odd count, detector words and hash on the checked column
+slice, including redundant rows. The prepared DFS proofs cover polling,
+terminal depth, an early closed prefix, the parity cut and the one-move
+lookup. A complete recursive DFS refinement, the C++ policy producer
+and whole-program termination are still open.

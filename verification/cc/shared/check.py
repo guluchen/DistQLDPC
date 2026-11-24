@@ -85,6 +85,14 @@ MODULES = (
     "PreparedSeed", "RootDriver", "ConcreteSeedSafety", "FunctionPointerGuard",
     "PreparedPolicyOptions", "PreparedSeedDispatch", "PreparedPrimitives", "PreparedRootStages",
     "PreparedRootLoop", "PreparedOverlapCalls", "PreparedRootOrbit",
+    "PreparedOwnerLoan", "PreparedOrbitNoNotify", "PreparedExemptionFrame",
+    "PreparedDFSTerminal", "PreparedDFSClosed", "PreparedDFSAbort",
+    "PreparedFlip", "PreparedDFSParity", "PreparedOrbitLoan",
+    "PreparedRecursiveCall", "PreparedRootAdmission", "PreparedLevelStorage",
+    "PreparedPhysicalVisit", "PreparedDFSOneLeft", "PreparedExhaustionEvidence",
+    "PreparedMinimumExclusion", "PreparedSeedResult", "PreparedSourceDriver",
+    "PreparedTablesDriver", "OverlapTableAdmission", "PreparedDeadline",
+    "NativeFlipPayload", "NativeRootFlip", "PreparedPhysicalPCM",
 )
 
 
