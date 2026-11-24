@@ -10,7 +10,7 @@
 #include "cc_level.h"
 #include "cc_epoch.h"
 #include "cc_pack_row.h"
-#include "cc_overlap_policy.h"
+#include "cc_seed_policy.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1506,16 +1506,16 @@ LevelResult HalfSearch::run_level(int w) {
                             !ext_ && !ovr_ && !tb_ && !orbit_mode_ && !par_;
         // Per-level storage. Search changes the contents of these vectors but
         // never resizes them while cc_run_level or its callbacks are active.
-        struct LevelOwner : cc_overlap_view {
+        struct LevelOwner : cc_seed_policy {
             HalfSearch *half;
             static HalfSearch& search(void *ctx) {
-                return *static_cast<LevelOwner*>(static_cast<cc_overlap_view*>(ctx))->half;
+                return *static_cast<LevelOwner*>(static_cast<cc_seed_policy*>(ctx))->half;
             }
         } owner{};
         cc_level_policy policy{};
         if (!simple) {
             owner.half = this;
-            policy.owner = static_cast<cc_overlap_view*>(&owner);
+            policy.owner = static_cast<cc_seed_policy*>(&owner);
             policy.seed_count = (int)seed_.size();
             policy.seed = seed_.data();
             policy.block_start = bstart_.data();
@@ -1530,17 +1530,23 @@ LevelResult HalfSearch::run_level(int w) {
                 return h.ext_ ? h.choose_children<true>(size, -1, odd, *sample) :
                                 h.choose_children<false>(size, -1, odd, *sample);
             };
-            if (ovr_) {
-                static_cast<cc_overlap_view&>(owner) = {
+            if (ovr_ || tb_) {
+                owner.overlap = {
                     kcstart_.data(), kcr_.data(), kstart_.data(), kq_.data(),
                     tb_ ? kex_.data() : nullptr, slack_.data(), blk_.data(),
                     (uint32_t)nk0_, &ovtight_, &ovtightx_, &ovforbid_
                 };
-                policy.overlap = cc_overlap_policy;
+                if (ovr_) policy.overlap = cc_seed_overlap;
             }
             if (tb_) {
-                policy.seed_exemption = [](void* ctx, int q, bool on) { LevelOwner::search(ctx).tb_seed(q, on); };
-                policy.block_done = [](void* ctx, int i) { LevelOwner::search(ctx).tb_block_done(i); };
+                owner.limit = klim_.data();
+                owner.base = kexbase_.data();
+                owner.fallback = kexfb_.data();
+                owner.current = kex_.data();
+                owner.block_start = bstart_.data();
+                owner.block_qubit = block_.data();
+                policy.seed_exemption = cc_seed_exemption;
+                policy.block_done = cc_seed_block_done;
             }
             policy.sample_done = [](void* ctx, const cc_erasure_sample* x) {
                 LevelOwner::search(ctx).er_sample_done(x->class_id, x->test_seconds, true, er_clock() - x->started);
