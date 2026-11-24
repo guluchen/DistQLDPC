@@ -10,7 +10,7 @@
 #include "cc_level.h"
 #include "cc_epoch.h"
 #include "cc_pack_row.h"
-#include "cc_overlap.h"
+#include "cc_overlap_policy.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1504,9 +1504,18 @@ LevelResult HalfSearch::run_level(int w) {
     if (mutant_ == 0 && rules_.excl && rules_.pack && rules_.leaf && !xu_) {
         const bool simple = !rules_.mrv && !rules_.sparse && !rules_.charge && !rules_.erasure &&
                             !ext_ && !ovr_ && !tb_ && !orbit_mode_ && !par_;
+        // Per-level storage. Search changes the contents of these vectors but
+        // never resizes them while cc_run_level or its callbacks are active.
+        struct LevelOwner : cc_overlap_view {
+            HalfSearch *half;
+            static HalfSearch& search(void *ctx) {
+                return *static_cast<LevelOwner*>(static_cast<cc_overlap_view*>(ctx))->half;
+            }
+        } owner{};
         cc_level_policy policy{};
         if (!simple) {
-            policy.owner = this;
+            owner.half = this;
+            policy.owner = static_cast<cc_overlap_view*>(&owner);
             policy.seed_count = (int)seed_.size();
             policy.seed = seed_.data();
             policy.block_start = bstart_.data();
@@ -1517,25 +1526,24 @@ LevelResult HalfSearch::run_level(int w) {
             }
             policy.parity = par_;
             policy.choose_children = [](void* ctx, int size, int odd, cc_erasure_sample* sample) {
-                HalfSearch& h = *static_cast<HalfSearch*>(ctx);
+                HalfSearch& h = LevelOwner::search(ctx);
                 return h.ext_ ? h.choose_children<true>(size, -1, odd, *sample) :
                                 h.choose_children<false>(size, -1, odd, *sample);
             };
-            if (ovr_) policy.overlap = [](void* ctx, int q, bool add) {
-                HalfSearch& h = *static_cast<HalfSearch*>(ctx);
-                cc_overlap_view view{
-                    h.kcstart_.data(), h.kcr_.data(), h.kstart_.data(), h.kq_.data(),
-                    h.tb_ ? h.kex_.data() : nullptr, h.slack_.data(), h.blk_.data(),
-                    (uint32_t)h.nk0_, &h.ovtight_, &h.ovtightx_, &h.ovforbid_
+            if (ovr_) {
+                static_cast<cc_overlap_view&>(owner) = {
+                    kcstart_.data(), kcr_.data(), kstart_.data(), kq_.data(),
+                    tb_ ? kex_.data() : nullptr, slack_.data(), blk_.data(),
+                    (uint32_t)nk0_, &ovtight_, &ovtightx_, &ovforbid_
                 };
-                cc_update_overlap(&view, q, add);
-            };
+                policy.overlap = cc_overlap_policy;
+            }
             if (tb_) {
-                policy.seed_exemption = [](void* ctx, int q, bool on) { static_cast<HalfSearch*>(ctx)->tb_seed(q, on); };
-                policy.block_done = [](void* ctx, int i) { static_cast<HalfSearch*>(ctx)->tb_block_done(i); };
+                policy.seed_exemption = [](void* ctx, int q, bool on) { LevelOwner::search(ctx).tb_seed(q, on); };
+                policy.block_done = [](void* ctx, int i) { LevelOwner::search(ctx).tb_block_done(i); };
             }
             policy.sample_done = [](void* ctx, const cc_erasure_sample* x) {
-                static_cast<HalfSearch*>(ctx)->er_sample_done(x->class_id, x->test_seconds, true, er_clock() - x->started);
+                LevelOwner::search(ctx).er_sample_done(x->class_id, x->test_seconds, true, er_clock() - x->started);
             };
         }
         cc_level s{};

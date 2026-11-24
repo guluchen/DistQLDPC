@@ -58,7 +58,7 @@ $(BUILD)/System.o: $(SOLVER)/utils/System.cc | dirs
 $(BUILD)/cc_level.o: $(CCDIR)/cc_level.c $(CCDIR)/cc_level.h $(CCDIR)/cc_epoch.h | dirs
 	$(CC) $(CPPFLAGS) $(CFLAGS) -std=c99 -Wall -c -o $@ $<
 
-$(BUILD)/cc_half.o: $(CCDIR)/cc_half.cc $(CCDIR)/cc_pack_row.h $(CCDIR)/cc_overlap.h $(CC_HDRS) | dirs
+$(BUILD)/cc_half.o: $(CCDIR)/cc_half.cc $(CCDIR)/cc_pack_row.h $(CCDIR)/cc_overlap.h $(CCDIR)/cc_overlap_policy.h $(CC_HDRS) | dirs
 	$(CXX) $(CXXFLAGS) -std=c++17 -c -o $@ $<
 
 $(BUILD)/cc_driver.o: $(CCDIR)/cc_driver.cc $(CCDIR)/cc_distance_bounds.h $(CC_HDRS) | dirs
