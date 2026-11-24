@@ -216,16 +216,30 @@ back through the recorded XOR reductions to an original physical column.
 A producer still has to establish that its pivot sequence and reductions
 actually describe the input.
 
-The C++ production policy also calls the header in `src/cc/cc_overlap.h`.
-The Clight generated from `overlap_ast.c` contains those actual C functions.
-`VerifOverlapRows` covers each complete inner row function, including
-exempt qubits, inherited block counts and empty slices. `OverlapColumnState`
-models the slack counters and the statistics separately and proves
-that one matched row update restores the search arrays. The two
-`VerifOverlapDispatch` statements pass the actual owner, qubit and
-direction through the policy pointer under its stated contract.
-The full column loop and the recursive path with overlap enabled
-remain additional proof obligations.
+The native overlap policy borrows a C view for one synchronous level.
+`VerifOverlapRows` proves both complete row updates, including empty
+slices and exemptions. `VerifOverlapOwner` proves the production C
+callback forwards the correct view, qubit and direction to the column
+function. Its contract is the one used by `VerifOverlapDispatch` in DFS.
+`OverlapRollback` proves equality of every slack and block count after a
+matched column entry and exit on a well-formed CSR column. Several tight
+rows can block the same qubit. `OverlapChildState` permits recursion to
+change the event statistics and accounts for the selected qubit's extra
+block. It requires the child to return with its input search arrays restored.
+
+The full `cc_update_overlap` column body is checked in `VerifOverlapUpdate`
+under the native CSR bounds and signed counter preconditions. All three
+C overlap bodies refer to the same layout and updates in the policy
+translation. `OverlapSharedBlocks` proves the search and the callback
+own one block buffer across their two Clight type environments.
+`VerifSeedOverlap` checks both enabled seed dispatches in `cc_run_level`.
+
+The production distance driver uses three C operations from
+`cc_distance_bounds.h`. `NativeBoundAlgebra` proves that an exhausted
+weight and the optional parity skip preserve a finite half's lower bound.
+`NativeBoundSafety` uses this result to justify both signed increments
+and proves the two-half stopping inequality with an absent half represented
+by the largest signed integer. `VerifDriverBounds` proves the complete C bodies for all three operations.
 
 ## Recheck
 

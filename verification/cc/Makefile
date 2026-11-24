@@ -58,7 +58,7 @@ clean:
 	$(if $(wildcard Makefile.coq),$(MAKE) -f Makefile.coq clean)
 	$(RM) Makefile.coq Makefile.coq.conf .Makefile.coq.d
 
-charge-epoch-test: ../../src/cc/cc_overlap.h ../../src/cc/cc_pack_row.h shared/test_charge_epoch.cc ../../src/cc/cc_half.cc ../../src/cc/cc_half.h ../../src/cc/cc_level.c ../../src/cc/cc_level.h ../../src/cc/cc_epoch.h
+charge-epoch-test: ../../src/cc/cc_overlap_policy.h ../../src/cc/cc_overlap.h ../../src/cc/cc_pack_row.h shared/test_charge_epoch.cc ../../src/cc/cc_half.cc ../../src/cc/cc_half.h ../../src/cc/cc_level.c ../../src/cc/cc_level.h ../../src/cc/cc_epoch.h
 	$(CC) $(CPPFLAGS) -std=c99 -O2 -Wall -Wextra -Werror -I../../src/cc -c ../../src/cc/cc_level.c -o charge-epoch-level.o
 	$(CXX) $(CPPFLAGS) -std=c++17 -O2 -I../../src/cc shared/test_charge_epoch.cc ../../src/cc/cc_half.cc charge-epoch-level.o $(LDFLAGS) -o $@
 

@@ -57,6 +57,16 @@ MODULES = (
     "OverlapColumnState",
     "VerifOverlapRows",
     "VerifOverlapDispatch",
+    "OverlapView",
+    "OverlapRollback",
+    "OverlapChildState",
+    "VerifOverlapOwner",
+    "NativeBoundAlgebra",
+    "NativeBoundSafety",
+    "VerifSeedOverlap",
+    "VerifOverlapUpdate",
+    "VerifDriverBounds",
+    "OverlapSharedBlocks",
 )
 
 
@@ -77,27 +87,32 @@ def main():
 
     with TemporaryDirectory(prefix="distqldpc-level-") as temp:
         build = Path(temp)
-        ast = build / "level_ast.v"
+        translations = [
+            ("level_ast", source_dir / "cc_level.c"),
+            ("pack_ast", proof_dir / "pack_row_ast.c"),
+            ("overlap_ast", proof_dir / "overlap_ast.c"),
+            ("driver_ast", proof_dir / "driver_bounds_ast.c"),
+            ("owner_ast", proof_dir / "overlap_policy_ast.c"),
+        ]
+        generated = []
+        for name, source in translations:
+            target = build / (name + ".v")
+            subprocess.run([compiler, "-normalize", "-canonical-idents", "-o", str(target),
+                            source.name], cwd=source.parent, check=True)
+            generated.append(target)
         proofs = [build / (name + ".v") for name in MODULES]
         for proof in proofs:
             shutil.copyfile(proof_dir / proof.name, proof)
-        subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
-                        str(ast), "cc_level.c"], cwd=source_dir, check=True)
-        pack_ast = build / "pack_ast.v"
-        subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
-                        str(pack_ast), "pack_row_ast.c"], cwd=proof_dir, check=True)
-        overlap_ast = build / "overlap_ast.v"
-        subprocess.run([compiler, "-normalize", "-canonical-idents", "-o",
-                        str(overlap_ast), "overlap_ast.c"], cwd=proof_dir, check=True)
-        for module in [ast, pack_ast, overlap_ast, *proofs]:
+        for module in [*generated, *proofs]:
             subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
-        check_targets = [arg for name in ("level_ast", "pack_ast", "overlap_ast", *MODULES)
+        check_targets = [arg for name in [*[p.stem for p in generated], *MODULES]
                          for arg in ("-norec", name)]
         subprocess.run(["coqchk", "-silent", *flags, *check_targets],
                        cwd=build, check=True)
-        inputs = [source_dir / "cc_level.c", source_dir / "cc_level.h", source_dir / "cc_epoch.h",
-                  source_dir / "cc_pack_row.h", source_dir / "cc_overlap.h",
-                  proof_dir / "pack_row_ast.c", proof_dir / "overlap_ast.c", ast, pack_ast, overlap_ast, *proofs]
+        inputs = [source_dir / name for name in ("cc_level.h", "cc_epoch.h", "cc_pack_row.h",
+                  "cc_overlap.h", "cc_overlap_policy.h", "cc_distance_bounds.h")]
+        inputs.extend(source for _, source in translations)
+        inputs.extend([*generated, *proofs])
         print(json.dumps({"checked_body": "detected",
                           "checked_paths": ["closes count mismatch", "closes full body",
                                             "dfs terminal depth without polling",
