@@ -60,6 +60,21 @@ enum cc_level_outcome { CC_LEVEL_EMPTY, CC_LEVEL_FOUND, CC_LEVEL_ABORTED, CC_LEV
 void cc_build_leaf_index(int n, uint64_t mask, const uint64_t *keys,
                          int32_t *slots, int32_t *next);
 
+/* A prepared level carries the choices made when constructing its policy.
+   Enabled callbacks and tables must be installed for the entire level.
+   A disabled policy permits a null policy pointer. */
+enum cc_level_option {
+    CC_USE_POLICY = 1u << 0,
+    CC_USE_POLL = 1u << 1,
+    CC_USE_REDUNDANT = 1u << 2,
+    CC_USE_PARITY = 1u << 3,
+    CC_USE_OVERLAP = 1u << 4,
+    CC_USE_SEED_EXEMPTION = 1u << 5,
+    CC_USE_BLOCK_DONE = 1u << 6
+};
+
+enum cc_level_outcome cc_run_prepared_level(struct cc_level *s,
+    const struct cc_level_policy *policy, unsigned options);
 enum cc_level_outcome cc_run_level(struct cc_level *s, const struct cc_level_policy *policy);
 
 #ifdef __cplusplus

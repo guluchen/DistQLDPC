@@ -99,9 +99,9 @@ static inline int index_children(struct cc_level *s, int size, uint32_t *childre
     return count;
 }
 
-static inline void flip(struct cc_level *s, const struct cc_level_policy *policy, int q) {
+static inline void flip(struct cc_level *s, const struct cc_level_policy *policy, int q, unsigned options) {
     toggle(s, q);
-    if (policy && policy->redundant_start) {
+    if (options & CC_USE_REDUNDANT) {
         for (uint32_t i = policy->redundant_start[q]; i < policy->redundant_start[q + 1]; ++i) {
             const uint32_t row = policy->redundant_rows[i];
             s->syn[row >> 6] ^= UINT64_C(1) << (row & 63);
@@ -109,10 +109,10 @@ static inline void flip(struct cc_level *s, const struct cc_level_policy *policy
     }
 }
 
-static enum cc_level_outcome dfs(struct cc_level *s, const struct cc_level_policy *policy, int size) {
+static enum cc_level_outcome dfs(struct cc_level *s, const struct cc_level_policy *policy, int size, unsigned options) {
     ++s->nodes;
     ++s->by_budget[s->w - size];
-    if (s->poll && !(s->nodes & s->poll_mask) && s->poll(s->poll_ctx)) return CC_LEVEL_ABORTED;
+    if ((options & CC_USE_POLL) && !(s->nodes & s->poll_mask) && s->poll(s->poll_ctx)) return CC_LEVEL_ABORTED;
     if (size == s->w) {
         if (s->nodd || !detected(s)) return CC_LEVEL_EMPTY;
         s->witness_size = size;
@@ -124,7 +124,7 @@ static enum cc_level_outcome dfs(struct cc_level *s, const struct cc_level_polic
         s->witness_size = size;
         return CC_LEVEL_INCONSISTENT;
     }
-    if (policy && policy->parity && ((s->w - size - s->nodd) & 1)) {
+    if ((options & CC_USE_PARITY) && ((s->w - size - s->nodd) & 1)) {
         ++s->parprune;
         return CC_LEVEL_EMPTY;
     }
@@ -139,15 +139,16 @@ static enum cc_level_outcome dfs(struct cc_level *s, const struct cc_level_polic
 
     struct cc_erasure_sample sample = { -1, 0, 0 };
     uint32_t *children = s->cand + (size_t)size * s->maxrow;
-    const int count = policy ? policy->choose_children(policy->owner, size, s->nodd, &sample)
-                             : index_children(s, size, children);
-    const bool update_overlap = policy && policy->overlap && s->w - size > 3;
+    const int count = (options & CC_USE_POLICY)
+        ? policy->choose_children(policy->owner, size, s->nodd, &sample)
+        : index_children(s, size, children);
+    const bool update_overlap = (options & CC_USE_OVERLAP) && s->w - size > 3;
     int excluded = 0;
     enum cc_level_outcome result = CC_LEVEL_EMPTY;
     for (int i = 0; i < count; ++i) {
         int a = (int)children[i];
         ++s->blk[a];
-        flip(s, policy, a);
+        flip(s, policy, a, options);
         if (update_overlap) policy->overlap(policy->owner, a, true);
         s->cur[size] = a;
         if (size == s->w - 2) {
@@ -167,10 +168,10 @@ static enum cc_level_outcome dfs(struct cc_level *s, const struct cc_level_polic
                 }
             }
         } else {
-            result = dfs(s, policy, size + 1);
+            result = dfs(s, policy, size + 1, options);
         }
         if (update_overlap) policy->overlap(policy->owner, a, false);
-        flip(s, policy, a);
+        flip(s, policy, a, options);
         --s->blk[a];
         if (result != CC_LEVEL_EMPTY) break;
         ++s->blk[a];
@@ -181,34 +182,47 @@ static enum cc_level_outcome dfs(struct cc_level *s, const struct cc_level_polic
     return result;
 }
 
-enum cc_level_outcome cc_run_level(struct cc_level *s, const struct cc_level_policy *policy) {
-    const int count = policy ? policy->seed_count : s->n;
+enum cc_level_outcome cc_run_prepared_level(struct cc_level *s, const struct cc_level_policy *policy, unsigned options) {
+    const int count = (options & CC_USE_POLICY) ? policy->seed_count : s->n;
     for (int i = 0; i < count; ++i) {
-        const int q = policy ? policy->seed[i] : i;
-        if (policy && policy->seed_exemption) policy->seed_exemption(policy->owner, q, true);
+        const int q = (options & CC_USE_POLICY) ? policy->seed[i] : i;
+        if (options & CC_USE_SEED_EXEMPTION) policy->seed_exemption(policy->owner, q, true);
         enum cc_level_outcome result = CC_LEVEL_EMPTY;
         if (!s->blk[q]) {
             ++s->seeds;
             ++s->blk[q];
-            flip(s, policy, q);
-            if (policy && policy->overlap) policy->overlap(policy->owner, q, true);
+            flip(s, policy, q, options);
+            if (options & CC_USE_OVERLAP) policy->overlap(policy->owner, q, true);
             s->cur[0] = q;
-            result = dfs(s, policy, 1);
-            if (policy && policy->overlap) policy->overlap(policy->owner, q, false);
-            flip(s, policy, q);
+            result = dfs(s, policy, 1, options);
+            if (options & CC_USE_OVERLAP) policy->overlap(policy->owner, q, false);
+            flip(s, policy, q, options);
             --s->blk[q];
         }
-        if (policy && policy->seed_exemption) policy->seed_exemption(policy->owner, q, false);
+        if (options & CC_USE_SEED_EXEMPTION) policy->seed_exemption(policy->owner, q, false);
         if (result != CC_LEVEL_EMPTY) return result;
-        if (policy) {
+        if (options & CC_USE_POLICY) {
             for (uint32_t j = policy->block_start[i]; j < policy->block_start[i+1]; ++j)
                 ++s->blk[policy->block[j]];
-            if (policy->block_done) policy->block_done(policy->owner, i);
+            if (options & CC_USE_BLOCK_DONE) policy->block_done(policy->owner, i);
         } else {
             ++s->blk[q];
         }
     }
     return CC_LEVEL_EMPTY;
+}
+
+enum cc_level_outcome cc_run_level(struct cc_level *s, const struct cc_level_policy *policy) {
+    unsigned options = s->poll ? CC_USE_POLL : 0u;
+    if (policy) {
+        options |= CC_USE_POLICY;
+        if (policy->redundant_start) options |= CC_USE_REDUNDANT;
+        if (policy->parity) options |= CC_USE_PARITY;
+        if (policy->overlap) options |= CC_USE_OVERLAP;
+        if (policy->seed_exemption) options |= CC_USE_SEED_EXEMPTION;
+        if (policy->block_done) options |= CC_USE_BLOCK_DONE;
+    }
+    return cc_run_prepared_level(s, policy, options);
 }
 
 /* Descending insertion leaves each same-key chain in ascending qubit order. */

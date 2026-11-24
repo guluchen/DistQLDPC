@@ -1513,7 +1513,10 @@ LevelResult HalfSearch::run_level(int w) {
             }
         } owner{};
         cc_level_policy policy{};
+        unsigned options = poll_fn_ ? static_cast<unsigned>(CC_USE_POLL) : 0u;
         if (!simple) {
+            options |= CC_USE_POLICY;
+            if (par_) options |= CC_USE_PARITY;
             owner.half = this;
             policy.owner = static_cast<cc_seed_policy*>(&owner);
             policy.seed_count = (int)seed_.size();
@@ -1521,6 +1524,7 @@ LevelResult HalfSearch::run_level(int w) {
             policy.block_start = bstart_.data();
             policy.block = block_.data();
             if (mx_ > 0) {
+                options |= CC_USE_REDUNDANT;
                 policy.redundant_start = xcstart_.data();
                 policy.redundant_rows = xcr_.data();
             }
@@ -1536,7 +1540,10 @@ LevelResult HalfSearch::run_level(int w) {
                     tb_ ? kex_.data() : nullptr, slack_.data(), blk_.data(),
                     (uint32_t)nk0_, &ovtight_, &ovtightx_, &ovforbid_
                 };
-                if (ovr_) policy.overlap = cc_seed_overlap;
+                if (ovr_) {
+                    options |= CC_USE_OVERLAP;
+                    policy.overlap = cc_seed_overlap;
+                }
             }
             if (tb_) {
                 owner.limit = klim_.data();
@@ -1545,6 +1552,7 @@ LevelResult HalfSearch::run_level(int w) {
                 owner.current = kex_.data();
                 owner.block_start = bstart_.data();
                 owner.block_qubit = block_.data();
+                options |= CC_USE_SEED_EXEMPTION | CC_USE_BLOCK_DONE;
                 policy.seed_exemption = cc_seed_exemption;
                 policy.block_done = cc_seed_block_done;
             }
@@ -1560,7 +1568,7 @@ LevelResult HalfSearch::run_level(int w) {
         s.mark = mark_.data(); s.blk = blk_.data(); s.cur = cur_.data(); s.cand = cand_.data();
         s.by_budget = r.by_budget.data(); s.poll = poll_fn_; s.poll_ctx = poll_ctx_;
         s.poll_mask = poll_mask_; s.stamp = stamp_;
-        const cc_level_outcome outcome = cc_run_level(&s, simple ? nullptr : &policy);
+        const cc_level_outcome outcome = cc_run_prepared_level(&s, simple ? nullptr : &policy, options);
         if (simple) stamp_ = s.stamp;
         r.nodes = s.nodes; r.seeds = s.seeds; r.closed = s.closed; r.nocand += s.nocand;
         r.parprune = s.parprune;
