@@ -122,6 +122,8 @@ MODULES = (
     "PreparedPackingVerdict", "PreparedOrbitCredit", "PreparedReachedOrbit",
     "PreparedZeroLimitRows", "PreparedSeedAdmission", "PreparedVerifiedSeedRoot",
     "PreparedReturnTrace",
+    "PreparedVerdictExit", "PreparedInteriorExit", "PreparedSampleOwnerReturn",
+    "PreparedLeafReturnContract", "PreparedFastRecursive",
 )
 
 

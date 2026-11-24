@@ -477,3 +477,17 @@ include redundant checks when their kernel contains the input kernel.
 instruction of DFS. Both paths return the result stored in the C local
 and preserve the trace. The optional callback must return its borrowed
 sample storage.
+
+`PreparedInteriorExit.recursive_interior_through_return` checks the
+general sibling loop, undo loop and return as a contiguous suffix of
+the compiled DFS. When the sampling class is negative, the returned
+status retains the CSS certificate and the parent regains its candidate
+array. `PreparedSampleOwnerReturn` checks the recorded return using the
+same owner field used by the overlap callback.
+
+`PreparedFastRecursive.fast_search_with_recursive_contract` uses the
+same minimum-distance and physical-witness contract for the two-move
+shortcut as the general recursive search. It derives that result from
+the original PCM, the odd branch row, the packed detector and the
+compiled leaf lookup. Its hypotheses include the initial encoding and
+the active search prefix.
