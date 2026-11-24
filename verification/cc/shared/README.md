@@ -491,3 +491,19 @@ shortcut as the general recursive search. It derives that result from
 the original PCM, the odd branch row, the packed detector and the
 compiled leaf lookup. Its hypotheses include the initial encoding and
 the active search prefix.
+
+`PreparedPrunedPCM.native_prune_excludes_compatible_minimum` checks the
+entire C DFS body on a nonterminal branch rejected by packing or charge.
+The level has at least two moves left, polling and parity are disabled,
+and the installed chooser returns zero candidates with no erasure
+sample. The proof follows the actual callback and both zero-iteration
+loops. It relates the result to the original PCM, reads the active
+prefix from the C trace, and preserves the block-array address and the
+trace on return. It assumes the callback's contract and the checked
+packing or charge evidence for these physical counters.
+
+`PreparedInteriorEntry`, `PreparedChooseReturn` and
+`PreparedSelectedReturn` also verify setup of a general nonterminal
+node. The chooser borrows the shared owner field once. Its returned
+count and candidate pointer reach the following subtree at exactly
+the depth and weight stored in the C structures.

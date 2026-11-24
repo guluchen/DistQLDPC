@@ -124,6 +124,9 @@ MODULES = (
     "PreparedReturnTrace",
     "PreparedVerdictExit", "PreparedInteriorExit", "PreparedSampleOwnerReturn",
     "PreparedLeafReturnContract", "PreparedFastRecursive",
+    "PreparedInitializeScan", "PreparedSelectedReturn", "PreparedChooseReturn",
+    "PreparedInteriorEntry", "PreparedEmptyLoops", "PreparedDFSRejected",
+    "PreparedPrunedPCM",
 )
 
 
