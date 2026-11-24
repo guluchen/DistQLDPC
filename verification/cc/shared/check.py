@@ -45,6 +45,10 @@ MODULES = (
     "CSSSearchSchedule",
     "ErasureBasisMap",
     "VerifPollAbort",
+    "SearchFuel",
+    "FlipRoundtrip",
+    "VerifOrbitBlock",
+    "VerifChildVisit",
 )
 
 
