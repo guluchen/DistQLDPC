@@ -271,6 +271,18 @@ orthogonality and rank checks. The finite distance lies between one and
 the number of columns. An empty half takes the mathematical sentinel
 `n+1`.
 
+The seed policy moves a stabilizer row’s exempt qubit to the active seed.
+When a row has limit zero, the C update transfers just that row’s contribution
+between two qubit block counts. `VerifSeedMove` checks all paths, including
+the old-equals-new shortcut. `VerifSeedVisit` checks the whole CSR column on
+entry and exit. `VerifRememberBlock` checks both nested loops of
+`cc_seed_block_done` and the calls that remember the earliest exhausted orbit
+member on each eligible row. These body proofs assume valid CSR slices and
+indices. `ExemptionRollback` proves that undoing a list of directed transfers
+in the same iteration order restores every qubit count, including repeated
+indices. `PCMOverlapHits` connects the overlap hit list with the finite-set
+stabilizer bound under its explicit incidence and slack hypotheses.
+
 ## Recheck
 
 With the Coq libraries on the load path and `clightgen` on PATH, run

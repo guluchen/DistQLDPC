@@ -71,6 +71,9 @@ MODULES = (
     "VerifEnabledSiblings", "VerifEnabledUndo", "NativeHalfExists",
     "ValidatedHalfStart", "OverlapTargetProgress", "EffectiveRowTarget",
     "VerifOverlapGuard",
+    "PCMOverlapHits", "SeedExemptionState", "SeedColumnModel", "VerifSeedMove",
+    "VerifSeedOwner", "SeedPolicyView", "VerifSeedVisit", "SeedBlockModel",
+    "SeedBlockView", "VerifRememberColumn", "VerifRememberBlock", "ExemptionRollback",
 )
 
 
@@ -97,6 +100,7 @@ def main():
             ("overlap_ast", proof_dir / "overlap_ast.c"),
             ("driver_ast", proof_dir / "driver_bounds_ast.c"),
             ("owner_ast", proof_dir / "overlap_policy_ast.c"),
+            ("seed_ast", proof_dir / "seed_policy_ast.c"),
         ]
         generated = []
         for name, source in translations:
@@ -114,7 +118,7 @@ def main():
         subprocess.run(["coqchk", "-silent", *flags, *check_targets],
                        cwd=build, check=True)
         inputs = [source_dir / name for name in ("cc_level.h", "cc_epoch.h", "cc_pack_row.h",
-                  "cc_overlap.h", "cc_overlap_policy.h", "cc_distance_bounds.h")]
+                  "cc_overlap.h", "cc_overlap_policy.h", "cc_seed_policy.h", "cc_distance_bounds.h")]
         inputs.extend(source for _, source in translations)
         inputs.extend([*generated, *proofs])
         print(json.dumps({"checked_body": "detected",
