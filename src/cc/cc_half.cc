@@ -10,6 +10,7 @@
 #include "cc_level.h"
 #include "cc_epoch.h"
 #include "cc_pack_row.h"
+#include "cc_overlap.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1522,7 +1523,12 @@ LevelResult HalfSearch::run_level(int w) {
             };
             if (ovr_) policy.overlap = [](void* ctx, int q, bool add) {
                 HalfSearch& h = *static_cast<HalfSearch*>(ctx);
-                if (add) h.ov_add<true>(q); else h.ov_del<true>(q);
+                cc_overlap_view view{
+                    h.kcstart_.data(), h.kcr_.data(), h.kstart_.data(), h.kq_.data(),
+                    h.tb_ ? h.kex_.data() : nullptr, h.slack_.data(), h.blk_.data(),
+                    (uint32_t)h.nk0_, &h.ovtight_, &h.ovtightx_, &h.ovforbid_
+                };
+                cc_update_overlap(&view, q, add);
             };
             if (tb_) {
                 policy.seed_exemption = [](void* ctx, int q, bool on) { static_cast<HalfSearch*>(ctx)->tb_seed(q, on); };
