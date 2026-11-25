@@ -793,3 +793,10 @@ the untouched suffix reconstitute a row that can serve the next call.
 preconditions from the stored PCM, the initial zero syndrome and the
 current distinct prefix. `PreparedPivotDetectors` relates free-column
 detectors to stabilizer-row-space membership given a reduced basis.
+
+The C body contracts `PreparedIndexTerminalCall.terminal_call_body` and
+`PreparedIndexClosedCall.closed_call_body` use the same physical heap as
+the recursive traversal. The first checks the current support at the target
+weight. The second returns the actual shorter witness when a closed interior
+prefix has a nonzero detector response. Both preserve the input PCM and the
+candidate arena while returning the updated counters and witness register.
