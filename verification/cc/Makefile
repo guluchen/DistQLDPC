@@ -46,6 +46,16 @@ check-shared-level:
 test-portable-level: portable-level-test
 	./portable-level-test
 
+.PHONY: test-native-pcm
+test-native-pcm: native-pcm-test
+	./native-pcm-test
+
+native-pcm-test: native/pcm.c native/pcm.h native/test_pcm.c native-test-level.o
+	$(CC) $(CPPFLAGS) $(CFLAGS) -I../../src/cc native/pcm.c native/test_pcm.c native-test-level.o $(LDFLAGS) -o $@
+
+native-test-level.o: ../../src/cc/cc_level.c ../../src/cc/cc_level.h ../../src/cc/cc_epoch.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Wno-sign-conversion -I../../src/cc -c $< -o $@
+
 portable-level-test: shared/test_portable_level.c ../../src/cc/cc_level.c ../../src/cc/cc_level.h ../../src/cc/cc_epoch.h
 	$(CC) $(CPPFLAGS) -std=c11 -O2 -Wall -Wextra -Werror -I../../src/cc shared/test_portable_level.c ../../src/cc/cc_level.c $(LDFLAGS) -o $@
 
@@ -53,7 +63,7 @@ check-ast:
 	sha256sum --check source-ast.sha256
 
 clean:
-	$(RM) portable-level-test charge-epoch-test charge-epoch-level.o pack-row-test
+	$(RM) portable-level-test native-pcm-test native-test-level.o charge-epoch-test charge-epoch-level.o pack-row-test
 	$(RM) ccv libccv.so mutant-*.so mutant-*.log pcm-prepare packed-oracle packed_hint.o tests/packed_oracle.cm[iox] tests/packed_oracle.o pcm_stubs.o ccv.o ccv_primitives.o pcm_generated.* extract/*.cm[iox] extract/*.o extract/*.vo* extract/*.glob extract/.*.aux
 	$(if $(wildcard Makefile.coq),$(MAKE) -f Makefile.coq clean)
 	$(RM) Makefile.coq Makefile.coq.conf .Makefile.coq.d

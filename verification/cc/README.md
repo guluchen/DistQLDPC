@@ -25,6 +25,24 @@ have separate verification boundaries.
 
 The [indexed and certified drivers](indexed/README.md) add sparse C search, input-checked X/Z symmetry, and certification of an externally proposed witness with verified bounded queries.
 
+## Raw PCM entry for the optimized C kernel
+
+The experimental C API `cc_pcm_distance` accepts two binary row-major
+check matrices with a common width. It checks commutation, reduces each
+stabilizer matrix and builds free-coordinate detectors, sparse incidence
+tables and the leaf lookup used by `cc_run_level`. It searches both Pauli
+halves in increasing weight and replays the winning support against the
+original checks and reduced stabilizers. A finite return identifies the
+Pauli half and writes the distance and indicator vector. A code with no
+encoded qubits returns `CC_PCM_NO_LOGICAL`. An interrupt, invalid input
+and insufficient storage have separate outcomes. Only a finite return
+writes the output buffers.
+
+Run `make -C verification/cc test-native-pcm` for the exhaustive small
+matrix oracle, Shor codes and boundary cases. The ABI is defined in
+[native/pcm.h](native/pcm.h). This entry is under verification. The
+complete C input-to-distance theorem is open.
+
 ## Shared C kernel used by the native CLI
 
 On this experimental branch the native CLI calls `src/cc/cc_level.c` for the
