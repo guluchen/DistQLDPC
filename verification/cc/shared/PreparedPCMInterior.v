@@ -8,6 +8,7 @@ Require Import LeafMatrix MinimumPrefix LevelSearch VerifDetected VerifChildVisi
  PreparedBudgetArena PreparedBudgetContract PreparedChildCall PreparedSiblingScan PreparedSiblingRestore
  PreparedMatrixPath PreparedPCMLeafVisit PreparedChildPrefix PreparedResidualIndex PreparedOverlapDepth
  PreparedInteriorReport.
+Require Import PreparedDescentFuel.
 Require flag_level_ast.
 Import flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
@@ -50,8 +51,13 @@ Hypothesis overlap:forall x,admissible_target (literal_path parent) x -> minimum
 (* The recursive call uses the same distance contract and machine weight
    as its caller. The proof uses the native branch, array and rollback
    instructions, including when the cached overlap bit is false. *)
-Theorem recursive_loop_at_physical_weight:
- semax (func_tycontext f_dfs prepared_vars (recursive_policy c heap (pool base stride levels) report options) nil)
+Section ChildCalls.
+Variable children:budget_heap.
+Hypothesis at_child:forall node,Zlength node=(depth+1)%coqZ ->
+ children w s node=(heap s node * loan)%logic.
+
+Theorem recursive_loop_at_physical_weight_with_children:
+ semax (func_tycontext f_dfs prepared_vars (with_child_heap c heap children report options) nil)
  (PROPx nil (LOCALx (scan_loc_mode update c s buf depth (Zlength xs) 0%coqZ 0%coqZ options)
   (SEPx [::enabled_memory c s cp w cells root;heap s (active_prefix depth cells);loan;child_array buf xs])))
  (Ssequence search_children undo_children)
@@ -66,8 +72,8 @@ Proof.
    change Int.max_unsigned with 4294967295%coqZ;lia.
  have [range _]:=@emitted_range_and_availability n row _ F unsigned size_ok (@available_in_view n root).
  have positive:(0<Zlength (blocked root)<=Int.max_signed)%coqZ by rewrite size_ok.
- eapply semax_post';last exact:(@scan_native_candidate_arena Espec c heap report options s cp xs root cells w depth
-      base stride levels fit budget cap count positive range owner ready).
+ eapply semax_post';last exact:(@restore_siblings_at_weight Espec c heap children loan report options s cp buf xs root cells w depth
+      update fit budget cap count positive range owner ready at_child).
  Intros i code st tail.
  match goal with h:scan_outcome_mode _ _ _ _ _ _ _ _ _ |- _ => pose proof h as scan end.
  rewrite prefix in scan.
@@ -75,5 +81,22 @@ Proof.
     (proj2 dims) size_ok row_ok unique odd inherited overlap w i code tail scan.
  rewrite -prefix in outcome.
  Exists i code st tail;unfold scan_loc_mode;entailer!;try apply derives_refl;auto.
+Qed.
+End ChildCalls.
+
+Theorem recursive_loop_at_physical_weight:
+ semax (func_tycontext f_dfs prepared_vars (recursive_policy c heap (pool base stride levels) report options) nil)
+ (PROPx nil (LOCALx (scan_loc_mode update c s buf depth (Zlength xs) 0%coqZ 0%coqZ options)
+  (SEPx [::enabled_memory c s cp w cells root;heap s (active_prefix depth cells);loan;child_array buf xs])))
+ (Ssequence search_children undo_children)
+ (normal_ret_assert (EX i:Z,EX code:Z,EX st:snapshot,EX tail:seq Integers.int,
+  PROPx [::recursive_result H S G admissible_target w root (active_prefix depth cells) code tail;
+    (0<=code<=3)%coqZ;keeps_witness_mode update c root xs i code tail;same_search st root;
+    Zlength tail=Zlength cells;active_prefix depth tail=active_prefix depth cells]
+   (LOCALx (scan_loc_mode update c s buf depth (Zlength xs) i code options)
+    (SEPx [::enabled_memory c s cp w tail st;heap s (active_prefix depth cells);loan;child_array buf xs])))).
+Proof.
+ apply recursive_loop_at_physical_weight_with_children with (children:=fun _=>node_heap heap (pool base stride levels));
+  intros node length;unfold node_heap,pool,loan;rewrite length;reflexivity.
 Qed.
 End Interior.

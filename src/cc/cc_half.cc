@@ -10,6 +10,8 @@
 #include "cc_level.h"
 #include "cc_epoch.h"
 #include "cc_pack_row.h"
+#include "cc_candidate_row.h"
+#include "cc_row_builder.h"
 #include "cc_seed_policy.h"
 
 #include <stdio.h>
@@ -169,6 +171,23 @@ std::vector<std::vector<int> > pair_sums(const std::vector<std::vector<int> >& s
     return out;
 }
 
+void build_candidate_rows(const std::vector<std::vector<uint32_t>>& rows,
+                          std::vector<uint32_t>& offsets, std::vector<uint32_t>& columns) {
+    size_t total = 0;
+    for (const auto& row : rows) {
+        if (row.size() > UINT32_MAX - total) fatal("candidate row table exceeds 32-bit offsets");
+        total += row.size();
+    }
+    offsets.resize(rows.size() + 1);
+    offsets[0] = 0;
+    columns.resize(total);
+    for (size_t i = 0; i < rows.size(); ++i) {
+        const auto& row = rows[i];
+        cc_append_candidate_row(columns.data(), offsets[i], row.data(),
+                                static_cast<uint32_t>(row.size()), &offsets[i + 1]);
+    }
+}
+
 } /* namespace */
 
 HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vector<int>& orbit_of,
@@ -210,7 +229,6 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
     m_ = (int)rows.size();
     mw_ = (m_ + 63) / 64;
     if (mw_ < 1) mw_ = 1;
-    rstart_.assign((size_t)m_ + 1, 0);
     std::vector<std::vector<uint32_t> > rq((size_t)m_);
     for (int i = 0; i < m_; i++) {
         const std::vector<int>& src = H.rows[(size_t)rows[i]];
@@ -222,9 +240,7 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         rq[i].erase(std::unique(rq[i].begin(), rq[i].end()), rq[i].end());
         if ((int)rq[i].size() > maxrow_) maxrow_ = (int)rq[i].size();
     }
-    for (int i = 0; i < m_; i++) rstart_[i + 1] = rstart_[i] + (uint32_t)rq[i].size();
-    rq_.reserve(rstart_[m_]);
-    for (int i = 0; i < m_; i++) rq_.insert(rq_.end(), rq[i].begin(), rq[i].end());
+    build_candidate_rows(rq, rstart_, rq_);
 
     /* qubit -> rows (ascending relabeled row index) */
     cstart_.assign((size_t)n_ + 1, 0);
@@ -256,16 +272,14 @@ HalfSearch::HalfSearch(const SparseRows& H, const SparseRows& G, const std::vect
         });
         mx_ = (int)Rn.size();
         mxw_ = (mx_ + 63) / 64;
-        xstart_.assign((size_t)mx_ + 1, 0);
         for (int j = 0; j < mx_; j++) {
             const std::vector<uint32_t>& g = Rn[(size_t)j];
             const int wt = (int)g.size();
             if (j == 0 || wt < xminw_) xminw_ = wt;
             if (j == 0 || wt > xmaxw_) xmaxw_ = wt;
             if (wt > maxrow_) maxrow_ = wt;
-            xq_.insert(xq_.end(), g.begin(), g.end());
-            xstart_[j + 1] = (uint32_t)xq_.size();
         }
+        build_candidate_rows(Rn, xstart_, xq_);
         xcstart_.assign((size_t)n_ + 1, 0);
         for (size_t t = 0; t < xq_.size(); t++) xcstart_[xq_[t] + 1]++;
         for (int q = 0; q < n_; q++) xcstart_[q + 1] += xcstart_[q];
@@ -1360,15 +1374,12 @@ template <bool E> inline int HalfSearch::choose_children(int size, int forced, i
     }
 
     uint32_t* cb = &cand_[(size_t)size * (size_t)maxrow_];
-    int nc = 0;
-    {
-        const bool red = E && brow >= ux_;
-        const uint32_t* a = red ? xq_.data() + xstart_[brow - ux_] : rq_.data() + rstart_[brow];
-        const uint32_t* e = red ? xq_.data() + xstart_[brow - ux_ + 1] : rq_.data() + rstart_[brow + 1];
-        for (const uint32_t* t = a; t < e; ++t)
-            if (!blk_[*t]) cb[nc++] = *t;
-    }
-    return nc;
+    const bool red = E && brow >= ux_;
+    const int row = red ? brow - ux_ : brow;
+    const auto& offsets = red ? xstart_ : rstart_;
+    const auto& columns = red ? xq_ : rq_;
+    const uint32_t begin = offsets[row];
+    return cc_gather_candidates(columns.data() + begin, offsets[row + 1] - begin, blk_.data(), cb);
 }
 
 /* the node's bound scan and branching (forced >= 0: branch on that row, GH-181 xorunit) */

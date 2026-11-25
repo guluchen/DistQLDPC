@@ -31,6 +31,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <vector>
+#include <fstream>
 #include <string>
 #include <algorithm>
 #include <memory>
@@ -69,33 +70,33 @@ static void die(const char* msg) {
     exit(1);
 }
 
-static Matrix load_matrix(const char* path) {
-    FILE* f = fopen(path, "r");
-    if (!f) {
+static Matrix load_matrix(const char* path, bool allow_zero_rows = false) {
+    std::ifstream input(path);
+    if (!input) {
         fprintf(stderr, "error: cannot open %s\n", path);
         exit(1);
     }
     Matrix m;
     m.rows = 0;
     m.cols = -1;
-    char line[65536];
-    while (fgets(line, sizeof(line), f)) {
-        char* p = line;
-        while (*p == ' ' || *p == '\t') p++;
-        if (*p == '#' || *p == '\n' || *p == '\0') continue;
+    std::string line;
+    while (std::getline(input, line)) {
+        const size_t first = line.find_first_not_of(" \t");
+        if (first == std::string::npos || line[first] == '#') continue;
         std::vector<uint8_t> row;
-        for (; *p; p++) {
-            if (*p == '0') row.push_back(0);
-            else if (*p == '1') row.push_back(1);
+        for (size_t i = first; i < line.size(); ++i) {
+            if (line[i] == '0') row.push_back(0);
+            else if (line[i] == '1') row.push_back(1);
         }
         if (row.empty()) continue;
-        if (m.cols < 0) m.cols = (int)row.size();
-        else if ((int)row.size() != m.cols) die("inconsistent row width");
+        if (row.size() > INT_MAX || m.rows == INT_MAX) die("matrix dimensions exceed integer range");
+        if (m.cols < 0) m.cols = static_cast<int>(row.size());
+        else if (static_cast<int>(row.size()) != m.cols) die("inconsistent row width");
         m.data.insert(m.data.end(), row.begin(), row.end());
         m.rows++;
     }
-    fclose(f);
-    if (m.rows == 0 || m.cols < 0) die("empty matrix");
+    if (input.bad() || !input.eof()) die("matrix read failed");
+    if (m.rows == 0 && !allow_zero_rows) die("empty matrix");
     return m;
 }
 
@@ -2181,6 +2182,9 @@ static void apply_pipe_line(BoundsBook& b, const char* line, ProgressState* prog
             prog->has_ub = true;
             prog->last_ub = b.ub;
         }
+    } else if (strcmp(line, "RESULT NO_LOGICAL") == 0) {
+        b.distance = distcc::CC_NO_LOGICAL;
+        b.finished = true;
     } else if (sscanf(line, "RESULT %d OPTIMAL", &d) == 1 && d >= 0) {
         b.distance = d;
         b.optimal = true;
@@ -2301,12 +2305,17 @@ static int solve_in_child_fork(
             d = min_distance_stabilizer_maxsat(
                 Hx, Hz, Gx, Gz, cpu_lim, verb, pipefd[1], card_mode, dump_wcnf_path);
         }
-        if (d < 0)
+        const bool no_logical = g_engine == ENGINE_CC && d == distcc::CC_NO_LOGICAL;
+        if (no_logical) {
+            const char message[] = "RESULT NO_LOGICAL\n";
+            (void)write(pipefd[1], message, sizeof(message) - 1);
+        } else if (d < 0) {
             pipe_write_result(pipefd[1], -1, false);
+        }
         close(pipefd[1]);
         fflush(stdout);
         fflush(stderr);
-        _exit(d >= 0 ? 0 : 1);
+        _exit(d >= 0 || no_logical ? 0 : 1);
     }
 
     close(pipefd[1]);
@@ -2962,10 +2971,17 @@ int main(int argc, char** argv) {
     std::string gx_path = p + "_Gx.txt";
     std::string gz_path = p + "_Gz.txt";
 
-    Matrix Hx = load_matrix(hx_path.c_str());
-    Matrix Hz = load_matrix(hz_path.c_str());
-    Matrix Gx = load_matrix(gx_path.c_str());
-    Matrix Gz = load_matrix(gz_path.c_str());
+    const bool allow_zero_rows = g_engine == ENGINE_CC;
+    Matrix Hx = load_matrix(hx_path.c_str(), allow_zero_rows);
+    Matrix Hz = load_matrix(hz_path.c_str(), allow_zero_rows);
+    Matrix Gx = load_matrix(gx_path.c_str(), allow_zero_rows);
+    Matrix Gz = load_matrix(gz_path.c_str(), allow_zero_rows);
+    if (allow_zero_rows) {
+        const int width = std::max(std::max(Hx.cols, Hz.cols), std::max(Gx.cols, Gz.cols));
+        if (width < 0) die("cannot infer matrix width from four empty files");
+        for (Matrix* matrix : {&Hx, &Hz, &Gx, &Gz})
+            if (matrix->rows == 0) matrix->cols = width;
+    }
 
     if (symbreak_report) {   /* GH-85 */
         if (Hz.cols != Hx.cols || Gx.cols != Hx.cols || Gz.cols != Hx.cols)
@@ -3055,6 +3071,12 @@ int main(int argc, char** argv) {
     int d = solve_in_child_fork(
         Hx, Hz, Gx, Gz, cpu_lim, verb, card_mode, backend,
         roundingsat_bin, dump_wcnf_path, book, timed_out, prog);
+
+    if (!timed_out && book.finished && d == distcc::CC_NO_LOGICAL) {
+        puts("c d  : +inf");
+        puts("s NO_LOGICAL");
+        return 0;
+    }
 
     if (verb > 0 || !prog.bounds_printed || timed_out || !book.optimal)
         print_bounds(book);

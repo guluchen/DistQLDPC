@@ -11,6 +11,7 @@ Require Import LeafMatrix MinimumPrefix LevelSearch VerifDetected VerifChildVisi
  PreparedNativeCallees PreparedArenaContext PreparedCallerLocals.
 Require Import PreparedChoiceCall PreparedChooseReturn PreparedSelectedReturn PreparedInteriorExit
  PreparedInitializeScan PreparedInteriorGuards PreparedDFSRejected PreparedCandidateSlice PreparedInteriorEntry VerifClosedPrefix.
+Require Import PreparedDescentFuel.
 Require flag_level_ast.
 Import flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
@@ -51,7 +52,6 @@ Hypothesis overlap:forall x,admissible_target (literal_path parent) x -> minimum
   forall a,wanted a=true -> a<>Znth i xs -> ~List.In a (new_blocks geom (Znth i xs) st).
 
 
-Let D:=func_tycontext f_dfs prepared_vars (recursive_policy c heap (pool base stride levels) report options) nil.
 Let contents:=heap s (active_prefix depth cells).
 Let input:choice_input:=fun owner sample=>
  (sample_data sample (Int.repr (-1)) Float.zero Float.zero * data_at_ Tsh (tarray tuint stride) buf)%logic.
@@ -63,7 +63,20 @@ Let output:choice_output:=fun owner sample written=>
    callback, then regains both before the first recursive sibling.
    The callback must put precisely the free members of the selected
    odd PCM row into the real buffer, leaving its unused suffix intact. *)
-Theorem visit_chosen_physical_row cb odd_count ptr (rest:mpred):
+
+
+Definition visit_tallies s bp nodes (budgets:list int64):=
+ (field_at Tsh level_type [StructField _nodes] (Vlong nodes) s *
+  field_at Tsh level_type [StructField _by_budget] bp s *
+  data_at Tsh (tarray tulong (Zlength budgets)) (map Vlong budgets) bp)%logic.
+
+Section ChildCalls.
+Variable children:budget_heap.
+Hypothesis at_child:forall node,Zlength node=(depth+1)%coqZ ->
+ children w s node=(heap s node * loan)%logic.
+
+Let D:=func_tycontext f_dfs prepared_vars (with_child_heap c heap children report options) nil.
+Theorem visit_chosen_physical_row_with_children cb odd_count ptr (rest:mpred):
   Int.and options Int.one<>Int.zero -> isptr ptr ->
   (0<=depth<levels)%coqZ -> (0<=stride)%coqZ -> (Zlength xs<=stride)%coqZ ->
   field_compatible0 (tarray tuint ((levels-depth)*stride)) [ArraySubsc stride] buf ->
@@ -80,7 +93,7 @@ Theorem visit_chosen_physical_row cb odd_count ptr (rest:mpred):
 Proof.
  move=>use live at_level width fits safe counter fn open_heap.
  have extend:tycontext_sub (func_tycontext f_dfs prepared_vars nil nil) D.
- { unfold D,recursive_policy;apply tycontext_sub_Gprog_nil;vm_compute;
+ { unfold D,with_child_heap;apply tycontext_sub_Gprog_nil;vm_compute;
    repeat (apply list_norepet_cons;[simpl;intuition congruence|]);apply list_norepet_nil. }
  eapply from_policy_choice.
  - eapply semax_pre;last first.
@@ -93,23 +106,18 @@ Proof.
    + eapply (@from_selected_candidates Espec D c s buf cp w cells root depth (Zlength xs) options ptr
         [::contents;loan;child_array buf xs;sample_data ptr (Int.repr (-1)) Float.zero Float.zero;
            spare_words buf stride xs]);[exact extend|lia|exact budget|].
-     exact:(@recursive_interior_through_return Espec m n r k H S G c heap options s cp base parent row check
+     exact:(@recursive_interior_through_return_with_children Espec m n r k H S G c heap options s cp base parent row check
        root cells w depth stride levels admissible_target dims size_ok row_ok unique odd prefix fit budget cap
-       owner count ready inherited overlap ptr (Int.repr (-1)) Float.zero Float.zero
+       owner count ready inherited overlap children at_child ptr (Int.repr (-1)) Float.zero Float.zero
        ltac:(compute;congruence) at_level width fits safe).
    + rewrite open_heap;unfold fn,counter,chosen_loc;entailer!;try cancel;apply derives_refl.
 Qed.
-
-Definition visit_tallies s bp nodes (budgets:list int64):=
- (field_at Tsh level_type [StructField _nodes] (Vlong nodes) s *
-  field_at Tsh level_type [StructField _by_budget] bp s *
-  data_at Tsh (tarray tulong (Zlength budgets)) (map Vlong budgets) bp)%logic.
 
 (* This theorem starts at the first instruction of the actual DFS body.
    The return contract is the one used recursively. The same level weight,
    odd count, callback field and candidate pointers are borrowed and
    reassembled as control passes through the guards and the C++ chooser. *)
-Theorem reachable_recursive_entry cb odd_count ptr bp nodes budgets mask (rest:mpred):
+Theorem reachable_recursive_entry_with_children cb odd_count ptr bp nodes budgets mask (rest:mpred):
   Int.and options Int.one<>Int.zero -> isptr ptr -> isptr base ->
   (0<odd_count<=Int.max_signed)%coqZ -> (w-depth<Zlength budgets)%coqZ ->
   (Int.and options (Int.repr 2)<>Int.zero -> Int64.and (Int64.add nodes Int64.one) mask<>Int64.zero) ->
@@ -133,7 +141,7 @@ Theorem reachable_recursive_entry cb odd_count ptr bp nodes budgets mask (rest:m
 Proof.
  move=>use live base_ok odd_fit room between even at_level width fits safe counter fn tallies bumped timer pointers row_space open_heap.
  have extend:tycontext_sub (func_tycontext f_dfs prepared_vars nil nil) D.
- { unfold D,recursive_policy;apply tycontext_sub_Gprog_nil;vm_compute;
+ { unfold D,with_child_heap;apply tycontext_sub_Gprog_nil;vm_compute;
    repeat (apply list_norepet_cons;[simpl;intuition congruence|]);apply list_norepet_nil. }
  pose (untouched:=(rest_of_level c s cp cells root * fn * rest * pointers *
           data_at_ Tsh sample_type ptr * row_space * loan)%logic).
@@ -151,11 +159,58 @@ Proof.
        [exact extend|lia|lia|exact base_ok|].
      eapply semax_pre;last first.
      * assert (wide:(0<=stride)%coqZ) by lia.
-       exact (@visit_chosen_physical_row cb odd_count ptr (pointers * bumped * timer * rest)%logic use live
+       exact (@visit_chosen_physical_row_with_children cb odd_count ptr (pointers * bumped * timer * rest)%logic use live
          at_level wide fits safe open_heap).
      * rewrite open_heap;unfold during,input,before_choice,choice_loc,pointers;cbn [app];entailer!;try cancel;apply derives_refl.
    + unfold during,untouched;rewrite share_weight_during_setup;unfold bumped,visit_tallies,visit_fields,
         timer,counter,pointers,guard_loc;entailer!;try cancel;apply derives_refl.
+Qed.
+End ChildCalls.
+
+Let D:=func_tycontext f_dfs prepared_vars (recursive_policy c heap (pool base stride levels) report options) nil.
+Theorem visit_chosen_physical_row cb odd_count ptr (rest:mpred):
+  Int.and options Int.one<>Int.zero -> isptr ptr ->
+  (0<=depth<levels)%coqZ -> (0<=stride)%coqZ -> (Zlength xs<=stride)%coqZ ->
+  field_compatible0 (tarray tuint ((levels-depth)*stride)) [ArraySubsc stride] buf ->
+  let counter:=field_at Tsh level_type [StructField _nodd] (Vint (Int.repr odd_count)) s in
+  let fn:=choice_field c cb (choose_callback depth odd_count buf (Z.of_nat n) input output) in
+  contents=(counter * fn * rest)%logic ->
+  semax D (PROPx nil (LOCALx (before_choice c s buf ptr depth options)
+    (SEPx [::enabled_memory c s cp w cells root;contents;input (callback_owner c) ptr;loan])))
+  choose_search_return
+  (existential_ret_assert (fun a=>function_body_ret_assert tint
+    (PROP(physical_exit H S G c options row root cells w depth admissible_target a)
+     LOCAL(temp ret_temp (Vint (Int.repr (returned_code a))))
+     SEP(data_at_ Tsh sample_type ptr;owned_after c heap s cp base cells w depth stride levels a)))).
+Proof.
+ refine (@visit_chosen_physical_row_with_children (fun _=>node_heap heap (pool base stride levels)) _ cb odd_count ptr rest).
+ intros node length;unfold node_heap,pool,loan;rewrite length;reflexivity.
+Qed.
+
+Theorem reachable_recursive_entry cb odd_count ptr bp nodes budgets mask (rest:mpred):
+  Int.and options Int.one<>Int.zero -> isptr ptr -> isptr base ->
+  (0<odd_count<=Int.max_signed)%coqZ -> (w-depth<Zlength budgets)%coqZ ->
+  (Int.and options (Int.repr 2)<>Int.zero -> Int64.and (Int64.add nodes Int64.one) mask<>Int64.zero) ->
+  (Int.and options (Int.repr 8)<>Int.zero -> Z.testbit (w-depth-odd_count) 0=false) ->
+  (0<=depth<levels)%coqZ -> (0<=stride<=Int.max_signed)%coqZ -> (Zlength xs<=stride)%coqZ ->
+  field_compatible0 (tarray tuint ((levels-depth)*stride)) [ArraySubsc stride] buf ->
+  let counter:=field_at Tsh level_type [StructField _nodd] (Vint (Int.repr odd_count)) s in
+  let fn:=choice_field c cb (choose_callback depth odd_count buf (Z.of_nat n) input output) in
+  let tallies:=visit_tallies s bp nodes budgets in
+  let bumped:=visit_tallies s bp (Int64.add nodes Int64.one) (bump budgets (w-depth)) in
+  let timer:=mask_field s mask in let pointers:=candidate_fields s base stride in
+  let row_space:=data_at_ Tsh (tarray tuint stride) buf in
+  contents=(counter * fn * (pointers * bumped * timer * rest))%logic ->
+  semax D (PROPx nil (LOCALx (guard_loc s (nested_policy (nested c)) depth options ptr)
+    (SEPx [::enabled_memory c s cp w cells root;counter;fn;tallies;timer;rest;pointers;
+       data_at_ Tsh sample_type ptr;row_space;loan]))) (fn_body f_dfs)
+  (existential_ret_assert (fun a=>function_body_ret_assert tint
+    (PROP(physical_exit H S G c options row root cells w depth admissible_target a)
+     LOCAL(temp ret_temp (Vint (Int.repr (returned_code a))))
+     SEP(data_at_ Tsh sample_type ptr;owned_after c heap s cp base cells w depth stride levels a)))).
+Proof.
+ refine (@reachable_recursive_entry_with_children (fun _=>node_heap heap (pool base stride levels)) _ cb odd_count ptr bp nodes budgets mask rest).
+ intros node length;unfold node_heap,pool,loan;rewrite length;reflexivity.
 Qed.
 
 End FromChoice.

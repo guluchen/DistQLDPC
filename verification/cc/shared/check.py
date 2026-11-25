@@ -114,8 +114,8 @@ MODULES = (
     "PreparedLeafLoopBridge", "PreparedPCMLeafVisit", "PreparedLeafMinimum",
     "PreparedLeafAtPath", "PreparedReusableBook", "PreparedInitialLookup",
     "PreparedSelectedBlocks", "PreparedChildPrefix",
-    "PreparedFastCoverage", "PreparedObservedWitness", "PreparedLeafReport", "PreparedPCMFastSearch",
-    "PreparedInteriorReport", "PreparedPCMInterior", "PreparedPreferredOverlap", "PreparedPreferredSeed",
+    "PreparedFastCoverage", "PreparedObservedWitness", "PreparedLeafReport",
+    "PreparedInteriorReport", "PreparedDescentFuel", "PreparedPCMInterior", "PreparedPreferredOverlap", "PreparedPreferredSeed",
     "PreparedRootWitness", "PreparedWeightCases", "PreparedCutReports", "PreparedFinalLookup",
     "PreparedZeroPCM", "PreparedReadWitness", "PreparedProtectedCounts", "PreparedSeedSlack",
     "PreparedCertifiedBounds", "PreparedCSSRootPost",
@@ -128,7 +128,8 @@ MODULES = (
     "PreparedInteriorEntry", "PreparedEmptyLoops", "PreparedDFSRejected",
     "PreparedPrunedPCM",
     "PreparedInteriorGuards",
-    "PreparedChosenPhysicalRow",
+    "PreparedChosenPhysicalRow", "PreparedNoLogical", "PreparedWritableChoice", "PreparedCounterJoin",
+    "PreparedRankedChildren", "PreparedPCMFastSearch", "PreparedBoundedEntry", "PreparedGatherCandidates", "PreparedConstructedRow", "PreparedRowAppend",
 )
 
 
@@ -153,6 +154,8 @@ def main():
             ("level_ast", proof_dir / "reference" / "cc_level.c"),
             ("flag_level_ast", source_dir / "cc_level.c"),
             ("pack_ast", proof_dir / "pack_row_ast.c"),
+            ("candidate_row_ast", proof_dir / "candidate_row_ast.c"),
+            ("row_builder_ast", proof_dir / "row_builder_ast.c"),
             ("overlap_ast", proof_dir / "overlap_ast.c"),
             ("driver_ast", proof_dir / "driver_bounds_ast.c"),
             ("owner_ast", proof_dir / "overlap_policy_ast.c"),
@@ -173,7 +176,7 @@ def main():
                          for arg in ("-norec", name)]
         subprocess.run(["coqchk", "-silent", *flags, *check_targets],
                        cwd=build, check=True)
-        inputs = [source_dir / name for name in ("cc_level.h", "cc_epoch.h", "cc_pack_row.h",
+        inputs = [source_dir / name for name in ("cc_level.h", "cc_epoch.h", "cc_pack_row.h", "cc_candidate_row.h", "cc_row_builder.h",
                   "cc_overlap.h", "cc_overlap_policy.h", "cc_seed_policy.h", "cc_distance_bounds.h")]
         inputs.extend(source for _, source in translations)
         inputs.extend(proof_dir / "reference" / n for n in ("cc_level.h", "cc_epoch.h"))
@@ -193,7 +196,10 @@ def main():
                                             "leaf lookup for a physically constructed PCM table",
                                             "one-left DFS with the PCM table and a non-null policy",
                                             "two-move dispatch with open or closed first child",
-                                            "restoration of excluded siblings in the native DFS"],
+                                            "restoration of excluded siblings in the native DFS",
+                                            "recursive reports by remaining search depth",
+                                            "CSR row append and unblocked candidate gathering",
+                                            "validated rank exit for zero encoded qubits"],
                           "reference_c_commit": "b558c89eb4cf482da029e2076daa44ddb06e17c4",
                           "production_ast": "flag_level_ast",
                           "modules": list(MODULES), "sha256": {

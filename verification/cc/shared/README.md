@@ -533,3 +533,61 @@ local sample and candidate pointer, then applies the chosen-row theorem.
 Its postcondition identifies the restored parent state and the stored
 CSS witness when the search returns a hit. The input row, lookup and
 overlap data, chooser and recursive callee must satisfy their contracts.
+
+### Recursive returns at a fixed weight
+
+For a level of weight `w` and a selected prefix of length `d`, the parent
+owns its candidate row until its sibling loop finishes. The call at
+`d + 1` receives the remaining arena and a budget of `w - d - 1`.
+`PreparedRankedChildren` proves by induction on this budget that a tree
+of local return evidence implies the distance contract. The induction
+covers each exhausted sibling and propagates the trace of the sibling
+that stops the scan. A deadline produces an interruption without
+certifying exhaustion. When a packing scan or a charge inequality cuts
+a node, its witnesses must justify returning zero at the active weight.
+
+With two moves left, the native loop flips a candidate qubit and tests
+the last move by lookup. `PreparedPCMFastSearch.physical_two_move_execution`
+proves that this compiled loop, including sibling rollback, produces the
+depth-two evidence consumed by the induction. Its inputs include a
+valid lookup table, a protected prefix and a selected odd row.
+
+`PreparedBoundedEntry.entry_from_child_execution` applies this theorem at
+the compiled DFS entry for a node with more than two remaining moves, a
+passing parity and polling guard, an unrecorded sample, and a selected
+odd physical row. The callback borrows the existing block-count array.
+Visit counters can change at arbitrary descendants. The postcondition
+retains the parent execution tree after rollback together with its
+distance and witness contract. Its recursive inputs use the same report
+at one less remaining move. The full native theorem still needs all entry
+cases and construction of the C++ tables and callback invariants.
+
+For a validated CC input with two empty logical quotients, the CLI
+prints `c d  : +inf` and `s NO_LOGICAL` and exits successfully.
+`PreparedNoLogical` relates the two rank tests to absence of a mixed
+logical Pauli. The same condition is equivalent to zero encoded qubits,
+where the encoded dimension is the number of columns minus the two PCM
+ranks. For a finite distance the specification requires a logical Pauli
+of that weight and a lower bound on every logical Pauli. Invalid
+detectors and interruption retain their separate status.
+
+The optimized C++ chooser calls `cc_gather_candidates` on the selected
+CSR row. The checked C body returns its unblocked entries in order and
+preserves every unused output word. `PreparedConstructedRow` proves
+that an odd original check or an odd linear combination of checks must
+contribute an available qubit from each compatible completion. It
+identifies the callback's block array with the DFS array across their
+two Clight type environments and gives the returned prefix and spare
+buffer words to the sibling loop at the same address.
+
+Both ordinary and redundant rows are written by `cc_append_candidate_row`.
+`PreparedRowAppend` checks the compiled C loop, including zero-length
+rows. It proves the exact words written, preservation of the prefix and
+unused suffix, and the exclusive end offset. Its index theorem shows that
+two consecutive offsets select the original normalized row for any list of
+rows. The C++ caller checks that the total fits in a 32-bit offset.
+
+Explicit `-engine=cc` also accepts a zero-row matrix file when another
+of the four matrices supplies its width. For example, a Bell stabilizer
+state has one `1 1` row in each PCM and may have empty logical basis
+files. With four empty files, the input has no encoded width.

@@ -93,6 +93,32 @@ D2="$tmp/D2_64_60_2"; gen_blocks "$D2" 32 32           # auto -> maxsat (n 64, m
 S4="$tmp/S4_128_120_2"; gen_blocks "$S4" 32 32 32 32   # auto -> cc (n 128, mean row weight 32 = n/4)
 L=-cpu-lim=20
 
+# A stabilizer state has an empty logical quotient. Incomplete detectors
+# for an encoded qubit must still fail validation before reaching this exit.
+for part in Hx Hz Gx Gz; do echo 0 > "$tmp/one_${part}.txt"; done
+echo 1 > "$tmp/one_Hx.txt"
+runs=$((runs + 1)); run -engine=cc "$tmp/one"
+if [[ $rc -ne 0 || "$out" != $'c d  : +inf\ns NO_LOGICAL' || -n "$err" ]]; then
+    echo "FAIL (empty logical quotient): rc=$rc stdout: $out stderr: $err" >&2; fails=$((fails + 1))
+fi
+echo 0 > "$tmp/one_Hx.txt"
+reject 'detector check failed' -engine=cc "$tmp/one"
+echo 1 > "$tmp/one_Gx.txt"; echo 1 > "$tmp/one_Gz.txt"
+accept 1 "" -engine=cc "$tmp/one"
+
+# Bell state with empty logical basis files; a long input line is one PCM row.
+printf '1%65534s1\n' '' > "$tmp/bell_Hx.txt"
+printf '1 1\n' > "$tmp/bell_Hz.txt"
+: > "$tmp/bell_Gx.txt"; : > "$tmp/bell_Gz.txt"
+runs=$((runs + 1)); run -engine=cc "$tmp/bell"
+if [[ $rc -ne 0 || "$out" != $'c d  : +inf\ns NO_LOGICAL' || -n "$err" ]]; then
+    echo "FAIL (Bell state with empty logical bases): rc=$rc stdout: $out stderr: $err" >&2; fails=$((fails + 1))
+fi
+: > "$tmp/one_Hx.txt"; : > "$tmp/one_Hz.txt"
+accept 1 "" -engine=cc "$tmp/one"
+: > "$tmp/one_Gx.txt"; : > "$tmp/one_Gz.txt"
+reject 'cannot infer matrix width' -engine=cc "$tmp/one"
+
 # 1. MaxSAT formulation / backend / dump flags with -engine=cc or -engine=auto
 for e in -engine=cc -engine=auto; do
     for f in -joint -roundingsat -roundingsat=/nonexistent "-dump-wcnf=$tmp/dump.wcnf" "-dump-opb=$tmp/dump.opb" \

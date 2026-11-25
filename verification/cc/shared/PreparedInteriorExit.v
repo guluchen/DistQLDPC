@@ -9,6 +9,7 @@ Require Import LeafMatrix MinimumPrefix LevelSearch VerifDetected VerifChildVisi
  PreparedMatrixPath PreparedPCMLeafVisit PreparedChildPrefix PreparedResidualIndex PreparedOverlapDepth
  PreparedInteriorReport PreparedPCMInterior PreparedVerdictExit PreparedReturnTrace PreparedSampling
  PreparedNativeCallees PreparedArenaContext PreparedCallerLocals.
+Require Import PreparedDescentFuel.
 Require flag_level_ast.
 Import flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
@@ -59,7 +60,6 @@ Definition physical_exit a:Prop:=
 Definition owned_after a:=
  (enabled_memory c s cp w (output_trace a) (restored_snapshot a) *
     heap s (active_prefix depth cells) * remaining_arena base stride levels depth)%logic.
-Let D:=func_tycontext f_dfs prepared_vars (recursive_policy c heap (pool base stride levels) report options) nil.
 Let live i r:=scan_loc_mode update c s buf depth (Zlength xs) i r options.
 Let start:=[::enabled_memory c s cp w cells root;heap s (active_prefix depth cells);loan;child_array buf xs].
 Let stop a:=[::enabled_memory c s cp w (output_trace a) (restored_snapshot a);
@@ -68,7 +68,13 @@ Let stop a:=[::enabled_memory c s cp w (output_trace a) (restored_snapshot a);
 (* Return from the actual general child loop with the restored parent
    heap. Ancestors retain their candidate rows. At this common exit the
    sample class is negative, so there is no callback invocation. *)
-Theorem recursive_interior_through_return ptr klass t1 t2:
+Section ChildCalls.
+Variable children:budget_heap.
+Hypothesis at_child:forall node,Zlength node=(depth+1)%coqZ ->
+ children w s node=(heap s node * loan)%logic.
+
+Let D:=func_tycontext f_dfs prepared_vars (with_child_heap c heap children report options) nil.
+Theorem recursive_interior_through_return_with_children ptr klass t1 t2:
  (Int.signed klass<0)%coqZ -> (0<=depth<levels)%coqZ -> (0<=stride)%coqZ -> (Zlength xs<=stride)%coqZ ->
  field_compatible0 (tarray tuint ((levels-depth)*stride)) [ArraySubsc stride] buf ->
  semax D (PROPx nil (LOCALx (live 0%coqZ 0%coqZ ++ [::lvar _sample sample_type ptr])
@@ -79,14 +85,14 @@ Theorem recursive_interior_through_return ptr klass t1 t2:
 Proof.
  move=>disabled at_depth wide fits comp.
  apply:(@finish_after_siblings scan_exit Espec D _ ptr klass t1 t2 returned_code physical_exit owned_after _ disabled).
- - unfold D,recursive_policy;apply tycontext_sub_Gprog_nil;vm_compute;
+ - unfold D,with_child_heap;apply tycontext_sub_Gprog_nil;vm_compute;
    repeat (apply list_norepet_cons;[simpl;intuition congruence|]);apply list_norepet_nil.
  - have loop:semax D (PROPx nil (LOCALx (live 0%coqZ 0%coqZ) (SEPx start)))
      (Ssequence search_children undo_children) (normal_ret_assert (EX a:scan_exit,
       PROPx [::physical_exit a] (LOCALx (live (next_index a) (returned_code a)) (SEPx (stop a))))).
-   { eapply semax_post';last exact:(@recursive_loop_at_physical_weight Espec m n r k H S G c heap options s cp base parent row
+   { eapply semax_post';last exact:(@recursive_loop_at_physical_weight_with_children Espec m n r k H S G c heap options s cp base parent row
        check root cells w depth stride levels admissible_target dims size_ok row_ok unique odd prefix fit budget cap owner count ready
-       inherited overlap).
+       inherited overlap children at_child).
      Intros i value st path;Exists (make_exit i value st path);unfold physical_exit,live,start,stop,scan_loc_mode;
      cbn [next_index returned_code restored_snapshot output_trace];entailer!;try apply derives_refl;intuition. }
    pose saved:=[::lvar _sample sample_type ptr].
@@ -100,5 +106,20 @@ Proof.
    entailer!;try cancel.
    rewrite sepcon_assoc (sepcon_comm loan).
    exact:(@release_after_descendants base stride levels depth xs at_depth wide fits comp).
+Qed.
+End ChildCalls.
+
+Let D:=func_tycontext f_dfs prepared_vars (recursive_policy c heap (pool base stride levels) report options) nil.
+Theorem recursive_interior_through_return ptr klass t1 t2:
+ (Int.signed klass<0)%coqZ -> (0<=depth<levels)%coqZ -> (0<=stride)%coqZ -> (Zlength xs<=stride)%coqZ ->
+ field_compatible0 (tarray tuint ((levels-depth)*stride)) [ArraySubsc stride] buf ->
+ semax D (PROPx nil (LOCALx (live 0%coqZ 0%coqZ ++ [::lvar _sample sample_type ptr])
+    (SEPx (start++[::sample_data ptr klass t1 t2;spare_words buf stride xs])))) search_finish
+ (existential_ret_assert (fun a=>function_body_ret_assert tint
+   (PROP(physical_exit a) LOCAL(temp ret_temp (Vint (Int.repr (returned_code a))))
+    SEP(data_at_ Tsh sample_type ptr;owned_after a)))).
+Proof.
+ refine (@recursive_interior_through_return_with_children (fun _=>node_heap heap (pool base stride levels)) _ ptr klass t1 t2).
+ intros node length;unfold node_heap,pool,loan;rewrite length;reflexivity.
 Qed.
 End ReturnFromInterior.

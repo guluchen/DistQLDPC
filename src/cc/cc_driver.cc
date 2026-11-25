@@ -312,7 +312,7 @@ int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const Bound
             printf("c cc: %s half: n %d, rank H %d, rank [H;G] %d, rank S %d: detectors complete, %d logical(s)\n",
                    hs[k].tag, n, hs[k].rankH, hs[k].rankHG, hs[k].rankS, hs[k].rankHG - hs[k].rankH);
     }
-    if (!hs[0].exists && !hs[1].exists) return fail("no nontrivial logical operator in either half");
+    if (!hs[0].exists && !hs[1].exists) return CC_NO_LOGICAL;
 
     bool dual = false;
     if (opt.dual && !in.dual_perm.empty() && hs[0].exists && hs[1].exists) {

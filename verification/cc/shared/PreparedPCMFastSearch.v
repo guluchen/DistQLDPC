@@ -9,6 +9,7 @@ Require Import LeafMatrix MinimumPrefix LevelSearch SyndromeHash RowTally IndexR
  PreparedCandidateArena PreparedArenaRoot PreparedMatrixPath PreparedMatrixResponse PreparedInitialLookup
  PreparedLeafWorkspace PreparedLeafVisit PreparedPCMLeafVisit PreparedChildPrefix PreparedFastCoverage
  PreparedLeafReport PreparedObservedWitness PreparedResidualIndex EnabledLoopFacts VerifEnabledSiblings SiblingCounters.
+Require Import PreparedRankedChildren.
 Require flag_level_ast.
 Import flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
@@ -62,6 +63,24 @@ Definition retains_minimum code:Prop:=forall (x:'cV['F_2]_n) (check:'I_m),
  #|support x|=(#|P|).+2 -> P \subset support x -> (H*m indicator P) check 0!=0 ->
  support x :\: P \subset F -> code<>0%coqZ.
 
+Lemma constructed_leaf_inputs:forall i st cur,(0<=i<Zlength xs)%coqZ -> same_search st (sibling_state root xs i) ->
+   active_prefix depth cur=active_prefix depth cells -> let q:=Znth i xs in let node:=append_qubit cur depth q in
+   exists ids:seq 'I_n,[ /\ uniq ids,node=literal_path ids,(depth+1)%coqZ=Z.of_nat (size ids) &
+   @reached_leaf m n k H G columns rowkey keys mask tab links policy initial (@prefix_set n node) (selected st q) node ].
+Proof.
+ have [history nonempty dim spare period bits_ok mask_ok cap_ok no_dups incidence stored alias]:=idx.
+ have fit:(Z.of_nat n<=Int.max_signed)%coqZ by rewrite -dim;exact:(qubits_fit _ _ _ base_safe).
+ move=>i st cur range same match_root q node.
+   have [a [addr unique trace width used]]:=@child_extends_protected_prefix n parent row root st i cur depth fit
+      blocked_size distinct legal_parent (etrans match_root prefix) protected range same.
+   change (node=literal_path (rcons parent a)) in trace.
+   exists (rcons parent a);split=> //.
+   - rewrite size_rcons parent_length;lia.
+   - rewrite trace literal_prefix_set //;apply (@reached_leaf_from_initial m n k H G rowkey columns policy keys
+      mask tab links initial old_blocks rows_fit dim nonempty no_dups incidence redundant stored encoded zero base_safe);
+      [exact unique|by rewrite width dim|exact used].
+Qed.
+
 Theorem physical_two_move_search:
  semax (func_tycontext f_dfs prepared_vars (policy_callees c hold
    (fun _=>node_heap hold (pool base stride levels)) goal_report options) nil)
@@ -81,19 +100,7 @@ Proof.
  have unsigned:(Z.of_nat n<=Int.max_unsigned)%coqZ by move:fit;change Int.max_signed with 2147483647%coqZ;
     change Int.max_unsigned with 4294967295%coqZ;lia.
  have [bounds free]:=@emitted_range_and_availability n row _ F unsigned blocked_size (@available_in_view n root).
- have child_input:forall i st cur,(0<=i<Zlength xs)%coqZ -> same_search st (sibling_state root xs i) ->
-   active_prefix depth cur=active_prefix depth cells -> let q:=Znth i xs in let node:=append_qubit cur depth q in
-   exists ids:seq 'I_n,[ /\ uniq ids,node=literal_path ids,(depth+1)%coqZ=Z.of_nat (size ids) &
-   @reached_leaf m n k H G columns rowkey keys mask tab links policy initial (@prefix_set n node) (selected st q) node ].
- { move=>i st cur range same match_root q node.
-   have [a [addr unique trace width used]]:=@child_extends_protected_prefix n parent row root st i cur depth fit
-      blocked_size distinct legal_parent (etrans match_root prefix) protected range same.
-   change (node=literal_path (rcons parent a)) in trace.
-   exists (rcons parent a);split=> //.
-   - rewrite size_rcons parent_length;lia.
-   - rewrite trace literal_prefix_set //;apply (@reached_leaf_from_initial m n k H G rowkey columns policy keys
-      mask tab links initial old_blocks rows_fit dim nonempty no_dups incidence redundant stored encoded zero base_safe);
-      [exact unique|by rewrite width dim|exact used]. }
+ have child_input:=constructed_leaf_inputs.
  eapply semax_post'.
  2:{ apply (@actual_fast_sibling_loop Espec m n k H G columns rowkey keys mask cap bits tab links c policy p
       initial frame s cp xs root cells depth stride levels base options goal_report (@prefix_set n)
@@ -113,6 +120,62 @@ Proof.
  have keeps:retains_minimum code.
  { move=>x check covered best size sub odd allowed;exact:(@physical_two_move_scan_keeps_minimum m n k H G parent row
        root check x w (geometry c) i code tail fit blocked_size covered distinct best size sub odd allowed scan). }
+ Exists i code st tail;unfold scan_loc_mode;entailer!;try apply derives_refl;auto.
+Qed.
+
+(* The two-move shortcut never calls DFS for its last qubit. Its actual
+   table lookups still produce the raw child evidence at remaining depth
+   one, including every sibling exhausted before a hit. *)
+Variable eligible:seq Integers.int->'cV['F_2]_n->Prop.
+Let inline_children:budget_report:=fun unused=>reports_at H S G eligible 1 w.
+Theorem physical_two_move_execution (check:'I_m):
+ (forall q:'I_n,H check q!=0 -> q \in row) ->
+ (H*m indicator P) check 0!=0 ->
+ (forall x (a:'I_n),eligible (literal_path parent) x ->
+      eligible (literal_path parent++[::Int.repr (Z.of_nat a)]) x) ->
+ semax (func_tycontext f_dfs prepared_vars (policy_callees c hold
+   (fun _=>node_heap hold (pool base stride levels)) inline_children options) nil)
+ (PROPx nil (LOCALx (scan_loc_mode false c s buf depth (Zlength xs) 0%coqZ 0%coqZ options)
+  (SEPx [::enabled_memory c s cp w cells root;hold s (active_prefix depth cells);loan;child_array buf xs])))
+ (Ssequence search_children undo_children)
+ (normal_ret_assert (EX i:Z,EX code:Z,EX st:snapshot,EX tail:seq Integers.int,
+  PROPx [::reports_at H S G eligible 2 w (geometry c) root (literal_path parent) code tail;
+    (0<=code<=3)%coqZ;same_search st root;Zlength tail=Zlength cells;active_prefix depth tail=active_prefix depth cells]
+   (LOCALx (scan_loc_mode false c s buf depth (Zlength xs) i code options)
+    (SEPx [::enabled_memory c s cp w tail st;hold s (active_prefix depth cells);loan;child_array buf xs])))).
+Proof.
+ move=>covered odd inherited.
+ have dim:=all_keys idx.
+ have fit:(Z.of_nat n<=Int.max_signed)%coqZ by rewrite -dim;exact:(qubits_fit _ _ _ base_safe).
+ have unsigned:(Z.of_nat n<=Int.max_unsigned)%coqZ by move:fit;change Int.max_signed with 2147483647%coqZ;
+    change Int.max_unsigned with 4294967295%coqZ;lia.
+ have [bounds _]:=@emitted_range_and_availability n row _ F unsigned blocked_size (@available_in_view n root).
+ have positive:(0<Zlength (OverlapColumnState.blocked root)<=Int.max_signed)%coqZ by rewrite blocked_size -dim;
+    split;[exact:(nonempty_keys idx)|exact:(qubits_fit _ _ _ base_safe)].
+ eapply semax_post'.
+ 2:{ apply (@actual_fast_sibling_loop Espec m n k H G columns rowkey keys mask cap bits tab links c policy p
+      initial frame s cp xs root cells depth stride levels base options inline_children (@prefix_set n)
+      idx signed_depth room rows_in_storage positive bounds owner csr_safe).
+    - move=>i st cur range same len matched;have [ids [_ _ _ reached]]:=constructed_leaf_inputs range same matched.
+      exact reached.
+    - move=>i st cur code tail range same len matched q child observed.
+      have [ids [unique trace count [_ _ live _ _]]]:=constructed_leaf_inputs range same matched.
+      have facts:=@prepared_leaf_evidence m n r k H S G ids child _ rowkey depth q cur code tail (geometry c)
+          orth det rank_ok fit unique ltac:(lia) ltac:(unfold w in room;lia) count trace live observed.
+      split.
+      + have members:@prefix_set n (append_qubit cur depth q)=[set a:'I_n | a \in ids]
+          by rewrite trace literal_prefix_set.
+        cbn zeta in observed;rewrite members in live observed.
+        unfold inline_children,w.
+        eapply pair_observation_supplies_child with (ids:=ids) (rowkey:=rowkey);
+          try eassumption;unfold w in room;lia.
+      + move=>found;apply (@notify child q code tail found);exact:((proj2 (proj2 facts)) found). }
+ Intros i code st tail.
+ match goal with h:scan_outcome_mode _ _ _ _ _ _ _ _ _ |- _ => pose proof h as observed end.
+ rewrite prefix in observed.
+ have raw:reports_at H S G eligible 2 w (geometry c) root (literal_path parent) code tail.
+ { right;eapply from_row with (row:=row) (check:=check) (update:=false) (stop:=i);
+     try eassumption;try solve [intros;discriminate]. }
  Exists i code st tail;unfold scan_loc_mode;entailer!;try apply derives_refl;auto.
 Qed.
 End CompiledScan.

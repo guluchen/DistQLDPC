@@ -131,7 +131,11 @@ struct BoundSink {
     BoundSink() : ctx(NULL), bound(NULL), result(NULL), trap(NULL) {}
 };
 
-/* Returns d >= 0 (RESULT d OPTIMAL emitted) or -1 (RESULT -1 emitted). */
+/* Both validated detector quotients are empty. This is +infinity in the
+ * extended distance, distinct from a finite weight or a failed search. */
+constexpr int CC_NO_LOGICAL = -2;
+
+/* Returns a finite distance, CC_NO_LOGICAL, or -1 on failure. */
 int min_distance_cc(const DriverInput& in, const DriverOptions& opt, const BoundSink& sink);
 
 /* "-cc-rules=" value: comma list of excl, pack, orbf, parity, leaf, overlap, mrv, charge (or "none"); empty values and empty items
