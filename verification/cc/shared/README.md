@@ -597,3 +597,25 @@ Explicit `-engine=cc` also accepts a zero-row matrix file when another
 of the four matrices supplies its width. For example, a Bell stabilizer
 state has one `1 1` row in each PCM and may have empty logical basis
 files. With four empty files, the input has no encoded width.
+
+### C index-based row selection
+
+In the C path with a null policy, `index_children` scans the packed
+syndrome, tries a disjoint-row packing, and gathers the unblocked
+columns of the first odd row. `PreparedIndexWords` derives the row
+indices from the machine words. The zeroed padding stays zero on any
+sequence of physical column flips, including undo operations.
+`PreparedIndexCandidates.index_choice_after_flips` starts at zeroed
+syndrome and detector buffers. For every compatible closed completion
+within the remaining weight budget, the modeled scan passes and the
+returned list contains a qubit from that completion. The theorem permits
+any initial contents of the packing marks. It requires the supplied
+column and detector encodings to represent the PCM.
+
+`PreparedIndexGather.physical_index_emit` verifies the final gather loop
+and return statement of the compiled C chooser. On the selected odd row
+the function writes the candidate prefix, preserves the unused buffer
+suffix, and returns the prefix length. That prefix has no duplicates and
+intersects every compatible completion. The complete C function still
+requires linking the outer word and packing loops to that return or a
+justified early cut. Neither result requires a C++ chooser contract.
