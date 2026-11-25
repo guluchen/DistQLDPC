@@ -705,3 +705,14 @@ return at any depth. A trace includes the recursively observed results
 of all earlier empty siblings and of the child that stopped the scan.
 Showing that the complete Clight DFS always produces this trace is a
 separate obligation.
+
+The fast C index-mode entry passes a null policy pointer.
+`PreparedPlainDescent.null_policy_recurses` checks the actual Clight
+child call with that pointer and a borrowed block/path array.
+`PreparedPlainUndo.plain_scan_and_restore` checks the two consecutive
+compiled loops for a node with at least three moves remaining. Each
+earlier sibling has produced an empty result under its own physical
+block counts. A witness or interrupt stops further exploration. The
+rollback loop restores the parent's original counts on every path.
+The recursive callee has an explicit contract at this stage. No
+callback or overlap struct is required in the heap.

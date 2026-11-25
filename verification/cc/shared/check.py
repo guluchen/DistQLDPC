@@ -138,6 +138,7 @@ MODULES = (
     "PreparedIndexFinish", "PreparedIndexEpoch", "PreparedIndexChooser", "PreparedPCMChooser",
     "PreparedIndexCall", "PreparedIndexChildrenView", "PreparedIndexCallerPCM",
     "PreparedIndexNodeReport", "PreparedIndexTree",
+    "PreparedPlainDescent", "PreparedPlainSiblings", "PreparedPlainUndo",
 )
 
 
