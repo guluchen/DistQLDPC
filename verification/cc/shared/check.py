@@ -139,6 +139,7 @@ MODULES = (
     "PreparedIndexCall", "PreparedIndexChildrenView", "PreparedIndexCallerPCM",
     "PreparedIndexNodeReport", "PreparedIndexTree",
     "PreparedPlainDescent", "PreparedPlainSiblings", "PreparedPlainUndo",
+    "PreparedPlainPCMScan", "PreparedChooserStorage",
 )
 
 
@@ -207,6 +208,9 @@ def main():
                                             "two-move dispatch with open or closed first child",
                                             "restoration of excluded siblings in the native DFS",
                                             "recursive reports by remaining search depth",
+                                            "direct C index_children body and actual caller",
+                                            "null-policy recursive sibling loops and rollback",
+                                            "PCM row or cut through the general-branch return",
                                             "CSR row append and unblocked candidate gathering",
                                             "validated rank exit for zero encoded qubits"],
                           "reference_c_commit": "b558c89eb4cf482da029e2076daa44ddb06e17c4",

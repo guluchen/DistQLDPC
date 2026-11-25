@@ -716,3 +716,13 @@ block counts. A witness or interrupt stops further exploration. The
 rollback loop restores the parent's original counts on every path.
 The recursive callee has an explicit contract at this stage. No
 callback or overlap struct is required in the heap.
+
+`PreparedPlainPCMScan.recursive_suffix_from_physical_row` composes the
+PCM interpretation with the compiled sibling loop, rollback and the
+actual C return. The count and access bounds follow from the identified
+physical row, including the zero-length result after a cut.
+`PreparedChooserStorage.dfs_borrows_and_releases` shows how the direct
+call borrows the same weight and block fields that the sibling code
+uses. Both the input and the post-call heap have a single copy of those
+fields. The following overlap flag initialization is checked with
+a null policy and the overlap bit clear.
