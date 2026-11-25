@@ -38,7 +38,7 @@ Theorem choose_and_search:
  legal_choice H rows a -> syndrome_p a=psyn (words_at t) -> odd_words a=syndrome (words_at t) ->
  Int.and options (Int.repr 1)=Int.zero -> is_pointer_or_null s -> is_pointer_or_null buf ->
  (forall z spare,provenance_at H rows a z -> (row z * spare |-- ready_row buf stride)%logic ->
-    semax D (PROPx nil (LOCALx (plain_chosen_loc s buf d (length_at a z) options ptr)
+    semax D (PROPx nil (LOCALx (plain_chosen_loc s buf d (length_at a z) options ptr++[::gvars (globals_at a)])
         (SEPx [::own;row z;spare;packed;work;extra]))) selected_subtree post) ->
  semax D (PROPx nil (LOCALx (before++held)
       (SEPx [::own;ready_row buf stride;packed;work;extra]))) choose_search_return post.

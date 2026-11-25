@@ -6,6 +6,7 @@ Require Import VST.floyd.proofauto VST.floyd.reassoc_seq VerifDetected VerifChil
  PreparedPlainSiblings PreparedPlainReachable PreparedPlainPCMScan PreparedPCMChooser PreparedIndexFinish
  PreparedIndexWhile PreparedIndexNodeReport PreparedIndexWitnessCall PreparedIndexWitnessScan
  PreparedIndexWitnessUndo PreparedIndexWitnessLeaf PreparedSiblingRestore PreparedVerdictExit PreparedSampling PreparedCallerLocals.
+Require Import PreparedIndexGlobals PreparedIndexGlobalTree.
 Require Import PreparedChooserStorage PreparedInitializeScan PreparedSelectedReturn PreparedIndexReuse.
 Require Import VerifToggleBody VerifClosedPrefix PreparedDFSRejected PreparedInteriorGuards PreparedCounterJoin PreparedInteriorEntry PreparedCandidateArena PreparedCandidateSlice PreparedArenaContext PreparedIndexCall PreparedIndexWitnessParent PreparedIndexContiguous PreparedIndexLink PreparedNativeCallees PreparedUniformIndex PreparedIndexSyndromeLoan PreparedChoiceCall PreparedChooseReturn PreparedLeafWorkspace.
 From mathcomp Require Import all_ssreflect all_algebra.
@@ -40,24 +41,6 @@ Qed.
 
 (* The local sample and the computed row pointer are live in the very
    environment whose global lookup table the next C call will read. *)
-Lemma hold_global_environment {Espec:OracleKind} D gv code (before after:seq localdef)
- (owned returned:seq mpred):
- closed_wrt_modvars code (LOCALx [::gvars gv] (SEPx nil)) ->
- semax D (PROPx nil (LOCALx before (SEPx owned))) code
-   (normal_ret_assert (PROPx nil (LOCALx after (SEPx returned)))) ->
- semax D (PROPx nil (LOCALx (before++[::gvars gv]) (SEPx owned))) code
-   (normal_ret_assert (PROPx nil (LOCALx (after++[::gvars gv]) (SEPx returned)))).
-Proof.
- move=>stable call.
- pose proof (@semax_frame VerifDetected.CompSpecs Espec D _ code _ _ stable call) as both.
- rewrite frame_normal in both.
- have split regs chunks:PROPx nil (LOCALx (regs++[::gvars gv]) (SEPx chunks))=
-     (PROPx nil (LOCALx regs (SEPx chunks)) * LOCALx [::gvars gv] (SEPx nil))%logic.
- { have complete:=@separate_caller_env nil regs chunks [::gvars gv] nil.
-   rewrite List.app_nil_r in complete;exact complete. }
- rewrite !split;exact both.
-Qed.
-
 Theorem initialize_index_frame {Espec:OracleKind} gv c s base stride depth options ptr (frame:mpred):
  (0<=depth<=Int.max_signed)%coqZ -> (0<=stride<=Int.max_signed)%coqZ -> isptr base ->
  let before:=[::temp _s s;temp _size (Vint (Int.repr depth));temp _options (Vint options);
@@ -68,7 +51,7 @@ Theorem initialize_index_frame {Espec:OracleKind} gv c s base stride depth optio
    (LOCALx (before_choice c s (row_pointer base stride depth) ptr depth options++[::gvars gv])
    (SEPx [::sample_data ptr (Int.repr (-1)) Float.zero Float.zero;candidate_fields s base stride;frame])))).
 Proof.
- move=>bound step live before;apply hold_global_environment.
+ move=>bound step live before;apply keep_globals_across_statement.
  - unfold sample_and_slice,init_sample,child_slice;auto 100 with closed.
  - exact:(@set_up_nonterminal_frame Espec c s base stride depth options ptr frame bound step live).
 Qed.
@@ -136,7 +119,7 @@ Variables (rec_heap:budget_heap) (s cp buffer:Values.val) (cells:seq Integers.in
 Let entry:entry_domain:=fun geom level trace blocks _ st words=>
  geom=geometry c /\ level=s /\ trace=cp /\ blocks=pb p /\ reachable_prefix n st words.
 Let flip:=snd (depth_flip c heap options).
-Let dfs:=snd (index_dfs_with_witness entry rec_heap report witness options).
+Let dfs:=snd (index_dfs_using_globals gv entry rec_heap report witness options).
 Hypotheses (room:(w<=Zlength cells)%coqZ) (depth:(1<=d<=w-2)%coqZ) (signed:(w<=Int.max_signed)%coqZ)
  (colroom:(Zlength (blocked root)<Zlength (column_offsets (geometry c)))%coqZ)
  (prefix:active_prefix d cells=node)
@@ -184,13 +167,13 @@ Proof.
    have smaller:tycontext_sub (func_tycontext f_dfs prepared_vars (visit_calls flip dfs) nil) D.
    { exact:link_index_visits. }
    eapply semax_Delta_subsumption;[exact smaller|].
-   pose proof (@selected_restores_whole_row Espec m n r k H S G rows columns rowkey keys mask cap bits tab links c p
+   pose proof (@global_children_restore_parent_row gv Espec m n r k H S G rows columns rowkey keys mask cap bits tab links c p
          initial initial_blocks work eligible root parent offsets cols remaining choice orth det shape row_cap idx base_safe
          packed_init zero plain block_width unique protected distinct covers maxrow meaning rec_heap s cp buffer cells loan
          options saved room depth signed colroom prefix lend inherit ptr klass t1 t2 spare stride disabled off recover) as sub.
      cbn zeta in sub;fold picks in sub;rewrite count in sub.
      eapply semax_pre;last exact sub.
-     unfold plain_chosen_loc,heap,index_flip_heap,physical_store,rest,work,storage,cur.
+     unfold plain_chosen_loc,heap,index_flip_heap,physical_store,rest,work,storage,cur;cbn [app].
      cbn [a level_p output_p blocks_p call_depth odd_words row_offsets entries blocked_cells offsets_p columns_p marks_p globals_at const_share requested_weight];rewrite -width.
      go_lowerx;normalize;try cancel;try apply derives_refl.
      all: try (apply andp_right;[apply prop_right;repeat split;try assumption;try congruence|cancel]).
@@ -283,7 +266,7 @@ Theorem deep_open_dfs_body:
 Proof.
  move=>slice base_ok step legal width odd within direct nopoll noparity disabled sample z1 z2 valid out regs.
  apply guards_then_search with (M:=PROPx nil (LOCALx regs (SEPx [::data_at_ Tsh sample_type ptr;retained cells saved]))).
- - apply hold_global_environment.
+ - apply keep_globals_across_statement.
    + unfold interior_guards;auto 100 with closed.
    + eapply semax_Delta_subsumption.
      * eapply tycontext_sub_trans;last exact:(@link_index_visits m n H rows flip dfs).

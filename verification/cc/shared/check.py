@@ -147,8 +147,9 @@ MODULES = (
     "PreparedIndexWitnessCall", "PreparedIndexWitnessScan", "PreparedIndexWitnessUndo",
     "PreparedIndexWitnessLeaf", "PreparedRawPCM",
     "PreparedIndexSyndromeLoan", "PreparedIndexReuse", "PreparedIndexSite", "PreparedPivotDetectors",
-    "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous", "PreparedIndexSelected",
-    "PreparedIndexGlobals", "PreparedIndexGlobalScan", "PreparedIndexGlobalTree",
+    "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous",
+    "PreparedIndexGlobals", "PreparedIndexGlobalScan", "PreparedIndexGlobalTree", "PreparedIndexSelected",
+    "PreparedIndexReachableBody",
 )
 
 
