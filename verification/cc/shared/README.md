@@ -619,3 +619,13 @@ suffix, and returns the prefix length. That prefix has no duplicates and
 intersects every compatible completion. The complete C function still
 requires linking the outer word and packing loops to that return or a
 justified early cut. Neither result requires a C++ chooser contract.
+
+`PreparedIndexAdmission.empty_row_return_for_pcm` and
+`packed_row_return_for_pcm` link the two early returns to the original
+matrix. Both start at the actual CSR tally loop and run through the C
+return, including its statistics update. Given the state reached by the
+preceding row iterations, each return excludes every compatible closed
+completion within budget. The packing theorem derives the signed integer
+bound on `++packed` from that history. `classify_scan` constructs the
+history or the first rejection for the finite row-scan model. Establishing
+that the enclosing compiled loops produce this history is still required.

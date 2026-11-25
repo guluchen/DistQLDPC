@@ -131,6 +131,7 @@ MODULES = (
     "PreparedChosenPhysicalRow", "PreparedNoLogical", "PreparedWritableChoice", "PreparedCounterJoin",
     "PreparedRankedChildren", "PreparedPCMFastSearch", "PreparedReusableSample", "PreparedBoundedEntry", "PreparedGatherCandidates", "PreparedConstructedRow", "PreparedRowAppend",
     "PreparedIndexWords", "PreparedIndexCandidates", "PreparedIndexGather",
+    "PreparedIndexCuts", "PreparedIndexAdmission",
 )
 
 
