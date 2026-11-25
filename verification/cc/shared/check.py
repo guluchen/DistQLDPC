@@ -152,6 +152,7 @@ MODULES = (
     "PreparedIndexReachableBody", "PreparedIndexCallable", "PreparedRawRREF",
     "PreparedIndexBaseCases", "PreparedIndexBaseContext",
     "PreparedIndexBranches", "PreparedIndexTerminal", "PreparedRawReduction",
+    "PreparedIndexTerminalCall",
 )
 
 
