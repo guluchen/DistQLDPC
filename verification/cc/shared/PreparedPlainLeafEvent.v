@@ -8,7 +8,7 @@ Require Import VerifDetected VerifChildVisit VerifClosesBody VerifFlipBody Verif
  PreparedPairDispatch PreparedPairStorage PreparedOpenPair PreparedLookupMatrix PreparedPairBracket
  PreparedPairLedger PreparedPairEvent PreparedClosedBracket PreparedClosedPair PreparedClosedPairMemory PreparedAnswerFrame PreparedPhysicalPair PackedDetector
  LeafShortcut CSSLevelDistance PreparedDepthSpec PreparedPairCSS PreparedWitnessRegister.
-Require Import PreparedRankedChildren PreparedLeafVisit PreparedObservedWitness PreparedInteriorReport PreparedPCMLeafVisit.
+Require Import PreparedRankedChildren PreparedLeafVisit PreparedObservedWitness PreparedInteriorReport PreparedPCMLeafVisit PreparedRecursiveCall.
 Require Import PreparedPlainPair PreparedPlainDescent PreparedPlainPhysicalPair PreparedPlainClosedBracket.
 Require flag_level_ast.
 Import flag_level_ast.
@@ -116,6 +116,20 @@ Qed.
 
 (* For the two-move base case no recursive DFS specification is needed.
    Its inline lookup/closure supplies the child's own matrix verdict. *)
+Lemma written_pair_weight depth saved seen last:
+ (1<=depth<=Int.max_signed-2)%coqZ -> witness_status (pair_code seen last) ->
+ Int.signed (pair_size depth saved seen last) =
+   (if Z.eq_dec (pair_code seen last) 3 then depth+1 else depth+2)%coqZ.
+Proof.
+ move=>bound;case:last=>[z|];unfold pair_code,pair_size,witness_status,final_pick,last_size.
+ - destruct (Z_lt_dec z 0);intro witness;first lia.
+   change (Int.signed (Int.repr (depth+2))=depth+2)%coqZ.
+   apply Int.signed_repr;change Int.min_signed with (-2147483648)%coqZ;lia.
+ - destruct seen;intro witness;last lia.
+   change (Int.signed (Int.repr (depth+1))=depth+1)%coqZ.
+   apply Int.signed_repr;change Int.min_signed with (-2147483648)%coqZ;lia.
+Qed.
+
 Theorem inline_child_verdict r (S:'M['F_2]_(r,n)) (ids:seq 'I_n)
  (eligible:seq Integers.int->'cV['F_2]_n->Prop)
  depth q children count i options cells closed leaves saved:
@@ -136,7 +150,9 @@ Theorem inline_child_verdict r (S:'M['F_2]_(r,n)) (ids:seq 'I_n)
     [::recursive_result H S L eligible w st (literal_path ids) (pair_code seen e) (pair_path depth next e);
        active_prefix (depth+1)%coqZ (pair_path depth next e)=literal_path ids;
        Zlength (pair_path depth next e)=Zlength cells;(0<=pair_code seen e<=3)%coqZ;
-       witness_at_limit w saved (pair_code seen e) (pair_size depth saved seen e) (pair_path depth next e)]
+       witness_at_limit w saved (pair_code seen e) (pair_size depth saved seen e) (pair_path depth next e);
+       witness_status (pair_code seen e) ->
+        stored_css_prefix H S (Int.signed (pair_size depth saved seen e)) (pair_path depth next e)]
   (LOCALx (temp _result (Vint (Int.repr (pair_code seen e)))::locs) (SEPx [::after e])))).
 Proof.
  move=>ortho detects dimension index_cap distinct inside offered deep room size_ok physical odd_bounds word_bounds
@@ -156,6 +172,11 @@ Proof.
  have depth_eq:Zlength (literal_path ids)=(depth+1)%coqZ by rewrite /literal_path Zlength_map Zlength_correct size_ok.
  have answer:=@recursive_reports_by_remaining_depth m n r k H S L eligible ortho detects dimension index_cap 1 w
      (geometry c) st (literal_path ids) (pair_code seen e) (pair_path depth next e) ltac:(unfold w;lia) reported.
+ have stored_weight:witness_status (pair_code seen e) ->
+   stored_css_prefix H S (Int.signed (pair_size depth saved seen e)) (pair_path depth next e).
+ { move=>found;rewrite (@written_pair_weight depth saved seen e deep found).
+   eapply observed_witness_has_valid_length with (ids:=ids) (F:=@available_now n st)
+       (rowkey:=rowkey) (t:=t) (q:=q) (cur:=cells);try eassumption;lia. }
  Exists e;unfold locs,plain_descent_loc,after,store;rewrite <-physical;entailer!;try apply derives_refl;try congruence.
 Qed.
 End LiveTraversal.

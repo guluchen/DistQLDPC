@@ -735,3 +735,11 @@ one below the requested weight. Otherwise the final lookup checks an
 available qubit against the syndrome and detector. The proof relates the
 actual return code, witness array and length field to the CSS matrices.
 The inline branch needs no recursive DFS contract.
+
+The recursive call now takes an entry condition. In
+`PreparedPlainPCMScan` the active prefix consists of distinct physical
+qubits protected by nonzero exclusion counters in a block array of
+the matrix's width. `PreparedPlainReachable` proves this condition for
+each index seed and for every visited child of the actual selected
+row, including children visited after earlier siblings returned empty.
+The VST proof supplies that condition at the compiled recursive call.

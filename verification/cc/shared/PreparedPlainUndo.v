@@ -1,6 +1,6 @@
 (* SPDX-License-Identifier: GPL-3.0-or-later *)
 Require Import VST.floyd.proofauto VST.zlist.list_solver VerifDetected VerifChildVisit
- SiblingCounters VerifVisitRestoration EnabledCall PreparedSeedDispatch PreparedRootStages
+ SiblingCounters VerifVisitRestoration EnabledCall EnabledLoopFacts PreparedSeedDispatch PreparedRootStages
  PreparedChildCall PreparedDepthSpec PreparedBudgetContract PreparedPlainDescent PreparedPlainSiblings
  PreparedSiblingRestore PreparedSiblingScan OverlapColumnState flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
@@ -34,7 +34,7 @@ Proof.
 Qed.
 End Restore.
 
-Theorem plain_scan_and_restore {Espec:OracleKind} c (heap:node_storage) (recursive_heap:budget_heap) loan report bits
+Theorem plain_scan_and_restore {Espec:OracleKind} (entry:entry_domain) c (heap:node_storage) (recursive_heap:budget_heap) loan report bits
  s cp bp children xs root path w d :
  let base:=blocked root in let parent:=active_prefix d path in
  let regs:=plain_scan_regs s children d (Zlength xs) in
@@ -43,8 +43,10 @@ Theorem plain_scan_and_restore {Espec:OracleKind} c (heap:node_storage) (recursi
  Zlength xs<=Int.max_signed -> Zlength base<=Int.max_signed -> in_array (Zlength base) xs ->
  Zlength base<Zlength (column_offsets (geometry c)) ->
  (forall node,Zlength node=d+1 -> recursive_heap w s node=(heap s node * loan)%logic) ->
+ (forall i cur,0<=i<Zlength xs -> active_prefix d cur=parent ->
+    entry (geometry c) s cp bp w (sibling_state root xs (i+1)) (append_qubit cur d (Znth i xs))) ->
  semax (func_tycontext f_dfs prepared_vars (prepared_calls (snd (depth_flip c heap bits))
-   (snd (plain_dfs_contract recursive_heap report bits))) nil)
+   (snd (plain_dfs_contract entry recursive_heap report bits))) nil)
  (PROPx nil (LOCALx (regs 0 0 bits) (SEPx [state path])))
  (Ssequence search_children undo_children)
  (normal_ret_assert (EX i:Z,EX code:Z,EX tail:list int,
@@ -52,17 +54,17 @@ Theorem plain_scan_and_restore {Espec:OracleKind} c (heap:node_storage) (recursi
           0<=code<=3;Zlength tail=Zlength path;active_prefix d tail=parent]
     (LOCALx (regs i code bits) (SEPx [state tail])))).
 Proof.
- intros base parent regs state plain deep cap room count limit range cols lend.
+ intros base parent regs state plain deep cap room count limit range cols lend reached.
  eapply semax_seq'.
- { eapply semax_pre;[|exact (@null_policy_sibling_scan Espec c heap recursive_heap loan report bits s cp bp children
-       xs root path w d plain deep cap room count limit range cols lend)].
+ { eapply semax_pre;[|exact (@null_policy_sibling_scan Espec entry c heap recursive_heap loan report bits s cp bp children
+       xs root path w d plain deep cap room count limit range cols lend reached)].
    unfold state,added;rewrite sublist_nil by lia;cbn [sweep fold_left];apply andp_left2;apply derives_refl. }
  Intros i code tail.
  assert (bounds:0<=i<=Zlength xs).
  { match goal with H:scan_outcome_mode _ _ _ _ _ _ _ _ _ |- _=>pose proof H as ran end.
    destruct ran as [_ [[-> _]|[within _]]];[pose proof (Zlength_nonneg xs)|];lia. }
  eapply semax_post'.
- 2:{ eapply semax_pre;[|apply (@null_policy_undo Espec (snd (depth_flip c heap bits)) (snd (plain_dfs_contract recursive_heap report bits))
+ 2:{ eapply semax_pre;[|apply (@null_policy_undo Espec (snd (depth_flip c heap bits)) (snd (plain_dfs_contract entry recursive_heap report bits))
       s cp bp children d w bits xs base tail i code (heap s parent * loan)%logic count limit range bounds)].
      unfold regs,parent,base,plain_scan_regs;go_lowerx;normalize;cancel. }
  Exists i code tail;unfold state,regs,plain_scan_regs,parent,base;entailer!;cancel.

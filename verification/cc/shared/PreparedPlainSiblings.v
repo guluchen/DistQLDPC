@@ -14,7 +14,7 @@ Definition plain_scan_regs s children d count i code bits:=
 
 Section Scan.
 Context {Espec:OracleKind}.
-Variables (c:policy_state) (heap:node_storage) (recursive_heap:budget_heap) (loan:mpred)
+Variables (entry:entry_domain) (c:policy_state) (heap:node_storage) (recursive_heap:budget_heap) (loan:mpred)
  (report:budget_report) (bits:int) (s cp bp children:val) (xs:list Z) (root:snapshot) (path:list int) (w d:Z).
 Let g:=geometry c.
 Let base:=blocked root.
@@ -27,13 +27,15 @@ Hypotheses (plain:nested_policy (nested c)=nullval) (depth:1<=d<w-2) (cap:w<=Int
  (room:w<=Zlength path) (count:Zlength xs<=Int.max_signed)
  (limit:Zlength base<=Int.max_signed) (range:in_array (Zlength base) xs)
  (columns:Zlength base<Zlength (column_offsets g))
- (lend:forall node,Zlength node=d+1 -> recursive_heap w s node=(heap s node * loan)%logic).
+ (lend:forall node,Zlength node=d+1 -> recursive_heap w s node=(heap s node * loan)%logic)
+ (next_entry:forall i cur,0<=i<Zlength xs -> active_prefix d cur=parent ->
+   entry g s cp bp w (sibling_state root xs (i+1)) (append_qubit cur d (Znth i xs))).
 
 (* Every C iteration records its actual recursive result and physical
    block counters. The suffix after a nonempty result is never visited. *)
 Theorem null_policy_sibling_scan :
  semax (func_tycontext f_dfs prepared_vars (prepared_calls (snd (depth_flip c heap bits))
-   (snd (plain_dfs_contract recursive_heap report bits))) nil)
+   (snd (plain_dfs_contract entry recursive_heap report bits))) nil)
    (PROPx nil (LOCALx (regs 0 0 bits) (SEPx [memory 0 path])))
    search_children
    (normal_ret_assert (EX i:Z,EX code:Z,EX tail:list int,
@@ -67,10 +69,11 @@ Proof.
      apply (semax_unfold_seq (Ssequence child_bracket suffix) body eq_refl) end.
    set (seen:=sibling_state root xs (i+1)).
    assert (marked:blocked seen=added xs base (i+1)) by reflexivity.
+   assert (reached:entry g s cp bp w seen (append_qubit cur d q)) by (apply next_entry;assumption).
    assert (node_len:Zlength (append_qubit cur d q)=d+1).
    { unfold append_qubit,active_prefix;rewrite Zlength_app,Zlength_sublist by lia;cbn;lia. }
    eapply semax_seq'.
-   { eapply semax_pre;[|apply (@null_policy_recurses Espec (snd (depth_flip c heap bits)) recursive_heap report
+   { eapply semax_pre;[|apply (@null_policy_recurses Espec entry (snd (depth_flip c heap bits)) recursive_heap report
        bits g s cp bp w d q seen cur children (Zlength xs) i (child_array children xs))];try assumption;try lia.
      rewrite (lend _ node_len);unfold plain_descent_loc,child_fields,child_array,append_qubit.
      rewrite marked,next_len,added_next,len by lia.

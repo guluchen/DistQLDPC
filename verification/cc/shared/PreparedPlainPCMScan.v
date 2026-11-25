@@ -7,7 +7,7 @@ Require Import VST.floyd.proofauto VerifDetected VerifChildVisit SiblingCounters
 From mathcomp Require Import all_ssreflect all_algebra.
 Require Import PreparedResidualIndex PreparedMatrixPath PreparedChildPrefix PreparedPCMLeafVisit
  PreparedInteriorReport PreparedSiblingScan LeafMatrix LevelSearch NativePackingScan
- OverlapColumnState RowTally IndexRowBridge flag_level_ast.
+ OverlapColumnState RowTally IndexRowBridge PreparedPlainReachable EnabledLoopFacts flag_level_ast.
 #[local] Existing Instance VerifDetected.CompSpecs.
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -27,8 +27,10 @@ Let xs:=map Int.unsigned (output_columns offsets cols base result).
 Let w:=Z.of_nat (size parent+remaining)%N.
 Let d:=Z.of_nat (size parent).
 Let report:=recursive_report H S G eligible.
+Let entry:entry_domain:=fun _ _ _ _ _ snapshot prefix=>reachable_prefix n snapshot prefix.
 Hypotheses (fits:(Z.of_nat n<=Int.max_signed)%coqZ) (width:Zlength base=Z.of_nat n)
- (unique:uniq parent) (distinct:forall i,uniq (rows i)) (covers:forall i q,H i q!=0 -> q \in rows i)
+ (unique:uniq parent) (protected:forall q:'I_n,q \in parent -> Znth (Z.of_nat q) base<>Int.zero)
+ (distinct:forall i,uniq (rows i)) (covers:forall i q,H i q!=0 -> q \in rows i)
  (maxrow:forall i,(Zlength (encoded rows i)<=Int.max_signed)%coqZ)
  (origin:selection_origin rows H (indicator P) F remaining offsets cols base result).
 Lemma actual_candidates_fit:
@@ -54,7 +56,7 @@ Theorem recursive_loop_from_physical_row {Espec:OracleKind} c (heap:node_storage
  let regs:=plain_scan_regs s buffer d (Zlength xs) in
  let own tail:=(child_fields s cp bp w base tail * child_array buffer xs * heap s node * loan)%logic in
  semax (func_tycontext f_dfs prepared_vars (prepared_calls (snd (depth_flip c heap bits))
-      (snd (plain_dfs_contract rec_heap report bits))) nil)
+      (snd (plain_dfs_contract entry rec_heap report bits))) nil)
    (PROPx nil (LOCALx (regs 0%coqZ 0%coqZ bits) (SEPx [::own path])))
    (Ssequence search_children undo_children)
    (normal_ret_assert (EX i:Z,EX code:Z,EX tail:seq Integers.int,
@@ -65,8 +67,13 @@ Proof.
  move=>plain deep cap room prefix colroom lend inherit regs own.
  have [range count]:=actual_candidates_fit.
  have limit:(Zlength base<=Int.max_signed)%coqZ by rewrite width.
- have run:=@plain_scan_and_restore Espec c heap rec_heap loan report bits s cp bp buffer xs st path w d
-   plain deep cap room count limit range colroom lend.
+ have reached i cur:(0<=i<Zlength xs)%coqZ -> active_prefix d cur=active_prefix d path ->
+   entry (geometry c) s cp bp w (sibling_state st xs (i+1)%coqZ) (append_qubit cur d (Znth i xs)).
+ { move=>pos same;rewrite prefix in same.
+   exact:(@all_visited_children_are_reachable m n H rows parent st offsets cols remaining result
+       fits width distinct unique protected origin i d cur pos same). }
+ have run:=@plain_scan_and_restore Espec entry c heap rec_heap loan report bits s cp bp buffer xs st path w d
+   plain deep cap room count limit range colroom lend reached.
  cbn zeta in run;rewrite prefix in run.
  eapply semax_post';[|exact run].
  Intros i code tail.
@@ -89,7 +96,7 @@ Theorem recursive_suffix_from_physical_row {Espec:OracleKind} c (heap:node_stora
  let evidence code tail:=recursive_result H S G eligible w st node code tail /\ (0<=code<=3)%coqZ /\
                           Zlength tail=Zlength path /\ active_prefix d tail=node in
  let D:=func_tycontext f_dfs prepared_vars (prepared_calls (snd (depth_flip c heap bits))
-      (snd (plain_dfs_contract rec_heap report bits))) nil in
+      (snd (plain_dfs_contract entry rec_heap report bits))) nil in
  semax D (PROPx nil (LOCALx (regs 0%coqZ 0%coqZ bits++[::lvar _sample sample_type ptr])
    (SEPx [::own path;sample_data ptr klass t1 t2]))) search_finish
    (existential_ret_assert (fun a:Z*(Z*seq Integers.int)=>function_body_ret_assert tint
