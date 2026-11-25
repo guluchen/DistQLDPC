@@ -726,3 +726,12 @@ call borrows the same weight and block fields that the sibling code
 uses. Both the input and the post-call heap have a single copy of those
 fields. The following overlap flag initialization is checked with
 a null policy and the overlap bit clear.
+
+When two moves remain, the index-mode loop handles each candidate inline.
+`PreparedPlainLeafEvent.inline_child_verdict` verifies this Clight branch
+on the same block, trace, packed syndrome and hash-table storage as the
+parent. If the first flip closes a logical operator, the stored length is
+one below the requested weight. Otherwise the final lookup checks an
+available qubit against the syndrome and detector. The proof relates the
+actual return code, witness array and length field to the CSS matrices.
+The inline branch needs no recursive DFS contract.

@@ -140,6 +140,8 @@ MODULES = (
     "PreparedIndexNodeReport", "PreparedIndexTree",
     "PreparedPlainDescent", "PreparedPlainSiblings", "PreparedPlainUndo",
     "PreparedPlainPCMScan", "PreparedChooserStorage",
+    "PreparedPlainPair", "PreparedPlainClosedBracket", "PreparedPlainPhysicalPair",
+    "PreparedPlainLeafEvent",
 )
 
 
