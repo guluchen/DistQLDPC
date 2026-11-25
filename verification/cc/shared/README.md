@@ -639,3 +639,12 @@ the actual tally through first-row selection. A clash leaves the packing
 count and table intact. A disjoint row within budget increments the count
 and writes the stamp on its CSR entries. These local contracts and the
 two return contracts apply to the same compiled row body.
+
+`PreparedIndexIteration.compiled_row_outcome` verifies the entire CSR
+portion of one row iteration with a single contract for all four C
+branches. The two counters and the mutable tag array are shared across
+those branches. Its companion theorem `iteration_preserves_pcm` proves
+that either early return excludes every compatible PCM completion within
+budget. A continuing branch gives the next reachable row state with the
+actual written tags and the updated packing count. Both theorems use
+the same computed outcome.
