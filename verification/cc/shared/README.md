@@ -659,3 +659,10 @@ statistics update. On exhaustion the odd register is zero.
 A cut rules out all compatible completions within budget. Finishing a
 word preserves the first selected row and the state for the remaining
 words, including the case where the word was initially zero.
+
+`PreparedIndexSweep.compiled_word_sweep` verifies the whole outer C
+loop over `s->syn[wi]`. It reads the word count and syndrome storage,
+executes the inner loop for each word, and returns immediately on an
+empty row or an exceeded packing budget. Normal exit preserves the
+selected row, packed count and tag array. Its contract requires a
+valid CSR index for each set bit and uses the exact fold over the words.
