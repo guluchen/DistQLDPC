@@ -151,6 +151,7 @@ MODULES = (
     "PreparedIndexGlobals", "PreparedIndexGlobalScan", "PreparedIndexGlobalTree", "PreparedIndexSelected",
     "PreparedIndexReachableBody", "PreparedIndexCallable", "PreparedRawRREF",
     "PreparedIndexBaseCases", "PreparedIndexBaseContext",
+    "PreparedIndexBranches", "PreparedIndexTerminal", "PreparedRawReduction",
 )
 
 

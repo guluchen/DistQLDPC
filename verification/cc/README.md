@@ -71,8 +71,14 @@ that scans the logical parity words. It returns one exactly when some word
 is nonzero and preserves the caller’s memory. This includes an empty array
 with a null data pointer. The [production proof inventory](shared/README.md)
 also covers the C closure scan, terminal DFS, and a MathComp implementation
-of weight-level search with a CSS minimum-distance theorem. Refinement of
-the native recursive traversal and its C++ policies remains open.
+of weight-level search with a CSS minimum-distance theorem.
+[PreparedIndexCallable](shared/PreparedIndexCallable.v) checks the full C
+function body for index-order search with polling disabled, at a reached,
+open node with at least two moves remaining.
+Its recursive calls use the common DFS contract. The three early exits
+use the same helper environment in
+[PreparedIndexBaseContext](shared/PreparedIndexBaseContext.v).
+The end-to-end proof target is the C entry in `native/pcm.c`.
 
 ## Build and check
 
