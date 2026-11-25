@@ -134,6 +134,7 @@ MODULES = (
     "PreparedIndexCuts", "PreparedIndexAdmission",
     "PreparedIndexWordStep", "PreparedIndexAdvance", "PreparedIndexIteration",
     "PreparedIndexBitBody", "PreparedIndexWhile", "PreparedIndexSweep",
+    "PreparedIndexSweepPCM", "PreparedIndexTables",
 )
 
 

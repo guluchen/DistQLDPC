@@ -666,3 +666,12 @@ executes the inner loop for each word, and returns immediately on an
 empty row or an exceeded packing budget. Normal exit preserves the
 selected row, packed count and tag array. Its contract requires a
 valid CSR index for each set bit and uses the exact fold over the words.
+
+`PreparedIndexTables.compiled_sweep_from_pcm` couples the compiled outer
+loop to the PCM. Starting at packed count zero and branch -1, its
+existential traversal is constructed from the input words. The theorem
+derives every accessed row and CSR column bound, and gives both the VST
+judgment and its meaning for the same result. If the loop completes, the
+branch is the first odd physical row. If C returns early, no budget-feasible
+compatible completion exists. The statement assumes that the C buffers
+represent the input matrix, including cleared padding and the CSR slices.
