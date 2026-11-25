@@ -648,3 +648,14 @@ that either early return excludes every compatible PCM completion within
 budget. A continuing branch gives the next reachable row state with the
 actual written tags and the updated packing count. Both theorems use
 the same computed outcome.
+
+`PreparedIndexWhile.compiled_odd_word` verifies the complete Clight
+`while (odd)` for one machine word. The loop invariant couples the
+unread set bits to the actual branch, packing count and tag storage.
+`PreparedIndexBitBody.compiled_active_bit` supplies its body, including
+the C call to find the lowest set bit. Early returns carry the actual
+statistics update. On exhaustion the odd register is zero.
+`word_preserves_pcm` relates the same result to the physical matrix.
+A cut rules out all compatible completions within budget. Finishing a
+word preserves the first selected row and the state for the remaining
+words, including the case where the word was initially zero.
