@@ -819,3 +819,14 @@ When the C traversal has one qubit left to choose,
 from the PCM and the prefix. A hit records the returned qubit in the
 physical path and writes the target weight. On exhaustion, every eligible
 completion fails. Both paths return the full recursive storage.
+
+`PreparedIndexUnified.native_index_dfs_body` checks the four entry cases of
+the optimized C `dfs` in index mode with polling disabled. Recursive calls
+use the same function specification at every depth. The contract relates
+the returned status, physical witness and restored workspace to the two
+PCM matrices. It assumes an initialized level and gives partial correctness.
+
+`PreparedIndexSeedCoverage.exhausted_index_seeds_exclude_a_minimum` proves
+that an EMPTY result from every seed rules out a minimum logical operator
+of that weight. The least physical qubit of any proposed minimum is its
+seed, and the native block vector leaves every larger qubit available there.

@@ -153,6 +153,7 @@ MODULES = (
     "PreparedIndexBaseCases", "PreparedIndexBaseContext",
     "PreparedIndexBranches", "PreparedIndexTerminal", "PreparedRawReduction",
     "PreparedIndexTerminalCall", "PreparedIndexClosedCall", "PreparedRawRank", "PreparedIndexOneLeftCall",
+    "PreparedIndexUnified", "PreparedIndexSeedCoverage",
 )
 
 
