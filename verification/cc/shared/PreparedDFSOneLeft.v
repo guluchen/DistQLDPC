@@ -31,7 +31,7 @@ Definition dfs_one_spec : ident * funspec :=
    SEP (one_left_fields s bp cp (depth+1) (bump budgets 1) (last_path depth a path)
      (Int64.add nodes Int64.one) (Int64.add leaves Int64.one) (last_size (depth+1) a saved);
      close_mem Tsh s odd v;book_mem s b p).
-Definition OneGprog : funspecs := ltac:(with_library prog [lookup_spec;dfs_one_spec]).
+Definition OneGprog : funspecs := ltac:(with_library prog [lookup_spec]).
 
 Theorem body_dfs_one_left : semax_body prepared_vars OneGprog f_dfs dfs_one_spec.
 Proof.

@@ -150,6 +150,7 @@ MODULES = (
     "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous",
     "PreparedIndexGlobals", "PreparedIndexGlobalScan", "PreparedIndexGlobalTree", "PreparedIndexSelected",
     "PreparedIndexReachableBody", "PreparedIndexCallable", "PreparedRawRREF",
+    "PreparedIndexBaseCases", "PreparedIndexBaseContext",
 )
 
 

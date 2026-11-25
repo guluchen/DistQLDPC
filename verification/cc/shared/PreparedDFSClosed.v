@@ -39,7 +39,7 @@ Definition dfs_closed_spec : ident * funspec :=
           (Int64.add nodes Int64.one) (Int64.add closed Int64.one)
           (if packed_detects words then Int.repr depth else saved)).
 
-Definition ClosedGprog : funspecs := ltac:(with_library prog [detected_spec; dfs_closed_spec]).
+Definition ClosedGprog : funspecs := ltac:(with_library prog [detected_spec]).
 
 Theorem body_dfs_closed : semax_body prepared_vars ClosedGprog f_dfs dfs_closed_spec.
 Proof.
