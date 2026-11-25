@@ -147,7 +147,7 @@ MODULES = (
     "PreparedIndexWitnessCall", "PreparedIndexWitnessScan", "PreparedIndexWitnessUndo",
     "PreparedIndexWitnessLeaf", "PreparedRawPCM",
     "PreparedIndexSyndromeLoan", "PreparedIndexReuse", "PreparedIndexSite", "PreparedPivotDetectors",
-    "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous",
+    "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous", "PreparedIndexSelected",
 )
 
 
