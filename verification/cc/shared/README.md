@@ -759,3 +759,17 @@ and returns the successful child's value with its path. The undo loop
 preserves both while restoring the block counters. The child contract
 links the signed length read from memory to a witness predicate on the
 corresponding prefix.
+
+`PreparedIndexWitnessParent.return_registered_index_result` covers the
+entire Clight suffix from the first sibling to the parent's return for
+every remaining depth of at least two. It instantiates the inline
+two-move child from the initial PCM layout and the selected path. At
+greater depths the actual recursive call receives the reachable state
+and the same physical arrays. The result relates the exact length
+field to the CSS witness, also after rollback. Proving the recursive
+function body implements its contract remains necessary.
+
+`PreparedRawPCM.raw_pcm_distance_spec` defines the expected outcome
+directly from the two commuting check matrices, including degenerate
+codes. The infinite case is exactly zero encoded qubits. Every finite
+value is attained and is minimal among mixed logical Pauli operators.

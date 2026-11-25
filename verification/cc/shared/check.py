@@ -144,6 +144,7 @@ MODULES = (
     "PreparedPlainLeafEvent",
     "PreparedUniformIndex", "PreparedIndexLink",
     "PreparedIndexWitnessCall", "PreparedIndexWitnessScan", "PreparedIndexWitnessUndo",
+    "PreparedIndexWitnessLeaf", "PreparedIndexWitnessParent", "PreparedRawPCM",
 )
 
 
@@ -216,7 +217,9 @@ def main():
                                             "null-policy recursive sibling loops and rollback",
                                             "PCM row or cut through the general-branch return",
                                             "CSR row append and unblocked candidate gathering",
-                                            "validated rank exit for zero encoded qubits"],
+                                            "validated rank exit for zero encoded qubits",
+                                            "finite or infinite specification from the two commuting PCMs alone",
+                                            "full index-mode sibling, rollback and return suffix with physical witness length"],
                           "reference_c_commit": "b558c89eb4cf482da029e2076daa44ddb06e17c4",
                           "production_ast": "flag_level_ast",
                           "modules": list(MODULES), "sha256": {
