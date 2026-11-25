@@ -6,6 +6,7 @@ Require Import VST.floyd.proofauto VerifDetected VerifChildVisit VerifClosesBody
  PreparedPlainSiblings PreparedPlainReachable PreparedPlainPCMScan PreparedPCMChooser PreparedIndexFinish
  PreparedIndexWhile PreparedIndexNodeReport PreparedIndexWitnessCall PreparedIndexWitnessScan
  PreparedIndexWitnessUndo PreparedIndexWitnessLeaf PreparedSiblingRestore PreparedVerdictExit PreparedSampling PreparedCallerLocals.
+Require Import PreparedChooserStorage PreparedInitializeScan PreparedSelectedReturn PreparedIndexReuse.
 From mathcomp Require Import all_ssreflect all_algebra.
 Require Import PreparedMatrixPath PreparedMatrixResponse PreparedInteriorReport PreparedObservedWitness
  PreparedPCMLeafVisit LeafMatrix LevelSearch NativePackingScan IndexRowBridge flag_level_ast.
@@ -153,5 +154,53 @@ Proof.
      (Ssequence search_children undo_children) nil before [::own (blocked root) cells saved]
      held extra facts after chunks stable loop).
    Intros a;Exists a;unfold after,regs,plain_scan_regs,facts,held,chunks,extra;cbn [app];entailer!;try apply derives_refl.
+Qed.
+
+(* On return from the parent the candidate storage once again consists
+   of a full row. A deeper call was lent only the later depth slices. *)
+Theorem selected_restores_whole_row ptr klass t1 t2 (spare:mpred) stride:
+ Int.and options (Int.repr 16)=Int.zero -> (Int.signed klass<0)%coqZ ->
+ (child_array buffer xs*spare |-- ready_row buffer stride)%logic ->
+ let answers:=(Z*(Z*(seq Integers.int*Integers.int)))%type in
+ let retained path written:=(child_fields s cp (pb p) w (blocked root) path *
+    ready_row buffer stride * heap s node * loan * witness_register s written)%logic in
+ let other:=(child_array buffer xs * spare * heap s node * loan * witness_register s saved *
+             sample_data ptr klass t1 t2)%logic in
+ semax D (PROPx nil (LOCALx (plain_chosen_loc s buffer d (Zlength xs) options ptr)
+   (SEPx [::child_fields s cp (pb p) w (blocked root) cells;other]))) selected_subtree
+ (existential_ret_assert (fun a:answers=>function_body_ret_assert tint
+    (PROP(parent_evidence a.2.1 a.2.2.1 a.2.2.2) LOCAL(temp ret_temp (Vint (Int.repr a.2.1)))
+       SEP(data_at_ Tsh sample_type ptr;retained a.2.2.1 a.2.2.2))))%assert.
+Proof.
+ move=>no_overlap off release answers retained other.
+ have small:tycontext_sub (func_tycontext f_dfs prepared_vars nil nil) D.
+ { unfold D,visit_calls;apply tycontext_sub_Gprog_nil;vm_compute;
+     repeat (apply list_norepet_cons;[simpl;intuition congruence|]);apply list_norepet_nil. }
+ apply:(@initialize_plain_subtree Espec D c s buffer cp (pb p) w (blocked root) cells d (Zlength xs)
+   options ptr other _ small plain no_overlap ltac:(lia) signed).
+ pose before:=regs 0%coqZ 0%coqZ options.
+ pose after (a:answers):=regs a.1 a.2.1 options.
+ pose facts (a:answers):=[::parent_evidence a.2.1 a.2.2.1 a.2.2.2].
+ pose chunks (a:answers):=[::own (blocked root) a.2.2.1 a.2.2.2].
+ have loop:semax D (PROPx nil (LOCALx before (SEPx [::own (blocked root) cells saved])))
+   (Ssequence search_children undo_children) (normal_ret_assert (EX a:answers,
+         PROPx (facts a) (LOCALx (after a) (SEPx (chunks a))))).
+ { eapply semax_post';last exact scan_all_remaining_depths.
+   Intros stop code tail written;Exists (stop,(code,(tail,written)));
+     unfold facts,parent_evidence,after,chunks,regs,plain_scan_regs;cbn [fst snd];entailer!;try apply derives_refl. }
+ apply:(@finish_after_siblings answers Espec D _ ptr klass t1 t2 (fun a=>a.2.1)
+   (fun a=>parent_evidence a.2.1 a.2.2.1 a.2.2.2) (fun a=>retained a.2.2.1 a.2.2.2) small off).
+ pose held:=[::lvar _sample sample_type ptr].
+ pose extra:=[::sample_data ptr klass t1 t2;spare].
+ have stable:closed_wrt_modvars (Ssequence search_children undo_children) (LOCALx held (SEPx extra))
+   by unfold held,extra,search_children,undo_children;auto 100 with closed.
+ pose proof (@keep_caller_locals_for_answer answers Espec VerifDetected.CompSpecs D
+   (Ssequence search_children undo_children) nil before [::own (blocked root) cells saved]
+   held extra facts after chunks stable loop) as framed.
+ eapply semax_post';last first.
+ - eapply semax_pre;[|exact framed];unfold own,other,before,regs,held,extra;
+   cbn [app];go_lowerx;normalize;cancel.
+ - Intros a;Exists a;unfold after,regs,plain_scan_regs,facts,chunks,held,extra,retained,own;
+     cbn [app];go_lowerx;normalize;sep_apply release;cancel;try apply derives_refl.
 Qed.
 End Search.
