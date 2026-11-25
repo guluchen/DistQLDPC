@@ -132,6 +132,7 @@ MODULES = (
     "PreparedRankedChildren", "PreparedPCMFastSearch", "PreparedReusableSample", "PreparedBoundedEntry", "PreparedGatherCandidates", "PreparedConstructedRow", "PreparedRowAppend",
     "PreparedIndexWords", "PreparedIndexCandidates", "PreparedIndexGather",
     "PreparedIndexCuts", "PreparedIndexAdmission",
+    "PreparedIndexWordStep", "PreparedIndexAdvance",
 )
 
 

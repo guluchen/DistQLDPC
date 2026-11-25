@@ -629,3 +629,13 @@ completion within budget. The packing theorem derives the signed integer
 bound on `++packed` from that history. `classify_scan` constructs the
 history or the first rejection for the finite row-scan model. Establishing
 that the enclosing compiled loops produce this history is still required.
+
+`PreparedIndexWordStep` verifies the call to the lowest-set-bit routine,
+the signed row-index calculation, clearing that bit, and loading the two
+CSR offsets. The step consumes the transition of the finite bit scan;
+membership in the physical scan bounds the signed arithmetic even in the
+last word. `PreparedIndexAdvance` verifies both continuing row cases from
+the actual tally through first-row selection. A clash leaves the packing
+count and table intact. A disjoint row within budget increments the count
+and writes the stamp on its CSR entries. These local contracts and the
+two return contracts apply to the same compiled row body.
