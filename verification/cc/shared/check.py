@@ -143,6 +143,7 @@ MODULES = (
     "PreparedPlainPair", "PreparedPlainClosedBracket", "PreparedPlainPhysicalPair",
     "PreparedPlainLeafEvent",
     "PreparedUniformIndex", "PreparedIndexLink",
+    "PreparedIndexWitnessCall", "PreparedIndexWitnessScan", "PreparedIndexWitnessUndo",
 )
 
 

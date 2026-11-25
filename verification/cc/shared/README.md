@@ -751,3 +751,11 @@ counters, scratch slice and mark epoch can all change between calls.
 and the leaf and bit-scanning helpers in a single VST function table.
 The registered chooser and seven direct helper bodies are checked in
 that table. The recursive entry still needs its own complete body proof.
+
+`PreparedIndexWitnessCall` carries the allocated witness-length word
+across the actual call to DFS. `PreparedIndexWitnessScan` checks that the
+compiled sibling loop retains its initial value across empty children
+and returns the successful child's value with its path. The undo loop
+preserves both while restoring the block counters. The child contract
+links the signed length read from memory to a witness predicate on the
+corresponding prefix.
