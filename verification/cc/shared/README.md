@@ -554,8 +554,14 @@ valid lookup table, a protected prefix and a selected odd row.
 
 `PreparedBoundedEntry.entry_from_child_execution` applies this theorem at
 the compiled DFS entry for a node with more than two remaining moves, a
-passing parity and polling guard, an unrecorded sample, and a selected
-odd physical row. The callback borrows the existing block-count array.
+passing parity and polling guard and a selected odd physical row.
+The chooser borrows the existing block-count array. It can leave the
+stack sample unused or record a class, a start time and the duration of
+the test. In the recorded branch, the C return invokes the owner's sampling callback
+after restoring excluded siblings. `PreparedReusableSample` lets each
+invocation pass its own admissible class and timing data through one
+fixed function-pointer contract. The callback can update its measurement
+state while preserving the search state, returned code and witness.
 Visit counters can change at arbitrary descendants. The postcondition
 retains the parent execution tree after rollback together with its
 distance and witness contract. Its recursive inputs use the same report

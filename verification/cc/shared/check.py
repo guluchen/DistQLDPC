@@ -129,7 +129,7 @@ MODULES = (
     "PreparedPrunedPCM",
     "PreparedInteriorGuards",
     "PreparedChosenPhysicalRow", "PreparedNoLogical", "PreparedWritableChoice", "PreparedCounterJoin",
-    "PreparedRankedChildren", "PreparedPCMFastSearch", "PreparedBoundedEntry", "PreparedGatherCandidates", "PreparedConstructedRow", "PreparedRowAppend",
+    "PreparedRankedChildren", "PreparedPCMFastSearch", "PreparedReusableSample", "PreparedBoundedEntry", "PreparedGatherCandidates", "PreparedConstructedRow", "PreparedRowAppend",
 )
 
 

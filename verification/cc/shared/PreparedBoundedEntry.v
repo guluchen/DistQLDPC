@@ -11,6 +11,7 @@ Require Import LeafMatrix MinimumPrefix LevelSearch VerifDetected VerifChildVisi
  PreparedNativeCallees PreparedArenaContext PreparedCallerLocals.
 Require Import PreparedChoiceCall PreparedChooseReturn PreparedSelectedReturn PreparedInteriorExit
  PreparedInitializeScan PreparedInteriorGuards PreparedDFSRejected PreparedCandidateSlice PreparedInteriorEntry VerifClosedPrefix.
+Require Import PreparedSampleOwnerReturn PreparedReusableSample.
 Require Import PreparedRankedChildren PreparedDescentFuel PreparedWritableChoice PreparedCounterJoin OverlapRowSpecs OverlapView.
 Require flag_level_ast.
 Import flag_level_ast.
@@ -56,9 +57,19 @@ Hypothesis overlap:forall x,admissible_target (literal_path parent) x -> minimum
 Let contents:=heap s (active_prefix depth cells).
 Let input:choice_input:=fun owner sample=>
  (sample_data sample (Int.repr (-1)) Float.zero Float.zero * data_at_ Tsh (tarray tuint stride) buf)%logic.
+(* The C++ callback can record a class while it chooses the row. Its
+   statistics are part of the recursively restored owner heap. The
+   invariant may existentially quantify the current measurement values. *)
+Definition sample_return_storage klass:Prop:=
+ (Int.signed klass<0)%coqZ \/
+ ((0<=Int.signed klass)%coqZ /\ exists cb (valid:Z->Prop) (stats:Values.val->mpred) (rest:mpred),
+   valid (Int.signed klass) /\ contents=(stats (callback_owner c) *
+      sample_field c cb (sample_input_for valid stats) (sample_output_for stats) * rest)%logic).
+
 Let output:choice_output:=fun owner sample written=>
- (!!(written=xs) && (sample_data sample (Int.repr (-1)) Float.zero Float.zero *
-    spare_words buf stride written))%logic.
+ (EX klass:Integers.int, EX t1:Floats.float, EX t2:Floats.float,
+  !!(written=xs /\ sample_return_storage klass) &&
+   (sample_data sample klass t1 t2 * spare_words buf stride written))%logic.
 
 Variable tables:mpred.
 Let before_pick:choice_input:=fun o a=>(tables * input o a)%logic.
@@ -109,8 +120,39 @@ Let stop a:=[::enabled_memory c s cp w (output_trace a) (restored_snapshot a);
     heap s (active_prefix depth cells);loan;child_array buf xs].
 Let owned a:=owned_after c heap s cp base cells w depth stride levels a.
 
+Lemma sample_preserves_report a ptr klass t1 t2:
+ sample_return_storage klass ->
+ semax D (PROP() LOCAL(lvar _sample sample_type ptr;temp _policy (nested_policy (nested c));
+       temp _result (Vint (Int.repr (returned_code a)))) SEP(sample_data ptr klass t1 t2;owned a))
+ finish_scan (function_body_ret_assert tint
+   (PROP() LOCAL(temp ret_temp (Vint (Int.repr (returned_code a))))
+    SEP(data_at_ Tsh sample_type ptr;owned a)))%assert.
+Proof.
+ move=>storage.
+ eapply semax_Delta_subsumption;first (unfold D,with_child_heap;apply tycontext_sub_Gprog_nil;vm_compute;
+   repeat (apply list_norepet_cons;[simpl;intuition congruence|]);apply list_norepet_nil).
+ case:storage=>[disabled|[active [cb [valid [stats [rest [measured arrangement]]]]]]].
+ - eapply semax_pre;last exact:(@unsampled_returns_trace Espec ptr klass t1 t2 (returned_code a) (owned a) disabled).
+   entailer!;cancel.
+ - set (fn:=sample_field c cb (sample_input_for valid stats) (sample_output_for stats)).
+   change (contents=(stats (callback_owner c) * fn * rest)%logic) in arrangement.
+   unfold owned,owned_after;fold contents;rewrite arrangement.
+   set (trace:=(rest * remaining_arena base stride levels depth)%logic).
+   have checked:=@owner_returns_from_current_sample Espec c cb ptr klass t1 t2 (returned_code a) s cp w
+     (output_trace a) (restored_snapshot a) valid stats trace active measured owner.
+   fold fn in checked.
+   unfold SEPx in checked |- *;cbn [fold_right_sepcon] in checked |- *;rewrite !sepcon_emp in checked |- *.
+   have joins:forall x:mpred,
+     (x * (enabled_memory c s cp w (output_trace a) (restored_snapshot a) *
+       (stats (callback_owner c) * fn * rest) * remaining_arena base stride levels depth))%logic=
+     (x * (stats (callback_owner c) *
+       ((enabled_memory c s cp w (output_trace a) (restored_snapshot a) * fn) * trace)))%logic.
+   { intro x;unfold trace;apply pred_ext;cancel. }
+   rewrite !joins;exact checked.
+Qed.
+
 Theorem report_after_rollback ptr klass t1 t2:
- (Int.signed klass<0)%coqZ -> (0<=depth<levels)%coqZ -> (0<=stride)%coqZ -> (Zlength xs<=stride)%coqZ ->
+ sample_return_storage klass -> (0<=depth<levels)%coqZ -> (0<=stride)%coqZ -> (Zlength xs<=stride)%coqZ ->
  field_compatible0 (tarray tuint ((levels-depth)*stride)) [ArraySubsc stride] buf ->
  semax D (PROPx nil (LOCALx (scan_locals 0%coqZ 0%coqZ ++ [::lvar _sample sample_type ptr])
     (SEPx (start++[::sample_data ptr klass t1 t2;spare_words buf stride xs])))) search_finish
@@ -118,14 +160,17 @@ Theorem report_after_rollback ptr klass t1 t2:
    (PROP(reported_exit a) LOCAL(temp ret_temp (Vint (Int.repr (returned_code a))))
     SEP(data_at_ Tsh sample_type ptr;owned a)))).
 Proof.
- move=>disabled at_depth wide fits comp.
+ move=>storage at_depth wide fits comp.
  have unsigned:(Z.of_nat n<=Int.max_unsigned)%coqZ by move:dims;change Int.max_signed with 2147483647%coqZ;
    change Int.max_unsigned with 4294967295%coqZ;lia.
  have [range _]:=@emitted_range_and_availability n row _ F unsigned size_ok (@available_in_view n root).
  have positive:(0<Zlength (blocked root)<=Int.max_signed)%coqZ by rewrite size_ok.
- apply:(@finish_after_siblings scan_exit Espec D _ ptr klass t1 t2 returned_code reported_exit owned _ disabled).
- - unfold D,with_child_heap;apply tycontext_sub_Gprog_nil;vm_compute;
-   repeat (apply list_norepet_cons;[simpl;intuition congruence|]);apply list_norepet_nil.
+ rewrite suffix_code.
+ apply (semax_unfold_seq (Ssequence (Ssequence search_children undo_children) finish_scan)
+   (Ssequence search_children (Ssequence undo_children finish_scan)) Logic.eq_refl).
+ eapply semax_seq' with (P':=(EX a:scan_exit, PROP(reported_exit a)
+      LOCAL(lvar _sample sample_type ptr;temp _policy (nested_policy (nested c));
+         temp _result (Vint (Int.repr (returned_code a)))) SEP(sample_data ptr klass t1 t2;owned a))%assert).
  - have loop:semax D (PROPx nil (LOCALx (scan_locals 0%coqZ 0%coqZ) (SEPx start)))
      (Ssequence search_children undo_children) (normal_ret_assert (EX a:scan_exit,
       PROPx [::reported_exit a] (LOCALx (scan_locals (next_index a) (returned_code a)) (SEPx (stop a))))).
@@ -151,6 +196,15 @@ Proof.
    entailer!;try cancel.
    rewrite sepcon_assoc (sepcon_comm loan).
    exact:(@release_after_descendants base stride levels depth xs at_depth wide fits comp).
+ - Intros a.
+   apply (@select_ret_assert scan_exit Espec _ _ _ _ a).
+   eapply semax_post_flipped.
+   + exact (@sample_preserves_report a ptr klass t1 t2 storage).
+   + simpl;normalize.
+   + simpl;normalize.
+   + simpl;normalize.
+   + intros [v|];intro rho;simpl;normalize;entailer!.
+     unfold liftx,PROPx;cbn;normalize;apply andp_left2;apply derives_refl.
 Qed.
 
 Theorem choose_with_smaller_children cb odd_count ptr (rest:mpred):
@@ -178,13 +232,16 @@ Proof.
      exact:(@select_with_live_blocks Espec c s buf ptr depth options odd_count cp w cells root cb
        (Z.of_nat n) before_pick after_pick (rest * loan)%logic use owner live).
    + rewrite open_heap;unfold fn,pick,blocks,before_pick,counter,before_choice,choice_loc;cbn [app];entailer!;try cancel;apply derives_refl.
- - Intros written;unfold after_pick,output;Intros;subst written.
+ - Intros written;unfold after_pick,output;Intros klass t1 t2.
+   have storage:sample_return_storage klass by tauto.
+   have same:written=xs by tauto.
+   subst written.
    eapply semax_pre;last first.
    + eapply (@from_selected_candidates Espec D c s buf cp w cells root depth (Zlength xs) options ptr
-        [::contents;loan;child_array buf xs;sample_data ptr (Int.repr (-1)) Float.zero Float.zero;
+        [::contents;loan;child_array buf xs;sample_data ptr klass t1 t2;
            spare_words buf stride xs]);[exact extend|lia|exact budget|].
-     exact:(@report_after_rollback ptr (Int.repr (-1)) Float.zero Float.zero
-       ltac:(compute;congruence) at_level width fits safe).
+     exact:(@report_after_rollback ptr klass t1 t2
+       storage at_level width fits safe).
    + rewrite open_heap;unfold fn,pick,blocks,counter,chosen_loc;entailer!;try cancel;apply derives_refl.
 Qed.
 
