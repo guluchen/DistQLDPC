@@ -7,7 +7,7 @@ Require Import VST.floyd.proofauto VST.floyd.reassoc_seq VerifDetected VerifChil
  PreparedIndexWhile PreparedIndexNodeReport PreparedIndexWitnessCall PreparedIndexWitnessScan
  PreparedIndexWitnessUndo PreparedIndexWitnessLeaf PreparedSiblingRestore PreparedVerdictExit PreparedSampling PreparedCallerLocals.
 Require Import PreparedChooserStorage PreparedInitializeScan PreparedSelectedReturn PreparedIndexReuse.
-Require Import PreparedInteriorEntry PreparedCandidateArena PreparedCandidateSlice PreparedArenaContext PreparedIndexCall PreparedIndexWitnessParent PreparedIndexContiguous PreparedIndexLink PreparedNativeCallees PreparedUniformIndex PreparedIndexSyndromeLoan PreparedChoiceCall PreparedChooseReturn PreparedLeafWorkspace.
+Require Import VerifToggleBody VerifClosedPrefix PreparedDFSRejected PreparedInteriorGuards PreparedCounterJoin PreparedInteriorEntry PreparedCandidateArena PreparedCandidateSlice PreparedArenaContext PreparedIndexCall PreparedIndexWitnessParent PreparedIndexContiguous PreparedIndexLink PreparedNativeCallees PreparedUniformIndex PreparedIndexSyndromeLoan PreparedChoiceCall PreparedChooseReturn PreparedLeafWorkspace.
 From mathcomp Require Import all_ssreflect all_algebra.
 Require Import PreparedMatrixPath PreparedMatrixResponse PreparedInteriorReport PreparedObservedWitness
  PreparedPCMLeafVisit LeafMatrix LevelSearch NativePackingScan IndexRowBridge flag_level_ast.
@@ -72,6 +72,35 @@ Proof.
  - unfold sample_and_slice,init_sample,child_slice;auto 100 with closed.
  - exact:(@set_up_nonterminal_frame Espec c s base stride depth options ptr frame bound step live).
 Qed.
+
+Definition packed_without_odd (s keys : Values.val) v hash (colkeys syn par : list int64) : mpred :=
+ (field_at Tsh level_type [StructField _cstart] (poff v) s *
+  field_at Tsh level_type [StructField _cr] (prows v) s *
+  field_at Tsh level_type [StructField _syn] (psyn v) s *
+  field_at Tsh level_type [StructField _kw] (Vint (Int.repr (width v))) s *
+  field_at Tsh level_type [StructField _gpar] (ppar v) s *
+  field_at Tsh level_type [StructField _gmask] (pmasks v) s *
+  field_at Tsh level_type [StructField _synkey] (Vlong hash) s *
+  field_at Tsh level_type [StructField _colkey] keys s *
+  data_at Tsh (tarray tuint (Zlength (offsets v)))
+    (map (fun z => Vint (Int.repr z)) (offsets v)) (poff v) *
+  data_at Tsh (tarray tuint (Zlength (rows v))) (map Vint (rows v)) (prows v) *
+  data_at Tsh (tarray tulong (Zlength syn)) (map Vlong syn) (psyn v) *
+  data_at Tsh (tarray tulong (width v)) (map Vlong par) (ppar v) *
+  data_at Tsh (tarray tulong (Zlength (masks v))) (map Vlong (masks v)) (pmasks v) *
+  data_at Tsh (tarray tulong (Zlength colkeys)) (map Vlong colkeys) keys)%logic.
+Definition raw_guard_remainder s cp bp blocks path addr keys (t:packed_support):mpred:=
+ (field_at Tsh level_type [StructField _blk] bp s *
+  data_at Tsh (tarray tuint (Zlength blocks)) (map Vint blocks) bp * path_storage s cp path *
+  packed_without_odd s addr (words_at t) (checksum t) keys (syndrome (words_at t)) (parities (words_at t)))%logic.
+
+Lemma split_live_guard_fields s cp bp w blocks path addr keys t:
+ (child_fields s cp bp w blocks path * packed_mem s addr Bare keys t)%logic=
+ (field_at Tsh level_type [StructField _w] (Vint (Int.repr w)) s *
+  field_at Tsh level_type [StructField _nodd] (Vint (Int.repr (odd_count t))) s *
+  raw_guard_remainder s cp bp blocks path addr keys t)%logic.
+Proof. unfold child_fields,packed_mem,toggle_mem,raw_guard_remainder,path_storage,packed_without_odd;
+       cbn [policy_storage];apply pred_ext;cancel. Qed.
 
 Section Selected.
 Variable Espec:OracleKind.
@@ -217,4 +246,68 @@ Proof.
      all: try (apply andp_right;[apply prop_right;repeat split;try assumption;try congruence|cancel]).
      all: try solve [match goal with h:_ |- _=>first [exact (proj1 h)|exact (proj2 h)] end].
 Qed.
+Section Guards.
+Variables (base budgetp:Values.val) (capacity:Z) (pollmask:int64) (keep:mpred).
+Let companion:=(visit_storage s budgetp capacity * mask_field s pollmask * keep)%logic.
+Let remainder:=(!!physical_prefix c node &&
+ (raw_guard_remainder s cp (pb p) (blocked root) cells (pk p) keys cur *
+  ready_row buffer stride * static_leaf_index s p mask tab links * independent_leaf_counters s *
+  storage s * candidate_fields s base stride * keep * loan * witness_register s saved))%logic.
+Hypothesis frame_parts:frame s=(candidate_fields s base stride*companion)%logic.
+
+Lemma opened_at_count:
+ retained cells saved=
+ (EX nodes:int64,EX budgets:seq int64, !!(Zlength budgets=capacity) &&
+ (visit_fields s budgetp w (odd_count cur) nodes budgets * mask_field s pollmask * remainder))%logic.
+Proof.
+ unfold retained,heap,index_flip_heap,physical_store,work;rewrite frame_parts.
+ unfold companion,visit_storage,remainder,visit_fields,tally_cells;
+   unfold raw_guard_remainder,path_storage,packed_without_odd,packed_mem,toggle_mem,child_fields;
+   cbn [policy_storage];apply pred_ext;normalize.
+ all: match goal with nodec:int64, bs:seq int64 |- _=>
+     Exists nodec bs;normalize;try cancel;try apply derives_refl end.
+ all: try (apply andp_right;[apply prop_right;tauto|cancel]).
+Qed.
+
+Theorem deep_open_dfs_body:
+ buffer=row_pointer base stride d -> isptr base -> (0<=stride<=Int.max_signed)%coqZ ->
+ legal_choice H rows a -> nw=Zlength (syndrome (words_at cur)) ->
+ (0<odd_count cur<=Int.max_signed)%coqZ -> (w-d<capacity)%coqZ ->
+ Int.and options (Int.repr 1)=Int.zero -> Int.and options (Int.repr 2)=Int.zero ->
+ Int.and options (Int.repr 8)=Int.zero -> Int.and options (Int.repr 16)=Int.zero ->
+ klass=Int.repr (-1) -> t1=Float.zero -> t2=Float.zero ->
+ is_pointer_or_null s -> is_pointer_or_null buffer ->
+ let regs:=guard_loc s (nested_policy (nested c)) d options ptr++[::gvars gv] in
+ semax D (PROPx nil (LOCALx regs (SEPx [::data_at_ Tsh sample_type ptr;retained cells saved])))
+   (fn_body f_dfs) result.
+Proof.
+ move=>slice base_ok step legal width odd within direct nopoll noparity disabled sample z1 z2 valid out regs.
+ apply guards_then_search with (M:=PROPx nil (LOCALx regs (SEPx [::data_at_ Tsh sample_type ptr;retained cells saved]))).
+ - apply hold_global_environment.
+   + unfold interior_guards;auto 100 with closed.
+   + eapply semax_Delta_subsumption.
+     * eapply tycontext_sub_trans;last exact:(@link_index_visits m n H rows flip dfs).
+       apply tycontext_sub_Gprog_nil;vm_compute;
+          repeat (apply list_norepet_cons;[simpl;intuition congruence|]);apply list_norepet_nil.
+     * rewrite opened_at_count;Intros nodes budgets.
+       pose proof (@enter_interior_on_live_flags Espec s (nested_policy (nested c)) budgetp w d
+          (odd_count cur) nodes budgets options pollmask ptr
+          (data_at_ Tsh sample_type ptr * remainder)%logic depth signed odd ltac:(lia)
+          ltac:(rewrite nopoll;congruence) ltac:(rewrite noparity;congruence)) as enter.
+       eapply semax_post';last first.
+       -- eapply semax_pre;last exact enter;go_lowerx;normalize;cancel;try apply derives_refl.
+       -- try rewrite opened_at_count.
+          Exists (Int64.add nodes Int64.one);cbn [replace_nth].
+          go_lowerx;normalize;Exists (VerifClosedPrefix.bump budgets (w-d)%coqZ).
+          have extent:Zlength (VerifClosedPrefix.bump budgets (w-d)%coqZ)=capacity by
+            rewrite /VerifClosedPrefix.bump upd_Znth_Zlength;lia.
+          normalize;try cancel;try apply derives_refl.
+          all: try (apply andp_right;[apply prop_right;repeat split;try assumption|cancel]).
+          all: try solve [match goal with h:_ |- _=>first [exact (proj1 h)|exact (proj2 h)] end].
+ - eapply semax_pre;last exact (search_from_the_stack slice frame_parts base_ok step legal width direct disabled sample z1 z2 valid out).
+   unfold regs,guard_loc;cbn [app];go_lowerx;normalize;try cancel;try apply derives_refl.
+   all: try (apply andp_right;[apply prop_right;repeat split;try assumption|cancel]).
+   all: try solve [match goal with h:_ |- _=>first [exact (proj1 h)|exact (proj2 h)] end].
+Qed.
+End Guards.
 End Selected.
