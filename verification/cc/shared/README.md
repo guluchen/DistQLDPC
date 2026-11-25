@@ -778,3 +778,13 @@ In `PreparedIndexSyndromeLoan.registered_choice_reads_current_state`
 the compiled chooser reads the same syndrome array updated by the C
 flip operation. The caller regains ownership of that array together
 with the chooser's updated epoch, mark contents and cut counters.
+
+The physical chooser preserves the length of the mark array on every
+return, including an empty candidate row, a packing cut, and epoch
+rollover. `PreparedIndexReuse.choose_in_reusable_storage` uses that
+fact to return the workspace to DFS. The emitted candidate prefix and
+the untouched suffix reconstitute a row that can serve the next call.
+`PreparedIndexSite.reached_choice_is_legal` derives the per-node
+preconditions from the stored PCM, the initial zero syndrome and the
+current distinct prefix. `PreparedPivotDetectors` relates free-column
+detectors to stabilizer-row-space membership given a reduced basis.

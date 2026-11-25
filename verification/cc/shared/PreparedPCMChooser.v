@@ -2,6 +2,48 @@
 Require Import VST.floyd.proofauto VerifDetected EpochFreshness VerifLowestBit
  PreparedIndexWords PreparedIndexSweep PreparedIndexWhile PreparedIndexFinish PreparedIndexEpoch
  PreparedIndexTables PreparedIndexChooser VerifGather RowGather RowTally.
+Require Import PreparedIndexSweepPCM PreparedIndexIteration PreparedIndexBitBody WordScan.
+Local Open Scope Z_scope.
+
+Definition scan_marks result:=match result with
+ | AllBits _ _ tags | EmptyRow tags | TooManyRows tags=>tags end.
+
+(* A cut returns the marks from before its row; a completed row can
+   overwrite cells, but every overwrite lies within the allocated array. *)
+Section Extent.
+Variables (offsets:list Z) (cols blocks:list int) (stamp:int64) (dep w:Z).
+Let safe:=safe_index_row offsets cols blocks.
+Let valid:=row_state_ok blocks dep w.
+
+Lemma word_marks_extent wi bits b p ms:
+ Forall (fun i=>safe (64*wi+i)) bits -> valid b p ms ->
+ Zlength (scan_marks (scan_bits offsets cols blocks stamp wi dep w bits b p ms))=Zlength blocks.
+Proof.
+ intros guarded;revert b p ms;induction guarded as [|i bits good tail ih];intros b p ms ok.
+ - exact (proj2 (proj2 ok)).
+ - cbn [scan_bits]. destruct (run_row _ _ _ _ _ _ _ _) as [| |q next] eqn:step;
+     [exact (proj2 (proj2 ok))|exact (proj2 (proj2 ok))|].
+   apply ih. exact (step_stays_in_range offsets cols blocks stamp dep w (64*wi+i) b p ms q next good ok step).
+Qed.
+
+Lemma sweep_marks_extent wi plan b p ms:
+ Forall safe (physical_order wi plan) -> valid b p ms ->
+ Zlength (scan_marks (sweep offsets cols blocks stamp dep w wi plan b p ms))=Zlength blocks.
+Proof.
+ revert wi b p ms;induction plan as [|bits later ih];intros wi b p ms safe_rows ok.
+ - exact (proj2 (proj2 ok)).
+ - change (Forall safe (map (Z.add (64*wi)) bits ++ physical_order (wi+1) later)) in safe_rows.
+   apply Forall_app in safe_rows;destruct safe_rows as [first more].
+   assert (guard:Forall (fun i=>safe (64*wi+i)) bits).
+   { apply Forall_forall;intros i found;rewrite Forall_forall in first;apply first;apply in_map;exact found. }
+   pose proof (word_marks_extent wi bits b p ms guard ok) as room.
+   cbn [sweep];destruct (scan_bits offsets cols blocks stamp wi dep w bits b p ms) as [b' p' tags|tags|tags] eqn:word.
+   + apply ih;[exact more|]. eapply exhausted_bits_valid;[exact guard|exact ok|exact word].
+   + exact room.
+   + exact room.
+Qed.
+End Extent.
+
 From mathcomp Require Import all_ssreflect all_algebra.
 Require Import NativePackingScan LeafMatrix SparseFlipBits SparseSyndrome IndexRowBridge
  PreparedIndexAdmission PreparedResidualIndex PreparedRowCoverage flag_level_ast.
@@ -47,7 +89,7 @@ Let picks:=output_columns offsets cols blocks.
 (* The statement covers execution from the function's parameter storage
    through its return. The candidate buffer is quantified at entry, so this
    also covers reuse of the same scratch space between recursive calls. *)
-Theorem physical_index_origin {Espec:OracleKind} gv sh s sp op cp bp mp children nc pk:
+Theorem physical_index_origin_and_extent {Espec:OracleKind} gv sh s sp op cp bp mp children nc pk:
  readable_share sh -> (1<=dep<=w)%coqZ -> (w<=Int.max_signed)%coqZ ->
  (Zlength words<=Int.max_signed)%coqZ ->
  exists result,
@@ -56,7 +98,8 @@ Theorem physical_index_origin {Espec:OracleKind} gv sh s sp op cp bp mp children
    (fn_body f_index_children)
    (frame_ret_assert (after_selection gv sh s sp op cp bp mp children offsets cols blocks w words nc pk old result)
       (fun _:environ=>counters_header s (Zlength marks) stamp)) /\
- selection_origin rows H prefix free budget offsets cols blocks result.
+ selection_origin rows H prefix free budget offsets cols blocks result /\
+ Zlength (scan_marks result)=Zlength marks.
 Proof.
  move=> readable depth signed words_fit.
  have unsigned:(Z.of_nat n<=Int.max_unsigned)%coqZ by
@@ -80,7 +123,18 @@ Proof.
      split;last exact:capacity.
      eapply physical_rows_are_safe; eassumption.
    + exact:buffer_signed.
- - case:result exact_result checked meaning=>[r p tags|tags|tags] exact_result checked meaning.
+ - have size_ok:Zlength (scan_marks result)=Zlength marks.
+   { rewrite exact_result mark_width -block_width;apply sweep_marks_extent.
+     - apply Forall_forall=> j inside.
+       have decoded:=@plan_traces_words 0 words plan run.
+       have [_ valid]:=@word_scan_physical_rows m words count (support (H*m prefix)) stored padding _ decoded.
+       have [r [-> _]]:=proj1 (valid _) inside.
+       eapply physical_rows_are_safe;eassumption.
+     - unfold row_state_ok;rewrite /initial after_length mark_width block_width.
+       repeat split;try lia;unfold Int.max_signed;lia. }
+   split;last exact size_ok.
+   clear size_ok.
+   case:result exact_result checked meaning=>[r p tags|tags|tags] exact_result checked meaning.
    + case:meaning=>first [rs [_ [dark [eqr _]]]].
      have [_ [_ [_ image]]]:=csr first.
      exists first;split=> //;split.
@@ -88,6 +142,23 @@ Proof.
      * by rewrite eqr /output_columns /gathered image.
    + exact meaning.
    + exact meaning.
+Qed.
+
+Theorem physical_index_origin {Espec:OracleKind} gv sh s sp op cp bp mp children nc pk:
+ readable_share sh -> (1<=dep<=w)%coqZ -> (w<=Int.max_signed)%coqZ ->
+ (Zlength words<=Int.max_signed)%coqZ ->
+ exists result,
+ semax (func_tycontext f_index_children Vprog index_calls nil)
+   (initial_index gv sh s sp op cp bp mp children offsets cols blocks dep w words nc pk old last marks)
+   (fn_body f_index_children)
+   (frame_ret_assert (after_selection gv sh s sp op cp bp mp children offsets cols blocks w words nc pk old result)
+      (fun _:environ=>counters_header s (Zlength marks) stamp)) /\
+ selection_origin rows H prefix free budget offsets cols blocks result.
+Proof.
+ move=>readable depth signed words_fit.
+ have [result [checked [origin _]]]:=@physical_index_origin_and_extent Espec gv sh s sp op cp bp mp children nc pk
+   readable depth signed words_fit.
+ by exists result.
 Qed.
 
 Theorem complete_physical_index_children {Espec:OracleKind} gv sh s sp op cp bp mp children nc pk:

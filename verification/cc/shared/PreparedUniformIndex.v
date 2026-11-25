@@ -51,8 +51,8 @@ Definition after_at a:=call_after (globals_at a) (const_share a) (level_p a) (sy
  (columns_p a) (blocks_p a) (marks_p a) (output_p a) (row_offsets a) (entries a) (blocked_cells a)
  (requested_weight a) (odd_words a) (empty_count a) (pack_count a) (spare_cells a) (epoch a) (marks a).
 Definition length_at a:=call_count (row_offsets a) (entries a) (blocked_cells a).
-Definition provenance_at a:=selection_origin rows H (partial a) (allowed a) (moves a)
-   (row_offsets a) (entries a) (blocked_cells a).
+Definition provenance_at a result:=selection_origin rows H (partial a) (allowed a) (moves a)
+   (row_offsets a) (entries a) (blocked_cells a) result /\ Zlength (scan_marks result)=Zlength (marks a).
 
 Definition pcm_index_spec:ident*funspec:=
  DECLARE _index_children WITH a:choice_site
@@ -66,12 +66,12 @@ Proof.
  start_function1;start_function2;start_function3.
  match goal with h:legal_choice ?a |- _ => destruct h as
    [mfit nfit free bwidth mwidth cover owidth csr remain stored pad live capacity outcap share_ok depth cap words_fit];
-   have run:=@physical_index_origin m n rows H (partial a) (allowed a) (blocked_cells a) (entries a)
+   have run:=@physical_index_origin_and_extent m n rows H (partial a) (allowed a) (blocked_cells a) (entries a)
      (row_offsets a) (moves a) (call_depth a) (requested_weight a) (odd_words a) (syndrome_count a)
      (marks a) (epoch a) (spare_cells a) mfit nfit free bwidth mwidth cover owidth csr remain stored pad live
      capacity outcap Espec (globals_at a) (const_share a) (level_p a) (syndrome_p a) (offsets_p a)
      (columns_p a) (blocks_p a) (marks_p a) (output_p a) (empty_count a) (pack_count a) share_ok depth cap words_fit end.
- destruct run as [result [complete physical]].
+ destruct run as [result [complete [physical extent]]].
  eapply semax_post_flipped.
  - eapply semax_pre;[|exact complete]. unfold before_at,initial_index,index_locals,call_before;entailer!;cancel.
  - destruct result;cbn [after_selection RA_normal frame_ret_assert function_body_ret_assert];normalize.
