@@ -142,6 +142,7 @@ MODULES = (
     "PreparedPlainPCMScan", "PreparedChooserStorage",
     "PreparedPlainPair", "PreparedPlainClosedBracket", "PreparedPlainPhysicalPair",
     "PreparedPlainLeafEvent",
+    "PreparedUniformIndex", "PreparedIndexLink",
 )
 
 

@@ -743,3 +743,11 @@ the matrix's width. `PreparedPlainReachable` proves this condition for
 each index seed and for every visited child of the actual selected
 row, including children visited after earlier siblings returned empty.
 The VST proof supplies that condition at the compiled recursive call.
+
+`PreparedUniformIndex.pcm_index_body` proves the C row chooser once
+for any reachable call on a given PCM. The depth, prefix, exclusion
+counters, scratch slice and mark epoch can all change between calls.
+`PreparedIndexLink` installs this specification, the recursive entry,
+and the leaf and bit-scanning helpers in a single VST function table.
+The registered chooser and seven direct helper bodies are checked in
+that table. The recursive entry still needs its own complete body proof.
