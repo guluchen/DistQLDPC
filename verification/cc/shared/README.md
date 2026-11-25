@@ -778,6 +778,8 @@ At the C input boundary, `RawPCMBinary.valid_binary_matrix` verifies
 the actual size check and byte scan in `valid_matrix` for every positive
 representable pair of dimensions and matching binary buffer. The function
 accepts the view and returns the original buffer to the caller.
+`RawPCMEmptyRows.validate_zero_checks` covers zero check rows at any
+representable width, including a null data pointer.
 
 In `PreparedIndexSyndromeLoan.registered_choice_reads_current_state`
 the compiled chooser reads the same syndrome array updated by the C
