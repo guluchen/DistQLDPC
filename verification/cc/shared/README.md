@@ -686,3 +686,11 @@ completions. The postcondition records the returned count, written
 buffer and its suffix, both statistics counters, and the resulting
 stamp storage. Epoch rollover and arbitrary prior mark values are
 included. This is the chooser on the optimized C index-mode path.
+
+`PreparedIndexCallerPCM.verified_row_for_sibling_loop` packages that
+result as a VST `semax_body` judgment for `index_children` and verifies
+the actual direct call in `dfs`. The caller receives the exact count and
+a separately owned candidate array at the same address. The remaining
+scratch suffix can be joined back after the recursive call, including
+when the candidate count is zero. The contract carries duplicate freedom
+and PCM completion coverage across this C call.
