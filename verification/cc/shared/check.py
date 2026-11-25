@@ -149,7 +149,7 @@ MODULES = (
     "PreparedIndexSyndromeLoan", "PreparedIndexReuse", "PreparedIndexSite", "PreparedPivotDetectors",
     "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous",
     "PreparedIndexGlobals", "PreparedIndexGlobalScan", "PreparedIndexGlobalTree", "PreparedIndexSelected",
-    "PreparedIndexReachableBody",
+    "PreparedIndexReachableBody", "PreparedIndexCallable", "PreparedRawRREF",
 )
 
 
