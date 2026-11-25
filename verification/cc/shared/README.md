@@ -783,6 +783,8 @@ representable width, including a null data pointer.
 `RawPCMCommutation.accept_commuting_views` checks all three loops of the
 C commutation test. For binary row-major inputs with zero GF(2) dot product
 for each row pair, it returns true and preserves both input matrices.
+`RawPCMProduct.accept_orthogonal_pcms` derives that precondition from
+the MathComp equation $H_X H_Z^T = 0$ and the row-major input encoding.
 
 In `PreparedIndexSyndromeLoan.registered_choice_reads_current_state`
 the compiled chooser reads the same syndrome array updated by the C
