@@ -178,15 +178,18 @@ def main():
             raw_ast = build / "raw_pcm_ast.v"
             subprocess.run([compiler, "-normalize", "-canonical-idents", "-I" + str(source_dir),
                             "-o", str(raw_ast), "pcm.c"], cwd=native, check=True)
-            proof = build / "RawPCMPrimitives.v"
-            shutil.copyfile(native / proof.name, proof)
-            for module in (raw_ast, proof):
+            modules = [raw_ast]
+            for name in ("RawPCMPrimitives.v", "RawPCMValidation.v"):
+                shutil.copyfile(native / name, build / name)
+                modules.append(build / name)
+            for module in modules:
                 subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
-            subprocess.run(["coqchk", "-silent", *flags, "-norec", raw_ast.stem, "-norec", proof.stem],
+            targets = [arg for module in modules for arg in ("-norec", module.stem)]
+            subprocess.run(["coqchk", "-silent", *flags, *targets],
                            cwd=build, check=True)
-            print(json.dumps({"modules": [raw_ast.stem, proof.stem],
+            print(json.dumps({"modules": [module.stem for module in modules],
                               "sha256": {p.name: digest(p) for p in (native / "pcm.c", native / "pcm.h",
-                                          source_dir / "cc_level.h", raw_ast, proof)}}))
+                                          source_dir / "cc_level.h", *modules)}}))
             return
 
         translations = [
