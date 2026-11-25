@@ -780,6 +780,9 @@ representable pair of dimensions and matching binary buffer. The function
 accepts the view and returns the original buffer to the caller.
 `RawPCMEmptyRows.validate_zero_checks` covers zero check rows at any
 representable width, including a null data pointer.
+`RawPCMCommutation.accept_commuting_views` checks all three loops of the
+C commutation test. For binary row-major inputs with zero GF(2) dot product
+for each row pair, it returns true and preserves both input matrices.
 
 In `PreparedIndexSyndromeLoan.registered_choice_reads_current_state`
 the compiled chooser reads the same syndrome array updated by the C
