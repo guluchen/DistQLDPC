@@ -46,7 +46,10 @@ check-shared-level:
 test-portable-level: portable-level-test
 	./portable-level-test
 
-.PHONY: test-native-pcm
+.PHONY: check-native-pcm test-native-pcm
+check-native-pcm:
+	python3 -B shared/check.py --raw-pcm
+
 test-native-pcm: native-pcm-test
 	./native-pcm-test
 

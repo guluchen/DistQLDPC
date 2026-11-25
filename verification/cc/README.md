@@ -39,7 +39,8 @@ and insufficient storage have separate outcomes. Only a finite return
 writes the output buffers.
 
 Run `make -C verification/cc test-native-pcm` for the exhaustive small
-matrix oracle, Shor codes and boundary cases. The ABI is defined in
+matrix oracle, Shor codes and boundary cases. Run `make -C verification/cc check-native-pcm` to regenerate the raw C
+Clight AST and kernel-check the packed-word sizing and row-exchange proofs. The ABI is defined in
 [native/pcm.h](native/pcm.h). This entry is under verification. The
 complete C input-to-distance theorem is open.
 

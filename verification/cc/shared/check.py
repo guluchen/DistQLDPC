@@ -1,4 +1,5 @@
 """Regenerate Clight from the production CC kernel and check its VST proofs."""
+import argparse
 import hashlib
 import json
 import os
@@ -144,8 +145,9 @@ MODULES = (
     "PreparedPlainLeafEvent",
     "PreparedUniformIndex", "PreparedIndexLink",
     "PreparedIndexWitnessCall", "PreparedIndexWitnessScan", "PreparedIndexWitnessUndo",
-    "PreparedIndexWitnessLeaf", "PreparedIndexWitnessParent", "PreparedRawPCM",
+    "PreparedIndexWitnessLeaf", "PreparedRawPCM",
     "PreparedIndexSyndromeLoan", "PreparedIndexReuse", "PreparedIndexSite", "PreparedPivotDetectors",
+    "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous",
 )
 
 
@@ -154,6 +156,9 @@ def digest(path):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--raw-pcm", action="store_true", help="regenerate and check the raw PCM front-end proofs")
+    args = parser.parse_args()
     proof_dir = Path(__file__).resolve().parent
     source_dir = proof_dir.parents[2] / "src" / "cc"
     compiler = os.environ.get("CLIGHTGEN", "clightgen")
@@ -166,6 +171,22 @@ def main():
 
     with TemporaryDirectory(prefix="distqldpc-level-") as temp:
         build = Path(temp)
+        if args.raw_pcm:
+            native = proof_dir.parent / "native"
+            raw_ast = build / "raw_pcm_ast.v"
+            subprocess.run([compiler, "-normalize", "-canonical-idents", "-I" + str(source_dir),
+                            "-o", str(raw_ast), "pcm.c"], cwd=native, check=True)
+            proof = build / "RawPCMPrimitives.v"
+            shutil.copyfile(native / proof.name, proof)
+            for module in (raw_ast, proof):
+                subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
+            subprocess.run(["coqchk", "-silent", *flags, "-norec", raw_ast.stem, "-norec", proof.stem],
+                           cwd=build, check=True)
+            print(json.dumps({"modules": [raw_ast.stem, proof.stem],
+                              "sha256": {p.name: digest(p) for p in (native / "pcm.c", native / "pcm.h",
+                                          source_dir / "cc_level.h", raw_ast, proof)}}))
+            return
+
         translations = [
             ("level_ast", proof_dir / "reference" / "cc_level.c"),
             ("flag_level_ast", source_dir / "cc_level.c"),
