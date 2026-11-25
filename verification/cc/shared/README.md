@@ -773,3 +773,8 @@ function body implements its contract remains necessary.
 directly from the two commuting check matrices, including degenerate
 codes. The infinite case is exactly zero encoded qubits. Every finite
 value is attained and is minimal among mixed logical Pauli operators.
+
+In `PreparedIndexSyndromeLoan.registered_choice_reads_current_state`
+the compiled chooser reads the same syndrome array updated by the C
+flip operation. The caller regains ownership of that array together
+with the chooser's updated epoch, mark contents and cut counters.
