@@ -675,3 +675,14 @@ judgment and its meaning for the same result. If the loop completes, the
 branch is the first odd physical row. If C returns early, no budget-feasible
 compatible completion exists. The statement assumes that the C buffers
 represent the input matrix, including cleared padding and the CSR slices.
+
+`PreparedPCMChooser.complete_physical_index_children` proves the full
+Clight function body, from epoch initialization through the final return.
+It takes represented CSR rows, a nonempty physical syndrome and a
+caller-sized scratch buffer. The actual C result is a duplicate-free
+candidate prefix that intersects every compatible closed completion
+within the remaining budget. Thus a zero count excludes all such
+completions. The postcondition records the returned count, written
+buffer and its suffix, both statistics counters, and the resulting
+stamp storage. Epoch rollover and arbitrary prior mark values are
+included. This is the chooser on the optimized C index-mode path.
