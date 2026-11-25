@@ -16,7 +16,16 @@ Definition swap_spec:ident*funspec:=
  PROP(Zlength xs=Zlength ys;Zlength xs<=Int.max_signed)
  PARAMS(a;b;Vint (Int.repr (Zlength xs))) SEP(row_storage a (Zlength xs) xs;row_storage b (Zlength xs) ys)
  POST [tvoid] PROP() RETURN() SEP(row_storage a (Zlength xs) ys;row_storage b (Zlength xs) xs).
-Definition raw_calls:funspecs:=ltac:(with_library prog [words_spec;swap_spec]).
+Definition xor_rows (xs ys:list int64):=map (fun p=>Int64.xor (fst p) (snd p)) (combine xs ys).
+Definition xor_spec:ident*funspec:=
+ DECLARE _xor_words WITH a:val,b:val,sh:share,xs:list int64,ys:list int64
+ PRE [tptr tulong,tptr tulong,tint]
+ PROP(readable_share sh;Zlength xs=Zlength ys;Zlength xs<=Int.max_signed)
+ PARAMS(a;b;Vint (Int.repr (Zlength xs)))
+ SEP(row_storage a (Zlength xs) xs;data_at sh (tarray tulong (Zlength ys)) (map Vlong ys) b)
+ POST [tvoid] PROP() RETURN()
+ SEP(row_storage a (Zlength xs) (xor_rows xs ys);data_at sh (tarray tulong (Zlength ys)) (map Vlong ys) b).
+Definition raw_calls:funspecs:=ltac:(with_library prog [words_spec;swap_spec;xor_spec]).
 
 Lemma packed_words_cover n:0<=n -> 0<=packed_words n /\ n<=64*packed_words n<n+64.
 Proof.
@@ -70,4 +79,35 @@ Proof.
    try rewrite !upd_Znth_map,!swap_view_advance by lia;try cancel.
    all: match goal with |- ?G => fail 1 "swap step" G end.
  - forward;entailer!;unfold swapped_part;rewrite <- H;autorewrite with sublist;cancel.
+Qed.
+
+Lemma xor_rows_width xs ys: Zlength xs=Zlength ys -> Zlength (xor_rows xs ys)=Zlength xs.
+Proof. intros;unfold xor_rows;rewrite Zlength_map,Zlength_combine;lia. Qed.
+Lemma xor_row_word xs ys j: Zlength xs=Zlength ys -> 0<=j<Zlength xs ->
+ Znth j (xor_rows xs ys)=Int64.xor (Znth j xs) (Znth j ys).
+Proof.
+ intros;unfold xor_rows;rewrite Znth_map by (rewrite Zlength_combine;lia).
+ rewrite Znth_combine by lia;reflexivity.
+Qed.
+
+Lemma swap_view_done x y:Zlength x=Zlength y -> swapped_part x y (Zlength x)=y.
+Proof. intros;unfold swapped_part;list_solve. Qed.
+
+Theorem xor_words_body:semax_body raw_vars raw_calls f_xor_words xor_spec.
+Proof.
+ start_function. pose (sum:=xor_rows xs ys).
+ assert (width:Zlength xs=Zlength sum) by (unfold sum;rewrite xor_rows_width by assumption;reflexivity).
+ forward_for_simple_bound (Zlength xs)
+   (EX j:Z,PROP() LOCAL(temp _destination a;temp _pivot b;temp _words (Vint (Int.repr (Zlength xs))))
+    SEP(row_storage a (Zlength xs) (swapped_part xs sum j);
+        data_at sh (tarray tulong (Zlength ys)) (map Vlong ys) b)).
+ - entailer!;unfold swapped_part;autorewrite with sublist;cancel.
+ - assert (sz:Zlength (swapped_part xs sum i)=Zlength xs) by (apply swap_view_length;lia).
+   unfold row_storage;forward;forward;forward;entailer!.
+   try rewrite !Znth_map by lia. try rewrite !swap_view_at by lia.
+   assert (word:Int64.xor (Znth i xs) (Znth i ys)=Znth i sum).
+   { unfold sum;rewrite xor_row_word by lia;reflexivity. }
+   rewrite word,upd_Znth_map,swap_view_advance by lia;cancel.
+ - forward;entailer!;try rewrite swap_view_done by lia;try cancel;try apply derives_refl.
+   all: match goal with |- ?G=> fail 1 "xor return" G end.
 Qed.
