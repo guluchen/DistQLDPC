@@ -148,6 +148,7 @@ MODULES = (
     "PreparedIndexWitnessLeaf", "PreparedRawPCM",
     "PreparedIndexSyndromeLoan", "PreparedIndexReuse", "PreparedIndexSite", "PreparedPivotDetectors",
     "PreparedIndexArena", "PreparedIndexWitnessParent", "PreparedIndexContiguous", "PreparedIndexSelected",
+    "PreparedIndexGlobals", "PreparedIndexGlobalScan", "PreparedIndexGlobalTree",
 )
 
 
