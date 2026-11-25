@@ -11,6 +11,18 @@ Unset Strict Implicit.
 Local Delimit Scope Z_scope with coqZ.
 Local Open Scope ring_scope.
 
+(* The recursive caller needs the identity of the physical odd row,
+   including the exact order of its free entries. For either early exit
+   the smaller certificate is sufficient: no extension fits the budget. *)
+Definition selection_origin m n (rows:'I_m->seq 'I_n) (H:'M['F_2]_(m,n))
+ (prefix:'cV['F_2]_n) (free:{set 'I_n}) budget offsets cols blocks result : Prop :=
+ match result with
+ | AllBits index _ _ => exists row:'I_m,
+    index=Z.of_nat row /\ (H*m prefix) row 0!=0 /\
+    output_columns offsets cols blocks result=free_row blocks (encoded rows row)
+ | _ => no_completion H prefix free budget
+ end.
+
 Section Matrix.
 Variables m n:nat.
 Variables (rows:'I_m->seq 'I_n) (H:'M['F_2]_(m,n)) (prefix:'cV['F_2]_n)
@@ -35,7 +47,7 @@ Let picks:=output_columns offsets cols blocks.
 (* The statement covers execution from the function's parameter storage
    through its return. The candidate buffer is quantified at entry, so this
    also covers reuse of the same scratch space between recursive calls. *)
-Theorem complete_physical_index_children {Espec:OracleKind} gv sh s sp op cp bp mp children nc pk:
+Theorem physical_index_origin {Espec:OracleKind} gv sh s sp op cp bp mp children nc pk:
  readable_share sh -> (1<=dep<=w)%coqZ -> (w<=Int.max_signed)%coqZ ->
  (Zlength words<=Int.max_signed)%coqZ ->
  exists result,
@@ -44,10 +56,7 @@ Theorem complete_physical_index_children {Espec:OracleKind} gv sh s sp op cp bp 
    (fn_body f_index_children)
    (frame_ret_assert (after_selection gv sh s sp op cp bp mp children offsets cols blocks w words nc pk old result)
       (fun _:environ=>counters_header s (Zlength marks) stamp)) /\
- List.NoDup (map Int.unsigned (picks result)) /\
- (forall target:'cV['F_2]_n,support prefix \subset support target -> H*m target=0 ->
-   support target :\: support prefix \subset free -> (#|support target :\: support prefix|<=budget)%N ->
-   exists q:'I_n,q \in support target :\: support prefix /\ List.In (Z.of_nat q) (map Int.unsigned (picks result))).
+ selection_origin rows H prefix free budget offsets cols blocks result.
 Proof.
  move=> readable depth signed words_fit.
  have unsigned:(Z.of_nat n<=Int.max_unsigned)%coqZ by
@@ -72,19 +81,44 @@ Proof.
      eapply physical_rows_are_safe; eassumption.
    + exact:buffer_signed.
  - case:result exact_result checked meaning=>[r p tags|tags|tags] exact_result checked meaning.
-   + case:meaning=>first [rs [_ [dark [-> _]]]].
+   + case:meaning=>first [rs [_ [dark [eqr _]]]].
      have [_ [_ [_ image]]]:=csr first.
-     rewrite /picks /output_columns /gathered image;split.
-     * exact:(@emitted_unique n (rows first) blocks free unsigned available (distinct first)).
-     * move=>target sub closed choices room.
-       have active:(H*m prefix) first 0!=0 by move:dark;rewrite /support inE.
-       exact (@odd_candidate_buffer_hits m n H prefix target first (rows first) blocks free unsigned available
-         (@covers first) sub closed active choices).
-   + split.
-     * constructor.
-     * move=>target included annihilated allowed within. exfalso. exact (@meaning target included annihilated allowed within).
-   + split.
-     * constructor.
-     * move=>target included annihilated allowed within. exfalso. exact (@meaning target included annihilated allowed within).
+     exists first;split=> //;split.
+     * by move:dark;rewrite /support inE.
+     * by rewrite eqr /output_columns /gathered image.
+   + exact meaning.
+   + exact meaning.
+Qed.
+
+Theorem complete_physical_index_children {Espec:OracleKind} gv sh s sp op cp bp mp children nc pk:
+ readable_share sh -> (1<=dep<=w)%coqZ -> (w<=Int.max_signed)%coqZ ->
+ (Zlength words<=Int.max_signed)%coqZ ->
+ exists result,
+ semax (func_tycontext f_index_children Vprog index_calls nil)
+   (initial_index gv sh s sp op cp bp mp children offsets cols blocks dep w words nc pk old last marks)
+   (fn_body f_index_children)
+   (frame_ret_assert (after_selection gv sh s sp op cp bp mp children offsets cols blocks w words nc pk old result)
+      (fun _:environ=>counters_header s (Zlength marks) stamp)) /\
+ List.NoDup (map Int.unsigned (picks result)) /\
+ (forall target:'cV['F_2]_n,support prefix \subset support target -> H*m target=0 ->
+   support target :\: support prefix \subset free -> (#|support target :\: support prefix|<=budget)%N ->
+   exists q:'I_n,q \in support target :\: support prefix /\ List.In (Z.of_nat q) (map Int.unsigned (picks result))).
+Proof.
+ move=>readable depth signed words_fit.
+ have unsigned:(Z.of_nat n<=Int.max_unsigned)%coqZ by
+   change Int.max_unsigned with 4294967295%coqZ;change Int.max_signed with 2147483647%coqZ in n_fits;lia.
+ have [result [run origin]]:=@physical_index_origin Espec gv sh s sp op cp bp mp children nc pk readable depth signed words_fit.
+ exists result;split=> //.
+ clear run;case:result origin=>[r p tags|tags|tags] origin.
+ - case:origin=>first [_ [active row_as_written]].
+   rewrite /picks row_as_written;split.
+   + exact:(@emitted_unique n (rows first) blocks free unsigned available (distinct first)).
+   + move=>target sub closed choices room.
+     exact (@odd_candidate_buffer_hits m n H prefix target first (rows first) blocks free unsigned available
+       (@covers first) sub closed active choices).
+ - split;first constructor.
+   move=>target included annihilated allowed within. exfalso. exact (@origin target included annihilated allowed within).
+ - split;first constructor.
+   move=>target included annihilated allowed within. exfalso. exact (@origin target included annihilated allowed within).
 Qed.
 End Matrix.

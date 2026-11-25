@@ -694,3 +694,14 @@ a separately owned candidate array at the same address. The remaining
 scratch suffix can be joined back after the recursive call, including
 when the candidate count is zero. The contract carries duplicate freedom
 and PCM completion coverage across this C call.
+
+`PreparedIndexCallerPCM.concrete_origin_at_dfs` additionally identifies
+the actual odd matrix row whose free entries were written, or supplies
+the packing/empty-row certificate for that return.
+`PreparedIndexTree.index_execution_sound` proves by remaining depth
+that any such index-mode search trace preserves compatible minima,
+propagates witnesses of the proper weight, and admits an interrupted
+return at any depth. A trace includes the recursively observed results
+of all earlier empty siblings and of the child that stopped the scan.
+Showing that the complete Clight DFS always produces this trace is a
+separate obligation.

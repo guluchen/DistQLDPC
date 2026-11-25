@@ -72,4 +72,25 @@ Proof.
  - exact:(proj1 (@verified_choices_at_dfs Espec bits readable depth signed fits direct valid out)).
  - exact:(@direct_call_supplies_child_array Espec gv sh s sp op cp bp mp children offsets cols blocks dep w words nc pk old last marks bits complete_choices direct valid out).
 Qed.
+Let origin:=selection_origin rows H prefix free budget offsets cols blocks.
+Let origin_spec:=call_spec gv s children dep before after size origin.
+
+Theorem concrete_origin_at_dfs {Espec:OracleKind} bits :
+ readable_share sh -> (1<=dep<=w)%coqZ -> (w<=Int.max_signed)%coqZ -> (Zlength words<=Int.max_signed)%coqZ ->
+ Int.and bits (Int.repr 1)=Int.zero -> is_pointer_or_null s -> is_pointer_or_null children ->
+ semax_body Vprog index_calls f_index_children origin_spec /\
+ semax (func_tycontext f_dfs Vprog (caller_functions origin_spec) nil)
+  (PROPx nil (LOCALx (caller_locals gv s children dep bits) (SEPx [::before])))
+  choose_count (normal_ret_assert (EX result:scan_exit,PROPx [::origin result]
+    (LOCALx (temp _count (Vint (Int.repr (size result)))::caller_locals gv s children dep bits)
+       (SEPx [::VerifChildVisit.child_array children (map Int.unsigned (picks result));
+           retained_by_parent gv sh s sp op cp bp mp children offsets cols blocks w words nc pk old last marks result]))))%assert.
+Proof.
+ move=>readable depth signed fits direct valid out;split.
+ - apply:body_with_chooser_post=>oracle.
+   exact:(@physical_index_origin m n rows H prefix free blocks cols offsets budget dep w words count
+      marks last old m_fits n_fits available block_width mark_width covers offset_count csr remaining
+      stored padding live capacity buffer_signed oracle gv sh s sp op cp bp mp children nc pk readable depth signed fits).
+ - exact:(@direct_call_supplies_child_array Espec gv sh s sp op cp bp mp children offsets cols blocks dep w words nc pk old last marks bits origin direct valid out).
+Qed.
 End Call.
