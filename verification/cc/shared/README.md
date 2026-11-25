@@ -802,3 +802,9 @@ the recursive traversal. The first checks the current support at the target
 weight. The second returns the actual shorter witness when a closed interior
 prefix has a nonzero detector response. Both preserve the input PCM and the
 candidate arena while returning the updated counters and witness register.
+
+`PreparedRawRank.complete_reduction_reports_rank` proves that the first-set-row
+pivot scan returns the MathComp rank of the input matrix. Its invariant
+keeps a unit pivot column for each chosen row and zeros in every processed
+column below those rows. It applies to rectangular and singular PCMs. The
+refinement of the complete packed C `reduce_matrix` loop remains open.
