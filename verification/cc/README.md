@@ -40,7 +40,7 @@ writes the output buffers.
 
 Run `make -C verification/cc test-native-pcm` for the exhaustive small
 matrix oracle, Shor codes and boundary cases. Run `make -C verification/cc check-native-pcm` to regenerate the raw C
-Clight AST and kernel-check the word count, row exchange, pivot-row XOR and extraction of a physical column bit. The ABI is defined in
+Clight AST and kernel-check the word count, row exchange, pivot-row XOR, extraction of a physical column bit and row-major access to the original PCM. The ABI is defined in
 [native/pcm.h](native/pcm.h). This entry is under verification. The
 complete C input-to-distance theorem is open.
 

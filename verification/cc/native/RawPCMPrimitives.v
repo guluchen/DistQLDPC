@@ -32,7 +32,18 @@ Definition bit_spec:ident*funspec:=
  PARAMS(row;Vint (Int.repr q)) SEP(data_at sh (tarray tulong (Zlength xs)) (map Vlong xs) row)
  POST [tbool] PROP() RETURN(Vint (if packed_bit xs q then Int.one else Int.zero))
  SEP(data_at sh (tarray tulong (Zlength xs)) (map Vlong xs) row).
-Definition raw_calls:funspecs:=ltac:(with_library prog [words_spec;swap_spec;xor_spec;bit_spec]).
+Definition cbit (b:bool):=Vint (if b then Int.one else Int.zero).
+Definition pcm_view_type:=Tstruct _cc_pcm_view noattr.
+Definition matrix_bytes sh a buf r n (cells:list bool):=
+ (data_at sh pcm_view_type (Vint (Int.repr r),(Vint (Int.repr n),(buf,Vlong (Int64.repr (r*n))))) a *
+  data_at sh (tarray tuchar (r*n)) (map cbit cells) buf)%logic.
+Definition entry_spec:ident*funspec:=
+ DECLARE _entry WITH a:val,buf:val,sh:share,r:Z,n:Z,cells:list bool,i:Z,j:Z
+ PRE [tptr pcm_view_type,tint,tint]
+ PROP(readable_share sh;0<=i<r;0<=j<n;r<=Int.max_signed;n<=Int.max_signed;Zlength cells=(r*n)%Z)
+ PARAMS(a;Vint (Int.repr i);Vint (Int.repr j)) SEP(matrix_bytes sh a buf r n cells)
+ POST [tuchar] PROP() RETURN(cbit (Znth (i*n+j) cells)) SEP(matrix_bytes sh a buf r n cells).
+Definition raw_calls:funspecs:=ltac:(with_library prog [words_spec;swap_spec;xor_spec;bit_spec;entry_spec]).
 
 Lemma packed_words_cover n:0<=n -> 0<=packed_words n /\ n<=64*packed_words n<n+64.
 Proof.
@@ -171,4 +182,38 @@ Proof.
    pose proof (Int64.eq_spec (Int64.and (Int64.shru' word (Int.repr j)) Int64.one) Int64.zero) as compare.
    destruct (Int64.eq (Int64.and (Int64.shru' word (Int.repr j)) Int64.one) Int64.zero);
     destruct (Int64.testbit word j);intuition congruence.
+Qed.
+
+Theorem entry_reads_original_pcm:semax_body raw_vars raw_calls f_entry entry_spec.
+Proof.
+ start_function;unfold matrix_bytes,pcm_view_type;Intros.
+ assert (offset:0<=i*n+j<r*n) by nia.
+ assert (limit:r*n<=Int64.max_unsigned).
+ { change Int64.max_unsigned with 18446744073709551615;change Int.max_signed with 2147483647 in *;nia. }
+ forward;forward.
+ assert (converted: Ptrofs.unsigned (Ptrofs.of_int64
+    (Int64.add (Int64.mul (Int64.repr (Int.signed (Int.repr i))) (Int64.repr (Int.signed (Int.repr n))))
+       (Int64.repr (Int.signed (Int.repr j)))))=i*n+j).
+ { rewrite !Int.signed_repr by rep_lia.
+   assert (mul:Int64.mul (Int64.repr i) (Int64.repr n)=Int64.repr (i*n)).
+   { unfold Int64.mul;rewrite !Int64.unsigned_repr by rep_lia;reflexivity. }
+   rewrite mul;unfold Int64.add.
+   rewrite (Int64.unsigned_repr (i*n)) by nia.
+   rewrite (Int64.unsigned_repr j) by rep_lia.
+   change (Ptrofs.unsigned (Ptrofs.repr (Int64.unsigned (Int64.repr (i*n+j))))=i*n+j).
+   rewrite Int64.unsigned_repr by lia;rewrite Ptrofs.unsigned_repr;[reflexivity|change Ptrofs.max_unsigned with Int64.max_unsigned;lia]. }
+ assert (in_bytes:0<=Ptrofs.unsigned (Ptrofs.of_int64
+    (Int64.add (Int64.mul (Int64.repr (Int.signed (Int.repr i))) (Int64.repr (Int.signed (Int.repr n))))
+       (Int64.repr (Int.signed (Int.repr j)))))<Zlength cells) by lia.
+ assert (at_byte:Znth (i*n+j) (map cbit cells)=cbit (Znth (i*n+j) cells)).
+ { rewrite Znth_map by lia;reflexivity. }
+ assert (fits:is_int I8 Unsigned (cbit (Znth (i*n+j) cells))).
+ { unfold cbit;destruct (Znth (i*n+j) cells);vm_compute;intuition discriminate. }
+ forward.
+ { entailer!;try rewrite converted;try rewrite at_byte;try exact fits.
+   all: try (change (is_int I8 Unsigned (Znth (i*n+j) (map cbit cells)));rewrite at_byte;exact fits).
+   all: match goal with |- ?G=>fail 1 "matrix byte type" G end. }
+ forward;entailer!;try rewrite converted,at_byte.
+ all: try (unfold cbit;destruct (Znth (i*n+j) cells);reflexivity).
+ all: match goal with |- ?G=>fail 1 "cell value" G end.
 Qed.
