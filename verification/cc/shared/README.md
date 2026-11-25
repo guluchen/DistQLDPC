@@ -811,3 +811,9 @@ pivot scan returns the MathComp rank of the input matrix. Its invariant
 keeps a unit pivot column for each chosen row and zeros in every processed
 column below those rows. It applies to rectangular and singular PCMs. The
 refinement of the complete packed C `reduce_matrix` loop remains open.
+
+When the C traversal has one qubit left to choose,
+`PreparedIndexOneLeftCall.last_call_body` derives the actual hash probe
+from the PCM and the prefix. A hit records the returned qubit in the
+physical path and writes the target weight. On exhaustion, every eligible
+completion fails. Both paths return the full recursive storage.
