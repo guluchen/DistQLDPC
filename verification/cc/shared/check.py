@@ -156,7 +156,7 @@ MODULES = (
     "PreparedIndexUnified", "PreparedIndexSeedCoverage",
     "PreparedIndexFunctions", "PreparedIndexLibrary", "PreparedIndexRoot", "PreparedRawPivotMap",
     "PreparedRawFreeColumns",
-    "PreparedIndexSeedCall", "PreparedIndexSeedLoop",
+    "PreparedIndexSeedCall", "PreparedIndexSeedLoop", "PreparedReplayAddresses",
 )
 
 
