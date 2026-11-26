@@ -157,7 +157,7 @@ MODULES = (
     "PreparedIndexFunctions", "PreparedIndexLibrary", "PreparedIndexRoot", "PreparedRawPivotMap",
     "PreparedRawFreeColumns",
     "PreparedIndexSeedCall", "PreparedIndexSeedLoop", "PreparedReplayAddresses",
-    "PreparedIndexLevelPCM", "PreparedReplaySyndrome",
+    "PreparedIndexLevelPCM", "PreparedReplaySyndrome", "PreparedPCMWeightOrder",
 )
 
 

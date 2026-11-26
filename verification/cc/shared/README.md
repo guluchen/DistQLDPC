@@ -871,3 +871,12 @@ memory representation and its recursive function contracts.
 `PreparedReplayAddresses.physical_replay_indices` recovers a duplicate-free
 sequence of in-range coordinates from the stored CSS witness and its length.
 `RawPCMEmptyProduct` covers commutation when either input has zero rows.
+
+`RawPCMReplayWitness.witness_passes_native_check_rows` applies to the
+two C loops that read the original check matrix and XOR the columns of
+the stored witness. The theorem derives both in-range access and zero
+parity from `stored_css_prefix` and the input's row-major representation.
+`RawPCMOutput.materialize_physical_output` verifies the byte writes in
+`run_weights` starting with a cleared output buffer. To regenerate the
+raw PCM and level ASTs together and check their connecting theorem, run
+`python3 check.py --combined-pcm` with the same VST and MathComp setup.
