@@ -845,3 +845,10 @@ the mathematical model of the C elimination loop. Every recorded column
 is a unit column at its recorded row in the final matrix. The number of
 recorded columns is the input rank, and the final row space equals the
 input row space.
+
+`PreparedRawFreeColumns.full_scan_replay` proves that checking the
+residual on the free columns suffices to decide membership in the
+original stabilizer row space. The theorem uses the pivots selected by
+the full binary scan and also covers dependent rows. The native
+`RawPCMRowAddress.packed_row_address` verifies the word address used
+to read or update each packed row in `reduce_matrix` and `replay`.
