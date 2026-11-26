@@ -168,7 +168,7 @@ def digest(path):
 RAW_MODULES = (
     "RawPCMPrimitives", "RawPCMValidation", "RawPCMBinary", "RawPCMEmptyRows",
     "RawPCMCommutation", "RawPCMProduct", "RawPCMRowAddress", "RawPCMEmptyProduct",
-    "RawPCMRelease", "RawPCMStorage", "RawPCMReplayChecks", "RawPCMOutput",
+    "RawPCMRelease", "RawPCMStorage", "RawPCMReplayChecks", "RawPCMOutput", "RawPCMPackRow",
 )
 
 
