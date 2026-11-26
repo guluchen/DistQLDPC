@@ -1,0 +1,36 @@
+{
+  "release": "20261112-7b19f97a",
+  "files": {
+    "app.js": "f4aed9cf2f4cfdd2f4612692514dbf07c85fb114bfd05a5a1c2d3ff4655e3766",
+    "codes.json": "8cd6dfca7a93321d9a000562946ea1066ce2ae079a7a86ffbf8e6ccb7ec53ff8",
+    "fault.js": "4ac55d9b973f9f4123f10ba7cd26f7d01272d6e007da8a78a769c25496193f79",
+    "fault.wasm": "d652a5dd9099438f572fb353df8e18117688f46e0f12aa9104249f7f2ac4504a",
+    "hook-circuit.json": "32a79d72408a6b0b4e6165f509ff65db3798a32c257fb73832c627eda59485f5",
+    "index.html": "372c1fb16db9875c663499dae616ab3735cbb8ed4e3ffccea6863ac7b7c2ec07",
+    "model.js": "943e3c4ceb6d2f210732d591b3cb412635ca4263843eab4f1592b504ffd96daa",
+    "repetition3.stim": "a5dd3c0082adc55db2df2ac22c7780a17fb948f5db142e76e9b94c296ee132a1",
+    "style.css": "596cdb38e4ec10bdce079bff557f95d969d1d71666befc4148f9c52bfef2855a",
+    "version.json": "daaeb41e7fd90cd8370c332bebb7679c9ab421634f4a32c7152bee4360727fbf",
+    "worker.js": "fdce6a80d9ff0f1ab9c384249d661b9086302edb338890ac6d875259c2ad181a"
+  },
+  "tests": {
+    "modelFixtures": 180,
+    "forwardReplays": 3561,
+    "wasmOracleCases": 103,
+    "bad": 0,
+    "browserCases": [
+      "phenomenological d=3",
+      "generated circuit d=3 with replay",
+      "direct Stim d=3 with replay",
+      "hook circuit d=1 with replay",
+      "sparse model d=2",
+      "invalid detector rejected",
+      "file upload and verified download",
+      "Stop",
+      "time limit",
+      "390px no horizontal overflow",
+      "legacy BB72 CC d=6"
+    ]
+  },
+  "deployment": "static artifacts only; native source branch remains local"
+}
