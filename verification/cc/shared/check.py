@@ -238,8 +238,8 @@ def main():
         if args.combined_pcm:
             native = proof_dir.parent / "native"
             proofs.extend(prepare_pcm_modules(build, source_dir, proof_dir, compiler))
-            bridge = "RawPCMReplayWitness.v"
-            proofs.append(Path(shutil.copyfile(native / bridge, build / bridge)))
+            for bridge in ("RawPCMReplayWitness.v", "RawPCMRowBits.v"):
+                proofs.append(Path(shutil.copyfile(native / bridge, build / bridge)))
         for module in [*generated, *proofs]:
             subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
         check_targets = [arg for name in [p.stem for p in [*generated, *proofs]]
