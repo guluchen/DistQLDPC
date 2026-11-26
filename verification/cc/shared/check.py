@@ -165,9 +165,29 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+RAW_MODULES = (
+    "RawPCMPrimitives", "RawPCMValidation", "RawPCMBinary", "RawPCMEmptyRows",
+    "RawPCMCommutation", "RawPCMProduct", "RawPCMRowAddress", "RawPCMEmptyProduct",
+    "RawPCMRelease", "RawPCMStorage", "RawPCMReplayChecks", "RawPCMOutput",
+)
+
+
+def prepare_pcm_modules(build, source_dir, proof_dir, compiler):
+    native = proof_dir.parent / "native"
+    ast = build / "raw_pcm_ast.v"
+    subprocess.run([compiler, "-normalize", "-canonical-idents", "-I" + str(source_dir),
+                    "-o", str(ast), "pcm.c"], cwd=native, check=True)
+    modules = [ast]
+    for name in RAW_MODULES:
+        modules.append(Path(shutil.copyfile(native / (name + ".v"), build / (name + ".v"))))
+    return modules
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--raw-pcm", action="store_true", help="regenerate and check the raw PCM front-end proofs")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--raw-pcm", action="store_true", help="regenerate and check the raw PCM front-end proofs")
+    mode.add_argument("--combined-pcm", action="store_true", help="check both C translations and the end-to-end witness-row bridge")
     args = parser.parse_args()
     proof_dir = Path(__file__).resolve().parent
     source_dir = proof_dir.parents[2] / "src" / "cc"
@@ -183,13 +203,8 @@ def main():
         build = Path(temp)
         if args.raw_pcm:
             native = proof_dir.parent / "native"
-            raw_ast = build / "raw_pcm_ast.v"
-            subprocess.run([compiler, "-normalize", "-canonical-idents", "-I" + str(source_dir),
-                            "-o", str(raw_ast), "pcm.c"], cwd=native, check=True)
-            modules = [raw_ast]
-            for name in ("RawPCMPrimitives.v", "RawPCMValidation.v", "RawPCMBinary.v", "RawPCMEmptyRows.v", "RawPCMCommutation.v", "RawPCMProduct.v", "RawPCMRowAddress.v", "RawPCMEmptyProduct.v", "RawPCMRelease.v", "RawPCMStorage.v"):
-                shutil.copyfile(native / name, build / name)
-                modules.append(build / name)
+            selector = Path(shutil.copyfile(proof_dir / "ClightSelect.v", build / "ClightSelect.v"))
+            modules = [selector, *prepare_pcm_modules(build, source_dir, proof_dir, compiler)]
             for module in modules:
                 subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
             targets = [arg for module in modules for arg in ("-norec", module.stem)]
@@ -220,14 +235,21 @@ def main():
         proofs = [build / (name + ".v") for name in MODULES]
         for proof in proofs:
             shutil.copyfile(proof_dir / proof.name, proof)
+        if args.combined_pcm:
+            native = proof_dir.parent / "native"
+            proofs.extend(prepare_pcm_modules(build, source_dir, proof_dir, compiler))
+            bridge = "RawPCMReplayWitness.v"
+            proofs.append(Path(shutil.copyfile(native / bridge, build / bridge)))
         for module in [*generated, *proofs]:
             subprocess.run(["coqc", *flags, module.name], cwd=build, check=True)
-        check_targets = [arg for name in [*[p.stem for p in generated], *MODULES]
+        check_targets = [arg for name in [p.stem for p in [*generated, *proofs]]
                          for arg in ("-norec", name)]
         subprocess.run(["coqchk", "-silent", *flags, *check_targets],
                        cwd=build, check=True)
         inputs = [source_dir / name for name in ("cc_level.h", "cc_epoch.h", "cc_pack_row.h", "cc_candidate_row.h", "cc_row_builder.h",
                   "cc_overlap.h", "cc_overlap_policy.h", "cc_seed_policy.h", "cc_distance_bounds.h")]
+        if args.combined_pcm:
+            inputs.extend([native / "pcm.c", native / "pcm.h"])
         inputs.extend(source for _, source in translations)
         inputs.extend(proof_dir / "reference" / n for n in ("cc_level.h", "cc_epoch.h"))
         inputs.extend([*generated, *proofs])
@@ -257,7 +279,7 @@ def main():
                                             "full index-mode sibling, rollback and return suffix with physical witness length"],
                           "reference_c_commit": "b558c89eb4cf482da029e2076daa44ddb06e17c4",
                           "production_ast": "flag_level_ast",
-                          "modules": list(MODULES), "sha256": {
+                          "modules": [p.stem for p in proofs], "sha256": {
             ("reference/" + path.name if path.parent == proof_dir / "reference" else path.name):
             digest(path) for path in inputs}}, indent=2))
 
