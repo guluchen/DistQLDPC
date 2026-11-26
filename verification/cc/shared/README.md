@@ -860,3 +860,14 @@ undoing the flip. The result retains the returned witness and length.
 steps with their C proofs. The level iterates through physical indices
 in order and commits an exclusion only after an EMPTY visit. Its
 precondition specifies the initial storage and the seed entry invariant.
+
+`PreparedIndexLevelPCM.raw_pcm_prepared_weight` proves that an EMPTY return
+from the initialized C seed loop at weight `w` excludes every minimum
+of that weight for the supplied check and detector matrices. It derives
+seed admissibility from the ascending physical index. The callable
+`cc_run_level` wrapper with a null policy and null polling pointer
+dispatches to this prepared loop. The result requires the prepared
+memory representation and its recursive function contracts.
+`PreparedReplayAddresses.physical_replay_indices` recovers a duplicate-free
+sequence of in-range coordinates from the stored CSS witness and its length.
+`RawPCMEmptyProduct` covers commutation when either input has zero rows.

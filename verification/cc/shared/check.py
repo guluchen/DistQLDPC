@@ -187,7 +187,7 @@ def main():
             subprocess.run([compiler, "-normalize", "-canonical-idents", "-I" + str(source_dir),
                             "-o", str(raw_ast), "pcm.c"], cwd=native, check=True)
             modules = [raw_ast]
-            for name in ("RawPCMPrimitives.v", "RawPCMValidation.v", "RawPCMBinary.v", "RawPCMEmptyRows.v", "RawPCMCommutation.v", "RawPCMProduct.v", "RawPCMRowAddress.v", "RawPCMEmptyProduct.v"):
+            for name in ("RawPCMPrimitives.v", "RawPCMValidation.v", "RawPCMBinary.v", "RawPCMEmptyRows.v", "RawPCMCommutation.v", "RawPCMProduct.v", "RawPCMRowAddress.v", "RawPCMEmptyProduct.v", "RawPCMRelease.v"):
                 shutil.copyfile(native / name, build / name)
                 modules.append(build / name)
             for module in modules:
