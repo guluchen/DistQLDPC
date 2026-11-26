@@ -154,6 +154,7 @@ MODULES = (
     "PreparedIndexBranches", "PreparedIndexTerminal", "PreparedRawReduction",
     "PreparedIndexTerminalCall", "PreparedIndexClosedCall", "PreparedRawRank", "PreparedIndexOneLeftCall",
     "PreparedIndexUnified", "PreparedIndexSeedCoverage",
+    "PreparedIndexFunctions", "PreparedIndexLibrary", "PreparedIndexRoot", "PreparedRawPivotMap",
 )
 
 

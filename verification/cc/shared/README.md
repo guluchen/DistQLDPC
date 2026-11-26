@@ -830,3 +830,18 @@ PCM matrices. It assumes an initialized level and gives partial correctness.
 that an EMPTY result from every seed rules out a minimum logical operator
 of that weight. The least physical qubit of any proposed minimum is its
 seed, and the native block vector leaves every larger qubit available there.
+
+`PreparedIndexLibrary.native_index_function_library` uses VST's
+`semax_func` to bind eleven functions in the Clight global environment
+generated from the C source. These include the recursive traversal, the
+forward and inverse column toggle, the row chooser and the leaf lookup.
+The theorem derives the column-toggle preconditions from the initial PCM
+and packed storage. It assumes a prepared positive-width level with
+fewer than `INT_MAX` check rows. `PreparedIndexRoot` verifies the outer
+index loop's control flow and the physical exclusion of each exhausted seed.
+
+`PreparedRawPivotMap.actual_pivot_columns` tracks the columns chosen by
+the mathematical model of the C elimination loop. Every recorded column
+is a unit column at its recorded row in the final matrix. The number of
+recorded columns is the input rank, and the final row space equals the
+input row space.
