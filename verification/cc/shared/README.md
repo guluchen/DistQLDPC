@@ -852,3 +852,11 @@ original stabilizer row space. The theorem uses the pivots selected by
 the full binary scan and also covers dependent rows. The native
 `RawPCMRowAddress.packed_row_address` verifies the word address used
 to read or update each packed row in `reduce_matrix` and `replay`.
+
+`PreparedIndexSeedCall.visit_native_seed` verifies the complete C visit
+at depth one, including writing the seed into the path, calling DFS and
+undoing the flip. The result retains the returned witness and length.
+`PreparedIndexSeedLoop.initialized_index_level` instantiates both loop
+steps with their C proofs. The level iterates through physical indices
+in order and commits an exclusion only after an EMPTY visit. Its
+precondition specifies the initial storage and the seed entry invariant.
